@@ -1,11 +1,14 @@
 /* @license Enterprise */
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { buildRelatedRecordPathSourceRequest } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-source-request.util';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
@@ -32,13 +35,17 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   ];
 
   return findRelatedRecordPathsExtendingAccess(request).flatMap(
-    ({ isInherent, sourceFlatObjectMetadata }) => {
-      const sourceRequest = {
-        ...request,
-        flatObjectMetadata: sourceFlatObjectMetadata,
-      };
+    (resolvedPath) => {
+      const { isInherent, sourceFlatObjectMetadata } = resolvedPath;
+      const sourceRequest = buildRelatedRecordPathSourceRequest({
+        request,
+        resolvedPath,
+      });
 
-      if (!canRelatedRecordPathExtendAccessToObject(sourceRequest)) {
+      if (
+        !isDefined(sourceRequest) ||
+        !canRelatedRecordPathExtendAccessToObject(sourceRequest)
+      ) {
         return [];
       }
 
@@ -49,7 +56,7 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
                 roleId,
                 objectMetadataId: sourceFlatObjectMetadata.id,
                 objectRecordsPermissions:
-                  metadataMaps.rolesPermissions[roleId]?.objects[
+                  sourceRequest.metadataMaps.rolesPermissions[roleId]?.objects[
                     sourceFlatObjectMetadata.id
                   ],
                 operationTypes: [request.operationType],

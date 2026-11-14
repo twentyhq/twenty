@@ -14,13 +14,9 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
+import { CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-object-universal-identifiers.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
-
-const CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
-  STANDARD_OBJECTS.message.universalIdentifier,
-  STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-];
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -313,19 +309,36 @@ export const computeRoleRecordsPermissions = ({
             })),
       }));
 
+    const objectFields = isWorkflowObject
+      ? NO_FIELDS
+      : buildUnreadableAndUneditableFields({
+          objectMetadata,
+          fieldPermissions: fieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId &&
+              !isDefined(fieldPermission.rowLevelPermissionRuleId),
+          ),
+          resolveMorphRelationPermissionFieldIds,
+          isLabelIdentifierAlwaysReadable: true,
+        });
+    // a thread is reached from any of its messages, even one whose subject is hidden, and its label is a copy of that subject
+    const hiddenFieldIds =
+      roleDefinition.isChannelVisibilityRlsEnabled &&
+      universalIdentifier ===
+        STANDARD_OBJECTS.messageThread.universalIdentifier &&
+      isDefined(objectMetadata.labelIdentifierFieldMetadataId)
+        ? [objectMetadata.labelIdentifierFieldMetadataId]
+        : [];
+
     objects[objectMetadataId] = buildObjectRecordsPermissions({
-      objectFields: isWorkflowObject
-        ? NO_FIELDS
-        : buildUnreadableAndUneditableFields({
-            objectMetadata,
-            fieldPermissions: fieldPermissions.filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId &&
-                !isDefined(fieldPermission.rowLevelPermissionRuleId),
-            ),
-            resolveMorphRelationPermissionFieldIds,
-            isLabelIdentifierAlwaysReadable: true,
-          }),
+      objectFields: {
+        unreadableFields: [
+          ...new Set([...objectFields.unreadableFields, ...hiddenFieldIds]),
+        ],
+        uneditableFields: [
+          ...new Set([...objectFields.uneditableFields, ...hiddenFieldIds]),
+        ],
+      },
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,
         canRead: objectRecordsAccess.canRead && hasAiAccess,

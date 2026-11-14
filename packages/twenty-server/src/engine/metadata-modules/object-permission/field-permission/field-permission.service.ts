@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -88,6 +90,51 @@ export class FieldPermissionService {
     input: UpsertFieldPermissionsInput;
     isSystemBuild?: boolean;
   }): Promise<FlatFieldPermission[]> {
+    await this.upsertManyFieldPermissions({
+      workspaceId,
+      inputs: [input],
+      isSystemBuild,
+    });
+
+    const [{ flatRoleMaps }, flatFieldPermissionMapsResult] = await Promise.all(
+      [
+        this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          { workspaceId, flatMapsKeys: ['flatRoleMaps'] },
+        ),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatFieldPermissionMaps',
+        ] as unknown as Parameters<WorkspaceCacheService['getOrRecompute']>[1]),
+      ],
+    );
+    const roleUniversalIdentifier =
+      flatRoleMaps.universalIdentifierById[input.roleId];
+
+    return filterFieldPermissionsOfInput({
+      fieldPermissions: Object.values(
+        (
+          flatFieldPermissionMapsResult as unknown as {
+            flatFieldPermissionMaps: FlatFieldPermissionMaps;
+          }
+        ).flatFieldPermissionMaps.byUniversalIdentifier,
+      ).filter(
+        (fp): fp is FlatFieldPermission =>
+          isDefined(fp) &&
+          fp.roleUniversalIdentifier === roleUniversalIdentifier,
+      ),
+      input,
+    });
+  }
+
+  // one migration for every role, so a system sync does not pay one per member
+  public async upsertManyFieldPermissions({
+    workspaceId,
+    inputs,
+    isSystemBuild = false,
+  }: {
+    workspaceId: string;
+    inputs: UpsertFieldPermissionsInput[];
+    isSystemBuild?: boolean;
+  }): Promise<void> {
     const [flatMapsForRoleObjectField, flatFieldPermissionMapsResult] =
       await Promise.all([
         this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -123,6 +170,96 @@ export class FieldPermissionService {
         'rolesPermissions',
       ]);
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const operations = inputs.map((input) =>
+      this.computeFieldPermissionOperations({
+        input,
+        isSystemBuild,
+        flatApplication: workspaceCustomFlatApplication,
+        flatRoleMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldPermissionMaps: flatFieldPermissionMapsResolved,
+        rolesPermissions,
+      }),
+    );
+    const flatEntityToCreate = operations.flatMap(
+      ({ flatEntityToCreate }) => flatEntityToCreate,
+    );
+    const flatEntityToUpdate = operations.flatMap(
+      ({ flatEntityToUpdate }) => flatEntityToUpdate,
+    );
+    const flatEntityToDelete = operations.flatMap(
+      ({ flatEntityToDelete }) => flatEntityToDelete,
+    );
+
+    if (
+      flatEntityToCreate.length === 0 &&
+      flatEntityToUpdate.length === 0 &&
+      flatEntityToDelete.length === 0
+    ) {
+      return;
+    }
+
+    const buildAndRunResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            fieldPermission: {
+              flatEntityToCreate,
+              flatEntityToUpdate,
+              flatEntityToDelete,
+            },
+          },
+          workspaceId,
+          isSystemBuild,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        } as Parameters<
+          WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunWorkspaceMigration']
+        >[0],
+      );
+
+    if (buildAndRunResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        buildAndRunResult,
+        'Validation errors occurred while upserting field permissions',
+      );
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+  }
+
+  private computeFieldPermissionOperations({
+    input,
+    isSystemBuild,
+    flatApplication,
+    flatRoleMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatRowLevelPermissionPredicateGroupMaps,
+    flatFieldPermissionMaps,
+    rolesPermissions,
+  }: {
+    input: UpsertFieldPermissionsInput;
+    isSystemBuild: boolean;
+    flatApplication: FlatApplication;
+    flatFieldPermissionMaps: FlatFieldPermissionMaps;
+    rolesPermissions: Record<string, RoleRecordsPermissions>;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatRoleMaps'
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatRowLevelPermissionPredicateGroupMaps'
+  >) {
     const roleUniversalIdentifier =
       flatRoleMaps.universalIdentifierById[input.roleId];
     const flatRole: FlatRole | undefined = isDefined(roleUniversalIdentifier)
@@ -132,7 +269,7 @@ export class FieldPermissionService {
       : undefined;
 
     const currentFieldPermissionsForRole = Object.values(
-      flatFieldPermissionMapsResolved.byUniversalIdentifier,
+      flatFieldPermissionMaps.byUniversalIdentifier,
     ).filter(
       (fp): fp is FlatFieldPermission =>
         isDefined(fp) && fp.roleUniversalIdentifier === roleUniversalIdentifier,
@@ -182,11 +319,6 @@ export class FieldPermissionService {
       input.fieldPermissions.map((fp) => keyFrom(fp)),
     );
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
     const flatEntityToCreate: (UniversalFlatFieldPermission & {
       id: string;
     })[] = [];
@@ -219,7 +351,7 @@ export class FieldPermissionService {
               canUpdateFieldValue,
             },
             roleId: input.roleId,
-            flatApplication: workspaceCustomFlatApplication,
+            flatApplication,
             flatRoleMaps,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -242,7 +374,7 @@ export class FieldPermissionService {
             mirroredFieldKeys.has(key) &&
             !inputFieldKeys.has(key) &&
             current.applicationUniversalIdentifier !==
-              workspaceCustomFlatApplication.universalIdentifier;
+              flatApplication.universalIdentifier;
 
           if (!isForeignMirroredRow) {
             flatEntityToDelete.push(
@@ -291,66 +423,7 @@ export class FieldPermissionService {
       }
     }
 
-    if (
-      flatEntityToCreate.length === 0 &&
-      flatEntityToUpdate.length === 0 &&
-      flatEntityToDelete.length === 0
-    ) {
-      return filterFieldPermissionsOfInput({
-        fieldPermissions: currentFieldPermissionsForRole,
-        input,
-      });
-    }
-
-    const buildAndRunResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            fieldPermission: {
-              flatEntityToCreate,
-              flatEntityToUpdate,
-              flatEntityToDelete,
-            },
-          },
-          workspaceId,
-          isSystemBuild,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        } as Parameters<
-          WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunWorkspaceMigration']
-        >[0],
-      );
-
-    if (buildAndRunResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        buildAndRunResult,
-        'Validation errors occurred while upserting field permissions',
-      );
-    }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-    ]);
-
-    const freshFlatFieldPermissionMaps: FlatFieldPermissionMaps = (
-      (await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldPermissionMaps',
-      ] as unknown as Parameters<
-        WorkspaceCacheService['getOrRecompute']
-      >[1])) as unknown as { flatFieldPermissionMaps: FlatFieldPermissionMaps }
-    ).flatFieldPermissionMaps;
-
-    const resultFieldPermissions = Object.values(
-      freshFlatFieldPermissionMaps.byUniversalIdentifier,
-    ).filter(
-      (fp): fp is FlatFieldPermission =>
-        isDefined(fp) && fp.roleUniversalIdentifier === roleUniversalIdentifier,
-    );
-
-    return filterFieldPermissionsOfInput({
-      fieldPermissions: resultFieldPermissions,
-      input,
-    });
+    return { flatEntityToCreate, flatEntityToUpdate, flatEntityToDelete };
   }
 
   private validateFieldPermission({
@@ -504,16 +577,16 @@ export class FieldPermissionService {
       );
     }
 
-    // An unreadable column reads as null, which a required field cannot return, and a join would still read through an unreadable relation
+    // An unreadable column reads as null, which a required field cannot return
     if (
-      flatFieldMetadata.isNullable === false ||
-      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
+      flatFieldMetadata.isNullable === false &&
+      !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
     ) {
       throw new PermissionsException(
         `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
         PermissionsExceptionCode.INVALID_ARG,
         {
-          userFriendlyMessage: msg`Required fields and relations cannot be restricted on a row level permission rule.`,
+          userFriendlyMessage: msg`Required fields cannot be restricted on a row level permission rule.`,
         },
       );
     }

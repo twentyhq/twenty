@@ -31,6 +31,7 @@ const RESTRICTED = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 const FLAGS = [
   FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
 ];
 
@@ -63,6 +64,31 @@ describe('Message channel visibility through personal role rules (integration)',
       (edge: { node: { subject: string | null; text: string | null } }) =>
         edge.node,
     );
+  };
+
+  const countAs = async ({
+    makeRequest,
+    objectMetadataSingularName,
+    objectMetadataPluralName,
+    filter,
+  }: {
+    makeRequest: MakeRequest;
+    objectMetadataSingularName: string;
+    objectMetadataPluralName: string;
+    filter: Record<string, unknown>;
+  }): Promise<number> => {
+    const response = await makeRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName,
+        objectMetadataPluralName,
+        gqlFields: 'id',
+        filter,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data[objectMetadataPluralName].edges.length;
   };
 
   const syncRules = async () => {
@@ -165,4 +191,63 @@ describe('Message channel visibility through personal role rules (integration)',
     expect(message.subject).toBe(subject);
     expect(message.text).not.toBe(RESTRICTED);
   }, 120000);
+
+  it.each([
+    MessageChannelVisibility.SHARE_EVERYTHING,
+    MessageChannelVisibility.SUBJECT,
+    MessageChannelVisibility.METADATA,
+  ])(
+    'lets another member read the participants, associations and thread of the message under %s',
+    async (visibility) => {
+      await setVisibility(visibility);
+
+      const messageFilter = { messageId: { eq: messageId } };
+      const ownerCounts = {
+        participants: await countAs({
+          makeRequest: makeGraphqlApiRequest,
+          objectMetadataSingularName: 'messageParticipant',
+          objectMetadataPluralName: 'messageParticipants',
+          filter: messageFilter,
+        }),
+        associations: await countAs({
+          makeRequest: makeGraphqlApiRequest,
+          objectMetadataSingularName: 'messageChannelMessageAssociation',
+          objectMetadataPluralName: 'messageChannelMessageAssociations',
+          filter: messageFilter,
+        }),
+        threads: await countAs({
+          makeRequest: makeGraphqlApiRequest,
+          objectMetadataSingularName: 'messageThread',
+          objectMetadataPluralName: 'messageThreads',
+          filter: { messages: { id: { eq: messageId } } },
+        }),
+      };
+
+      expect(ownerCounts.participants).toBeGreaterThan(0);
+      expect(ownerCounts.associations).toBe(1);
+      expect(ownerCounts.threads).toBe(1);
+
+      expect({
+        participants: await countAs({
+          makeRequest: makeGraphqlApiRequestWithMemberRole,
+          objectMetadataSingularName: 'messageParticipant',
+          objectMetadataPluralName: 'messageParticipants',
+          filter: messageFilter,
+        }),
+        associations: await countAs({
+          makeRequest: makeGraphqlApiRequestWithMemberRole,
+          objectMetadataSingularName: 'messageChannelMessageAssociation',
+          objectMetadataPluralName: 'messageChannelMessageAssociations',
+          filter: messageFilter,
+        }),
+        threads: await countAs({
+          makeRequest: makeGraphqlApiRequestWithMemberRole,
+          objectMetadataSingularName: 'messageThread',
+          objectMetadataPluralName: 'messageThreads',
+          filter: { messages: { id: { eq: messageId } } },
+        }),
+      }).toEqual(ownerCounts);
+    },
+    120000,
+  );
 });

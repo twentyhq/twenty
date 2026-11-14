@@ -47,7 +47,14 @@ const buildPath = ({
   isInherent,
   sourceFlatObjectMetadata: source,
   targetObjectMetadataId: target.id,
-  hops: [],
+  hops: [
+    {
+      flatObjectMetadata: source,
+      relationFieldMetadataId: `${source.id}-to-${target.id}-field-id`,
+      sourceColumnName: 'id',
+      targetColumnName: 'sourceId',
+    },
+  ],
 });
 
 const READ_ALL_RECORDS: ObjectRecordsPermissions = {

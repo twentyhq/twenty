@@ -141,27 +141,24 @@ export class PersonalRoleService {
   // a role target, rule or field permission of a personal role goes with it
   async deletePersonalRoles({
     workspaceId,
-    userWorkspaceIds,
+    keptUserWorkspaceIds = [],
   }: {
     workspaceId: string;
-    userWorkspaceIds?: string[];
+    keptUserWorkspaceIds?: string[];
   }): Promise<void> {
     const { flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatRoleMaps'] },
       );
-    const personalRoleUniversalIdentifiers = isDefined(userWorkspaceIds)
-      ? new Set(userWorkspaceIds.map(getPersonalRoleUniversalIdentifier))
-      : undefined;
+    const keptUniversalIdentifiers = new Set(
+      keptUserWorkspaceIds.map(getPersonalRoleUniversalIdentifier),
+    );
     const flatRolesToDelete = Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (flatRole) =>
           isPersonalRole(flatRole) &&
-          (personalRoleUniversalIdentifiers?.has(
-            flatRole.universalIdentifier,
-          ) ??
-            true),
+          !keptUniversalIdentifiers.has(flatRole.universalIdentifier),
       );
 
     if (flatRolesToDelete.length === 0) {
