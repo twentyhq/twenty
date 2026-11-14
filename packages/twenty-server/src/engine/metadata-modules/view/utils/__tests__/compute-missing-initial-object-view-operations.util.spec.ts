@@ -238,6 +238,33 @@ describe('computeMissingInitialObjectViewOperations', () => {
     ]);
   });
 
+  it('copies every column when isCanonical is not readable yet during an upgrade', () => {
+    // Upgrade-aware reads return null for a column a later upgrade adds, whatever the type says
+    const unreadableIsCanonical = null as unknown as boolean;
+
+    const { viewFieldsToCreate } = computeMissingInitialObjectViewOperations({
+      ...buildMaps({
+        objects: [PET_OBJECT],
+        views: [PET_INDEX_VIEW],
+        viewFields: [
+          { ...NAME_INDEX_VIEW_FIELD, isCanonical: unreadableIsCanonical },
+          { ...AGE_INDEX_VIEW_FIELD, isCanonical: unreadableIsCanonical },
+        ],
+      }),
+      initialViewApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(
+      viewFieldsToCreate.map(
+        (viewField) => viewField.fieldMetadataUniversalIdentifier,
+      ),
+    ).toEqual([
+      NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      AGE_FIELD_UNIVERSAL_IDENTIFIER,
+    ]);
+  });
+
   it('produces nothing when the initial view already exists, live or soft-deleted', () => {
     const buildExistingInitialView = (
       deletedAt: string | null,
