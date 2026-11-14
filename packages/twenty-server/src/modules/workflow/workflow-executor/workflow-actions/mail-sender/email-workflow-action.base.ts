@@ -4,8 +4,10 @@ import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import {
   canConnectedAccountPerformEmailOperation,
+  type EmailDocument,
   isDefined,
   isValidUuid,
+  parseJson,
   resolveInput as resolveWorkflowInput,
 } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
@@ -56,17 +58,17 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
   protected override async toToolInput(
     resolvedInput: WorkflowSendEmailActionInput,
-    context: Record<string, unknown>,
   ): Promise<ToolInput> {
     // New steps are created with an empty body
     return {
       ...resolvedInput,
       body: isNonEmptyString(resolvedInput.body)
-        ? resolveEmailBody(resolvedInput.body, context)
+        ? parseJson<EmailDocument>(resolvedInput.body)
         : { type: 'text', text: '' },
     };
   }
 
+  // The body is resolved inside its document so variables are escaped per string context
   protected override resolveInput(
     input: WorkflowSendEmailActionInput,
     context: Record<string, unknown>,
@@ -78,7 +80,9 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         inputWithoutBody,
         context,
       ) as typeof inputWithoutBody),
-      body,
+      body: isNonEmptyString(body)
+        ? JSON.stringify(resolveEmailBody(body, context))
+        : body,
     };
   }
 

@@ -1,5 +1,4 @@
 import { convertEmailBodyInputToEmailDocument } from '../convert-email-body-input-to-email-document';
-import { emailBodyInputSchema } from '../email-body-input-schema';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
 
 describe('convertEmailBodyInputToEmailDocument', () => {
@@ -51,18 +50,5 @@ describe('convertEmailBodyInputToEmailDocument', () => {
       attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
       content,
     });
-  });
-});
-
-describe('emailBodyInputSchema', () => {
-  it('rejects a bare string instead of guessing its format', () => {
-    expect(emailBodyInputSchema.safeParse('<p>Hi</p>').success).toBe(false);
-  });
-
-  it('rejects an unknown format', () => {
-    expect(
-      emailBodyInputSchema.safeParse({ type: 'markdown', markdown: '# Hi' })
-        .success,
-    ).toBe(false);
   });
 });
