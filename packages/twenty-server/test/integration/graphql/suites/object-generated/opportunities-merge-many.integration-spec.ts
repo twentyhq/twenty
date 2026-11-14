@@ -63,4 +63,60 @@ describe('opportunities merge resolvers (integration)', () => {
 
     expect(findMergedAwayResponse.body.data.opportunity).toBeNull();
   });
+
+  it('should keep the other record amount when the priority amount only has a currency code', async () => {
+    const gqlFields = `
+      id
+      amount {
+        amountMicros
+        currencyCode
+      }
+    `;
+
+    const createResponse = await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields,
+        data: [
+          {
+            name: 'Renewal without amount',
+            amount: { amountMicros: null, currencyCode: 'USD' },
+          },
+          {
+            name: 'Renewal with amount',
+            amount: { amountMicros: 24000000000, currencyCode: 'USD' },
+          },
+        ],
+      }),
+    );
+
+    const [emptyAmountOpportunity, opportunityWithAmount] =
+      createResponse.body.data.createOpportunities;
+
+    createdOpportunityIds.push(
+      emptyAmountOpportunity.id,
+      opportunityWithAmount.id,
+    );
+
+    await waitForTimelineActivities('targetOpportunityId', [
+      emptyAmountOpportunity.id,
+      opportunityWithAmount.id,
+    ]);
+
+    const mergeResponse = await makeGraphqlApiRequest(
+      mergeManyOperationFactory({
+        objectMetadataPluralName: 'opportunities',
+        gqlFields,
+        ids: [emptyAmountOpportunity.id, opportunityWithAmount.id],
+        conflictPriorityIndex: 0,
+      }),
+    );
+
+    expect(mergeResponse.body.errors).toBeUndefined();
+    expect(mergeResponse.body.data.mergeOpportunities).toMatchObject({
+      id: emptyAmountOpportunity.id,
+      amount: { amountMicros: 24000000000, currencyCode: 'USD' },
+    });
+  });
 });
