@@ -1,4 +1,4 @@
-import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
+import { getPositionBetween } from '~/utils/getPositionBetween';
 
 export const computeDndReorderPosition = ({
   sortedList,
