@@ -135,15 +135,15 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
       continue;
     }
 
-    if (key === '__typename') {
-      formatted.__typename = getNodeTypename(objectNameSingular);
-      continue;
-    }
-
     const fieldName = getSelectedFieldName({
       responseKey: key,
       selection: subFields,
     });
+
+    if (fieldName === '__typename') {
+      formatted[key] = getNodeTypename(objectNameSingular);
+      continue;
+    }
     const relationInfo = findRelationInfo(
       objectNameSingular,
       fieldName,
@@ -232,15 +232,15 @@ const backfillNullValuesAndComputeTypeNameForCompositeField = (
       continue;
     }
 
-    if (key === '__typename') {
-      formatted.__typename = pascalCase(fieldMetadataType);
-      continue;
-    }
-
     const subFieldName = getSelectedFieldName({
       responseKey: key,
       selection: subFields,
     });
+
+    if (subFieldName === '__typename') {
+      formatted[key] = pascalCase(fieldMetadataType);
+      continue;
+    }
     const value = record[subFieldName] ?? null;
     const subFieldTypeName = getCompositeSubFieldObjectTypeName(
       fieldMetadataType,
@@ -292,12 +292,13 @@ const backfillNullValuesAndComputeTypeNameForCompositeSubField = (
       continue;
     }
 
+    const fieldName = getSelectedFieldName({
+      responseKey: key,
+      selection: subFields,
+    });
+
     formatted[key] =
-      key === '__typename'
-        ? typeName
-        : (record[
-            getSelectedFieldName({ responseKey: key, selection: subFields })
-          ] ?? null);
+      fieldName === '__typename' ? typeName : (record[fieldName] ?? null);
   }
 
   return formatted;
@@ -318,15 +319,15 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
       continue;
     }
 
-    if (key === '__typename') {
-      formatted.__typename = getConnectionTypename(objectNameSingular);
-      continue;
-    }
-
     const connectionFieldName = getSelectedFieldName({
       responseKey: key,
       selection: subFields,
     });
+
+    if (connectionFieldName === '__typename') {
+      formatted[key] = getConnectionTypename(objectNameSingular);
+      continue;
+    }
 
     if (connectionFieldName === 'edges') {
       formatted[key] = connection.edges.map((edge) => {
@@ -335,15 +336,15 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
         for (const [edgeKey, edgeSubFields] of Object.entries(
           subFields as Record<string, object>,
         )) {
-          if (edgeKey === '__typename') {
-            edgeFormatted.__typename = getEdgeTypename(objectNameSingular);
-            continue;
-          }
-
           const edgeFieldName = getSelectedFieldName({
             responseKey: edgeKey,
             selection: edgeSubFields,
           });
+
+          if (edgeFieldName === '__typename') {
+            edgeFormatted[edgeKey] = getEdgeTypename(objectNameSingular);
+            continue;
+          }
 
           if (edgeFieldName === 'cursor') {
             edgeFormatted[edgeKey] = edge.cursor;
@@ -377,18 +378,15 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
           continue;
         }
 
-        if (pageInfoKey === '__typename') {
-          pageInfoFormatted.__typename = 'PageInfo';
-          continue;
-        }
+        const pageInfoFieldName = getSelectedFieldName({
+          responseKey: pageInfoKey,
+          selection: pageInfoSubFields,
+        });
 
         pageInfoFormatted[pageInfoKey] =
-          pageInfoValues[
-            getSelectedFieldName({
-              responseKey: pageInfoKey,
-              selection: pageInfoSubFields,
-            })
-          ] ?? null;
+          pageInfoFieldName === '__typename'
+            ? 'PageInfo'
+            : (pageInfoValues[pageInfoFieldName] ?? null);
       }
 
       formatted[key] = pageInfoFormatted;
