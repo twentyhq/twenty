@@ -1,5 +1,5 @@
 import { buildRoleManifestFromMarketplaceAppRole } from '@/marketplace/utils/buildRoleManifestFromMarketplaceAppRole';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type MarketplaceAppDetail } from '~/generated-metadata/graphql';
 
@@ -8,7 +8,7 @@ export const getMarketplaceAppDefaultRoleManifest = (
     | Pick<MarketplaceAppDetail, 'roles' | 'defaultRoleUniversalIdentifier'>
     | null
     | undefined,
-): RoleManifest | undefined => {
+): LegacyCompliantRoleManifest | undefined => {
   const defaultRole = detail?.roles?.find(
     (role) =>
       role.universalIdentifier === detail?.defaultRoleUniversalIdentifier,

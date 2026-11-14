@@ -327,7 +327,7 @@ msgstr "Kalendarni ochishda tarmoq xatosi yuz berdi."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Kanonik bo‘lmagan ko‘rinish maydoni yorliq identifikatori maydonidan foydalana olmaydi"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Tashqi xizmat javob berish uchun juda uzoq vaqt oldi."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Qo‘shimcha ustun yozuv nomini ko‘rsata olmaydi"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Ish maydonidan oxirgi adminni olib tashlab bo‘lmaydi."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Oxirgi server administratorini o‘chirib bo‘lmaydi. Avval Boshqaruv panelida boshqa foydalanuvchiga server administratori ruxsatini bering."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -4361,8 +4361,8 @@ msgid "Default Task Layout"
 msgstr "Standart vazifa maketi"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standart qiymat \"{defaultValue}\" tanlov qiymatlaridan biri bo‘lishi kerak"
 
@@ -5105,6 +5105,11 @@ msgstr "Boyitish"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "1 dan {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tagacha belgidan iborat nomni va qo‘llab-quvvatlanadigan yordamchi ko‘rinishi parametrlarini kiriting."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "API kalitini kiriting."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5376,7 +5381,7 @@ msgstr "Tashqi yozuv ID"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Bu yerda qo‘shimcha ustunlar qo‘llab-quvvatlanmaydi"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5516,7 +5521,7 @@ msgstr "Fevral"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "\"{fieldName}\" maydonini \"{workspaceMemberFieldName}\" ish maydoni a’zosi bilan solishtirib bo‘lmaydi, ularning turlari mos emas"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9555,7 +9560,7 @@ msgstr "Hech qanday tasdiqlangan yuboruvchi domeni ushbu \"from\" manzili bilan 
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Vidjet ko‘rinishlarida kanonik bo‘lmagan ko‘rinish maydonlari qo‘llab-quvvatlanmaydi"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10051,7 +10056,7 @@ msgstr "Bu a’zo uchun tiklash kodlarini faqat server administratori boshqarish
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Ish jarayonini kim ko‘rishini faqat ish maydoni a’zosi o‘zgartirishi mumkin"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10262,6 +10267,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Imkoniyat bosqichi"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "\"{optionLabel}\" parametri maydon bilan birga keladi va uni olib tashlab bo‘lmaydi. Buning o‘rniga uni faolsizlantiring."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10278,12 +10289,6 @@ msgstr "Parametr ID yaroqsiz"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Parametr ID majburiy"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Parametr identifikatori 4 yoki undan keyingi versiyadagi kichik harflardan iborat UUID bo‘lishi kerak"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -12226,6 +12231,11 @@ msgstr "Yangilash uchun moʻljallangan qator darajasidagi ruxsat qoidasi topilma
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Ushbu universal identifikatorli qator darajasidagi ruxsat qoidasi allaqachon mavjud"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "Maydonlarni yashiradigan yoki qulflaydigan qator darajasidagi yozuv ruxsatlari kamida bitta predikat guruhiga ega bo‘lishi kerak."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13769,6 +13779,12 @@ msgstr "Bu bosqich ishga tushirishi kerak bo‘lgan agent topilmadi."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Siz izlayotgan agent topilmadi. U o‘chirilgan bo‘lishi yoki sizda unga kirish huquqi bo‘lmasligi mumkin."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "\"{optionLabel}\" parametrining API qiymati maydon bilan birga keladi va uni o‘zgartirib bo‘lmaydi."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13948,6 +13964,12 @@ msgstr "Yozuv yaratuvchisi"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Xabar qabul qilingan sana"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Standart parametrni faolsizlantirib bo‘lmaydi"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14866,7 +14888,7 @@ msgstr "Ushbu funksiya yoqilmagan."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Bu maydonni ushbu ish maydoni a’zosi maydoni bilan solishtirib bo‘lmaydi"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17127,6 +17149,11 @@ msgstr "Xabaringizni yuborib bo‘lmadi. Iltimos, qayta urinib ko‘ring."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Ulanishni boshlab bo‘lmadi. Iltimos, qayta urinib ko‘ring."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Bu kalitni tasdiqlay olmadik. Uni tekshiring yoki xizmat ishlamayotgan bo‘lsa, keyinroq qayta urinib ko‘ring."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

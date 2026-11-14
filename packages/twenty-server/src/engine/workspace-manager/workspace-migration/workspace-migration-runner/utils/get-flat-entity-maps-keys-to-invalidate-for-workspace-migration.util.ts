@@ -18,6 +18,8 @@ const EXTRA_AFFECTED_METADATA_NAMES: Partial<
   Record<AllMetadataName, AllMetadataName[]>
 > = {
   index: ['objectMetadata', 'fieldMetadata'],
+  // A field's options are derived from its option rows
+  fieldMetadataOption: ['fieldMetadata'],
 };
 
 // Their deletion cascades in the database: rules take the predicates fields aggregate, a view field takes its scope view

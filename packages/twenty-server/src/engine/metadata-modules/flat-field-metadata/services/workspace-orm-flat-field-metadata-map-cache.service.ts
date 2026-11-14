@@ -22,6 +22,10 @@ const ORM_FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'fieldMetadataId', 'subFieldName'],
     groupBy: ['indexMetadataId'],
   },
+  fieldMetadataOption: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -40,6 +44,7 @@ export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCache
       fieldMetadata: fieldMetadatas,
       index: indexMetadatas,
       indexFieldMetadata: indexFieldMetadatas,
+      fieldMetadataOption: fieldMetadataOptions,
     } = rows;
 
     const uniqueFieldMetadataIds = computeUniqueFieldMetadataIdsFromIndexes(
@@ -56,6 +61,11 @@ export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCache
       const ormFlatFieldMetadata =
         fromFieldMetadataEntityToOrmFlatFieldMetadata({
           entity: fieldMetadataEntity,
+          fieldMetadataOptionUniversalIdentifiers: (
+            fieldMetadataOptions.byFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) ?? []
+          ).map(({ universalIdentifier }) => universalIdentifier),
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
         });
 

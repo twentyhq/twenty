@@ -12,7 +12,7 @@ import { INBOX_INSTANCE_ID } from '@/inbox/constants/InboxInstanceId';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -99,7 +99,7 @@ const meta = {
   args: { channelView: OPEN_VIEW },
   parameters: { container: { width: 560, height: 280 } },
   beforeEach: ({ args }) => {
-    jotaiStore.set(inboxChannelsState.atom, [
+    jotaiStore.set(aiChatChannelsState.atom, [
       {
         id: OPEN_VIEW.channelId,
         name: 'Sales',
@@ -300,7 +300,7 @@ export const Snoozed: Story = {
 
 export const ChannelsLoading: Story = {
   beforeEach: () => {
-    jotaiStore.set(inboxChannelsState.atom, null);
+    jotaiStore.set(aiChatChannelsState.atom, null);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

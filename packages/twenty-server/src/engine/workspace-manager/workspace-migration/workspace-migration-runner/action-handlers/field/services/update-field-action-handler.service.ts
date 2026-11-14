@@ -25,7 +25,9 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
+import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-field-metadata-options-to-option-rows.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -83,13 +85,6 @@ type NullableUpdateHandlerArgs = Omit<
   toIsNullable: boolean;
 };
 
-type OptionsUpdateHandlerArgs<T extends FieldMetadataType = FieldMetadataType> =
-  UpdateFieldPropertyHandlerArgs<T> & {
-    toOptions: FlatFieldMetadata['options'];
-    flatObjectMetadata: FlatObjectMetadata;
-    workspaceId: string;
-  };
-
 @Injectable()
 export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update',
@@ -97,6 +92,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
+    private readonly fieldMetadataOptionEnumSchemaService: FieldMetadataOptionEnumSchemaService,
   ) {
     super();
   }
@@ -207,7 +203,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       objectMetadata: flatObjectMetadata,
     });
 
-    let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
+    const optimisticFlatFieldMetadata = structuredClone(
+      currentFlatFieldMetadata,
+    );
 
     let wasDefaultValueHandledByEnumUpdate = false;
 
@@ -223,29 +221,47 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       optimisticFlatFieldMetadata.name = update.name;
     }
 
-    if (
-      update.options !== undefined &&
-      isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
-    ) {
-      if (update.defaultValue !== undefined) {
-        optimisticFlatFieldMetadata = {
-          ...optimisticFlatFieldMetadata,
-          defaultValue: update.defaultValue,
-        };
-        wasDefaultValueHandledByEnumUpdate = true;
-      }
+    // Before the option table exists there are no option rows, so the enum follows the options of the update.
+    // TODO: drop the options fallback once every instance has run the 2.56 option table command, with the options column drop.
+    const enumChange = !isEnumFlatFieldMetadata(currentFlatFieldMetadata)
+      ? undefined
+      : (context.fieldMetadataOptionEnumChanges?.get(
+          currentFlatFieldMetadata.universalIdentifier,
+        ) ??
+        (isDefined(update.options) && !isFieldMetadataOptionEntityAvailable()
+          ? {
+              fromOptionRows: fromFieldMetadataOptionsToOptionRows(
+                currentFlatFieldMetadata.options,
+              ),
+              toOptionRows: fromFieldMetadataOptionsToOptionRows(
+                update.options,
+              ),
+            }
+          : undefined));
 
-      await this.handleFieldOptionsUpdate({
-        queryRunner,
-        schemaName,
-        tableName,
-        flatFieldMetadata: optimisticFlatFieldMetadata,
-        flatObjectMetadata,
-        toOptions: update.options,
-        workspaceId,
-        update,
-      });
-      optimisticFlatFieldMetadata.options = update.options ?? [];
+    if (isDefined(enumChange)) {
+      // Rebuilding the enum recreates the column, so the new default value goes with it.
+      const wasEnumChanged =
+        await this.fieldMetadataOptionEnumSchemaService.applyEnumChange({
+          enumChange,
+          flatFieldMetadata:
+            update.defaultValue !== undefined
+              ? {
+                  ...optimisticFlatFieldMetadata,
+                  defaultValue: update.defaultValue,
+                }
+              : optimisticFlatFieldMetadata,
+          flatObjectMetadata,
+          queryRunner,
+          workspaceId,
+        });
+
+      wasDefaultValueHandledByEnumUpdate =
+        wasEnumChanged && update.defaultValue !== undefined;
+    }
+
+    if (isDefined(update.options)) {
+      optimisticFlatFieldMetadata.options = update.options;
     }
 
     if (update.defaultValue !== undefined) {
@@ -645,55 +661,5 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
             defaultValue: flatFieldMetadata.defaultValue,
           }),
     });
-  }
-
-  private async handleFieldOptionsUpdate({
-    flatFieldMetadata,
-    queryRunner,
-    schemaName,
-    tableName,
-    toOptions,
-    flatObjectMetadata,
-    workspaceId,
-  }: OptionsUpdateHandlerArgs) {
-    const fromOptions = flatFieldMetadata.options;
-    const fromOptionsById = new Map(
-      (fromOptions ?? [])
-        .filter((opt) => isDefined(opt.id))
-        .map((opt) => [opt.id, opt]),
-    );
-
-    const toOptionsById = new Map(
-      (toOptions ?? [])
-        .filter((opt) => isDefined(opt.id))
-        .map((opt) => [opt.id, opt]),
-    );
-
-    const valueMapping: Record<string, string> = {};
-
-    for (const toOption of toOptionsById.values()) {
-      const fromOption = fromOptionsById.get(toOption.id);
-
-      if (fromOption) {
-        valueMapping[fromOption.value] = toOption.value;
-      }
-    }
-
-    const enumColumnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata,
-      flatObjectMetadata,
-      workspaceId,
-    });
-
-    for (const enumColumnDefinition of enumColumnDefinitions) {
-      await this.workspaceSchemaManagerService.enumManager.alterEnumValues({
-        queryRunner,
-        schemaName,
-        tableName,
-        columnDefinition: enumColumnDefinition,
-        enumValues: toOptions?.map((opt) => opt.value) ?? [],
-        oldToNewEnumOptionMap: valueMapping,
-      });
-    }
   }
 }
