@@ -13,7 +13,6 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-// additional roles add their grants to the main role, where a limiting role narrows it
 type WithAdditionalRoleIds<TPrincipal> = TPrincipal & {
   additionalRoleIds?: string[];
 };

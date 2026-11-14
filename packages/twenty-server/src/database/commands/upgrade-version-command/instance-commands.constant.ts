@@ -304,6 +304,7 @@ import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/da
 import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
 import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
 import { AddViewFieldIsCanonicalFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794578763738-add-view-field-is-canonical';
+import { AddIsAdditionalToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794651427142-add-is-additional-to-role-target';
 import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794588217126-add-is-internal-import-enabled-to-workspace';
 import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794590652080-backfill-field-metadata-option-rows-from-stored-options';
 
@@ -614,4 +615,5 @@ export const INSTANCE_COMMANDS = [
   AddViewFieldIsCanonicalFastInstanceCommand,
   AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand,
   BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
+  AddIsAdditionalToRoleTargetFastInstanceCommand,
 ];
