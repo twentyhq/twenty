@@ -2,7 +2,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import {
@@ -19,7 +18,8 @@ import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/ut
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type ReactNode } from 'react';
+import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
+import { type ReactNode, useContext } from 'react';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   findById,
@@ -57,7 +57,7 @@ export const RecordTableCellLookupFieldContext = ({
 
   const restrictedFieldNames = useRecordRestrictedFieldNames(relatedRecordId);
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const updateRecord = useContext(RecordTableUpdateContext);
 
   const isRelatedRecordReadOnly = useIsRecordReadOnly({
     recordId: relatedRecordId,
@@ -86,12 +86,8 @@ export const RecordTableCellLookupFieldContext = ({
       findById(lookupTargetFieldMetadataItem.id),
     ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
 
-  const updateRelatedRecord = ({ variables }: RecordUpdateHookParams) =>
-    updateOneRecord({
-      objectNameSingular: relationObjectMetadataItem.nameSingular,
-      idToUpdate: relatedRecordId,
-      updateOneRecordInput: variables.updateOneRecordInput,
-    });
+  const updateRelatedRecord = (params: RecordUpdateHookParams) =>
+    updateRecord?.(params, relationObjectMetadataItem.nameSingular);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
