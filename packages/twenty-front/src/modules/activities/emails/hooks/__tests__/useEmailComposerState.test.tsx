@@ -169,6 +169,7 @@ const renderAppComposerState = ({
 describe('useEmailComposerState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.localStorage.clear();
     mockIsMessageAttachmentEnabled = false;
   });
 
@@ -448,5 +449,110 @@ describe('useEmailComposerState', () => {
 
     expect(result.current.connectedAccountId).toBe('account-2');
     expect(result.current.fromHandle).toBeUndefined();
+  });
+
+  it('persists unsent reply drafts across unmount and restores them on reopen', () => {
+    const firstRender = renderAppComposerState({
+      mocks: [],
+      onSent: jest.fn(),
+    });
+
+    act(() => {
+      firstRender.result.current.setBody('Draft reply paragraph');
+      firstRender.result.current.setSubject('Re: Updated subject');
+      firstRender.result.current.setCc([{ address: 'cc@example.com' }]);
+      firstRender.result.current.setShowCcBcc(true);
+    });
+
+    firstRender.unmount();
+
+    const secondRender = renderAppComposerState({
+      mocks: [],
+      onSent: jest.fn(),
+    });
+
+    expect(secondRender.result.current.body).toBe('Draft reply paragraph');
+    expect(secondRender.result.current.subject).toBe('Re: Updated subject');
+    expect(secondRender.result.current.cc).toEqual([
+      { address: 'cc@example.com' },
+    ]);
+    expect(secondRender.result.current.showCcBcc).toBe(true);
+  });
+
+  it('clears the persisted reply draft after sending successfully', async () => {
+    const onSent = jest.fn();
+    const firstRender = renderAppComposerState({
+      mocks: [
+        {
+          ...createSendAppChannelMessageMock(() => true),
+          request: {
+            query: SEND_APP_CHANNEL_MESSAGE,
+            variables: ({ input }) =>
+              input.email.subject === 'Re: Hello' &&
+              input.email.body === 'Final reply body',
+          },
+        } satisfies SendAppChannelMessageMockedResponse,
+      ],
+      onSent,
+    });
+
+    act(() => {
+      firstRender.result.current.setBody('Final reply body');
+    });
+
+    await act(async () => {
+      await firstRender.result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+
+    firstRender.unmount();
+
+    const reopenedRender = renderAppComposerState({
+      mocks: [],
+      onSent: jest.fn(),
+    });
+
+    expect(reopenedRender.result.current.body).toBe('');
+    expect(reopenedRender.result.current.subject).toBe('Re: Hello');
+  });
+
+  it('keeps server draftPrefill isolated from localStorage reply drafts', () => {
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <MockedProvider mocks={[]}>{children}</MockedProvider>
+    );
+
+    const firstRender = renderHook(
+      () =>
+        useEmailComposerState({
+          connectedAccountId: 'account-1',
+          defaultTo: 'ada@lovelace.com',
+          defaultSubject: 'Re: Hello',
+          defaultInReplyTo: '<inbound-1@app>',
+          draftPrefill: {
+            messageId: 'server-draft-1',
+            to: 'grace@hopper.com',
+            cc: '',
+            bcc: '',
+            subject: 'Server draft subject',
+            body: 'Server draft body',
+          },
+        }),
+      { wrapper },
+    );
+
+    act(() => {
+      firstRender.result.current.setBody('Edited server draft');
+    });
+
+    firstRender.unmount();
+
+    const plainReplyRender = renderAppComposerState({
+      mocks: [],
+      onSent: jest.fn(),
+    });
+
+    expect(plainReplyRender.result.current.body).toBe('');
+    expect(plainReplyRender.result.current.subject).toBe('Re: Hello');
   });
 });

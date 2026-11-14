@@ -1,5 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
@@ -20,6 +20,12 @@ import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/s
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
+import {
+  buildEmailComposerDraftStorageKey,
+  clearEmailComposerDraft,
+  loadEmailComposerDraft,
+  saveEmailComposerDraft,
+} from '@/activities/emails/utils/emailComposerDraftStorage';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
@@ -47,11 +53,24 @@ export const useEmailComposerState = ({
   appReplyTarget,
   onSent,
 }: UseEmailComposerStateArgs) => {
-  const initialTo = draftPrefill?.to ?? defaultTo;
-  const initialCc = draftPrefill?.cc ?? '';
-  const initialBcc = draftPrefill?.bcc ?? '';
-  const initialSubject = draftPrefill?.subject ?? defaultSubject;
-  const initialBody = draftPrefill?.body ?? '';
+  const [restoredDraft] = useState(() =>
+    isDefined(draftPrefill)
+      ? null
+      : loadEmailComposerDraft(
+          buildEmailComposerDraftStorageKey({
+            connectedAccountId: initialConnectedAccountId,
+            defaultInReplyTo,
+            contextRecord,
+          }),
+        ),
+  );
+
+  const initialTo = draftPrefill?.to ?? restoredDraft?.to ?? defaultTo;
+  const initialCc = draftPrefill?.cc ?? restoredDraft?.cc ?? '';
+  const initialBcc = draftPrefill?.bcc ?? restoredDraft?.bcc ?? '';
+  const initialSubject =
+    draftPrefill?.subject ?? restoredDraft?.subject ?? defaultSubject;
+  const initialBody = draftPrefill?.body ?? restoredDraft?.body ?? '';
 
   const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
@@ -66,6 +85,15 @@ export const useEmailComposerState = ({
   }
 
   const { connectedAccountId, fromHandle } = sender;
+  const draftStorageKey = useMemo(
+    () =>
+      buildEmailComposerDraftStorageKey({
+        connectedAccountId,
+        defaultInReplyTo,
+        contextRecord,
+      }),
+    [connectedAccountId, defaultInReplyTo, contextRecord],
+  );
   const [to, setTo] = useState<EmailRecipient[]>(() =>
     parseEmailRecipients(initialTo),
   );
@@ -78,8 +106,40 @@ export const useEmailComposerState = ({
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
   const [showCcBcc, setShowCcBcc] = useState(
-    initialCc.length > 0 || initialBcc.length > 0,
+    Boolean(restoredDraft?.showCcBcc) ||
+      initialCc.length > 0 ||
+      initialBcc.length > 0,
   );
+
+  useEffect(() => {
+    if (isDefined(draftPrefill) || !isDefined(draftStorageKey)) {
+      return;
+    }
+
+    if (body.trim().length === 0) {
+      clearEmailComposerDraft(draftStorageKey);
+
+      return;
+    }
+
+    saveEmailComposerDraft(draftStorageKey, {
+      to: serializeEmailRecipients(to),
+      cc: serializeEmailRecipients(cc),
+      bcc: serializeEmailRecipients(bcc),
+      subject,
+      body,
+      showCcBcc,
+    });
+  }, [
+    draftPrefill,
+    draftStorageKey,
+    to,
+    cc,
+    bcc,
+    subject,
+    body,
+    showCcBcc,
+  ]);
   const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
   const isSendingThroughAppSender =
@@ -163,6 +223,7 @@ export const useEmailComposerState = ({
         });
 
         setPendingAppSend(null);
+        clearEmailComposerDraft(draftStorageKey);
         onSent?.(sentMessage?.messageThreadId ?? null);
       } catch (error) {
         enqueueToast({
@@ -193,10 +254,12 @@ export const useEmailComposerState = ({
     });
 
     if (success) {
+      clearEmailComposerDraft(draftStorageKey);
       onSent?.(messageThreadId);
     }
   }, [
     canSend,
+    draftStorageKey,
     connectedAccountId,
     fromHandle,
     to,
