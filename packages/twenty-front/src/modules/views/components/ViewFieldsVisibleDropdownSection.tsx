@@ -6,8 +6,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { findRecordFieldLookupTargetFieldMetadataItem } from '@/object-record/record-column-lookup/utils/findRecordFieldLookupTargetFieldMetadataItem';
-import { getRecordFieldColumnLabel } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnLabel';
+import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -121,12 +120,11 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
-                  const lookupTargetFieldMetadataItem =
-                    findRecordFieldLookupTargetFieldMetadataItem({
-                      recordField,
-                      fieldMetadataItem,
-                      objectMetadataItems,
-                    });
+                  const columnDisplay = getRecordFieldColumnDisplay({
+                    recordField,
+                    fieldMetadataItem,
+                    objectMetadataItems,
+                  });
 
                   return (
                     <DraggableItem
@@ -138,10 +136,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           key={recordField.id}
                           startIcon={
                             <ApplicationStackIcon
-                              Icon={getIcon(
-                                lookupTargetFieldMetadataItem?.icon ??
-                                  fieldMetadataItem.icon,
-                              )}
+                              Icon={getIcon(columnDisplay.icon)}
                               applicationId={fieldMetadataItem.applicationId}
                             />
                           }
@@ -173,11 +168,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           }
                           dragHandleVisibility="always"
                         >
-                          {getRecordFieldColumnLabel({
-                            recordField,
-                            fieldMetadataItem,
-                            lookupTargetFieldMetadataItem,
-                          })}
+                          {columnDisplay.label}
                         </DraggableListRow>
                       }
                     />

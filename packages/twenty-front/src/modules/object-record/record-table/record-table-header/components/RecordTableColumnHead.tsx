@@ -3,8 +3,7 @@ import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/compone
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { findRecordFieldLookupTargetFieldMetadataItem } from '@/object-record/record-column-lookup/utils/findRecordFieldLookupTargetFieldMetadataItem';
-import { getRecordFieldColumnLabel } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnLabel';
+import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -47,17 +46,15 @@ export const RecordTableColumnHead = ({
   const fieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
 
-  const lookupTargetFieldMetadataItem = isDefined(fieldMetadataItem)
-    ? findRecordFieldLookupTargetFieldMetadataItem({
+  const columnDisplay = isDefined(fieldMetadataItem)
+    ? getRecordFieldColumnDisplay({
         recordField,
         fieldMetadataItem,
         objectMetadataItems,
       })
     : undefined;
 
-  const Icon = getIcon(
-    lookupTargetFieldMetadataItem?.icon ?? fieldMetadataItem?.icon,
-  );
+  const Icon = getIcon(columnDisplay?.icon);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
@@ -65,15 +62,8 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={getRecordFieldColumnLabel({
-          recordField,
-          fieldMetadataItem,
-          lookupTargetFieldMetadataItem,
-        })}
-        description={
-          lookupTargetFieldMetadataItem?.description ??
-          fieldMetadataItem?.description
-        }
+        label={columnDisplay?.label ?? ''}
+        description={columnDisplay?.description}
       />
     </StyledTitle>
   );

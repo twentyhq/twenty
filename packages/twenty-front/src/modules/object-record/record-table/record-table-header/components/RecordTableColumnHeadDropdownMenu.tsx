@@ -6,6 +6,7 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -42,7 +43,8 @@ export const RecordTableColumnHeadDropdownMenu = ({
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, objectMetadataItems } =
+    useRecordTableContextOrThrow();
 
   const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
@@ -112,15 +114,23 @@ export const RecordTableColumnHeadDropdownMenu = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  // Filter and sort would act on the relation itself, not on the looked-up field
-  const isLookupColumn = isDefined(recordField.relationTargetFieldMetadataId);
-  const isFilterable = filterableAndSortable.isFilterable && !isLookupColumn;
-  const isSortable = filterableAndSortable.isSortable && !isLookupColumn;
-
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
       fieldMetadataItemId: recordField.fieldMetadataItemId,
     });
+
+  // Filter and sort would act on the relation itself, not on the looked-up field
+  const isLookupColumn =
+    isDefined(fieldMetadataItem) &&
+    isDefined(
+      getRecordFieldLookupTarget({
+        recordField,
+        fieldMetadataItem,
+        objectMetadataItems,
+      }),
+    );
+  const isFilterable = filterableAndSortable.isFilterable && !isLookupColumn;
+  const isSortable = filterableAndSortable.isSortable && !isLookupColumn;
 
   const canConfigureColumns = useCanConfigureRecordTableColumns();
   const { canPersistChanges } = useCanPersistViewChanges();
