@@ -8,6 +8,8 @@ import {
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
 
+import { CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-source-changed-event.constant';
+import { type ChannelVisibilitySourceChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-source-changed-event.type';
 import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
@@ -153,8 +155,15 @@ export class CalendarChannelMetadataService {
     },
   ): Promise<CalendarChannelDTO> {
     const entity = this.repository.create(data);
+    const savedEntity = await this.repository.save(entity);
 
-    return this.repository.save(entity);
+    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
+      CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
+      [{ reason: 'channelCreated' }],
+      data.workspaceId,
+    );
+
+    return savedEntity;
   }
 
   async update({
@@ -171,6 +180,14 @@ export class CalendarChannelMetadataService {
       data as Record<string, unknown>,
     );
 
+    if ('visibility' in data) {
+      this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
+        CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
+        [{ reason: 'channelVisibilityUpdated' }],
+        workspaceId,
+      );
+    }
+
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
@@ -186,6 +203,12 @@ export class CalendarChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
+      CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
+      [{ reason: 'channelDeleted' }],
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
       CALENDAR_CHANNEL_DELETED_EVENT,
