@@ -94,6 +94,7 @@ const filter = ({
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: {},
       rolesPermissions: {},
     },

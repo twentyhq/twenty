@@ -58,6 +58,7 @@ export const assertUpdatedColumnsAreEditableOrThrow = async ({
     const uneditableFieldMetadataIds = findUneditableFieldMetadataIdsOnRecord({
       flatObjectMetadata,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
       record: formatRecords([rawRecordBefore])[0],
       uneditableFieldsOnMatchingRecords,
     });

@@ -291,6 +291,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
     {
+      "applicationId": Any<String>,
       "color": "green",
       "id": Any<String>,
       "label": "Closed",

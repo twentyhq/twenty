@@ -44,7 +44,7 @@ export default defineField({
 
 * `defineField()` è l'unico modo per aggiungere campi a oggetti che non hai creato con `defineObject()`.
 
-* `SELECT` e `MULTI_SELECT` seguono le stesse [regole di convalida delle opzioni e dei colori](/it/developers/extend/apps/data/objects#select-options) dei campi in linea. Un colore omesso o null usa per impostazione predefinita `gray`; i colori non supportati vengono rifiutati.
+* `SELECT` e `MULTI_SELECT` seguono le stesse [regole di convalida delle opzioni e dei colori](/it/developers/extend/apps/data/objects#select-options) dei campi in linea. Un colore omesso o null usa per impostazione predefinita `gray`; i colori non supportati vengono rifiutati. Uno spazio di lavoro può sovrascrivere e disattivare queste opzioni, ma non rimuoverle, e le relative modifiche vengono [mantenute tra le sincronizzazioni](/it/developers/extend/apps/data/objects#workspace-changes-to-your-options).
 
 * Il percorso del file dipende da te. La convenzione è `src/fields/\<name>.field.ts`, ma la CLI rileva i campi ovunque in `src/`.
 

@@ -61,11 +61,11 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
   }),
 }));
 
-const executeInboxThreadStatusAction = jest.fn();
+const executeAiChatThreadStatusAction = jest.fn();
 
-jest.mock('@/inbox/hooks/useExecuteInboxThreadStatusAction', () => ({
-  useExecuteInboxThreadStatusAction: () => ({
-    executeInboxThreadStatusAction,
+jest.mock('@/ai/hooks/useExecuteAiChatThreadStatusAction', () => ({
+  useExecuteAiChatThreadStatusAction: () => ({
+    executeAiChatThreadStatusAction,
     isPending: false,
   }),
 }));
@@ -301,8 +301,8 @@ describe('AiChatThreadDetailsDropdown', () => {
 
     await user.click(screen.getByRole('button', { name: 'Unfollow for me' }));
 
-    expect(executeInboxThreadStatusAction).toHaveBeenCalledTimes(1);
-    expect(executeInboxThreadStatusAction).toHaveBeenCalledWith({
+    expect(executeAiChatThreadStatusAction).toHaveBeenCalledTimes(1);
+    expect(executeAiChatThreadStatusAction).toHaveBeenCalledWith({
       threadIds: [THREAD_ID],
       action: AgentChatInboxAction.UNSUBSCRIBE,
       isInChannel: false,

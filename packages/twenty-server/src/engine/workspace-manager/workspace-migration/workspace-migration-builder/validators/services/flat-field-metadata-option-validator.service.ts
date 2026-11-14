@@ -89,6 +89,66 @@ export class FlatFieldMetadataOptionValidatorService {
     return finalOptionsByField.get(fieldMetadataUniversalIdentifier) ?? [];
   }
 
+  // Only the owner of an option, or of its field, may remove or re-value it; others deactivate it.
+  private isCallerAllowedToRemoveOrRevalue({
+    universalFlatFieldMetadataOption,
+    flatFieldMetadataMaps,
+    buildOptions,
+  }: {
+    universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
+    flatFieldMetadataMaps: FieldMetadataOptionRelatedMaps['flatFieldMetadataMaps'];
+    buildOptions: Pick<
+      WorkspaceMigrationValidationBuildOptions,
+      'isSystemBuild' | 'applicationUniversalIdentifier'
+    >;
+  }): boolean {
+    if (
+      buildOptions.isSystemBuild ||
+      universalFlatFieldMetadataOption.applicationUniversalIdentifier ===
+        buildOptions.applicationUniversalIdentifier
+    ) {
+      return true;
+    }
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        universalFlatFieldMetadataOption.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    const isFieldBeingDeleted = !isDefined(flatFieldMetadata);
+
+    if (isFieldBeingDeleted) {
+      return true;
+    }
+
+    return (
+      flatFieldMetadata.applicationUniversalIdentifier ===
+      buildOptions.applicationUniversalIdentifier
+    );
+  }
+
+  private getEffectiveLabel({
+    universalFlatFieldMetadataOption,
+    buildOptions,
+  }: {
+    universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
+    buildOptions: Pick<
+      WorkspaceMigrationValidationBuildOptions,
+      'workspaceCustomApplicationUniversalIdentifier'
+    >;
+  }): string {
+    return resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadataOption',
+      flatEntity: universalFlatFieldMetadataOption,
+      property: 'label',
+      authorContext: {
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      },
+    });
+  }
+
   private collectOptionErrors({
     universalFlatFieldMetadataOption,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
@@ -220,7 +280,9 @@ export class FlatFieldMetadataOptionValidatorService {
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataOptionMaps,
+      flatFieldMetadataMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadataOption
   >): FailedFlatEntityValidation<'fieldMetadataOption', 'delete'> {
@@ -241,6 +303,28 @@ export class FlatFieldMetadataOptionValidatorService {
 
     if (!isDefined(existingFlatFieldMetadataOption)) {
       validationResult.errors.push(buildNotFoundError());
+
+      return validationResult;
+    }
+
+    if (
+      !this.isCallerAllowedToRemoveOrRevalue({
+        universalFlatFieldMetadataOption: existingFlatFieldMetadataOption,
+        flatFieldMetadataMaps,
+        buildOptions,
+      })
+    ) {
+      const optionLabel = this.getEffectiveLabel({
+        universalFlatFieldMetadataOption: existingFlatFieldMetadataOption,
+        buildOptions,
+      });
+
+      validationResult.errors.push({
+        code: FieldMetadataOptionExceptionCode.INVALID_FIELD_METADATA_OPTION_INPUT,
+        message: t`Option "${optionLabel}" comes with the field and cannot be removed. Deactivate it instead.`,
+        userFriendlyMessage: msg`Option "${optionLabel}" comes with the field and cannot be removed. Deactivate it instead.`,
+        value: existingFlatFieldMetadataOption.value,
+      });
     }
 
     return validationResult;
@@ -275,6 +359,29 @@ export class FlatFieldMetadataOptionValidatorService {
       validationResult.errors.push(buildNotFoundError());
 
       return validationResult;
+    }
+
+    if (
+      isDefined(flatEntityUpdate.value) &&
+      flatEntityUpdate.value !== existingFlatFieldMetadataOption.value &&
+      !this.isCallerAllowedToRemoveOrRevalue({
+        universalFlatFieldMetadataOption: existingFlatFieldMetadataOption,
+        flatFieldMetadataMaps:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
+        buildOptions,
+      })
+    ) {
+      const optionLabel = this.getEffectiveLabel({
+        universalFlatFieldMetadataOption: existingFlatFieldMetadataOption,
+        buildOptions,
+      });
+
+      validationResult.errors.push({
+        code: FieldMetadataOptionExceptionCode.INVALID_FIELD_METADATA_OPTION_INPUT,
+        message: t`The API value of option "${optionLabel}" comes with the field and cannot be changed.`,
+        userFriendlyMessage: msg`The API value of option "${optionLabel}" comes with the field and cannot be changed.`,
+        value: existingFlatFieldMetadataOption.value,
+      });
     }
 
     validationResult.errors.push(

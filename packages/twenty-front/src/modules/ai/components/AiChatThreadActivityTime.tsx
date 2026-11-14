@@ -4,9 +4,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
 import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
 import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
@@ -17,7 +17,7 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadActivityTimeProps = {
   thread: AiChatThreadRecord;
-  variant?: InboxThreadListVariant;
+  variant?: AiChatThreadRowVariant;
 };
 
 export const AiChatThreadActivityTime = ({
@@ -27,7 +27,7 @@ export const AiChatThreadActivityTime = ({
   const { t } = useLingui();
   const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateFamilySelector,
+    aiChatThreadMemberStateFamilySelector,
     thread.id,
   );
   const { formatAiChatThreadDay } = useFormatAiChatThreadDate();

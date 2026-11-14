@@ -10,7 +10,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import {
@@ -195,7 +195,7 @@ describe('InboxThreadListItem', () => {
   });
 
   it('shows the channel a chat belongs to next to its time', () => {
-    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
+    jotaiStore.set(aiChatChannelsState.atom, [SALES_CHANNEL]);
 
     renderListItem({ thread: buildThread({ channelId: SALES_CHANNEL.id }) });
 
@@ -204,7 +204,7 @@ describe('InboxThreadListItem', () => {
   });
 
   it('shows no channel for a chat outside channels', () => {
-    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
+    jotaiStore.set(aiChatChannelsState.atom, [SALES_CHANNEL]);
 
     renderListItem({ thread: buildThread({ channelId: null }) });
 
@@ -212,7 +212,7 @@ describe('InboxThreadListItem', () => {
   });
 
   it('shows no channel while viewing that channel', () => {
-    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
+    jotaiStore.set(aiChatChannelsState.atom, [SALES_CHANNEL]);
     setInboxSelectedChannelView(jotaiStore, {
       channelId: SALES_CHANNEL.id,
       channelStatus: AgentChatChannelThreadStatus.OPEN,

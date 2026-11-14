@@ -44,7 +44,7 @@ export default defineField({
 
 * `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
 
-* `SELECT` și `MULTI_SELECT` urmează aceleași [reguli de validare a opțiunilor și de culori](/ro/developers/extend/apps/data/objects#select-options) ca și câmpurile inline. O culoare omisă sau nulă este implicit `gray`; culorile neacceptate sunt respinse.
+* `SELECT` și `MULTI_SELECT` urmează aceleași [reguli de validare a opțiunilor și de culori](/ro/developers/extend/apps/data/objects#select-options) ca și câmpurile inline. O culoare omisă sau nulă este implicit `gray`; culorile neacceptate sunt respinse. Un spațiu de lucru poate suprascrie și dezactiva aceste opțiuni, dar nu le poate elimina, iar modificările sale sunt [păstrate între sincronizări](/ro/developers/extend/apps/data/objects#workspace-changes-to-your-options).
 
 * Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar CLI-ul detectează câmpuri oriunde în `src/`.
 

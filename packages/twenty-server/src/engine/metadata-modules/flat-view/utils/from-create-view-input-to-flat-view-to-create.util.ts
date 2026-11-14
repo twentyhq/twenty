@@ -24,6 +24,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createdByUserWorkspaceId,
   flatApplication,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
   flatViewFieldMaps,
 }: {
@@ -31,6 +32,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createdByUserWorkspaceId?: string;
   flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
 }): {
@@ -126,6 +128,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       flatViewToCreateUniversalIdentifier: flatViewToCreate.universalIdentifier,
       mainGroupByFieldMetadataId,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
   }
 
