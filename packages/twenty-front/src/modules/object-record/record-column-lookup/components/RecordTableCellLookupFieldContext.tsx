@@ -22,6 +22,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { type ReactNode } from 'react';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  findById,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -80,9 +81,10 @@ export const RecordTableCellLookupFieldContext = ({
     objectMetadataItem: relationObjectMetadataItem,
   });
 
-  const isLookupTargetRestricted = restrictedFieldNames.includes(
-    lookupTargetFieldMetadataItem.name,
-  );
+  const isLookupTargetRestricted =
+    !relationObjectMetadataItem.readableFields.some(
+      findById(lookupTargetFieldMetadataItem.id),
+    ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
 
   const updateRelatedRecord = ({ variables }: RecordUpdateHookParams) =>
     updateOneRecord({
