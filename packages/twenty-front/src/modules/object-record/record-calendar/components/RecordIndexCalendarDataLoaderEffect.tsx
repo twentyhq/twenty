@@ -1,4 +1,6 @@
 import { useRecordCalendarGroupByRecords } from '@/object-record/record-calendar/hooks/useRecordCalendarGroupByRecords';
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
+import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { hasInitializedRecordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/hasInitializedRecordCalendarSelectedDateComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
@@ -21,6 +23,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
   );
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
 
   const setRecordIndexRecordIdsByGroup = useSetAtomComponentFamilyState(
     recordIndexRecordIdsByGroupComponentFamilyState,
@@ -42,12 +45,18 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
       return;
     }
 
-    upsertRecordsInStore({ partialRecords: records });
+    upsertRecordsInStore({
+      partialRecords: [
+        ...records,
+        ...getLookupRelatedRecords({ records, lookupRelationFieldNames }),
+      ],
+    });
     const recordIds = records.map((record) => record.id);
     setRecordIndexRecordIdsByGroup(recordIds);
   }, [
     hasInitializedRecordCalendarSelectedDate,
     records,
+    lookupRelationFieldNames,
     setRecordIndexRecordIdsByGroup,
     upsertRecordsInStore,
   ]);

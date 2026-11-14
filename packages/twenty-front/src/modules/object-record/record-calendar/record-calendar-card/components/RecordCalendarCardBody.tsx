@@ -24,9 +24,11 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordCalendarCardBodyProps = {
@@ -76,6 +78,10 @@ export const RecordCalendarCardBody = ({
 
   const scopedRelationAliases = useScopedRelationAliases();
 
+  const isColumnSettingsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
+  );
+
   const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
     (recordField) =>
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
@@ -119,11 +125,13 @@ export const RecordCalendarCardBody = ({
 
         const anchorId = `${fieldInstanceIdPrefix}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`;
 
-        const lookupTarget = getRecordFieldLookupTarget({
-          recordField,
-          fieldMetadataItem,
-          objectMetadataItems,
-        });
+        const lookupTarget = isColumnSettingsEnabled
+          ? getRecordFieldLookupTarget({
+              recordField,
+              fieldMetadataItem,
+              objectMetadataItems,
+            })
+          : undefined;
 
         const { label } = getRecordFieldColumnDisplay({
           recordField,
