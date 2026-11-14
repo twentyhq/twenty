@@ -150,6 +150,27 @@ describe('collectRecordsByObjectNameSingular', () => {
     ).toEqual([sharedEvent]);
   });
 
+  it('should collect records nested under aliased relations', () => {
+    const event = { id: 'event-1', title: 'Demo' };
+
+    const records: ObjectRecord[] = [
+      {
+        id: 'person-1',
+        'calendarEventParticipants::attendees': [
+          { id: 'participant-1', 'calendarEvent::meeting': event },
+        ],
+      },
+    ];
+
+    expect(
+      collect({
+        records,
+        flatObjectMetadata: person,
+        objectNameSingulars: ['calendarEvent'],
+      }).get('calendarEvent'),
+    ).toEqual([event]);
+  });
+
   it('should collect nothing when no requested object is in the result', () => {
     const records: ObjectRecord[] = [
       { id: 'person-1', calendarEventParticipants: [] },

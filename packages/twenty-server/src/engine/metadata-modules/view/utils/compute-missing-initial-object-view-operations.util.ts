@@ -31,6 +31,7 @@ type SeedInputFlatViewField = Pick<
   | 'position'
   | 'aggregateOperation'
   | 'isActive'
+  | 'isCanonical'
 >;
 
 type SeedInputFlatEntityMaps = {
@@ -116,7 +117,7 @@ export const computeMissingInitialObjectViewOperations = ({
       const flatViewField =
         flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
 
-      if (!isDefined(flatViewField)) {
+      if (!isDefined(flatViewField) || !flatViewField.isCanonical) {
         continue;
       }
 

@@ -1,24 +1,13 @@
 import { msg, t } from '@lingui/core/macro';
-import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { type ViewFieldSettings } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { RelationType, type ViewFieldSettings } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
+import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { viewFieldSettingsSchema } from 'src/engine/metadata-modules/view-field/schemas/view-field-settings.schema';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { isOneToManyRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-one-to-many-relation-universal-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-
-type ViewFieldSettingsFlatFieldMetadata = Pick<
-  UniversalFlatFieldMetadata,
-  'type' | 'universalSettings'
->;
-
-const VIEW_FIELD_SETTINGS_KEYS = new Set<string>([
-  'label',
-  'recordLimit',
-] satisfies (keyof ViewFieldSettings)[]);
 
 export const validateFlatViewFieldSettings = ({
   settings,
@@ -27,7 +16,10 @@ export const validateFlatViewFieldSettings = ({
 }: {
   settings: ViewFieldSettings | null;
   isCanonical: boolean;
-  flatFieldMetadata: ViewFieldSettingsFlatFieldMetadata;
+  flatFieldMetadata: Pick<
+    UniversalFlatFieldMetadata,
+    'type' | 'universalSettings'
+  >;
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (!isDefined(settings)) {
     return [];
@@ -43,68 +35,35 @@ export const validateFlatViewFieldSettings = ({
     ];
   }
 
-  if (!isPlainObject(settings)) {
+  const parsedSettings = viewFieldSettingsSchema.strict().safeParse(settings);
+
+  if (!parsedSettings.success) {
+    const issues = z.prettifyError(parsedSettings.error);
+
     return [
       {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field settings must be an object`,
+        message: t`Invalid view field settings: ${issues}`,
         userFriendlyMessage: msg`Invalid column settings`,
       },
     ];
   }
 
-  const errors: FlatEntityValidationError<ViewExceptionCode>[] = [];
-
-  const unknownKeys = Object.keys(settings).filter(
-    (key) => !VIEW_FIELD_SETTINGS_KEYS.has(key),
-  );
-
-  if (unknownKeys.length > 0) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Unknown view field settings: ${unknownKeys.join(', ')}`,
-      userFriendlyMessage: msg`Invalid column settings`,
-    });
-  }
-
-  const { label, recordLimit } = settings;
-
   if (
-    isDefined(label) &&
-    (!isString(label) ||
-      !isNonEmptyString(label.trim()) ||
-      label.length > IDENTIFIER_MAX_CHAR_LENGTH)
+    isDefined(parsedSettings.data.recordLimit) &&
+    !isRelationUniversalFlatFieldMetadataOfType({
+      flatFieldMetadata,
+      relationType: RelationType.ONE_TO_MANY,
+    })
   ) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`View field label must be a non-empty string of at most ${IDENTIFIER_MAX_CHAR_LENGTH} characters`,
-      userFriendlyMessage: msg`Column name must be between 1 and ${IDENTIFIER_MAX_CHAR_LENGTH} characters`,
-    });
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field record limit is only supported on one-to-many relation fields`,
+        userFriendlyMessage: msg`A record limit can only be set on a column listing related records`,
+      },
+    ];
   }
 
-  if (!isDefined(recordLimit)) {
-    return errors;
-  }
-
-  if (!isOneToManyRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`View field record limit is only supported on one-to-many relation fields`,
-      userFriendlyMessage: msg`A record limit can only be set on a column listing related records`,
-    });
-  }
-
-  if (
-    !Number.isInteger(recordLimit) ||
-    recordLimit < 1 ||
-    recordLimit > QUERY_MAX_RECORDS_FROM_RELATION
-  ) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`View field record limit must be an integer between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
-      userFriendlyMessage: msg`Record limit must be between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
-    });
-  }
-
-  return errors;
+  return [];
 };
