@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { v5 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -21,6 +22,10 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
+import {
+  buildChannelVisibilityRuleSyncLockKey,
+  CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
+} from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE } from 'src/engine/permissions/channel-visibility/constants/personal-role.constant';
 import { PersonalRoleService } from 'src/engine/permissions/channel-visibility/services/personal-role.service';
 import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visibility/types/channel-visibility-level.type';
@@ -61,9 +66,19 @@ export class ChannelVisibilityRuleSyncService {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
+  // two syncs of one workspace would each write the lists they read, and the older could land last
   async syncWorkspace(workspaceId: string): Promise<void> {
+    await this.cacheLockService.withLock(
+      () => this.syncWorkspaceWithLock(workspaceId),
+      buildChannelVisibilityRuleSyncLockKey(workspaceId),
+      CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
+    );
+  }
+
+  private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
     const { featureFlagsMap, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'featureFlagsMap',

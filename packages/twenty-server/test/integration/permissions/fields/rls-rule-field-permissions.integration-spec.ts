@@ -1,3 +1,4 @@
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -165,9 +166,13 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
-  it('should read the unreadable field as empty on a record the RLS rule matches', async () => {
+  it('should read the unreadable field as restricted on a record the RLS rule matches', async () => {
     expect(await listPeopleAsMember()).toEqual([
-      { id: originalPeople[0].id, avatarUrl: '', jobTitle: 'Paris office' },
+      {
+        id: originalPeople[0].id,
+        avatarUrl: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+        jobTitle: 'Paris office',
+      },
     ]);
   });
 
@@ -193,7 +198,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       expect(people).toHaveLength(2);
       expect(
         people.find(({ id }) => id === originalPeople[0].id)?.avatarUrl,
-      ).toBe('');
+      ).toBe(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED);
       expect(
         people.find(({ id }) => id === originalPeople[1].id)?.avatarUrl,
       ).toBe('Secret avatar');
@@ -373,7 +378,9 @@ describe('field permissions on an RLS rule (integration)', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(jobTitleResponse.body.data.people.edges[0].node.avatarUrl).toBe('');
+    expect(jobTitleResponse.body.data.people.edges[0].node.avatarUrl).toBe(
+      FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+    );
 
     const linkedinFieldMetadataId = await findFieldMetadataId('linkedinLink');
 

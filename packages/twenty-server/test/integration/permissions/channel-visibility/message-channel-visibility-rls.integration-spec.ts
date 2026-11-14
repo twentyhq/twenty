@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type PersonalRoleService } from 'src/engine/permissions/channel-visibility/services/personal-role.service';
 import { type ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
@@ -123,6 +124,9 @@ describe('Message channel visibility through personal role rules (integration)',
       });
     }
 
+    await getAppProviderByClassName<PersonalRoleService>(
+      'PersonalRoleService',
+    ).deletePersonalRoles({ workspaceId: SEED_APPLE_WORKSPACE_ID });
     await channel?.cleanup().catch(() => undefined);
   }, 120000);
 

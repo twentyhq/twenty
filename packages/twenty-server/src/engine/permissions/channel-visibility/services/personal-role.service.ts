@@ -12,6 +12,7 @@ import {
   buildPersonalFlatRole,
   getPersonalRoleUniversalIdentifier,
 } from 'src/engine/permissions/channel-visibility/utils/build-personal-flat-role.util';
+import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -135,5 +136,64 @@ export class PersonalRoleService {
     }
 
     return personalRoleIdByUserWorkspaceId;
+  }
+
+  // a role target, rule or field permission of a personal role goes with it
+  async deletePersonalRoles({
+    workspaceId,
+    userWorkspaceIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceIds?: string[];
+  }): Promise<void> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatRoleMaps'] },
+      );
+    const personalRoleUniversalIdentifiers = isDefined(userWorkspaceIds)
+      ? new Set(userWorkspaceIds.map(getPersonalRoleUniversalIdentifier))
+      : undefined;
+    const flatRolesToDelete = Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (flatRole) =>
+          isPersonalRole(flatRole) &&
+          (personalRoleUniversalIdentifiers?.has(
+            flatRole.universalIdentifier,
+          ) ??
+            true),
+      );
+
+    if (flatRolesToDelete.length === 0) {
+      return;
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            role: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatRolesToDelete,
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Validation errors occurred while deleting personal roles',
+      );
+    }
   }
 }
