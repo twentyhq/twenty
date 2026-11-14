@@ -327,21 +327,6 @@ export class ProcessNestedRelationsHelper {
         }),
       );
 
-    this.assignRelationResults({
-      parentRecords: parentObjectRecords,
-      parentObjectRecordsAggregatedValues,
-      relationResults,
-      relationAggregatedFieldsResult,
-      sourceFieldName,
-      relatedRecordJoinColumnName:
-        relationType === RelationType.ONE_TO_MANY
-          ? `${fieldMetadataTargetRelationColumnName}`
-          : 'id',
-      parentRecordJoinColumnName: joinColumnName,
-      relationType,
-      selectedFields,
-    });
-
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelationsWithLimiter(
         {
@@ -366,6 +351,22 @@ export class ProcessNestedRelationsHelper {
         relationQueryLimiter,
       );
     }
+
+    // After the nested load: a to-one relation is assigned as a copy, so nested rows must already be on it
+    this.assignRelationResults({
+      parentRecords: parentObjectRecords,
+      parentObjectRecordsAggregatedValues,
+      relationResults,
+      relationAggregatedFieldsResult,
+      sourceFieldName,
+      relatedRecordJoinColumnName:
+        relationType === RelationType.ONE_TO_MANY
+          ? `${fieldMetadataTargetRelationColumnName}`
+          : 'id',
+      parentRecordJoinColumnName: joinColumnName,
+      relationType,
+      selectedFields,
+    });
   }
 
   private resolveNestedRelationQueryArgs({
