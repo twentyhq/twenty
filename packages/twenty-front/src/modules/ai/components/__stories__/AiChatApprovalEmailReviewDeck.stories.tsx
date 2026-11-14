@@ -154,7 +154,6 @@ export const RetainedDraftEdits: Story = {
             body: expect.stringContaining(
               'Updated walkthrough for Brian and Joe.',
             ),
-            isCcBccExpanded: true,
           }),
         }),
         expect.objectContaining({

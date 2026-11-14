@@ -54,23 +54,17 @@ export const AiChatToolCallApprovalEmailCard = ({
   const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
-  const [draft, setDraft] = useState<AiChatApprovalReviewEmailDraft>(() => {
-    const recipients = readRecipients(proposal.arguments);
-
-    return {
-      ...recipients,
-      subject: isString(proposal.arguments.subject)
-        ? proposal.arguments.subject
-        : '',
-      body: isEmailDocumentShape(proposal.arguments.body)
-        ? serializeJsonContentAsAdvancedTextEditorDocument(
-            proposal.arguments.body,
-          )
-        : '',
-      isCcBccExpanded:
-        isNonEmptyArray(recipients.cc) || isNonEmptyArray(recipients.bcc),
-    };
-  });
+  const [draft, setDraft] = useState<AiChatApprovalReviewEmailDraft>(() => ({
+    ...readRecipients(proposal.arguments),
+    subject: isString(proposal.arguments.subject)
+      ? proposal.arguments.subject
+      : '',
+    body: isEmailDocumentShape(proposal.arguments.body)
+      ? serializeJsonContentAsAdvancedTextEditorDocument(
+          proposal.arguments.body,
+        )
+      : '',
+  }));
 
   const runnableToolNames = [
     proposal.toolName,

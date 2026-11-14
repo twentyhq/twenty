@@ -77,9 +77,6 @@ export const useEmailComposerState = ({
   );
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
-  const [showCcBcc, setShowCcBcc] = useState(
-    initialCc.length > 0 || initialBcc.length > 0,
-  );
   const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
   const isSendingThroughAppSender =
@@ -231,8 +228,6 @@ export const useEmailComposerState = ({
     setSubject,
     body,
     setBody,
-    showCcBcc,
-    setShowCcBcc,
     files,
     setFiles,
     canAttachFiles,

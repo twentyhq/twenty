@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EMAIL_RECIPIENTS_FIELD_IDS } from '@/activities/emails/recipients/constants/EmailRecipientsFieldIds';
+import { type DraggedEmailRecipients } from '@/activities/emails/recipients/types/DraggedEmailRecipients';
 import { type EmailRecipientDragData } from '@/activities/emails/recipients/types/EmailRecipientDragData';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
-import {
-  type EmailRecipientsByFieldId,
-  moveEmailRecipientsBetweenFields,
-} from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
+import { moveEmailRecipientsBetweenFields } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
@@ -40,10 +39,8 @@ export const useEmailRecipientsDragAndDrop = ({
   const [activeDroppableId, setActiveDroppableId] = useState<string | null>(
     null,
   );
-  const [draggedRecipients, setDraggedRecipients] = useState<{
-    fieldId: EmailRecipientsFieldId;
-    indices: number[];
-  } | null>(null);
+  const [draggedRecipients, setDraggedRecipients] =
+    useState<DraggedEmailRecipients | null>(null);
 
   const getDroppableItemCount = (droppableId: string) =>
     isEmailRecipientsFieldId(droppableId)
