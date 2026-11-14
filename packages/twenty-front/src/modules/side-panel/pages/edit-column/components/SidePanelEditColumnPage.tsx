@@ -1,3 +1,4 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -54,11 +55,16 @@ export const SidePanelEditColumnPage = () => {
     return null;
   }
 
+  // The table may live in another context store, e.g. inside a side panel
   return (
-    <SidePanelEditColumnPageContent
-      recordTableId={editColumnRequest.recordTableId}
-      recordFieldId={editColumnRequest.recordFieldId}
-    />
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: editColumnRequest.contextStoreInstanceId }}
+    >
+      <SidePanelEditColumnPageContent
+        recordTableId={editColumnRequest.recordTableId}
+        recordFieldId={editColumnRequest.recordFieldId}
+      />
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };
 
@@ -114,7 +120,15 @@ const SidePanelEditColumnForm = ({
     recordField.settings?.label ?? '',
   );
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSaveClick = async () => {
+    if (isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+
     const updatedRecordField = {
       ...recordField,
       settings: computeViewFieldSettingsWithLabel({
@@ -128,6 +142,8 @@ const SidePanelEditColumnForm = ({
     const isSaved = await saveViewFields([
       mapRecordFieldToViewField(updatedRecordField),
     ]);
+
+    setIsSaving(false);
 
     if (!isSaved) {
       upsertRecordField(recordField);
@@ -182,6 +198,7 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
+            disabled={isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"
