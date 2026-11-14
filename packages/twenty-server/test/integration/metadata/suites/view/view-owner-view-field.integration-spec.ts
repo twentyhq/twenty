@@ -8,6 +8,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
@@ -251,6 +252,35 @@ describe('View scoping a one-to-many view field', () => {
     });
 
     expect(errors).toBeUndefined();
+  });
+
+  it('accepts a new scope view once the previous one is soft-deleted', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+    );
+
+    const {
+      data: { createView: firstScopeView },
+    } = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: false,
+    });
+
+    await deleteOneView({ viewId: firstScopeView.id, expectToFail: false });
+
+    const {
+      data: { createView: secondScopeView },
+    } = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: false,
+    });
+
+    expect(secondScopeView.ownerViewFieldId).toBe(viewFieldId);
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
   });
 
   it('rejects turning a scope view into a regular view', async () => {
