@@ -549,7 +549,6 @@ describe('Outbound email body formats (integration)', () => {
       });
     }, 300000);
 
-    // The runtime now rejects these string bodies, so only the converted one can be run
     it.each([
       {
         kind: 'plain text with variables',
