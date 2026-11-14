@@ -9,8 +9,7 @@ export const useRecordBoardQueryIdentifier = () => {
   const { combinedFilters, orderBy, recordGqlFields, relationAliases } =
     useRecordIndexGroupCommonQueryVariables();
 
-  // The board only refetches when this identifier changes, so it covers everything the query selects:
-  // nested fields (a lookup target sits inside its relation) and scoped relation arguments
+  // The board only refetches when this identifier changes, so it covers nested fields and scope arguments too
   const fetchedFields = JSON.stringify(recordGqlFields);
   const scopedRelations = JSON.stringify(
     getRecordGqlRelationAliasVariables(relationAliases),

@@ -35,7 +35,6 @@ type RecordFieldLookupFieldContextProps = {
   children: ReactNode;
 };
 
-// Points the field context at the related record, so displays, inputs and persistence work unchanged
 export const RecordFieldLookupFieldContext = ({
   recordId,
   fieldMetadataItem,

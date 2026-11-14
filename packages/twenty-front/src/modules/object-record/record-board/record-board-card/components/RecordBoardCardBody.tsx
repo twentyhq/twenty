@@ -8,7 +8,7 @@ import { recordBoardCardHoverPositionComponentState } from '@/object-record/reco
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { getRecordCardFieldInstanceIdPrefix } from '@/object-record/record-card/utils/getRecordCardFieldInstanceIdPrefix';
-import { RecordFieldLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordFieldLookupFieldContext';
+import { RecordCardLookupInlineCell } from '@/object-record/record-card/components/RecordCardLookupInlineCell';
 import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
@@ -129,32 +129,16 @@ export const RecordBoardCardBody = () => {
         });
 
         if (isDefined(lookupTarget)) {
-          // Two cards can show the same related record, so the cell instance is keyed by the card's record too
-          const lookupInstanceIdPrefix = `${fieldInstanceIdPrefix}-${recordId}`;
-
           return (
             <StopPropagationContainer key={recordField.id}>
-              <RecordFieldLookupFieldContext
+              <RecordCardLookupInlineCell
                 recordId={recordId}
                 fieldMetadataItem={fieldMetadataItem}
-                relationObjectMetadataItem={
-                  lookupTarget.relationObjectMetadataItem
-                }
-                lookupTargetFieldMetadataItem={
-                  lookupTarget.lookupTargetFieldMetadataItem
-                }
-                instanceIdPrefix={lookupInstanceIdPrefix}
-                isNonEditable
+                lookupTarget={lookupTarget}
+                fieldInstanceIdPrefix={fieldInstanceIdPrefix}
+                anchorId={anchorId}
                 label={label}
-                fieldContextOverrides={{
-                  maxWidth: 156,
-                  isDisplayModeFixHeight: true,
-                  triggerEvent: 'CLICK',
-                  anchorId,
-                }}
-              >
-                <RecordInlineCell instanceIdPrefix={lookupInstanceIdPrefix} />
-              </RecordFieldLookupFieldContext>
+              />
             </StopPropagationContainer>
           );
         }
@@ -195,6 +179,7 @@ export const RecordBoardCardBody = () => {
                 onMouseEnter: isAddedColumn
                   ? undefined
                   : () => handleMouseEnter(index),
+                onOpenEditMode: isAddedColumn ? () => undefined : undefined,
               }}
             >
               <RecordFieldComponentInstanceContext.Provider
