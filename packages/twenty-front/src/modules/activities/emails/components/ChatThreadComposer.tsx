@@ -16,6 +16,7 @@ import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThr
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledContainer = styled.div`
@@ -184,6 +185,10 @@ export const ChatThreadComposer = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isKeyboardEventComposing(event.nativeEvent)) {
+      return;
+    }
+
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSubmit();

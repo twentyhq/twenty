@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
@@ -62,6 +62,39 @@ describe('ChatThreadComposer', () => {
 
     expect(firstCall[0].id).toEqual(expect.any(String));
     expect(secondCall[0].id).toBe(firstCall[0].id);
+  });
+
+  it('does not send on the Enter that confirms an IME composition', async () => {
+    mockSendAppChannelMessage.mockResolvedValue(undefined);
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={jest.fn().mockResolvedValue(undefined)}
+        />
+      </I18nProvider>,
+    );
+
+    const textbox = screen.getByRole('textbox');
+
+    await userEvent.type(textbox, 'こんにちは');
+    fireEvent.keyDown(textbox, { key: 'Enter', isComposing: true });
+    // Safari fires the confirming keydown after compositionend, with keyCode 229
+    fireEvent.keyDown(textbox, { key: 'Enter', keyCode: 229 });
+
+    expect(mockSendAppChannelMessage).not.toHaveBeenCalled();
+    expect(textbox).toHaveValue('こんにちは');
+
+    await userEvent.type(textbox, '{Enter}');
+
+    await waitFor(() =>
+      expect(mockSendAppChannelMessage).toHaveBeenCalledTimes(1),
+    );
+    expect(mockSendAppChannelMessage.mock.calls[0][0].text).toBe('こんにちは');
   });
 
   it('keeps the sent message until the thread is refreshed', async () => {
