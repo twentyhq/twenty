@@ -91,11 +91,10 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         const rlsFieldMetadataIds = new Set(
-          (permissionsForEntity?.rowLevelRecordsPermissions ?? [])
-            .filter(({ canCreateRecords }) => canCreateRecords)
-            .flatMap(({ predicates }) =>
+          (permissionsForEntity?.rowLevelRecordsPermissions ?? []).flatMap(
+            ({ predicates }) =>
               predicates.map((predicate) => predicate.fieldMetadataId),
-            ),
+          ),
         );
 
         const updatedColumnsWithoutRlsFields = updatedColumns.filter(
