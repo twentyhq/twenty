@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -56,14 +57,15 @@ export const formatResultWithGroupByDimensionValues = async ({
       const records = await Promise.all(
         ((entry.records as Array<Record<string, unknown>>) ?? []).map(
           async (record) =>
-            await processRecord(
-              formatResult(
+            await processRecord({
+              ...formatResult<ObjectRecord>(
                 record,
                 flatObjectMetadata,
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
               ),
-            ),
+              ...getAliasedRelations(record),
+            }),
         ),
       );
 
@@ -106,6 +108,14 @@ export const formatResultWithGroupByDimensionValues = async ({
 
   return formattedResult;
 };
+
+// formatResult only keeps field names, and aliased relations are attached already formatted
+const getAliasedRelations = (record: Record<string, unknown>) =>
+  Object.fromEntries(
+    Object.entries(record).filter(
+      ([key]) => getFieldNameFromRelationRecordKey(key) !== key,
+    ),
+  );
 
 const createGroupKey = (
   group: Record<string, unknown>,
