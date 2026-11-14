@@ -158,7 +158,10 @@ export const useLoadRecordIndexStates = () => {
       const recordFields = view.viewFields
         .map(mapViewFieldToRecordField)
         .filter((recordField) =>
-          isRecordFieldSupportedByViewType(recordField, view.type),
+          isRecordFieldSupportedByViewType({
+            recordField,
+            viewType: view.type,
+          }),
         );
 
       const recordIndexId =

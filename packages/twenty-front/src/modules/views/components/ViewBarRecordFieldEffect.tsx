@@ -46,7 +46,10 @@ export const ViewBarRecordFieldEffect = () => {
       const recordFields = currentView.viewFields
         .map(mapViewFieldToRecordField)
         .filter((recordField) =>
-          isRecordFieldSupportedByViewType(recordField, currentView.type),
+          isRecordFieldSupportedByViewType({
+            recordField,
+            viewType: currentView.type,
+          }),
         );
 
       setCurrentRecordFields(recordFields);

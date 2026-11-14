@@ -6,8 +6,11 @@ export const buildRecordTableColumnToAdd = ({
   sourceRecordField,
   recordFields,
 }: {
-  sourceRecordField: RecordField;
-  recordFields: RecordField[];
+  sourceRecordField: Pick<
+    RecordField,
+    'position' | 'fieldMetadataItemId' | 'size'
+  >;
+  recordFields: Pick<RecordField, 'position'>[];
 }): RecordField => {
   const followingPositions = recordFields
     .map(({ position }) => position)

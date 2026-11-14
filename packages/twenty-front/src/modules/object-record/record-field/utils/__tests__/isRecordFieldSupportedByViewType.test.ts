@@ -4,17 +4,31 @@ import { ViewType } from '@/views/types/ViewType';
 describe('isRecordFieldSupportedByViewType', () => {
   it('should keep extra columns in tables only', () => {
     expect(
-      isRecordFieldSupportedByViewType({ isCanonical: false }, ViewType.TABLE),
+      isRecordFieldSupportedByViewType({
+        recordField: { isCanonical: false },
+        viewType: ViewType.TABLE,
+      }),
     ).toBe(true);
     expect(
-      isRecordFieldSupportedByViewType({ isCanonical: false }, ViewType.KANBAN),
+      isRecordFieldSupportedByViewType({
+        recordField: { isCanonical: false },
+        viewType: ViewType.KANBAN,
+      }),
     ).toBe(false);
   });
 
   it('should keep canonical fields in every layout', () => {
-    expect(isRecordFieldSupportedByViewType({}, ViewType.CALENDAR)).toBe(true);
     expect(
-      isRecordFieldSupportedByViewType({ isCanonical: true }, ViewType.LIST),
+      isRecordFieldSupportedByViewType({
+        recordField: {},
+        viewType: ViewType.CALENDAR,
+      }),
+    ).toBe(true);
+    expect(
+      isRecordFieldSupportedByViewType({
+        recordField: { isCanonical: true },
+        viewType: ViewType.LIST,
+      }),
     ).toBe(true);
   });
 });

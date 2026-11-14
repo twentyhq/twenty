@@ -3,7 +3,10 @@ import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCan
 import { ViewType } from '@/views/types/ViewType';
 
 // Extra columns are table-only: other layouts render one entry per field metadata
-export const isRecordFieldSupportedByViewType = (
-  recordField: Pick<RecordField, 'isCanonical'>,
-  viewType: ViewType,
-) => viewType === ViewType.TABLE || isCanonicalRecordField(recordField);
+export const isRecordFieldSupportedByViewType = ({
+  recordField,
+  viewType,
+}: {
+  recordField: Pick<RecordField, 'isCanonical'>;
+  viewType: ViewType;
+}) => viewType === ViewType.TABLE || isCanonicalRecordField(recordField);
