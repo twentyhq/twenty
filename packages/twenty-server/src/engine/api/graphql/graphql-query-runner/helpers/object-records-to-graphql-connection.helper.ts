@@ -14,6 +14,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/get-aliased-relation-record-keys.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
@@ -230,51 +231,59 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         const isToManyRelation =
           fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
-        const objectValue =
-          !isDefined(objectRecord[fieldMetadata.name]) && isToManyRelation
-            ? []
-            : objectRecord[fieldMetadata.name];
+        for (const relationRecordKey of [
+          fieldMetadata.name,
+          ...getAliasedRelationRecordKeys({
+            record: objectRecord,
+            fieldName: fieldMetadata.name,
+          }),
+        ]) {
+          const objectValue =
+            !isDefined(objectRecord[relationRecordKey]) && isToManyRelation
+              ? []
+              : objectRecord[relationRecordKey];
 
-        if (!isDefined(objectValue)) {
-          continue;
-        }
+          if (!isDefined(objectValue)) {
+            continue;
+          }
 
-        if (Array.isArray(objectValue)) {
-          processedObjectRecord[fieldMetadata.name] = this.createConnection({
-            objectRecords: objectValue,
-            parentObjectRecord: objectRecord,
-            objectRecordsAggregatedValues:
-              objectRecordsAggregatedValues[fieldMetadata.name],
-            selectedAggregatedFields:
-              selectedAggregatedFields[fieldMetadata.name],
-            objectName: targetObjectMetadata.nameSingular,
-            take,
-            totalCount:
-              objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
-              objectValue.length,
-            order,
-            hasNextPage: false,
-            hasPreviousPage: false,
-            depth: depth + 1,
-          });
-        } else if (isPlainObject(objectValue)) {
-          const targetObjectMetadataOrThrow = getTargetObjectMetadataOrThrow(
-            fieldMetadata,
-            this.flatObjectMetadataMaps,
-          );
+          if (Array.isArray(objectValue)) {
+            processedObjectRecord[relationRecordKey] = this.createConnection({
+              objectRecords: objectValue,
+              parentObjectRecord: objectRecord,
+              objectRecordsAggregatedValues:
+                objectRecordsAggregatedValues[relationRecordKey],
+              selectedAggregatedFields:
+                selectedAggregatedFields[relationRecordKey],
+              objectName: targetObjectMetadata.nameSingular,
+              take,
+              totalCount:
+                objectRecordsAggregatedValues[relationRecordKey]?.totalCount ??
+                objectValue.length,
+              order,
+              hasNextPage: false,
+              hasPreviousPage: false,
+              depth: depth + 1,
+            });
+          } else if (isPlainObject(objectValue)) {
+            const targetObjectMetadataOrThrow = getTargetObjectMetadataOrThrow(
+              fieldMetadata,
+              this.flatObjectMetadataMaps,
+            );
 
-          processedObjectRecord[fieldMetadata.name] = this.processRecord({
-            objectRecord: objectValue,
-            objectRecordsAggregatedValues:
-              objectRecordsAggregatedValues[fieldMetadata.name],
-            selectedAggregatedFields:
-              selectedAggregatedFields[fieldMetadata.name],
-            objectName: targetObjectMetadataOrThrow.nameSingular,
-            take,
-            totalCount,
-            order,
-            depth: depth + 1,
-          });
+            processedObjectRecord[relationRecordKey] = this.processRecord({
+              objectRecord: objectValue,
+              objectRecordsAggregatedValues:
+                objectRecordsAggregatedValues[relationRecordKey],
+              selectedAggregatedFields:
+                selectedAggregatedFields[relationRecordKey],
+              objectName: targetObjectMetadataOrThrow.nameSingular,
+              take,
+              totalCount,
+              order,
+              depth: depth + 1,
+            });
+          }
         }
         continue;
       }

@@ -1,6 +1,7 @@
 import { RelationType } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
 import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -33,7 +34,7 @@ export const computeMaxFieldCountPerRecord = ({
         flatEntityId: buildFieldMapsFromFlatObjectMetadata(
           flatFieldMetadataMaps,
           flatObjectMetadata,
-        ).fieldIdByName[relationName],
+        ).fieldIdByName[getFieldNameFromRelationRecordKey(relationName)],
         flatEntityMaps: flatFieldMetadataMaps,
       });
       const relationSelect = select[relationName];

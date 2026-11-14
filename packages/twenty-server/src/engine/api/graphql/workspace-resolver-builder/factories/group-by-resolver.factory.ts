@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import graphqlFields from 'graphql-fields';
-
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   GroupByResolverArgs,
@@ -14,6 +11,8 @@ import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-qu
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { mergeFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/merge-field-selections.util';
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
@@ -30,15 +29,22 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
     const internalContext = context;
 
     return async (_source, args, _requestContext, info) => {
-      const selectedFields = graphqlFields(info);
+      const selectedFields = getResolverSelectedFields(info);
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
       });
 
       const shouldIncludeRecords =
-        isDefined(selectedFields.edges?.node) &&
-        Object.keys(selectedFields.edges?.node).length > 0;
+        Object.keys(
+          mergeFieldSelections({
+            selectedFields: mergeFieldSelections({
+              selectedFields,
+              fieldName: 'edges',
+            }),
+            fieldName: 'node',
+          }),
+        ).length > 0;
 
       try {
         const typeORMObjectRecordsParser =

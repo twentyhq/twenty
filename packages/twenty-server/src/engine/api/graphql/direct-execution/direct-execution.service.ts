@@ -18,7 +18,6 @@ import {
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import graphqlFields from 'graphql-fields';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlDirectExecutionException,
@@ -47,6 +46,7 @@ import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
+import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -247,7 +247,7 @@ export class DirectExecutionService {
 
       const fragmentMap = graphQLBuildFragmentMap(document);
       const variables = req.body.variables ?? {};
-      const data: Record<string, unknown> = {};
+      const data: Record<string, unknown> = Object.create(null);
 
       const {
         graphQLResolverNameMap,
@@ -282,10 +282,11 @@ export class DirectExecutionService {
           try {
             const args = extractArgumentsFromAst(field.arguments, variables);
 
-            const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(
+            const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo({
               field,
               fragmentMap,
-            );
+              variableValues: variables,
+            });
 
             const workspaceSchemaBuilderContext =
               buildWorkspaceSchemaBuilderContext(
@@ -305,11 +306,7 @@ export class DirectExecutionService {
 
             const formattedResult = graphQLFormatResultFromSelectedFields(
               result,
-              graphqlFields(
-                graphqlPartialResolveInfo as GraphQLResolveInfo,
-                {},
-                { excludedFields: [] },
-              ),
+              getResolverSelectedFields(graphqlPartialResolveInfo),
               workspaceSchemaBuilderContext.flatObjectMetadata.nameSingular,
               {
                 flatObjectMetadataMaps,
@@ -405,7 +402,7 @@ export class DirectExecutionService {
     args: Record<string, unknown>;
     graphqlPartialResolveInfo: Pick<
       GraphQLResolveInfo,
-      'fieldNodes' | 'fragments'
+      'fieldNodes' | 'fragments' | 'variableValues'
     >;
     workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext;
   }): Promise<unknown> {

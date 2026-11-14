@@ -1,6 +1,7 @@
 import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/utils/extract-nested-relation-query-args.util';
 import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
@@ -79,5 +80,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
+    accumulator.nestedRelationQueryArgsByFieldName[fieldKey] = {
+      ...(isOneToManyRelation && isPlainObject(fieldValue)
+        ? extractNestedRelationQueryArgs(fieldValue.__arguments)
+        : {}),
+      nestedRelationQueryArgsByFieldName:
+        relationAccumulator.nestedRelationQueryArgsByFieldName,
+    };
   }
 }

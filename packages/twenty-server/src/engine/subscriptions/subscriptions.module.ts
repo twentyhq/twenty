@@ -1,6 +1,8 @@
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { Global, Module } from '@nestjs/common';
 
+import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -47,6 +49,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceEventBroadcaster,
     QueueJobEventListener,
     ProcessNestedRelationsHelper,
+    FilterArgProcessorService,
+    OrderByArgProcessorService,
     CommonSelectFieldsBuilder,
   ],
   exports: [

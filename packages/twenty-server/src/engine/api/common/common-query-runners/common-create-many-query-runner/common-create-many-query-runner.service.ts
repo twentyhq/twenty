@@ -218,6 +218,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       authContext,
       repository,
       selectedFields: args.selectedFieldsResult.select,
+      nestedRelationQueryArgsByFieldName:
+        args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
       ...nestedRelationsReadPathOptions,
     });
   }

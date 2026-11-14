@@ -22,6 +22,9 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { computeRelationRecordKey } from 'src/engine/api/common/utils/compute-relation-record-key.util';
+import { getSelectedFieldName } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selected-field-name.util';
+import { isSelectionMetaKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/is-selection-meta-key.util';
 import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -125,20 +128,37 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
   objectNameSingular: string,
   context: GraphQLFormatContext,
 ): Record<string, unknown> => {
-  const formatted: Record<string, unknown> = {};
+  const formatted: Record<string, unknown> = Object.create(null);
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = getNodeTypename(objectNameSingular);
       continue;
     }
 
-    if (!isDefined(record[key])) {
+    const fieldName = getSelectedFieldName({
+      responseKey: key,
+      selection: subFields,
+    });
+    const relationInfo = findRelationInfo(
+      objectNameSingular,
+      fieldName,
+      context,
+    );
+    const recordKey = isDefined(relationInfo)
+      ? computeRelationRecordKey({ fieldName, responseKey: key })
+      : fieldName;
+
+    if (!isDefined(record[recordKey])) {
       formatted[key] = null;
       continue;
     }
 
-    const value = record[key];
+    const value = record[recordKey];
 
     const hasNestedFields = isDefined(subFields) && !isEmptyObject(subFields);
 
@@ -146,8 +166,6 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
       formatted[key] = value;
       continue;
     }
-
-    const relationInfo = findRelationInfo(objectNameSingular, key, context);
 
     if (isDefined(relationInfo)) {
       if (relationInfo.relationType === RelationType.ONE_TO_MANY) {
@@ -170,7 +188,7 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
 
     const fieldMetadata = findFieldMetadataByName(
       objectNameSingular,
-      key,
+      fieldName,
       context,
     );
 
@@ -207,18 +225,26 @@ const backfillNullValuesAndComputeTypeNameForCompositeField = (
   selectedFields: Record<string, object>,
   fieldMetadataType: FieldMetadataType,
 ): Record<string, unknown> => {
-  const formatted: Record<string, unknown> = {};
+  const formatted: Record<string, unknown> = Object.create(null);
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = pascalCase(fieldMetadataType);
       continue;
     }
 
-    const value = record[key] ?? null;
+    const subFieldName = getSelectedFieldName({
+      responseKey: key,
+      selection: subFields,
+    });
+    const value = record[subFieldName] ?? null;
     const subFieldTypeName = getCompositeSubFieldObjectTypeName(
       fieldMetadataType,
-      key,
+      subFieldName,
     );
 
     if (
@@ -259,10 +285,19 @@ const backfillNullValuesAndComputeTypeNameForCompositeSubField = (
   }
 
   const record = value as Record<string, unknown>;
-  const formatted: Record<string, unknown> = {};
+  const formatted: Record<string, unknown> = Object.create(null);
 
-  for (const key of Object.keys(selectedFields)) {
-    formatted[key] = key === '__typename' ? typeName : (record[key] ?? null);
+  for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
+    formatted[key] =
+      key === '__typename'
+        ? typeName
+        : (record[
+            getSelectedFieldName({ responseKey: key, selection: subFields })
+          ] ?? null);
   }
 
   return formatted;
@@ -274,19 +309,28 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
   objectNameSingular: string,
   context: GraphQLFormatContext,
 ): Record<string, unknown> => {
-  const formatted: Record<string, unknown> = {};
+  const formatted: Record<string, unknown> = Object.create(null);
   const connectionValues: Record<string, unknown> = connection;
   const pageInfoValues: Record<string, unknown> = connection.pageInfo;
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = getConnectionTypename(objectNameSingular);
       continue;
     }
 
-    if (key === 'edges') {
-      formatted.edges = connection.edges.map((edge) => {
-        const edgeFormatted: Record<string, unknown> = {};
+    const connectionFieldName = getSelectedFieldName({
+      responseKey: key,
+      selection: subFields,
+    });
+
+    if (connectionFieldName === 'edges') {
+      formatted[key] = connection.edges.map((edge) => {
+        const edgeFormatted: Record<string, unknown> = Object.create(null);
 
         for (const [edgeKey, edgeSubFields] of Object.entries(
           subFields as Record<string, object>,
@@ -296,13 +340,18 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
             continue;
           }
 
-          if (edgeKey === 'cursor') {
-            edgeFormatted.cursor = edge.cursor;
+          const edgeFieldName = getSelectedFieldName({
+            responseKey: edgeKey,
+            selection: edgeSubFields,
+          });
+
+          if (edgeFieldName === 'cursor') {
+            edgeFormatted[edgeKey] = edge.cursor;
             continue;
           }
 
-          if (edgeKey === 'node') {
-            edgeFormatted.node =
+          if (edgeFieldName === 'node') {
+            edgeFormatted[edgeKey] =
               backfillNullValuesAndComputeTypeNameForObjectRecord(
                 edge.node,
                 edgeSubFields as Record<string, object>,
@@ -318,25 +367,35 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
       continue;
     }
 
-    if (key === 'pageInfo') {
-      const pageInfoFormatted: Record<string, unknown> = {};
+    if (connectionFieldName === 'pageInfo') {
+      const pageInfoFormatted: Record<string, unknown> = Object.create(null);
 
-      for (const pageInfoKey of Object.keys(
+      for (const [pageInfoKey, pageInfoSubFields] of Object.entries(
         subFields as Record<string, object>,
       )) {
+        if (isSelectionMetaKey(pageInfoKey)) {
+          continue;
+        }
+
         if (pageInfoKey === '__typename') {
           pageInfoFormatted.__typename = 'PageInfo';
           continue;
         }
 
-        pageInfoFormatted[pageInfoKey] = pageInfoValues[pageInfoKey] ?? null;
+        pageInfoFormatted[pageInfoKey] =
+          pageInfoValues[
+            getSelectedFieldName({
+              responseKey: pageInfoKey,
+              selection: pageInfoSubFields,
+            })
+          ] ?? null;
       }
 
-      formatted.pageInfo = pageInfoFormatted;
+      formatted[key] = pageInfoFormatted;
       continue;
     }
 
-    const rawAggregateValue = connectionValues[key] ?? null;
+    const rawAggregateValue = connectionValues[connectionFieldName] ?? null;
 
     formatted[key] =
       isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
