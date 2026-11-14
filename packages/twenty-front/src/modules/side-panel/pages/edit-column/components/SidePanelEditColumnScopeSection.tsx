@@ -1,5 +1,4 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -12,10 +11,7 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { type View } from '@/views/types/View';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useIcons } from 'twenty-ui/icon/provider';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 // The effects also prepare the filter rows the user adds before the scope view exists
 const EMPTY_SCOPE_VIEW: Pick<
@@ -57,21 +53,6 @@ export const SidePanelEditColumnScopeSection = ({
   onRecordLimitChange,
 }: SidePanelEditColumnScopeSectionProps) => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
-
-  const sortableFieldOptions = relationObjectMetadataItem.fields
-    .filter(filterSortableFieldMetadataItems)
-    .map((field) => ({
-      Icon: getIcon(field.icon),
-      label: field.label,
-      value: field.id,
-    }));
-
-  const directionOptions: Array<SelectOption<ViewSortDirection>> = [
-    { label: t`Ascending`, value: ViewSortDirection.ASC },
-    { label: t`Descending`, value: ViewSortDirection.DESC },
-  ];
-
   return (
     <StyledContainer>
       <StyledSection>
@@ -98,8 +79,7 @@ export const SidePanelEditColumnScopeSection = ({
           value={{ instanceId: scopeInstanceId }}
         >
           <RecordTableSettingsSortsContent
-            sortableFieldOptions={sortableFieldOptions}
-            directionOptions={directionOptions}
+            objectMetadataItem={relationObjectMetadataItem}
           />
           <RecordTableSettingsSortsInitializeStateEffect
             view={scopeView ?? EMPTY_SCOPE_VIEW}

@@ -5,6 +5,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
+import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
   type QueryCursorDirection,
@@ -54,7 +55,13 @@ export const useFindManyRecordsQuery = ({
     ],
   );
 
+  const relationAliasVariables = useMemo(
+    () => getRecordGqlRelationAliasVariables(relationAliases),
+    [relationAliases],
+  );
+
   return {
     findManyRecordsQuery,
+    relationAliasVariables,
   };
 };

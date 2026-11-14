@@ -63,6 +63,11 @@ describe('getScopedRelationAffectedParentRecordIds', () => {
       operation: { type: 'create-many' },
       expected: ['deal-1', 'deal-2', 'deal-3'],
     },
+    {
+      title: 'no parent for a destroyed record',
+      operation: { type: 'destroy-many' },
+      expected: [],
+    },
   ])('returns $title', ({ operation, expected }) => {
     expect(getAffectedParentRecordIds(operation)).toEqual(expected);
   });
