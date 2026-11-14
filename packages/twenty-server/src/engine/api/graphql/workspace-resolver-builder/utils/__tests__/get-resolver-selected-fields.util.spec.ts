@@ -89,4 +89,26 @@ describe('getResolverSelectedFields', () => {
       ).edges.node,
     ).toEqual({ id: {}, domainName: { primaryLinkUrl: {} } });
   });
+
+  it('keeps an alias named __proto__ as an ordinary key', () => {
+    const selectedFields = getSelectedFields(`
+      query {
+        companies {
+          edges {
+            node {
+              __proto__: id
+            }
+          }
+        }
+      }
+    `).edges.node;
+
+    expect(
+      Object.prototype.hasOwnProperty.call(selectedFields, '__proto__'),
+    ).toBe(true);
+    expect(selectedFields['__proto__']).toEqual({ __fieldName: 'id' });
+    expect(
+      Object.prototype.hasOwnProperty.call(Object.prototype, '__fieldName'),
+    ).toBe(false);
+  });
 });

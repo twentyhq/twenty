@@ -18,7 +18,7 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
-import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
@@ -492,6 +492,8 @@ export class ProcessNestedRelationsHelper {
       return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
 
+    // Qualified so a relation join added by orderBy or filter can't make it ambiguous
+    const qualifiedColumn = `"${targetObjectNameSingular}".${column}`;
     const aggregateForRelation = aggregate[sourceFieldName];
     // oxlint-disable-next-line typescript/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
@@ -512,9 +514,9 @@ export class ProcessNestedRelationsHelper {
       });
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
-        .addSelect(column, column.replace(/["']/g, ''))
-        .andWhere(`${column} IN (:...ids)`, { ids })
-        .groupBy(column)
+        .addSelect(qualifiedColumn, column.replace(/["']/g, ''))
+        .andWhere(`${qualifiedColumn} IN (:...ids)`, { ids })
+        .groupBy(qualifiedColumn)
         .getRawMany();
 
       relationAggregatedFieldsResult = aggregatedFieldsValues.reduce<
@@ -541,7 +543,7 @@ export class ProcessNestedRelationsHelper {
     if (relationType !== RelationType.ONE_TO_MANY) {
       const result = await referenceQueryBuilder
         .setFindOptions(findOptionsWithJoinColumn)
-        .where(`${column} IN (:...ids)`, { ids })
+        .where(`${qualifiedColumn} IN (:...ids)`, { ids })
         .take(perParentLimit * parentRecordsCount)
         .getMany();
 
@@ -565,7 +567,9 @@ export class ProcessNestedRelationsHelper {
 
     const hydrationQueryBuilder = referenceQueryBuilder
       .setFindOptions(findOptionsWithJoinColumn)
-      .where(`id IN (:...recordIdsToHydrate)`, { recordIdsToHydrate });
+      .where(`"${targetObjectNameSingular}"."id" IN (:...recordIdsToHydrate)`, {
+        recordIdsToHydrate,
+      });
 
     // The id query may have kept soft-deleted records the filter asked for
     if (isDefined(resolvedQueryArgs?.filter)) {
@@ -620,7 +624,7 @@ export class ProcessNestedRelationsHelper {
     });
 
     perParentRecordIdsQueryBuilder.andWhere(
-      `${column} = "lateralParents"."parentId"`,
+      `"${targetObjectNameSingular}".${column} = "lateralParents"."parentId"`,
     );
 
     if (isDefined(resolvedQueryArgs?.orderBy)) {

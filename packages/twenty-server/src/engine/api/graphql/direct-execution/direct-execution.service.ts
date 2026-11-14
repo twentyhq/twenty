@@ -247,7 +247,7 @@ export class DirectExecutionService {
 
       const fragmentMap = graphQLBuildFragmentMap(document);
       const variables = req.body.variables ?? {};
-      const data: Record<string, unknown> = {};
+      const data: Record<string, unknown> = Object.create(null);
 
       const {
         graphQLResolverNameMap,
