@@ -182,4 +182,37 @@ describe('message visibility restrictions (e2e)', () => {
       response.body.data.messageParticipants.edges[0].node.message,
     ).toMatchObject(MASKED_FIELDS);
   });
+
+  it('should mask a message and its attachments fetched through aliased relations', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'messageParticipant',
+        objectMetadataPluralName: 'messageParticipants',
+        gqlFields: `
+          aliasedMessage: message {
+            ${RESTRICTABLE_FIELDS}
+            aliasedAttachments: attachments {
+              edges { node { name file { fileId } } }
+            }
+          }
+        `,
+        filter: { id: { eq: UNASSOCIATED_MESSAGE_PARTICIPANT_ID } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { aliasedMessage } =
+      response.body.data.messageParticipants.edges[0].node;
+
+    expect(aliasedMessage).toMatchObject(MASKED_FIELDS);
+    expect(aliasedMessage.aliasedAttachments.edges).toEqual([
+      {
+        node: {
+          name: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+          file: [],
+        },
+      },
+    ]);
+  });
 });

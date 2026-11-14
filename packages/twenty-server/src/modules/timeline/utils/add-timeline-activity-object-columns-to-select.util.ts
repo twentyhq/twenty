@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
+import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -89,24 +90,41 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     }
   }
 
-  for (const fieldId of flatObjectMetadata.fieldIds) {
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-    const relationSelect = isDefined(flatFieldMetadata)
-      ? select[flatFieldMetadata.name]
-      : undefined;
+  const relationTargetObjectMetadataIdByFieldName = new Map<string, string>(
+    flatObjectMetadata.fieldIds.flatMap((fieldId) => {
+      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      return isDefined(flatFieldMetadata?.relationTargetObjectMetadataId)
+        ? [
+            [
+              flatFieldMetadata.name,
+              flatFieldMetadata.relationTargetObjectMetadataId,
+            ] as const,
+          ]
+        : [];
+    }),
+  );
+
+  for (const {
+    recordKey,
+    fieldName,
+    value: relationSelect,
+  } of getRecordFieldEntries(select)) {
+    const relationTargetObjectMetadataId =
+      relationTargetObjectMetadataIdByFieldName.get(fieldName);
 
     if (
-      !isDefined(flatFieldMetadata?.relationTargetObjectMetadataId) ||
+      !isDefined(relationTargetObjectMetadataId) ||
       typeof relationSelect !== 'object'
     ) {
       continue;
     }
 
     const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+      flatEntityId: relationTargetObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
@@ -114,14 +132,13 @@ export const addTimelineActivityObjectColumnsToSelect = ({
       continue;
     }
 
-    extendedSelect[flatFieldMetadata.name] =
-      addTimelineActivityObjectColumnsToSelect({
-        select: relationSelect,
-        flatObjectMetadata: targetFlatObjectMetadata,
-        recordReadRestrictions,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
+    extendedSelect[recordKey] = addTimelineActivityObjectColumnsToSelect({
+      select: relationSelect,
+      flatObjectMetadata: targetFlatObjectMetadata,
+      recordReadRestrictions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 
   return extendedSelect;

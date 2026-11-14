@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
@@ -130,7 +130,11 @@ export const useAddNewRecordAndOpenSidePanel = ({
             timeZone: userTimezone,
           }),
           ...buildRecordInputFromRLSPredicates(),
-          ...(isNonEmptyString(searchInput) ? recordLabelPayload : {}),
+          // An empty search must not erase a label prefilled from the scope filters
+          ...(isNonEmptyString(searchInput) ||
+          !isNonEmptyArray(prefillRecordFilters)
+            ? recordLabelPayload
+            : {}),
           ...buildSourceRecordLink({
             relationFieldMetadataItem,
             sourceObjectMetadataId: objectMetadataItem.id,

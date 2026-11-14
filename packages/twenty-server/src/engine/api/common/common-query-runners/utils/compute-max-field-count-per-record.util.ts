@@ -1,7 +1,7 @@
 import { RelationType } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
+import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -26,19 +26,18 @@ export const computeMaxFieldCountPerRecord = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   recordLimitPerOneToManyRelation: number;
 }): number => {
-  const relationNames = Object.keys(relations);
+  const relationEntries = getRecordFieldEntries(relations);
 
-  return relationNames.reduce(
-    (fieldCount, relationName) => {
+  return relationEntries.reduce(
+    (fieldCount, { recordKey, fieldName, value: nestedRelations }) => {
       const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: buildFieldMapsFromFlatObjectMetadata(
           flatFieldMetadataMaps,
           flatObjectMetadata,
-        ).fieldIdByName[getFieldNameFromRelationRecordKey(relationName)],
+        ).fieldIdByName[fieldName],
         flatEntityMaps: flatFieldMetadataMaps,
       });
-      const relationSelect = select[relationName];
-      const nestedRelations = relations[relationName];
+      const relationSelect = select[recordKey];
 
       if (
         !isMorphOrRelationFlatFieldMetadata(relationField) ||
@@ -68,6 +67,6 @@ export const computeMaxFieldCountPerRecord = ({
           })
       );
     },
-    Object.keys(select).length - relationNames.length,
+    Object.keys(select).length - relationEntries.length,
   );
 };

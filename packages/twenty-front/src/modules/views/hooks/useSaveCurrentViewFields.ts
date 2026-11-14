@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -57,20 +58,30 @@ export const useSaveCurrentViewFields = () => {
             { viewFieldsToCreate, viewFieldsToUpdate },
             viewFieldToCreateOrUpdate,
           ) => {
+            const settings = getViewFieldSettingsInput(
+              viewFieldToCreateOrUpdate.settings,
+            );
+
             const createViewFieldInput: CreateViewFieldInput = {
               id: viewFieldToCreateOrUpdate.id,
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
               position: viewFieldToCreateOrUpdate.position,
               isVisible: viewFieldToCreateOrUpdate.isVisible,
-              isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
-              settings: getViewFieldSettingsInput(
-                viewFieldToCreateOrUpdate.settings,
-              ),
-              relationTargetFieldMetadataId:
-                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
               viewId: currentViewId,
+              ...(isCanonicalRecordField(viewFieldToCreateOrUpdate)
+                ? {}
+                : { isCanonical: false }),
+              ...(isDefined(settings) ? { settings } : {}),
+              ...(isDefined(
+                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+              )
+                ? {
+                    relationTargetFieldMetadataId:
+                      viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+                  }
+                : {}),
             };
             const existingField = currentViewFields.find(
               (currentViewField) =>
@@ -87,25 +98,30 @@ export const useSaveCurrentViewFields = () => {
               };
             }
 
+            const areSettingsUnchanged = isDeeplyEqual(
+              getViewFieldSettingsInput(existingField.settings),
+              settings,
+            );
+
+            const isRelationTargetUnchanged =
+              (existingField.relationTargetFieldMetadataId ?? null) ===
+              (viewFieldToCreateOrUpdate.relationTargetFieldMetadataId ?? null);
+
             if (
+              areSettingsUnchanged &&
+              isRelationTargetUnchanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
                   size: existingField.size,
                   isVisible: existingField.isVisible,
                   aggregateOperation: existingField.aggregateOperation,
-                  settings: getViewFieldSettingsInput(existingField.settings),
-                  relationTargetFieldMetadataId:
-                    existingField.relationTargetFieldMetadataId ?? null,
                 },
                 {
                   position: createViewFieldInput.position,
                   size: createViewFieldInput.size,
                   isVisible: createViewFieldInput.isVisible,
                   aggregateOperation: createViewFieldInput.aggregateOperation,
-                  settings: createViewFieldInput.settings,
-                  relationTargetFieldMetadataId:
-                    createViewFieldInput.relationTargetFieldMetadataId ?? null,
                 },
               )
             ) {
@@ -128,9 +144,14 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
-                      settings: createViewFieldInput.settings,
-                      relationTargetFieldMetadataId:
-                        createViewFieldInput.relationTargetFieldMetadataId,
+                      ...(areSettingsUnchanged ? {} : { settings }),
+                      ...(isRelationTargetUnchanged
+                        ? {}
+                        : {
+                            relationTargetFieldMetadataId:
+                              viewFieldToCreateOrUpdate.relationTargetFieldMetadataId ??
+                              null,
+                          }),
                     },
                   },
                 },

@@ -168,6 +168,7 @@ export class CompleteViewUpsertService {
           flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,
           flatViewFieldMaps,
+          flatViewMaps,
         });
 
     const { viewId, viewUniversalIdentifier } = rootOperations;
@@ -267,6 +268,7 @@ export class CompleteViewUpsertService {
     flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
     flatViewFieldMaps,
+    flatViewMaps,
   }: {
     objectMetadataId?: string;
     name?: string;
@@ -285,6 +287,7 @@ export class CompleteViewUpsertService {
     flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
   }): ViewUpsertRootOperations {
     if (!isDefined(objectMetadataId)) {
       throw new ViewException(
@@ -314,6 +317,7 @@ export class CompleteViewUpsertService {
         flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
         flatViewFieldMaps,
+        flatViewMaps,
       });
 
     return {
