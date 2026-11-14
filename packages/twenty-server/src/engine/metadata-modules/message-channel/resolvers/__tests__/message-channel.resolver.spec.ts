@@ -45,6 +45,7 @@ describe('MessageChannelResolver connectedAccount', () => {
       applicationMessageChannelsService as never,
       {} as never,
       {} as never,
+      {} as never,
     );
 
     return {

@@ -1,7 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { graphql, HttpResponse } from 'msw';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -10,6 +12,8 @@ import {
   MessageChannelVisibility,
   type TimelineThread,
 } from '~/generated/graphql';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
@@ -54,6 +58,7 @@ const meta: Meta<typeof EmailThreadPreview> = {
   title: 'Modules/Activities/Emails/EmailThreadPreview',
   component: EmailThreadPreview,
   decorators: [
+    ToastDecorator,
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -70,6 +75,89 @@ export const Default: Story = {
 
     await canvas.findByText('A quick hello from Twenty');
     await expect(canvas.queryByText('Draft')).not.toBeInTheDocument();
+  },
+};
+
+export const Unread: Story = {
+  args: { thread: { ...thread, read: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('A quick hello from Twenty');
+  },
+};
+
+const markMessageThreadAsRead = fn();
+
+export const UnreadWhenMarkingAsReadFails: Story = {
+  args: { thread: { ...thread, read: false } },
+  beforeEach: () => {
+    markMessageThreadAsRead.mockClear();
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('MarkMessageThreadAsRead', ({ variables }) => {
+          markMessageThreadAsRead(variables);
+
+          return HttpResponse.json({
+            errors: [{ message: 'Could not mark the thread as read' }],
+          });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const subject = await canvas.findByText('A quick hello from Twenty');
+
+    await userEvent.click(subject);
+    await waitFor(() =>
+      expect(markMessageThreadAsRead).toHaveBeenCalledTimes(1),
+    );
+
+    await userEvent.click(subject);
+    await waitFor(() =>
+      expect(markMessageThreadAsRead).toHaveBeenCalledTimes(2),
+    );
+  },
+};
+
+export const UnreadWhileImpersonating: Story = {
+  args: { thread: { ...thread, read: false } },
+  beforeEach: () => {
+    markMessageThreadAsRead.mockClear();
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [],
+      twoFactorAuthenticationMethodSummary: [],
+      isImpersonating: true,
+      objectRecordsPermissions: [],
+    });
+
+    return () => {
+      jotaiStore.set(currentUserWorkspaceState.atom, null);
+    };
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('MarkMessageThreadAsRead', ({ variables }) => {
+          markMessageThreadAsRead(variables);
+
+          return HttpResponse.json({
+            data: { markMessageThreadAsRead: true },
+          });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('A quick hello from Twenty'));
+    await expect(markMessageThreadAsRead).not.toHaveBeenCalled();
   },
 };
 

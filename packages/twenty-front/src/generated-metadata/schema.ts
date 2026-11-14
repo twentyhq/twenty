@@ -556,6 +556,7 @@ export type AppMessageInput = {
   attachments?: InputMaybe<Array<AppMessageAttachmentInput>>;
   externalId: Scalars['String']['input'];
   folderExternalIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  isRead?: InputMaybe<Scalars['Boolean']['input']>;
   participants: Array<AppMessageParticipantInput>;
   receivedAt: Scalars['DateTime']['input'];
   subject?: InputMaybe<Scalars['String']['input']>;
@@ -3505,6 +3506,7 @@ export type MessageCampaignSendBlockerDto = {
 
 export type MessageChannel = {
   __typename?: 'MessageChannel';
+  canStartConversation: Scalars['Boolean']['output'];
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
@@ -3930,6 +3932,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setAppMessageThreadReadState: SetAppMessageThreadReadStateOutput;
   setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
@@ -3942,6 +3945,7 @@ export type Mutation = {
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   snoozeAgentChatThreadInChannel: Scalars['Boolean']['output'];
+  startAppChannelConversation: SendAppChannelMessageOutput;
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
@@ -5054,6 +5058,11 @@ export type MutationSetAppKeyValueArgs = {
 };
 
 
+export type MutationSetAppMessageThreadReadStateArgs = {
+  input: SetAppMessageThreadReadStateInput;
+};
+
+
 export type MutationSetBillingPartnerCodeArgs = {
   partnerCode: Scalars['String']['input'];
 };
@@ -5131,6 +5140,11 @@ export type MutationSkipSyncEmailOnboardingStepArgs = {
 export type MutationSnoozeAgentChatThreadInChannelArgs = {
   snoozedUntil: Scalars['DateTime']['input'];
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStartAppChannelConversationArgs = {
+  input: StartAppChannelConversationInput;
 };
 
 
@@ -7411,6 +7425,17 @@ export type SetAppKeyValueInput = {
   value?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type SetAppMessageThreadReadStateInput = {
+  isRead: Scalars['Boolean']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  threadExternalId: Scalars['String']['input'];
+};
+
+export type SetAppMessageThreadReadStateOutput = {
+  __typename?: 'SetAppMessageThreadReadStateOutput';
+  updatedMessageCount: Scalars['Int']['output'];
+};
+
 export type SettingsMenuItem = {
   __typename?: 'SettingsMenuItem';
   applicationId: Scalars['UUID']['output'];
@@ -7490,6 +7515,13 @@ export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextBody;
   configurationType: WidgetConfigurationType;
+};
+
+export type StartAppChannelConversationInput = {
+  idempotencyKey: Scalars['UUID']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  personId: Scalars['UUID']['input'];
+  text: Scalars['String']['input'];
 };
 
 export type StartWorkspaceSetupChatResult = {

@@ -257,6 +257,26 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
       },
     },
   }),
+  setAppMessageThreadReadState: ({
+    messageChannelId,
+  }: Pick<ApplicationOnlyEndpointTarget, 'messageChannelId'>) => ({
+    query: gql`
+      mutation SetAppMessageThreadReadState(
+        $input: SetAppMessageThreadReadStateInput!
+      ) {
+        setAppMessageThreadReadState(input: $input) {
+          updatedMessageCount
+        }
+      }
+    `,
+    variables: {
+      input: {
+        messageChannelId,
+        threadExternalId: 'application-only-probe',
+        isRead: false,
+      },
+    },
+  }),
 };
 
 type ApplicationOnlyRestRequest = {

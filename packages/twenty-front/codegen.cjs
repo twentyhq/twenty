@@ -12,6 +12,7 @@ module.exports = {
     './src/modules/activities/calendar/graphql/queries/**/*.{ts,tsx}',
     './src/modules/command-menu/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/mutations/answerToolCall.ts',
+    './src/modules/activities/emails/graphql/mutations/markMessageThreadAsRead.ts',
 
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',

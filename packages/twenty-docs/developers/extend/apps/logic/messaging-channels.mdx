@@ -156,6 +156,24 @@ Attachments are stored only while the message has none, so a redelivery never re
 
 Attachments follow the channel's `visibility` like the body: unless the conversation is fully shared, other members get an empty list.
 
+### Read state
+
+Each message can carry `isRead` for the member who owns the channel. It defaults to read, and it is only applied when the message is first stored, so a redelivery never overrides it. A thread shows as unread on timelines, to its channel owner only, while one of its incoming messages is unread. Opening the thread in Twenty marks it read.
+
+When the provider reports that a conversation was read or marked unread, call `setMessageThreadReadState`:
+
+```ts
+import { setMessageThreadReadState } from 'twenty-sdk/logic-function';
+
+await setMessageThreadReadState({
+  messageChannelId: channel.id,
+  threadExternalId: conversation.id,
+  isRead: conversation.unreadCount === 0,
+});
+```
+
+Marking a thread read marks all its messages read. Marking it unread flags its latest incoming message, and leaves the thread as is when it already has an unread message. Requires `"engines": { "twenty": ">=2.59.0" }`.
+
 ### Linking participants to People
 
 An unlinked participant pulls the conversation onto no record page, so every participant should end up linked to a Person. There are two ways to get there: let Twenty match handles against a person field, or resolve the person yourself.
@@ -301,7 +319,7 @@ Once your function returns, Twenty keeps the delivery for 24 hours under the mem
 
 ## Marking threads as read
 
-Twenty keeps no read state for app messages, but it can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
+Twenty can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
 
 ```ts src/messaging-providers/linkedin-messaging.ts
 export default defineMessagingProvider({
@@ -327,6 +345,56 @@ export const linkedinMarkThreadAsReadHandler = async ({
 ```
 
 When the owner of the channel's account opens one of its threads, Twenty calls the `markAppChannelThreadAsRead` mutation, which runs your function with the `messagingProviderName`, the `connectedAccountId`, the `messageChannelId` and the conversation's `threadExternalId`. Its return value is ignored. Members the account is only shared with never trigger it, and calls for the same member and thread are skipped for 30 seconds, so reopening a conversation does not call your provider again. The call is best effort: the thread opens whatever your function does. A provider without `markThreadAsReadLogicFunction` is never called. Requires `"engines": { "twenty": ">=2.59.0" }`.
+
+## Starting conversations
+
+A messaging provider can also declare a `startConversationLogicFunction`. Members then get a "New message" entry for the channel on a Person record, and the first message they write there starts a new conversation with that person:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+  startConversationLogicFunction: {
+    universalIdentifier: '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f',
+  },
+});
+```
+
+The `startAppChannelConversation` mutation takes the channel, the `personId`, the text and an `idempotencyKey`, and runs the function:
+
+```ts src/logic-functions/handlers/linkedin-start-conversation-handler.ts
+import {
+  type StartAppConversationPayload,
+  type StartAppConversationResult,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinStartConversationHandler = async ({
+  connectedAccountId,
+  recipients: [recipient],
+  text,
+}: StartAppConversationPayload): Promise<StartAppConversationResult> => {
+  const profile = await resolveLinkedinProfile(recipient);
+  const started = await startLinkedinChat({
+    connectedAccountId,
+    profileId: profile.id,
+    text,
+  });
+
+  return {
+    externalId: started.messageId,
+    threadExternalId: started.chatId,
+    recipients: [{ personId: recipient.personId, handle: profile.url }],
+  };
+};
+```
+
+Each recipient carries its `personId`, its `displayName`, and the `handle` the person already has on this channel when Twenty knows one from earlier messages, or `null`. Resolve the person on the provider yourself when it is `null`, for example from a field of the Person record.
+
+Return the sent message's `externalId` and the new conversation's `threadExternalId`, using the same thread id your ingestion uses so later messages land in the same thread. Return each recipient's `handle` in `recipients` unless the payload already carried it: Twenty records the message as an outgoing message from the channel to that handle, linked to the Person, and opens the new thread. Replies then go through your `sendMessageLogicFunction` as usual.
+
+Retries, idempotency and failures behave as for [replies](#sending-replies), keyed on the person instead of the thread. A channel whose provider has no `startConversationLogicFunction`, or uses the `'email'` conversation style, refuses the mutation, and the "New message" entry only lists channels that can start conversations. Requires `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Listing and updating channels
 
@@ -529,7 +597,7 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 ## What a channel does not do
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
-- **It does not start conversations.** Replies go to an existing thread through a [messaging provider](#sending-replies); a first message to someone new has to be started from your app.
+- **It does not start conversations on its own.** Replies go to an existing thread through a [messaging provider](#sending-replies); a first message to someone new needs a [`startConversationLogicFunction`](#starting-conversations) on the provider.
 - **It only resolves contacts through a declared field.** Without one, Twenty cannot tell who a LinkedIn URN belongs to, so app channels [link participants explicitly at ingestion](#resolve-the-person-yourself).
 - **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.
 

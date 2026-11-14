@@ -97,7 +97,7 @@ const readMessageChannels: StateReader = ({ application }) =>
 
 const readIngestedMessages: StateReader = ({ target }) =>
   globalThis.testDataSource.query(
-    `SELECT "messageId"
+    `SELECT "messageId", "isRead"
        FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation"
       WHERE "messageChannelId" = $1`,
     [target.messageChannelId],
@@ -126,6 +126,7 @@ const GRAPHQL_STATE_READERS: Partial<
   deleteAppMessageChannel: readMessageChannels,
   syncAppMessageFolders: readMessageFolders,
   ingestAppMessages: readIngestedMessages,
+  setAppMessageThreadReadState: readIngestedMessages,
 };
 
 const REST_STATE_READERS: Partial<Record<RestRequestName, StateReader>> = {

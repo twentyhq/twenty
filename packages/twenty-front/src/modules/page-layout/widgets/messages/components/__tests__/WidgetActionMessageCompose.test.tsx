@@ -30,6 +30,27 @@ jest.mock('@/activities/emails/hooks/useComposeEmailForTargetRecord', () => ({
   }),
 }));
 
+let mockConversationStartChannels: Array<{
+  messageChannelId: string;
+  label: string;
+  provider: ConnectedAccountProvider;
+  applicationId: string | null;
+}> = [];
+const openStartAppConversationInSidePanel = jest.fn();
+
+jest.mock(
+  '@/activities/emails/hooks/useConversationStartMessageChannels',
+  () => ({
+    useConversationStartMessageChannels: () => mockConversationStartChannels,
+  }),
+);
+
+jest.mock('@/side-panel/hooks/useOpenStartAppConversationInSidePanel', () => ({
+  useOpenStartAppConversationInSidePanel: () => ({
+    openStartAppConversationInSidePanel,
+  }),
+}));
+
 jest.mock('@/activities/emails/components/MessageChannelLogo', () => ({
   MessageChannelLogo: ({ channel }: { channel: { provider: string } }) => (
     <span>{channel.provider}</span>
@@ -103,6 +124,7 @@ describe('WidgetActionMessageCompose', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockComposerLoading = false;
+    mockConversationStartChannels = [];
   });
 
   it('lets the user pick which account the new message is sent from', async () => {
@@ -154,5 +176,33 @@ describe('WidgetActionMessageCompose', () => {
     renderAction(null);
 
     expect(screen.getByRole('button', { name: 'New message' })).toBeDisabled();
+  });
+
+  it('lets the user start a conversation with the person on an app channel', async () => {
+    const user = userEvent.setup();
+
+    mockConversationStartChannels = [
+      {
+        messageChannelId: 'channel-linkedin',
+        label: 'Tim on LinkedIn',
+        provider: ConnectedAccountProvider.APP,
+        applicationId: 'application-linkedin',
+      },
+    ];
+
+    renderAction([googleAccount]);
+
+    await user.click(screen.getByRole('button', { name: 'New message' }));
+
+    expect(screen.getAllByRole('menuitem')).toHaveLength(2);
+
+    await user.click(screen.getByRole('menuitem', { name: /Tim on LinkedIn/ }));
+
+    expect(openStartAppConversationInSidePanel).toHaveBeenCalledWith({
+      messageChannelId: 'channel-linkedin',
+      channelLabel: 'Tim on LinkedIn',
+      personId: PERSON_ID,
+    });
+    expect(openComposerWithConnectedAccount).not.toHaveBeenCalled();
   });
 });

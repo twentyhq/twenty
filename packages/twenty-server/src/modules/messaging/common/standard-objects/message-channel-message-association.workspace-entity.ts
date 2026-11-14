@@ -8,6 +8,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageExternalId: string | null;
   messageThreadExternalId: string | null;
   direction: MessageDirection;
+  isRead: boolean;
   messageChannelId: string;
   message: EntityRelation<MessageWorkspaceEntity> | null;
   messageId: string;
