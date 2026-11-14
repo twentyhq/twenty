@@ -4,6 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -228,9 +229,13 @@ const SidePanelEditColumnForm = ({
 
   const FieldIcon = getIcon(fieldMetadataItem?.icon);
 
-  const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    ({ id }) => id === relationTargetFieldMetadataId,
-  );
+  const lookupTargetFieldMetadataItem = isDefined(fieldMetadataItem)
+    ? getRecordFieldLookupTarget({
+        recordField: { relationTargetFieldMetadataId },
+        fieldMetadataItem,
+        objectMetadataItems,
+      })?.lookupTargetFieldMetadataItem
+    : undefined;
 
   const columnNamePlaceholder = isDefined(fieldMetadataItem)
     ? formatLookupColumnLabel(fieldMetadataItem, lookupTargetFieldMetadataItem)
