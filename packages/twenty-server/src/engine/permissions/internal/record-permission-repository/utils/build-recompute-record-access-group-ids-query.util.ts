@@ -60,7 +60,11 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
     parameters: Object.assign(
       { recordIds },
       ...recordAccessGroupSQLConditions.map(
-        ({ sqlCondition }) => sqlCondition?.parameters ?? {},
+        (recordAccessGroupSQLCondition) =>
+          ('compactIdsSQLExpression' in recordAccessGroupSQLCondition
+            ? recordAccessGroupSQLCondition.compactIdsSQLExpression
+            : recordAccessGroupSQLCondition.sqlCondition
+          )?.parameters ?? {},
       ),
       ...inheritedAccessGroupIdsExpressions.map(({ parameters }) => parameters),
     ),

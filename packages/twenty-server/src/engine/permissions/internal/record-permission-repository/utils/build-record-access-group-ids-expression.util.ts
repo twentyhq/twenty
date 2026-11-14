@@ -7,18 +7,37 @@ import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/inter
 const buildOwnAccessGroupIdsExpression = (
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[],
 ): string => {
-  if (recordAccessGroupSQLConditions.length === 0) {
-    return `CAST('{}' AS integer[])`;
-  }
+  const compactIdCases: string[] = [];
+  const compactIdsSQLExpressions: string[] = [];
 
-  const compactIdCases = recordAccessGroupSQLConditions.map(
-    ({ compactId, sqlCondition }) =>
+  for (const recordAccessGroupSQLCondition of recordAccessGroupSQLConditions) {
+    if ('compactIdsSQLExpression' in recordAccessGroupSQLCondition) {
+      compactIdsSQLExpressions.push(
+        recordAccessGroupSQLCondition.compactIdsSQLExpression.sql,
+      );
+      continue;
+    }
+
+    const { compactId, sqlCondition } = recordAccessGroupSQLCondition;
+
+    compactIdCases.push(
       isDefined(sqlCondition)
         ? `CASE WHEN (${sqlCondition.sql}) THEN ${compactId} END`
         : `${compactId}`,
-  );
+    );
+  }
 
-  return `ARRAY_REMOVE(CAST(ARRAY[${compactIdCases.join(', ')}] AS integer[]), NULL)`;
+  return [
+    ...(compactIdCases.length > 0
+      ? [
+          `ARRAY_REMOVE(CAST(ARRAY[${compactIdCases.join(', ')}] AS integer[]), NULL)`,
+        ]
+      : []),
+    ...compactIdsSQLExpressions,
+    ...(recordAccessGroupSQLConditions.length === 0
+      ? [`CAST('{}' AS integer[])`]
+      : []),
+  ].join(' || ');
 };
 
 export const buildRecordAccessGroupIdsExpression = ({

@@ -82,4 +82,30 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     expect(sql).not.toContain('_isPrivate');
     expect(parameters).toEqual({ recordIds: ['note-id'] });
   });
+
+  it('should append the groups read by one expression to the groups read one by one', () => {
+    const { sql, parameters } = buildRecomputeRecordAccessGroupIdsQuery({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: note,
+      recordAccessGroupSQLConditions: [
+        { compactId: 7, sqlCondition: null },
+        {
+          compactIdsSQLExpression: {
+            sql: 'ARRAY(SELECT "compactId" FROM unnest(:sharedCompactIds) AS "compactId")',
+            parameters: { sharedCompactIds: [8, 9] },
+          },
+        },
+      ],
+      relatedRecordPathAccessGroupSources: [],
+      recordIds: ['note-id'],
+    });
+
+    expect(sql).toContain(
+      'ARRAY_REMOVE(CAST(ARRAY[7] AS integer[]), NULL) || ARRAY(SELECT "compactId" FROM unnest(:sharedCompactIds) AS "compactId") AS "accessGroupIds"',
+    );
+    expect(parameters).toEqual({
+      recordIds: ['note-id'],
+      sharedCompactIds: [8, 9],
+    });
+  });
 });

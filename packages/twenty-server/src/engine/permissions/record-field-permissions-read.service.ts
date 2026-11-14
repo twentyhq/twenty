@@ -6,10 +6,14 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
+import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/access-group/utils/build-record-access-groups-sql-condition.util';
+import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
@@ -25,6 +29,7 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 export class RecordFieldPermissionsReadService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
+    private readonly accessGroupReadService: AccessGroupReadService,
   ) {}
 
   findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
@@ -68,25 +73,72 @@ export class RecordFieldPermissionsReadService {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
+    // reading the groups the record already holds avoids evaluating every rule again on every row
+    const compactIdsByRlsRuleId =
+      resolveRecordsAccessSQLConditionStrategy({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
+      }) === 'accessGroups'
+        ? await this.accessGroupReadService.findPrincipalsCompactIdsByRlsRuleId(
+            { principals, objectMetadataId, operationType: 'read' },
+          )
+        : new Map<string, number[]>();
+
     const rlsRuleSQLConditions = rlsRuleInaccessibleFields.map(
-      ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
-        fieldMetadataIds,
-        sqlCondition: renderRlsRecordFilterToSql({
-          recordFilter: buildRlsRulesRecordFilter({
-            principals,
-            metadataMaps,
-            rowLevelPermissionRules: [rowLevelPermissionRule],
-          }),
-          tableAlias,
-          objectMetadata: flatObjectMetadata,
-          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-          flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        }) ?? { sql: 'TRUE', parameters: {} },
-      }),
+      ({ rowLevelPermissionRule, fieldMetadataIds }) => {
+        const principalsAccessGroupCompactIds = compactIdsByRlsRuleId.get(
+          rowLevelPermissionRule.ruleId,
+        );
+
+        return {
+          fieldMetadataIds,
+          sqlCondition: isDefined(principalsAccessGroupCompactIds)
+            ? buildRecordAccessGroupsSQLCondition({
+                tableAlias,
+                principalsAccessGroupCompactIds,
+              })
+            : this.renderRlsRuleSQLCondition({
+                principals,
+                metadataMaps,
+                flatObjectMetadata,
+                rowLevelPermissionRule,
+                tableAlias,
+              }),
+        };
+      },
     );
 
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
+    );
+  }
+
+  private renderRlsRuleSQLCondition({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    rowLevelPermissionRule,
+    tableAlias,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    metadataMaps: PermissionsMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    rowLevelPermissionRule: RlsRule;
+    tableAlias: string;
+  }): SQLCondition {
+    return (
+      renderRlsRecordFilterToSql({
+        recordFilter: buildRlsRulesRecordFilter({
+          principals,
+          metadataMaps,
+          rowLevelPermissionRules: [rowLevelPermissionRule],
+        }),
+        tableAlias,
+        objectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+      }) ?? { sql: 'TRUE', parameters: {} }
     );
   }
 

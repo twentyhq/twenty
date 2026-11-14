@@ -1,6 +1,8 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { type RowLevelRecordsPermissions } from 'twenty-shared/types';
+
 import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { findRlsRulesAccessingOperation } from 'src/engine/permissions/internal/rls/utils/find-rls-rules-accessing-operation.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -28,7 +30,7 @@ export const findRlsRuleInaccessibleFields = ({
   objectMetadataId: string;
   inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';
 }): {
-  rowLevelPermissionRule: RlsRule;
+  rowLevelPermissionRule: RlsRule & Pick<RowLevelRecordsPermissions, 'ruleId'>;
   fieldMetadataIds: string[];
 }[] => {
   const rlsRuleInaccessibleFields = (

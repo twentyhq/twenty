@@ -73,6 +73,79 @@ export class AccessGroupReadService {
     });
   }
 
+  // the groups a rule gives the caller: a record holds one of them exactly when the rule reaches it
+  async findPrincipalsCompactIdsByRlsRuleId({
+    principals,
+    objectMetadataId,
+    operationType,
+  }: {
+    principals: Pick<
+      PermissionsPrincipalsWithRolesContext,
+      'workspaceId' | 'mainPrincipal'
+    >;
+    objectMetadataId: string;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Map<string, number[]>> {
+    const { workspaceId } = principals;
+    const { featureFlagsMap, rolesPermissions, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+        'rolesPermissions',
+        'flatFieldMetadataMaps',
+      ]);
+    const workspaceMembers =
+      await this.findPrincipalsWorkspaceMembers(principals);
+    const rlsRuleAccessGroups = getPermissionsPrincipalsMainRoleIds(principals)
+      .flatMap((roleId) =>
+        buildRoleAccessGroupsOrThrow({
+          roleId,
+          objectMetadataId,
+          objectRecordsPermissions:
+            rolesPermissions[roleId]?.objects[objectMetadataId],
+          operationTypes: [operationType],
+          workspaceMembers,
+          flatFieldMetadataMaps,
+          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+          isSharingGroupsByPredicateValue:
+            featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ??
+            false,
+        }),
+      )
+      .filter(({ rowLevelPermissionPredicateGroupId }) =>
+        isDefined(rowLevelPermissionPredicateGroupId),
+      );
+    const compactIdsByRlsRuleId = new Map<string, number[]>();
+
+    if (!isNonEmptyArray(rlsRuleAccessGroups)) {
+      return compactIdsByRlsRuleId;
+    }
+
+    const compactIdByGroupHash =
+      await this.accessGroupReadRepository.findCompactIdByGroupHash({
+        workspaceId,
+        groupHashes: rlsRuleAccessGroups.map(({ groupHash }) => groupHash),
+      });
+
+    for (const {
+      rowLevelPermissionPredicateGroupId,
+      groupHash,
+    } of rlsRuleAccessGroups) {
+      if (!isDefined(rowLevelPermissionPredicateGroupId)) {
+        continue;
+      }
+
+      const compactId = compactIdByGroupHash.get(groupHash);
+
+      compactIdsByRlsRuleId.set(rowLevelPermissionPredicateGroupId, [
+        ...(compactIdsByRlsRuleId.get(rowLevelPermissionPredicateGroupId) ??
+          []),
+        ...(isDefined(compactId) ? [compactId] : []),
+      ]);
+    }
+
+    return compactIdsByRlsRuleId;
+  }
+
   async findPrincipalsRelatedRecordPathCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
