@@ -10,8 +10,12 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
-  const { recordGqlFields, relationAliases, columnQueryFingerprint } =
-    useRecordIndexTableColumnQuery(objectMetadataItem);
+  const {
+    recordGqlFields,
+    relationAliases,
+    lookupRelationFieldNames,
+    columnQueryFingerprint,
+  } = useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
     useLazyFindManyRecords({
@@ -23,7 +27,8 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
   return {
     findManyRecordsLazy,
     fetchMoreRecordsLazy,
-    // A column's scope changes loaded cells without changing the filter or sort
+    lookupRelationFieldNames,
+    // A column's scope or lookup changes loaded cells without changing the filter or sort
     queryIdentifier: `${queryIdentifier}${columnQueryFingerprint}`,
   };
 };
