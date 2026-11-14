@@ -14,7 +14,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/get-aliased-relation-record-keys.util';
+import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
@@ -191,6 +191,18 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
     // oxlint-disable-next-line typescript/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
+    const aliasedRecordKeysByFieldName = new Map<string, string[]>();
+
+    for (const { recordKey, fieldName } of getRecordFieldEntries(
+      objectRecord,
+    )) {
+      if (recordKey !== fieldName) {
+        aliasedRecordKeysByFieldName.set(fieldName, [
+          ...(aliasedRecordKeysByFieldName.get(fieldName) ?? []),
+          recordKey,
+        ]);
+      }
+    }
 
     for (const fieldId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -233,10 +245,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
         for (const relationRecordKey of [
           fieldMetadata.name,
-          ...getAliasedRelationRecordKeys({
-            record: objectRecord,
-            fieldName: fieldMetadata.name,
-          }),
+          ...(aliasedRecordKeysByFieldName.get(fieldMetadata.name) ?? []),
         ]) {
           const objectValue =
             !isDefined(objectRecord[relationRecordKey]) && isToManyRelation
@@ -258,8 +267,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
               objectName: targetObjectMetadata.nameSingular,
               take,
               totalCount:
-                objectRecordsAggregatedValues[relationRecordKey]?.totalCount ??
-                objectValue.length,
+                objectRecordsAggregatedValues[relationRecordKey]?.[
+                  objectRecord.id
+                ]?.totalCount ?? objectValue.length,
               order,
               hasNextPage: false,
               hasPreviousPage: false,

@@ -85,6 +85,26 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     );
   });
 
+  it('invalidates the maps of a scope view cascaded through its owner column when a field is deleted', () => {
+    const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+      buildAction({
+        type: 'delete',
+        metadataName: 'fieldMetadata',
+        universalIdentifier: 'field-1',
+      }),
+    ]);
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        'flatViewMaps',
+        'flatViewFilterGroupMaps',
+        'flatViewGroupMaps',
+        'flatViewFieldGroupMaps',
+        'flatNavigationMenuItemMaps',
+      ]),
+    );
+  });
+
   it('invalidates only the field metadata map for a non-relation field update', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({

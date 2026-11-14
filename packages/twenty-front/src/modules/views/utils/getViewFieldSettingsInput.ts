@@ -6,6 +6,6 @@ import { type ViewFieldSettingsInput } from '~/generated-metadata/graphql';
 export const getViewFieldSettingsInput = (
   settings: ViewFieldSettings | null | undefined,
 ): ViewFieldSettingsInput | null =>
-  isDefined(settings)
-    ? { label: settings.label, recordLimit: settings.recordLimit }
+  isDefined(settings?.label) || isDefined(settings?.recordLimit)
+    ? { label: settings?.label, recordLimit: settings?.recordLimit }
     : null;

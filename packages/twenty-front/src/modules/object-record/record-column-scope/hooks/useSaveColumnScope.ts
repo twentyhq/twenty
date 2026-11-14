@@ -17,12 +17,14 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType, type ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type WriteColumnScopeArgs = {
   ownerViewFieldId: string;
+  // Matches the owner view so a user who can edit that view can scope its columns
+  ownerViewVisibility: ViewVisibility;
   relationObjectMetadataId: string;
   scopeView: View | undefined;
   recordFilters: RecordFilter[];
@@ -42,6 +44,7 @@ export const useSaveColumnScope = () => {
   const writeColumnScope = useCallback(
     async ({
       ownerViewFieldId,
+      ownerViewVisibility,
       relationObjectMetadataId,
       scopeView,
       recordFilters,
@@ -71,7 +74,7 @@ export const useSaveColumnScope = () => {
               icon: 'IconFilter',
               objectMetadataId: relationObjectMetadataId,
               type: ViewType.TABLE_WIDGET,
-              visibility: ViewVisibility.WORKSPACE,
+              visibility: ownerViewVisibility,
               ownerViewFieldId,
             },
           },
@@ -116,7 +119,10 @@ export const useSaveColumnScope = () => {
       ...args
     }: Pick<
       WriteColumnScopeArgs,
-      'ownerViewFieldId' | 'relationObjectMetadataId' | 'scopeView'
+      | 'ownerViewFieldId'
+      | 'ownerViewVisibility'
+      | 'relationObjectMetadataId'
+      | 'scopeView'
     > & { scopeInstanceId: string }) =>
       writeColumnScope({
         ...args,
@@ -140,7 +146,13 @@ export const useSaveColumnScope = () => {
   );
 
   const copyColumnScopes = useCallback(
-    async (newViewFieldIdByViewFieldId: Map<string, string>) => {
+    async ({
+      newViewFieldIdByViewFieldId,
+      ownerViewVisibility,
+    }: {
+      newViewFieldIdByViewFieldId: Map<string, string>;
+      ownerViewVisibility: ViewVisibility;
+    }) => {
       const scopeViewsByOwnerViewFieldId = store.get(
         scopeViewsByOwnerViewFieldIdMapSelector.atom,
       );
@@ -163,6 +175,7 @@ export const useSaveColumnScope = () => {
 
         const isCopied = await writeColumnScope({
           ownerViewFieldId: newViewFieldId,
+          ownerViewVisibility,
           relationObjectMetadataId: scopeView.objectMetadataId,
           scopeView: undefined,
           recordFilters: mapViewFiltersToFilters(

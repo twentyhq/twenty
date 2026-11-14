@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -21,6 +22,8 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     additionalFieldMetadataIds: [recordIndexGroupFieldMetadataItem?.id],
   });
 
+  const relationAliases = useScopedRelationAliases();
+
   const {
     records,
     hasNextPage,
@@ -33,6 +36,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
   } = useFindManyRecords({
     ...params,
     recordGqlFields,
+    relationAliases,
   });
 
   return {
