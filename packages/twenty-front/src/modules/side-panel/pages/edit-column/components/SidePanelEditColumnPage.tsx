@@ -1,3 +1,4 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
@@ -65,11 +66,16 @@ export const SidePanelEditColumnPage = () => {
     return null;
   }
 
+  // The table may live in another context store, e.g. inside a side panel
   return (
-    <SidePanelEditColumnPageContent
-      recordTableId={editColumnRequest.recordTableId}
-      recordFieldId={editColumnRequest.recordFieldId}
-    />
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: editColumnRequest.contextStoreInstanceId }}
+    >
+      <SidePanelEditColumnPageContent
+        recordTableId={editColumnRequest.recordTableId}
+        recordFieldId={editColumnRequest.recordFieldId}
+      />
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };
 
@@ -154,10 +160,14 @@ const SidePanelEditColumnForm = ({
     !isDefined(relationObjectMetadataItem) ||
     parseRecordLimitInput(recordLimit).isValid;
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSaveClick = async () => {
-    if (!isRecordLimitValid) {
+    if (!isRecordLimitValid || isSaving) {
       return;
     }
+
+    setIsSaving(true);
 
     const updatedRecordField = {
       ...recordField,
@@ -174,6 +184,7 @@ const SidePanelEditColumnForm = ({
     ]);
 
     if (!areSettingsSaved) {
+      setIsSaving(false);
       upsertRecordField(recordField);
       return;
     }
@@ -187,6 +198,7 @@ const SidePanelEditColumnForm = ({
       });
 
       if (!isScopeSaved) {
+        setIsSaving(false);
         return;
       }
     }
@@ -255,7 +267,7 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={!isRecordLimitValid}
+            disabled={!isRecordLimitValid || isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"
