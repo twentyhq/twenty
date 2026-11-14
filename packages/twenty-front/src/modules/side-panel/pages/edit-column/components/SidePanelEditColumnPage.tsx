@@ -7,6 +7,8 @@ import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCan
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -17,10 +19,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
-import { computeViewFieldSettingsWithLabel } from '@/views/utils/computeViewFieldSettingsWithLabel';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,6 +65,7 @@ export const SidePanelEditColumnPage = () => {
       <SidePanelEditColumnPageContent
         recordTableId={editColumnRequest.recordTableId}
         recordFieldId={editColumnRequest.recordFieldId}
+        recordFieldToCreate={editColumnRequest.recordFieldToCreate}
       />
     </ContextStoreComponentInstanceContext.Provider>
   );
@@ -71,18 +74,21 @@ export const SidePanelEditColumnPage = () => {
 const SidePanelEditColumnPageContent = ({
   recordTableId,
   recordFieldId,
+  recordFieldToCreate,
 }: {
   recordTableId: string;
   recordFieldId: string;
+  recordFieldToCreate?: RecordField;
 }) => {
   const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
     recordTableId,
   );
 
-  const recordField = currentRecordFields.find(
-    (currentRecordField) => currentRecordField.id === recordFieldId,
-  );
+  const recordField =
+    currentRecordFields.find(
+      (currentRecordField) => currentRecordField.id === recordFieldId,
+    ) ?? recordFieldToCreate;
 
   if (!isDefined(recordField) || isCanonicalRecordField(recordField)) {
     return null;
@@ -107,7 +113,11 @@ const SidePanelEditColumnForm = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
-  const { goBackFromSidePanel } = useSidePanelHistory();
+  const { goBackFromSidePanel, removePageFromSidePanelHistory } =
+    useSidePanelHistory();
+  const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
+    SidePanelPageComponentInstanceContext,
+  );
   const { upsertRecordField } = useUpsertRecordField(recordTableId);
   const { saveViewFields } = useSaveCurrentViewFields();
 
@@ -129,15 +139,15 @@ const SidePanelEditColumnForm = ({
 
     setIsSaving(true);
 
-    const updatedRecordField = {
-      ...recordField,
-      settings: computeViewFieldSettingsWithLabel({
-        settings: recordField.settings,
-        label: columnName,
-      }),
-    };
+    const trimmedColumnName = columnName.trim();
 
-    upsertRecordField(updatedRecordField);
+    const updatedRecordField: RecordField = {
+      ...recordField,
+      settings: {
+        ...recordField.settings,
+        label: isNonEmptyString(trimmedColumnName) ? trimmedColumnName : null,
+      },
+    };
 
     const isSaved = await saveViewFields([
       mapRecordFieldToViewField(updatedRecordField),
@@ -146,11 +156,13 @@ const SidePanelEditColumnForm = ({
     setIsSaving(false);
 
     if (!isSaved) {
-      upsertRecordField(recordField);
       return;
     }
 
-    goBackFromSidePanel();
+    upsertRecordField(updatedRecordField);
+
+    // The user may have opened another page while saving
+    removePageFromSidePanelHistory(sidePanelPageId);
   };
 
   const containerRef = useHotkeysOnFocusedElement({
