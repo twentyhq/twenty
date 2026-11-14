@@ -12,7 +12,11 @@ import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delet
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -276,6 +280,34 @@ describe('View scoping a one-to-many view field', () => {
     });
 
     expect(secondScopeView.ownerViewFieldId).toBe(viewFieldId);
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
+  });
+
+  it('rejects a private scope view on a column the user cannot edit', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+    );
+
+    const { errors } = await createOneView({
+      expectToFail: true,
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      input: {
+        name: 'Guest scope',
+        icon: 'IconFilter',
+        objectMetadataId: testContext.actionItemObjectId,
+        type: ViewType.TABLE_WIDGET,
+        visibility: ViewVisibility.UNLISTED,
+        ownerViewFieldId: viewFieldId,
+      },
+    });
+
+    expect(errors?.[0]?.message).toBe(
+      'You do not have permission to modify this view',
+    );
 
     await destroyOneViewField({
       expectToFail: false,

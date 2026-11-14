@@ -1,10 +1,12 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
 import { computeScopedRelationArgs } from '@/object-record/record-column-scope/utils/computeScopedRelationArgs';
 import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
@@ -14,7 +16,10 @@ import { scopeViewsByOwnerViewFieldIdMapSelector } from '@/views/states/selector
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
   const isColumnSettingsEnabled = useIsFeatureEnabled(
@@ -33,6 +38,7 @@ export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
     scopeViewsByOwnerViewFieldIdMapSelector,
   );
   const { filterValueDependencies } = useFilterValueDependencies();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   return useMemo(() => {
     if (!isColumnSettingsEnabled) {
@@ -56,7 +62,16 @@ export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
         objectMetadataItems,
       });
 
-      if (!isDefined(relationObjectMetadataItem)) {
+      if (
+        !isDefined(relationObjectMetadataItem) ||
+        !canAccessThroughAllRecordsOrRlsPermission({
+          objectRecordsPermissions: getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            relationObjectMetadataItem.id,
+          ),
+          operationType: 'read',
+        })
+      ) {
         return [];
       }
 
@@ -84,5 +99,6 @@ export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
     objectMetadataItems,
     flattenedFieldMetadataItems,
     filterValueDependencies,
+    objectPermissionsByObjectMetadataId,
   ]);
 };
