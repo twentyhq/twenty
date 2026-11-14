@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { EmailRecipientsFieldRows } from '@/activities/emails/recipients/components/EmailRecipientsFieldRows';
 import { EmailRecipientsProvider } from '@/activities/emails/recipients/components/EmailRecipientsProvider';
 import { EmailRecipientsReadonlyFields } from '@/activities/emails/recipients/components/EmailRecipientsReadonlyFields';
@@ -12,23 +15,48 @@ type EmailRecipientsFieldsProps = {
   readonly?: boolean;
 };
 
+const hasCcOrBccRecipients = ({ cc, bcc }: EmailRecipientsByFieldId) =>
+  isNonEmptyArray(cc) || isNonEmptyArray(bcc);
+
 export const EmailRecipientsFields = ({
   recipientsByFieldId,
   onChange,
   onSubmit,
   contextRecord,
   readonly = false,
-}: EmailRecipientsFieldsProps) =>
-  readonly ? (
-    <EmailRecipientsReadonlyFields recipientsByFieldId={recipientsByFieldId} />
-  ) : (
+}: EmailRecipientsFieldsProps) => {
+  // Sticky once shown, so removing the last Cc chip doesn't unmount the field being edited.
+  const [isCcBccExpanded, setIsCcBccExpanded] = useState(() =>
+    hasCcOrBccRecipients(recipientsByFieldId),
+  );
+
+  const handleChange = (nextRecipientsByFieldId: EmailRecipientsByFieldId) => {
+    if (hasCcOrBccRecipients(nextRecipientsByFieldId)) {
+      setIsCcBccExpanded(true);
+    }
+
+    onChange(nextRecipientsByFieldId);
+  };
+
+  if (readonly) {
+    return (
+      <EmailRecipientsReadonlyFields
+        recipientsByFieldId={recipientsByFieldId}
+      />
+    );
+  }
+
+  return (
     <EmailRecipientsProvider
       recipientsByFieldId={recipientsByFieldId}
-      onChange={onChange}
+      onChange={handleChange}
     >
       <EmailRecipientsFieldRows
+        isCcBccExpanded={isCcBccExpanded}
+        onExpandCcBcc={() => setIsCcBccExpanded(true)}
         onSubmit={onSubmit}
         contextRecord={contextRecord}
       />
     </EmailRecipientsProvider>
   );
+};

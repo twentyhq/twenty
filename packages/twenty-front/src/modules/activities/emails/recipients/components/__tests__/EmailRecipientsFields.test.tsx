@@ -87,6 +87,36 @@ describe('EmailRecipientsFields', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('keeps Cc and Bcc open after their last recipient is removed', async () => {
+    const user = userEvent.setup();
+    const onChange = jest.fn();
+    const { rerender } = renderFields({
+      recipientsByFieldId: { ...RECIPIENTS, cc: [{ address: 'joe@acme.com' }] },
+      onChange,
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: 'Remove joe@acme.com' }),
+    );
+
+    expect(onChange).toHaveBeenCalledWith(RECIPIENTS);
+
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <Provider store={createStore()}>
+          <ToastProvider>
+            <EmailRecipientsFields
+              recipientsByFieldId={RECIPIENTS}
+              onChange={onChange}
+            />
+          </ToastProvider>
+        </Provider>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('combobox', { name: 'Cc' })).toBeInTheDocument();
+  });
+
   it('removes a recipient from its field', async () => {
     const user = userEvent.setup();
     const onChange = jest.fn();
