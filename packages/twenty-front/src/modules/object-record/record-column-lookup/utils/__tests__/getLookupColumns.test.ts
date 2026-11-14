@@ -1,3 +1,5 @@
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { getLookupColumns } from '@/object-record/record-column-lookup/utils/getLookupColumns';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -15,6 +17,8 @@ const employeesField = getMockFieldMetadataItemOrThrow({
 });
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+const getLookupTarget: GetRecordFieldLookupTarget = (params) =>
+  getRecordFieldLookupTarget({ ...params, objectMetadataItems });
 
 describe('getLookupColumns', () => {
   it('should list the relation and target of each lookup column only', () => {
@@ -34,7 +38,7 @@ describe('getLookupColumns', () => {
         fieldMetadataItemByFieldMetadataItemId: {
           [companyField.id]: companyField,
         },
-        objectMetadataItems,
+        getLookupTarget,
       }),
     ).toEqual([
       {

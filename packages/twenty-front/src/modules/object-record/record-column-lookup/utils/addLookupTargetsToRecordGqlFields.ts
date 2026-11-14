@@ -1,6 +1,5 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -9,7 +8,7 @@ export const addLookupTargetsToRecordGqlFields = ({
   recordGqlFields,
   recordFields,
   fieldMetadataItemByFieldMetadataItemId,
-  objectMetadataItems,
+  getLookupTarget,
 }: {
   recordGqlFields: RecordGqlFields;
   recordFields: Pick<
@@ -20,7 +19,7 @@ export const addLookupTargetsToRecordGqlFields = ({
     string,
     FieldMetadataItem | undefined
   >;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  getLookupTarget: GetRecordFieldLookupTarget;
 }) =>
   recordFields.reduce<RecordGqlFields>((gqlFields, recordField) => {
     const fieldMetadataItem =
@@ -30,10 +29,9 @@ export const addLookupTargetsToRecordGqlFields = ({
       return gqlFields;
     }
 
-    const lookupTargetFieldMetadataItem = getRecordFieldLookupTarget({
+    const lookupTargetFieldMetadataItem = getLookupTarget({
       recordField,
       fieldMetadataItem,
-      objectMetadataItems,
     })?.lookupTargetFieldMetadataItem;
 
     const relationGqlFields = gqlFields[fieldMetadataItem.name];

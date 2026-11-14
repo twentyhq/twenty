@@ -1,4 +1,4 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { getLookupColumns } from '@/object-record/record-column-lookup/utils/getLookupColumns';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -11,7 +11,7 @@ export const useRecordIndexLookupColumns = () => {
   );
   const { fieldMetadataItemByFieldMetadataItemId } =
     useRecordIndexContextOrThrow();
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
 
   // Memoized: both results feed query fingerprints and loader dependencies
   const lookupColumns = useMemo(
@@ -19,12 +19,12 @@ export const useRecordIndexLookupColumns = () => {
       getLookupColumns({
         recordFields: visibleRecordFields,
         fieldMetadataItemByFieldMetadataItemId,
-        objectMetadataItems,
+        getLookupTarget,
       }),
     [
       visibleRecordFields,
       fieldMetadataItemByFieldMetadataItemId,
-      objectMetadataItems,
+      getLookupTarget,
     ],
   );
 
