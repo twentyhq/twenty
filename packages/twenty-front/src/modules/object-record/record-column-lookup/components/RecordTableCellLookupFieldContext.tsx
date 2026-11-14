@@ -9,7 +9,10 @@ import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hook
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ReactNode } from 'react';
-import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  findById,
+} from 'twenty-shared/utils';
 
 type RecordTableCellLookupFieldContextProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -62,6 +65,9 @@ export const RecordTableCellLookupFieldContext = ({
         isRecordFieldReadOnly: true,
         isForbidden:
           !canReadRelatedRecord ||
+          !relationObjectMetadataItem.readableFields.some(
+            findById(lookupTargetFieldMetadataItem.id),
+          ) ||
           restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name),
       }}
     >
