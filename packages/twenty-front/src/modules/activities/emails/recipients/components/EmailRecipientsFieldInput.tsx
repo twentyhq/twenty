@@ -125,7 +125,6 @@ export const EmailRecipientsFieldInput = ({
   const recipients = recipientsByFieldId[fieldId];
   const onChange = (nextRecipients: EmailRecipient[]) =>
     setFieldRecipients(fieldId, nextRecipients);
-  // null when the drag started in another field.
   const draggedSourceIndices =
     draggedRecipients?.fieldId === fieldId ? draggedRecipients.indices : null;
   const excludedSuggestionKeys = Object.values(recipientsByFieldId)
