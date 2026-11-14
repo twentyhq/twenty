@@ -30,6 +30,7 @@ import { getUnsupportedViewFilterReason } from 'src/engine/core-modules/applicat
 import { getUnsupportedViewReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-view-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 type ViewChildren = Required<ViewChildrenManifests>;
@@ -52,10 +53,10 @@ export const reconstructViewsManifest = ({
   const coverage: ApplicationExportCoverageEntry[] = [];
   const parentViewStatusByUniversalIdentifier = new Map<string, ParentStatus>();
   const exportedFlatViews: FlatView[] = [];
+  const exportedViewFieldUniversalIdentifiers = new Set<string>();
+  const childrenByViewUniversalIdentifier = new Map<string, ViewChildren>();
 
-  for (const flatView of sortFlatEntitiesByUniversalIdentifier(
-    applicationAllFlatEntityMaps.flatViewMaps,
-  )) {
+  const classifyFlatView = (flatView: FlatView) => {
     if (flatView.isSystemSideEffect) {
       coverage.push({
         metadataName: 'view',
@@ -66,15 +67,29 @@ export const reconstructViewsManifest = ({
         flatView.universalIdentifier,
         'engineDerived',
       );
-      continue;
+
+      return;
     }
 
-    const unsupportedReason = getUnsupportedViewReason({
-      flatView,
-      applicationAllFlatEntityMaps,
-      allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers,
-    });
+    const ownerViewFieldUniversalIdentifier =
+      flatView.ownerViewFieldUniversalIdentifier;
+
+    const isOwnerViewFieldLeftOut =
+      isDefined(ownerViewFieldUniversalIdentifier) &&
+      !exportedViewFieldUniversalIdentifiers.has(
+        ownerViewFieldUniversalIdentifier,
+      );
+
+    const unsupportedReason =
+      getUnsupportedViewReason({
+        flatView,
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+      }) ??
+      (isOwnerViewFieldLeftOut
+        ? 'view scoping a view field that is not exported'
+        : undefined);
 
     if (isDefined(unsupportedReason)) {
       coverage.push({
@@ -87,29 +102,43 @@ export const reconstructViewsManifest = ({
         flatView.universalIdentifier,
         'unsupported',
       );
-      continue;
+
+      return;
     }
 
     exportedFlatViews.push(flatView);
+    childrenByViewUniversalIdentifier.set(flatView.universalIdentifier, {
+      fields: [],
+      filters: [],
+      filterGroups: [],
+      groups: [],
+      fieldGroups: [],
+      sorts: [],
+    });
     parentViewStatusByUniversalIdentifier.set(
       flatView.universalIdentifier,
       'exported',
     );
-  }
+  };
 
-  const childrenByViewUniversalIdentifier = new Map<string, ViewChildren>(
-    exportedFlatViews.map(({ universalIdentifier }) => [
-      universalIdentifier,
-      {
-        fields: [],
-        filters: [],
-        filterGroups: [],
-        groups: [],
-        fieldGroups: [],
-        sorts: [],
-      },
-    ]),
+  // Scope views wait for the view fields of the other views, since their status depends on their owner's
+  const sortedFlatViews = sortFlatEntitiesByUniversalIdentifier(
+    applicationAllFlatEntityMaps.flatViewMaps,
   );
+  const scopeFlatViews = sortedFlatViews.filter((flatView) =>
+    isDefined(flatView.ownerViewFieldUniversalIdentifier),
+  );
+  const scopeViewUniversalIdentifiers = new Set(
+    scopeFlatViews.map(({ universalIdentifier }) => universalIdentifier),
+  );
+
+  sortedFlatViews
+    .filter(
+      ({ universalIdentifier }) =>
+        !scopeViewUniversalIdentifiers.has(universalIdentifier),
+    )
+    .forEach(classifyFlatView);
+
   const viewFields: StandaloneViewFieldManifest[] = [];
   const decideViewChild = createChildDecider<FlatViewChild>({
     coverage,
@@ -123,9 +152,7 @@ export const reconstructViewsManifest = ({
   ): ViewChildren | undefined =>
     childrenByViewUniversalIdentifier.get(viewUniversalIdentifier);
 
-  for (const flatViewField of sortFlatEntitiesByUniversalIdentifier(
-    applicationAllFlatEntityMaps.flatViewFieldMaps,
-  )) {
+  const decideFlatViewField = (flatViewField: FlatViewField) => {
     const decision = decideViewChild({
       metadataName: 'viewField',
       flatEntity: flatViewField,
@@ -155,7 +182,28 @@ export const reconstructViewsManifest = ({
         fromFlatViewFieldToStandaloneViewFieldManifest({ flatViewField }),
       );
     }
-  }
+
+    if (isDefined(decision)) {
+      exportedViewFieldUniversalIdentifiers.add(
+        flatViewField.universalIdentifier,
+      );
+    }
+  };
+
+  const sortedFlatViewFields = sortFlatEntitiesByUniversalIdentifier(
+    applicationAllFlatEntityMaps.flatViewFieldMaps,
+  );
+  const isScopeViewChild = ({
+    viewUniversalIdentifier,
+  }: {
+    viewUniversalIdentifier: string;
+  }) => scopeViewUniversalIdentifiers.has(viewUniversalIdentifier);
+
+  sortedFlatViewFields
+    .filter((flatViewField) => !isScopeViewChild(flatViewField))
+    .forEach(decideFlatViewField);
+  scopeFlatViews.forEach(classifyFlatView);
+  sortedFlatViewFields.filter(isScopeViewChild).forEach(decideFlatViewField);
 
   for (const flatViewFieldGroup of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatViewFieldGroupMaps,
@@ -247,19 +295,21 @@ export const reconstructViewsManifest = ({
     }
   }
 
-  const views = exportedFlatViews.map((flatView) => {
-    coverage.push(
-      buildExportedCoverageEntry({
-        metadataName: 'view',
-        flatEntity: flatView,
-      }),
-    );
+  const views = exportedFlatViews
+    .sort(compareByUniversalIdentifier)
+    .map((flatView) => {
+      coverage.push(
+        buildExportedCoverageEntry({
+          metadataName: 'view',
+          flatEntity: flatView,
+        }),
+      );
 
-    return fromFlatViewToViewManifest({
-      flatView,
-      children: childrenOf(flatView.universalIdentifier),
+      return fromFlatViewToViewManifest({
+        flatView,
+        children: childrenOf(flatView.universalIdentifier),
+      });
     });
-  });
 
   viewFields.sort(compareByUniversalIdentifier);
 
