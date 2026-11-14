@@ -24,7 +24,7 @@ const parseSerializedEmailDocumentOrThrow = (
   return parseResult.document;
 };
 
-// The step body is a serialized email document; a whole-body variable may itself hold one.
+// A whole-body variable may itself hold a serialized email document
 export const resolveEmailBody = (
   body: string,
   context: Record<string, unknown>,

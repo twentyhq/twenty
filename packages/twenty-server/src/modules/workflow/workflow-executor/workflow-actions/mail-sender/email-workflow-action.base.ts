@@ -59,10 +59,10 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected override async toToolInput(
     resolvedInput: WorkflowSendEmailActionInput,
   ): Promise<ToolInput> {
-    // New steps are created with an empty body
+    // New steps are created with an empty body, and the 2-47 command left blank ones unconverted
     return {
       ...resolvedInput,
-      body: isNonEmptyString(resolvedInput.body)
+      body: isNonEmptyString(resolvedInput.body?.trim())
         ? parseJson<EmailDocument>(resolvedInput.body)
         : { type: 'text', text: '' },
     };
@@ -80,7 +80,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         inputWithoutBody,
         context,
       ) as typeof inputWithoutBody),
-      body: isNonEmptyString(body)
+      body: isNonEmptyString(body?.trim())
         ? JSON.stringify(resolveEmailBody(body, context))
         : body,
     };

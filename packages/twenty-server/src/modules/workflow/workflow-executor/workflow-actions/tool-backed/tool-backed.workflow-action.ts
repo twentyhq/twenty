@@ -60,7 +60,6 @@ export abstract class ToolBackedWorkflowAction<
     return resolveWorkflowInput(input, context) as TInput;
   }
 
-  // The step's stored input and the tool's input can differ, e.g. a serialized document the tool takes parsed
   protected async toToolInput(resolvedInput: TInput): Promise<ToolInput> {
     return resolvedInput;
   }
