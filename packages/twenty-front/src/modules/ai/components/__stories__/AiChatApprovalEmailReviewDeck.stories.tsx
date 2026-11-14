@@ -90,7 +90,7 @@ export const RetainedDraftEdits: Story = {
     await userEvent.type(bodyEditor, 'Updated walkthrough for Brian and Joe.');
     await userEvent.type(
       canvas.getByRole('combobox', { name: 'Bcc' }),
-      'archive@example.com',
+      'archive@example.com{Enter}',
     );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Next approval' }),
