@@ -8,6 +8,11 @@ import { Readable } from 'node:stream';
 import { finished, pipeline } from 'node:stream/promises';
 import { type ReadableStream as NodeWebReadableStream } from 'node:stream/web';
 
+import { CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-media-upload-base-url-env-var-name';
+import { resolveMediaUploadUrl } from 'src/logic-functions/domain/resolve-media-upload-url.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
+
 type MediaUploadTarget = {
   uploadUrl: string;
   contentType: string;
@@ -29,6 +34,22 @@ export const putMediaDownloadBodyToUploadTarget = async ({
   uploadTarget: MediaUploadTarget;
   signal: AbortSignal;
 }): Promise<void> => {
+  let uploadUrl: URL;
+
+  try {
+    uploadUrl = resolveMediaUploadUrl({
+      issuedUploadUrl: uploadTarget.uploadUrl,
+      mediaUploadBaseUrl: normalizeOptionalString(
+        getApplicationVariableValue(
+          CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME,
+        )?.trim(),
+      ),
+    });
+  } catch (error) {
+    await mediaDownloadBody.cancel().catch(() => undefined);
+    throw error;
+  }
+
   // Use node:http instead of fetch here: fetch can buffer ReadableStream
   // request bodies in memory, which OOMs Lambda for large recordings.
   const mediaDownloadReadable = Readable.fromWeb(
@@ -40,6 +61,7 @@ export const putMediaDownloadBodyToUploadTarget = async ({
     mediaDownloadReadable,
     sizeBytes,
     uploadTarget,
+    uploadUrl,
     signal,
   });
 };
@@ -49,15 +71,16 @@ const streamMediaDownloadReadableToUploadTarget = async ({
   mediaDownloadReadable,
   sizeBytes,
   uploadTarget,
+  uploadUrl,
   signal,
 }: {
   fileName: string;
   mediaDownloadReadable: Readable;
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
+  uploadUrl: URL;
   signal: AbortSignal;
 }): Promise<void> => {
-  const uploadUrl = new URL(uploadTarget.uploadUrl);
   const requestUpload =
     uploadUrl.protocol === 'http:' ? requestOverHttp : requestOverHttps;
   const uploadRequest = requestUpload(uploadUrl, {

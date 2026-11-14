@@ -24,6 +24,7 @@ import {
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
+import { CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-media-upload-base-url-env-var-name';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
@@ -225,6 +226,12 @@ export default defineApplication({
       description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
       isSecret: false,
       type: FieldType.NUMBER,
+    },
+    [CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME]: {
+      description:
+        'Base URL the recorder uploads recording media to, such as http://localhost:3000. Leave unset to upload to the URL the server issues. Set it on self-hosted deployments whose public URL sits behind a proxy with a request size limit (Google Cloud Run rejects requests over 32 MiB), pointing at an address of the Twenty server that the logic functions can reach directly.',
+      isSecret: false,
+      type: FieldType.TEXT,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
       description:
