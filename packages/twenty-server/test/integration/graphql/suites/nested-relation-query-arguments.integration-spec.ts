@@ -2,7 +2,9 @@ import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 const FIRST_COMPANY_ID = '20202020-fffe-4000-8000-000000000001';
@@ -384,6 +386,43 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
         [FIRST_COMPANY_ID]: ['Analyst', 'Buyer', 'CEO'],
         [SECOND_COMPANY_ID]: ['CTO', 'Designer'],
       },
+    );
+  });
+
+  it('rejects malformed nested arguments instead of ignoring them', async () => {
+    const response = await findCompaniesWithPeople('people(first: -1)');
+
+    expect(response.body.data?.companies ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.message).toContain('"first"');
+  });
+
+  it('rejects an invalid nested filter before running the mutation', async () => {
+    const response = await makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: `
+          id
+          people(filter: { unknownField: { eq: "x" } }) {
+            edges { node { id } }
+          }
+        `,
+        data: { name: 'Renamed by a failing mutation' },
+        recordId: FIRST_COMPANY_ID,
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+
+    const companyResponse = await makeGraphqlApiRequest(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'name',
+        filter: { id: { eq: FIRST_COMPANY_ID } },
+      }),
+    );
+
+    expect(companyResponse.body.data.company.name).toBe(
+      'Nested arguments company one',
     );
   });
 });

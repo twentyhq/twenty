@@ -40,4 +40,18 @@ describe('extractNestedRelationQueryArgs', () => {
       }),
     ).toEqual({});
   });
+
+  it.each([
+    ['a list filter', { filter: [] }],
+    ['a string filter', { filter: 'x' }],
+    ['a string orderBy', { orderBy: 'name' }],
+    ['a string first', { first: '5' }],
+    ['a negative first', { first: -1 }],
+    ['a fractional first', { first: 2.5 }],
+    ['an unknown argument', { limit: 5 }],
+  ])('rejects %s', (_, graphqlArguments) => {
+    expect(() => extractNestedRelationQueryArgs(graphqlArguments)).toThrow(
+      expect.objectContaining({ code: 'INVALID_QUERY_INPUT' }),
+    );
+  });
 });

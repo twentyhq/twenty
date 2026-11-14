@@ -1,6 +1,9 @@
 import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { type NestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
+import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/utils/extract-nested-relation-query-args.util';
 import {
   GraphqlQuerySelectedFieldsParser,
@@ -15,6 +18,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export class GraphqlQuerySelectedFieldsRelationParser {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  private readonly filterArgProcessor = new FilterArgProcessorService();
 
   constructor(
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
@@ -81,11 +85,35 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
     accumulator.nestedRelationQueryArgsByFieldName[fieldKey] = {
-      ...(isOneToManyRelation && isPlainObject(fieldValue)
-        ? extractNestedRelationQueryArgs(fieldValue.__arguments)
+      ...(isOneToManyRelation &&
+      isPlainObject(fieldValue) &&
+      isPlainObject(fieldValue.__arguments)
+        ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
         : {}),
       nestedRelationQueryArgsByFieldName:
         relationAccumulator.nestedRelationQueryArgsByFieldName,
+    };
+  }
+
+  // Resolved while parsing so a malformed argument fails before a mutation writes anything
+  private resolveQueryArgs(
+    graphqlArguments: Record<string, unknown>,
+    targetObjectMetadata: FlatObjectMetadata,
+  ): Omit<NestedRelationQueryArgs, 'nestedRelationQueryArgsByFieldName'> {
+    const { filter, orderBy, first } =
+      extractNestedRelationQueryArgs(graphqlArguments);
+
+    return {
+      filter: this.filterArgProcessor.process({
+        filter,
+        flatObjectMetadata: targetObjectMetadata,
+        flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      }),
+      orderBy: isDefined(orderBy)
+        ? [...orderBy, DEFAULT_ID_ORDER_BY_TIEBREAKER]
+        : undefined,
+      first,
     };
   }
 }
