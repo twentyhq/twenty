@@ -7,11 +7,17 @@ describe('isSafeUrl', () => {
     expect(isSafeUrl('/objects/people?view=1#top')).toBe(true);
   });
 
+  it('accepts relative paths with leading or trailing whitespace', () => {
+    expect(isSafeUrl('  /settings  ')).toBe(true);
+    expect(isSafeUrl('\t/objects/people\n')).toBe(true);
+  });
+
   it('accepts absolute urls with a safe protocol', () => {
     expect(isSafeUrl('https://example.com')).toBe(true);
     expect(isSafeUrl('http://example.com/path')).toBe(true);
     expect(isSafeUrl('mailto:someone@example.com')).toBe(true);
     expect(isSafeUrl('tel:+33612345678')).toBe(true);
+    expect(isSafeUrl('  https://example.com/dashboard  ')).toBe(true);
   });
 
   it('rejects unsafe protocols', () => {
@@ -28,8 +34,13 @@ describe('isSafeUrl', () => {
     expect(isSafeUrl('/\t\\evil.com')).toBe(false);
   });
 
-  it('rejects unparsable input', () => {
+  it('rejects unparsable and non-string inputs safely without throwing', () => {
     expect(isSafeUrl('')).toBe(false);
+    expect(isSafeUrl('   ')).toBe(false);
     expect(isSafeUrl('not a url')).toBe(false);
+    expect(isSafeUrl(null)).toBe(false);
+    expect(isSafeUrl(undefined)).toBe(false);
+    expect(isSafeUrl(123 as any)).toBe(false);
+    expect(isSafeUrl({} as any)).toBe(false);
   });
 });
