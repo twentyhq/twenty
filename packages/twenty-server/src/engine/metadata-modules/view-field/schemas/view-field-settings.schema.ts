@@ -6,6 +6,7 @@ export const viewFieldSettingsSchema = z
   .object({
     label: z
       .string()
+      .trim()
       .min(1)
       .max(IDENTIFIER_MAX_CHAR_LENGTH)
       .nullable()

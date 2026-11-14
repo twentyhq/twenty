@@ -99,7 +99,7 @@ describe('View field settings', () => {
     {
       title: 'an empty column label',
       input: { isCanonical: false, settings: { label: '   ' } },
-      expectedMessage: 'View field label must be a non-empty string',
+      expectedMessage: 'Invalid view field settings',
     },
     {
       title: 'settings on a canonical column',
