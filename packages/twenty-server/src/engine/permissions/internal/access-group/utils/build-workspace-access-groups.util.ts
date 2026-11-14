@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -109,6 +109,9 @@ export const buildWorkspaceAccessGroups = ({
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
           flatFieldMetadataMaps,
           isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+          isSharingGroupsByPredicateValue:
+            featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ??
+            false,
         })) {
           accessGroupByGroupHash.set(accessGroup.groupHash, accessGroup);
         }

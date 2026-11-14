@@ -2,7 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordsOperationType } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type ObjectRecordsOperationType,
+} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
@@ -61,6 +64,10 @@ export class AccessGroupReadService {
             workspaceMembers,
             flatFieldMetadataMaps,
             isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+            isSharingGroupsByPredicateValue:
+              featureFlagsMap[
+                FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED
+              ] ?? false,
           }),
       ),
     });

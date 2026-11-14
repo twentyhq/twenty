@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RlsRuleSharedPredicate } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-shared-predicate.util';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
@@ -98,6 +99,30 @@ export const computeAccessGroupHash = ({
         Object.entries(memberFieldValues ?? {}).sort(
           ([firstKey], [secondKey]) => firstKey.localeCompare(secondKey),
         ),
+      ]),
+    )
+    .digest('hex');
+
+export const computeSharedAccessGroupHash = ({
+  sharedPredicate,
+  value,
+  isRelationHopEnabled,
+}: {
+  sharedPredicate: Omit<RlsRuleSharedPredicate, 'values'>;
+  value: string;
+  isRelationHopEnabled: boolean;
+}): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify([
+        'shared',
+        sharedPredicate.objectMetadataId,
+        sharedPredicate.relationFieldMetadataId,
+        sharedPredicate.fieldMetadataId,
+        sharedPredicate.subFieldName,
+        sharedPredicate.operand,
+        value,
+        isRelationHopEnabled,
       ]),
     )
     .digest('hex');

@@ -15,7 +15,14 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
-import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import {
+  computeAccessGroupHash,
+  computeSharedAccessGroupHash,
+} from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import {
+  findRlsRuleSharedPredicate,
+  SHARED_PREDICATE_MEMBER_FIELD_KEY,
+} from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-shared-predicate.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
 const ALL_OPERATION_TYPES: ObjectRecordsOperationType[] = [
@@ -34,6 +41,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers,
   flatFieldMetadataMaps,
   isRelationHopEnabled,
+  isSharingGroupsByPredicateValue = false,
 }: {
   roleId: string;
   objectMetadataId: string;
@@ -42,6 +50,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   isRelationHopEnabled: boolean;
+  isSharingGroupsByPredicateValue?: boolean;
 }): AccessGroupWithoutCompactId[] => {
   if (!isDefined(objectRecordsPermissions)) {
     return [];
@@ -93,6 +102,31 @@ export const buildRoleAccessGroupsOrThrow = ({
   const buildRuleAccessGroups = (
     rowLevelPermissionRule: RowLevelRecordsPermissions,
   ): AccessGroupWithoutCompactId[] => {
+    const sharedPredicate = isSharingGroupsByPredicateValue
+      ? findRlsRuleSharedPredicate(rowLevelPermissionRule)
+      : undefined;
+
+    if (isDefined(sharedPredicate)) {
+      const { values, ...sharedPredicateWithoutValues } = sharedPredicate;
+
+      return values.map((value) => ({
+        groupHash: computeSharedAccessGroupHash({
+          sharedPredicate: sharedPredicateWithoutValues,
+          value,
+          isRelationHopEnabled,
+        }),
+        roleId,
+        objectMetadataId,
+        rowLevelPermissionPredicateGroupId: rowLevelPermissionRule.ruleId,
+        memberFieldValues: {
+          [SHARED_PREDICATE_MEMBER_FIELD_KEY]: {
+            ...sharedPredicateWithoutValues,
+            value,
+          },
+        },
+      }));
+    }
+
     const workspaceMemberBoundPredicates =
       rowLevelPermissionRule.predicates.filter(
         ({ workspaceMemberFieldMetadataId }) =>
