@@ -33,7 +33,7 @@ describe('useHandleToggleColumnSort', () => {
     throw new Error('Missing mock fields');
   }
 
-  const COMPONENT_INSTANCE_ID = 'test-instance-id';
+  const COMPONENT_INSTANCE_ID = 'recordIndexId';
 
   const renderToggleSortHook = (initialSorts: RecordSort[] = []) =>
     renderHook(
