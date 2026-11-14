@@ -30,6 +30,8 @@ export type IngestMessage = {
   participants: IngestMessageParticipant[];
   folderExternalIds?: string[];
   attachments?: IngestMessageAttachment[];
+  // Read state for the channel owner, applied only when the message is first stored; defaults to read
+  isRead?: boolean;
 };
 
 export type IngestedMessage = {

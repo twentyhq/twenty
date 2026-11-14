@@ -518,6 +518,7 @@ input AppMessageInput {
   attachments: [AppMessageAttachmentInput!]
   externalId: String!
   folderExternalIds: [String!]
+  isRead: Boolean
   participants: [AppMessageParticipantInput!]!
   receivedAt: DateTime!
   subject: String
@@ -3325,6 +3326,7 @@ type MessageCampaignSendBlockerDTO {
 }
 
 type MessageChannel {
+  canStartConversation: Boolean!
   connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -3741,6 +3743,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setAppMessageThreadReadState(input: SetAppMessageThreadReadStateInput!): SetAppMessageThreadReadStateOutput!
   setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
@@ -3753,6 +3756,7 @@ type Mutation {
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   snoozeAgentChatThreadInChannel(snoozedUntil: DateTime!, threadId: UUID!): Boolean!
+  startAppChannelConversation(input: StartAppChannelConversationInput!): SendAppChannelMessageOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -5048,6 +5052,16 @@ input SetAppKeyValueInput {
   value: JSON
 }
 
+input SetAppMessageThreadReadStateInput {
+  isRead: Boolean!
+  messageChannelId: UUID!
+  threadExternalId: String!
+}
+
+type SetAppMessageThreadReadStateOutput {
+  updatedMessageCount: Int!
+}
+
 type SettingsMenuItem {
   applicationId: UUID!
   createdAt: DateTime!
@@ -5121,6 +5135,13 @@ type Skill {
 type StandaloneRichTextConfiguration {
   body: RichTextBody!
   configurationType: WidgetConfigurationType!
+}
+
+input StartAppChannelConversationInput {
+  idempotencyKey: UUID!
+  messageChannelId: UUID!
+  personId: UUID!
+  text: String!
 }
 
 type StartWorkspaceSetupChatResult {

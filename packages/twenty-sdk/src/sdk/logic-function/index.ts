@@ -61,6 +61,10 @@ export type {
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,
+  StartAppConversationPayload,
+  StartAppConversationRecipient,
+  StartAppConversationResult,
+  StartAppConversationResultRecipient,
 } from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';
@@ -71,6 +75,8 @@ export { updateMessageChannel } from '@/sdk/logic-function/messaging/update-mess
 export type { UpdateMessageChannelInput } from '@/sdk/logic-function/messaging/update-message-channel';
 export { deleteMessageChannel } from '@/sdk/logic-function/messaging/delete-message-channel';
 export { ingestMessages } from '@/sdk/logic-function/messaging/ingest-messages';
+export { setMessageThreadReadState } from '@/sdk/logic-function/messaging/set-message-thread-read-state';
+export type { SetMessageThreadReadStateInput } from '@/sdk/logic-function/messaging/set-message-thread-read-state';
 export { uploadMessageAttachment } from '@/sdk/logic-function/messaging/upload-message-attachment';
 export type {
   IngestedMessage,

@@ -991,6 +991,9 @@ export const STANDARD_OBJECT_FIELDS = {
     direction: {
       universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
     },
+    isRead: {
+      universalIdentifier: 'e2342b78-0e71-49ba-b9d4-f4b89e4b988e',
+    },
     messageFolders: {
       universalIdentifier: '9bfc9da7-ae2d-44fd-9563-ede90c5d6222',
     },
