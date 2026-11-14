@@ -32,6 +32,7 @@ export class CreateViewPermissionGuard implements CanActivate {
 
     return this.viewAccessService.canUserCreateView({
       visibility,
+      ownerViewFieldId: args?.input?.ownerViewFieldId,
       accessContext: resolveViewAccessContext(request),
     });
   }
