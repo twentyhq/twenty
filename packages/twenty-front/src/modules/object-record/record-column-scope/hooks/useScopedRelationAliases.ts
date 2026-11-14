@@ -3,8 +3,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
 import { computeScopedRelationArgs } from '@/object-record/record-column-scope/utils/computeScopedRelationArgs';
 import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
-import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
-import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
+import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -47,8 +46,7 @@ export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
 
       if (
         !isDefined(fieldMetadataItem) ||
-        !isScopableRelationField(fieldMetadataItem) ||
-        !isRecordFieldScoped({ recordField, scopeView })
+        !isScopedRelationColumn({ fieldMetadataItem, recordField, scopeView })
       ) {
         return [];
       }

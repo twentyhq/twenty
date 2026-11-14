@@ -1,8 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
-import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
+import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -134,10 +133,9 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinition.metadata.fieldName,
   );
 
-  const isScopedRelationColumn =
+  const isScopedColumn =
     isColumnSettingsEnabled &&
-    isScopableRelationField(fieldMetadataItem) &&
-    isRecordFieldScoped({ recordField, scopeView });
+    isScopedRelationColumn({ fieldMetadataItem, recordField, scopeView });
 
   return (
     <FieldContext.Provider
@@ -166,9 +164,7 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
-        scopedRelationViewFieldId: isScopedRelationColumn
-          ? recordField.id
-          : undefined,
+        scopedRelationViewFieldId: isScopedColumn ? recordField.id : undefined,
       }}
     >
       {children}

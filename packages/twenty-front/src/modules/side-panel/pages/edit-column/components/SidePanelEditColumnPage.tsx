@@ -1,7 +1,7 @@
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
-import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -135,7 +135,8 @@ const SidePanelEditColumnForm = ({
   );
 
   const relationObjectMetadataItem =
-    isDefined(fieldMetadataItem) && isScopableRelationField(fieldMetadataItem)
+    isDefined(fieldMetadataItem) &&
+    isPlainOneToManyRelationField(fieldMetadataItem)
       ? findRelationTargetObjectMetadataItem({
           fieldMetadataItem,
           objectMetadataItems,

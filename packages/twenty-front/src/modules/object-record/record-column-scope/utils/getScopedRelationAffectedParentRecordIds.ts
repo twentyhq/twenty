@@ -29,6 +29,10 @@ const getChangedRecords = (
       return [{ id: operation.deletedRecordId }];
     case 'delete-many':
       return operation.deletedRecordIds.map((id) => ({ id }));
+    // Only soft-deleted records can be destroyed, and their delete already refreshed the rows
+    case 'destroy-one':
+    case 'destroy-many':
+      return [];
     default:
       return undefined;
   }
