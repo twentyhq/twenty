@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
@@ -22,6 +23,11 @@ export const useBuildRecordInputFromFilters = ({
     instanceId,
   );
 
+  const currentRecordFilterGroups = useAtomComponentStateValue(
+    currentRecordFilterGroupsComponentState,
+    instanceId,
+  );
+
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { currentRecord } = useContext(RecordFilterValueDependenciesContext);
@@ -31,6 +37,7 @@ export const useBuildRecordInputFromFilters = ({
   const buildRecordInputFromFilters = (): Partial<ObjectRecord> => {
     return buildRecordInputFromFilter({
       currentRecordFilters,
+      currentRecordFilterGroups,
       objectMetadataItem,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
       currentRecordId: currentRecord?.id,
