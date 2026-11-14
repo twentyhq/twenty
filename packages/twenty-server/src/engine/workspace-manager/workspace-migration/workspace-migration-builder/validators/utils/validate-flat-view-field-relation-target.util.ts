@@ -1,7 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
+import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isManyToOneRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-many-to-one-relation-universal-flat-field-metadata.util';
+import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -22,14 +23,18 @@ export const validateFlatViewFieldRelationTarget = ({
     relationTargetFieldMetadataUniversalIdentifier,
   },
   flatFieldMetadata,
-  relationTargetFlatFieldMetadata,
+  flatFieldMetadataMaps,
 }: {
   flatViewField: Pick<
     UniversalFlatViewField,
     'isCanonical' | 'relationTargetFieldMetadataUniversalIdentifier'
   >;
   flatFieldMetadata: RelationTargetFlatFieldMetadata;
-  relationTargetFlatFieldMetadata: RelationTargetFlatFieldMetadata | undefined;
+  flatFieldMetadataMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, RelationTargetFlatFieldMetadata>
+    >;
+  };
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
     return [];
@@ -45,7 +50,12 @@ export const validateFlatViewFieldRelationTarget = ({
     ];
   }
 
-  if (!isManyToOneRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
+  if (
+    !isRelationUniversalFlatFieldMetadataOfType({
+      flatFieldMetadata,
+      relationType: RelationType.MANY_TO_ONE,
+    })
+  ) {
     return [
       {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
@@ -54,6 +64,11 @@ export const validateFlatViewFieldRelationTarget = ({
       },
     ];
   }
+
+  const relationTargetFlatFieldMetadata =
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      relationTargetFieldMetadataUniversalIdentifier
+    ];
 
   if (
     !isDefined(relationTargetFlatFieldMetadata) ||

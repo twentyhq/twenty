@@ -89,14 +89,7 @@ export class FlatViewFieldValidatorService {
         ...validateFlatViewFieldRelationTarget({
           flatViewField: updatedFlatViewField,
           flatFieldMetadata,
-          relationTargetFlatFieldMetadata: isDefined(
-            updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier,
-          )
-            ? flatFieldMetadataMaps.byUniversalIdentifier[
-                updatedFlatViewField
-                  .relationTargetFieldMetadataUniversalIdentifier
-              ]
-            : undefined,
+          flatFieldMetadataMaps,
         }),
       );
     }
@@ -249,20 +242,10 @@ export class FlatViewFieldValidatorService {
           isCanonical: flatViewFieldToValidate.isCanonical,
           flatFieldMetadata,
         }),
-      );
-
-      validationResult.errors.push(
         ...validateFlatViewFieldRelationTarget({
           flatViewField: flatViewFieldToValidate,
           flatFieldMetadata,
-          relationTargetFlatFieldMetadata: isDefined(
-            flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
-          )
-            ? flatFieldMetadataMaps.byUniversalIdentifier[
-                flatViewFieldToValidate
-                  .relationTargetFieldMetadataUniversalIdentifier
-              ]
-            : undefined,
+          flatFieldMetadataMaps,
         }),
       );
     }
