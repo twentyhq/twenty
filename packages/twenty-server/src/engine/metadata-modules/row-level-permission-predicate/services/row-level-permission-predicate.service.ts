@@ -111,14 +111,19 @@ export class RowLevelPermissionPredicateService {
   async upsertRowLevelPermissionPredicates({
     input,
     workspaceId,
+    isSystemBuild = false,
   }: {
     input: UpsertRowLevelPermissionPredicatesInput;
     workspaceId: string;
+    // rules the system maintains exist on every plan and on non editable roles
+    isSystemBuild?: boolean;
   }): Promise<{
     predicates: RowLevelPermissionPredicateDTO[];
     predicateGroups: RowLevelPermissionPredicateGroupDTO[];
   }> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
+    if (!isSystemBuild) {
+      await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
+    }
 
     const { roleId, objectMetadataId, predicates, predicateGroups } = input;
 
@@ -252,6 +257,7 @@ export class RowLevelPermissionPredicateService {
 
     await this.runUpsertMigration({
       workspaceId,
+      isSystemBuild,
       ...ruleChanges,
       predicatesToDelete,
       groupsToDelete,
@@ -772,6 +778,7 @@ export class RowLevelPermissionPredicateService {
 
   private async runUpsertMigration({
     workspaceId,
+    isSystemBuild,
     rulesToCreate,
     rulesToUpdate,
     rulesToDelete,
@@ -784,6 +791,7 @@ export class RowLevelPermissionPredicateService {
     groupsToDelete,
   }: {
     workspaceId: string;
+    isSystemBuild: boolean;
     rulesToCreate: FlatRowLevelPermissionRule[];
     rulesToUpdate: FlatRowLevelPermissionRule[];
     rulesToDelete: FlatRowLevelPermissionRule[];
@@ -826,7 +834,7 @@ export class RowLevelPermissionPredicateService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

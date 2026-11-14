@@ -82,9 +82,11 @@ export class FieldPermissionService {
   public async upsertFieldPermissions({
     workspaceId,
     input,
+    isSystemBuild = false,
   }: {
     workspaceId: string;
     input: UpsertFieldPermissionsInput;
+    isSystemBuild?: boolean;
   }): Promise<FlatFieldPermission[]> {
     const [flatMapsForRoleObjectField, flatFieldPermissionMapsResult] =
       await Promise.all([
@@ -310,7 +312,7 @@ export class FieldPermissionService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         } as Parameters<
