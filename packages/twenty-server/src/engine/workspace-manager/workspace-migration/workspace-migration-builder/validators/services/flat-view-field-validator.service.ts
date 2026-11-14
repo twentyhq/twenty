@@ -14,6 +14,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
 import { validateFlatViewFieldSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-settings.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
 
@@ -72,24 +73,36 @@ export class FlatViewFieldValidatorService {
       isDefined(flatEntityUpdate.settings) ||
       isDefined(flatEntityUpdate.universalOverrides);
 
-    const settingsFlatFieldMetadata = isSettingsUpdate
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            updatedFlatViewField.fieldMetadataUniversalIdentifier,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        updatedFlatViewField.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
-    if (isDefined(settingsFlatFieldMetadata)) {
+    if (isDefined(flatFieldMetadata)) {
       validationResult.errors.push(
-        ...validateFlatViewFieldSettings({
-          settings: resolveEffectiveUniversalFlatEntityProperty({
-            metadataName: 'viewField',
-            universalFlatEntity: updatedFlatViewField,
-            property: 'settings',
-          }),
-          isCanonical: updatedFlatViewField.isCanonical,
-          flatFieldMetadata: settingsFlatFieldMetadata,
+        ...(isSettingsUpdate
+          ? validateFlatViewFieldSettings({
+              settings: resolveEffectiveUniversalFlatEntityProperty({
+                metadataName: 'viewField',
+                universalFlatEntity: updatedFlatViewField,
+                property: 'settings',
+              }),
+              isCanonical: updatedFlatViewField.isCanonical,
+              flatFieldMetadata,
+            })
+          : []),
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: updatedFlatViewField,
+          flatFieldMetadata,
+          relationTargetFlatFieldMetadata: isDefined(
+            updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier,
+          )
+            ? flatFieldMetadataMaps.byUniversalIdentifier[
+                updatedFlatViewField
+                  .relationTargetFieldMetadataUniversalIdentifier
+              ]
+            : undefined,
         }),
       );
     }
@@ -241,6 +254,21 @@ export class FlatViewFieldValidatorService {
           settings: flatViewFieldToValidate.settings,
           isCanonical: flatViewFieldToValidate.isCanonical,
           flatFieldMetadata,
+        }),
+      );
+
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: flatViewFieldToValidate,
+          flatFieldMetadata,
+          relationTargetFlatFieldMetadata: isDefined(
+            flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+          )
+            ? flatFieldMetadataMaps.byUniversalIdentifier[
+                flatViewFieldToValidate
+                  .relationTargetFieldMetadataUniversalIdentifier
+              ]
+            : undefined,
         }),
       );
     }

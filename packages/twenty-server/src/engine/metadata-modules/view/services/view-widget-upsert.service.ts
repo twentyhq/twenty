@@ -595,6 +595,8 @@ export class ViewWidgetUpsertService {
         position: inputField.position,
         aggregateOperation: inputField.aggregateOperation ?? null,
         settings: null,
+        relationTargetFieldMetadataId: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
         overrides: null,
         universalOverrides: null,
         isActive: true,

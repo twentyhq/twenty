@@ -223,6 +223,7 @@ const buildFlatViewField = ({
   fieldMetadataId: `${viewFieldManifest.fieldMetadataUniversalIdentifier}-id`,
   viewId: `${viewUniversalIdentifier}-id`,
   viewFieldGroupId: null,
+  relationTargetFieldMetadataId: null,
   overrides: null,
   ...flatViewFieldProperties,
 });

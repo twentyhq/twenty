@@ -28,17 +28,23 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
 }: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): UniversalFlatViewField & {
   id: string;
 } => {
-  const { fieldMetadataId, viewId, viewFieldGroupId, ...createViewFieldInput } =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawCreateViewFieldInput,
-      [
-        'aggregateOperation',
-        'fieldMetadataId',
-        'id',
-        'viewId',
-        'viewFieldGroupId',
-      ],
-    );
+  const {
+    fieldMetadataId,
+    viewId,
+    viewFieldGroupId,
+    relationTargetFieldMetadataId,
+    ...createViewFieldInput
+  } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+    rawCreateViewFieldInput,
+    [
+      'aggregateOperation',
+      'fieldMetadataId',
+      'id',
+      'viewId',
+      'viewFieldGroupId',
+      'relationTargetFieldMetadataId',
+    ],
+  );
 
   const { settings } = extractAndSanitizeObjectStringFields(
     createViewFieldInput,
@@ -52,9 +58,15 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     viewFieldGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'viewField',
-    foreignKeyValues: { fieldMetadataId, viewId, viewFieldGroupId },
+    foreignKeyValues: {
+      fieldMetadataId,
+      viewId,
+      viewFieldGroupId,
+      relationTargetFieldMetadataId,
+    },
     flatEntityMaps: {
       flatFieldMetadataMaps,
       flatViewMaps,
@@ -80,6 +92,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     isCanonical: createViewFieldInput.isCanonical ?? true,
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

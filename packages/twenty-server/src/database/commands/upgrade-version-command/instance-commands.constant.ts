@@ -308,6 +308,7 @@ import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/da
 import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794590652080-backfill-field-metadata-option-rows-from-stored-options';
 import { AddViewFieldSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794591685022-add-view-field-settings';
 import { AddViewOwnerViewFieldIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794591789191-add-view-owner-view-field-id';
+import { AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794606690417-add-view-field-relation-target-field-metadata-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -618,4 +619,5 @@ export const INSTANCE_COMMANDS = [
   BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
   AddViewFieldSettingsFastInstanceCommand,
   AddViewOwnerViewFieldIdFastInstanceCommand,
+  AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand,
 ];
