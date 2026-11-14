@@ -73,13 +73,15 @@ export class ViewAccessService {
   }): Promise<boolean> {
     // A scope view inherits the visibility of its owner column's view, so editing that view is what it takes
     if (isDefined(ownerViewFieldId)) {
-      await this.findModifiableParentViewOrThrow({
+      const ownerParentView = await this.findModifiableParentViewOrThrow({
         kind: 'viewField',
         entityId: ownerViewFieldId,
         accessContext,
       });
 
-      return true;
+      if (isDefined(ownerParentView)) {
+        return true;
+      }
     }
 
     // An UNLISTED view belongs to the user who created it, so a principal that

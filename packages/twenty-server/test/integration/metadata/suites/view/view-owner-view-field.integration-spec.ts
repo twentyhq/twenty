@@ -317,6 +317,25 @@ describe('View scoping a one-to-many view field', () => {
     });
   });
 
+  it('needs the usual view permission when the owner column does not exist', async () => {
+    const { errors } = await createOneView({
+      expectToFail: true,
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      input: {
+        name: 'Guest workspace view',
+        icon: 'IconTable',
+        objectMetadataId: testContext.actionItemObjectId,
+        type: ViewType.TABLE_WIDGET,
+        visibility: ViewVisibility.WORKSPACE,
+        ownerViewFieldId: '20202020-0000-4000-8000-0000000000ff',
+      },
+    });
+
+    expect(errors?.[0]?.message).toBe(
+      'You do not have permission to create workspace-level views',
+    );
+  });
+
   it('rejects turning a scope view into a regular view', async () => {
     const viewFieldId = await createDealViewField(
       testContext.actionItemsFieldId,
