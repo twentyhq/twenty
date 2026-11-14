@@ -105,7 +105,13 @@ describe('DraftEmailWorkflowAction', () => {
           connectedAccountId: 'account-1',
           recipients: { to: 'test@example.com' },
           subject: 'Draft Test',
-          body: '{{trigger.name}}',
+          body: JSON.stringify({
+            type: 'doc',
+            attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+            content: [
+              { type: 'htmlDocument', attrs: { html: '{{trigger.name}}' } },
+            ],
+          }),
         }),
       ],
       context: { trigger: { name: 'John' } },
@@ -114,11 +120,11 @@ describe('DraftEmailWorkflowAction', () => {
 
     expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
       expect.objectContaining({
-        body: JSON.stringify({
+        body: {
           type: 'doc',
           attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
           content: [{ type: 'htmlDocument', attrs: { html: 'John' } }],
-        }),
+        },
       }),
       expect.objectContaining({ workspaceId: 'workspace-1' }),
     );
@@ -132,7 +138,7 @@ describe('DraftEmailWorkflowAction', () => {
           connectedAccountId: 'account-1',
           recipients: { to: 'test@example.com' },
           subject: 'Draft Test',
-          body: 'hello',
+          body: '',
         }),
       ],
       context: {},
@@ -163,7 +169,7 @@ describe('DraftEmailWorkflowAction', () => {
             connectedAccountId,
             recipients: { to: 'test@example.com' },
             subject: 'Draft Test',
-            body: 'hello',
+            body: '',
           }),
         ],
         context: {},

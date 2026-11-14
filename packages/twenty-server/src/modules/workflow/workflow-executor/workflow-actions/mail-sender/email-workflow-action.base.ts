@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
@@ -10,6 +11,7 @@ import {
 import { IsNull, type Repository } from 'typeorm';
 
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -49,13 +51,20 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     rawInput: WorkflowSendEmailActionInput,
     context: Record<string, unknown>,
   ): Promise<WorkflowSendEmailActionInput> {
-    const files = resolveEmailFiles(rawInput.files, context);
+    return { ...rawInput, files: resolveEmailFiles(rawInput.files, context) };
+  }
 
-    const body = isDefined(rawInput.body)
-      ? await resolveEmailBody(rawInput.body, context)
-      : rawInput.body;
-
-    return { ...rawInput, body, files };
+  protected override async toToolInput(
+    resolvedInput: WorkflowSendEmailActionInput,
+    context: Record<string, unknown>,
+  ): Promise<ToolInput> {
+    // New steps are created with an empty body
+    return {
+      ...resolvedInput,
+      body: isNonEmptyString(resolvedInput.body)
+        ? resolveEmailBody(resolvedInput.body, context)
+        : { type: 'text', text: '' },
+    };
   }
 
   protected override resolveInput(

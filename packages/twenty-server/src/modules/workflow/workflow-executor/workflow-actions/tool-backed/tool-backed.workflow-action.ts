@@ -60,6 +60,14 @@ export abstract class ToolBackedWorkflowAction<
     return resolveWorkflowInput(input, context) as TInput;
   }
 
+  // The step's stored input and the tool's input can differ, e.g. a serialized document the tool takes parsed
+  protected async toToolInput(
+    resolvedInput: TInput,
+    _context: Record<string, unknown>,
+  ): Promise<ToolInput> {
+    return resolvedInput;
+  }
+
   protected abstract buildStepLog(
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
@@ -90,7 +98,7 @@ export abstract class ToolBackedWorkflowAction<
 
     const startedAt = Date.now();
     const toolOutput = await this.getTool().execute(
-      resolvedInput,
+      await this.toToolInput(resolvedInput, context),
       await this.buildToolExecutionContext(runInfo, currentStepId),
     );
     const durationMs = Date.now() - startedAt;

@@ -1,12 +1,14 @@
 import { isString } from '@sniptt/guards';
 
-import { parseJson } from '@/utils/parseJson';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import {
+  EMAIL_DOCUMENT_SCHEMA_VERSION,
+  isEmailDocumentShape,
+  isPlainObject,
+  parseEmailDocument,
+  parseJson,
+} from 'twenty-shared/utils';
 
-import { convertStringBodyToEmailDocument } from './convert-string-body-to-email-document';
-import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
-import { isEmailDocumentShape } from './is-email-document-shape';
-import { parseEmailDocument } from './parse-email-document';
+import { convertStringBodyToEmailDocument } from 'src/database/commands/upgrade-version-command/2-47/utils/convert-string-body-to-email-document.util';
 
 export const convertEmailBodyToEmailDocument = (emailBody: unknown) => {
   const emailBodyAsJson = isString(emailBody)

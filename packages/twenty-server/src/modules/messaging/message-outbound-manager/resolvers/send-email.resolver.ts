@@ -19,6 +19,10 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
+import {
+  EmailToolException,
+  EmailToolExceptionCode,
+} from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -27,7 +31,11 @@ import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/d
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 import { SentMessageRecordLinkService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-record-link.service';
 import { CustomException } from 'src/utils/custom-exception';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseCanonicalEmailDocument,
+  parseJson,
+} from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -76,6 +84,17 @@ export class SendEmailResolver {
         workspaceId: workspace.id,
       });
 
+      const bodyParseResult = parseCanonicalEmailDocument(
+        parseJson<unknown>(input.body),
+      );
+
+      if (!bodyParseResult.success) {
+        throw new EmailToolException(
+          `Invalid outbound email document: ${bodyParseResult.error}`,
+          EmailToolExceptionCode.INVALID_EMAIL_BODY,
+        );
+      }
+
       const result = await this.emailComposerService.composeEmail({
         parameters: {
           recipients: {
@@ -84,7 +103,7 @@ export class SendEmailResolver {
             bcc: input.bcc ?? '',
           },
           subject: input.subject,
-          body: input.body,
+          body: bodyParseResult.document,
           connectedAccountId: input.connectedAccountId,
           fromHandle: input.fromHandle,
           files: input.files ?? [],

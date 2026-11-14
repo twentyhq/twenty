@@ -8,7 +8,7 @@ export type ComposeEmailParams = {
     bcc?: string;
   };
   subject: string;
-  body: string | EmailDocument;
+  body: EmailDocument;
   connectedAccountId?: string;
   fromHandle?: string;
   files?: Array<EmailAttachment>;

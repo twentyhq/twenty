@@ -1,6 +1,6 @@
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import {
-  convertEmailBodyToEmailDocument,
+  convertEmailBodyInputToEmailDocument,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -9,8 +9,7 @@ import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/emai
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 
 // the email tools' own schema decides what can be proposed; the card cannot show attachments,
-// so an email carrying files would send them without the person seeing them; the body is stored
-// as the document it will be sent as, so the card never has to interpret a string
+// so an email carrying files would send them without the person seeing them
 export const buildEmailProposal = (
   baseProposal: Omit<ProposedToolCall, 'template'>,
 ): ProposedToolCallResolution => {
@@ -31,22 +30,12 @@ export const buildEmailProposal = (
     };
   }
 
-  const bodyConversionResult = convertEmailBodyToEmailDocument(
-    parsedArguments.data.body,
-  );
-
-  if (!bodyConversionResult.success) {
-    return {
-      error: `The email body is not a valid email document: ${bodyConversionResult.error}`,
-    };
-  }
-
   return {
     proposal: {
       ...baseProposal,
       arguments: {
         ...baseProposal.arguments,
-        body: bodyConversionResult.document,
+        body: convertEmailBodyInputToEmailDocument(parsedArguments.data.body),
       },
       template: 'email',
     },

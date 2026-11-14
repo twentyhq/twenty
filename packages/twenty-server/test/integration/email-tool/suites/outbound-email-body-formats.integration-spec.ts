@@ -102,18 +102,20 @@ describe('Outbound email body formats (integration)', () => {
   let greenmail: GreenmailServer;
   let connectedAccountId: string;
 
-  const runSendEmailWorkflow = async ({
-    body,
-    payload = {},
-    stepType = 'SEND_EMAIL',
-    beforeRun,
-  }: {
+  type EmailBodyWorkflowArgs = {
     body: EmailDocument | string;
     payload?: Record<string, unknown>;
     stepType?: 'SEND_EMAIL' | 'DRAFT_EMAIL';
     beforeRun?: (coreWorkflowVersionId: string) => Promise<void>;
-  }): Promise<ComposedBody & { run: WorkflowActionStepRun }> => {
-    const run = await runWorkflowActionStep({
+  };
+
+  const runEmailBodyWorkflow = ({
+    body,
+    payload = {},
+    stepType = 'SEND_EMAIL',
+    beforeRun,
+  }: EmailBodyWorkflowArgs): Promise<WorkflowActionStepRun> =>
+    runWorkflowActionStep({
       name: `Email body format ${randomUUID()}`,
       stepType,
       input: {
@@ -131,6 +133,11 @@ describe('Outbound email body formats (integration)', () => {
         await beforeRun?.(coreWorkflowVersionId);
       },
     });
+
+  const runSendEmailWorkflow = async (
+    args: EmailBodyWorkflowArgs,
+  ): Promise<ComposedBody & { run: WorkflowActionStepRun }> => {
+    const run = await runEmailBodyWorkflow(args);
 
     expect(run).toMatchObject({ status: 'COMPLETED', stepStatus: 'SUCCESS' });
 
@@ -274,41 +281,25 @@ describe('Outbound email body formats (integration)', () => {
     }, 300000);
   });
 
-  describe('workflow email body stored as a string before the upgrade', () => {
-    it('keeps the line breaks of a plain-text body and inserts its variable values as before', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: 'Hi {{trigger.name}},\n\nSee you soon\nJane',
-        payload: { name: '<b>Ada</b>' },
-      });
+  describe('workflow email body held by a whole-body variable', () => {
+    const wholeBodyVariable = (variable: string): EmailDocument => ({
+      type: 'doc',
+      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+      content: [{ type: 'htmlDocument', attrs: { html: variable } }],
+    });
 
-      expect(sanitizedHtmlBody).toBe(
-        'Hi <b>Ada</b>,<br><br>See you soon<br>Jane',
-      );
-      expect(plainTextBody).toBe('Hi Ada,\n\nSee you soon\nJane');
-    }, 300000);
-
-    it('injects variable values raw into a legacy HTML body and sends it without the email shell', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: '<p>Hello {{trigger.name}}</p><script>alert(1)</script>',
-        payload: { name: '<b>Ada</b>' },
-      });
-
-      expect(sanitizedHtmlBody).toBe('<p>Hello <b>Ada</b></p>');
-      expect(plainTextBody).toBe('Hello Ada');
-    }, 300000);
-
-    it('sends the HTML held by a body that is a single variable verbatim', async () => {
+    it('sends the HTML it holds verbatim', async () => {
       const { sanitizedHtmlBody } = await runSendEmailWorkflow({
-        body: '{{trigger.html}}',
+        body: wholeBodyVariable('{{trigger.html}}'),
         payload: { html: '<h1>Weekly report</h1><p>All good</p>' },
       });
 
       expect(sanitizedHtmlBody).toBe('<h1>Weekly report</h1><p>All good</p>');
     }, 300000);
 
-    it('renders the email document held by a body that is a single variable', async () => {
+    it('renders the email document it holds', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: '{{trigger.document}}',
+        body: wholeBodyVariable('{{trigger.document}}'),
         payload: {
           document: JSON.stringify(paragraphDocument('From a record')),
         },
@@ -319,11 +310,34 @@ describe('Outbound email body formats (integration)', () => {
     }, 300000);
   });
 
+  describe('workflow email body stored as a string', () => {
+    it.each([
+      'Hi {{trigger.name}},\n\nSee you soon\nJane',
+      '<p>Hello {{trigger.name}}</p>',
+      '{{trigger.html}}',
+    ])(
+      'fails the step instead of guessing the format of %s',
+      async (body) => {
+        const run = await runEmailBodyWorkflow({
+          body,
+          payload: { name: 'Ada', html: '<h1>Report</h1>' },
+        });
+
+        expect(run).toMatchObject({
+          stepStatus: 'FAILED',
+          stepError: expect.stringContaining('Invalid workflow email document'),
+        });
+      },
+      300000,
+    );
+  });
+
   describe('send_email tool', () => {
     it('keeps the paragraphs of a plain-text body and persists them', async () => {
-      const { plainTextBody, subject } = await executeSendEmailTool(
-        'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
-      );
+      const { plainTextBody, subject } = await executeSendEmailTool({
+        type: 'text',
+        text: 'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
+      });
 
       expect(plainTextBody).toBe(
         'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
@@ -331,10 +345,11 @@ describe('Outbound email body formats (integration)', () => {
       expect(await findPersistedMessageText(subject)).toBe(plainTextBody);
     }, 300000);
 
-    it('sends an HTML string verbatim', async () => {
-      const { sanitizedHtmlBody } = await executeSendEmailTool(
-        '<p>Hello <strong>Ada</strong></p>',
-      );
+    it('sends an HTML body as written', async () => {
+      const { sanitizedHtmlBody } = await executeSendEmailTool({
+        type: 'html',
+        html: '<p>Hello <strong>Ada</strong></p>',
+      });
 
       expect(sanitizedHtmlBody).toBe('<p>Hello <strong>Ada</strong></p>');
     }, 300000);
@@ -386,10 +401,28 @@ describe('Outbound email body formats (integration)', () => {
         connectedAccountId,
         to: HANDLE,
         subject: `Mutation empty ${randomUUID()}`,
-        body: '',
+        body: JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+          content: [{ type: 'paragraph', content: [] }],
+        }),
       });
 
       expect(result.success).toBe(true);
+    }, 300000);
+
+    it('rejects a body that is not a serialized email document', async () => {
+      const subject = `Mutation string ${randomUUID()}`;
+
+      const result = await sendEmail({
+        connectedAccountId,
+        to: HANDLE,
+        subject,
+        body: '<p>Hello</p>',
+      });
+
+      expect(result.success).toBe(false);
+      expect(await findPersistedMessageText(subject)).toBeUndefined();
     }, 300000);
   });
 
