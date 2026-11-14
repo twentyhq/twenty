@@ -14,6 +14,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 
 const RECIPIENT_INPUT_MIN_WIDTH_PX = 80;
 
@@ -71,6 +72,10 @@ export const AiChatEmailRecipientsRow = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (isKeyboardEventComposing(event.nativeEvent)) {
+      return;
+    }
+
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault();
       addDraftRecipients();

@@ -36,6 +36,7 @@ import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuesti
 import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
 import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 
 const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber1,
@@ -358,6 +359,10 @@ export const AiChatQuestionCard = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isKeyboardEventComposing(event.nativeEvent)) {
+      return;
+    }
+
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
 

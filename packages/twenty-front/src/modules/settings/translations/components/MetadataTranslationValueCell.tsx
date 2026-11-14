@@ -1,5 +1,6 @@
 import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,6 +71,9 @@ export const MetadataTranslationValueCell = ({
         await onSave(value);
       }}
       onKeyDown={(event) => {
+        if (isKeyboardEventComposing(event.nativeEvent)) {
+          return;
+        }
         if (event.key === 'Enter') {
           event.currentTarget.blur();
         }
