@@ -64,11 +64,22 @@ export class ViewAccessService {
 
   async canUserCreateView({
     visibility,
+    ownerViewFieldId,
     accessContext,
   }: {
     visibility: ViewVisibility;
+    ownerViewFieldId?: string | null;
     accessContext: ViewAccessContext;
   }): Promise<boolean> {
+    // Creating a scope view claims its owner column, so it needs edit rights on that column's view
+    if (isDefined(ownerViewFieldId)) {
+      await this.findModifiableParentViewOrThrow({
+        kind: 'viewField',
+        entityId: ownerViewFieldId,
+        accessContext,
+      });
+    }
+
     // An UNLISTED view belongs to the user who created it, so a principal that
     // is not a user - an API key or an application - has no owner to record
     if (visibility === ViewVisibility.UNLISTED) {
