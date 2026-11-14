@@ -21,6 +21,15 @@ import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/uti
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+type PrincipalsAccessGroupsQuestion = {
+  principals: Pick<
+    PermissionsPrincipalsWithRolesContext,
+    'workspaceId' | 'mainPrincipal'
+  >;
+  objectMetadataId: string;
+  operationType: ObjectRecordsOperationType;
+};
+
 @Injectable()
 export class AccessGroupReadService {
   constructor(
@@ -28,92 +37,56 @@ export class AccessGroupReadService {
     private readonly accessGroupReadRepository: AccessGroupReadRepository,
   ) {}
 
-  async findPrincipalsCompactIds({
-    principals,
-    objectMetadataId,
-    operationType,
-  }: {
-    principals: Pick<
-      PermissionsPrincipalsWithRolesContext,
-      'workspaceId' | 'mainPrincipal'
-    >;
-    objectMetadataId: string;
-    operationType: ObjectRecordsOperationType;
-  }): Promise<number[]> {
-    const { workspaceId } = principals;
-    const { featureFlagsMap, rolesPermissions, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
-        'rolesPermissions',
-        'flatFieldMetadataMaps',
-      ]);
-
-    const workspaceMembers =
-      await this.findPrincipalsWorkspaceMembers(principals);
-
+  async findPrincipalsCompactIds(
+    question: PrincipalsAccessGroupsQuestion,
+  ): Promise<number[]> {
     return this.findCompactIds({
-      workspaceId,
-      accessGroups: getPermissionsPrincipalsMainRoleIds(principals).flatMap(
-        (roleId) =>
-          buildRoleAccessGroupsOrThrow({
-            roleId,
-            objectMetadataId,
-            objectRecordsPermissions:
-              rolesPermissions[roleId]?.objects[objectMetadataId],
-            operationTypes: [operationType],
-            workspaceMembers,
-            flatFieldMetadataMaps,
-            isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
-            isSharingGroupsByPredicateValue:
-              featureFlagsMap[
-                FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED
-              ] ?? false,
-          }),
-      ),
+      workspaceId: question.principals.workspaceId,
+      accessGroups: await this.buildPrincipalsAccessGroups(question),
     });
   }
 
-  // the groups a rule gives the caller: a record holds one of them exactly when the rule reaches it
-  async findPrincipalsCompactIdsByRlsRuleId({
+  private async buildPrincipalsAccessGroups({
     principals,
     objectMetadataId,
     operationType,
-  }: {
-    principals: Pick<
-      PermissionsPrincipalsWithRolesContext,
-      'workspaceId' | 'mainPrincipal'
-    >;
-    objectMetadataId: string;
-    operationType: ObjectRecordsOperationType;
-  }): Promise<Map<string, number[]>> {
-    const { workspaceId } = principals;
+  }: PrincipalsAccessGroupsQuestion): Promise<AccessGroupWithoutCompactId[]> {
     const { featureFlagsMap, rolesPermissions, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      await this.workspaceCacheService.getOrRecompute(principals.workspaceId, [
         'featureFlagsMap',
         'rolesPermissions',
         'flatFieldMetadataMaps',
       ]);
     const workspaceMembers =
       await this.findPrincipalsWorkspaceMembers(principals);
-    const rlsRuleAccessGroups = getPermissionsPrincipalsMainRoleIds(principals)
-      .flatMap((roleId) =>
-        buildRoleAccessGroupsOrThrow({
-          roleId,
-          objectMetadataId,
-          objectRecordsPermissions:
-            rolesPermissions[roleId]?.objects[objectMetadataId],
-          operationTypes: [operationType],
-          workspaceMembers,
-          flatFieldMetadataMaps,
-          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
-          isSharingGroupsByPredicateValue:
-            featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ??
-            false,
-        }),
-      )
-      .filter(({ rowLevelPermissionPredicateGroupId }) =>
-        isDefined(rowLevelPermissionPredicateGroupId),
-      );
+
+    return getPermissionsPrincipalsMainRoleIds(principals).flatMap((roleId) =>
+      buildRoleAccessGroupsOrThrow({
+        roleId,
+        objectMetadataId,
+        objectRecordsPermissions:
+          rolesPermissions[roleId]?.objects[objectMetadataId],
+        operationTypes: [operationType],
+        workspaceMembers,
+        flatFieldMetadataMaps,
+        isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+        isSharingGroupsByPredicateValue:
+          featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ??
+          false,
+      }),
+    );
+  }
+
+  // a record holds one of a rule's groups exactly when the rule reaches it
+  async findPrincipalsCompactIdsByRlsRuleId(
+    question: PrincipalsAccessGroupsQuestion,
+  ): Promise<Map<string, number[]>> {
+    const { workspaceId } = question.principals;
+    const rlsRuleAccessGroups = (
+      await this.buildPrincipalsAccessGroups(question)
+    ).filter(({ rowLevelPermissionPredicateGroupId }) =>
+      isDefined(rowLevelPermissionPredicateGroupId),
+    );
     const compactIdsByRlsRuleId = new Map<string, number[]>();
 
     if (!isNonEmptyArray(rlsRuleAccessGroups)) {
