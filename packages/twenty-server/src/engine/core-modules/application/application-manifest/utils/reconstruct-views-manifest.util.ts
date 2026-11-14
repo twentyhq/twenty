@@ -74,14 +74,8 @@ export const reconstructViewsManifest = ({
     const ownerViewFieldUniversalIdentifier =
       flatView.ownerViewFieldUniversalIdentifier;
 
-    // An owner column of another application resolves on sync; one of this application must be in the manifest
     const isOwnerViewFieldLeftOut =
       isDefined(ownerViewFieldUniversalIdentifier) &&
-      isDefined(
-        applicationAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
-          ownerViewFieldUniversalIdentifier
-        ],
-      ) &&
       !exportedViewFieldUniversalIdentifiers.has(
         ownerViewFieldUniversalIdentifier,
       );

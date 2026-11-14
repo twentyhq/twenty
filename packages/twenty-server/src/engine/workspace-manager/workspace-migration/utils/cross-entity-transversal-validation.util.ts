@@ -88,8 +88,6 @@ export const crossEntityTransversalValidation = ({
     validateViewOwnerViewFieldCrossEntity({
       optimisticUniversalFlatMaps,
       orchestratorActionsReport,
-      applicationUniversalIdentifier:
-        buildOptions.applicationUniversalIdentifier,
       isWorkspaceCaller,
     });
 

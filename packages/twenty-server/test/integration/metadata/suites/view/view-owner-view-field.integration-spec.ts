@@ -345,7 +345,7 @@ describe('View scoping a one-to-many view field', () => {
     });
   });
 
-  it('gives a scope view the visibility of the view holding its column, and keeps it in sync', async () => {
+  it('gives a scope view the visibility of the view holding its column and keeps it in sync', async () => {
     const {
       data: { createView: parentView },
     } = await createOneView({
@@ -403,6 +403,16 @@ describe('View scoping a one-to-many view field', () => {
     });
 
     expect(data.getView?.visibility).toBe(ViewVisibility.WORKSPACE);
+
+    const directUpdateResponse = await updateOneView({
+      viewId: scopeView.id,
+      input: { id: scopeView.id, visibility: ViewVisibility.UNLISTED },
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(directUpdateResponse.errors)).toContain(
+      'must share the visibility of the view holding that field',
+    );
 
     await destroyOneView({ expectToFail: false, viewId: parentView.id });
   });

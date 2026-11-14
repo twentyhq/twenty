@@ -25,7 +25,11 @@ const getOwnerViewFieldErrorMessages = ({
 }: {
   scopeView: Pick<
     UniversalFlatView,
-    'type' | 'objectMetadataUniversalIdentifier'
+    | 'type'
+    | 'objectMetadataUniversalIdentifier'
+    | 'applicationUniversalIdentifier'
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
   >;
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
   ownerViewFieldUniversalIdentifier: string;
@@ -53,6 +57,33 @@ const getOwnerViewFieldErrorMessages = ({
     return {
       message: t`Only a non-canonical view field can be scoped`,
       userFriendlyMessage: msg`Only added columns can be scoped`,
+    };
+  }
+
+  if (
+    ownerViewField.applicationUniversalIdentifier !==
+    scopeView.applicationUniversalIdentifier
+  ) {
+    return {
+      message: t`A view scoping a view field must belong to the same application`,
+      userFriendlyMessage: msg`This column cannot be scoped`,
+    };
+  }
+
+  const ownerParentView = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: ownerViewField.viewUniversalIdentifier,
+    flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
+  });
+
+  if (
+    isDefined(ownerParentView) &&
+    (ownerParentView.visibility !== scopeView.visibility ||
+      ownerParentView.createdByUserWorkspaceId !==
+        scopeView.createdByUserWorkspaceId)
+  ) {
+    return {
+      message: t`A view scoping a view field must share the visibility of the view holding that field`,
+      userFriendlyMessage: msg`A column scope follows the visibility of its view`,
     };
   }
 
@@ -105,7 +136,6 @@ const getOwnerViewFieldErrorMessages = ({
 export const validateViewOwnerViewFieldCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
-  applicationUniversalIdentifier,
   isWorkspaceCaller,
 }: {
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
@@ -113,7 +143,6 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     OrchestratorActionsReport,
     'view' | 'viewField'
   >;
-  applicationUniversalIdentifier: string;
   isWorkspaceCaller: boolean;
 }): Pick<OrchestratorFailureReport, 'view' | 'viewField'> => {
   const validationErrors: Pick<
@@ -130,11 +159,6 @@ export const validateViewOwnerViewFieldCrossEntity = ({
       Object.values(
         optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
       )
-        .filter(
-          (flatView) =>
-            flatView?.applicationUniversalIdentifier ===
-            applicationUniversalIdentifier,
-        )
         .map((flatView) => flatView?.ownerViewFieldUniversalIdentifier)
         .filter(isDefined),
     );
@@ -165,14 +189,19 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     }
   }
 
-  // The owner never changes after creation, but a type update could turn a scope into a regular view
+  // The owner never changes after creation, but a type or visibility update could break the scope
   const scopeViewsToValidate = [
     ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
       scopeView: flatEntity,
       type: 'create' as const,
     })),
     ...orchestratorActionsReport.view.update
-      .filter(({ update }) => isDefined(update.type))
+      .filter(
+        ({ update }) =>
+          isDefined(update.type) ||
+          isDefined(update.visibility) ||
+          update.createdByUserWorkspaceId !== undefined,
+      )
       .map(({ universalIdentifier }) => ({
         scopeView: findFlatEntityByUniversalIdentifier({
           universalIdentifier,
