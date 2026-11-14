@@ -1,4 +1,7 @@
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import {
+  extractAndSanitizeObjectStringFields,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -37,6 +40,11 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
       ],
     );
 
+  const { settings } = extractAndSanitizeObjectStringFields(
+    createViewFieldInput,
+    ['settings'],
+  );
+
   const createdAt = new Date().toISOString();
   const viewFieldId = createViewFieldInput.id ?? v4();
 
@@ -66,6 +74,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
+    settings: settings ?? null,
     isActive: true,
     isSystemSideEffect: false,
     isCanonical: createViewFieldInput.isCanonical ?? true,

@@ -4254,6 +4254,7 @@ export interface ViewField {
     isSystemSideEffect: Scalars['Boolean']
     isVisible: Scalars['Boolean']
     position: Scalars['Float']
+    settings?: ViewFieldSettings
     size: Scalars['Float']
     universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -4278,6 +4279,12 @@ export interface ViewFieldGroup {
     viewId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ViewFieldGroup'
+}
+
+export interface ViewFieldSettings {
+    label?: Scalars['String']
+    recordLimit?: Scalars['Int']
+    __typename: 'ViewFieldSettings'
 }
 
 export interface ViewFilter {
@@ -6185,7 +6192,7 @@ export interface CreateValidationRuleInput {description?: (Scalars['String'] | n
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -9110,7 +9117,7 @@ id: Scalars['UUID'],
 /** The view field to update */
 update: UpdateViewFieldInputUpdates}
 
-export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
+export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
 export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
@@ -9540,6 +9547,7 @@ export interface ViewFieldGenqlSelection{
     isSystemSideEffect?: boolean | number
     isVisible?: boolean | number
     position?: boolean | number
+    settings?: ViewFieldSettingsGenqlSelection
     size?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
@@ -9567,6 +9575,15 @@ export interface ViewFieldGroupGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface ViewFieldSettingsGenqlSelection{
+    label?: boolean | number
+    recordLimit?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ViewFieldSettingsInput {label?: (Scalars['String'] | null),recordLimit?: (Scalars['Int'] | null)}
 
 export interface ViewFilterGenqlSelection{
     createdAt?: boolean | number
@@ -12698,6 +12715,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isViewFieldGroup = (obj?: { __typename?: any } | null): obj is ViewFieldGroup => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldGroup"')
       return ViewFieldGroup_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ViewFieldSettings_possibleTypes: string[] = ['ViewFieldSettings']
+    export const isViewFieldSettings = (obj?: { __typename?: any } | null): obj is ViewFieldSettings => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldSettings"')
+      return ViewFieldSettings_possibleTypes.includes(obj.__typename)
     }
     
 

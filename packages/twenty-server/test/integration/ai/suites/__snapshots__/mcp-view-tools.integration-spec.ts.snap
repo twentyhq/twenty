@@ -490,6 +490,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "format": "uuid",
           "type": "string",
         },
+        "isCanonical": {
+          "default": true,
+          "description": "False adds an extra column for a field the view already shows. Only extra columns accept settings; the field's own column follows the data model.",
+          "type": "boolean",
+        },
         "isVisible": {
           "default": true,
           "description": "Whether the field is visible in the view.",
@@ -499,6 +504,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "default": 0,
           "description": "Position of the field in the view (0-based).",
           "type": "number",
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
+              "properties": {
+                "label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 63,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    {
+                      "type": "null",
+                    },
+                  ],
+                  "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                },
+                "recordLimit": {
+                  "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                  "type": [
+                    "integer",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
         },
         "size": {
           "default": 150,
@@ -553,6 +591,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "position": {
           "description": "Position of the field.",
           "type": "number",
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
+              "properties": {
+                "label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 63,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    {
+                      "type": "null",
+                    },
+                  ],
+                  "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                },
+                "recordLimit": {
+                  "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                  "type": [
+                    "integer",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
         },
         "size": {
           "description": "Column width in pixels.",
@@ -614,6 +685,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "format": "uuid",
                 "type": "string",
               },
+              "isCanonical": {
+                "default": true,
+                "description": "False adds an extra column for a field the view already shows. Only extra columns accept settings; the field's own column follows the data model.",
+                "type": "boolean",
+              },
               "isVisible": {
                 "default": true,
                 "description": "Whether the field is visible in the view.",
@@ -623,6 +699,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "default": 0,
                 "description": "Position of the field in the view (0-based).",
                 "type": "number",
+              },
+              "settings": {
+                "anyOf": [
+                  {
+                    "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
+                    "properties": {
+                      "label": {
+                        "anyOf": [
+                          {
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "type": "string",
+                          },
+                          {
+                            "type": "null",
+                          },
+                        ],
+                        "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                      },
+                      "recordLimit": {
+                        "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                        "type": [
+                          "integer",
+                          "null",
+                        ],
+                      },
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
               },
               "size": {
                 "default": 150,
@@ -691,6 +800,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "position": {
                 "description": "Position of the field.",
                 "type": "number",
+              },
+              "settings": {
+                "anyOf": [
+                  {
+                    "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
+                    "properties": {
+                      "label": {
+                        "anyOf": [
+                          {
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "type": "string",
+                          },
+                          {
+                            "type": "null",
+                          },
+                        ],
+                        "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                      },
+                      "recordLimit": {
+                        "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                        "type": [
+                          "integer",
+                          "null",
+                        ],
+                      },
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
               },
               "size": {
                 "description": "Column width in pixels.",

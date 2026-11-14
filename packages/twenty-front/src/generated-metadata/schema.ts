@@ -2087,6 +2087,7 @@ export type CreateViewFieldInput = {
   isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  settings?: InputMaybe<ViewFieldSettingsInput>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
   viewId: Scalars['UUID']['input'];
@@ -8181,6 +8182,7 @@ export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  settings?: InputMaybe<ViewFieldSettingsInput>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
 };
@@ -8821,6 +8823,7 @@ export type ViewField = {
   isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
   position: Scalars['Float']['output'];
+  settings?: Maybe<ViewFieldSettings>;
   size: Scalars['Float']['output'];
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -8844,6 +8847,17 @@ export type ViewFieldGroup = {
   viewFields: Array<ViewField>;
   viewId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
+};
+
+export type ViewFieldSettings = {
+  __typename?: 'ViewFieldSettings';
+  label?: Maybe<Scalars['String']['output']>;
+  recordLimit?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ViewFieldSettingsInput = {
+  label?: InputMaybe<Scalars['String']['input']>;
+  recordLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ViewFilter = {

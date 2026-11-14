@@ -91,6 +91,7 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   size: 150,
   position: 0,
   aggregateOperation: null,
+  settings: null,
   isActive: true,
   isSystemSideEffect: false,
   isCanonical: true,

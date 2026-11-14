@@ -155,6 +155,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
           sourceFlatFieldMetadata.universalIdentifier,
         ) ?? 0,
       aggregateOperation: null,
+      settings: null,
       isActive: true,
       isSystemSideEffect: true,
       isCanonical: true,

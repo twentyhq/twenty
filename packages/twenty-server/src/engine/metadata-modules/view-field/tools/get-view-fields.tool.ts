@@ -67,6 +67,8 @@ export class GetViewFieldsTool extends BaseTool<
       size: viewField.size,
       position: viewField.position,
       aggregateOperation: viewField.aggregateOperation,
+      isCanonical: viewField.isCanonical,
+      settings: viewField.settings,
     }));
 
     return {

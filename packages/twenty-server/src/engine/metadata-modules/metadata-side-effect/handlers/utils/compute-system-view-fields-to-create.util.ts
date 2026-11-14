@@ -52,6 +52,7 @@ export const computeSystemViewFieldsToCreate = ({
     size: DEFAULT_VIEW_FIELD_SIZE,
     position: startPosition + index,
     aggregateOperation: null,
+    settings: null,
     isActive: true,
     isSystemSideEffect: true,
     isCanonical: true,

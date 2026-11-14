@@ -356,6 +356,7 @@ export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescrip
 export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewCalendarLayout } from './ViewCalendarLayout';
+export type { ViewFieldSettings } from './ViewFieldSettings';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';

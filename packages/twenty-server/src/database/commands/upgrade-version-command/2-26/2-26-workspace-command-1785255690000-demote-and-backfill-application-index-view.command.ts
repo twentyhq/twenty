@@ -311,6 +311,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
             size: DEFAULT_VIEW_FIELD_SIZE,
             position,
             aggregateOperation: null,
+            settings: null,
             isActive: true,
             isSystemSideEffect: true,
             isCanonical: true,

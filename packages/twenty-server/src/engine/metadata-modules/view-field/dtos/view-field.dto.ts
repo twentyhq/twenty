@@ -8,6 +8,7 @@ import { AggregateOperations } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldSettingsDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field-settings.dto';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
@@ -49,6 +50,9 @@ export class ViewFieldDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string | null;
+
+  @Field(() => ViewFieldSettingsDTO, { nullable: true })
+  settings?: ViewFieldSettingsDTO | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;

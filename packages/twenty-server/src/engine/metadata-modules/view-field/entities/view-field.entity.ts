@@ -13,14 +13,17 @@ import {
 import {
   AggregateOperations,
   type SerializedRelation,
+  type ViewFieldSettings,
 } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-canonical-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_SETTINGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-settings-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type ViewFieldOverrides = {
@@ -30,6 +33,7 @@ export type ViewFieldOverrides = {
   position?: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: SerializedRelation | null;
+  settings?: ViewFieldSettings | null;
 };
 
 @Entity({ name: 'viewField', schema: 'core' })
@@ -97,6 +101,12 @@ export class ViewFieldEntity
   })
   @Column({ nullable: false, default: true, type: 'boolean' })
   isCanonical: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_FIELD_SETTINGS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  settings: JsonbProperty<ViewFieldSettings> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

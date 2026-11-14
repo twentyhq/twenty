@@ -1,6 +1,8 @@
 import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { viewFieldSettingsSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/view-field-settings.schema';
+
 export const createViewFieldInputSchema = z.object({
   viewId: z.string().uuid().describe('The ID of the view to add the field to.'),
   fieldMetadataId: z
@@ -30,4 +32,12 @@ export const createViewFieldInputSchema = z.object({
     .describe(
       'Aggregate operation for this field (e.g., "SUM", "AVG", "COUNT").',
     ),
+  isCanonical: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe(
+      "False adds an extra column for a field the view already shows. Only extra columns accept settings; the field's own column follows the data model.",
+    ),
+  settings: viewFieldSettingsSchema.nullable().optional(),
 });
