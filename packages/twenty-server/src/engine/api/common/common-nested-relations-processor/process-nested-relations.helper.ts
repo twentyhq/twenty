@@ -9,10 +9,8 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
-import {
-  type NestedRelationQueryArgs,
-  type NestedRelationQueryArgsByFieldName,
-} from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
+import { type NestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
+import { type NestedRelationQueryArgsByFieldName } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args-by-field-name.type';
 import {
   type ConcurrencyLimiter,
   createConcurrencyLimiter,
