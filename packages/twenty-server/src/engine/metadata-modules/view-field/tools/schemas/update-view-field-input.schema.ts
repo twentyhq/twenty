@@ -1,7 +1,7 @@
 import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { viewFieldSettingsSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/view-field-settings.schema';
+import { viewFieldSettingsSchema } from 'src/engine/metadata-modules/view-field/schemas/view-field-settings.schema';
 
 export const updateViewFieldInputSchema = z.object({
   id: z

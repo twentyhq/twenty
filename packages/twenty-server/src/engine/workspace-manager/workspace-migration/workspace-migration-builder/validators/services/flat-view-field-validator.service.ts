@@ -68,19 +68,13 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
-    const isSettingsUpdate =
-      isDefined(flatEntityUpdate.settings) ||
-      isDefined(flatEntityUpdate.universalOverrides);
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        updatedFlatViewField.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
-    const settingsFlatFieldMetadata = isSettingsUpdate
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            updatedFlatViewField.fieldMetadataUniversalIdentifier,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    if (isDefined(settingsFlatFieldMetadata)) {
+    if (isDefined(flatFieldMetadata)) {
       validationResult.errors.push(
         ...validateFlatViewFieldSettings({
           settings: resolveEffectiveUniversalFlatEntityProperty({
@@ -89,7 +83,7 @@ export class FlatViewFieldValidatorService {
             property: 'settings',
           }),
           isCanonical: updatedFlatViewField.isCanonical,
-          flatFieldMetadata: settingsFlatFieldMetadata,
+          flatFieldMetadata,
         }),
       );
     }

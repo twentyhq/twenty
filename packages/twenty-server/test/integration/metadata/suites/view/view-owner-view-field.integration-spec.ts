@@ -29,6 +29,8 @@ type DealFieldNode = {
 const SCOPE_VIEW_GQL_FIELDS = `
   ${VIEW_GQL_FIELDS}
   ownerViewFieldId
+  visibility
+  createdByUserWorkspaceId
 `;
 
 const testContext = {
@@ -341,6 +343,78 @@ describe('View scoping a one-to-many view field', () => {
       expectToFail: false,
       input: { id: viewFieldId },
     });
+  });
+
+  it('gives a scope view the visibility of the view holding its column and keeps it in sync', async () => {
+    const {
+      data: { createView: parentView },
+    } = await createOneView({
+      expectToFail: false,
+      gqlFields: SCOPE_VIEW_GQL_FIELDS,
+      input: {
+        name: 'My deals',
+        icon: 'IconTable',
+        objectMetadataId: testContext.dealObjectId,
+        visibility: ViewVisibility.UNLISTED,
+      },
+    });
+
+    const {
+      data: { createViewField },
+    } = await createOneViewField({
+      expectToFail: false,
+      input: {
+        fieldMetadataId: testContext.actionItemsFieldId,
+        viewId: parentView.id,
+        position: 1,
+        isCanonical: false,
+      },
+    });
+
+    const {
+      data: { createView: scopeView },
+    } = await createOneView({
+      expectToFail: false,
+      gqlFields: SCOPE_VIEW_GQL_FIELDS,
+      input: {
+        name: 'Open action items',
+        icon: 'IconFilter',
+        objectMetadataId: testContext.actionItemObjectId,
+        type: ViewType.TABLE_WIDGET,
+        visibility: ViewVisibility.WORKSPACE,
+        ownerViewFieldId: createViewField.id,
+      },
+    });
+
+    expect(scopeView.visibility).toBe(ViewVisibility.UNLISTED);
+    expect(scopeView.createdByUserWorkspaceId).toBe(
+      parentView.createdByUserWorkspaceId,
+    );
+
+    await updateOneView({
+      viewId: parentView.id,
+      input: { id: parentView.id, visibility: ViewVisibility.WORKSPACE },
+      expectToFail: false,
+    });
+
+    const { data } = await findOneView({
+      viewId: scopeView.id,
+      gqlFields: SCOPE_VIEW_GQL_FIELDS,
+    });
+
+    expect(data.getView?.visibility).toBe(ViewVisibility.WORKSPACE);
+
+    const directUpdateResponse = await updateOneView({
+      viewId: scopeView.id,
+      input: { id: scopeView.id, visibility: ViewVisibility.UNLISTED },
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(directUpdateResponse.errors)).toContain(
+      'must share the visibility of the view holding that field',
+    );
+
+    await destroyOneView({ expectToFail: false, viewId: parentView.id });
   });
 
   it('removes the scope view when the scoped view field parent view is destroyed', async () => {
