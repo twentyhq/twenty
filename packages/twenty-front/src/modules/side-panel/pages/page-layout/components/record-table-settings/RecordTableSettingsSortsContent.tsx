@@ -1,9 +1,12 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowsSort, IconTrash } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -22,17 +25,30 @@ const StyledAddButtonContainer = styled.div`
 `;
 
 type RecordTableSettingsSortsContentProps = {
-  sortableFieldOptions: Array<SelectOption<string>>;
-  directionOptions: Array<SelectOption<ViewSortDirection>>;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   onUpdate?: () => void;
 };
 
 export const RecordTableSettingsSortsContent = ({
-  sortableFieldOptions,
-  directionOptions,
+  objectMetadataItem,
   onUpdate,
 }: RecordTableSettingsSortsContentProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
+
+  const sortableFieldOptions: Array<SelectOption<string>> =
+    objectMetadataItem.fields
+      .filter(filterSortableFieldMetadataItems)
+      .map((field) => ({
+        Icon: getIcon(field.icon),
+        label: field.label,
+        value: field.id,
+      }));
+
+  const directionOptions: Array<SelectOption<ViewSortDirection>> = [
+    { label: t`Ascending`, value: ViewSortDirection.ASC },
+    { label: t`Descending`, value: ViewSortDirection.DESC },
+  ];
   const [currentRecordSorts, setCurrentRecordSorts] = useAtomComponentState(
     currentRecordSortsComponentState,
   );
@@ -61,10 +77,11 @@ export const RecordTableSettingsSortsContent = ({
     onUpdate?.();
   };
 
+  // A saved sort cannot change its field, so a new field makes a new sort
   const handleFieldChange = (sortId: string, fieldMetadataId: string) => {
     setCurrentRecordSorts(
       currentRecordSorts.map((sort) =>
-        sort.id === sortId ? { ...sort, fieldMetadataId } : sort,
+        sort.id === sortId ? { ...sort, id: uuidv4(), fieldMetadataId } : sort,
       ),
     );
     onUpdate?.();

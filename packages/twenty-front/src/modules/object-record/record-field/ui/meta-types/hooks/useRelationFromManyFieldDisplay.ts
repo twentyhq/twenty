@@ -8,6 +8,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -16,7 +17,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 
 export const useRelationFromManyFieldDisplay = () => {
-  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth, scopedRelationViewFieldId } =
+    useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -40,7 +42,9 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
-    fieldName,
+    isDefined(scopedRelationViewFieldId)
+      ? getScopedRelationAlias(scopedRelationViewFieldId)
+      : fieldName,
     fieldDefinition,
   );
 

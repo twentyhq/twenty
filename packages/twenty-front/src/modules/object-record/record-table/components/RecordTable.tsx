@@ -10,6 +10,7 @@ import { RecordTableContent } from '@/object-record/record-table/components/Reco
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
 import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedCellEffect';
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
+import { RecordTableScopedRelationsRefreshEffect } from '@/object-record/record-column-scope/components/RecordTableScopedRelationsRefreshEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
@@ -96,6 +97,7 @@ export const RecordTable = () => {
           />
           <RecordTableScrollToFocusedCellEffect />
           <RecordTableScrollToFocusedRowEffect />
+          <RecordTableScopedRelationsRefreshEffect />
         </>
       )}
       {isRecordTableInitialLoading &&

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
@@ -5,7 +6,12 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { buildSourceRecordLink } from '@/object-record/record-field/ui/meta-types/input/utils/buildSourceRecordLink';
@@ -29,6 +35,7 @@ type useAddNewRecordAndOpenSidePanelProps = {
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   relationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
+  prefillRecordFilters?: RecordFilter[];
 };
 
 export const useAddNewRecordAndOpenSidePanel = ({
@@ -38,7 +45,11 @@ export const useAddNewRecordAndOpenSidePanel = ({
   relationObjectMetadataItem,
   relationFieldMetadataItem,
   recordId,
+  prefillRecordFilters = [],
 }: useAddNewRecordAndOpenSidePanelProps) => {
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { userTimezone } = useUserTimezone();
+
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
@@ -103,14 +114,23 @@ export const useAddNewRecordAndOpenSidePanel = ({
         attachRecord: shouldAttachToSourceRecord ? attachRecord : undefined,
       });
 
+      const recordLabelPayload = buildRecordLabelPayload({
+        searchInput,
+        objectMetadataItem: relationObjectMetadataItem,
+      });
+
       const createdRecord = await requestRecordCreation({
         objectMetadataItem: relationObjectMetadataItem,
         initialDraftRecord: {
-          ...buildRecordInputFromRLSPredicates(),
-          ...buildRecordLabelPayload({
-            searchInput,
+          ...recordLabelPayload,
+          ...buildRecordInputFromFilter({
+            currentRecordFilters: prefillRecordFilters,
             objectMetadataItem: relationObjectMetadataItem,
+            currentWorkspaceMember: currentWorkspaceMember ?? undefined,
+            timeZone: userTimezone,
           }),
+          ...buildRecordInputFromRLSPredicates(),
+          ...(isNonEmptyString(searchInput) ? recordLabelPayload : {}),
           ...buildSourceRecordLink({
             relationFieldMetadataItem,
             sourceObjectMetadataId: objectMetadataItem.id,

@@ -44,8 +44,13 @@ export const triggerDetachRelationOptimisticEffect = ({
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { isReference, readField },
+        { isReference, readField, storeFieldName },
       ) => {
+        // A copy with arguments is filtered or limited, so it is refreshed from the server instead of guessed
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return targetRecordFieldValue;
+        }
+
         const isRecordConnection = isObjectRecordConnectionWithRefs(
           sourceObjectNameSingular,
           targetRecordFieldValue,

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableSettingsFiltersInitializeStateEffectProps = {
-  view: View;
+  view: Pick<View, 'viewFilters' | 'viewFilterGroups'>;
 };
 
 export const RecordTableSettingsFiltersInitializeStateEffect = ({

@@ -9,6 +9,7 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -32,12 +33,16 @@ export const useLazyFindManyRecordsWithOffset = ({
     objectMetadataItem,
   });
 
+  const relationAliases = useScopedRelationAliases();
+
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { findManyRecordsQuery, relationAliasVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      relationAliases,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -68,6 +73,7 @@ export const useLazyFindManyRecordsWithOffset = ({
           query: findManyRecordsQuery,
           variables: {
             ...params,
+            ...relationAliasVariables,
             limit,
             offset,
           },
@@ -100,6 +106,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       apolloCoreClient,
       findManyRecordsQuery,
       params,
+      relationAliasVariables,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

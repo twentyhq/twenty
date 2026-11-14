@@ -26,6 +26,7 @@ export const VIEW_FRAGMENT = gql`
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
     mainGroupByFieldMetadataId
+    ownerViewFieldId
     shouldHideEmptyGroups
     shouldDisplayGroupsAsTabs
     kanbanColumnWidth

@@ -27,6 +27,7 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   computeReferences?: boolean;
   isRootLevel?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
+  additionalSelections?: string[];
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -36,6 +37,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
+  additionalSelections = [],
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -156,6 +158,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       });
     })
     .filter((field) => field !== '')
+    .concat(additionalSelections)
     .join('\n');
 
   return doNotTranslate(`{

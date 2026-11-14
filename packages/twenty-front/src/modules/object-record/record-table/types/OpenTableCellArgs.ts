@@ -9,5 +9,6 @@ export type OpenTableCellArgs = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
   recordFieldId: string;
+  fieldValueKey?: string;
   isNavigating: boolean;
 };

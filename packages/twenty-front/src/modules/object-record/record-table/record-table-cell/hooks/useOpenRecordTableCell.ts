@@ -75,6 +75,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       fieldDefinition,
       recordId,
       recordFieldId,
+      fieldValueKey,
       isNavigating,
     }: OpenTableCellArgs) => {
       store.set(
@@ -127,6 +128,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         fieldDefinition,
         recordId,
         prefix: getRecordTableCellInputIdPrefix(recordFieldId),
+        fieldValueKey,
         onFileUploadClose: () => {
           setRecordTableCellEditModePosition(null);
           removeLastFocusItemFromFocusStackByComponentType({
