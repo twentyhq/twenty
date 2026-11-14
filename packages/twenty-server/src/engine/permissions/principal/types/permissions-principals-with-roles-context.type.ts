@@ -13,13 +13,19 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-export type PermissionsMainPrincipalWithRole =
+// additional roles add their grants to the main role, where a limiting role narrows it
+type WithAdditionalRoleIds<TPrincipal> = TPrincipal & {
+  additionalRoleIds?: string[];
+};
+
+export type PermissionsMainPrincipalWithRole = WithAdditionalRoleIds<
   | WithRoleId<PermissionsWorkspaceMemberPrincipal>
   | WithRoleId<PermissionsApiKeyPrincipal>
   | WithRoleId<PermissionsAgentPrincipal>
   | WithRoleId<PermissionsWebhookPrincipal>
   | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsRolePrincipal;
+  | PermissionsRolePrincipal
+>;
 
 export type PermissionsLimitingPrincipalWithRole =
   WithRoleId<PermissionsAgentPrincipal>;
