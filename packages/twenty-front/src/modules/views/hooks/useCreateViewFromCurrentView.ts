@@ -6,6 +6,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { usePerformViewFilterApiPersist } from '@/views/hooks/internal/usePerformViewFilterApiPersist';
@@ -172,7 +173,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       const fieldResult = await performViewFieldApiCreate({
         inputs: sourceView.viewFields
           .filter((viewField) =>
-            isRecordFieldSupportedByViewType(viewField, viewType),
+            isRecordFieldSupportedByViewType({
+              recordField: viewField,
+              viewType,
+            }),
           )
           .map((viewField) => ({
             id: v4(),
@@ -183,6 +187,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             size: viewField.size,
             aggregateOperation: viewField.aggregateOperation,
             viewFieldGroupId: viewField.viewFieldGroupId,
+            settings: getViewFieldSettingsInput(viewField.settings),
             viewId: newViewId,
           })),
       });
