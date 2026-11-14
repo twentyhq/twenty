@@ -2,8 +2,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
+import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
@@ -11,35 +11,30 @@ const PLACEHOLDER_INSTANCE_ID =
   'record-table-settings-descriptions-placeholder';
 
 type UseRecordTableSettingsDescriptionsParams = {
-  objectMetadataId: string | null | undefined;
-  viewId: string | null;
-  widgetId: string;
-  pageLayoutId: string;
+  // The dashboard names its source object before the widget has a view
+  sourceObjectMetadataId?: string | null;
+  view: View | undefined;
 };
 
 export const useRecordTableSettingsDescriptions = ({
-  objectMetadataId,
-  viewId,
-  widgetId,
-  pageLayoutId,
+  sourceObjectMetadataId,
+  view,
 }: UseRecordTableSettingsDescriptionsParams) => {
   const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { view } = useRecordTableWidgetViewForDisplay({
-    viewId: viewId ?? '',
-    widgetId,
-    pageLayoutId,
-  });
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === objectMetadataId,
+    (item) => item.id === sourceObjectMetadataId,
+  );
+  const viewObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === view?.objectMetadataId,
   );
 
   const recordIndexId =
-    isDefined(viewId) && isDefined(sourceObjectMetadataItem)
+    isDefined(view) && isDefined(viewObjectMetadataItem)
       ? getRecordIndexIdFromObjectNamePluralAndViewId(
-          sourceObjectMetadataItem.namePlural,
-          viewId,
+          viewObjectMetadataItem.namePlural,
+          view.id,
         )
       : PLACEHOLDER_INSTANCE_ID;
 
@@ -48,12 +43,10 @@ export const useRecordTableSettingsDescriptions = ({
     recordIndexId,
   );
 
-  const hasViewId = isDefined(viewId);
-
-  const activeVisibleFieldLabels: Array<string | undefined> = hasViewId
+  const activeVisibleFieldLabels: Array<string | undefined> = isDefined(view)
     ? visibleRecordFields.map(
         (field) =>
-          sourceObjectMetadataItem?.fields.find(
+          viewObjectMetadataItem?.fields.find(
             (metaField) => metaField.id === field.fieldMetadataItemId,
           )?.label,
       )
@@ -65,7 +58,7 @@ export const useRecordTableSettingsDescriptions = ({
     .filter((filter) => !isCurrentRecordViewFilter(filter))
     .map(
       (filter) =>
-        sourceObjectMetadataItem?.fields.find(
+        viewObjectMetadataItem?.fields.find(
           (field) => field.id === filter.fieldMetadataId,
         )?.label,
     );
@@ -74,7 +67,7 @@ export const useRecordTableSettingsDescriptions = ({
     view?.viewSorts ?? []
   ).map(
     (sort) =>
-      sourceObjectMetadataItem?.fields.find(
+      viewObjectMetadataItem?.fields.find(
         (field) => field.id === sort.fieldMetadataId,
       )?.label,
   );

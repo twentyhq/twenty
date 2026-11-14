@@ -200,7 +200,7 @@ export const TableFilterAndSort: Story = {
     await userEvent.click(
       await canvas.findByRole('button', { name: /^Layout/ }),
     );
-    await userEvent.click(await body.findByRole('option', { name: 'List' }));
+    await userEvent.click(await body.findByRole('option', { name: 'Table' }));
 
     expect(
       await canvas.findByRole('button', { name: /^Filter/ }),

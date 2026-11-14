@@ -1,6 +1,5 @@
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
 import { useEffect, useState } from 'react';
@@ -17,21 +16,11 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
     currentRecordSortsComponentState,
   );
 
-  const currentRecordSorts = useAtomComponentStateValue(
-    currentRecordSortsComponentState,
-  );
-
   const [hasInitializedSorts, setHasInitializedSorts] = useState(false);
 
-  const stateAlreadyHasSorts = currentRecordSorts.length > 0;
-
+  // The editor state outlives the sub-page (record pages key it apart from the live widget), so reseed it on every open
   useEffect(() => {
     if (hasInitializedSorts) {
-      return;
-    }
-
-    if (stateAlreadyHasSorts) {
-      setHasInitializedSorts(true);
       return;
     }
 
@@ -45,7 +34,7 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
 
     setCurrentRecordSorts(recordSorts);
     setHasInitializedSorts(true);
-  }, [view, hasInitializedSorts, stateAlreadyHasSorts, setCurrentRecordSorts]);
+  }, [view, hasInitializedSorts, setCurrentRecordSorts]);
 
   return null;
 };

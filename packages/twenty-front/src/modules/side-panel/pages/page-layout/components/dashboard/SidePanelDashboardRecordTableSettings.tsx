@@ -105,18 +105,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
     pageLayoutDraft.type,
   );
 
-  const {
-    sourceDescription,
-    fieldsDescription,
-    filterDescription,
-    sortDescription,
-  } = useRecordTableSettingsDescriptions({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
-    viewId,
-    widgetId: widgetInEditMode?.id ?? '',
-    pageLayoutId,
-  });
-
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
@@ -154,6 +142,16 @@ export const SidePanelDashboardRecordTableSettings = () => {
     viewId: viewId ?? '',
     widgetId: widgetInEditMode?.id ?? '',
     pageLayoutId,
+  });
+
+  const {
+    sourceDescription,
+    fieldsDescription,
+    filterDescription,
+    sortDescription,
+  } = useRecordTableSettingsDescriptions({
+    sourceObjectMetadataId: widgetInEditMode?.objectMetadataId,
+    view: widgetView,
   });
 
   const mainGroupByFieldMetadataId =

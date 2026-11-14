@@ -122,19 +122,14 @@ export const SidePanelRecordPageFieldSettings = () => {
     });
   };
 
-  const { filterDescription, sortDescription } =
-    useRecordTableSettingsDescriptions({
-      objectMetadataId: targetObjectMetadataId,
-      viewId: currentViewId,
-      widgetId: widgetInEditMode?.id ?? '',
-      pageLayoutId,
-    });
-
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
     viewId: currentViewId ?? '',
     widgetId: widgetInEditMode?.id ?? '',
     pageLayoutId,
   });
+
+  const { filterDescription, sortDescription } =
+    useRecordTableSettingsDescriptions({ view: embeddedWidgetView });
 
   if (!isDefined(widgetInEditMode)) {
     return null;

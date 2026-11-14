@@ -1,32 +1,19 @@
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
-import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFilters } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilters';
-import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { useRecordTableWidgetInEditModeView } from '@/side-panel/pages/page-layout/hooks/useRecordTableWidgetInEditModeView';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelRecordTableFilterSubPage = () => {
-  const { pageLayoutId } = usePageLayoutSidePanelTarget();
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+  const { pageLayoutId, widgetId, viewId, view } =
+    useRecordTableWidgetInEditModeView();
 
-  const viewId = isDefined(widgetInEditMode)
-    ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
-    : null;
-
-  const { view } = useRecordTableWidgetViewForDisplay({
-    viewId: viewId ?? '',
-    widgetId: widgetInEditMode?.id ?? '',
-    pageLayoutId,
-  });
-
-  if (!isDefined(widgetInEditMode) || !isDefined(viewId) || !isDefined(view)) {
+  if (!isDefined(widgetId) || !isDefined(viewId) || !isDefined(view)) {
     return null;
   }
 
   return (
     <RecordTableSettingsFilters
       viewId={viewId}
-      widgetId={widgetInEditMode.id}
+      widgetId={widgetId}
       pageLayoutId={pageLayoutId}
       objectMetadataId={view.objectMetadataId}
     />
