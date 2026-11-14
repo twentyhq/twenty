@@ -175,7 +175,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       }
 
       const viewFieldsToCopy = sourceView.viewFields.filter((viewField) =>
-        isRecordFieldSupportedByViewType(viewField, viewType),
+        isRecordFieldSupportedByViewType({ recordField: viewField, viewType }),
       );
 
       const newViewFieldIdByViewFieldId = new Map(

@@ -62,7 +62,6 @@ export const useSaveCurrentViewFields = () => {
               viewFieldToCreateOrUpdate.settings,
             );
 
-            // Extra-column fields are only sent when used, so canonical writes stay unchanged
             const createViewFieldInput: CreateViewFieldInput = {
               id: viewFieldToCreateOrUpdate.id,
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
