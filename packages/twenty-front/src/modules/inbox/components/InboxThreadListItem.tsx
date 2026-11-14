@@ -18,7 +18,7 @@ import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -33,7 +33,7 @@ const StyledActivityTime = styled.div`
 
 type InboxThreadListItemProps = {
   thread: AiChatThreadRecord;
-  variant?: InboxThreadListVariant;
+  variant?: AiChatThreadRowVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (

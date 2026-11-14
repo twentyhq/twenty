@@ -190,6 +190,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
         ALL_METADATA_NAME.fieldMetadata,
         workspaceMigrationFieldActionsBuilderService,
       ),
+      // Right after fields, so the entities built next validate against the options of this migration
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.fieldMetadataOption,
+        workspaceMigrationFieldMetadataOptionActionsBuilderService,
+      ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.index,
         workspaceMigrationIndexActionsBuilderService,
@@ -323,10 +328,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationTimelineActivityTypeActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.fieldMetadataOption,
-        workspaceMigrationFieldMetadataOptionActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.relatedRecordPath,
         workspaceMigrationRelatedRecordPathActionsBuilderService,
       ),
@@ -440,6 +441,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
       preDeletionFlatViewFieldMaps,
       fromFlatFieldMetadataMaps:
         fromToAllFlatEntityMaps.flatFieldMetadataMaps?.from,
+      fromFlatFieldMetadataOptionMaps:
+        fromToAllFlatEntityMaps.flatFieldMetadataOptionMaps?.from,
+      buildOptions,
     });
 
     mergeOrchestratorFailureReports({

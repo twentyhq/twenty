@@ -127,6 +127,7 @@ const omit = ({
     unreadableFieldsOnMatchingRecords: [],
     metadataMaps: {
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: {},
       rolesPermissions: {},
