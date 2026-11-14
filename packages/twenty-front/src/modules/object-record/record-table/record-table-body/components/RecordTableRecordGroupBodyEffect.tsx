@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
+import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
@@ -32,6 +35,9 @@ export const RecordTableRecordGroupBodyEffect = () => {
   const { records, loading, hasNextPage } =
     useRecordIndexTableQuery(objectNameSingular);
 
+  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
   const setRecordIndexHasFetchedAllRecordsByGroup =
     useSetAtomComponentFamilyState(
       recordIndexHasFetchedAllRecordsByGroupComponentState,
@@ -46,6 +52,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     if (!loading) {
+      upsertRecordsInStore({
+        partialRecords: getLookupRelatedRecords({
+          records,
+          lookupRelationFieldNames,
+        }),
+      });
       setRecordTableData({
         records,
         currentRecordGroupId: recordGroupId,
@@ -57,6 +69,8 @@ export const RecordTableRecordGroupBodyEffect = () => {
     hasNextPage,
     loading,
     records,
+    lookupRelationFieldNames,
+    upsertRecordsInStore,
     recordGroupId,
     setRecordIndexHasFetchedAllRecordsByGroup,
     setIsRecordTableInitialLoading,

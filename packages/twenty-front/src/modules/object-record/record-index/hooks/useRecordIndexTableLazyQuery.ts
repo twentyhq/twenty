@@ -1,8 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 
 export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
@@ -11,11 +10,12 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
-    objectMetadataItem,
-  });
-
-  const relationAliases = useScopedRelationAliases();
+  const {
+    recordGqlFields,
+    relationAliases,
+    lookupRelationFieldNames,
+    columnQueryFingerprint,
+  } = useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
     useLazyFindManyRecords({
@@ -27,6 +27,8 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
   return {
     findManyRecordsLazy,
     fetchMoreRecordsLazy,
-    queryIdentifier,
+    lookupRelationFieldNames,
+    // A column's scope or lookup changes loaded cells without changing the filter or sort
+    queryIdentifier: `${queryIdentifier}${columnQueryFingerprint}`,
   };
 };

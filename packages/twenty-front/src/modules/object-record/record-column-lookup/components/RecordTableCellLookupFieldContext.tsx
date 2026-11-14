@@ -5,7 +5,6 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { RecordTableCellLookupRelatedRecordEffect } from '@/object-record/record-column-lookup/components/RecordTableCellLookupRelatedRecordEffect';
 import {
   FieldContext,
   type RecordUpdateHookParams,
@@ -124,11 +123,6 @@ export const RecordTableCellLookupFieldContext = ({
           isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
         }}
       >
-        {isDefined(relatedRecord) && (
-          <RecordTableCellLookupRelatedRecordEffect
-            relatedRecord={relatedRecord}
-          />
-        )}
         {children}
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>

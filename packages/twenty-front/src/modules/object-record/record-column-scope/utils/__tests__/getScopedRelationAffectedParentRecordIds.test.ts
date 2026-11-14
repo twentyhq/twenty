@@ -41,6 +41,33 @@ describe('getScopedRelationAffectedParentRecordIds', () => {
       expected: ['deal-1', 'deal-2'],
     },
     {
+      title: 'only the listing parent when a listed record changes',
+      operation: {
+        type: 'update-one',
+        result: {
+          updateInput: {
+            recordId: 'item-1',
+            updatedFields: [{ status: 'DONE' }],
+          },
+        },
+      },
+      expected: ['deal-1'],
+    },
+    {
+      title:
+        'every parent when an unlisted record changes without its parent link',
+      operation: {
+        type: 'update-one',
+        result: {
+          updateInput: {
+            recordId: 'item-7',
+            updatedFields: [{ status: 'OPEN' }],
+          },
+        },
+      },
+      expected: ['deal-1', 'deal-2', 'deal-3'],
+    },
+    {
       title: 'the parent of a created record',
       operation: {
         type: 'create-one',
