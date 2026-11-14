@@ -110,11 +110,31 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     view: [],
   };
 
-  for (const { flatEntity: scopeView } of orchestratorActionsReport.view
-    .create) {
-    const { ownerViewFieldUniversalIdentifier } = scopeView;
+  // The owner never changes after creation, but a type update could turn a scope into a regular view
+  const scopeViewsToValidate = [
+    ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
+      scopeView: flatEntity,
+      type: 'create' as const,
+    })),
+    ...orchestratorActionsReport.view.update
+      .filter(({ update }) => isDefined(update.type))
+      .map(({ universalIdentifier }) => ({
+        scopeView: findFlatEntityByUniversalIdentifier({
+          universalIdentifier,
+          flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
+        }),
+        type: 'update' as const,
+      })),
+  ];
 
-    if (!isDefined(ownerViewFieldUniversalIdentifier)) {
+  for (const { scopeView, type } of scopeViewsToValidate) {
+    const ownerViewFieldUniversalIdentifier =
+      scopeView?.ownerViewFieldUniversalIdentifier;
+
+    if (
+      !isDefined(scopeView) ||
+      !isDefined(ownerViewFieldUniversalIdentifier)
+    ) {
       continue;
     }
 
@@ -133,7 +153,7 @@ export const validateViewOwnerViewFieldCrossEntity = ({
         universalIdentifier: scopeView.universalIdentifier,
       },
       metadataName: 'view',
-      type: 'create',
+      type,
     });
 
     failedValidation.errors.push({
