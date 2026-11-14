@@ -323,6 +323,56 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('orders related records by a relation field', async () => {
+    const response = await findCompaniesWithPeople(
+      'people(orderBy: [{ company: { name: AscNullsLast } }, { jobTitle: AscNullsLast }], first: 2)',
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(getJobTitlesByCompanyId(response.body.data.companies.edges)).toEqual(
+      {
+        [FIRST_COMPANY_ID]: ['Analyst', 'Buyer'],
+        [SECOND_COMPANY_ID]: ['CTO', 'Designer'],
+      },
+    );
+  });
+
+  it('resolves aliases on sub-fields, connection fields and relations without arguments', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedCompanies($filter: CompanyFilterInput) {
+          companies(filter: $filter) {
+            rows: edges {
+              item: node {
+                __proto__: id
+                label: name
+                everyone: people {
+                  edges {
+                    node {
+                      fullName: name {
+                        given: firstName
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const [{ item }] = response.body.data.companies.rows;
+
+    expect(item['__proto__']).toBe(FIRST_COMPANY_ID);
+    expect(item.label).toBe('Nested arguments company one');
+    expect(item.everyone.edges).toHaveLength(3);
+    expect(item.everyone.edges[0].node.fullName).toHaveProperty('given');
+  });
+
   it('ignores cursor arguments on a nested relation', async () => {
     const response = await findCompaniesWithPeople(
       'people(last: 1, after: "cursor", orderBy: [{ jobTitle: AscNullsLast }])',
