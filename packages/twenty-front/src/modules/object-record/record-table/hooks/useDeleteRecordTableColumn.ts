@@ -36,8 +36,19 @@ export const useDeleteRecordTableColumn = (recordTableId: string) => {
         { input: { id: recordFieldId } },
       ]);
 
+      // Restore only this column so changes made while the request was pending survive
       if (result.status === 'failed') {
-        store.set(currentRecordFieldsAtom, previousRecordFields);
+        const deletedIndex = previousRecordFields.findIndex(
+          (recordField) => recordField.id === recordFieldId,
+        );
+        const deletedRecordField = previousRecordFields[deletedIndex];
+
+        store.set(currentRecordFieldsAtom, (latestRecordFields) =>
+          !isDefined(deletedRecordField) ||
+          latestRecordFields.some(({ id }) => id === recordFieldId)
+            ? latestRecordFields
+            : latestRecordFields.toSpliced(deletedIndex, 0, deletedRecordField),
+        );
 
         return false;
       }

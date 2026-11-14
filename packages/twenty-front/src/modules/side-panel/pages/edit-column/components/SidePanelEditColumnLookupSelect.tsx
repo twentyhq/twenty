@@ -1,9 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
-import { isLookupTargetCandidateField } from '@/object-record/record-column-lookup/utils/isLookupTargetCandidateField';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 type SidePanelEditColumnLookupSelectProps = {
@@ -22,8 +23,15 @@ export const SidePanelEditColumnLookupSelect = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const lookupTargetOptions = relationObjectMetadataItem.fields
-    .filter(isLookupTargetCandidateField)
+  // Lookups follow one hop only, matching the server rule
+  const lookupTargetOptions = relationObjectMetadataItem.readableFields
+    .filter(
+      (field) =>
+        field.isActive &&
+        !isHiddenSystemField(field) &&
+        field.type !== FieldMetadataType.RELATION &&
+        field.type !== FieldMetadataType.MORPH_RELATION,
+    )
     .toSorted((a, b) => a.label.localeCompare(b.label))
     .map((field) => ({
       value: field.id,

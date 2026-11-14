@@ -11,7 +11,9 @@ import { isRecordTableCellsNonEditableComponentState } from '@/object-record/rec
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextWrapperProps = {
@@ -47,11 +49,17 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  const lookupTarget = getRecordFieldLookupTarget({
-    recordField,
-    fieldMetadataItem,
-    objectMetadataItems,
-  });
+  const isColumnSettingsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
+  );
+
+  const lookupTarget = isColumnSettingsEnabled
+    ? getRecordFieldLookupTarget({
+        recordField,
+        fieldMetadataItem,
+        objectMetadataItems,
+      })
+    : undefined;
 
   // The lookup cell keys its own editor instance to the related record
   if (isDefined(lookupTarget)) {

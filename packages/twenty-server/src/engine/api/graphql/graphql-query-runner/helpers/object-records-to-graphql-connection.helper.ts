@@ -14,7 +14,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/relation-record-key.util';
+import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/get-aliased-relation-record-keys.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
@@ -233,7 +233,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
         for (const relationRecordKey of [
           fieldMetadata.name,
-          ...getAliasedRelationRecordKeys(objectRecord, fieldMetadata.name),
+          ...getAliasedRelationRecordKeys({
+            record: objectRecord,
+            fieldName: fieldMetadata.name,
+          }),
         ]) {
           const objectValue =
             !isDefined(objectRecord[relationRecordKey]) && isToManyRelation

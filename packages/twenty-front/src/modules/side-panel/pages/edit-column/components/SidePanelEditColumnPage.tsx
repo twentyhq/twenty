@@ -1,8 +1,10 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -68,11 +70,16 @@ export const SidePanelEditColumnPage = () => {
     return null;
   }
 
+  // The table may live in another context store, e.g. inside a side panel
   return (
-    <SidePanelEditColumnPageContent
-      recordTableId={editColumnRequest.recordTableId}
-      recordFieldId={editColumnRequest.recordFieldId}
-    />
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: editColumnRequest.contextStoreInstanceId }}
+    >
+      <SidePanelEditColumnPageContent
+        recordTableId={editColumnRequest.recordTableId}
+        recordFieldId={editColumnRequest.recordFieldId}
+      />
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };
 
@@ -166,10 +173,14 @@ const SidePanelEditColumnForm = ({
   const isRecordLimitValid =
     !isScopableColumn || parseRecordLimitInput(recordLimit).isValid;
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSaveClick = async () => {
-    if (!isRecordLimitValid) {
+    if (!isRecordLimitValid || isSaving) {
       return;
     }
+
+    setIsSaving(true);
 
     const updatedRecordField = {
       ...recordField,
@@ -187,6 +198,7 @@ const SidePanelEditColumnForm = ({
     ]);
 
     if (!areSettingsSaved) {
+      setIsSaving(false);
       upsertRecordField(recordField);
       return;
     }
@@ -200,6 +212,7 @@ const SidePanelEditColumnForm = ({
       });
 
       if (!isScopeSaved) {
+        setIsSaving(false);
         return;
       }
     }
@@ -216,9 +229,13 @@ const SidePanelEditColumnForm = ({
 
   const FieldIcon = getIcon(fieldMetadataItem?.icon);
 
-  const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    ({ id }) => id === relationTargetFieldMetadataId,
-  );
+  const lookupTargetFieldMetadataItem = isDefined(fieldMetadataItem)
+    ? getRecordFieldLookupTarget({
+        recordField: { relationTargetFieldMetadataId },
+        fieldMetadataItem,
+        objectMetadataItems,
+      })?.lookupTargetFieldMetadataItem
+    : undefined;
 
   const columnNamePlaceholder = isDefined(fieldMetadataItem)
     ? formatLookupColumnLabel(fieldMetadataItem, lookupTargetFieldMetadataItem)
@@ -284,7 +301,7 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={!isRecordLimitValid}
+            disabled={!isRecordLimitValid || isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"

@@ -2,10 +2,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { RecordTableCellLookupRelatedRecordEffect } from '@/object-record/record-column-lookup/components/RecordTableCellLookupRelatedRecordEffect';
 import {
   FieldContext,
   type GenericFieldContextType,
@@ -17,9 +15,11 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { type ReactNode } from 'react';
+import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
+import { type ReactNode, useContext } from 'react';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  findById,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -62,7 +62,7 @@ export const RecordFieldLookupFieldContext = ({
 
   const restrictedFieldNames = useRecordRestrictedFieldNames(relatedRecordId);
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const updateRecord = useContext(RecordTableUpdateContext);
 
   const isRelatedRecordReadOnly = useIsRecordReadOnly({
     recordId: relatedRecordId,
@@ -87,16 +87,13 @@ export const RecordFieldLookupFieldContext = ({
     label: label ?? lookupTargetFieldDefinition.label,
   };
 
-  const isLookupTargetRestricted = restrictedFieldNames.includes(
-    lookupTargetFieldMetadataItem.name,
-  );
+  const isLookupTargetRestricted =
+    !relationObjectMetadataItem.readableFields.some(
+      findById(lookupTargetFieldMetadataItem.id),
+    ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
 
-  const updateRelatedRecord = ({ variables }: RecordUpdateHookParams) =>
-    updateOneRecord({
-      objectNameSingular: relationObjectMetadataItem.nameSingular,
-      idToUpdate: relatedRecordId,
-      updateOneRecordInput: variables.updateOneRecordInput,
-    });
+  const updateRelatedRecord = (params: RecordUpdateHookParams) =>
+    updateRecord?.(params, relationObjectMetadataItem.nameSingular);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -130,11 +127,6 @@ export const RecordFieldLookupFieldContext = ({
           ...fieldContextOverrides,
         }}
       >
-        {isDefined(relatedRecord) && (
-          <RecordTableCellLookupRelatedRecordEffect
-            relatedRecord={relatedRecord}
-          />
-        )}
         {children}
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>

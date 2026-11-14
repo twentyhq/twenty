@@ -8,9 +8,15 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
+import {
+  FieldMetadataType,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -213,6 +219,22 @@ describe('View scoping a one-to-many view field', () => {
       'A view field can be scoped by only one view',
     );
 
+    // Created before the cascade so the object cache refresh it triggers can't hide a stale view id
+    const {
+      data: {
+        createOneField: { id: titleFieldId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: testContext.actionItemObjectId,
+        name: 'title',
+        label: 'Title',
+        isLabelSyncedWithName: false,
+        type: FieldMetadataType.TEXT,
+      },
+    });
+
     await destroyOneViewField({
       expectToFail: false,
       input: { id: viewFieldId },
@@ -224,6 +246,101 @@ describe('View scoping a one-to-many view field', () => {
     });
 
     expect(data.getView).toBeNull();
+
+    const { errors } = await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testContext.actionItemObjectId,
+        updatePayload: { labelIdentifierFieldMetadataId: titleFieldId },
+      },
+    });
+
+    expect(errors).toBeUndefined();
+  });
+
+  it('accepts a new scope view once the previous one is soft-deleted', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+    );
+
+    const {
+      data: { createView: firstScopeView },
+    } = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: false,
+    });
+
+    await deleteOneView({ viewId: firstScopeView.id, expectToFail: false });
+
+    const {
+      data: { createView: secondScopeView },
+    } = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: false,
+    });
+
+    expect(secondScopeView.ownerViewFieldId).toBe(viewFieldId);
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
+  });
+
+  it('rejects a private scope view on a column the user cannot edit', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+    );
+
+    const { errors } = await createOneView({
+      expectToFail: true,
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      input: {
+        name: 'Guest scope',
+        icon: 'IconFilter',
+        objectMetadataId: testContext.actionItemObjectId,
+        type: ViewType.TABLE_WIDGET,
+        visibility: ViewVisibility.UNLISTED,
+        ownerViewFieldId: viewFieldId,
+      },
+    });
+
+    expect(errors?.[0]?.message).toBe(
+      'You do not have permission to modify this view',
+    );
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
+  });
+
+  it('rejects turning a scope view into a regular view', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+    );
+
+    const {
+      data: { createView: scopeView },
+    } = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: false,
+    });
+
+    const response = await updateOneView({
+      viewId: scopeView.id,
+      input: { id: scopeView.id, type: ViewType.TABLE },
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'must be of type TABLE_WIDGET',
+    );
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
   });
 
   it('removes the scope view when the scoped view field parent view is destroyed', async () => {

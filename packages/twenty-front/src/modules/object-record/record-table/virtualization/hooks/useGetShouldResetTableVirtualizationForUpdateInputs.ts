@@ -1,4 +1,5 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -23,6 +24,8 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     currentRecordFiltersComponentState,
   );
 
+  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
+
   const getShouldResetTableVirtualizationForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
   ) => {
@@ -30,6 +33,7 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
 
     let thereIsAnUpdateOnAFilteredField = false;
     let thereIsAnUpdateOnASortedField = false;
+    let thereIsAnUpdateOnALookupRelation = false;
 
     for (const updateInput of updateInputs) {
       const fieldNamesForUpdateInput = updateInput.updatedFields.flatMap(
@@ -67,13 +71,26 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
       if (updateOnASortedField) {
         thereIsAnUpdateOnASortedField = true;
       }
+
+      // The update returns the new related record without its looked-up field
+      if (
+        updatedFieldMetadataItems.some(({ name }) =>
+          lookupRelationFieldNames.includes(name),
+        )
+      ) {
+        thereIsAnUpdateOnALookupRelation = true;
+      }
     }
 
     if (updatedFieldNames.has('position')) {
       return true;
     }
 
-    return thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField;
+    return (
+      thereIsAnUpdateOnAFilteredField ||
+      thereIsAnUpdateOnASortedField ||
+      thereIsAnUpdateOnALookupRelation
+    );
   };
 
   return {

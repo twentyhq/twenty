@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, stringifySafely } from 'twenty-shared/utils';
 
-import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE,
