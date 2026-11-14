@@ -60,6 +60,7 @@ type FrontComponentRendererProps = {
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
+  errorFallback?: ReactNode;
   shouldPreventPageZoom?: boolean;
 };
 
@@ -83,6 +84,7 @@ export const FrontComponentRenderer = ({
   onError,
   colorScheme,
   loadingFallback,
+  errorFallback,
   shouldPreventPageZoom = false,
 }: FrontComponentRendererProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
@@ -155,7 +157,7 @@ export const FrontComponentRenderer = ({
         {isDefined(error) && (
           <ThemeProvider colorScheme={colorScheme}>
             <FrontComponentErrorEffect error={error} onError={onError} />
-            <FrontComponentErrorBox error={error} />
+            {errorFallback ?? <FrontComponentErrorBox error={error} />}
           </ThemeProvider>
         )}
 
@@ -209,7 +211,7 @@ export const FrontComponentRenderer = ({
 
         {!isDefined(error) && !isReady && loadingFallback}
 
-        {isReady && (
+        {isReady && !(isDefined(error) && isDefined(errorFallback)) && (
           <ThemeProvider colorScheme={colorScheme}>
             <ErrorBoundary
               onError={setError}

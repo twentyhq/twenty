@@ -121,6 +121,10 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type SetToolCallArgumentsFunction = (
+  toolArguments: Record<string, unknown>,
+) => Promise<void>;
+
 export type UploadedFrontComponentFile = {
   fileId: string;
   path: string;
@@ -175,6 +179,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  setToolCallArguments?: SetToolCallArgumentsFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
