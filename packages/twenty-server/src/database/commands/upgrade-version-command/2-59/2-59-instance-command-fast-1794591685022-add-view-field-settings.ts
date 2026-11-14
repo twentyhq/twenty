@@ -11,18 +11,9 @@ export class AddViewFieldSettingsFastInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."viewField" ADD COLUMN IF NOT EXISTS "settings" jsonb`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."viewField" DROP CONSTRAINT IF EXISTS "CHK_VIEW_FIELD_CANONICAL_HAS_NO_SETTINGS"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."viewField" ADD CONSTRAINT "CHK_VIEW_FIELD_CANONICAL_HAS_NO_SETTINGS" CHECK ("isCanonical" = false OR "settings" IS NULL)`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."viewField" DROP CONSTRAINT IF EXISTS "CHK_VIEW_FIELD_CANONICAL_HAS_NO_SETTINGS"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."viewField" DROP COLUMN IF EXISTS "settings"`,
     );
