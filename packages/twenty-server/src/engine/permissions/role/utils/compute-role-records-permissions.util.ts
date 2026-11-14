@@ -165,7 +165,8 @@ const resolveObjectRecordsAccess = ({
     canSoftDelete: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
       hasAllObjectsPermission:
-        isRoleWideGrantApplicable && roleDefinition.canSoftDeleteAllObjectRecords,
+        isRoleWideGrantApplicable &&
+        roleDefinition.canSoftDeleteAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canDestroy: resolveObjectPermissionValue({
@@ -181,7 +182,10 @@ const buildUnreadableAndUneditableFields = ({
   objectMetadata,
   fieldPermissions,
   resolveMorphRelationPermissionFieldIds,
+  isLabelIdentifierAlwaysReadable,
 }: {
+  // a rule can hide the label identifier of the records it reaches, an object level restriction cannot
+  isLabelIdentifierAlwaysReadable: boolean;
   objectMetadata: Pick<ObjectMetadataEntity, 'labelIdentifierFieldMetadataId'>;
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
@@ -192,8 +196,11 @@ const buildUnreadableAndUneditableFields = ({
   for (const fieldPermission of fieldPermissions) {
     const isUnreadable =
       fieldPermission.canReadFieldValue === false &&
-      fieldPermission.fieldMetadataId !==
-        objectMetadata.labelIdentifierFieldMetadataId;
+      !(
+        isLabelIdentifierAlwaysReadable &&
+        fieldPermission.fieldMetadataId ===
+          objectMetadata.labelIdentifierFieldMetadataId
+      );
 
     for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
       fieldPermission.fieldMetadataId,
@@ -302,6 +309,7 @@ export const computeRoleRecordsPermissions = ({
                   rowLevelPermissionRuleId === rule.id,
               ),
               resolveMorphRelationPermissionFieldIds,
+              isLabelIdentifierAlwaysReadable: false,
             })),
       }));
 
@@ -316,6 +324,7 @@ export const computeRoleRecordsPermissions = ({
                 !isDefined(fieldPermission.rowLevelPermissionRuleId),
             ),
             resolveMorphRelationPermissionFieldIds,
+            isLabelIdentifierAlwaysReadable: true,
           }),
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,

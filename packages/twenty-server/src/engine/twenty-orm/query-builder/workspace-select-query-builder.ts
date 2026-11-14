@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type ColumnNullifyConditions,
+  type ColumnNullifyReplacements,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -104,6 +105,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
+  private readonly columnNullifyReplacements: ColumnNullifyReplacements =
+    {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -717,10 +720,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
+    replacementLiteralByColumnName = {},
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
+    replacementLiteralByColumnName?: Record<string, string>;
   }): this {
     const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
       alias
@@ -728,6 +733,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
     for (const columnName of columnNames) {
       (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
+
+      const replacementLiteral = replacementLiteralByColumnName[columnName];
+
+      if (isDefined(replacementLiteral)) {
+        (this.columnNullifyReplacements[alias] ??= {})[columnName] =
+          replacementLiteral;
+      }
     }
 
     return this.setParameters(condition.parameters);
@@ -1314,6 +1326,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       columnNullifyConditions: this.columnNullifyConditions,
+      columnNullifyReplacements: this.columnNullifyReplacements,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

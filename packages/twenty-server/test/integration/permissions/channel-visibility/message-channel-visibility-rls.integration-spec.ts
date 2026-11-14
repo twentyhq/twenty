@@ -1,3 +1,4 @@
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   FeatureFlagKey,
@@ -25,6 +26,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 
 const HANDLE = 'gmail-channel-visibility-rls@apple.dev';
 const SENDER_HANDLE = 'gmail-channel-visibility-rls-sender@example.com';
+const RESTRICTED = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 const FLAGS = [
   FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
@@ -65,13 +67,7 @@ describe('Message channel visibility through personal role rules (integration)',
   const syncRules = async () => {
     await getAppProviderByClassName<ChannelVisibilityRuleSyncService>(
       'ChannelVisibilityRuleSyncService',
-    )
-      .syncWorkspace(SEED_APPLE_WORKSPACE_ID)
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('DEBUGSYNC', JSON.stringify(error, null, 1).slice(0, 4000));
-        throw error;
-      });
+    ).syncWorkspace(SEED_APPLE_WORKSPACE_ID);
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
@@ -136,7 +132,7 @@ describe('Message channel visibility through personal role rules (integration)',
     const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
     expect(message.subject).toBe(subject);
-    expect(message.text).not.toBeNull();
+    expect(message.text).not.toBe(RESTRICTED);
   }, 120000);
 
   it('hides the body but keeps the subject for another member under subject visibility', async () => {
@@ -145,7 +141,7 @@ describe('Message channel visibility through personal role rules (integration)',
     const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
     expect(message.subject).toBe(subject);
-    expect(message.text).toBeNull();
+    expect(message.text).toBe(RESTRICTED);
   }, 120000);
 
   it('hides the subject and the body for another member under metadata visibility', async () => {
@@ -153,8 +149,8 @@ describe('Message channel visibility through personal role rules (integration)',
 
     const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
-    expect(message.subject).toBeNull();
-    expect(message.text).toBeNull();
+    expect(message.subject).toBe(RESTRICTED);
+    expect(message.text).toBe(RESTRICTED);
   }, 120000);
 
   it('always shows the full message to the owner of the connected account', async () => {
@@ -163,6 +159,6 @@ describe('Message channel visibility through personal role rules (integration)',
     const [message] = await readMessageAs(makeGraphqlApiRequest);
 
     expect(message.subject).toBe(subject);
-    expect(message.text).not.toBeNull();
+    expect(message.text).not.toBe(RESTRICTED);
   }, 120000);
 });

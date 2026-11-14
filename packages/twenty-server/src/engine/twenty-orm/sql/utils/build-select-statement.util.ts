@@ -67,6 +67,9 @@ export type OrderByClause = {
 
 export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
+// what a hidden column returns in place of NULL, as a SQL literal
+export type ColumnNullifyReplacements = Record<string, Record<string, string>>;
+
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -75,6 +78,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   columnNullifyConditions: ColumnNullifyConditions;
+  columnNullifyReplacements?: ColumnNullifyReplacements;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -101,7 +105,9 @@ const renderProjectedColumn = ({
 }: {
   state: Pick<
     SelectStatementState,
-    'columnNullifyConditions' | 'groupByExpressions'
+    | 'columnNullifyConditions'
+    | 'columnNullifyReplacements'
+    | 'groupByExpressions'
   >;
   alias: string;
   columnName: string;
@@ -116,7 +122,9 @@ const renderProjectedColumn = ({
 
   return `CASE WHEN ${nullifyConditions
     .map((nullifyCondition) => `(${nullifyCondition})`)
-    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
+    .join(' OR ')} THEN ${
+    state.columnNullifyReplacements?.[alias]?.[columnName] ?? 'NULL'
+  } ELSE ${quotedColumn} END`;
 };
 
 export const normaliseColumnExpression = (

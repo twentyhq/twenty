@@ -1,6 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import {
+  FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type ObjectRecord,
   type ObjectRecordsOperationType,
@@ -88,7 +92,11 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import {
+  escapeIdentifier,
+  escapeLiteral,
+} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
   type WorkspaceRelationShape,
@@ -1935,13 +1943,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         fieldMetadataIds,
         sqlCondition,
       } of unreadableFieldsSQLConditions) {
+        const hiddenColumnEntries = columnEntries.filter(
+          ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
+        );
+
         queryBuilder.nullifyColumnsWhen({
           alias,
-          columnNames: columnEntries
-            .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
-            )
-            .map(([columnName]) => columnName),
+          columnNames: hiddenColumnEntries.map(([columnName]) => columnName),
+          // a hidden text reads as not shared, where NULL would read as empty
+          replacementLiteralByColumnName: Object.fromEntries(
+            hiddenColumnEntries
+              .filter(
+                ([, fieldMetadataId]) =>
+                  findFlatEntityByIdInFlatEntityMaps({
+                    flatEntityId: fieldMetadataId,
+                    flatEntityMaps:
+                      this.options.internalContext.flatFieldMetadataMaps,
+                  })?.type === FieldMetadataType.TEXT,
+              )
+              .map(([columnName]) => [
+                columnName,
+                escapeLiteral(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
+              ]),
+          ),
           condition: sqlCondition,
         });
       }
