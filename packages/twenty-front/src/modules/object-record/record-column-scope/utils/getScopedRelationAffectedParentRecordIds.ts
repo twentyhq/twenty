@@ -58,6 +58,36 @@ export const getScopedRelationAffectedParentRecordIds = ({
     return parentRecordIds;
   }
 
+  const listedRecordIds = new Set<string | undefined>(
+    parentRecordIds.flatMap((parentRecordId) => {
+      const parentRecord = getParentRecord(parentRecordId);
+
+      return aliases.flatMap((alias) => {
+        const relatedRecords: ObjectRecord[] = parentRecord?.[alias] ?? [];
+
+        return relatedRecords.map(({ id }) => id);
+      });
+    }),
+  );
+
+  const isRemoval =
+    operation.type === 'delete-one' || operation.type === 'delete-many';
+
+  // An edit that omits the parent link can still move an unlisted record into a scope
+  const hasUnlinkedNewcomer =
+    !isRemoval &&
+    changedRecords.some(
+      (changedRecord) =>
+        !listedRecordIds.has(changedRecord.id) &&
+        !joinColumnNames.some(
+          (joinColumnName) => joinColumnName in changedRecord,
+        ),
+    );
+
+  if (hasUnlinkedNewcomer) {
+    return parentRecordIds;
+  }
+
   const changedRecordIds = new Set(changedRecords.map(({ id }) => id));
   const linkedParentRecordIds = new Set(
     changedRecords.flatMap((changedRecord) =>

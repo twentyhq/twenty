@@ -9,9 +9,8 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
@@ -29,11 +28,8 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
-    objectMetadataItem,
-  });
-
-  const relationAliases = useScopedRelationAliases();
+  const { recordGqlFields, relationAliases } =
+    useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const apolloCoreClient = useApolloCoreClient();
 
