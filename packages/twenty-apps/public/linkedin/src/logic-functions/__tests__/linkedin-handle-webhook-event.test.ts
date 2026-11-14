@@ -264,7 +264,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
     );
 
     expect(mocks.ingestMessages).toHaveBeenCalledTimes(1);
-    expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
+    expect(mocks.getUnipileChat).toHaveBeenCalledWith({
       accountId: 'acc_1',
       chatId: 'chat-1',
     });
@@ -318,6 +318,32 @@ describe('linkedinHandleWebhookEventHandler', () => {
     expect(mocks.ingestMessages.mock.calls[0][0].messages[0].isRead).toBe(
       false,
     );
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
+  });
+
+  it('applies the chat read state fetched after ingestion, not the one fetched before', async () => {
+    const chat = {
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      user: DAPHNE,
+    };
+
+    mocks.getUnipileChat
+      .mockResolvedValueOnce({ ...chat, unread_count: 0 })
+      .mockResolvedValueOnce({ ...chat, unread_count: 1 });
+
+    await linkedinHandleWebhookEventHandler(
+      buildMessageEvent({
+        sender_id: DAPHNE.id,
+        sender: DAPHNE,
+        is_sender: false,
+      }),
+    );
+
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+    expect(mocks.getUnipileChat).toHaveBeenCalledTimes(2);
     expect(mocks.metadataMutation).not.toHaveBeenCalled();
   });
 

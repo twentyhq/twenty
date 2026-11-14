@@ -14,6 +14,7 @@ import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { refreshLinkedinChatReadState } from 'src/logic-functions/utils/refresh-linkedin-chat-read-state.util';
 import { syncLinkedinChatReadState } from 'src/logic-functions/utils/sync-linkedin-chat-read-state.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
@@ -71,7 +72,11 @@ const ingestUnipileMessage = async ({
     };
   }
 
-  await syncLinkedinChatReadState({ messageChannelId: channel.id, chat });
+  await refreshLinkedinChatReadState({
+    unipileAccountId,
+    messageChannelId: channel.id,
+    chatId: chat.id,
+  });
 
   return { handled: true };
 };
