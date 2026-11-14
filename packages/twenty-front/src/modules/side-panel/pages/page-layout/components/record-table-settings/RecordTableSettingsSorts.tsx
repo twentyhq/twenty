@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecordTableWidgetSortCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetSortCallbacks';
@@ -9,10 +8,7 @@ import { RecordTableSettingsSortsInitializeStateEffect } from '@/side-panel/page
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon/provider';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledSortSettingsContainer = styled.div`
@@ -45,8 +41,6 @@ export const RecordTableSettingsSorts = ({
     objectId: objectMetadataId,
   });
 
-  const { getIcon } = useIcons();
-
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
     viewId,
@@ -63,25 +57,6 @@ export const RecordTableSettingsSorts = ({
     return null;
   }
 
-  const sortableFieldOptions = objectMetadataItem.fields
-    .filter(filterSortableFieldMetadataItems)
-    .map((field) => ({
-      Icon: getIcon(field.icon),
-      label: field.label,
-      value: field.id,
-    }));
-
-  const directionOptions: Array<SelectOption<ViewSortDirection>> = [
-    {
-      label: t`Ascending`,
-      value: ViewSortDirection.ASC,
-    },
-    {
-      label: t`Descending`,
-      value: ViewSortDirection.DESC,
-    },
-  ];
-
   return (
     <StyledSortSettingsContainer>
       <InputLabel>{t`Sorts`}</InputLabel>
@@ -89,8 +64,7 @@ export const RecordTableSettingsSorts = ({
         value={{ instanceId: recordIndexId }}
       >
         <RecordTableSettingsSortsContent
-          sortableFieldOptions={sortableFieldOptions}
-          directionOptions={directionOptions}
+          objectMetadataItem={objectMetadataItem}
           onUpdate={handleSortUpdate}
         />
         <RecordTableSettingsSortsInitializeStateEffect view={view} />

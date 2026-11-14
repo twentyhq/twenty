@@ -58,11 +58,11 @@ export const triggerAttachRelationOptimisticEffect = ({
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { toReference, storeFieldName, DELETE },
+        { toReference, storeFieldName },
       ) => {
-        // A copy with arguments is filtered or limited; drop it so it is refetched instead of guessed
+        // A copy with arguments is filtered or limited, so it is refreshed from the server instead of guessed
         if (storeFieldName !== fieldNameOnTargetRecord) {
-          return DELETE;
+          return targetRecordFieldValue;
         }
 
         const fieldValueIsObjectRecordConnectionWithRefs =

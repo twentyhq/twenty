@@ -1,3 +1,4 @@
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
@@ -5,7 +6,6 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
-import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -130,7 +130,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     canConfigureColumns &&
     isCanonical &&
     isDefined(fieldMetadataItem) &&
-    (isScopableRelationField(fieldMetadataItem) ||
+    (isPlainOneToManyRelationField(fieldMetadataItem) ||
       isManyToOneRelationField(fieldMetadataItem));
   const canEditColumn = canConfigureColumns && !isCanonical;
   const canDeleteColumn = canPersistChanges && !isCanonical;

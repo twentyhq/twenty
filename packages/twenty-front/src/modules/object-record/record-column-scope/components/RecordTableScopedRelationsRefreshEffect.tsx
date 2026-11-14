@@ -3,7 +3,6 @@ import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/ty
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { getScopedRelationAffectedParentRecordIds } from '@/object-record/record-column-scope/utils/getScopedRelationAffectedParentRecordIds';
@@ -38,11 +37,12 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
     recordTableId,
   );
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordGqlFields: SCOPED_RELATIONS_REFRESH_GQL_FIELDS,
-    relationAliases,
-  });
+  const { findManyRecordsQuery, relationAliasVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      recordGqlFields: SCOPED_RELATIONS_REFRESH_GQL_FIELDS,
+      relationAliases,
+    });
 
   const handleRecordOperation = useCallback(
     async ({
@@ -78,9 +78,6 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
         return;
       }
 
-      const relationAliasVariables =
-        getRecordGqlRelationAliasVariables(relationAliases);
-
       await Promise.all(
         arrayToChunks(parentRecordIds, QUERY_MAX_RECORDS).map(
           async (parentRecordIdsChunk) => {
@@ -115,6 +112,7 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
       objectMetadataItem,
       apolloCoreClient,
       findManyRecordsQuery,
+      relationAliasVariables,
       upsertRecordsInStore,
     ],
   );
