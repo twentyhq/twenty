@@ -723,22 +723,29 @@ export class RecordPermissionsReadService {
       flatObjectMetadata,
       operationType,
       tableAlias,
-      buildEntrySQLCondition: ({ reachedThroughResolvedPath, ...entry }) =>
-        this.buildEntrySQLCondition({
+      buildEntrySQLCondition: ({ reachedThroughResolvedPath, ...entry }) => {
+        const sourceRequest = isDefined(reachedThroughResolvedPath)
+          ? buildRelatedRecordPathSourceRequest({
+              request: { principals, metadataMaps, flatObjectMetadata },
+              resolvedPath: reachedThroughResolvedPath,
+            })
+          : { metadataMaps };
+
+        if (!isDefined(sourceRequest)) {
+          return false;
+        }
+
+        return this.buildEntrySQLCondition({
           principals,
           operationType,
           ...entry,
-          metadataMaps: isDefined(reachedThroughResolvedPath)
-            ? (buildRelatedRecordPathSourceRequest({
-                request: { principals, metadataMaps, flatObjectMetadata },
-                resolvedPath: reachedThroughResolvedPath,
-              })?.metadataMaps ?? metadataMaps)
-            : metadataMaps,
+          metadataMaps: sourceRequest.metadataMaps,
           hypotheticalRecordShareAccessLevel:
             entry.flatObjectMetadata.id === flatObjectMetadata.id
               ? hypotheticalRecordShareAccessLevel
               : undefined,
-        }),
+        });
+      },
     });
   }
 
