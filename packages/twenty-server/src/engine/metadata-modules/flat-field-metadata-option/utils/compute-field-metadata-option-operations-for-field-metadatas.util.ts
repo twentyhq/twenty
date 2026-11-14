@@ -13,12 +13,14 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
   flatFieldMetadatasToDelete = [],
   existingFlatFieldMetadataOptionMaps,
   applicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatFieldMetadatasToCreate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToUpdate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToDelete?: UniversalFlatFieldMetadata[];
   existingFlatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   applicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier?: string;
 }): FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> => {
   const operations: FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> = {
     flatEntityToCreate: [],
@@ -26,6 +28,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     flatEntityToDelete: [],
   };
 
+  // TODO: remove once every instance has run the 2.56 option table command.
   if (!isFieldMetadataOptionEntityAvailable()) {
     return operations;
   }
@@ -70,25 +73,16 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     fieldMetadataUniversalIdentifier,
     targetUniversalFlatFieldMetadata,
   } of fieldsWithTarget) {
+    const existingOptions =
+      existingOptionsByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      ) ?? [];
+
     const fieldOperations = computeFieldMetadataOptionOperationsForField({
       targetUniversalFlatFieldMetadata,
-      existingOptions:
-        existingOptionsByFieldMetadataUniversalIdentifier.get(
-          fieldMetadataUniversalIdentifier,
-        ) ?? [],
-      isUniversalIdentifierUsedByOtherField: (universalIdentifier) => {
-        const existingOption =
-          existingFlatFieldMetadataOptionMaps.byUniversalIdentifier[
-            universalIdentifier
-          ];
-
-        return (
-          isDefined(existingOption) &&
-          existingOption.fieldMetadataUniversalIdentifier !==
-            fieldMetadataUniversalIdentifier
-        );
-      },
+      existingOptions,
       applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
     operations.flatEntityToCreate.push(

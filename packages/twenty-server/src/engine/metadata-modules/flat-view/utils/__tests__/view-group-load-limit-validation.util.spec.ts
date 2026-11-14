@@ -117,6 +117,7 @@ const createViewWithGroupLoadLimit = (groupLoadLimit?: number) =>
     },
     flatApplication,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatViewFieldMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps,
   });
@@ -127,6 +128,7 @@ const updateViewWithGroupLoadLimit = (groupLoadLimit: number) =>
     flatViewMaps,
     flatViewGroupMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     callerApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -189,6 +191,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:
@@ -211,6 +214,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:

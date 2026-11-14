@@ -1,4 +1,4 @@
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { NavigationDrawerInboxContent } from '@/inbox/components/NavigationDrawerInboxContent';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -24,7 +24,7 @@ export const NavigationDrawerTabbedContent = ({
       </StyledTabContent>
       {shouldMountAiChatContent && (
         <StyledTabContent isHidden={!showAiChatContent}>
-          <NavigationDrawerAiChatContent />
+          <NavigationDrawerInboxContent />
         </StyledTabContent>
       )}
     </>
