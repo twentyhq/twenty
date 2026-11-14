@@ -11,6 +11,8 @@ const selectOptionSchema = z
     label: z.string().trim().min(1),
     position: z.number(),
     value: z.string(),
+    isActive: z.boolean().optional(),
+    applicationId: z.string().optional(),
   })
   .refine(
     (option) => {

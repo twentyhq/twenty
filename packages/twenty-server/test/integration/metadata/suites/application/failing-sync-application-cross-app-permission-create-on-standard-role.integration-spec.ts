@@ -119,6 +119,7 @@ describe('Sync application should fail when creating permissions on a standard r
                 universalIdentifier: TEST_FIELD_PERMISSION_ID,
                 objectUniversalIdentifier: FAKE_OBJECT_ID,
                 fieldUniversalIdentifier: FAKE_FIELD_ID,
+                canReadFieldValue: false,
               },
             ],
           },

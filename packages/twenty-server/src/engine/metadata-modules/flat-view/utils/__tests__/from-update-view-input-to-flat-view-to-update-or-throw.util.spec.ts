@@ -184,6 +184,7 @@ const updateView = ({
       createEmptyFlatEntityMaps(),
     ),
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     callerApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:

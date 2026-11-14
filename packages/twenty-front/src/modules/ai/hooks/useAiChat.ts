@@ -24,7 +24,7 @@ import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
-import { useOpenNewInboxAsDirectMessage } from '@/inbox/hooks/useOpenNewInboxAsDirectMessage';
+import { useOpenNewAiChatAsDirectMessage } from '@/ai/hooks/useOpenNewAiChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
@@ -42,20 +42,20 @@ import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHand
 import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/inbox/states/selectors/inboxThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/aiChatIsAwaitingPersistedRefetchFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getAiChatInitialRecipients } from '@/ai/utils/getAiChatInitialRecipients';
-import { getInboxNewThreadDirectMessageWorkspaceMemberId } from '@/inbox/utils/getInboxNewThreadDirectMessageWorkspaceMemberId';
+import { getAiChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAiChatNewThreadDirectMessageWorkspaceMemberId';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAiChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -104,7 +104,7 @@ export const useAiChat = () => {
   const isDirectMessageIdentityEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
-  const { openNewInboxAsDirectMessage } = useOpenNewInboxAsDirectMessage();
+  const { openNewAiChatAsDirectMessage } = useOpenNewAiChatAsDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -306,7 +306,7 @@ export const useAiChat = () => {
         if (isNewChat) {
           await refreshAiChatThreadPermissions([threadId]);
           store.set(newAiChatThreadIdState.atom, v4());
-          store.set(inboxNewThreadChannelIdState.atom, null);
+          store.set(aiChatNewThreadChannelIdState.atom, null);
           store.set(unconfirmedFirstMessageAtom, null);
 
           if (isDefined(newInboxChatRecipients)) {
@@ -388,7 +388,7 @@ export const useAiChat = () => {
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
     const isNewChat = threadId === newAiChatThreadId;
     const isDirectMessage = store.get(
-      inboxThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
+      aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
     );
     const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
       threadId,
@@ -461,7 +461,7 @@ export const useAiChat = () => {
       serializedContentToSend,
     );
     const channelId = isNewChat
-      ? store.get(inboxNewThreadChannelIdState.atom)
+      ? store.get(aiChatNewThreadChannelIdState.atom)
       : undefined;
     const initialRecipients = getAiChatInitialRecipients({
       recipientWorkspaceMemberIds:
@@ -494,7 +494,7 @@ export const useAiChat = () => {
     }
 
     const directMessageWorkspaceMemberId =
-      getInboxNewThreadDirectMessageWorkspaceMemberId({
+      getAiChatNewThreadDirectMessageWorkspaceMemberId({
         isDirectMessageIdentityEnabled,
         newInboxChatRecipients,
         isAssistantMentioned,
@@ -504,7 +504,7 @@ export const useAiChat = () => {
       });
 
     if (isDefined(directMessageWorkspaceMemberId)) {
-      const directMessageThreadId = await openNewInboxAsDirectMessage({
+      const directMessageThreadId = await openNewAiChatAsDirectMessage({
         newChatThreadId: threadId,
         workspaceMemberId: directMessageWorkspaceMemberId,
         serializedDraft: serializedContentToSend,
@@ -572,7 +572,7 @@ export const useAiChat = () => {
     canSendAiChatMessage,
     isAiChatInboxEnabled,
     isDirectMessageIdentityEnabled,
-    openNewInboxAsDirectMessage,
+    openNewAiChatAsDirectMessage,
     enqueueToast,
     setCurrentAiChatThread,
     sendToThread,

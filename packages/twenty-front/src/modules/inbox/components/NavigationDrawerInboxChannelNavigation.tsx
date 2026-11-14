@@ -2,14 +2,14 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/inbox/constants/InboxChannelNavigationItems';
 import { useOpenInboxChannel } from '@/inbox/hooks/useOpenInboxChannel';
-import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
+import { type InboxChannelSummary } from '@/inbox/types/InboxChannelSummary';
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
 import { getInboxChannelNavigationItemOrThrow } from '@/inbox/utils/getInboxChannelNavigationItemOrThrow';
 import { getInboxChannelViewKey } from '@/inbox/utils/getInboxChannelViewKey';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
@@ -17,8 +17,8 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 
 type NavigationDrawerInboxChannelNavigationProps = {
-  channel: AgentChatChannel;
-  summary?: AgentChatChannelSummary;
+  channel: AiChatChannel;
+  summary?: InboxChannelSummary;
   channelView: InboxChannelView | null;
   isActive: boolean;
   isExpandable?: boolean;
@@ -92,7 +92,7 @@ export const NavigationDrawerInboxChannelNavigation = ({
       <NavigationDrawerItem
         label={channel.name}
         secondaryLabel={isChannelAccessible ? undefined : t`Not open to you`}
-        Icon={icon ?? <InboxChannelIcon channel={channel} />}
+        Icon={icon ?? <AiChatChannelIcon channel={channel} />}
         variant={isChannelAccessible ? 'default' : 'tertiary'}
         isUnread={summary?.hasUnreadOpen}
         active={isActive && !areChildrenVisible}

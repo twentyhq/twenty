@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadCompactContent } from '@/ai/components/AiChatThreadCompactContent';
-import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
 
 const StyledHeading = styled.div`
   align-items: center;
@@ -20,7 +20,7 @@ const StyledTitle = styled.div`
 `;
 
 type AiChatThreadRowContentProps = {
-  variant: InboxThreadListVariant;
+  variant: AiChatThreadRowVariant;
   title: ReactNode;
   subtitle: ReactNode;
   activityTime: ReactNode;

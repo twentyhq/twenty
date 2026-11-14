@@ -4,6 +4,7 @@ import {
   type TagColor,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
@@ -20,6 +21,7 @@ const sanitizeOptionsUpdate = ({
   options: UpdateFieldInput['options'];
 }) =>
   sanitizeRawUpdateFieldInput({
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     existingFlatFieldMetadata: getFlatFieldMetadataMock({
       id: FIELD_ID,
       type,
@@ -97,6 +99,7 @@ describe('sanitizeRawUpdateFieldInput', () => {
   describe('system side effect fields', () => {
     const sanitizeLabelUpdate = ({ morphId }: { morphId: string | null }) =>
       sanitizeRawUpdateFieldInput({
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         existingFlatFieldMetadata: getFlatFieldMetadataMock({
           id: FIELD_ID,
           type: FieldMetadataType.MORPH_RELATION,
