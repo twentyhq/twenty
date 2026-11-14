@@ -90,6 +90,7 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -1949,7 +1950,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
         queryBuilder.nullifyColumnsWhen({
           alias,
-          columnNames: hiddenColumnEntries.map(([columnName]) => columnName),
+          columnNames: [
+            ...hiddenColumnEntries.map(([columnName]) => columnName),
+            // the search vector is derived from fields that may be hidden, so a search must not match those rows
+            ...(hiddenColumnEntries.length > 0 &&
+            tableShape.columnNames.includes(SEARCH_VECTOR_FIELD.name)
+              ? [SEARCH_VECTOR_FIELD.name]
+              : []),
+          ],
           // a hidden text reads as not shared, where NULL would read as empty
           replacementLiteralByColumnName: Object.fromEntries(
             hiddenColumnEntries

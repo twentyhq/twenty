@@ -23,7 +23,7 @@ import { connectMessagingAccount } from 'test/integration/utils/connect-messagin
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { waitForDeferredWorkspaceOperations } from 'test/integration/utils/wait-for-deferred-workspace-operations.util';
 
 const HANDLE = 'gmail-channel-visibility-rls@apple.dev';
 const SENDER_HANDLE = 'gmail-channel-visibility-rls-sender@example.com';
@@ -98,7 +98,7 @@ describe('Message channel visibility through personal role rules (integration)',
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await waitForAllJobsToFinish();
+    await waitForDeferredWorkspaceOperations(SEED_APPLE_WORKSPACE_ID);
   };
 
   const setVisibility = async (visibility: MessageChannelVisibility) => {
@@ -154,6 +154,7 @@ describe('Message channel visibility through personal role rules (integration)',
       'PersonalRoleService',
     ).deletePersonalRoles({ workspaceId: SEED_APPLE_WORKSPACE_ID });
     await channel?.cleanup().catch(() => undefined);
+    await waitForDeferredWorkspaceOperations(SEED_APPLE_WORKSPACE_ID);
   }, 120000);
 
   it('shows the full message to another member when the channel shares everything', async () => {

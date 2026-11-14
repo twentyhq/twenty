@@ -88,15 +88,43 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should not nullify columns in a grouped query', () => {
+  it('should group a nullified column by its nullified value', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        extraSelectClauses: [{ expression: '"person"."id"', alias: 'groupId' }],
         groupByExpressions: ['"person"."id"'],
       }),
     );
+    const nullifiedColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
-    expect(sql).not.toContain('CASE WHEN');
+    expect(sql).toContain(`${nullifiedColumn} AS "groupId"`);
+    expect(sql).toContain(`GROUP BY ${nullifiedColumn}`);
+  });
+
+  it('should filter and order on the nullified value of a column, and leave row access conditions and string literals alone', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            sql: `"person"."id" = :a OR "person"."name" = '"person"."id"'`,
+          },
+        ],
+        rowAccessConditions: ['"person"."id" = :ownerId'],
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+    const nullifiedColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
+
+    expect(sql).toContain(
+      `WHERE (${nullifiedColumn} = :a OR "person"."name" = '"person"."id"') AND ("person"."id" = :ownerId)`,
+    );
+    expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
   });
 
   it('should keep row access conditions outside a user OR chain', () => {

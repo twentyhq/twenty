@@ -577,16 +577,22 @@ export class FieldPermissionService {
       );
     }
 
-    // An unreadable column reads as null, which a required field cannot return
+    const isToManyRelation =
+      flatFieldMetadata.type === FieldMetadataType.RELATION &&
+      (flatFieldMetadata.settings as { relationType?: string } | undefined)
+        ?.relationType === RelationType.ONE_TO_MANY;
+
+    // An unreadable column reads as null, which a required field cannot return, and a join would still read through an unreadable to-one relation. A to-many relation has neither: hiding it stops what hangs from it from following the record
     if (
-      flatFieldMetadata.isNullable === false &&
-      !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
+      !isToManyRelation &&
+      (flatFieldMetadata.isNullable === false ||
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata))
     ) {
       throw new PermissionsException(
         `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
         PermissionsExceptionCode.INVALID_ARG,
         {
-          userFriendlyMessage: msg`Required fields cannot be restricted on a row level permission rule.`,
+          userFriendlyMessage: msg`Required fields and relations to a single record cannot be restricted on a row level permission rule.`,
         },
       );
     }

@@ -98,6 +98,67 @@ export const quoteColumn = (alias: string, columnName: string): string =>
 
 const PLAIN_COLUMN_EXPRESSION = /^"?(\w+)"?\."?(\w+)"?$/;
 
+const SQL_STRING_LITERALS = /('(?:[^']|'')*')/;
+
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const renderNullifiedColumn = ({
+  quotedColumn,
+  nullifyConditions,
+  replacement = 'NULL',
+}: {
+  quotedColumn: string;
+  nullifyConditions: string[];
+  replacement?: string;
+}): string =>
+  `CASE WHEN ${nullifyConditions
+    .map((nullifyCondition) => `(${nullifyCondition})`)
+    .join(' OR ')} THEN ${replacement} ELSE ${quotedColumn} END`;
+
+// a column hidden on some rows reads as NULL wherever a caller can test it, so a filter, a sort or a group cannot reveal it
+export const maskNullifiedColumnReferences = (
+  expression: string,
+  columnNullifyConditions: ColumnNullifyConditions,
+): string => {
+  const maskedColumnByQuotedColumn = new Map(
+    Object.entries(columnNullifyConditions).flatMap(([alias, conditions]) =>
+      Object.entries(conditions).map(
+        ([columnName, nullifyConditions]): [string, string] => {
+          const quotedColumn = quoteColumn(alias, columnName);
+
+          return [
+            quotedColumn,
+            `(${renderNullifiedColumn({ quotedColumn, nullifyConditions })})`,
+          ];
+        },
+      ),
+    ),
+  );
+
+  if (maskedColumnByQuotedColumn.size === 0) {
+    return expression;
+  }
+
+  const quotedColumnPattern = new RegExp(
+    [...maskedColumnByQuotedColumn.keys()].map(escapeRegExp).join('|'),
+    'g',
+  );
+
+  return expression
+    .split(SQL_STRING_LITERALS)
+    .map((segment, segmentIndex) =>
+      segmentIndex % 2 === 1
+        ? segment
+        : segment.replace(
+            quotedColumnPattern,
+            (quotedColumn) =>
+              maskedColumnByQuotedColumn.get(quotedColumn) ?? quotedColumn,
+          ),
+    )
+    .join('');
+};
+
 const renderProjectedColumn = ({
   state,
   alias,
@@ -115,16 +176,23 @@ const renderProjectedColumn = ({
   const quotedColumn = quoteColumn(alias, columnName);
   const nullifyConditions = state.columnNullifyConditions[alias]?.[columnName];
 
-  // A grouped query projects no plain column, and a CASE on one wouldn't be grouped
-  if (!isDefined(nullifyConditions) || state.groupByExpressions.length > 0) {
+  if (!isDefined(nullifyConditions)) {
     return quotedColumn;
   }
 
-  return `CASE WHEN ${nullifyConditions
-    .map((nullifyCondition) => `(${nullifyCondition})`)
-    .join(' OR ')} THEN ${
-    state.columnNullifyReplacements?.[alias]?.[columnName] ?? 'NULL'
-  } ELSE ${quotedColumn} END`;
+  // a grouped column has to be written exactly as its GROUP BY expression is
+  if (state.groupByExpressions.length > 0) {
+    return maskNullifiedColumnReferences(
+      quotedColumn,
+      state.columnNullifyConditions,
+    );
+  }
+
+  return renderNullifiedColumn({
+    quotedColumn,
+    nullifyConditions,
+    replacement: state.columnNullifyReplacements?.[alias]?.[columnName],
+  });
 };
 
 export const normaliseColumnExpression = (
@@ -329,7 +397,10 @@ export const buildProjection = (
           alias: plainColumn[1],
           columnName: plainColumn[2],
         })
-      : quoteQualifiedAliasReferences(extraSelect.expression, aliases);
+      : maskNullifiedColumnReferences(
+          quoteQualifiedAliasReferences(extraSelect.expression, aliases),
+          state.columnNullifyConditions,
+        );
 
     expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
   }
@@ -373,6 +444,7 @@ export const renderWhereExpressionWithRowAccess = ({
 const renderExistsFilter = (
   existsFilterClause: ExistsFilterClause,
   includeDeleted: boolean,
+  columnNullifyConditions: ColumnNullifyConditions,
 ): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
@@ -380,7 +452,12 @@ const renderExistsFilter = (
   ];
 
   if (existsFilterClause.conditionSql.length > 0) {
-    conditions.push(existsFilterClause.conditionSql);
+    conditions.push(
+      maskNullifiedColumnReferences(
+        existsFilterClause.conditionSql,
+        columnNullifyConditions,
+      ),
+    );
   }
 
   if (
@@ -405,16 +482,24 @@ export const substituteExistsFilterTokens = ({
   expression,
   existsFilterClauses,
   includeDeleted,
+  columnNullifyConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
+  columnNullifyConditions?: ColumnNullifyConditions;
 }): string =>
   existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
       substituted
         .split(existsFilterClause.token)
-        .join(renderExistsFilter(existsFilterClause, includeDeleted)),
+        .join(
+          renderExistsFilter(
+            existsFilterClause,
+            includeDeleted,
+            columnNullifyConditions,
+          ),
+        ),
     expression,
   );
 
@@ -428,12 +513,19 @@ export const buildWhereExpression = (
     substituteExistsFilters?: boolean;
   } = {},
 ): string => {
+  const aliases = collectStatementAliases(state);
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
-      whereClauses: state.whereClauses,
+      whereClauses: state.whereClauses.map((whereClause) => ({
+        ...whereClause,
+        sql: maskNullifiedColumnReferences(
+          quoteQualifiedAliasReferences(whereClause.sql, aliases),
+          state.columnNullifyConditions,
+        ),
+      })),
       rowAccessConditions: state.rowAccessConditions,
     }),
-    collectStatementAliases(state),
+    aliases,
   );
 
   const filterExpression = substituteExistsFilters
@@ -441,6 +533,7 @@ export const buildWhereExpression = (
         expression: renderedWhereExpression,
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
+        columnNullifyConditions: state.columnNullifyConditions,
       })
     : renderedWhereExpression;
 
@@ -556,7 +649,16 @@ export const buildGroupByClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  return `GROUP BY ${state.groupByExpressions.join(', ')}`;
+  const aliases = collectStatementAliases(state);
+
+  return `GROUP BY ${state.groupByExpressions
+    .map((expression) =>
+      maskNullifiedColumnReferences(
+        quoteQualifiedAliasReferences(expression, aliases),
+        state.columnNullifyConditions,
+      ),
+    )
+    .join(', ')}`;
 };
 
 export const buildOrderByClause = (state: SelectStatementState): string => {
@@ -569,9 +671,10 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
   return `ORDER BY ${state.orderByClauses
     .map(
       (orderByClause) =>
-        `${quoteQualifiedAliasReferences(orderByClause.expression, aliases)} ${
-          orderByClause.direction
-        }${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
+        `${maskNullifiedColumnReferences(
+          quoteQualifiedAliasReferences(orderByClause.expression, aliases),
+          state.columnNullifyConditions,
+        )} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
@@ -603,7 +706,12 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
   const aliases = collectStatementAliases(state);
 
   return `DISTINCT ON (${state.distinctOnExpressions
-    .map((expression) => quoteQualifiedAliasReferences(expression, aliases))
+    .map((expression) =>
+      maskNullifiedColumnReferences(
+        quoteQualifiedAliasReferences(expression, aliases),
+        state.columnNullifyConditions,
+      ),
+    )
     .join(', ')}) `;
 };
 
