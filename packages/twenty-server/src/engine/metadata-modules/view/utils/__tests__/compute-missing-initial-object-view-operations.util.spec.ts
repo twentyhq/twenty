@@ -50,6 +50,7 @@ type ViewFieldFixture = {
   aggregateOperation: AggregateOperations | null;
   isActive: boolean;
   isSystemSideEffect: boolean;
+  isCanonical: boolean;
   universalOverrides: null;
   createdAt: string;
   updatedAt: string;
@@ -102,6 +103,7 @@ const buildIndexViewFieldFixture = ({
   aggregateOperation: null,
   isActive: true,
   isSystemSideEffect: true,
+  isCanonical: true,
   universalOverrides: null,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
@@ -192,6 +194,48 @@ describe('computeMissingInitialObjectViewOperations', () => {
             AGE_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
       ),
     ).toBe(true);
+  });
+
+  it('copies only canonical columns, leaving extra columns of the same field out', () => {
+    const extraNameIndexViewField: ViewFieldFixture = {
+      ...buildIndexViewFieldFixture({
+        universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000011',
+        fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+        position: 2,
+      }),
+      isCanonical: false,
+    };
+
+    const { viewFieldsToCreate } = computeMissingInitialObjectViewOperations({
+      ...buildMaps({
+        objects: [PET_OBJECT],
+        views: [
+          {
+            ...PET_INDEX_VIEW,
+            viewFieldUniversalIdentifiers: [
+              ...PET_INDEX_VIEW.viewFieldUniversalIdentifiers,
+              extraNameIndexViewField.universalIdentifier,
+            ],
+          },
+        ],
+        viewFields: [
+          NAME_INDEX_VIEW_FIELD,
+          AGE_INDEX_VIEW_FIELD,
+          extraNameIndexViewField,
+        ],
+      }),
+      initialViewApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(
+      viewFieldsToCreate.map(
+        (viewField) => viewField.fieldMetadataUniversalIdentifier,
+      ),
+    ).toEqual([
+      NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      AGE_FIELD_UNIVERSAL_IDENTIFIER,
+    ]);
   });
 
   it('produces nothing when the initial view already exists, live or soft-deleted', () => {
