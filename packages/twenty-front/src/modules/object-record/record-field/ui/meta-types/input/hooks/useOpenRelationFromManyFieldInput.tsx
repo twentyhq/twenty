@@ -75,8 +75,12 @@ export const useOpenRelationFromManyFieldInput = () => {
           };
         });
 
+      // Scoped values only carry identifier fields, so merge rather than replace
       for (const record of fieldValue) {
-        store.set(recordStoreFamilyState.atomFamily(record.id), record);
+        store.set(
+          recordStoreFamilyState.atomFamily(record.id),
+          (existingRecord) => ({ ...existingRecord, ...record }),
+        );
       }
 
       store.set(
