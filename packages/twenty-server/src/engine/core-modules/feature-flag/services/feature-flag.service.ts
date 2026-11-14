@@ -131,6 +131,9 @@ export class FeatureFlagService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
+      ...(featureFlag === FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED
+        ? (['rolesPermissions'] as const)
+        : []),
     ]);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<FeatureFlagEnabledEvent>(

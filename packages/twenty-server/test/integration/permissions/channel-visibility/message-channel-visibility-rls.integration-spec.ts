@@ -103,6 +103,8 @@ describe('Message channel visibility through personal role rules (integration)',
       }),
     );
 
+    expect(response.body.errors).toBeUndefined();
+
     messageId = response.body.data.messages.edges[0].node.id;
 
     for (const featureFlag of FLAGS) {

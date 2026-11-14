@@ -149,6 +149,7 @@ export class FieldPermissionService {
         flatRowLevelPermissionPredicateGroupMaps,
         rolesPermissions,
         flatRole,
+        isSystemBuild,
       });
 
       const bothNull =
@@ -360,6 +361,7 @@ export class FieldPermissionService {
     flatRowLevelPermissionPredicateGroupMaps,
     rolesPermissions,
     flatRole,
+    isSystemBuild,
   }: {
     allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
@@ -368,6 +370,7 @@ export class FieldPermissionService {
     flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
     rolesPermissions: Record<string, RoleRecordsPermissions> | undefined;
     flatRole: { id: string } | undefined;
+    isSystemBuild: boolean;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(
       (permission) => keyFrom(permission) === keyFrom(fieldPermission),
@@ -409,7 +412,7 @@ export class FieldPermissionService {
       );
     }
 
-    if (flatObjectMetadata.isSystem === true) {
+    if (flatObjectMetadata.isSystem === true && !isSystemBuild) {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,

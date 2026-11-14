@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v5 } from 'uuid';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -59,6 +60,7 @@ export class ChannelVisibilityRuleSyncService {
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async syncWorkspace(workspaceId: string): Promise<void> {
@@ -120,6 +122,10 @@ export class ChannelVisibilityRuleSyncService {
           ],
         },
       );
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
     const systemFlatObjectMetadatas = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
@@ -134,6 +140,20 @@ export class ChannelVisibilityRuleSyncService {
 
     for (const flatRole of Object.values(flatRoleMaps.byUniversalIdentifier)) {
       if (!isDefined(flatRole) || isPersonalRole(flatRole)) {
+        continue;
+      }
+
+      const isGrantedRoleWide =
+        flatRole.canReadAllObjectRecords &&
+        flatRole.canUpdateAllObjectRecords &&
+        flatRole.canSoftDeleteAllObjectRecords &&
+        flatRole.canDestroyAllObjectRecords;
+
+      // TODO: a role of another application that lacks a role wide grant still loses system objects here
+      if (
+        isGrantedRoleWide ||
+        flatRole.applicationId !== workspaceCustomFlatApplication.id
+      ) {
         continue;
       }
 
