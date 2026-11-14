@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/relation-record-key.util';
+import { getAliasedRelationRecordKeys } from 'src/engine/api/common/utils/get-aliased-relation-record-keys.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -52,7 +52,7 @@ const isRelationSelected = (
   fieldName: string,
 ) =>
   isDefined(relations[fieldName]) ||
-  getAliasedRelationRecordKeys(relations, fieldName).length > 0;
+  getAliasedRelationRecordKeys({ record: relations, fieldName }).length > 0;
 
 const getRequiredRelationColumns = (
   relations: Record<string, unknown>,

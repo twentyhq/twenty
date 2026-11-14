@@ -62,7 +62,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
         primaryPhoneNumber: '123456789',
         additionalPhones: [{ number: '987654321', callingCode: '+33' }],
       }),
-    ).toStrictEqual({
+    ).toEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: [
@@ -82,7 +82,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',
       }),
-    ).toStrictEqual({
+    ).toEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',

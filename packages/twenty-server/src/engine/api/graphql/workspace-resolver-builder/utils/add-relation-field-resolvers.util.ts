@@ -1,7 +1,7 @@
 import { isObjectType, type GraphQLSchema } from 'graphql';
 import { getNodeTypename, isDefined } from 'twenty-shared/utils';
 
-import { computeRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
+import { computeRelationRecordKey } from 'src/engine/api/common/utils/compute-relation-record-key.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
