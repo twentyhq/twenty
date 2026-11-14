@@ -1,6 +1,5 @@
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -23,8 +22,6 @@ export const useHandleToggleColumnSort = ({
 
   const { columnDefinitions } =
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
-
-  const { upsertRecordSort } = useUpsertRecordSort();
 
   const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
@@ -59,14 +56,9 @@ export const useHandleToggleColumnSort = ({
           : ViewSortDirection.ASC,
       };
 
-      upsertRecordSort(newSort);
+      store.set(currentRecordSortsCallbackState, [newSort]);
     },
-    [
-      columnDefinitions,
-      currentRecordSortsCallbackState,
-      store,
-      upsertRecordSort,
-    ],
+    [columnDefinitions, currentRecordSortsCallbackState, store],
   );
 
   return handleToggleColumnSort;
