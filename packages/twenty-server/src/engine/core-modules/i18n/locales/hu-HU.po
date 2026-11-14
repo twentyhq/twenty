@@ -327,7 +327,7 @@ msgstr "Hálózati hiba történt a naptár elérése közben."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Nem kanonikus nézetmező nem használhatja a címkeazonosító mezőt"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Egy külső szolgáltatás túl sokáig válaszolt."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Egy extra oszlop nem jelenítheti meg a rekord nevét"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Az utolsó admin nem távolítható el a munkaterületről."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Nem távolítható el az utolsó szerveradminisztrátor. Először adjon szerveradminisztrátori hozzáférést egy másik felhasználónak az Adminisztrációs panelen."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -4361,8 +4361,8 @@ msgid "Default Task Layout"
 msgstr "Alapértelmezett feladat elrendezés"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Az alapértelmezett érték \"{defaultValue}\" egyik opciónak kell lennie"
 
@@ -5105,6 +5105,11 @@ msgstr "Adatbővítés"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Adjon meg 1 és {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter közötti nevet és támogatott asszisztensmegjelenési beállításokat."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "Adja meg az API-kulcsot."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5376,7 +5381,7 @@ msgstr "Külső felvételazonosító"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Az extra oszlopok itt nem támogatottak"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5516,7 +5521,7 @@ msgstr "Február"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "A(z) „{fieldName}” mező nem hasonlítható össze a(z) „{workspaceMemberFieldName}” munkaterületi tagmezővel, mert a típusaik nem kompatibilisek"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9555,7 +9560,7 @@ msgstr "Ehhez a feladói címhez nem tartozik ellenőrzött küldői domain."
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "A nem kanonikus nézetmezők nem támogatottak a widgetnézetekben"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10051,7 +10056,7 @@ msgstr "Csak egy kiszolgáló-rendszergazda kezelheti ennek a tagnak a helyreál
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Csak egy munkaterület-tag módosíthatja, hogy ki láthat egy munkafolyamatot"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10262,6 +10267,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Lehetőség szakasza"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "A „{optionLabel}” lehetőség a mező része, ezért nem távolítható el. Ehelyett kapcsolja ki."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10278,12 +10289,6 @@ msgstr "Opció azonosító érvénytelen"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Opció azonosító szükséges"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Az opcióazonosítónak kisbetűs, 4-es vagy újabb verziójú UUID-nek kell lennie"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -12226,6 +12231,11 @@ msgstr "A módosítandó sorszintű jogosultsági szabály nem található"
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Ezzel az univerzális azonosítóval rendelkező sorszintű jogosultsági szabály már létezik"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "A mezőket elrejtő vagy zároló rekordszintű jogosultságokhoz legalább egy predikátumcsoport szükséges."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13769,6 +13779,12 @@ msgstr "Nem található az ügynök, amelyet ennek a lépésnek kell futtatnia."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Az ügynök, amit keres, nem található. Lehet, hogy törölték, vagy Ön nem férhet hozzá."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "A „{optionLabel}” lehetőség API-értéke a mező része, ezért nem módosítható."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13948,6 +13964,12 @@ msgstr "A rekord létrehozója"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Az üzenet fogadásának dátuma"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Az alapértelmezett lehetőség nem deaktiválható"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14866,7 +14888,7 @@ msgstr "Ez a funkció nincs engedélyezve."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Ez a mező nem hasonlítható össze ezzel a munkaterületi tagmezővel"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17127,6 +17149,11 @@ msgstr "Nem sikerült elküldeni az üzenetét. Kérjük, próbálja meg újra."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Nem sikerült elindítani a kapcsolatot. Kérjük, próbálja meg újra."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Nem sikerült ellenőriznünk ezt a kulcsot. Ellenőrizze, vagy próbálja meg később, ha a szolgáltatás nem működik."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

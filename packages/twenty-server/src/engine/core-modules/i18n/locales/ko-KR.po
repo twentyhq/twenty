@@ -327,7 +327,7 @@ msgstr "캘린더에 액세스하는 동안 네트워크 오류가 발생했습�
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "비정규 뷰 필드는 레이블 식별자 필드를 사용할 수 없습니다"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "외부 서비스의 응답 시간이 너무 오래 걸렸습니다."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "추가 열에는 레코드 이름을 표시할 수 없습니다"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "워크스페이스에서 마지막 관리자를 제거할 수 없습니�
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "마지막 서버 관리자는 제거할 수 없습니다. 먼저 관리자 패널에서 다른 사용자에게 서버 관리자 액세스 권한을 부여하세요."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -4361,8 +4361,8 @@ msgid "Default Task Layout"
 msgstr "기본 작업 레이아웃"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "기본값 \"{defaultValue}\"는 옵션 값 중 하나여야 합니다."
 
@@ -5105,6 +5105,11 @@ msgstr "보강"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "1자에서 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}자 사이의 이름과 지원되는 어시스턴트 외관 옵션을 입력하세요."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "API 키를 입력하세요."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5376,7 +5381,7 @@ msgstr "외부 녹음 ID"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "여기서는 추가 열이 지원되지 않습니다"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5516,7 +5521,7 @@ msgstr "2월"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "필드 \"{fieldName}\"은 워크스페이스 멤버 필드 \"{workspaceMemberFieldName}\"과 비교할 수 없습니다. 유형이 호환되지 않습니다"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9555,7 +9560,7 @@ msgstr "이 발신 주소와 일치하는 검증된 발신 도메인이 없습�
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "위젯 뷰에서는 비정규 뷰 필드가 지원되지 않습니다"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10051,7 +10056,7 @@ msgstr "서버 관리자만 이 구성원의 복구 코드를 관리할 수 있�
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "워크스페이스 멤버만 워크플로를 볼 수 있는 사용자를 변경할 수 있습니다"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10262,6 +10267,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "기회 단계"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "옵션 \"{optionLabel}\"은 필드에 포함되어 있어 제거할 수 없습니다. 대신 비활성화하세요."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10278,12 +10289,6 @@ msgstr "옵션 ID가 잘못되었습니다"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "옵션 ID가 필요합니다"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "옵션 ID는 버전 4 이상의 소문자 UUID여야 합니다"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -12226,6 +12231,11 @@ msgstr "업데이트할 레코드 수준 권한 규칙을 찾을 수 없습니�
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "이 범용 식별자를 가진 레코드 수준 권한 규칙이 이미 존재합니다"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "필드를 숨기거나 잠그는 행 수준 레코드 권한에는 하나 이상의 조건자 그룹이 필요합니다."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13769,6 +13779,12 @@ msgstr "이 단계에서 실행해야 하는 에이전트를 찾을 수 없습�
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "찾고 있는 에이전트를 찾을 수 없습니다. 삭제되었거나 접근 권한이 없을 수 있습니다."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "옵션 \"{optionLabel}\"의 API 값은 필드와 함께 제공되며 변경할 수 없습니다."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13948,6 +13964,12 @@ msgstr "레코드 작성자"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "메시지 수신 날짜"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "기본 옵션은 비활성화할 수 없습니다"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14866,7 +14888,7 @@ msgstr "이 기능은 활성화되어 있지 않습니다."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "이 필드는 이 워크스페이스 멤버 필드와 비교할 수 없습니다"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17127,6 +17149,11 @@ msgstr "메시지를 보낼 수 없습니다. 다시 시도하세요."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "연결을 시작할 수 없습니다. 다시 시도하세요."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "이 키를 확인할 수 없습니다. 확인하거나 서비스가 중단된 경우 나중에 다시 시도하세요."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

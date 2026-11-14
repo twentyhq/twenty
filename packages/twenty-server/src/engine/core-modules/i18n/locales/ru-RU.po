@@ -327,7 +327,7 @@ msgstr "Произошла сетевая ошибка при доступе к 
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Неканоническое поле представления не может использовать поле идентификатора метки"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Внешняя служба слишком долго не отвеча�
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Дополнительный столбец не может отображать имя записи"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Нельзя удалить последнего администрат�
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Невозможно удалить последнего администратора сервера. Сначала предоставьте другому пользователю права администратора сервера в панели администратора."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -4361,8 +4361,8 @@ msgid "Default Task Layout"
 msgstr "Макет задачи по умолчанию"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Значение по умолчанию \"{defaultValue}\" должно быть одним из значений опций"
 
@@ -5105,6 +5105,11 @@ msgstr "Обогатить"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Введите имя длиной от 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} символов и поддерживаемые параметры внешнего вида ассистента."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "Введите ключ API."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5376,7 +5381,7 @@ msgstr "Внешний ID записи"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Дополнительные столбцы здесь не поддерживаются"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5516,7 +5521,7 @@ msgstr "Февраль"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "Поле \"{fieldName}\" нельзя сравнить с полем участника рабочего пространства \"{workspaceMemberFieldName}\", их типы несовместимы"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9555,7 +9560,7 @@ msgstr "Для этого адреса отправителя не найден�
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Неканонические поля представления не поддерживаются в представлениях виджетов"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10051,7 +10056,7 @@ msgstr "Только администратор сервера может упр
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Только участник рабочего пространства может изменить, кто видит рабочий процесс"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10262,6 +10267,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Стадия возможности"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "Вариант \"{optionLabel}\" поставляется с полем и не может быть удалён. Вместо этого деактивируйте его."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10278,12 +10289,6 @@ msgstr "Неверный идентификатор опции"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Требуется идентификатор опции"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Идентификатор опции должен быть UUID версии 4 или выше в нижнем регистре"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -12226,6 +12231,11 @@ msgstr "Правило разрешений на уровне строк для 
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Правило разрешений на уровне строк с таким универсальным идентификатором уже существует"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "Для разрешений на записи на уровне строк, которые скрывают или блокируют поля, требуется хотя бы одна группа предикатов."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13769,6 +13779,12 @@ msgstr "Агент, которого должен запустить этот ш
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Агент, которого вы ищете, не найден. Возможно, он был удалён или у вас нет к нему доступа."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "Значение API варианта \"{optionLabel}\" поставляется с полем и не может быть изменено."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13948,6 +13964,12 @@ msgstr "Создатель записи"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Дата получения сообщения"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Вариант по умолчанию нельзя деактивировать"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14866,7 +14888,7 @@ msgstr "Эта функция не включена."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Это поле нельзя сравнить с этим полем участника рабочего пространства"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17127,6 +17149,11 @@ msgstr "Не удалось отправить ваше сообщение. По
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Не удалось запустить подключение. Пожалуйста, попробуйте ещё раз."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Не удалось проверить этот ключ. Проверьте его или повторите попытку позже, если сервис недоступен."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -5,7 +5,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFolderSymlink } from 'twenty-ui/icon';
 
 import { useMoveInboxThreadToChannel } from '@/inbox/hooks/useMoveInboxThreadToChannel';
-import { inboxAccessibleChannelsSelector } from '@/inbox/states/selectors/inboxAccessibleChannelsSelector';
+import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -22,20 +22,20 @@ export const InboxThreadChannelPicker = ({
   dropdownId,
 }: InboxThreadChannelPickerProps) => {
   const { t } = useLingui();
-  const inboxAccessibleChannels = useAtomStateValue(
-    inboxAccessibleChannelsSelector,
+  const aiChatAccessibleChannels = useAtomStateValue(
+    aiChatAccessibleChannelsSelector,
   );
   const { moveAgentChatThreadToChannel } = useMoveInboxThreadToChannel();
   const currentChannelId = thread.channelId ?? null;
   const canLeaveChannels = isDefined(thread.workspaceMemberId);
 
-  if (inboxAccessibleChannels.length === 0 && !isDefined(currentChannelId)) {
+  if (aiChatAccessibleChannels.length === 0 && !isDefined(currentChannelId)) {
     return null;
   }
 
   const options = [
     ...(canLeaveChannels ? [{ id: null, name: t`No channel` }] : []),
-    ...inboxAccessibleChannels.map(({ id, name }) => ({ id, name })),
+    ...aiChatAccessibleChannels.map(({ id, name }) => ({ id, name })),
   ];
 
   return (

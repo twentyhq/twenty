@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
@@ -73,9 +73,9 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
   }),
 }));
 
-jest.mock('@/inbox/hooks/useExecuteInboxThreadStatusAction', () => ({
-  useExecuteInboxThreadStatusAction: () => ({
-    executeInboxThreadStatusAction: jest.fn(),
+jest.mock('@/ai/hooks/useExecuteAiChatThreadStatusAction', () => ({
+  useExecuteAiChatThreadStatusAction: () => ({
+    executeAiChatThreadStatusAction: jest.fn(),
     isPending: false,
   }),
 }));
@@ -140,7 +140,7 @@ const renderThread = async ({
       store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
       store.set(currentWorkspaceMembersState.atom, [mockedWorkspaceMemberData]);
       store.set(
-        inboxChannelsState.atom,
+        aiChatChannelsState.atom,
         isDefined(channelStatus) ? [SALES_CHANNEL] : [],
       );
       setInboxSelectedChannelView(
