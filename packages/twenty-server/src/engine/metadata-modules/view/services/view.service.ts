@@ -75,6 +75,7 @@ export class ViewService {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -82,6 +83,7 @@ export class ViewService {
           'flatFieldMetadataMaps',
           'flatFieldMetadataOptionMaps',
           'flatObjectMetadataMaps',
+          'flatViewFieldMaps',
         ],
       },
     );
@@ -94,6 +96,7 @@ export class ViewService {
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
       });
 
     const validateAndBuildResult =

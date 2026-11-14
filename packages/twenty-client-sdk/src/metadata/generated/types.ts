@@ -4542,6 +4542,9 @@ export default {
             "openRecordIn": [
                 689
             ],
+            "ownerViewFieldId": [
+                564
+            ],
             "position": [
                 8
             ],
@@ -16601,6 +16604,9 @@ export default {
             ],
             "openRecordIn": [
                 689
+            ],
+            "ownerViewFieldId": [
+                564
             ],
             "position": [
                 8

@@ -60,7 +60,7 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).not.toContain('flatObjectMetadataMaps');
   });
 
-  it('invalidates the related view-side maps but not object metadata when a viewField is deleted', () => {
+  it('invalidates the maps a cascaded scope view lives in, including its object, when a viewField is deleted', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({
         type: 'delete',
@@ -72,12 +72,17 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result.sort()).toEqual(
       [
         'flatFieldMetadataMaps',
+        'flatNavigationMenuItemMaps',
+        'flatObjectMetadataMaps',
         'flatViewFieldGroupMaps',
         'flatViewFieldMaps',
+        'flatViewFilterGroupMaps',
+        'flatViewFilterMaps',
+        'flatViewGroupMaps',
         'flatViewMaps',
+        'flatViewSortMaps',
       ].sort(),
     );
-    expect(result).not.toContain('flatObjectMetadataMaps');
   });
 
   it('invalidates only the field metadata map for a non-relation field update', () => {

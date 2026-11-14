@@ -26,6 +26,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   flatFieldMetadataMaps,
   flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
+  flatViewFieldMaps,
 }: {
   createViewInput: CreateViewInput;
   createdByUserWorkspaceId?: string;
@@ -33,6 +34,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+  flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
 }): {
   flatViewToCreate: UniversalFlatView & { id: string };
   flatViewGroupsToCreate: UniversalFlatViewGroup[];
@@ -54,6 +56,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     calendarEndFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
+    ownerViewFieldUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'view',
     foreignKeyValues: {
@@ -63,8 +66,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       kanbanAggregateOperationFieldMetadataId:
         createViewInput.kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
+      ownerViewFieldId: createViewInput.ownerViewFieldId,
     },
-    flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+    flatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewFieldMaps,
+    },
   });
 
   const mainGroupByFieldMetadataId =
@@ -92,6 +100,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
+    ownerViewFieldUniversalIdentifier,
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,

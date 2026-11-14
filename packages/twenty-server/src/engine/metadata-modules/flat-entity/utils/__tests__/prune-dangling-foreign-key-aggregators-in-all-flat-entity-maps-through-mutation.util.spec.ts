@@ -46,6 +46,7 @@ const buildFlatView = ({
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
+  ownerViewFieldId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
   kanbanColumnWidth: null,
@@ -78,6 +79,7 @@ const buildFlatView = ({
   calendarFieldMetadataUniversalIdentifier: null,
   calendarEndFieldMetadataUniversalIdentifier: null,
   mainGroupByFieldMetadataUniversalIdentifier: null,
+  ownerViewFieldUniversalIdentifier: null,
   universalOverrides: null,
 });
 

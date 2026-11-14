@@ -49,6 +49,12 @@ export const fromFlatViewToViewManifest = ({
           flatView.mainGroupByFieldMetadataUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatView.ownerViewFieldUniversalIdentifier)
+    ? {
+        ownerViewFieldUniversalIdentifier:
+          flatView.ownerViewFieldUniversalIdentifier,
+      }
+    : {}),
   ...(isDefined(flatView.anyFieldFilterValue)
     ? { anyFieldFilterValue: flatView.anyFieldFilterValue }
     : {}),
