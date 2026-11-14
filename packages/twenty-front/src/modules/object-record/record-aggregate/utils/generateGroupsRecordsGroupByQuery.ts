@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
+import { mapRecordGqlRelationAliasesToGraphQLQuery } from '@/object-record/graphql/utils/mapRecordGqlRelationAliasesToGraphQLQuery';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import {
   type ObjectRecordsPermissions,
@@ -15,13 +17,21 @@ export const generateGroupsRecordsGroupByQuery = ({
   recordGqlFields,
   computeReferences,
   objectPermissionsByObjectMetadataId,
+  relationAliases,
 }: {
   objectMetadataItems: EnrichedObjectMetadataItem[];
   objectMetadataItem: EnrichedObjectMetadataItem;
   recordGqlFields: RecordGqlFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
+  relationAliases?: RecordGqlRelationAlias[];
 }) => {
+  const { variableDefinitions, selections } =
+    mapRecordGqlRelationAliasesToGraphQLQuery({
+      relationAliases,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    });
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
   const queryName = `${capitalize(objectMetadataItem.namePlural)}GroupByRecords`;
   const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
@@ -32,7 +42,7 @@ export const generateGroupsRecordsGroupByQuery = ({
       $filter: ${capitalizedSingular}FilterInput
       $orderByForRecords: [${capitalizedSingular}OrderByInput!]
       $limit: Int
-      $offsetForRecords: Int
+      $offsetForRecords: Int${variableDefinitions}
     ) {
       ${queryFieldName}(
         groupBy: $groupBy
@@ -49,6 +59,7 @@ export const generateGroupsRecordsGroupByQuery = ({
             recordGqlFields,
             computeReferences,
             objectPermissionsByObjectMetadataId,
+            additionalSelections: selections,
           })}
         }
         pageInfo {

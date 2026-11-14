@@ -1,6 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -74,6 +75,8 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     additionalFieldMetadataIds: [recordIndexGroupFieldMetadataItem?.id],
   });
 
+  const relationAliases = useScopedRelationAliases();
+
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
@@ -102,6 +105,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   return {
     combinedFilters,
     recordGqlFields,
+    relationAliases,
     orderBy,
     recordGroupsLimit,
   };

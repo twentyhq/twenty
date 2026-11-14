@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, stringifySafely } from 'twenty-shared/utils';
 
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE,
@@ -112,10 +113,12 @@ function formatResultRecursively<T>(
     const compositePropertyArgs =
       objectCache.compositeFieldMetadataMap.get(key);
 
+    // Group by formats records after their relations are attached, aliased ones included
     const fieldMetadataId =
       fieldIdByName[key] ||
       fieldIdByJoinColumnName[key] ||
-      fieldIdByName[compositePropertyArgs?.parentField ?? ''];
+      fieldIdByName[compositePropertyArgs?.parentField ?? ''] ||
+      fieldIdByName[getFieldNameFromRelationRecordKey(key)];
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldMetadataId,

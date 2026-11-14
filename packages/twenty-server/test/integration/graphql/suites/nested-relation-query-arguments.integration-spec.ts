@@ -323,6 +323,84 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('applies alias arguments to the records of a group by query', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query CompaniesGroupByWithScopedPeople(
+          $groupBy: [CompanyGroupByInput!]!
+          $filter: CompanyFilterInput
+          $scopeFilter: PersonFilterInput
+          $scopeOrderBy: [PersonOrderByInput]
+          $scopeFirst: Int
+        ) {
+          companiesGroupBy(groupBy: $groupBy, filter: $filter) {
+            groupByDimensionValues
+            edges {
+              node {
+                id
+                people {
+                  edges {
+                    node {
+                      jobTitle
+                    }
+                  }
+                }
+                scope_column: people(
+                  filter: $scopeFilter
+                  orderBy: $scopeOrderBy
+                  first: $scopeFirst
+                ) {
+                  edges {
+                    node {
+                      jobTitle
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        groupBy: [{ name: true }],
+        filter: { id: { in: COMPANY_IDS } },
+        scopeFilter: { jobTitle: { neq: 'CEO' } },
+        scopeOrderBy: [{ jobTitle: 'DescNullsLast' }],
+        scopeFirst: 1,
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const scopedJobTitlesByCompanyId = Object.fromEntries(
+      response.body.data.companiesGroupBy.flatMap(
+        ({
+          edges,
+        }: {
+          edges: {
+            node: {
+              id: string;
+              people: { edges: { node: { jobTitle: string } }[] };
+              scope_column: { edges: { node: { jobTitle: string } }[] };
+            };
+          }[];
+        }) =>
+          edges.map(({ node }) => [
+            node.id,
+            {
+              people: node.people.edges.length,
+              scoped: node.scope_column.edges.map(({ node }) => node.jobTitle),
+            },
+          ]),
+      ),
+    );
+
+    expect(scopedJobTitlesByCompanyId).toEqual({
+      [FIRST_COMPANY_ID]: { people: 3, scoped: ['Buyer'] },
+      [SECOND_COMPANY_ID]: { people: 2, scoped: ['Designer'] },
+    });
+  });
+
   it('ignores cursor arguments on a nested relation', async () => {
     const response = await findCompaniesWithPeople(
       'people(last: 1, after: "cursor", orderBy: [{ jobTitle: AscNullsLast }])',

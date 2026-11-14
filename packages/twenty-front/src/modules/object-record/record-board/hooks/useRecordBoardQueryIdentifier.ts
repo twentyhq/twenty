@@ -1,3 +1,4 @@
+import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
@@ -5,11 +6,15 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 export const useRecordBoardQueryIdentifier = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { combinedFilters, orderBy, recordGqlFields } =
+  const { combinedFilters, orderBy, recordGqlFields, relationAliases } =
     useRecordIndexGroupCommonQueryVariables();
 
-  // Newly shown fields are only fetched when this identifier changes
-  const fetchedFieldNames = Object.keys(recordGqlFields).sort().join(',');
+  // The board only refetches when this identifier changes, so it covers everything the query selects:
+  // nested fields (a lookup target sits inside its relation) and scoped relation arguments
+  const fetchedFields = JSON.stringify(recordGqlFields);
+  const scopedRelations = JSON.stringify(
+    getRecordGqlRelationAliasVariables(relationAliases),
+  );
 
   const baseQueryIdentifier = getQueryIdentifier({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -17,5 +22,5 @@ export const useRecordBoardQueryIdentifier = () => {
     orderBy,
   });
 
-  return `${baseQueryIdentifier}|fields:${fetchedFieldNames}`;
+  return `${baseQueryIdentifier}|fields:${fetchedFields}|scopes:${scopedRelations}`;
 };
