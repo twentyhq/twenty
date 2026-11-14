@@ -267,8 +267,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
               objectName: targetObjectMetadata.nameSingular,
               take,
               totalCount:
-                objectRecordsAggregatedValues[relationRecordKey]?.totalCount ??
-                objectValue.length,
+                objectRecordsAggregatedValues[relationRecordKey]?.[
+                  objectRecord.id
+                ]?.totalCount ?? objectValue.length,
               order,
               hasNextPage: false,
               hasPreviousPage: false,

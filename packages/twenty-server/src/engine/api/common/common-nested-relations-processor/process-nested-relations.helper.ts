@@ -149,7 +149,9 @@ export class ProcessNestedRelationsHelper {
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
-    aggregate: Record<string, AggregationField>;
+    // Mixes this level's aggregation fields with each nested relation's own map
+    // oxlint-disable-next-line typescript/no-explicit-any
+    aggregate: Record<string, any>;
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
@@ -325,7 +327,7 @@ export class ProcessNestedRelationsHelper {
             string,
             FindOptionsRelations<ObjectLiteral>
           >,
-          aggregate,
+          aggregate: aggregate[sourceFieldName] ?? {},
           limit,
           authContext,
           useReplica,

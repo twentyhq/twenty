@@ -389,6 +389,80 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     );
   });
 
+  it('counts every matching related record when first limits the loaded ones', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: `
+          id
+          firstPerson: people(orderBy: [{ jobTitle: AscNullsLast }], first: 1) {
+            totalCount
+            edges { node { jobTitle } }
+          }
+        `,
+        filter: { id: { in: COMPANY_IDS } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const firstPersonByCompanyId = Object.fromEntries(
+      response.body.data.companies.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            id: string;
+            firstPerson: {
+              totalCount: number;
+              edges: { node: { jobTitle: string } }[];
+            };
+          };
+        }) => [
+          node.id,
+          {
+            totalCount: node.firstPerson.totalCount,
+            jobTitles: node.firstPerson.edges.map(({ node }) => node.jobTitle),
+          },
+        ],
+      ),
+    );
+
+    expect(firstPersonByCompanyId).toEqual({
+      [FIRST_COMPANY_ID]: { totalCount: 3, jobTitles: ['Analyst'] },
+      [SECOND_COMPANY_ID]: { totalCount: 2, jobTitles: ['CTO'] },
+    });
+  });
+
+  it('applies nested arguments and counts through a to-one relation', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `
+          id
+          company {
+            colleague: people(orderBy: [{ jobTitle: AscNullsLast }], first: 1) {
+              totalCount
+              edges { node { jobTitle } }
+            }
+          }
+        `,
+        filter: { id: { eq: buildPersonId(1) } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const [{ node }] = response.body.data.people.edges;
+
+    expect(node.company.colleague.totalCount).toBe(3);
+    expect(node.company.colleague.edges).toEqual([
+      { node: { jobTitle: 'Analyst' } },
+    ]);
+  });
+
   it('rejects malformed nested arguments instead of ignoring them', async () => {
     const response = await findCompaniesWithPeople('people(first: -1)');
 
