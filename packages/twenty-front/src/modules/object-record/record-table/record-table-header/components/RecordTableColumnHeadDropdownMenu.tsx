@@ -14,7 +14,9 @@ import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -130,6 +132,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = isLabelIdentifier !== true && isCanonical;
 
   const { openEditColumnInSidePanel } = useOpenEditColumnInSidePanel();
+  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ContextStoreComponentInstanceContext,
+  );
   const { addRecordTableColumn } = useAddRecordTableColumn(recordTableId);
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
 
@@ -143,6 +148,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openEditColumnInSidePanel({
       recordTableId,
       recordFieldId: addedRecordField.id,
+      contextStoreInstanceId,
     });
   };
 
@@ -183,6 +189,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
             openEditColumnInSidePanel({
               recordTableId,
               recordFieldId: recordField.id,
+              contextStoreInstanceId,
             })
           }
         >{t`Edit column`}</Dropdown.ActionItem>
