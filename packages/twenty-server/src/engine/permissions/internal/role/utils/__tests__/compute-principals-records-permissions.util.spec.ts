@@ -159,6 +159,50 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(agentRolePermissions);
   });
 
+  it('should add the grants of an additional role to the main role', () => {
+    expect(
+      computeForPrincipals({
+        mainPrincipal: {
+          type: 'role',
+          roleId: 'default-role-id',
+          additionalRoleIds: ['agent-role-id'],
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      }),
+    ).toEqual(agentRolePermissions);
+  });
+
+  it('should still narrow additional roles by the limiting role', () => {
+    expect(
+      computeForPrincipals({
+        mainPrincipal: {
+          type: 'role',
+          roleId: 'default-role-id',
+          additionalRoleIds: ['agent-role-id'],
+        },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'default-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      }),
+    ).toEqual(defaultRolePermissions);
+  });
+
+  it('should grant nothing when an additional role has no permissions', () => {
+    expect(
+      computeForPrincipals({
+        mainPrincipal: {
+          type: 'role',
+          roleId: 'agent-role-id',
+          additionalRoleIds: ['unknown-role-id'],
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      }),
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
+  });
+
   it('should resolve a role held by several principals as that role alone', () => {
     expect(
       computeForPrincipals({

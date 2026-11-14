@@ -33,9 +33,11 @@ export class ObjectPermissionService {
   public async upsertObjectPermissions({
     workspaceId,
     input,
+    isSystemBuild = false,
   }: {
     workspaceId: string;
     input: UpsertObjectPermissionsInput;
+    isSystemBuild?: boolean;
   }): Promise<FlatObjectPermission[]> {
     const { flatObjectPermissionMaps, flatRoleMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -224,7 +226,7 @@ export class ObjectPermissionService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
         },
       );

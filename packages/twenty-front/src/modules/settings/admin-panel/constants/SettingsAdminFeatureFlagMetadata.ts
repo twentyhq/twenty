@@ -84,6 +84,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Access groups`,
     description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
   },
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
+    label: msg`Channel visibility through row-level permissions`,
+    description: msg`Apply message and calendar channel visibility through a personal role per member instead of post-read hooks. Needs access groups and the row-level permission relation hop.`,
+  },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
     label: msg`AI data policy and Privacy tab`,
     description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,

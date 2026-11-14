@@ -1,0 +1,2 @@
+export const ADD_IS_ADDITIONAL_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddIsAdditionalToRoleTargetFastInstanceCommand_1794651427142';

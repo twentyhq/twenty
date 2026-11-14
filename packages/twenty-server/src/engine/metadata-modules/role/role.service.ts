@@ -42,6 +42,7 @@ import {
 } from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
+import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -66,7 +67,9 @@ export class RoleService {
       );
 
     return this.findManyWithRelationsFromCache(
-      Object.values(flatRoleMaps.byUniversalIdentifier).filter(isDefined),
+      Object.values(flatRoleMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter((flatRole) => !isPersonalRole(flatRole)),
       workspaceId,
     );
   }
