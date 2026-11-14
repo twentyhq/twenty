@@ -17,13 +17,13 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
 import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
@@ -96,7 +96,7 @@ export const AiChatThreadDetailsDropdown = ({
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
-  const channel = useAtomStateValue(inboxChannelsState)?.find(
+  const channel = useAtomStateValue(aiChatChannelsState)?.find(
     ({ id }) => id === thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -228,7 +228,7 @@ export const AiChatThreadDetailsDropdown = ({
             >
               {isDefined(channel) ? (
                 <StyledChannel>
-                  <InboxChannelIcon
+                  <AiChatChannelIcon
                     channel={channel}
                     size={theme.icon.size.sm}
                   />

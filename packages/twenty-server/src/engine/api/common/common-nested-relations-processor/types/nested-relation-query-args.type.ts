@@ -1,3 +1,4 @@
+import { type NestedRelationQueryArgsByFieldName } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args-by-field-name.type';
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
@@ -9,7 +10,3 @@ export type NestedRelationQueryArgs = {
   first?: number;
   nestedRelationQueryArgsByFieldName: NestedRelationQueryArgsByFieldName;
 };
-
-export type NestedRelationQueryArgsByFieldName = Partial<
-  Record<string, NestedRelationQueryArgs>
->;

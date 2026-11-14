@@ -5,7 +5,7 @@ import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamily
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -29,7 +29,7 @@ export const initializeNewAiChatStory = ({
   isInboxEnabled: boolean;
 }) => {
   jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(inboxNewThreadChannelIdState.atom, null);
+  jotaiStore.set(aiChatNewThreadChannelIdState.atom, null);
   jotaiStore.set(
     aiChatIsSendingMessageFamilyState.atomFamily({
       threadId: NEW_CHAT_THREAD_ID,

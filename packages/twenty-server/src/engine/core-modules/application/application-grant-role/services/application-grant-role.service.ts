@@ -31,9 +31,11 @@ export class ApplicationGrantRoleService {
   async upsertGrantRole({
     workspaceId,
     applicationId,
+    isRequestedRoleDeclaredWithLegacyProperties,
   }: {
     workspaceId: string;
     applicationId: string;
+    isRequestedRoleDeclaredWithLegacyProperties: boolean;
   }): Promise<void> {
     const grantRoleSources = await this.findGrantRoleSources({
       workspaceId,
@@ -103,6 +105,11 @@ export class ApplicationGrantRoleService {
               workspaceCustomApplicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               flatEntityMaps,
+              // TODO(@charlesBochet): remove with the legacy role properties
+              flatRowLevelPermissionRuleMaps:
+                isRequestedRoleDeclaredWithLegacyProperties
+                  ? flatEntityMaps.flatRowLevelPermissionRuleMaps
+                  : undefined,
               now: new Date().toISOString(),
             }),
           // The builder mutates these maps, so it must not get the cache's own
@@ -208,6 +215,7 @@ export class ApplicationGrantRoleService {
       'flatRolePermissionFlagMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
+      'flatRowLevelPermissionRuleMaps',
     ]);
 
     const flatApplication = findActiveFlatApplicationById(

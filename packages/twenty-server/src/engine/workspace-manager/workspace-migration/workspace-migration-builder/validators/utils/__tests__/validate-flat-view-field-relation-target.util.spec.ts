@@ -35,11 +35,9 @@ const PERSON_CITY_FIELD = {
   objectMetadataUniversalIdentifier: PERSON_OBJECT,
 };
 
-type FieldMetadataForValidation = NonNullable<
-  Parameters<
-    typeof validateFlatViewFieldRelationTarget
-  >[0]['flatFieldMetadataMaps']['byUniversalIdentifier'][string]
->;
+type FieldMetadataForValidation = Parameters<
+  typeof validateFlatViewFieldRelationTarget
+>[0]['flatFieldMetadata'];
 
 const validate = ({
   isCanonical,
@@ -53,15 +51,10 @@ const validate = ({
   validateFlatViewFieldRelationTarget({
     flatViewField: {
       isCanonical,
-      fieldMetadataUniversalIdentifier: 'view-field-field',
       relationTargetFieldMetadataUniversalIdentifier: 'relation-target-field',
     },
-    flatFieldMetadataMaps: {
-      byUniversalIdentifier: {
-        'view-field-field': flatFieldMetadata,
-        'relation-target-field': relationTargetFlatFieldMetadata,
-      },
-    },
+    flatFieldMetadata,
+    relationTargetFlatFieldMetadata,
   });
 
 describe('validateFlatViewFieldRelationTarget', () => {
@@ -70,12 +63,10 @@ describe('validateFlatViewFieldRelationTarget', () => {
       validateFlatViewFieldRelationTarget({
         flatViewField: {
           isCanonical: true,
-          fieldMetadataUniversalIdentifier: 'view-field-field',
           relationTargetFieldMetadataUniversalIdentifier: null,
         },
-        flatFieldMetadataMaps: {
-          byUniversalIdentifier: { 'view-field-field': PERSON_CITY_FIELD },
-        },
+        flatFieldMetadata: PERSON_CITY_FIELD,
+        relationTargetFlatFieldMetadata: undefined,
       }),
     ).toEqual([]);
   });

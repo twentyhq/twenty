@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
-import { useExecuteInboxThreadStatusAction } from '@/inbox/hooks/useExecuteInboxThreadStatusAction';
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { useExecuteAiChatThreadStatusAction } from '@/ai/hooks/useExecuteAiChatThreadStatusAction';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -23,11 +23,11 @@ export const AiChatThreadDetailsFollowing = ({
     threadId,
   );
   const { isSubscribed, isAssignedToMe } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateFamilySelector,
+    aiChatThreadMemberStateFamilySelector,
     threadId,
   );
-  const { executeInboxThreadStatusAction, isPending } =
-    useExecuteInboxThreadStatusAction();
+  const { executeAiChatThreadStatusAction, isPending } =
+    useExecuteAiChatThreadStatusAction();
 
   if (!isDefined(currentWorkspaceMember)) {
     return null;
@@ -38,7 +38,7 @@ export const AiChatThreadDetailsFollowing = ({
     !isDefined(thread?.deletedAt) && !isAssigneeFollowing;
 
   const handleFollowingChange = (isFollowing: boolean) =>
-    executeInboxThreadStatusAction({
+    executeAiChatThreadStatusAction({
       threadIds: [threadId],
       action: isFollowing
         ? AgentChatInboxAction.SUBSCRIBE

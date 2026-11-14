@@ -5,7 +5,6 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
-import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -48,11 +47,12 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-    relationAliases,
-  });
+  const { findManyRecordsQuery, relationAliasVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      relationAliases,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -79,9 +79,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       filter,
       limit,
       orderBy,
-      ...getRecordGqlRelationAliasVariables(relationAliases),
+      ...relationAliasVariables,
     }),
-    [filter, limit, orderBy, relationAliases],
+    [filter, limit, orderBy, relationAliasVariables],
   );
 
   const [findManyRecords, { data, error, fetchMore }] =

@@ -37,11 +37,13 @@ export class PermissionsMetadataMapsService {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       featureFlagsMap,
       rolesPermissions,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
+      'flatFieldMetadataOptionMaps',
       'featureFlagsMap',
       'rolesPermissions',
     ]);
@@ -49,6 +51,7 @@ export class PermissionsMetadataMapsService {
     const metadataMaps: PermissionsMetadataMaps = {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       featureFlagsMap,
       rolesPermissions,
     };
