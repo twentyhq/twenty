@@ -4,6 +4,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 export type EditColumnRequest = {
   recordTableId: string;
   recordFieldId: string;
+  contextStoreInstanceId: string;
 };
 
 export const editColumnRequestComponentState =
