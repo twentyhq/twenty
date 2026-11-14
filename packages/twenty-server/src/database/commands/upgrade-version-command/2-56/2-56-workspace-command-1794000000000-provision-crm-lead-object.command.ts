@@ -44,7 +44,7 @@ const CRM_LEAD_VIEW_IDENTIFIERS = {
   },
   followUpDay: {
     id: 'd6240a9b-1c7a-4ef5-8cb7-4e42d1c094e5',
-    universalIdentifier: 'd6240a9b-1c7a-4ef5-8cb7-4e42d1c094e6',
+    universalIdentifier: 'b6240a9b-1c7a-4ef5-8cb7-4e42d1c094e1',
   },
 } as const;
 
