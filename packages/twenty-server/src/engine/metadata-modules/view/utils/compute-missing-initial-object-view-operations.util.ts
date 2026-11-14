@@ -117,7 +117,8 @@ export const computeMissingInitialObjectViewOperations = ({
       const flatViewField =
         flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
 
-      if (!isDefined(flatViewField) || !flatViewField.isCanonical) {
+      // isCanonical reads as null until the 2.59 upgrade adds it, so only an explicit false is an extra column
+      if (!isDefined(flatViewField) || flatViewField.isCanonical === false) {
         continue;
       }
 
