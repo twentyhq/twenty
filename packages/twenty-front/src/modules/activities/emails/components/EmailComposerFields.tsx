@@ -51,14 +51,16 @@ const StyledBody = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledAttachments = styled.div`
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const ATTACH_ACTION_CLASS_NAME = css`
