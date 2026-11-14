@@ -105,13 +105,65 @@ const getOwnerViewFieldErrorMessages = ({
 export const validateViewOwnerViewFieldCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
+  applicationUniversalIdentifier,
+  isWorkspaceCaller,
 }: {
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
-  orchestratorActionsReport: Pick<OrchestratorActionsReport, 'view'>;
-}): Pick<OrchestratorFailureReport, 'view'> => {
-  const validationErrors: Pick<OrchestratorFailureReport, 'view'> = {
+  orchestratorActionsReport: Pick<
+    OrchestratorActionsReport,
+    'view' | 'viewField'
+  >;
+  applicationUniversalIdentifier: string;
+  isWorkspaceCaller: boolean;
+}): Pick<OrchestratorFailureReport, 'view' | 'viewField'> => {
+  const validationErrors: Pick<
+    OrchestratorFailureReport,
+    'view' | 'viewField'
+  > = {
     view: [],
+    viewField: [],
   };
+
+  // A workspace caller relies on the database cascade; an application must drop the scope views it keeps declaring
+  if (!isWorkspaceCaller) {
+    const ownerViewFieldUniversalIdentifiersOfKeptScopeViews = new Set(
+      Object.values(
+        optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
+      )
+        .filter(
+          (flatView) =>
+            flatView?.applicationUniversalIdentifier ===
+            applicationUniversalIdentifier,
+        )
+        .map((flatView) => flatView?.ownerViewFieldUniversalIdentifier)
+        .filter(isDefined),
+    );
+
+    for (const { universalIdentifier } of orchestratorActionsReport.viewField
+      .delete) {
+      if (
+        !ownerViewFieldUniversalIdentifiersOfKeptScopeViews.has(
+          universalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
+      const failedValidation = getEmptyFlatEntityValidationError({
+        flatEntityMinimalInformation: { universalIdentifier },
+        metadataName: 'viewField',
+        type: 'delete',
+      });
+
+      failedValidation.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`A view field cannot be removed while the view scoping it is kept`,
+        userFriendlyMessage: msg`Remove the column scope before removing the column`,
+      });
+
+      validationErrors.viewField.push(failedValidation);
+    }
+  }
 
   // The owner never changes after creation, but a type update could turn a scope into a regular view
   const scopeViewsToValidate = [
