@@ -1,9 +1,9 @@
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 import { RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR } from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
@@ -89,8 +89,9 @@ export const RecordTableAggregateFooterCell = ({
   columnIndex: number;
   currentRecordGroupId?: string;
 }) => {
-  const { visibleRecordFields, objectMetadataItem, objectMetadataItems } =
+  const { visibleRecordFields, objectMetadataItem } =
     useRecordTableContextOrThrow();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
 
   const { fieldMetadataId, viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
@@ -125,10 +126,9 @@ export const RecordTableAggregateFooterCell = ({
   const isLookupColumn =
     isDefined(fieldMetadataItem) &&
     isDefined(
-      getRecordFieldLookupTarget({
+      getLookupTarget({
         recordField,
         fieldMetadataItem,
-        objectMetadataItems,
       }),
     );
 

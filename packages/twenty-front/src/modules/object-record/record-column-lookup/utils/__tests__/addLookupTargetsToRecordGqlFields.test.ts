@@ -1,3 +1,5 @@
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -16,6 +18,8 @@ const employeesField = getMockFieldMetadataItemOrThrow({
 });
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+const getLookupTarget: GetRecordFieldLookupTarget = (params) =>
+  getRecordFieldLookupTarget({ ...params, objectMetadataItems });
 
 const fieldMetadataItemByFieldMetadataItemId = {
   [companyField.id]: companyField,
@@ -33,7 +37,7 @@ describe('addLookupTargetsToRecordGqlFields', () => {
           },
         ],
         fieldMetadataItemByFieldMetadataItemId,
-        objectMetadataItems,
+        getLookupTarget,
       }),
     ).toEqual({
       company: { id: true, name: true, employees: true },
@@ -51,7 +55,7 @@ describe('addLookupTargetsToRecordGqlFields', () => {
         recordGqlFields,
         recordFields: [{ fieldMetadataItemId: companyField.id }],
         fieldMetadataItemByFieldMetadataItemId,
-        objectMetadataItems,
+        getLookupTarget,
       }),
     ).toEqual(recordGqlFields);
   });
