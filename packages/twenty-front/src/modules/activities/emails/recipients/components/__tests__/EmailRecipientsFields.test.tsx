@@ -3,6 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
+import { useState } from 'react';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { EmailRecipientsFields } from '@/activities/emails/recipients/components/EmailRecipientsFields';
@@ -29,28 +30,57 @@ const RECIPIENTS: EmailRecipientsByFieldId = {
   bcc: [],
 };
 
+const StatefulEmailRecipientsFields = ({
+  initialRecipientsByFieldId,
+  onRecipientsChange,
+  readonly,
+}: {
+  initialRecipientsByFieldId: EmailRecipientsByFieldId;
+  onRecipientsChange: (recipientsByFieldId: EmailRecipientsByFieldId) => void;
+  readonly: boolean;
+}) => {
+  const [recipientsByFieldId, setRecipientsByFieldId] = useState(
+    initialRecipientsByFieldId,
+  );
+
+  onRecipientsChange(recipientsByFieldId);
+
+  return (
+    <EmailRecipientsFields
+      recipientsByFieldId={recipientsByFieldId}
+      onChange={setRecipientsByFieldId}
+      readonly={readonly}
+    />
+  );
+};
+
 const renderFields = ({
   recipientsByFieldId = RECIPIENTS,
-  onChange = jest.fn(),
   readonly = false,
 }: {
   recipientsByFieldId?: EmailRecipientsByFieldId;
-  onChange?: (recipientsByFieldId: EmailRecipientsByFieldId) => void;
   readonly?: boolean;
-} = {}) =>
+} = {}) => {
+  let latestRecipientsByFieldId = recipientsByFieldId;
+
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
         <ToastProvider>
-          <EmailRecipientsFields
-            recipientsByFieldId={recipientsByFieldId}
-            onChange={onChange}
+          <StatefulEmailRecipientsFields
+            initialRecipientsByFieldId={recipientsByFieldId}
+            onRecipientsChange={(nextRecipientsByFieldId) => {
+              latestRecipientsByFieldId = nextRecipientsByFieldId;
+            }}
             readonly={readonly}
           />
         </ToastProvider>
       </Provider>
     </I18nProvider>,
   );
+
+  return { getRecipientsByFieldId: () => latestRecipientsByFieldId };
+};
 
 describe('EmailRecipientsFields', () => {
   beforeAll(() => {
@@ -73,61 +103,40 @@ describe('EmailRecipientsFields', () => {
     expect(screen.getByRole('combobox', { name: 'Bcc' })).toBeInTheDocument();
   });
 
-  it('shows Cc and Bcc when they already have recipients', () => {
-    renderFields({
-      recipientsByFieldId: {
-        ...RECIPIENTS,
-        bcc: [{ address: 'joe@acme.com' }],
-      },
-    });
-
-    expect(screen.getByRole('combobox', { name: 'Bcc' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Cc/Bcc' }),
-    ).not.toBeInTheDocument();
-  });
-
   it('keeps Cc and Bcc open after their last recipient is removed', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn();
-    const { rerender } = renderFields({
+    const { getRecipientsByFieldId } = renderFields({
       recipientsByFieldId: { ...RECIPIENTS, cc: [{ address: 'joe@acme.com' }] },
-      onChange,
     });
 
     await user.click(
       screen.getByRole('button', { name: 'Remove joe@acme.com' }),
     );
 
-    expect(onChange).toHaveBeenCalledWith(RECIPIENTS);
-
-    rerender(
-      <I18nProvider i18n={i18n}>
-        <Provider store={createStore()}>
-          <ToastProvider>
-            <EmailRecipientsFields
-              recipientsByFieldId={RECIPIENTS}
-              onChange={onChange}
-            />
-          </ToastProvider>
-        </Provider>
-      </I18nProvider>,
-    );
-
+    expect(getRecipientsByFieldId().cc).toEqual([]);
     expect(screen.getByRole('combobox', { name: 'Cc' })).toBeInTheDocument();
   });
 
-  it('removes a recipient from its field', async () => {
+  it('keeps both changes when removing a Cc recipient commits typed To text', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn();
+    const { getRecipientsByFieldId } = renderFields({
+      recipientsByFieldId: { ...RECIPIENTS, cc: [{ address: 'joe@acme.com' }] },
+    });
 
-    renderFields({ onChange });
-
+    await user.type(
+      screen.getByRole('combobox', { name: 'To' }),
+      'ana@acme.com',
+    );
+    await user.keyboard('{Escape}');
     await user.click(
-      screen.getByRole('button', { name: 'Remove tim@apple.dev' }),
+      screen.getByRole('button', { name: 'Remove joe@acme.com' }),
     );
 
-    expect(onChange).toHaveBeenCalledWith({ to: [], cc: [], bcc: [] });
+    expect(getRecipientsByFieldId()).toEqual({
+      to: [{ address: 'tim@apple.dev' }, { address: 'ana@acme.com' }],
+      cc: [],
+      bcc: [],
+    });
   });
 
   it('only lists recipients when read-only', () => {

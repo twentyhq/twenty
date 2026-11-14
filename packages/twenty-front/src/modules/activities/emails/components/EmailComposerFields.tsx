@@ -127,16 +127,8 @@ export const EmailComposerFields = ({
           </ComposerFieldRow>
         )}
         <EmailRecipientsFields
-          recipientsByFieldId={{
-            to: composerState.to,
-            cc: composerState.cc,
-            bcc: composerState.bcc,
-          }}
-          onChange={({ to, cc, bcc }) => {
-            composerState.setTo(to);
-            composerState.setCc(cc);
-            composerState.setBcc(bcc);
-          }}
+          recipientsByFieldId={composerState.recipientsByFieldId}
+          onChange={composerState.setRecipientsByFieldId}
           onSubmit={composerState.handleSend}
           contextRecord={contextRecord}
         />

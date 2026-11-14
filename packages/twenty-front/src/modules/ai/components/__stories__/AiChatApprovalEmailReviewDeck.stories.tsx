@@ -75,12 +75,12 @@ export const RetainedDraftEdits: Story = {
     recipientRemoval.focus();
     await userEvent.click(recipientRemoval);
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to To' }),
+      canvas.getByRole('combobox', { name: 'To' }),
       'joe.revised@example.com{Enter}',
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Cc' }),
+      canvas.getByRole('combobox', { name: 'Cc' }),
       'team@example.com{Enter}',
     );
 
@@ -89,7 +89,7 @@ export const RetainedDraftEdits: Story = {
     await userEvent.clear(bodyEditor);
     await userEvent.type(bodyEditor, 'Updated walkthrough for Brian and Joe.');
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Bcc' }),
+      canvas.getByRole('combobox', { name: 'Bcc' }),
       'archive@example.com',
     );
     await userEvent.click(
@@ -290,7 +290,7 @@ export const Outcomes: Story = {
           canvas.getByRole('button', { name: 'Skip' }),
         ).toBeDisabled();
         await expect(
-          canvas.queryByRole('textbox', { name: 'Add a recipient to To' }),
+          canvas.queryByRole('combobox', { name: 'To' }),
         ).not.toBeInTheDocument();
         await expect(
           canvas.queryByRole('button', { name: 'Remove brian@example.com' }),
@@ -331,7 +331,7 @@ export const MissingRecipient: Story = {
     ).toBeDisabled();
     await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to To' }),
+      canvas.getByRole('combobox', { name: 'To' }),
       'brian@example.com{Enter}',
     );
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
@@ -381,9 +381,7 @@ export const Narrow: Story = {
     await expect(await getBodyEditor(canvasElement)).toBeVisible();
     await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
     await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
-    await expect(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Bcc' }),
-    ).toBeVisible();
+    await expect(canvas.getByRole('combobox', { name: 'Bcc' })).toBeVisible();
     await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
   },
 };

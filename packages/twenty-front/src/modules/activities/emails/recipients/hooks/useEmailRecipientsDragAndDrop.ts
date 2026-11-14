@@ -5,6 +5,7 @@ import { EMAIL_RECIPIENTS_FIELD_IDS } from '@/activities/emails/recipients/const
 import { type DraggedEmailRecipients } from '@/activities/emails/recipients/types/DraggedEmailRecipients';
 import { type EmailRecipientDragData } from '@/activities/emails/recipients/types/EmailRecipientDragData';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
+import { type EmailRecipientsByFieldIdUpdater } from '@/activities/emails/recipients/types/EmailRecipientsByFieldIdUpdater';
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { moveEmailRecipientsBetweenFields } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
@@ -20,7 +21,7 @@ type DragEndEvent = DragDropProviderDragEndEvent<EmailRecipientDragData>;
 type UseEmailRecipientsDragAndDropArgs = {
   recipientsByFieldId: EmailRecipientsByFieldId;
   onRecipientsByFieldIdChange: (
-    recipientsByFieldId: EmailRecipientsByFieldId,
+    update: EmailRecipientsByFieldIdUpdater,
   ) => void;
 };
 
@@ -114,16 +115,17 @@ export const useEmailRecipientsDragAndDrop = ({
     }
 
     const movedIndices = getMovedIndices(sourceData);
+    const destinationFieldId = resolvedDrop.droppableId;
 
-    const nextRecipientsByFieldId = moveEmailRecipientsBetweenFields({
-      recipientsByFieldId,
-      sourceFieldId: sourceData.fieldId,
-      movedIndices,
-      destinationFieldId: resolvedDrop.droppableId,
-      destinationIndex: resolvedDrop.dropTargetIndex,
-    });
-
-    onRecipientsByFieldIdChange(nextRecipientsByFieldId);
+    onRecipientsByFieldIdChange((currentRecipientsByFieldId) =>
+      moveEmailRecipientsBetweenFields({
+        recipientsByFieldId: currentRecipientsByFieldId,
+        sourceFieldId: sourceData.fieldId,
+        movedIndices,
+        destinationFieldId,
+        destinationIndex: resolvedDrop.dropTargetIndex,
+      }),
+    );
   };
 
   const contextValues: DragDropItemDndContextValue = {

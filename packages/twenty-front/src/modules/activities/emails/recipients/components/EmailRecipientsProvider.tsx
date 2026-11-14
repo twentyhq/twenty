@@ -5,13 +5,14 @@ import { EmailRecipientsContextProvider } from '@/activities/emails/recipients/c
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailRecipientDragData } from '@/activities/emails/recipients/types/EmailRecipientDragData';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
+import { type EmailRecipientsByFieldIdUpdater } from '@/activities/emails/recipients/types/EmailRecipientsByFieldIdUpdater';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 
 type EmailRecipientsProviderProps = {
   recipientsByFieldId: EmailRecipientsByFieldId;
-  onChange: (recipientsByFieldId: EmailRecipientsByFieldId) => void;
+  onChange: (update: EmailRecipientsByFieldIdUpdater) => void;
   children: ReactNode;
 };
 
@@ -32,7 +33,10 @@ export const EmailRecipientsProvider = ({
         recipientsByFieldId,
         draggedRecipients,
         setFieldRecipients: (fieldId, recipients) =>
-          onChange({ ...recipientsByFieldId, [fieldId]: recipients }),
+          onChange((currentRecipientsByFieldId) => ({
+            ...currentRecipientsByFieldId,
+            [fieldId]: recipients,
+          })),
       }}
     >
       <DragDropItemDndContext.Provider value={contextValues}>

@@ -79,7 +79,11 @@ export const CalendarEventComposerFields = ({
               cc: [],
               bcc: [],
             }}
-            onChange={({ to }) => composerState.setAttendees(to)}
+            onChange={(update) =>
+              composerState.setAttendees(
+                (attendees) => update({ to: attendees, cc: [], bcc: [] }).to,
+              )
+            }
           >
             <EmailRecipientsFieldInput
               fieldId="to"

@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
@@ -10,26 +10,32 @@ import { useEmailRecipientsContext } from '@/activities/emails/recipients/contex
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
 type EmailRecipientsFieldRowsProps = {
-  isCcBccExpanded: boolean;
-  onExpandCcBcc: () => void;
   onSubmit?: () => void;
   contextRecord?: EmailComposerContextRecord | null;
 };
 
 export const EmailRecipientsFieldRows = ({
-  isCcBccExpanded,
-  onExpandCcBcc,
   onSubmit,
   contextRecord,
 }: EmailRecipientsFieldRowsProps) => {
   const { t } = useLingui();
-  const { draggedRecipients } = useEmailRecipientsContext();
+  const { recipientsByFieldId, draggedRecipients } =
+    useEmailRecipientsContext();
   const ccInputRef = useRef<HTMLInputElement>(null);
+  const hasCcOrBccRecipients =
+    isNonEmptyArray(recipientsByFieldId.cc) ||
+    isNonEmptyArray(recipientsByFieldId.bcc);
+  const [isCcBccExpanded, setIsCcBccExpanded] = useState(hasCcOrBccRecipients);
+
+  // Sticky once Cc or Bcc held someone, so removing the last chip doesn't unmount the field being edited.
+  if (hasCcOrBccRecipients && !isCcBccExpanded) {
+    setIsCcBccExpanded(true);
+  }
 
   const areCcBccFieldsVisible = isCcBccExpanded || isDefined(draggedRecipients);
 
   const handleShowCcBcc = () => {
-    flushSync(onExpandCcBcc);
+    flushSync(() => setIsCcBccExpanded(true));
     ccInputRef.current?.focus();
   };
 

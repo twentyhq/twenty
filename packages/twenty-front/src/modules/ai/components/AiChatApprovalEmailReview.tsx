@@ -24,7 +24,11 @@ const StyledBody = styled.div`
 
 type AiChatApprovalEmailReviewProps = {
   draft: AiChatApprovalReviewEmailDraft;
-  onDraftChange: (draft: AiChatApprovalReviewEmailDraft) => void;
+  onDraftChange: (
+    update: (
+      draft: AiChatApprovalReviewEmailDraft,
+    ) => AiChatApprovalReviewEmailDraft,
+  ) => void;
   disabled?: boolean;
 };
 
@@ -39,7 +43,7 @@ export const AiChatApprovalEmailReview = ({
       return;
     }
 
-    onDraftChange({ ...draft, ...changes });
+    onDraftChange((currentDraft) => ({ ...currentDraft, ...changes }));
   };
 
   return (
@@ -47,7 +51,16 @@ export const AiChatApprovalEmailReview = ({
       <ComposerHeader>
         <EmailRecipientsFields
           recipientsByFieldId={{ to: draft.to, cc: draft.cc, bcc: draft.bcc }}
-          onChange={updateDraft}
+          onChange={(update) =>
+            onDraftChange((currentDraft) => ({
+              ...currentDraft,
+              ...update({
+                to: currentDraft.to,
+                cc: currentDraft.cc,
+                bcc: currentDraft.bcc,
+              }),
+            }))
+          }
           readonly={disabled}
         />
         <ComposerFieldRow label={t`Subject`} hasDivider={false}>
