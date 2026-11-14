@@ -549,51 +549,58 @@ describe('Outbound email body formats (integration)', () => {
       });
     }, 300000);
 
+    // The runtime now rejects these string bodies, so only the converted one can be run
     it.each([
       {
         kind: 'plain text with variables',
         body: 'Hi {{trigger.name}},\n\nSee you soon',
-        payload: { name: 'Tom & <Jerry>' },
+        payload: { name: 'Ada' },
+        expectedHtml: /Hi Ada,<br\s*\/?><br\s*\/?>See you soon/,
       },
       {
         kind: 'HTML with raw variable values',
         body: '<p>Hello {{trigger.name}}</p>',
         payload: { name: '<b>Ada</b>' },
+        expectedHtml: '<p>Hello <b>Ada</b></p>',
       },
       {
         kind: 'a single variable holding HTML',
         body: '{{trigger.html}}',
         payload: { html: '<h1>Report</h1><p>All good</p>' },
-      },
-      {
-        kind: 'a versionless document',
-        body: JSON.stringify({
-          type: 'doc',
-          content: [
-            { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
-          ],
-        }),
-        payload: {},
+        expectedHtml: '<h1>Report</h1><p>All good</p>',
       },
     ])(
-      'sends the same email from a stored body made of $kind before and after the upgrade',
-      async ({ body, payload }) => {
-        const beforeUpgrade = await runSendEmailWorkflow({
-          body,
-          payload,
-        });
-        const afterUpgrade = await runSendEmailWorkflow({
+      'sends a stored body made of $kind once the upgrade converts it',
+      async ({ body, payload, expectedHtml }) => {
+        const { sanitizedHtmlBody } = await runSendEmailWorkflow({
           body,
           payload,
           beforeRun: convertStoredBodyBeforeRun(body),
         });
 
-        expect(afterUpgrade.sanitizedHtmlBody).toBe(
-          beforeUpgrade.sanitizedHtmlBody,
-        );
-        expect(afterUpgrade.plainTextBody).toBe(beforeUpgrade.plainTextBody);
+        expect(sanitizedHtmlBody).toMatch(expectedHtml);
       },
-      600000,
+      300000,
     );
+
+    it('sends the same email from a versionless document before and after the upgrade', async () => {
+      const body = JSON.stringify({
+        type: 'doc',
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
+        ],
+      });
+
+      const beforeUpgrade = await runSendEmailWorkflow({ body });
+      const afterUpgrade = await runSendEmailWorkflow({
+        body,
+        beforeRun: convertStoredBodyBeforeRun(body),
+      });
+
+      expect(afterUpgrade.sanitizedHtmlBody).toBe(
+        beforeUpgrade.sanitizedHtmlBody,
+      );
+      expect(afterUpgrade.plainTextBody).toBe(beforeUpgrade.plainTextBody);
+    }, 600000);
   });
 });

@@ -14,6 +14,7 @@ import {
   isDefined,
   isNonEmptyArray,
   isValidUuid,
+  parseEmailDocument,
 } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 
@@ -422,8 +423,18 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
+    // Typed callers can still hand over an unvalidated document, e.g. a tool run outside the AI SDK
+    const bodyParseResult = parseEmailDocument(body);
+
+    if (!bodyParseResult.success) {
+      throw new EmailToolException(
+        `Invalid outbound email document: ${bodyParseResult.error}`,
+        EmailToolExceptionCode.INVALID_EMAIL_BODY,
+      );
+    }
+
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(body);
+      await compileOutboundEmailContent(bodyParseResult.document);
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =
