@@ -5,8 +5,6 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 
-import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
@@ -48,7 +46,6 @@ export const useTriggerRecordBoardFetchMore = () => {
   const { combinedFilters } = useRecordIndexGroupCommonQueryVariables();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
 
   const recordBoardCurrentGroupByQueryOffsetCallbackState =
     useAtomComponentStateCallbackState(
@@ -189,15 +186,7 @@ export const useTriggerRecordBoardFetchMore = () => {
         newRecordIds,
       );
 
-      upsertRecordsInStore({
-        partialRecords: [
-          ...newRecords,
-          ...getLookupRelatedRecords({
-            records: newRecords,
-            lookupRelationFieldNames,
-          }),
-        ],
-      });
+      upsertRecordsInStore({ partialRecords: newRecords });
 
       if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
         store.set(
@@ -226,7 +215,6 @@ export const useTriggerRecordBoardFetchMore = () => {
     objectMetadataItem,
     recordGroupDefinitions,
     upsertRecordsInStore,
-    lookupRelationFieldNames,
     executeRecordIndexGroupsRecordsLazyGroupBy,
     recordIndexRecordIdsByGroupCallbackState,
     recordBoardIsFetchingMore,

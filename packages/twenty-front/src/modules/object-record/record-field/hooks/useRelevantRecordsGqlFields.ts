@@ -1,4 +1,4 @@
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -39,7 +39,7 @@ export const useRelevantRecordsGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const getLookupTarget = useGetRecordFieldLookupTarget();
+  const lookupColumns = useRecordIndexLookupColumns();
 
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
@@ -81,9 +81,7 @@ export const useRelevantRecordsGqlFields = ({
       fields: fieldMetadataItemsToUse,
       depth: 1,
     }),
-    recordFields: visibleRecordFields,
-    fieldMetadataItemByFieldMetadataItemId,
-    getLookupTarget,
+    lookupColumns,
   });
 
   const coreRecordReferenceFieldsRecordGqlFields =

@@ -7,6 +7,8 @@ import { RecordCalendarTopBar } from '@/object-record/record-calendar/components
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';
 import { RecordCalendarGrid } from '@/object-record/record-calendar/grid/components/RecordCalendarGrid';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
@@ -41,6 +43,9 @@ export const RecordCalendar = () => {
     recordIndexCalendarLayoutComponentState,
   );
 
+  // Cards read the alias list the calendar query fetched, like table cells
+  const scopedRelationAliases = useScopedRelationAliases();
+
   useEffect(() => {
     resetRecordSelection();
   }, [resetRecordSelection, recordIndexCalendarLayout]);
@@ -60,14 +65,16 @@ export const RecordCalendar = () => {
   });
 
   return (
-    <StyledContainerContainer>
-      <RecordSelectionEscapeHotkeyEffect />
-      <RecordCalendarTopBar />
-      <ScrollWrapper
-        componentInstanceId={`scroll-wrapper-record-calendar-${recordCalendarId}`}
-      >
-        <RecordCalendarGrid calendarLayout={recordIndexCalendarLayout} />
-      </ScrollWrapper>
-    </StyledContainerContainer>
+    <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
+      <StyledContainerContainer>
+        <RecordSelectionEscapeHotkeyEffect />
+        <RecordCalendarTopBar />
+        <ScrollWrapper
+          componentInstanceId={`scroll-wrapper-record-calendar-${recordCalendarId}`}
+        >
+          <RecordCalendarGrid calendarLayout={recordIndexCalendarLayout} />
+        </ScrollWrapper>
+      </StyledContainerContainer>
+    </ScopedRelationAliasesContext.Provider>
   );
 };

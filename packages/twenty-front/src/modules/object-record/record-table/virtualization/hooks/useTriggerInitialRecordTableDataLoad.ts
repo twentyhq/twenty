@@ -1,4 +1,3 @@
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -38,7 +37,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
   const { recordLimit } = useRecordIndexContextOrThrow();
 
-  const { findManyRecordsLazy, lookupRelationFieldNames } =
+  const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);
 
   const isInitializingVirtualTableDataLoadingCallbackState =
@@ -158,12 +157,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         if (isDefined(records)) {
-          upsertRecordsInStore({
-            partialRecords: [
-              ...records,
-              ...getLookupRelatedRecords({ records, lookupRelationFieldNames }),
-            ],
-          });
+          upsertRecordsInStore({ partialRecords: records });
 
           loadRecordsAtRowIndexes({
             records,
@@ -209,7 +203,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       findManyRecordsLazy,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
-      lookupRelationFieldNames,
       loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,

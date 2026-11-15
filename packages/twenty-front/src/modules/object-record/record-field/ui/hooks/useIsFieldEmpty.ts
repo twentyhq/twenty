@@ -2,7 +2,6 @@ import { useContext } from 'react';
 
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 
-import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
@@ -14,7 +13,7 @@ export const useIsFieldEmpty = () => {
     recordId,
     fieldDefinition,
     overridenIsFieldEmpty,
-    scopedRelationViewFieldId,
+    scopedRelationAlias,
   } = useContext(FieldContext);
 
   const coreRecordReferenceFields = useContext(
@@ -28,9 +27,7 @@ export const useIsFieldEmpty = () => {
 
   const fieldValue = useRecordFieldValue(
     recordId,
-    isDefined(scopedRelationViewFieldId)
-      ? getScopedRelationAlias(scopedRelationViewFieldId)
-      : fieldValueSourceDefinition.metadata.fieldName,
+    scopedRelationAlias?.alias ?? fieldValueSourceDefinition.metadata.fieldName,
     fieldValueSourceDefinition,
   );
 

@@ -1,8 +1,6 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordFieldLookupFieldContext';
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
-import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
-import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import {
   FieldContext,
@@ -14,10 +12,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordCardFieldProps = {
@@ -44,26 +39,19 @@ export const RecordCardField = ({
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
+    columnDescriptorByRecordFieldId,
   } = useRecordIndexContextOrThrow();
 
   const restrictedFieldNames = useRecordRestrictedFieldNames(recordId);
 
-  const getLookupTarget = useGetRecordFieldLookupTarget();
-
-  const isColumnSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
-  );
-
   // The card's hover and edit portals find a cell by field, so an added column stays read-only here
   const isAddedColumn = !isCanonicalRecordField(recordField);
 
-  const scopeView = useAtomFamilySelectorValue(
-    scopeViewFromOwnerViewFieldIdFamilySelector,
-    {
-      ownerViewFieldId:
-        isColumnSettingsEnabled && isAddedColumn ? recordField.id : '',
-    },
+  const scopedRelationAlias = useContext(ScopedRelationAliasesContext).find(
+    ({ ownerViewFieldId }) => ownerViewFieldId === recordField.id,
   );
+
+  const columnDescriptor = columnDescriptorByRecordFieldId[recordField.id];
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -83,13 +71,8 @@ export const RecordCardField = ({
     ? `${fieldInstanceIdPrefix}-${recordId}-${fieldDefinition.metadata.fieldName}`
     : undefined;
 
-  const lookupTarget = getLookupTarget({ recordField, fieldMetadataItem });
-
-  const { label } = getRecordFieldColumnDisplay({
-    recordField,
-    fieldMetadataItem,
-    getLookupTarget,
-  });
+  const lookupTarget = columnDescriptor?.lookupTarget;
+  const label = columnDescriptor?.label ?? fieldDefinition.label;
 
   if (isDefined(lookupTarget)) {
     // Two cards can show the same related record, so the cell instance is keyed by the card's record too
@@ -121,10 +104,6 @@ export const RecordCardField = ({
     fieldMetadataItem.name,
   );
 
-  const isScopedColumn =
-    isColumnSettingsEnabled &&
-    isScopedRelationColumn({ fieldMetadataItem, recordField, scopeView });
-
   return (
     <FieldContext.Provider
       value={{
@@ -147,7 +126,7 @@ export const RecordCardField = ({
         isDisplayModeFixHeight: true,
         triggerEvent: 'CLICK',
         anchorId,
-        scopedRelationViewFieldId: isScopedColumn ? recordField.id : undefined,
+        scopedRelationAlias,
         onMouseEnter: isAddedColumn ? undefined : onMouseEnter,
         onOpenEditMode: isAddedColumn ? () => undefined : undefined,
       }}

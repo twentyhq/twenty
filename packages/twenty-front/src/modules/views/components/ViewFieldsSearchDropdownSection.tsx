@@ -1,4 +1,5 @@
-import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
+import { isDefined } from 'twenty-shared/utils';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -52,12 +53,6 @@ export const ViewFieldsSearchDropdownSection = ({
     visibleRecordFieldsComponentSelector,
   );
 
-  const visibleFieldIds = new Set(
-    visibleRecordFields
-      .filter(isCanonicalRecordField)
-      .map((recordField) => recordField.fieldMetadataItemId),
-  );
-
   const fieldMetadataItemLabelIdentifier =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
@@ -73,7 +68,12 @@ export const ViewFieldsSearchDropdownSection = ({
     <DropdownMenuItemsContainer>
       {filteredFields.length > 0 ? (
         filteredFields.map((fieldMetadataItem) => {
-          const isVisible = visibleFieldIds.has(fieldMetadataItem.id);
+          const isVisible = isDefined(
+            findCanonicalRecordField({
+              recordFields: visibleRecordFields,
+              fieldMetadataItemId: fieldMetadataItem.id,
+            }),
+          );
           const isLabelIdentifier =
             fieldMetadataItem.id === fieldMetadataItemLabelIdentifier?.id;
 

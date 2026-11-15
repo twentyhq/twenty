@@ -1,5 +1,6 @@
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
 import { type NestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
 import {
   CommonQueryRunnerException,
@@ -47,7 +48,7 @@ const isNonNegativeInteger = (value: unknown): value is number =>
 
 // Cursor and offset arguments are accepted but ignored on nested relations, as they always were
 export const extractNestedRelationQueryArgs = (
-  graphqlArguments: Record<string, unknown> = {},
+  graphqlArguments: Record<string, unknown>,
 ): ExtractedNestedRelationQueryArgs => {
   const unknownArgumentName = Object.keys(graphqlArguments).find(
     (argumentName) => !ALLOWED_ARGUMENT_NAMES.has(argumentName),
@@ -74,10 +75,10 @@ export const extractNestedRelationQueryArgs = (
   }
 
   return {
-    ...(isObjectRecordFilter(filter) ? { filter } : {}),
-    ...(isObjectRecordOrderBy(orderBy)
-      ? { orderBy: Array.isArray(orderBy) ? orderBy : [orderBy] }
-      : {}),
-    ...(isNonNegativeInteger(first) ? { first } : {}),
+    filter: isObjectRecordFilter(filter) ? filter : undefined,
+    orderBy: isObjectRecordOrderBy(orderBy)
+      ? new OrderByArgProcessorService().process({ orderBy })
+      : undefined,
+    first: isNonNegativeInteger(first) ? first : undefined,
   };
 };

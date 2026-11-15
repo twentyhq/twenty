@@ -24,7 +24,7 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
+  const lookupColumns = useRecordIndexLookupColumns();
 
   const getShouldResetTableVirtualizationForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
@@ -75,7 +75,9 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
       // The update returns the new related record without its looked-up field
       if (
         updatedFieldMetadataItems.some(({ name }) =>
-          lookupRelationFieldNames.includes(name),
+          lookupColumns.some(
+            ({ relationFieldName }) => relationFieldName === name,
+          ),
         )
       ) {
         thereIsAnUpdateOnALookupRelation = true;

@@ -1,5 +1,4 @@
 import { RecordFieldLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordFieldLookupFieldContext';
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -27,6 +26,7 @@ export const RecordTableCellFieldContextWrapper = ({
   const {
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
+    columnDescriptorByRecordFieldId,
   } = useRecordIndexContextOrThrow();
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
@@ -45,8 +45,8 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  const getLookupTarget = useGetRecordFieldLookupTarget();
-  const lookupTarget = getLookupTarget({ recordField, fieldMetadataItem });
+  const lookupTarget =
+    columnDescriptorByRecordFieldId[recordField.id]?.lookupTarget;
 
   // The lookup cell keys its own editor instance to the related record
   if (isDefined(lookupTarget)) {

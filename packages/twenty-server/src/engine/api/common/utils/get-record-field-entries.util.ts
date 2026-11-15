@@ -1,4 +1,4 @@
-import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
+import { ALIASED_RELATION_RECORD_KEY_SEPARATOR } from 'src/engine/api/common/constants/aliased-relation-record-key-separator.constant';
 
 // Walk records, select or relations maps through this: an aliased relation sits under `fieldName::alias`
 export const getRecordFieldEntries = <TValue>(
@@ -6,6 +6,6 @@ export const getRecordFieldEntries = <TValue>(
 ): { recordKey: string; fieldName: string; value: TValue }[] =>
   Object.entries(record).map(([recordKey, value]) => ({
     recordKey,
-    fieldName: getFieldNameFromRelationRecordKey(recordKey),
+    fieldName: recordKey.split(ALIASED_RELATION_RECORD_KEY_SEPARATOR)[0],
     value,
   }));

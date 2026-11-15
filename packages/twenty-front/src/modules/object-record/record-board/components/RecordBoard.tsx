@@ -10,6 +10,8 @@ import { RecordBoardEffects } from '@/object-record/record-board/components/Reco
 import { RecordBoardFetchMoreInViewTriggerComponent } from '@/object-record/record-board/components/RecordBoardFetchMoreInViewTriggerComponent';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -46,8 +48,11 @@ export const RecordBoard = () => {
     isRecordBoardViewSettingsReadOnlyComponentState,
   );
 
+  // Cards read the alias list the board query fetched, like table cells
+  const scopedRelationAliases = useScopedRelationAliases();
+
   return (
-    <>
+    <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
       >
@@ -68,6 +73,6 @@ export const RecordBoard = () => {
           </StyledBoardContentContainer>
         </StyledContainerContainer>
       </ScrollWrapper>
-    </>
+    </ScopedRelationAliasesContext.Provider>
   );
 };

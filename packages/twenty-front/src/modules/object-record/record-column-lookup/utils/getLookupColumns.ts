@@ -1,45 +1,31 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type RecordFieldColumnDescriptor } from '@/object-record/record-field/types/RecordFieldColumnDescriptor';
 import { isDefined } from 'twenty-shared/utils';
 
 export type LookupColumn = {
   relationFieldName: string;
-  lookupTargetFieldMetadataId: string;
+  lookupTargetFieldName: string;
 };
 
 export const getLookupColumns = ({
   recordFields,
-  fieldMetadataItemByFieldMetadataItemId,
-  getLookupTarget,
+  columnDescriptorByRecordFieldId,
 }: {
-  recordFields: Pick<
-    RecordField,
-    'fieldMetadataItemId' | 'relationTargetFieldMetadataId'
-  >[];
-  fieldMetadataItemByFieldMetadataItemId: Record<
+  recordFields: Pick<RecordField, 'id'>[];
+  columnDescriptorByRecordFieldId: Record<
     string,
-    FieldMetadataItem | undefined
+    Pick<RecordFieldColumnDescriptor, 'lookupTarget'> | undefined
   >;
-  getLookupTarget: GetRecordFieldLookupTarget;
 }): LookupColumn[] =>
-  recordFields.flatMap((recordField) => {
-    const fieldMetadataItem =
-      fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  recordFields.flatMap(({ id }) => {
+    const lookupTarget = columnDescriptorByRecordFieldId[id]?.lookupTarget;
 
-    const lookupTarget = isDefined(fieldMetadataItem)
-      ? getLookupTarget({
-          recordField,
-          fieldMetadataItem,
-        })
-      : undefined;
-
-    return isDefined(fieldMetadataItem) && isDefined(lookupTarget)
+    return isDefined(lookupTarget)
       ? [
           {
-            relationFieldName: fieldMetadataItem.name,
-            lookupTargetFieldMetadataId:
-              lookupTarget.lookupTargetFieldMetadataItem.id,
+            relationFieldName: lookupTarget.relationFieldName,
+            lookupTargetFieldName:
+              lookupTarget.lookupTargetFieldMetadataItem.name,
           },
         ]
       : [];

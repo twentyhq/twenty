@@ -1,8 +1,6 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { useRecordBoardQueryIdentifier } from '@/object-record/record-board/hooks/useRecordBoardQueryIdentifier';
-import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
@@ -60,7 +58,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
   const { setRecordIdsForColumn } = useSetRecordIdsForColumn();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { lookupRelationFieldNames } = useRecordIndexLookupColumns();
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
@@ -140,12 +137,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
           continue;
         }
 
-        upsertRecordsInStore({
-          partialRecords: [
-            ...records,
-            ...getLookupRelatedRecords({ records, lookupRelationFieldNames }),
-          ],
-        });
+        upsertRecordsInStore({ partialRecords: records });
 
         setRecordIdsForColumn(recordGroupDefinition.id, records);
 
@@ -179,7 +171,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
       scrollWrapperHTMLElement,
       recordGroupDefinitions,
       upsertRecordsInStore,
-      lookupRelationFieldNames,
       setRecordIdsForColumn,
       recordBoardShouldFetchMoreInColumnFamilyCallbackState,
     ],

@@ -1,4 +1,3 @@
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
@@ -8,6 +7,7 @@ import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-tab
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
@@ -89,9 +89,8 @@ export const RecordTableAggregateFooterCell = ({
   columnIndex: number;
   currentRecordGroupId?: string;
 }) => {
-  const { visibleRecordFields, objectMetadataItem } =
-    useRecordTableContextOrThrow();
-  const getLookupTarget = useGetRecordFieldLookupTarget();
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
 
   const { fieldMetadataId, viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
@@ -106,9 +105,14 @@ export const RecordTableAggregateFooterCell = ({
     isRecordTableColumnResizableComponentState,
   );
 
+  // A total over a lookup counts a related record once per row that links to it
+  const isLookupColumn =
+    columnDescriptorByRecordFieldId[viewFieldId]?.isLookupColumn === true;
+
   const isFooterReadOnly =
-    useIsRecordTableWidgetAggregateNonInteractive() ??
-    !isRecordTableColumnResizable;
+    (useIsRecordTableWidgetAggregateNonInteractive() ??
+      !isRecordTableColumnResizable) ||
+    isLookupColumn;
 
   const recordField = visibleRecordFields.find(findById(viewFieldId));
 
@@ -118,25 +122,11 @@ export const RecordTableAggregateFooterCell = ({
     return null;
   }
 
-  const fieldMetadataItem = objectMetadataItem.fields.find(
-    findById(fieldMetadataId),
-  );
-
-  // A total over a lookup counts a related record once per row that links to it
-  const isLookupColumn =
-    isDefined(fieldMetadataItem) &&
-    isDefined(
-      getLookupTarget({
-        recordField,
-        fieldMetadataItem,
-      }),
-    );
-
   return (
     <StyledColumnFooterCell
       columnWidth={recordField.size + 1}
       isFirstCell={isFirstCell}
-      isReadOnly={isFooterReadOnly || isLookupColumn}
+      isReadOnly={isFooterReadOnly}
       className={cx(
         'footer-cell',
         getRecordTableColumnFieldWidthClassName(columnIndex),
@@ -145,20 +135,19 @@ export const RecordTableAggregateFooterCell = ({
       <StyledColumnFootContainer
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
-        {!isLookupColumn &&
-          (isFooterReadOnly ? (
-            hasAggregateOperationForViewField ? (
-              <RecordTableColumnAggregateFooterValue
-                fieldMetadataId={fieldMetadataId}
-                dropdownId={`${viewFieldId}-footer-readonly`}
-              />
-            ) : null
-          ) : (
-            <RecordTableColumnFooterWithDropdown
-              currentRecordGroupId={currentRecordGroupId}
-              isFirstCell={isFirstCell}
+        {isFooterReadOnly ? (
+          hasAggregateOperationForViewField && !isLookupColumn ? (
+            <RecordTableColumnAggregateFooterValue
+              fieldMetadataId={fieldMetadataId}
+              dropdownId={`${viewFieldId}-footer-readonly`}
             />
-          ))}
+          ) : null
+        ) : (
+          <RecordTableColumnFooterWithDropdown
+            currentRecordGroupId={currentRecordGroupId}
+            isFirstCell={isFirstCell}
+          />
+        )}
       </StyledColumnFootContainer>
     </StyledColumnFooterCell>
   );

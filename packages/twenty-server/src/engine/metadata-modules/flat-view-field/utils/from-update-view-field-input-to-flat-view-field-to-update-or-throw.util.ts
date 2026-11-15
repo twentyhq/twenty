@@ -89,34 +89,22 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     overrides,
   } as UniversalFlatViewField;
 
-  if (updatedEditableProperties.viewFieldGroupId !== undefined) {
-    const { viewFieldGroupUniversalIdentifier } =
-      resolveEntityRelationUniversalIdentifiers({
-        metadataName: 'viewField',
-        foreignKeyValues: {
-          viewFieldGroupId: mergedRecord.viewFieldGroupId,
-        },
-        flatEntityMaps: { flatViewFieldGroupMaps },
-      });
+  const {
+    viewFieldGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'viewField',
+    foreignKeyValues: {
+      viewFieldGroupId: mergedRecord.viewFieldGroupId,
+      relationTargetFieldMetadataId: mergedRecord.relationTargetFieldMetadataId,
+    },
+    flatEntityMaps: { flatViewFieldGroupMaps, flatFieldMetadataMaps },
+  });
 
-    flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
-      viewFieldGroupUniversalIdentifier;
-  }
-
-  if (updatedEditableProperties.relationTargetFieldMetadataId !== undefined) {
-    const { relationTargetFieldMetadataUniversalIdentifier } =
-      resolveEntityRelationUniversalIdentifiers({
-        metadataName: 'viewField',
-        foreignKeyValues: {
-          relationTargetFieldMetadataId:
-            mergedRecord.relationTargetFieldMetadataId,
-        },
-        flatEntityMaps: { flatFieldMetadataMaps },
-      });
-
-    flatViewFieldToUpdate.relationTargetFieldMetadataUniversalIdentifier =
-      relationTargetFieldMetadataUniversalIdentifier;
-  }
+  flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
+    viewFieldGroupUniversalIdentifier;
+  flatViewFieldToUpdate.relationTargetFieldMetadataUniversalIdentifier =
+    relationTargetFieldMetadataUniversalIdentifier;
 
   if (isDefined(overrides)) {
     flatViewFieldToUpdate.universalOverrides =

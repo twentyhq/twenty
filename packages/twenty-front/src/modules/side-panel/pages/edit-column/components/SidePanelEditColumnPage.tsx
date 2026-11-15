@@ -3,8 +3,7 @@ import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneT
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -38,7 +37,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
@@ -164,7 +163,7 @@ const SidePanelEditColumnForm = ({
   const isLookupableColumn =
     isDefined(relationObjectMetadataItem) &&
     isDefined(fieldMetadataItem) &&
-    isManyToOneRelationField(fieldMetadataItem);
+    isPlainManyToOneRelationField(fieldMetadataItem);
 
   const [columnName, setColumnName] = useState(
     recordField.settings?.label ?? '',
@@ -237,13 +236,12 @@ const SidePanelEditColumnForm = ({
 
   const FieldIcon = getIcon(fieldMetadataItem?.icon);
 
-  const lookupTargetFieldMetadataItem = isDefined(fieldMetadataItem)
-    ? getRecordFieldLookupTarget({
-        recordField: { relationTargetFieldMetadataId },
-        fieldMetadataItem,
-        objectMetadataItems,
-      })?.lookupTargetFieldMetadataItem
-    : undefined;
+  const lookupTargetFieldMetadataItem =
+    isLookupableColumn && isDefined(relationTargetFieldMetadataId)
+      ? relationObjectMetadataItem.fields.find(
+          findById(relationTargetFieldMetadataId),
+        )
+      : undefined;
 
   const columnNamePlaceholder = isDefined(fieldMetadataItem)
     ? formatLookupColumnLabel({

@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -27,8 +27,7 @@ export const SidePanelEditColumnLookupSelect = ({
   const lookupTargetOptions = relationObjectMetadataItem.readableFields
     .filter(
       (field) =>
-        field.isActive &&
-        !isHiddenSystemField(field) &&
+        isActiveFieldMetadataItem({ fieldMetadata: field }) &&
         field.type !== FieldMetadataType.RELATION &&
         field.type !== FieldMetadataType.MORPH_RELATION,
     )

@@ -18,6 +18,7 @@ export const JestRecordIndexContextProviderWrapper = ({
 }: JestRecordIndexContextProviderWrapperProps) => {
   const {
     fieldDefinitionByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
@@ -46,6 +47,7 @@ export const JestRecordIndexContextProviderWrapper = ({
               labelIdentifierFieldMetadataItem,
               recordFieldByFieldMetadataItemId,
               fieldDefinitionByFieldMetadataItemId,
+              columnDescriptorByRecordFieldId,
               fieldMetadataItemByFieldMetadataItemId,
             }}
           >

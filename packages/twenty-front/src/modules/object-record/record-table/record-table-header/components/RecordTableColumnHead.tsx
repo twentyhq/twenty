@@ -1,14 +1,10 @@
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
-import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitle = styled.div`
@@ -36,25 +32,11 @@ export const RecordTableColumnHead = ({
 }: RecordTableColumnHeadProps) => {
   const theme = useTheme();
 
-  const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
-    fieldMetadataItemByIdSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
+  const columnDescriptor = columnDescriptorByRecordFieldId[recordField.id];
 
-  const getLookupTarget = useGetRecordFieldLookupTarget();
   const { getIcon } = useIcons();
-  const fieldMetadataItem =
-    correspondingFieldMetadataItem.foundFieldMetadataItem;
-
-  const columnDisplay = isDefined(fieldMetadataItem)
-    ? getRecordFieldColumnDisplay({
-        recordField,
-        fieldMetadataItem,
-        getLookupTarget,
-      })
-    : undefined;
-
-  const Icon = getIcon(columnDisplay?.icon);
+  const Icon = getIcon(columnDescriptor?.icon);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
@@ -62,8 +44,8 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={columnDisplay?.label}
-        description={columnDisplay?.description}
+        label={columnDescriptor?.label}
+        description={columnDescriptor?.description}
       />
     </StyledTitle>
   );

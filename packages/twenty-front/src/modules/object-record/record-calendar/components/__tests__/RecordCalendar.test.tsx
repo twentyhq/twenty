@@ -58,6 +58,10 @@ jest.mock(
     DragDropItemDropTarget: () => null,
   }),
 );
+jest.mock(
+  '@/object-record/record-column-scope/hooks/useScopedRelationAliases',
+  () => ({ useScopedRelationAliases: () => [] }),
+);
 jest.mock('@dnd-kit/react', () => ({
   useDroppable: () => ({ isDropTarget: false, ref: jest.fn() }),
 }));

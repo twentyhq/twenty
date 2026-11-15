@@ -4,10 +4,8 @@ import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/get
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsObjectReadOnly } from '@/object-record/read-only/hooks/useIsObjectReadOnly';
@@ -15,6 +13,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableBodyContextValueProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import {
   RecordTableContextProvider,
@@ -25,8 +24,6 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -108,50 +105,17 @@ const InternalTableContextProviders = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const isObjectReadOnly = useIsObjectReadOnly(objectMetadataItem.id);
 
-  const currentRecordFields = useAtomComponentStateValue(
-    currentRecordFieldsComponentState,
-  );
-
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
-  const fieldMetadataItems = objectMetadataItem.fields;
-
-  const fieldMetadataItemByFieldMetadataItemId = Object.fromEntries(
-    fieldMetadataItems.map((fieldMetadataItem) => [
-      fieldMetadataItem.id,
-      fieldMetadataItem,
-    ]),
-  );
-
-  const recordFieldByFieldMetadataItemId = Object.fromEntries(
-    currentRecordFields.map((recordField) => [
-      recordField.fieldMetadataItemId,
-      recordField,
-    ]),
-  );
-
-  const fieldDefinitionByFieldMetadataItemId = Object.fromEntries(
-    fieldMetadataItems.map((fieldMetadataItem) => [
-      fieldMetadataItem.id,
-      formatFieldMetadataItemAsColumnDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem: objectMetadataItem,
-        position:
-          recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.position ?? 0,
-        labelWidth:
-          recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.size ?? 0,
-      }),
-    ]),
-  );
-
-  const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
-    labelIdentifierFieldMetadataItemSelector,
-    {
-      objectMetadataItemId: objectMetadataItem.id,
-    },
-  );
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+    fieldDefinitionByFieldMetadataItemId,
+    recordFieldByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
+  } = useRecordIndexFieldMetadataDerivedStates(objectMetadataItem);
 
   const triggerEvent = 'CLICK';
 
@@ -169,6 +133,7 @@ const InternalTableContextProviders = ({
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,
+        columnDescriptorByRecordFieldId,
         fieldMetadataItemByFieldMetadataItemId,
       }}
     >

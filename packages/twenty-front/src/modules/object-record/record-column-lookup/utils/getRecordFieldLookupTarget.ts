@@ -1,11 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 
 export type RecordFieldLookupTarget = {
+  relationFieldName: string;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   lookupTargetFieldMetadataItem: FieldMetadataItem;
 };
@@ -16,12 +17,12 @@ export const getRecordFieldLookupTarget = ({
   objectMetadataItems,
 }: {
   recordField: Pick<RecordField, 'relationTargetFieldMetadataId'>;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
+  fieldMetadataItem: FieldMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): RecordFieldLookupTarget | undefined => {
   if (
     !isDefined(recordField.relationTargetFieldMetadataId) ||
-    !isManyToOneRelationField(fieldMetadataItem)
+    !isPlainManyToOneRelationField(fieldMetadataItem)
   ) {
     return undefined;
   }
@@ -32,7 +33,7 @@ export const getRecordFieldLookupTarget = ({
   });
 
   const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    ({ id }) => id === recordField.relationTargetFieldMetadataId,
+    findById(recordField.relationTargetFieldMetadataId),
   );
 
   if (
@@ -42,5 +43,9 @@ export const getRecordFieldLookupTarget = ({
     return undefined;
   }
 
-  return { relationObjectMetadataItem, lookupTargetFieldMetadataItem };
+  return {
+    relationFieldName: fieldMetadataItem.name,
+    relationObjectMetadataItem,
+    lookupTargetFieldMetadataItem,
+  };
 };
