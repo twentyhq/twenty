@@ -148,6 +148,18 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('limits related records by id when first comes without orderBy', async () => {
+    const response = await findCompaniesWithPeople('people(first: 1)');
+
+    expect(response.body.errors).toBeUndefined();
+    expect(getJobTitlesByCompanyId(response.body.data.companies.edges)).toEqual(
+      {
+        [FIRST_COMPANY_ID]: ['CEO'],
+        [SECOND_COMPANY_ID]: ['CTO'],
+      },
+    );
+  });
+
   it('reads nested arguments from variables', async () => {
     const response = await makeGraphqlApiRequest({
       query: gql`
