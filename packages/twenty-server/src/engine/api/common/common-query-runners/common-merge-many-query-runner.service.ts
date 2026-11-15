@@ -687,7 +687,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   async processQueryResult({
     queryResult,
-  }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
+  }: Pick<
+    CommonQueryResultProcessingArgs<ObjectRecord>,
+    'queryResult'
+  >): Promise<ObjectRecord> {
     return queryResult;
   }
 
