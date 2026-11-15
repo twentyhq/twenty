@@ -71,7 +71,6 @@ export class RolePermissionsService {
     }
 
     const allRoleTargets = await this.roleTargetRepository.find(workspaceId, {
-      // additional roles are held by the system for a member, and are not theirs to see or change
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         isAdditional: false,
