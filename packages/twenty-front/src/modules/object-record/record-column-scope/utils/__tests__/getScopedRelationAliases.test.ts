@@ -71,7 +71,7 @@ describe('getScopedRelationAliases', () => {
   });
 
   it('turns the scope view filters and sorts into nested arguments', () => {
-    const [{ filter, orderBy, first }] = getAliases({
+    const [{ filter, orderBy, first, prefillRecordFilters }] = getAliases({
       scopeView: {
         id: '20202020-0000-4000-8000-000000000001',
         viewFilters: [
@@ -94,6 +94,12 @@ describe('getScopedRelationAliases', () => {
     });
 
     expect(filter).toEqual({ jobTitle: { ilike: '%cto%' } });
+    expect(prefillRecordFilters).toEqual([
+      expect.objectContaining({
+        fieldMetadataId: jobTitleField.id,
+        value: 'cto',
+      }),
+    ]);
     expect(orderBy).toEqual([
       { createdAt: 'AscNullsLast' },
       { position: 'AscNullsFirst' },
