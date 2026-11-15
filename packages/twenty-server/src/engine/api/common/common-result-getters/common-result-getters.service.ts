@@ -116,7 +116,10 @@ export class CommonResultGettersService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     workspaceId,
-  }: ResultGettersArgs): ResultProcessingContext {
+  }: Pick<
+    ResultGettersArgs,
+    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'workspaceId'
+  >): ResultProcessingContext {
     return {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
