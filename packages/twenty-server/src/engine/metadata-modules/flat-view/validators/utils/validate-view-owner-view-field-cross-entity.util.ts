@@ -190,25 +190,47 @@ export const validateViewOwnerViewFieldCrossEntity = ({
   }
 
   // The owner never changes after creation, but a type or visibility update could break the scope
-  const scopeViewsToValidate = [
-    ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
-      scopeView: flatEntity,
-      type: 'create' as const,
-    })),
-    ...orchestratorActionsReport.view.update
+  const updatedViewUniversalIdentifiers = new Set(
+    orchestratorActionsReport.view.update
       .filter(
         ({ update }) =>
           isDefined(update.type) ||
           isDefined(update.visibility) ||
           update.createdByUserWorkspaceId !== undefined,
       )
-      .map(({ universalIdentifier }) => ({
-        scopeView: findFlatEntityByUniversalIdentifier({
-          universalIdentifier,
-          flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
-        }),
-        type: 'update' as const,
-      })),
+      .map(({ universalIdentifier }) => universalIdentifier),
+  );
+
+  const createdViewUniversalIdentifiers = new Set(
+    orchestratorActionsReport.view.create.map(
+      ({ flatEntity }) => flatEntity.universalIdentifier,
+    ),
+  );
+
+  // A scope view is re-checked when it changes or when the view holding its owner column does
+  const scopeViewsToValidate = [
+    ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
+      scopeView: flatEntity,
+      type: 'create' as const,
+    })),
+    ...Object.values(
+      optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatView) =>
+          !createdViewUniversalIdentifiers.has(flatView.universalIdentifier) &&
+          (updatedViewUniversalIdentifiers.has(flatView.universalIdentifier) ||
+            (isDefined(flatView.ownerViewFieldUniversalIdentifier) &&
+              updatedViewUniversalIdentifiers.has(
+                findFlatEntityByUniversalIdentifier({
+                  universalIdentifier:
+                    flatView.ownerViewFieldUniversalIdentifier,
+                  flatEntityMaps: optimisticUniversalFlatMaps.flatViewFieldMaps,
+                })?.viewUniversalIdentifier ?? '',
+              ))),
+      )
+      .map((flatView) => ({ scopeView: flatView, type: 'update' as const })),
   ];
 
   for (const { scopeView, type } of scopeViewsToValidate) {
