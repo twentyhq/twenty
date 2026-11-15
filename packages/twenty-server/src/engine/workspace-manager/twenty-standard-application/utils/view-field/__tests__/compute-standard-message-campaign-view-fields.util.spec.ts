@@ -26,6 +26,7 @@ const buildArgs = () => {
       dependencyFlatEntityMaps: {
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
         flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatViewFieldMaps: createEmptyFlatEntityMaps(),
       },
     }),
   ).reduce<FlatEntityMaps<FlatView>>(

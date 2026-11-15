@@ -2769,6 +2769,7 @@ export interface Mutation {
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertViewFieldWithScope: ViewFieldWithScope
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -4216,6 +4217,7 @@ export interface View {
     objectMetadataId: Scalars['UUID']
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn: ViewOpenRecordIn
+    ownerViewFieldId?: Scalars['UUID']
     position: Scalars['Float']
     shouldDisplayGroupsAsTabs?: Scalars['Boolean']
     shouldHideEmptyGroups: Scalars['Boolean']
@@ -4254,6 +4256,7 @@ export interface ViewField {
     isSystemSideEffect: Scalars['Boolean']
     isVisible: Scalars['Boolean']
     position: Scalars['Float']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     settings?: ViewFieldSettings
     size: Scalars['Float']
     universalIdentifier: Scalars['UUID']
@@ -4285,6 +4288,12 @@ export interface ViewFieldSettings {
     label?: Scalars['String']
     recordLimit?: Scalars['Int']
     __typename: 'ViewFieldSettings'
+}
+
+export interface ViewFieldWithScope {
+    scopeView?: View
+    viewField: ViewField
+    __typename: 'ViewFieldWithScope'
 }
 
 export interface ViewFilter {
@@ -6192,7 +6201,7 @@ export interface CreateValidationRuleInput {description?: (Scalars['String'] | n
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -6202,7 +6211,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),ownerViewFieldId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -7657,6 +7666,7 @@ export interface MutationGenqlSelection{
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertViewFieldWithScope?: (ViewFieldWithScopeGenqlSelection & { __args: {input: UpsertViewFieldWithScopeInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -9117,7 +9127,7 @@ id: Scalars['UUID'],
 /** The view field to update */
 update: UpdateViewFieldInputUpdates}
 
-export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
+export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
 export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
@@ -9196,6 +9206,12 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UpsertViewFieldWithScopeInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],
+/** The id of the view field, created when it does not exist */
+id: Scalars['UUID'],isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),
+/** The filters and sorts scoping the related records; without filters or sorts the scope is removed */
+scope?: (ViewFieldScopeInput | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
+
 export interface UpsertViewWidgetInput {
 /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
 view?: (UpsertViewWidgetViewSettingsInput | null),
@@ -9226,7 +9242,7 @@ openRecordIn?: (ViewOpenRecordIn | null),shouldHideEmptyGroups?: (Scalars['Boole
 /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
 type?: (ViewType | null)}
 
-export interface UpsertViewWidgetViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null)}
+export interface UpsertViewWidgetViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null)}
 
 export interface UsageAnalyticsGenqlSelection{
     periodEnd?: boolean | number
@@ -9509,6 +9525,7 @@ export interface ViewGenqlSelection{
     objectMetadataId?: boolean | number
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn?: boolean | number
+    ownerViewFieldId?: boolean | number
     position?: boolean | number
     shouldDisplayGroupsAsTabs?: boolean | number
     shouldHideEmptyGroups?: boolean | number
@@ -9547,6 +9564,7 @@ export interface ViewFieldGenqlSelection{
     isSystemSideEffect?: boolean | number
     isVisible?: boolean | number
     position?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     settings?: ViewFieldSettingsGenqlSelection
     size?: boolean | number
     universalIdentifier?: boolean | number
@@ -9576,6 +9594,8 @@ export interface ViewFieldGroupGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ViewFieldScopeInput {viewFilterGroups: UpsertViewWidgetViewFilterGroupInput[],viewFilters: UpsertViewWidgetViewFilterInput[],viewSorts: UpsertViewWidgetViewSortInput[]}
+
 export interface ViewFieldSettingsGenqlSelection{
     label?: boolean | number
     recordLimit?: boolean | number
@@ -9584,6 +9604,13 @@ export interface ViewFieldSettingsGenqlSelection{
 }
 
 export interface ViewFieldSettingsInput {label?: (Scalars['String'] | null),recordLimit?: (Scalars['Int'] | null)}
+
+export interface ViewFieldWithScopeGenqlSelection{
+    scopeView?: ViewGenqlSelection
+    viewField?: ViewFieldGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface ViewFilterGenqlSelection{
     createdAt?: boolean | number
@@ -12723,6 +12750,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isViewFieldSettings = (obj?: { __typename?: any } | null): obj is ViewFieldSettings => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldSettings"')
       return ViewFieldSettings_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ViewFieldWithScope_possibleTypes: string[] = ['ViewFieldWithScope']
+    export const isViewFieldWithScope = (obj?: { __typename?: any } | null): obj is ViewFieldWithScope => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldWithScope"')
+      return ViewFieldWithScope_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -2087,6 +2087,7 @@ export type CreateViewFieldInput = {
   isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   settings?: InputMaybe<ViewFieldSettingsInput>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2139,6 +2140,7 @@ export type CreateViewInput = {
   objectMetadataId: Scalars['UUID']['input'];
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  ownerViewFieldId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
@@ -4037,6 +4039,7 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertViewFieldWithScope: ViewFieldWithScope;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -5573,6 +5576,11 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
+};
+
+
+export type MutationUpsertViewFieldWithScopeArgs = {
+  input: UpsertViewFieldWithScopeInput;
 };
 
 
@@ -8183,6 +8191,7 @@ export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   settings?: InputMaybe<ViewFieldSettingsInput>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8389,6 +8398,22 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   predicates: Array<RowLevelPermissionPredicate>;
 };
 
+export type UpsertViewFieldWithScopeInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  fieldMetadataId: Scalars['UUID']['input'];
+  /** The id of the view field, created when it does not exist */
+  id: Scalars['UUID']['input'];
+  isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
+  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  /** The filters and sorts scoping the related records; without filters or sorts the scope is removed */
+  scope?: InputMaybe<ViewFieldScopeInput>;
+  settings?: InputMaybe<ViewFieldSettingsInput>;
+  size?: InputMaybe<Scalars['Float']['input']>;
+  viewId: Scalars['UUID']['input'];
+};
+
 export type UpsertViewWidgetInput = {
   /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
   view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
@@ -8452,6 +8477,7 @@ export type UpsertViewWidgetViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UsageAnalytics = {
@@ -8782,6 +8808,7 @@ export type View = {
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
+  ownerViewFieldId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
@@ -8824,6 +8851,7 @@ export type ViewField = {
   isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
   position: Scalars['Float']['output'];
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   settings?: Maybe<ViewFieldSettings>;
   size: Scalars['Float']['output'];
   universalIdentifier: Scalars['UUID']['output'];
@@ -8850,6 +8878,12 @@ export type ViewFieldGroup = {
   workspaceId: Scalars['UUID']['output'];
 };
 
+export type ViewFieldScopeInput = {
+  viewFilterGroups: Array<UpsertViewWidgetViewFilterGroupInput>;
+  viewFilters: Array<UpsertViewWidgetViewFilterInput>;
+  viewSorts: Array<UpsertViewWidgetViewSortInput>;
+};
+
 export type ViewFieldSettings = {
   __typename?: 'ViewFieldSettings';
   label?: Maybe<Scalars['String']['output']>;
@@ -8859,6 +8893,12 @@ export type ViewFieldSettings = {
 export type ViewFieldSettingsInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   recordLimit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ViewFieldWithScope = {
+  __typename?: 'ViewFieldWithScope';
+  scopeView?: Maybe<View>;
+  viewField: ViewField;
 };
 
 export type ViewFilter = {

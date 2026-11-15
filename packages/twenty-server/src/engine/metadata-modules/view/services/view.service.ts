@@ -10,9 +10,11 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { computeScopeFlatViewsFollowingVisibility } from 'src/engine/metadata-modules/flat-view/utils/compute-scope-flat-views-following-visibility.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { inheritScopeViewOwnerVisibility } from 'src/engine/metadata-modules/flat-view/utils/inherit-scope-view-owner-visibility.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
@@ -75,6 +77,8 @@ export class ViewService {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewMaps: existingFlatViewMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -82,11 +86,13 @@ export class ViewService {
           'flatFieldMetadataMaps',
           'flatFieldMetadataOptionMaps',
           'flatObjectMetadataMaps',
+          'flatViewFieldMaps',
+          'flatViewMaps',
         ],
       },
     );
 
-    const { flatViewToCreate, flatViewGroupsToCreate } =
+    const { flatViewToCreate: inputFlatView, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({
         createViewInput,
         createdByUserWorkspaceId,
@@ -94,7 +100,27 @@ export class ViewService {
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
       });
+
+    const ownerFlatViewField = isDefined(createViewInput.ownerViewFieldId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: createViewInput.ownerViewFieldId,
+          flatEntityMaps: existingFlatViewFieldMaps,
+        })
+      : undefined;
+    const ownerParentFlatView = isDefined(ownerFlatViewField)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: ownerFlatViewField.viewId,
+          flatEntityMaps: existingFlatViewMaps,
+        })
+      : undefined;
+    const flatViewToCreate = isDefined(ownerParentFlatView)
+      ? inheritScopeViewOwnerVisibility({
+          flatViewToCreate: inputFlatView,
+          ownerParentFlatView,
+        })
+      : inputFlatView;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -189,6 +215,11 @@ export class ViewService {
           workspaceCustomFlatApplication.universalIdentifier,
       });
 
+    const scopeFlatViewsToUpdate = computeScopeFlatViewsFollowingVisibility({
+      flatViewToUpdate,
+      flatViewMaps: existingFlatViewMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -196,7 +227,7 @@ export class ViewService {
             view: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [flatViewToUpdate],
+              flatEntityToUpdate: [flatViewToUpdate, ...scopeFlatViewsToUpdate],
             },
             viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,

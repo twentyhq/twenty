@@ -1966,6 +1966,7 @@ input CreateViewFieldInput {
   isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettingsInput
   size: Float = 0
   viewFieldGroupId: UUID
@@ -2021,6 +2022,7 @@ input CreateViewInput {
   Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
+  ownerViewFieldId: UUID
   position: Float = 0
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
@@ -3840,6 +3842,7 @@ type Mutation {
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  upsertViewFieldWithScope(input: UpsertViewFieldWithScopeInput!): ViewFieldWithScope!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
@@ -5768,6 +5771,7 @@ input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
   position: Float
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettingsInput
   size: Float
   viewFieldGroupId: UUID
@@ -5992,6 +5996,26 @@ type UpsertRowLevelPermissionPredicatesResult {
   predicates: [RowLevelPermissionPredicate!]!
 }
 
+input UpsertViewFieldWithScopeInput {
+  aggregateOperation: AggregateOperations
+  fieldMetadataId: UUID!
+
+  """The id of the view field, created when it does not exist"""
+  id: UUID!
+  isCanonical: Boolean
+  isVisible: Boolean
+  position: Float
+  relationTargetFieldMetadataId: UUID
+
+  """
+  The filters and sorts scoping the related records; without filters or sorts the scope is removed
+  """
+  scope: ViewFieldScopeInput
+  settings: ViewFieldSettingsInput
+  size: Float
+  viewId: UUID!
+}
+
 input UpsertViewWidgetInput {
   """
   View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.
@@ -6072,6 +6096,7 @@ input UpsertViewWidgetViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  subFieldName: String
 }
 
 type UsageAnalytics {
@@ -6378,6 +6403,7 @@ type View {
   name: String!
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
+  ownerViewFieldId: UUID
   position: Float!
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
@@ -6417,6 +6443,7 @@ type ViewField {
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
   position: Float!
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettings
   size: Float!
   universalIdentifier: UUID!
@@ -6441,6 +6468,12 @@ type ViewFieldGroup {
   workspaceId: UUID!
 }
 
+input ViewFieldScopeInput {
+  viewFilterGroups: [UpsertViewWidgetViewFilterGroupInput!]!
+  viewFilters: [UpsertViewWidgetViewFilterInput!]!
+  viewSorts: [UpsertViewWidgetViewSortInput!]!
+}
+
 type ViewFieldSettings {
   label: String
   recordLimit: Int
@@ -6449,6 +6482,11 @@ type ViewFieldSettings {
 input ViewFieldSettingsInput {
   label: String
   recordLimit: Int
+}
+
+type ViewFieldWithScope {
+  scopeView: View
+  viewField: ViewField!
 }
 
 type ViewFilter {

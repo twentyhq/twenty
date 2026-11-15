@@ -4,6 +4,7 @@ import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/en
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
 import { validateViewFieldLabelIdentifierCrossEntity } from 'src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util';
+import { validateViewOwnerViewFieldCrossEntity } from 'src/engine/metadata-modules/flat-view/validators/utils/validate-view-owner-view-field-cross-entity.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -65,14 +66,16 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport,
     });
 
+  const isWorkspaceCaller =
+    buildOptions.applicationUniversalIdentifier ===
+    buildOptions.workspaceCustomApplicationUniversalIdentifier;
+
   const { fieldMetadata: fieldMetadataDefaultValue } =
     validateFieldMetadataDefaultValueOptionCrossEntity({
       fromFlatFieldMetadataOptionMaps,
       optimisticUniversalFlatMaps,
       orchestratorActionsReport,
-      isWorkspaceCaller:
-        buildOptions.applicationUniversalIdentifier ===
-        buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      isWorkspaceCaller,
     });
 
   const { navigationMenuItem } =
@@ -81,8 +84,16 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport,
     });
 
+  const { view, viewField: scopedViewField } =
+    validateViewOwnerViewFieldCrossEntity({
+      optimisticUniversalFlatMaps,
+      orchestratorActionsReport,
+      isWorkspaceCaller,
+    });
+
   crossEntityFailureReport.objectMetadata.push(...objectMetadata);
-  crossEntityFailureReport.viewField.push(...viewField);
+  crossEntityFailureReport.view.push(...view);
+  crossEntityFailureReport.viewField.push(...viewField, ...scopedViewField);
   crossEntityFailureReport.permissionFlag.push(...permissionFlag);
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);
   crossEntityFailureReport.fieldMetadata.push(

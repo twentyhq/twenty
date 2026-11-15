@@ -60,6 +60,11 @@ export class CreateViewFieldInput {
   viewFieldGroupId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
+
+  @IsOptional()
   @Type(() => ViewFieldSettingsInput)
   @ValidateNested()
   @Field(() => ViewFieldSettingsInput, { nullable: true })

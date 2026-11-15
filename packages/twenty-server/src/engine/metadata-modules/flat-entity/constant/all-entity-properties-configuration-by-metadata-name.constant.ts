@@ -440,6 +440,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    ownerViewFieldId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'ownerViewFieldUniversalIdentifier',
+    },
     shouldHideEmptyGroups: {
       toCompare: true,
       toStringify: false,
@@ -593,6 +598,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
       isOverridable: true,
+    },
+    relationTargetFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
     },
     deletedAt: {
       toCompare: true,

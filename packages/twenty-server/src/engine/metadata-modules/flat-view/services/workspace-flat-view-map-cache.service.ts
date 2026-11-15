@@ -79,6 +79,10 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
     const fieldMetadataUniversalIdentifierById = Object.fromEntries(
       fieldMetadataIdToUniversalIdentifierMap,
     );
+    const viewFieldIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(
+        [...viewFields.byViewId.values()].flat(),
+      );
 
     const flatViewMaps = createEmptyFlatEntityMaps();
 
@@ -100,6 +104,7 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
+        viewFieldIdToUniversalIdentifierMap,
         fieldMetadataUniversalIdentifierById,
       });
 

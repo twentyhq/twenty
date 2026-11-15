@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import {
-  ViewFilterGroupLogicalOperator,
-  ViewFilterOperand,
-  ViewSortDirection,
-  ViewType,
-} from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
@@ -14,38 +9,28 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
-import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
-import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { getDefaultViewFilterOperand } from 'src/engine/metadata-modules/flat-view-filter/utils/get-default-view-filter-operand.util';
-import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+import { buildViewFiltersAndSortsUpsertFlatOperations } from 'src/engine/metadata-modules/flat-view/utils/build-view-filters-and-sorts-upsert-flat-operations.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpsertViewWidgetViewFieldInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-field.input';
-import { type UpsertViewWidgetViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-filter-group.input';
-import { type UpsertViewWidgetViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-filter.input';
-import { type UpsertViewWidgetViewSortInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-sort.input';
 import { type UpsertViewWidgetInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget.input';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { sortViewFilterGroupInputsParentsFirst } from 'src/engine/metadata-modules/view/utils/sort-view-filter-group-inputs-parents-first.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -55,24 +40,6 @@ import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/
 const EMPTY_FIELD_OPS = {
   fieldsToCreate: [] as FlatViewField[],
   fieldsToUpdate: [] as FlatViewField[],
-};
-
-const EMPTY_FILTER_GROUP_OPS = {
-  filterGroupsToCreate: [] as FlatViewFilterGroup[],
-  filterGroupsToUpdate: [] as FlatViewFilterGroup[],
-  filterGroupsToRemove: [] as FlatViewFilterGroup[],
-};
-
-const EMPTY_FILTER_OPS = {
-  filtersToCreate: [] as FlatViewFilter[],
-  filtersToUpdate: [] as FlatViewFilter[],
-  filtersToRemove: [] as FlatViewFilter[],
-};
-
-const EMPTY_SORT_OPS = {
-  sortsToCreate: [] as FlatViewSort[],
-  sortsToUpdate: [] as FlatViewSort[],
-  sortsToRemove: [] as FlatViewSort[],
 };
 
 const ALLOWED_WIDGET_VIEW_TYPES: ViewType[] = [
@@ -249,24 +216,6 @@ export class ViewWidgetUpsertService {
           }) && field.viewId === viewId,
       );
 
-    const existingViewFilters = Object.values(
-      flatViewFilterMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((filter) => filter.viewId === viewId);
-
-    const existingViewFilterGroups = Object.values(
-      flatViewFilterGroupMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((group) => group.viewId === viewId);
-
-    const existingViewSorts = Object.values(
-      flatViewSortMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((sort) => sort.viewId === viewId);
-
     const viewFieldOperations = isDefined(input.viewFields)
       ? this.computeViewFieldOperations({
           inputFields: input.viewFields,
@@ -277,40 +226,18 @@ export class ViewWidgetUpsertService {
         })
       : EMPTY_FIELD_OPS;
 
-    const viewFilterGroupOperations = isDefined(input.viewFilterGroups)
-      ? this.computeViewFilterGroupOperations({
-          inputFilterGroups: input.viewFilterGroups,
-          existingViewFilterGroups,
-          ...upsertContext,
-          flatViewMaps,
-          flatViewFilterGroupMaps,
-        })
-      : {
-          ...EMPTY_FILTER_GROUP_OPS,
-          optimisticFlatViewFilterGroupMaps: flatViewFilterGroupMaps,
-        };
-
-    const viewFilterOperations = isDefined(input.viewFilters)
-      ? this.computeViewFilterOperations({
-          inputFilters: input.viewFilters,
-          existingViewFilters,
-          ...upsertContext,
-          flatFieldMetadataMaps,
-          flatViewMaps,
-          flatViewFilterGroupMaps:
-            viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
-        })
-      : EMPTY_FILTER_OPS;
-
-    const viewSortOperations = isDefined(input.viewSorts)
-      ? this.computeViewSortOperations({
-          inputSorts: input.viewSorts,
-          existingViewSorts,
-          ...upsertContext,
-          flatFieldMetadataMaps,
-          flatViewMaps,
-        })
-      : EMPTY_SORT_OPS;
+    const viewFiltersAndSortsOperations =
+      buildViewFiltersAndSortsUpsertFlatOperations({
+        ...upsertContext,
+        viewFilterGroups: input.viewFilterGroups,
+        viewFilters: input.viewFilters,
+        viewSorts: input.viewSorts,
+        flatFieldMetadataMaps,
+        flatViewMaps,
+        flatViewFilterMaps,
+        flatViewFilterGroupMaps,
+        flatViewSortMaps,
+      });
 
     const viewUpdateOperations = isDefined(input.view)
       ? fromUpdateViewInputToFlatViewToUpdateOrThrow({
@@ -328,35 +255,6 @@ export class ViewWidgetUpsertService {
             upsertContext.applicationUniversalIdentifier,
         })
       : undefined;
-
-    const {
-      toHardDelete: filterGroupsToDelete,
-      toDeactivate: filterGroupsToDeactivate,
-    } = splitEntitiesByRemovalStrategy({
-      metadataName: 'viewFilterGroup',
-      entitiesToRemove: viewFilterGroupOperations.filterGroupsToRemove,
-      workspaceCustomApplicationUniversalIdentifier:
-        upsertContext.applicationUniversalIdentifier,
-      now: upsertContext.now,
-    });
-
-    const { toHardDelete: filtersToDelete, toDeactivate: filtersToDeactivate } =
-      splitEntitiesByRemovalStrategy({
-        metadataName: 'viewFilter',
-        entitiesToRemove: viewFilterOperations.filtersToRemove,
-        workspaceCustomApplicationUniversalIdentifier:
-          upsertContext.applicationUniversalIdentifier,
-        now: upsertContext.now,
-      });
-
-    const { toHardDelete: sortsToDelete, toDeactivate: sortsToDeactivate } =
-      splitEntitiesByRemovalStrategy({
-        metadataName: 'viewSort',
-        entitiesToRemove: viewSortOperations.sortsToRemove,
-        workspaceCustomApplicationUniversalIdentifier:
-          upsertContext.applicationUniversalIdentifier,
-        now: upsertContext.now,
-      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -383,31 +281,7 @@ export class ViewWidgetUpsertService {
               flatEntityToDelete: [],
               flatEntityToUpdate: viewFieldOperations.fieldsToUpdate,
             },
-            viewFilterGroup: {
-              flatEntityToCreate:
-                viewFilterGroupOperations.filterGroupsToCreate,
-              flatEntityToDelete: filterGroupsToDelete,
-              flatEntityToUpdate: [
-                ...viewFilterGroupOperations.filterGroupsToUpdate,
-                ...filterGroupsToDeactivate,
-              ],
-            },
-            viewFilter: {
-              flatEntityToCreate: viewFilterOperations.filtersToCreate,
-              flatEntityToDelete: filtersToDelete,
-              flatEntityToUpdate: [
-                ...viewFilterOperations.filtersToUpdate,
-                ...filtersToDeactivate,
-              ],
-            },
-            viewSort: {
-              flatEntityToCreate: viewSortOperations.sortsToCreate,
-              flatEntityToDelete: sortsToDelete,
-              flatEntityToUpdate: [
-                ...viewSortOperations.sortsToUpdate,
-                ...sortsToDeactivate,
-              ],
-            },
+            ...viewFiltersAndSortsOperations,
           },
           workspaceId: upsertContext.workspaceId,
           isSystemBuild: false,
@@ -595,6 +469,8 @@ export class ViewWidgetUpsertService {
         position: inputField.position,
         aggregateOperation: inputField.aggregateOperation ?? null,
         settings: null,
+        relationTargetFieldMetadataId: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
         overrides: null,
         universalOverrides: null,
         isActive: true,
@@ -607,415 +483,5 @@ export class ViewWidgetUpsertService {
     }
 
     return { fieldsToCreate, fieldsToUpdate };
-  }
-
-  private computeViewFilterGroupOperations({
-    inputFilterGroups,
-    existingViewFilterGroups,
-    viewId,
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-    now,
-    flatViewMaps,
-    flatViewFilterGroupMaps,
-  }: {
-    inputFilterGroups: UpsertViewWidgetViewFilterGroupInput[];
-    existingViewFilterGroups: FlatViewFilterGroup[];
-    viewId: string;
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-    now: string;
-    flatViewMaps: FlatViewMaps;
-    flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
-  }): {
-    filterGroupsToCreate: FlatViewFilterGroup[];
-    filterGroupsToUpdate: FlatViewFilterGroup[];
-    filterGroupsToRemove: FlatViewFilterGroup[];
-    optimisticFlatViewFilterGroupMaps: FlatViewFilterGroupMaps;
-  } {
-    const filterGroupsToCreate: FlatViewFilterGroup[] = [];
-    const filterGroupsToUpdate: FlatViewFilterGroup[] = [];
-    const inputFilterGroupIds = new Set(
-      inputFilterGroups.map((g) => g.id).filter(isDefined),
-    );
-
-    let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
-
-    for (const inputGroup of sortViewFilterGroupInputsParentsFirst(
-      inputFilterGroups,
-    )) {
-      const existingGroup = isDefined(inputGroup.id)
-        ? existingViewFilterGroups.find((g) => g.id === inputGroup.id)
-        : undefined;
-
-      if (!isDefined(existingGroup)) {
-        const filterGroupId = inputGroup.id ?? v4();
-
-        const {
-          viewUniversalIdentifier,
-          parentViewFilterGroupUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'viewFilterGroup',
-          foreignKeyValues: {
-            viewId,
-            parentViewFilterGroupId: inputGroup.parentViewFilterGroupId,
-          },
-          flatEntityMaps: {
-            flatViewMaps,
-            flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
-          },
-        });
-
-        const filterGroupToCreate: FlatViewFilterGroup = {
-          id: filterGroupId,
-          workspaceId,
-          applicationId,
-          universalIdentifier: filterGroupId,
-          applicationUniversalIdentifier,
-          viewId,
-          viewUniversalIdentifier,
-          logicalOperator:
-            inputGroup.logicalOperator ?? ViewFilterGroupLogicalOperator.AND,
-          parentViewFilterGroupId: inputGroup.parentViewFilterGroupId ?? null,
-          parentViewFilterGroupUniversalIdentifier,
-          positionInViewFilterGroup:
-            inputGroup.positionInViewFilterGroup ?? null,
-          viewFilterIds: [],
-          viewFilterUniversalIdentifiers: [],
-          childViewFilterGroupIds: [],
-          childViewFilterGroupUniversalIdentifiers: [],
-          createdAt: now,
-          updatedAt: now,
-          deletedAt: null,
-        };
-
-        filterGroupsToCreate.push(filterGroupToCreate);
-
-        optimisticFlatViewFilterGroupMaps =
-          addFlatEntityToFlatEntityMapsOrThrow({
-            flatEntity: filterGroupToCreate,
-            flatEntityMaps: optimisticFlatViewFilterGroupMaps,
-          });
-      } else {
-        const hasChanged =
-          existingGroup.logicalOperator !== inputGroup.logicalOperator ||
-          existingGroup.positionInViewFilterGroup !==
-            inputGroup.positionInViewFilterGroup ||
-          existingGroup.parentViewFilterGroupId !==
-            inputGroup.parentViewFilterGroupId;
-
-        if (hasChanged) {
-          const resolvedParentId =
-            inputGroup.parentViewFilterGroupId ??
-            existingGroup.parentViewFilterGroupId;
-
-          const { parentViewFilterGroupUniversalIdentifier } =
-            resolveEntityRelationUniversalIdentifiers({
-              metadataName: 'viewFilterGroup',
-              foreignKeyValues: {
-                parentViewFilterGroupId: resolvedParentId,
-              },
-              flatEntityMaps: {
-                flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
-              },
-            });
-
-          filterGroupsToUpdate.push({
-            ...existingGroup,
-            logicalOperator:
-              inputGroup.logicalOperator ?? existingGroup.logicalOperator,
-            positionInViewFilterGroup:
-              inputGroup.positionInViewFilterGroup ??
-              existingGroup.positionInViewFilterGroup,
-            parentViewFilterGroupId: resolvedParentId,
-            parentViewFilterGroupUniversalIdentifier,
-            updatedAt: now,
-          });
-        }
-      }
-    }
-
-    const filterGroupsToRemove = existingViewFilterGroups.filter(
-      (g) => !inputFilterGroupIds.has(g.id),
-    );
-
-    return {
-      filterGroupsToCreate,
-      filterGroupsToUpdate,
-      filterGroupsToRemove,
-      optimisticFlatViewFilterGroupMaps,
-    };
-  }
-
-  private computeViewFilterOperations({
-    inputFilters,
-    existingViewFilters,
-    viewId,
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-    now,
-    flatFieldMetadataMaps,
-    flatViewMaps,
-    flatViewFilterGroupMaps,
-  }: {
-    inputFilters: UpsertViewWidgetViewFilterInput[];
-    existingViewFilters: FlatViewFilter[];
-    viewId: string;
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-    now: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    flatViewMaps: FlatViewMaps;
-    flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
-  }): {
-    filtersToCreate: FlatViewFilter[];
-    filtersToUpdate: FlatViewFilter[];
-    filtersToRemove: FlatViewFilter[];
-  } {
-    const filtersToCreate: FlatViewFilter[] = [];
-    const filtersToUpdate: FlatViewFilter[] = [];
-    const inputFilterIds = new Set(
-      inputFilters.map((f) => f.id).filter(isDefined),
-    );
-
-    for (const inputFilter of inputFilters) {
-      const existingFilter = isDefined(inputFilter.id)
-        ? existingViewFilters.find((f) => f.id === inputFilter.id)
-        : undefined;
-
-      if (!isDefined(existingFilter)) {
-        const filterId = inputFilter.id ?? v4();
-
-        const {
-          fieldMetadataUniversalIdentifier,
-          viewUniversalIdentifier,
-          viewFilterGroupUniversalIdentifier,
-          relationTargetFieldMetadataUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'viewFilter',
-          foreignKeyValues: {
-            fieldMetadataId: inputFilter.fieldMetadataId,
-            viewId,
-            viewFilterGroupId: inputFilter.viewFilterGroupId,
-            relationTargetFieldMetadataId:
-              inputFilter.relationTargetFieldMetadataId,
-          },
-          flatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-            flatViewFilterGroupMaps,
-          },
-        });
-        const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: inputFilter.fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-        const relationTargetFieldMetadata = isDefined(
-          inputFilter.relationTargetFieldMetadataId,
-        )
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: inputFilter.relationTargetFieldMetadataId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            })
-          : undefined;
-        const operand =
-          inputFilter.operand ??
-          (isDefined(referencedFieldMetadata)
-            ? getDefaultViewFilterOperand({
-                fieldType: referencedFieldMetadata.type,
-                subFieldName: inputFilter.subFieldName,
-                relationTargetFieldType: relationTargetFieldMetadata?.type,
-              })
-            : undefined) ??
-          ViewFilterOperand.CONTAINS;
-
-        filtersToCreate.push({
-          id: filterId,
-          workspaceId,
-          applicationId,
-          universalIdentifier: v4(),
-          applicationUniversalIdentifier,
-          fieldMetadataId: inputFilter.fieldMetadataId,
-          fieldMetadataUniversalIdentifier,
-          viewId,
-          viewUniversalIdentifier,
-          operand,
-          value: inputFilter.value,
-          viewFilterGroupId: inputFilter.viewFilterGroupId ?? null,
-          viewFilterGroupUniversalIdentifier,
-          positionInViewFilterGroup:
-            inputFilter.positionInViewFilterGroup ?? null,
-          subFieldName: inputFilter.subFieldName ?? null,
-          relationTargetFieldMetadataId:
-            inputFilter.relationTargetFieldMetadataId ?? null,
-          relationTargetFieldMetadataUniversalIdentifier,
-          createdAt: now,
-          updatedAt: now,
-          deletedAt: null,
-        });
-      } else {
-        const hasChanged =
-          existingFilter.fieldMetadataId !== inputFilter.fieldMetadataId ||
-          existingFilter.operand !== inputFilter.operand ||
-          JSON.stringify(existingFilter.value) !==
-            JSON.stringify(inputFilter.value) ||
-          existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
-          existingFilter.positionInViewFilterGroup !==
-            inputFilter.positionInViewFilterGroup ||
-          existingFilter.subFieldName !== inputFilter.subFieldName ||
-          existingFilter.relationTargetFieldMetadataId !==
-            (inputFilter.relationTargetFieldMetadataId ?? null);
-
-        if (hasChanged) {
-          const {
-            fieldMetadataUniversalIdentifier,
-            viewFilterGroupUniversalIdentifier,
-            relationTargetFieldMetadataUniversalIdentifier,
-          } = resolveEntityRelationUniversalIdentifiers({
-            metadataName: 'viewFilter',
-            foreignKeyValues: {
-              fieldMetadataId: inputFilter.fieldMetadataId,
-              viewFilterGroupId: inputFilter.viewFilterGroupId,
-              relationTargetFieldMetadataId:
-                inputFilter.relationTargetFieldMetadataId,
-            },
-            flatEntityMaps: {
-              flatFieldMetadataMaps,
-              flatViewFilterGroupMaps,
-            },
-          });
-
-          filtersToUpdate.push({
-            ...existingFilter,
-            fieldMetadataId: inputFilter.fieldMetadataId,
-            fieldMetadataUniversalIdentifier,
-            operand: inputFilter.operand ?? existingFilter.operand,
-            value: inputFilter.value,
-            viewFilterGroupId:
-              inputFilter.viewFilterGroupId ?? existingFilter.viewFilterGroupId,
-            viewFilterGroupUniversalIdentifier,
-            positionInViewFilterGroup:
-              inputFilter.positionInViewFilterGroup ??
-              existingFilter.positionInViewFilterGroup,
-            subFieldName:
-              inputFilter.subFieldName ?? existingFilter.subFieldName,
-            relationTargetFieldMetadataId:
-              inputFilter.relationTargetFieldMetadataId ?? null,
-            relationTargetFieldMetadataUniversalIdentifier,
-            updatedAt: now,
-          });
-        }
-      }
-    }
-
-    const filtersToRemove = existingViewFilters.filter(
-      (f) => !inputFilterIds.has(f.id),
-    );
-
-    return { filtersToCreate, filtersToUpdate, filtersToRemove };
-  }
-
-  private computeViewSortOperations({
-    inputSorts,
-    existingViewSorts,
-    viewId,
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-    now,
-    flatFieldMetadataMaps,
-    flatViewMaps,
-  }: {
-    inputSorts: UpsertViewWidgetViewSortInput[];
-    existingViewSorts: FlatViewSort[];
-    viewId: string;
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-    now: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    flatViewMaps: FlatViewMaps;
-  }): {
-    sortsToCreate: FlatViewSort[];
-    sortsToUpdate: FlatViewSort[];
-    sortsToRemove: FlatViewSort[];
-  } {
-    const sortsToCreate: FlatViewSort[] = [];
-    const sortsToUpdate: FlatViewSort[] = [];
-    const inputSortIds = new Set(inputSorts.map((s) => s.id).filter(isDefined));
-
-    for (const inputSort of inputSorts) {
-      const existingSort = isDefined(inputSort.id)
-        ? existingViewSorts.find((s) => s.id === inputSort.id)
-        : undefined;
-
-      if (!isDefined(existingSort)) {
-        const sortId = inputSort.id ?? v4();
-
-        const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-          resolveEntityRelationUniversalIdentifiers({
-            metadataName: 'viewSort',
-            foreignKeyValues: {
-              fieldMetadataId: inputSort.fieldMetadataId,
-              viewId,
-            },
-            flatEntityMaps: {
-              flatFieldMetadataMaps,
-              flatViewMaps,
-            },
-          });
-
-        sortsToCreate.push({
-          id: sortId,
-          workspaceId,
-          applicationId,
-          universalIdentifier: v4(),
-          applicationUniversalIdentifier,
-          fieldMetadataId: inputSort.fieldMetadataId,
-          fieldMetadataUniversalIdentifier,
-          viewId,
-          viewUniversalIdentifier,
-          direction: inputSort.direction ?? ViewSortDirection.ASC,
-          createdAt: now,
-          updatedAt: now,
-          deletedAt: null,
-        });
-      } else {
-        const hasChanged =
-          existingSort.fieldMetadataId !== inputSort.fieldMetadataId ||
-          existingSort.direction !== inputSort.direction;
-
-        if (hasChanged) {
-          const { fieldMetadataUniversalIdentifier } =
-            resolveEntityRelationUniversalIdentifiers({
-              metadataName: 'viewSort',
-              foreignKeyValues: {
-                fieldMetadataId: inputSort.fieldMetadataId,
-              },
-              flatEntityMaps: {
-                flatFieldMetadataMaps,
-              },
-            });
-
-          sortsToUpdate.push({
-            ...existingSort,
-            fieldMetadataId: inputSort.fieldMetadataId,
-            fieldMetadataUniversalIdentifier,
-            direction: inputSort.direction ?? existingSort.direction,
-            updatedAt: now,
-          });
-        }
-      }
-    }
-
-    const sortsToRemove = existingViewSorts.filter(
-      (s) => !inputSortIds.has(s.id),
-    );
-
-    return { sortsToCreate, sortsToUpdate, sortsToRemove };
   }
 }

@@ -121,6 +121,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     mainGroupByFieldMetadata: {
       foreignKey: 'mainGroupByFieldMetadataId',
     },
+    ownerViewField: {
+      foreignKey: 'ownerViewFieldId',
+    },
   },
   viewField: {
     fieldMetadata: {
@@ -131,6 +134,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     viewFieldGroup: {
       foreignKey: 'viewFieldGroupId',
+    },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
     },
     workspace: null,
     application: null,

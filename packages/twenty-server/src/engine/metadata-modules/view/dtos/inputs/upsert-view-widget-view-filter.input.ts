@@ -37,17 +37,17 @@ export class UpsertViewWidgetViewFilterInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  viewFilterGroupId?: string;
+  viewFilterGroupId?: string | null;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
-  positionInViewFilterGroup?: number;
+  @Field(() => Number, { nullable: true })
+  positionInViewFilterGroup?: number | null;
 
   @IsOptional()
   @IsString()
-  @Field({ nullable: true })
-  subFieldName?: string;
+  @Field(() => String, { nullable: true })
+  subFieldName?: string | null;
 
   @IsOptional()
   @IsUUID()
