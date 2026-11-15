@@ -1,5 +1,6 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -44,7 +45,12 @@ export const ViewBarRecordFieldEffect = () => {
 
       const recordFields = currentView.viewFields
         .map(mapViewFieldToRecordField)
-        .filter(isDefined);
+        .filter((recordField) =>
+          isRecordFieldSupportedByViewType({
+            recordField,
+            viewType: currentView.type,
+          }),
+        );
 
       setCurrentRecordFields(recordFields);
 
