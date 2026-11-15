@@ -1,5 +1,3 @@
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -129,13 +127,6 @@ const SidePanelEditColumnForm = ({
   const { upsertRecordField } = useUpsertRecordField(recordTableId);
   const { saveViewFields } = useSaveCurrentViewFields();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
-    viewId: contextStoreCurrentViewId ?? '',
-  });
-
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
       fieldMetadataItemId: recordField.fieldMetadataItemId,
@@ -204,11 +195,10 @@ const SidePanelEditColumnForm = ({
 
     upsertRecordField(updatedRecordField);
 
-    if (isDefined(relationObjectMetadataItem) && isDefined(currentView)) {
+    if (isDefined(relationObjectMetadataItem)) {
       const isScopeSaved = await saveColumnScope({
         scopeInstanceId,
         ownerViewFieldId: recordField.id,
-        ownerViewVisibility: currentView.visibility,
         relationObjectMetadataId: relationObjectMetadataItem.id,
         scopeView,
       });
