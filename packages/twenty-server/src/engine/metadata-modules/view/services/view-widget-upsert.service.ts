@@ -594,6 +594,8 @@ export class ViewWidgetUpsertService {
         size: inputField.size ?? DEFAULT_VIEW_FIELD_SIZE,
         position: inputField.position,
         aggregateOperation: inputField.aggregateOperation ?? null,
+        relationTargetFieldMetadataId: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
         overrides: null,
         universalOverrides: null,
         isActive: true,

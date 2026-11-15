@@ -40,6 +40,11 @@ class UpdateViewFieldInputUpdates {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
 }
 
 @InputType()

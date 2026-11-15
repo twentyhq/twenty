@@ -13,6 +13,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
 
 @Injectable()
@@ -26,6 +27,7 @@ export class FlatViewFieldValidatorService {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
       flatViewMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
@@ -64,6 +66,22 @@ export class FlatViewFieldValidatorService {
       fieldMetadataUniversalIdentifier:
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        updatedFlatViewField.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (isDefined(flatFieldMetadata)) {
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: updatedFlatViewField,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
+    }
 
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: updatedFlatViewField.viewUniversalIdentifier,
@@ -206,6 +224,14 @@ export class FlatViewFieldValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: flatViewFieldToValidate,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
