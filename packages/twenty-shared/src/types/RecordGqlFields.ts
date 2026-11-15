@@ -1,3 +1,8 @@
+import { type RecordGqlFieldsRelationWithArguments } from './RecordGqlFieldsRelationWithArguments';
+
 export type RecordGqlFields = {
-  [fieldName: string]: true | RecordGqlFields;
+  [responseKey: string]:
+    | true
+    | RecordGqlFields
+    | RecordGqlFieldsRelationWithArguments;
 };

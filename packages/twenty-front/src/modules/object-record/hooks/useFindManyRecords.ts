@@ -9,7 +9,6 @@ import {
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -35,7 +34,6 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     recordGqlFields?: RecordGqlFields;
     fetchPolicy?: WatchQueryFetchPolicy;
     withSoftDeleted?: boolean;
-    relationAliases?: RecordGqlRelationAlias[];
   };
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -50,18 +48,16 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   cursorFilter,
   limit = QUERY_DEFAULT_LIMIT_RECORDS,
   withSoftDeleted = false,
-  relationAliases,
 }: UseFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
   const apolloCoreClient = useApolloCoreClient();
-  const { findManyRecordsQuery, relationAliasVariables } =
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
     useFindManyRecordsQuery({
       objectNameSingular,
       recordGqlFields,
       cursorDirection: cursorFilter?.cursorDirection,
-      relationAliases,
     });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
@@ -109,7 +105,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,
-        ...relationAliasVariables,
+        ...relationsWithArgumentsVariables,
       },
       fetchPolicy: fetchPolicy,
       client: apolloCoreClient,

@@ -285,4 +285,24 @@ describe('filterRecordOnGqlFields', () => {
       email: 'john@example.com',
     });
   });
+
+  it('should filter a relation with arguments on its nested fields', () => {
+    const record = {
+      id: '1',
+      __typename: 'Company',
+      people_0123456789abcdef: [{ id: '2', city: 'Paris' }],
+    };
+
+    const recordGqlFields: RecordGqlFields = {
+      people_0123456789abcdef: {
+        relationFieldName: 'people',
+        first: 1,
+        recordGqlFields: { id: true },
+      },
+    };
+
+    expect(filterRecordOnGqlFields({ record, recordGqlFields })).toEqual({
+      people_0123456789abcdef: [{ id: '2' }],
+    });
+  });
 });
