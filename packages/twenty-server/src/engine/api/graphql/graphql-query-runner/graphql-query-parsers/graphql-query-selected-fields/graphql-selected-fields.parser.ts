@@ -227,7 +227,7 @@ export class GraphqlQuerySelectedFieldsParser {
         responseKey,
         fieldName: fieldMetadata.name,
         flatObjectMetadata,
-        accumulator,
+        relationSelections: accumulator.relationSelections,
       });
 
       this.graphqlQuerySelectedFieldsRelationParser.parseRelationField({
@@ -245,12 +245,12 @@ export class GraphqlQuerySelectedFieldsParser {
     responseKey,
     fieldName,
     flatObjectMetadata,
-    accumulator,
+    relationSelections,
   }: {
     responseKey: string;
     fieldName: string;
     flatObjectMetadata: FlatObjectMetadata;
-    accumulator: GraphqlQuerySelectedFieldsResult;
+    relationSelections: CommonRelationSelections;
   }): void {
     const { fieldIdByName, fieldIdByJoinColumnName } =
       buildFieldMapsFromFlatObjectMetadata(
@@ -258,9 +258,7 @@ export class GraphqlQuerySelectedFieldsParser {
         flatObjectMetadata,
       );
 
-    const isTakenByAnotherRelation = isDefined(
-      accumulator.relationSelections[responseKey],
-    );
+    const isTakenByAnotherRelation = isDefined(relationSelections[responseKey]);
     const isTakenByAColumn =
       responseKey !== fieldName &&
       (isDefined(fieldIdByName[responseKey]) ||

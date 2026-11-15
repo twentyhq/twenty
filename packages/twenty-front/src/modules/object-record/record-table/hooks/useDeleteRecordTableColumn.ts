@@ -36,6 +36,15 @@ export const useDeleteRecordTableColumn = (recordTableId: string) => {
         { input: { id: recordFieldId } },
       ]);
 
+      // A view field sync during the request can bring the column back from not yet updated metadata
+      if (result.status === 'successful') {
+        store.set(currentRecordFieldsAtom, (latestRecordFields) =>
+          latestRecordFields.filter(
+            (recordField) => recordField.id !== recordFieldId,
+          ),
+        );
+      }
+
       // Restore only this column so changes made while the request was pending survive
       if (result.status === 'failed') {
         const deletedIndex = previousRecordFields.findIndex(
