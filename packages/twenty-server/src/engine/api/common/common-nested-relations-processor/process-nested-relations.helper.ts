@@ -612,7 +612,7 @@ export class ProcessNestedRelationsHelper {
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
-    relationSelection: CommonRelationSelection;
+    relationSelection: Pick<CommonRelationSelection, 'filter'>;
     relationQueryParser: GraphqlQueryParser;
   }): void {
     if (!isDefined(relationSelection.filter)) {
