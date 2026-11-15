@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
-import { RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE } from '@/object-record/record-column-aggregate/constants/RelationAggregateOperationsByFieldType';
-import { isDefined } from 'twenty-shared/utils';
+import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const getAggregatedFieldMetadataItems = (
   relationObjectMetadataItem: Pick<
@@ -13,9 +13,7 @@ export const getAggregatedFieldMetadataItems = (
     .filter(
       (fieldMetadataItem) =>
         isActiveFieldMetadataItem({ fieldMetadata: fieldMetadataItem }) &&
-        isDefined(
-          RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE[fieldMetadataItem.type],
-        ),
+        isNonEmptyArray(getRelationAggregateOperations(fieldMetadataItem)),
     )
     .toSorted(
       (fieldMetadataItemA, fieldMetadataItemB) =>

@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE } from '@/object-record/record-column-aggregate/constants/RelationAggregateOperationsByFieldType';
+import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -63,9 +63,9 @@ export const getRecordFieldAggregateTarget = ({
   const isValidTarget = isCount
     ? !isDefined(relationTargetFieldMetadataId)
     : isDefined(aggregatedFieldMetadataItem) &&
-      RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE[
-        aggregatedFieldMetadataItem.type
-      ]?.includes(relationAggregateOperation) === true;
+      getRelationAggregateOperations(aggregatedFieldMetadataItem).includes(
+        relationAggregateOperation,
+      );
 
   if (!isValidTarget) {
     return undefined;

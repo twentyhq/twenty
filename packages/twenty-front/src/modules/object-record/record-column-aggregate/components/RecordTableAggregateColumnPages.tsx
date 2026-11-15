@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE } from '@/object-record/record-column-aggregate/constants/RelationAggregateOperationsByFieldType';
+import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
 import { getAggregatedFieldMetadataItems } from '@/object-record/record-column-aggregate/utils/getAggregatedFieldMetadataItems';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type RecordTableRelationColumnTarget } from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
@@ -114,29 +114,27 @@ export const RecordTableAggregateColumnPages = ({
           </Dropdown.Back>
           <Dropdown.Separator />
           <Dropdown.Section>
-            {(
-              RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE[
-                aggregatedFieldMetadataItem.type
-              ] ?? []
-            ).map((aggregateOperation) => (
-              <Dropdown.ActionItem
-                key={aggregateOperation}
-                onClick={() =>
-                  onSelect({
-                    relationTargetFieldMetadataId:
-                      aggregatedFieldMetadataItem.id,
-                    relationAggregateOperation: aggregateOperation,
-                  })
-                }
-              >
-                {getAggregateOperationLabel(
-                  convertAggregateOperationToExtendedAggregateOperation(
-                    aggregateOperation,
-                    aggregatedFieldMetadataItem.type,
-                  ),
-                )}
-              </Dropdown.ActionItem>
-            ))}
+            {getRelationAggregateOperations(aggregatedFieldMetadataItem).map(
+              (aggregateOperation) => (
+                <Dropdown.ActionItem
+                  key={aggregateOperation}
+                  onClick={() =>
+                    onSelect({
+                      relationTargetFieldMetadataId:
+                        aggregatedFieldMetadataItem.id,
+                      relationAggregateOperation: aggregateOperation,
+                    })
+                  }
+                >
+                  {getAggregateOperationLabel(
+                    convertAggregateOperationToExtendedAggregateOperation(
+                      aggregateOperation,
+                      aggregatedFieldMetadataItem.type,
+                    ),
+                  )}
+                </Dropdown.ActionItem>
+              ),
+            )}
           </Dropdown.Section>
         </Dropdown.Page>
       ))}
