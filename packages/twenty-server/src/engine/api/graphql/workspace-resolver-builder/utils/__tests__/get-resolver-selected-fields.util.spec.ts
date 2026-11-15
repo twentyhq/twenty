@@ -1,6 +1,9 @@
 import { Kind, parse, type FragmentDefinitionNode } from 'graphql';
 
+import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
 
 const getSelectedFields = (
   query: string,
@@ -32,14 +35,15 @@ const getSelectedFields = (
 };
 
 describe('getResolverSelectedFields', () => {
-  it('keeps the arguments of a relation next to its selection', () => {
+  it('keys aliases of one relation separately with their own arguments', () => {
     expect(
       getSelectedFields(`
         query {
           companies {
             edges {
               node {
-                people(first: 1, orderBy: [{ name: AscNullsLast }]) {
+                people { edges { node { id } } }
+                nextPerson: people(first: 1, orderBy: [{ name: AscNullsLast }]) {
                   edges { node { id } }
                 }
               }
@@ -48,8 +52,13 @@ describe('getResolverSelectedFields', () => {
         }
       `).edges.node,
     ).toEqual({
-      people: {
-        __arguments: { first: 1, orderBy: [{ name: 'AscNullsLast' }] },
+      people: { edges: { node: { id: {} } } },
+      nextPerson: {
+        [SELECTION_FIELD_NAME]: 'people',
+        [SELECTION_ARGUMENTS]: {
+          first: 1,
+          orderBy: [{ name: 'AscNullsLast' }],
+        },
         edges: { node: { id: {} } },
       },
     });
@@ -62,7 +71,7 @@ describe('getResolverSelectedFields', () => {
           companies { edges { node { people(filter: $filter) { totalCount } } } }
         }`,
         { filter: { city: { eq: 'Paris' } } },
-      ).edges.node.people.__arguments,
+      ).edges.node.people[SELECTION_ARGUMENTS],
     ).toEqual({ filter: { city: { eq: 'Paris' } } });
   });
 
@@ -87,13 +96,13 @@ describe('getResolverSelectedFields', () => {
     ).toEqual({ id: {}, domainName: { primaryLinkUrl: {} } });
   });
 
-  it('keeps a field named __proto__ as an ordinary key', () => {
+  it('keeps an alias named __proto__ as an ordinary key', () => {
     const selectedFields = getSelectedFields(`
       query {
         companies {
           edges {
             node {
-              __proto__(first: 1) { id }
+              __proto__: id
             }
           }
         }
@@ -104,11 +113,46 @@ describe('getResolverSelectedFields', () => {
       Object.prototype.hasOwnProperty.call(selectedFields, '__proto__'),
     ).toBe(true);
     expect(selectedFields['__proto__']).toEqual({
-      __arguments: { first: 1 },
-      id: {},
+      [SELECTION_FIELD_NAME]: 'id',
     });
     expect(
-      Object.prototype.hasOwnProperty.call(Object.prototype, '__arguments'),
+      Object.prototype.hasOwnProperty.call(
+        Object.prototype,
+        SELECTION_FIELD_NAME,
+      ),
     ).toBe(false);
+  });
+
+  it('keeps aliases named like internal selection data as ordinary keys', () => {
+    const selectedFields = getSelectedFields(`
+      query {
+        companies {
+          edges {
+            node {
+              __arguments: name
+              employer: accountOwner {
+                __fieldName: id
+              }
+            }
+          }
+        }
+      }
+    `).edges.node;
+
+    expect(getSelectionEntries(selectedFields)).toEqual([
+      {
+        responseKey: '__arguments',
+        fieldName: 'name',
+        selection: { [SELECTION_FIELD_NAME]: 'name' },
+      },
+      {
+        responseKey: 'employer',
+        fieldName: 'accountOwner',
+        selection: {
+          [SELECTION_FIELD_NAME]: 'accountOwner',
+          __fieldName: { [SELECTION_FIELD_NAME]: 'id' },
+        },
+      },
+    ]);
   });
 });

@@ -3,12 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -24,9 +21,7 @@ import {
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -66,7 +61,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      relationSelections: args.selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -90,24 +85,17 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-    }
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem: flatObjectMetadata,
+      parentObjectRecords: objectRecords,
+      relationSelections: args.selectedFieldsResult.relationSelections,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      authContext,
+      selectedFields: args.selectedFieldsResult.select,
+      ...this.getNestedRelationsReadPathOptions(),
+    });
 
     return objectRecords[0];
   }
@@ -133,20 +121,22 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     };
   }
 
-  async processQueryResult(
-    queryResult: ObjectRecord,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
-      queryResult,
+  async processQueryResult({
+    queryResult,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    authContext,
+    relationSelections,
+  }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
+    return this.commonResultGettersService.processRecord({
+      record: queryResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+      relationSelections,
+    });
   }
 
   async validate(

@@ -1,3 +1,4 @@
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -5,13 +6,13 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const buildColumnsToReturn = ({
   select,
-  relations,
+  relationSelections,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: Record<string, unknown>;
-  relations: Record<string, unknown>;
+  relationSelections: CommonRelationSelections;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -19,7 +20,7 @@ export const buildColumnsToReturn = ({
   return Object.entries(
     buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
