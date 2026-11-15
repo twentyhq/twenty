@@ -17,7 +17,7 @@ const StyledChips = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: 28px;
+  min-height: ${themeCssVariables.spacing[7]};
   min-width: 0;
 `;
 

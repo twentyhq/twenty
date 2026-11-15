@@ -32,7 +32,7 @@ export const EmailRecipientsProvider = ({
       value={{
         recipientsByFieldId,
         draggedRecipients,
-        setFieldRecipients: (fieldId, recipients) =>
+        setFieldRecipients: ({ fieldId, recipients }) =>
           onChange((currentRecipientsByFieldId) => ({
             ...currentRecipientsByFieldId,
             [fieldId]: recipients,
