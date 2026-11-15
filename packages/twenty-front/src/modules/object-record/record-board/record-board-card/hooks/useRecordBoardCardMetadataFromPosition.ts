@@ -1,9 +1,7 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useRecordCardVisibleRecordFields } from '@/object-record/record-card/hooks/useRecordCardVisibleRecordFields';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,16 +17,7 @@ export const useRecordBoardCardMetadataFromPosition = () => {
     recordBoardCardEditModePositionComponentState,
   );
 
-  const visibleRecordFields = useAtomComponentSelectorValue(
-    visibleRecordFieldsComponentSelector,
-  );
-
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const visibleRecordFieldsFiltered = visibleRecordFields.filter(
-    (recordField) =>
-      labelIdentifierFieldMetadataItem?.id !== recordField.fieldMetadataItemId,
-  );
+  const visibleRecordFieldsFiltered = useRecordCardVisibleRecordFields();
 
   const hoveredRecordField = isDefined(recordBoardCardHoverPosition)
     ? visibleRecordFieldsFiltered.at(recordBoardCardHoverPosition)

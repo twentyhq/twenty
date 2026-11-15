@@ -31,9 +31,16 @@ type RecordFieldLookupFieldContextProps = {
   instanceIdPrefix: string;
   isNonEditable: boolean;
   label?: string;
-  fieldContextOverrides?: Partial<GenericFieldContextType>;
   children: ReactNode;
-};
+} & Pick<
+  GenericFieldContextType,
+  | 'displayedMaxRows'
+  | 'maxWidth'
+  | 'isDisplayModeFixHeight'
+  | 'triggerEvent'
+  | 'anchorId'
+  | 'onOpenEditMode'
+>;
 
 export const RecordFieldLookupFieldContext = ({
   recordId,
@@ -43,7 +50,12 @@ export const RecordFieldLookupFieldContext = ({
   instanceIdPrefix,
   isNonEditable,
   label,
-  fieldContextOverrides,
+  displayedMaxRows,
+  maxWidth,
+  isDisplayModeFixHeight,
+  triggerEvent,
+  anchorId,
+  onOpenEditMode,
   children,
 }: RecordFieldLookupFieldContextProps) => {
   const {
@@ -123,7 +135,12 @@ export const RecordFieldLookupFieldContext = ({
               objectPermissionsByObjectMetadataId,
             }),
           isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
-          ...fieldContextOverrides,
+          displayedMaxRows,
+          maxWidth,
+          isDisplayModeFixHeight,
+          triggerEvent,
+          anchorId,
+          onOpenEditMode,
         }}
       >
         {children}

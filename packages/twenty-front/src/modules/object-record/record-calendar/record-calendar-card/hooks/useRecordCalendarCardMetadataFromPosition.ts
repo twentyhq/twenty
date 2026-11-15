@@ -1,9 +1,7 @@
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { recordCalendarCardEditModePositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardEditModePositionComponentState';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useRecordCardVisibleRecordFields } from '@/object-record/record-card/hooks/useRecordCardVisibleRecordFields';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,16 +16,7 @@ export const useRecordCalendarCardMetadataFromPosition = () => {
     recordCalendarCardEditModePositionComponentState,
   );
 
-  const visibleRecordFields = useAtomComponentSelectorValue(
-    visibleRecordFieldsComponentSelector,
-  );
-
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const visibleRecordFieldsFiltered = visibleRecordFields.filter(
-    (recordField) =>
-      labelIdentifierFieldMetadataItem?.id !== recordField.fieldMetadataItemId,
-  );
+  const visibleRecordFieldsFiltered = useRecordCardVisibleRecordFields();
 
   const hoveredRecordField = isDefined(recordCalendarCardHoverPosition)
     ? visibleRecordFieldsFiltered.at(recordCalendarCardHoverPosition)

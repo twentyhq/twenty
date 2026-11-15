@@ -61,7 +61,7 @@ export const RecordTableCellFieldContextWrapper = ({
         }
         instanceIdPrefix={getRecordTableCellInputIdPrefix(recordField.id)}
         isNonEditable={isRecordTableCellsNonEditable}
-        fieldContextOverrides={{ displayedMaxRows: 1 }}
+        displayedMaxRows={1}
       >
         {children}
       </RecordFieldLookupFieldContext>
