@@ -41,7 +41,8 @@ export const RecordTableCellLookupFieldContext = ({
   lookupTargetFieldMetadataItem,
   children,
 }: RecordTableCellLookupFieldContextProps) => {
-  const { recordId } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly: isRowReadOnly } =
+    useRecordTableRowContextOrThrow();
   const {
     objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
@@ -109,6 +110,7 @@ export const RecordTableCellLookupFieldContext = ({
           displayedMaxRows: 1,
           isRecordFieldReadOnly:
             !isDefined(relatedRecord) ||
+            isRowReadOnly === true ||
             isRecordTableCellsNonEditable ||
             isLookupTargetRestricted ||
             isRecordFieldReadOnly({
