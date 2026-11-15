@@ -34,10 +34,11 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -70,6 +71,7 @@ export const useLazyFindManyRecordsWithOffset = ({
             ...params,
             limit,
             offset,
+            ...relationsWithArgumentsVariables,
           },
         });
 
@@ -100,6 +102,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       apolloCoreClient,
       findManyRecordsQuery,
       params,
+      relationsWithArgumentsVariables,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

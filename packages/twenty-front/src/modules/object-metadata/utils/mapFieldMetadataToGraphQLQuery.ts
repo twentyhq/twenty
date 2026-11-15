@@ -26,6 +26,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
+  relationWithArgumentsResponseKey?: string;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
@@ -35,6 +36,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
+  relationWithArgumentsResponseKey,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -244,7 +246,13 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    return doNotTranslate(`${gqlField}
+    const relationSelection = isDefined(relationWithArgumentsResponseKey)
+      ? doNotTranslate(
+          `${relationWithArgumentsResponseKey}: ${gqlField}(filter: $${relationWithArgumentsResponseKey}Filter, orderBy: $${relationWithArgumentsResponseKey}OrderBy, first: $${relationWithArgumentsResponseKey}First)`,
+        )
+      : gqlField;
+
+    return doNotTranslate(`${relationSelection}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({

@@ -2,8 +2,8 @@ import gql from 'graphql-tag';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
-import { mapRecordGqlRelationAliasesToGraphQLQuery } from '@/object-record/graphql/utils/mapRecordGqlRelationAliasesToGraphQLQuery';
+import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
+import { getRelationsWithArgumentsVariableDefinitions } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariableDefinitions';
 import {
   type ObjectRecordsPermissions,
   type QueryCursorDirection,
@@ -18,7 +18,6 @@ export const generateFindManyRecordsQuery = ({
   computeReferences,
   cursorDirection,
   objectPermissionsByObjectMetadataId,
-  relationAliases,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -26,14 +25,13 @@ export const generateFindManyRecordsQuery = ({
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-  relationAliases?: RecordGqlRelationAlias[];
 }) => {
-  const { variableDefinitions, selections } =
-    mapRecordGqlRelationAliasesToGraphQLQuery({
-      relationAliases,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    });
+  const readableRelationsWithArguments = getReadableRelationsWithArguments({
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields,
+    objectPermissionsByObjectMetadataId,
+  });
 
   return gql`
 query FindMany${capitalize(
@@ -42,7 +40,9 @@ query FindMany${capitalize(
     objectMetadataItem.nameSingular,
   )}FilterInput, $orderBy: [${capitalize(
     objectMetadataItem.nameSingular,
-  )}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${variableDefinitions}) {
+  )}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${getRelationsWithArgumentsVariableDefinitions(
+    readableRelationsWithArguments,
+  )}) {
   ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy, ${
     cursorDirection === 'before'
       ? 'last: $limit, before: $lastCursor'
@@ -55,7 +55,7 @@ query FindMany${capitalize(
         recordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
-        additionalSelections: selections,
+        readableRelationsWithArguments,
       })}
       cursor
     }
