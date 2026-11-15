@@ -55,7 +55,7 @@ const computeViewFilterGroupOperations = ({
   const filterGroupsToCreate: FlatViewFilterGroup[] = [];
   const filterGroupsToUpdate: FlatViewFilterGroup[] = [];
   const inputFilterGroupIds = new Set(
-    inputFilterGroups.map((g) => g.id).filter(isDefined),
+    inputFilterGroups.map((filterGroup) => filterGroup.id).filter(isDefined),
   );
 
   let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
@@ -64,7 +64,9 @@ const computeViewFilterGroupOperations = ({
     inputFilterGroups,
   )) {
     const existingGroup = isDefined(inputGroup.id)
-      ? existingViewFilterGroups.find((g) => g.id === inputGroup.id)
+      ? existingViewFilterGroups.find(
+          (filterGroup) => filterGroup.id === inputGroup.id,
+        )
       : undefined;
 
     if (!isDefined(existingGroup)) {
@@ -114,18 +116,21 @@ const computeViewFilterGroupOperations = ({
         flatEntityMaps: optimisticFlatViewFilterGroupMaps,
       });
     } else {
+      const logicalOperator =
+        inputGroup.logicalOperator ?? existingGroup.logicalOperator;
+      const positionInViewFilterGroup =
+        inputGroup.positionInViewFilterGroup ??
+        existingGroup.positionInViewFilterGroup;
+      const resolvedParentId =
+        inputGroup.parentViewFilterGroupId ??
+        existingGroup.parentViewFilterGroupId;
+
       const hasChanged =
-        existingGroup.logicalOperator !== inputGroup.logicalOperator ||
-        existingGroup.positionInViewFilterGroup !==
-          inputGroup.positionInViewFilterGroup ||
-        existingGroup.parentViewFilterGroupId !==
-          inputGroup.parentViewFilterGroupId;
+        logicalOperator !== existingGroup.logicalOperator ||
+        positionInViewFilterGroup !== existingGroup.positionInViewFilterGroup ||
+        resolvedParentId !== existingGroup.parentViewFilterGroupId;
 
       if (hasChanged) {
-        const resolvedParentId =
-          inputGroup.parentViewFilterGroupId ??
-          existingGroup.parentViewFilterGroupId;
-
         const { parentViewFilterGroupUniversalIdentifier } =
           resolveEntityRelationUniversalIdentifiers({
             metadataName: 'viewFilterGroup',
@@ -139,11 +144,8 @@ const computeViewFilterGroupOperations = ({
 
         filterGroupsToUpdate.push({
           ...existingGroup,
-          logicalOperator:
-            inputGroup.logicalOperator ?? existingGroup.logicalOperator,
-          positionInViewFilterGroup:
-            inputGroup.positionInViewFilterGroup ??
-            existingGroup.positionInViewFilterGroup,
+          logicalOperator,
+          positionInViewFilterGroup,
           parentViewFilterGroupId: resolvedParentId,
           parentViewFilterGroupUniversalIdentifier,
           updatedAt: now,
@@ -153,7 +155,7 @@ const computeViewFilterGroupOperations = ({
   }
 
   const filterGroupsToRemove = existingViewFilterGroups.filter(
-    (g) => !inputFilterGroupIds.has(g.id),
+    (filterGroup) => !inputFilterGroupIds.has(filterGroup.id),
   );
 
   return {
@@ -194,12 +196,12 @@ const computeViewFilterOperations = ({
   const filtersToCreate: FlatViewFilter[] = [];
   const filtersToUpdate: FlatViewFilter[] = [];
   const inputFilterIds = new Set(
-    inputFilters.map((f) => f.id).filter(isDefined),
+    inputFilters.map((filter) => filter.id).filter(isDefined),
   );
 
   for (const inputFilter of inputFilters) {
     const existingFilter = isDefined(inputFilter.id)
-      ? existingViewFilters.find((f) => f.id === inputFilter.id)
+      ? existingViewFilters.find((filter) => filter.id === inputFilter.id)
       : undefined;
 
     if (!isDefined(existingFilter)) {
@@ -334,7 +336,7 @@ const computeViewFilterOperations = ({
   }
 
   const filtersToRemove = existingViewFilters.filter(
-    (f) => !inputFilterIds.has(f.id),
+    (filter) => !inputFilterIds.has(filter.id),
   );
 
   return { filtersToCreate, filtersToUpdate, filtersToRemove };
@@ -367,11 +369,13 @@ const computeViewSortOperations = ({
 } => {
   const sortsToCreate: FlatViewSort[] = [];
   const sortsToUpdate: FlatViewSort[] = [];
-  const inputSortIds = new Set(inputSorts.map((s) => s.id).filter(isDefined));
+  const inputSortIds = new Set(
+    inputSorts.map((sort) => sort.id).filter(isDefined),
+  );
 
   for (const inputSort of inputSorts) {
     const existingSort = isDefined(inputSort.id)
-      ? existingViewSorts.find((s) => s.id === inputSort.id)
+      ? existingViewSorts.find((sort) => sort.id === inputSort.id)
       : undefined;
 
     if (!isDefined(existingSort)) {
@@ -441,7 +445,7 @@ const computeViewSortOperations = ({
   }
 
   const sortsToRemove = existingViewSorts.filter(
-    (s) => !inputSortIds.has(s.id),
+    (sort) => !inputSortIds.has(sort.id),
   );
 
   return { sortsToCreate, sortsToUpdate, sortsToRemove };
