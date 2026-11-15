@@ -282,10 +282,11 @@ export class DirectExecutionService {
           try {
             const args = extractArgumentsFromAst(field.arguments, variables);
 
-            const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(
+            const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo({
               field,
               fragmentMap,
-            );
+              variableValues: variables,
+            });
 
             const workspaceSchemaBuilderContext =
               buildWorkspaceSchemaBuilderContext(
@@ -405,7 +406,7 @@ export class DirectExecutionService {
     args: Record<string, unknown>;
     graphqlPartialResolveInfo: Pick<
       GraphQLResolveInfo,
-      'fieldNodes' | 'fragments'
+      'fieldNodes' | 'fragments' | 'variableValues'
     >;
     workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext;
   }): Promise<unknown> {
