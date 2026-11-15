@@ -48,8 +48,6 @@ type ViewFieldWithScopeFlatMaps = Pick<
   | 'flatViewSortMaps'
 >;
 
-// Saves a column of the edit column panel, its settings and the view scoping
-// its related records, in a single workspace migration
 @Injectable()
 export class ViewFieldWithScopeUpsertService {
   constructor(

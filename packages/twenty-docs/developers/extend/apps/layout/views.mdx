@@ -41,6 +41,7 @@ export default defineView({
 - `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
 - Set `isCanonical: false` on a field to add an extra column for a field the view already shows. A view has at most one canonical column per field but any number of non-canonical ones. They are not allowed on the object's label identifier field or in widget views, and `isCanonical` is set when the column is created: changing it later has no effect.
 - A non-canonical column can carry `settings` that customize it: `label` renames it (1 to 63 characters), and `recordLimit` caps how many related records a one-to-many relation column shows per row (1 to 60). Canonical columns always follow the data model and take no `settings`.
+- A non-canonical column on a many-to-one relation field can set `relationTargetFieldMetadataUniversalIdentifier` to show a field of the related record instead of the record itself. The target must be a non-relation field of the related object.
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
