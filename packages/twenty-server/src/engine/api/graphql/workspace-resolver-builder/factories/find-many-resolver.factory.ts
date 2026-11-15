@@ -60,6 +60,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
+          relationSelections: selectedFieldsResult.relationSelections,
           objectRecordsAggregatedValues: aggregatedValues,
           selectedAggregatedFields: selectedFieldsResult.aggregate,
           objectName: resolverContext.flatObjectMetadata.nameSingular,

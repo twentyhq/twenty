@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -26,6 +25,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -47,7 +47,7 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      relationSelections: args.selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -60,21 +60,16 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
       kind: 'restore',
     });
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relationSelections)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: restoredRecords,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
+        relationSelections: args.selectedFieldsResult.relationSelections,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
@@ -109,6 +104,7 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<ObjectRecord[]> {
     return this.commonResultGettersService.processRecordArray(
       queryResult,
@@ -116,6 +112,7 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext.workspace.id,
+      relationSelections,
     );
   }
 

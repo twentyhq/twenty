@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
+import { In } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -35,6 +35,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -66,7 +67,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      relationSelections: args.selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -165,7 +166,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         }),
       );
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relationSelections)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -174,15 +175,10 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           (item) => item.records,
         ),
         parentObjectRecordsAggregatedValues: {},
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
+        relationSelections: args.selectedFieldsResult.relationSelections,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
@@ -242,6 +238,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<CommonFindDuplicatesOutputItem[]> {
     const processedResults = await Promise.all(
       queryResult.map(async (result) => {
@@ -253,6 +250,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             authContext.workspace.id,
+            relationSelections,
           ),
         };
       }),

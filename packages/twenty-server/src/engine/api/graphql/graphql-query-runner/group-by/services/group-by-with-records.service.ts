@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -83,7 +82,7 @@ export class GroupByWithRecordsService {
 
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      relationSelections: selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -109,23 +108,18 @@ export class GroupByWithRecordsService {
       .flatMap((group) => group.records as ObjectRecord[])
       .filter(isDefined);
 
-    if (!isEmpty(selectedFieldsResult.relations)) {
+    if (!isEmpty(selectedFieldsResult.relationSelections)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: allRecords,
         parentObjectRecordsAggregatedValues: {},
-        relations: selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
+        relationSelections: selectedFieldsResult.relationSelections,
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
         selectedFields: selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...nestedRelationsReadPathOptions,
       });
     }
@@ -145,6 +139,7 @@ export class GroupByWithRecordsService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           authContext.workspace.id,
+          selectedFieldsResult.relationSelections,
         ),
     });
   }
