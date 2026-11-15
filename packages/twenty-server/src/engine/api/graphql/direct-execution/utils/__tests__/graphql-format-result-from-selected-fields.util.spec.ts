@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getGroupByConnectionTypename } from 'twenty-shared/utils';
 
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
 import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
@@ -71,6 +72,33 @@ describe('graphQLFormatResultFromSelectedFields', () => {
     );
 
     expect(result).toEqual({ id: 'record-id', kind: 'Person' });
+  });
+
+  it('returns group by connection data under aliased response keys', () => {
+    const result = graphQLFormatResultFromSelectedFields(
+      {
+        edges: [],
+        pageInfo: { hasNextPage: false, hasPreviousPage: false },
+        totalCount: 0,
+        groupByDimensionValues: ['Acme'],
+      },
+      {
+        kind: { [SELECTION_FIELD_NAME]: '__typename' },
+        dimensions: { [SELECTION_FIELD_NAME]: 'groupByDimensionValues' },
+      },
+      'person',
+      {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular: { person: PERSON_ID },
+        method: 'groupBy',
+      },
+    );
+
+    expect(result).toEqual({
+      kind: getGroupByConnectionTypename('person'),
+      dimensions: ['Acme'],
+    });
   });
 
   it('projects selected sub-fields of an object-typed composite sub-field', () => {
