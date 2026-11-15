@@ -161,6 +161,41 @@ describe('buildViewFiltersAndSortsUpsertFlatOperations', () => {
     ]);
   });
 
+  it('clears the group of a filter sent with a null group', () => {
+    const { viewFilter } = buildViewFiltersAndSortsUpsertFlatOperations({
+      ...baseArgs,
+      flatViewFilterMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...buildExistingFlatViewFilter(KEPT_FILTER_ID),
+          viewFilterGroupId: GROUP_ID,
+          viewFilterGroupUniversalIdentifier: GROUP_ID,
+          positionInViewFilterGroup: 0,
+        },
+        flatEntityMaps:
+          createEmptyFlatEntityMaps() as FlatEntityMaps<FlatViewFilter>,
+      }),
+      viewFilters: [
+        {
+          id: KEPT_FILTER_ID,
+          fieldMetadataId: NAME_FIELD_ID,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'acme',
+          viewFilterGroupId: null,
+          positionInViewFilterGroup: null,
+        },
+      ],
+    });
+
+    expect(viewFilter.flatEntityToUpdate).toEqual([
+      expect.objectContaining({
+        id: KEPT_FILTER_ID,
+        viewFilterGroupId: null,
+        viewFilterGroupUniversalIdentifier: null,
+        positionInViewFilterGroup: null,
+      }),
+    ]);
+  });
+
   it('leaves the children of an omitted kind untouched', () => {
     const { viewFilterGroup, viewFilter, viewSort } =
       buildViewFiltersAndSortsUpsertFlatOperations(baseArgs);

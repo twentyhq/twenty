@@ -310,13 +310,20 @@ const computeViewFilterOperations = ({
           fieldMetadataUniversalIdentifier,
           operand: inputFilter.operand ?? existingFilter.operand,
           value: inputFilter.value,
+          // Undefined keeps the stored value, null clears it
           viewFilterGroupId:
-            inputFilter.viewFilterGroupId ?? existingFilter.viewFilterGroupId,
+            inputFilter.viewFilterGroupId === undefined
+              ? existingFilter.viewFilterGroupId
+              : inputFilter.viewFilterGroupId,
           viewFilterGroupUniversalIdentifier,
           positionInViewFilterGroup:
-            inputFilter.positionInViewFilterGroup ??
-            existingFilter.positionInViewFilterGroup,
-          subFieldName: inputFilter.subFieldName ?? existingFilter.subFieldName,
+            inputFilter.positionInViewFilterGroup === undefined
+              ? existingFilter.positionInViewFilterGroup
+              : inputFilter.positionInViewFilterGroup,
+          subFieldName:
+            inputFilter.subFieldName === undefined
+              ? existingFilter.subFieldName
+              : inputFilter.subFieldName,
           relationTargetFieldMetadataId:
             inputFilter.relationTargetFieldMetadataId ?? null,
           relationTargetFieldMetadataUniversalIdentifier,

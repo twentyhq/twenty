@@ -26,10 +26,10 @@ export const buildViewFieldScopeInput = ({
       fieldMetadataId: recordFilter.fieldMetadataId,
       operand: recordFilter.operand,
       value: recordFilter.value,
-      viewFilterGroupId: recordFilter.recordFilterGroupId,
+      viewFilterGroupId: recordFilter.recordFilterGroupId ?? null,
       positionInViewFilterGroup:
-        recordFilter.positionInRecordFilterGroup ?? undefined,
-      subFieldName: recordFilter.subFieldName ?? undefined,
+        recordFilter.positionInRecordFilterGroup ?? null,
+      subFieldName: recordFilter.subFieldName ?? null,
       relationTargetFieldMetadataId:
         recordFilter.relationTargetFieldMetadataId ?? undefined,
     })),

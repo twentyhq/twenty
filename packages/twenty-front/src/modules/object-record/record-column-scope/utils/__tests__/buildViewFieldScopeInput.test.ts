@@ -66,7 +66,7 @@ describe('buildViewFieldScopeInput', () => {
           value: 'renewal',
           viewFilterGroupId: FILTER_GROUP_ID,
           positionInViewFilterGroup: 0,
-          subFieldName: undefined,
+          subFieldName: null,
           relationTargetFieldMetadataId: undefined,
         },
       ],
