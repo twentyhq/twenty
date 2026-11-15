@@ -857,15 +857,23 @@ export class ViewWidgetUpsertService {
           deletedAt: null,
         });
       } else {
+        const viewFilterGroupId =
+          inputFilter.viewFilterGroupId ?? existingFilter.viewFilterGroupId;
+        const positionInViewFilterGroup =
+          inputFilter.positionInViewFilterGroup ??
+          existingFilter.positionInViewFilterGroup;
+        const subFieldName =
+          inputFilter.subFieldName ?? existingFilter.subFieldName;
+
         const hasChanged =
           existingFilter.fieldMetadataId !== inputFilter.fieldMetadataId ||
           existingFilter.operand !== inputFilter.operand ||
           JSON.stringify(existingFilter.value) !==
             JSON.stringify(inputFilter.value) ||
-          existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
+          existingFilter.viewFilterGroupId !== viewFilterGroupId ||
           existingFilter.positionInViewFilterGroup !==
-            inputFilter.positionInViewFilterGroup ||
-          existingFilter.subFieldName !== inputFilter.subFieldName ||
+            positionInViewFilterGroup ||
+          existingFilter.subFieldName !== subFieldName ||
           existingFilter.relationTargetFieldMetadataId !==
             (inputFilter.relationTargetFieldMetadataId ?? null);
 
@@ -878,7 +886,7 @@ export class ViewWidgetUpsertService {
             metadataName: 'viewFilter',
             foreignKeyValues: {
               fieldMetadataId: inputFilter.fieldMetadataId,
-              viewFilterGroupId: inputFilter.viewFilterGroupId,
+              viewFilterGroupId,
               relationTargetFieldMetadataId:
                 inputFilter.relationTargetFieldMetadataId,
             },
@@ -894,14 +902,10 @@ export class ViewWidgetUpsertService {
             fieldMetadataUniversalIdentifier,
             operand: inputFilter.operand ?? existingFilter.operand,
             value: inputFilter.value,
-            viewFilterGroupId:
-              inputFilter.viewFilterGroupId ?? existingFilter.viewFilterGroupId,
+            viewFilterGroupId,
             viewFilterGroupUniversalIdentifier,
-            positionInViewFilterGroup:
-              inputFilter.positionInViewFilterGroup ??
-              existingFilter.positionInViewFilterGroup,
-            subFieldName:
-              inputFilter.subFieldName ?? existingFilter.subFieldName,
+            positionInViewFilterGroup,
+            subFieldName,
             relationTargetFieldMetadataId:
               inputFilter.relationTargetFieldMetadataId ?? null,
             relationTargetFieldMetadataUniversalIdentifier,

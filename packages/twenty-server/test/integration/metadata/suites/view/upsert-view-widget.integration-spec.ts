@@ -876,6 +876,62 @@ describe('upsertViewWidget', () => {
       expect(filters.length).toBe(1);
       expect(filters[0].viewFilterGroupId).toBe(filterGroupId);
     });
+
+    it('should keep a filter in its group when an update omits the group', async () => {
+      const filterGroupId = uuidv4();
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const viewFilterGroups = [
+        {
+          id: filterGroupId,
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        },
+      ];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups,
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'before',
+              viewFilterGroupId: filterGroupId,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups,
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'after',
+            },
+          ],
+        },
+      });
+
+      const filters = await global.testDataSource.query(
+        `SELECT "viewFilterGroupId", value
+         FROM core."viewFilter"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterId],
+      );
+
+      expect(filters).toEqual([
+        { viewFilterGroupId: filterGroupId, value: 'after' },
+      ]);
+    });
   });
 
   describe('view sorts', () => {
