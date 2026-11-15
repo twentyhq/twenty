@@ -306,7 +306,10 @@ describe('upsertViewFieldWithScope', () => {
     const groupId = v4();
     const filterId = v4();
     const gqlFields = `scopeView { viewFilters { id value viewFilterGroupId } }`;
-    const buildScope = (filter: Record<string, unknown>) => ({
+    const buildScope = (filter: {
+      value: string;
+      viewFilterGroupId?: string;
+    }) => ({
       viewFilterGroups: [
         { id: groupId, logicalOperator: ViewFilterGroupLogicalOperator.AND },
       ],
