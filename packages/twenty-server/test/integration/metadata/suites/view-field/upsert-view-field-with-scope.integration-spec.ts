@@ -249,6 +249,43 @@ describe('upsertViewFieldWithScope', () => {
     expect(data.getView).toBeNull();
   });
 
+  it('keeps the scope when the input omits it', async () => {
+    const viewFieldId = v4();
+    const filterId = v4();
+    const gqlFields = `viewField { size } scopeView { viewFilters { id } }`;
+
+    await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: {
+        ...buildColumnInput(viewFieldId),
+        scope: {
+          viewFilterGroups: [],
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId: testContext.actionItemNameFieldId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'renewal',
+            },
+          ],
+          viewSorts: [],
+        },
+      },
+    });
+
+    const {
+      data: { upsertViewFieldWithScope: resized },
+    } = await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: { ...buildColumnInput(viewFieldId), size: 240 },
+    });
+
+    expect(resized.viewField.size).toBe(240);
+    expect(resized.scopeView?.viewFilters).toEqual([{ id: filterId }]);
+  });
+
   it('moves a nested filter group to the root when its parent is set to null', async () => {
     const viewFieldId = v4();
     const rootGroupId = v4();
