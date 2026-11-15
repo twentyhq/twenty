@@ -11,6 +11,7 @@ exports[`Standard related record paths declares the standard paths and their inh
   "company.timelineActivities inherent",
   "dashboard.attachments inherent",
   "dashboard.timelineActivities inherent",
+  "message.attachments inherent",
   "message.messageChannelMessageAssociations inherent",
   "message.messageChannelMessageAssociations.messageFolders inherent",
   "message.messageParticipants inherent",

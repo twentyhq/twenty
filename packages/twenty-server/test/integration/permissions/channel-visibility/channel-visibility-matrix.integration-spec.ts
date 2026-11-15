@@ -42,6 +42,8 @@ const FLAGS = [
 const METADATA_MESSAGE_CHANNEL_ID = '20202020-9b80-4c2c-a597-383db48de1d6';
 const SUBJECT_MESSAGE_CHANNEL_ID = '20202020-e2f1-49b5-85d2-5d3a3386990e';
 const UNASSOCIATED_MESSAGE_ID = '20202020-c4a1-4000-8000-000000000001';
+const FULL_MESSAGE_ATTACHMENT_ID = '20202020-c4a1-4000-8000-000000000002';
+const METADATA_MESSAGE_ATTACHMENT_ID = '20202020-c4a1-4000-8000-000000000003';
 const SAMPLE_SIZE = 4;
 const LEVELS: ChannelVisibilityLevel[] = ['full', 'subject', 'metadata'];
 const LEVEL_RANK: Record<ChannelVisibilityLevel, number> = {
@@ -273,6 +275,23 @@ describe('Channel visibility matrix (integration)', () => {
       ).map(({ messageId, count }) => [messageId, Number(count)]),
     );
 
+    for (const [attachmentId, level] of [
+      [FULL_MESSAGE_ATTACHMENT_ID, 'full'],
+      [METADATA_MESSAGE_ATTACHMENT_ID, 'metadata'],
+    ] as const) {
+      const [message] = sample({
+        viewer: VIEWERS[1],
+        records: messages,
+        channels: messageChannels,
+        level,
+      });
+
+      await query(
+        `INSERT INTO "${SCHEMA}"."attachment" (id, name, "targetMessageId") VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`,
+        [attachmentId, `${level}.txt`, message.id],
+      );
+    }
+
     for (const featureFlag of FLAGS) {
       await updateFeatureFlag({
         featureFlag,
@@ -285,6 +304,9 @@ describe('Channel visibility matrix (integration)', () => {
   }, 600000);
 
   afterAll(async () => {
+    await query(`DELETE FROM "${SCHEMA}"."attachment" WHERE id = ANY($1)`, [
+      [FULL_MESSAGE_ATTACHMENT_ID, METADATA_MESSAGE_ATTACHMENT_ID],
+    ]);
     await query(`DELETE FROM "${SCHEMA}"."message" WHERE id = $1`, [
       UNASSOCIATED_MESSAGE_ID,
     ]);
@@ -773,6 +795,83 @@ describe('Channel visibility matrix (integration)', () => {
     expect(await readAsMember()).toMatchObject(
       buildExpectedFields({ record, level: 'metadata' }),
     );
+  }, 240000);
+
+  it('leaves message attachments to the role: its grant reads them all, and without it they follow the message at full level only', async () => {
+    const member = VIEWERS[1];
+    const [{ memberRoleId }] = await query<{ memberRoleId: string }>(
+      `SELECT id AS "memberRoleId" FROM core."role" WHERE "workspaceId" = $1 AND label = 'Member'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    const [{ objectMetadataId }] = await query<{ objectMetadataId: string }>(
+      `SELECT id AS "objectMetadataId" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'attachment'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    const readAttachmentIdsAsMember = async (): Promise<string[]> => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          objectMetadataPluralName: 'attachments',
+          gqlFields: 'id',
+          filter: {
+            id: {
+              in: [FULL_MESSAGE_ATTACHMENT_ID, METADATA_MESSAGE_ATTACHMENT_ID],
+            },
+          },
+        }),
+        member.token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.attachments.edges
+        .map(({ node }: { node: { id: string } }) => node.id)
+        .sort();
+    };
+
+    expect(await readAttachmentIdsAsMember()).toEqual([
+      FULL_MESSAGE_ATTACHMENT_ID,
+      METADATA_MESSAGE_ATTACHMENT_ID,
+    ]);
+
+    const client = request(`http://localhost:${APP_PORT}`);
+    const { roleId } = await createCustomRoleWithObjectPermissions({
+      label: 'Reads no attachment on its own',
+    });
+    const denyResponse = await makeMetadataApiRequest(
+      createUpsertObjectPermissionsOperation(roleId, [
+        {
+          objectMetadataId,
+          canReadObjectRecords: false,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+        },
+      ]),
+    );
+
+    expect(denyResponse.body.errors).toBeUndefined();
+
+    await updateWorkspaceMemberRole({
+      client,
+      roleId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+    await syncRules();
+
+    try {
+      expect(await readAttachmentIdsAsMember()).toEqual([
+        FULL_MESSAGE_ATTACHMENT_ID,
+      ]);
+    } finally {
+      await updateWorkspaceMemberRole({
+        client,
+        roleId: memberRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+      await deleteRole(client, roleId);
+      await syncRules();
+    }
   }, 240000);
 
   it('follows a channel visibility change', async () => {

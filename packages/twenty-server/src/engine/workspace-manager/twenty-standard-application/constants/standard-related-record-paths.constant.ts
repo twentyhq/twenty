@@ -98,6 +98,7 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     fieldNames: ['taskTargets', 'task'],
     isInherent: false,
   },
+  { objectName: 'message', fieldNames: ['attachments'], isInherent: true },
   {
     objectName: 'message',
     fieldNames: ['messageThread'],
