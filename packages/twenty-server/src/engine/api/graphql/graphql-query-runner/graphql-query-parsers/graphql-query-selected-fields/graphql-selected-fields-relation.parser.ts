@@ -8,6 +8,8 @@ import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
+import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -27,15 +29,21 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
 
-  parseRelationField(
+  parseRelationField({
+    fieldMetadata,
+    responseKey,
+    fieldValue,
+    accumulator,
+    isFromOneToManyRelation,
+  }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    fieldKey: string,
-    fieldValue: unknown,
-    accumulator: GraphqlQuerySelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+    responseKey: string;
+    fieldValue: ResolverSelectedFields;
+    accumulator: GraphqlQuerySelectedFieldsResult;
+    isFromOneToManyRelation?: boolean;
+  }): void {
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
     }
@@ -68,11 +76,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       isFromOneToManyRelation || isOneToManyRelation,
     );
 
-    accumulator.select[fieldKey] = {
+    accumulator.select[responseKey] = {
       id: true,
       ...relationAccumulator.select,
     };
-    accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
+    accumulator.aggregate[responseKey] = relationAccumulator.aggregate;
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +
       relationAccumulator.relationFieldsCount +
@@ -80,12 +88,13 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
-    accumulator.relationSelections[fieldKey] = {
+
+    const graphqlArguments = fieldValue[SELECTION_ARGUMENTS];
+
+    accumulator.relationSelections[responseKey] = {
       fieldName: fieldMetadata.name,
-      ...(isOneToManyRelation &&
-      isPlainObject(fieldValue) &&
-      isPlainObject(fieldValue.__arguments)
-        ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
+      ...(isOneToManyRelation && isPlainObject(graphqlArguments)
+        ? this.resolveQueryArgs(graphqlArguments, targetObjectMetadata)
         : {}),
       relationSelections: relationAccumulator.relationSelections,
     };

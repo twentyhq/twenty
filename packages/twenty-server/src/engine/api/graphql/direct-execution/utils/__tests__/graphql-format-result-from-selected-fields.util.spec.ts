@@ -1,6 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getGroupByConnectionTypename } from 'twenty-shared/utils';
 
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -56,13 +58,56 @@ const formatPerson = (phones: unknown) =>
   );
 
 describe('graphQLFormatResultFromSelectedFields', () => {
+  it('returns the type name under an aliased __typename', () => {
+    const result = graphQLFormatResultFromSelectedFields(
+      { id: 'record-id' },
+      { id: {}, kind: { [SELECTION_FIELD_NAME]: '__typename' } },
+      'person',
+      {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular: { person: PERSON_ID },
+        method: 'findOne',
+      },
+    );
+
+    expect(result).toEqual({ id: 'record-id', kind: 'Person' });
+  });
+
+  it('returns group by connection data under aliased response keys', () => {
+    const result = graphQLFormatResultFromSelectedFields(
+      {
+        edges: [],
+        pageInfo: { hasNextPage: false, hasPreviousPage: false },
+        totalCount: 0,
+        groupByDimensionValues: ['Acme'],
+      },
+      {
+        kind: { [SELECTION_FIELD_NAME]: '__typename' },
+        dimensions: { [SELECTION_FIELD_NAME]: 'groupByDimensionValues' },
+      },
+      'person',
+      {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular: { person: PERSON_ID },
+        method: 'groupBy',
+      },
+    );
+
+    expect(result).toEqual({
+      kind: getGroupByConnectionTypename('person'),
+      dimensions: ['Acme'],
+    });
+  });
+
   it('projects selected sub-fields of an object-typed composite sub-field', () => {
     expect(
       formatPerson({
         primaryPhoneNumber: '123456789',
         additionalPhones: [{ number: '987654321', callingCode: '+33' }],
       }),
-    ).toStrictEqual({
+    ).toEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: [
@@ -82,7 +127,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',
       }),
-    ).toStrictEqual({
+    ).toEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',

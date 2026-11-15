@@ -35,7 +35,7 @@ export class DeleteOneResolverFactory implements WorkspaceResolverBuilderFactory
       });
 
       try {
-        const { results: record } =
+        const { results: record, args: processedArgs } =
           await this.commonDeleteOneQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -50,6 +50,8 @@ export class DeleteOneResolverFactory implements WorkspaceResolverBuilderFactory
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
+          relationSelections:
+            processedArgs.selectedFieldsResult.relationSelections,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,

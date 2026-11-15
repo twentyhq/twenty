@@ -8,6 +8,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
+import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
 
 type SelectionInfo = Pick<
@@ -61,9 +63,15 @@ const collectSelectedFields = (
       continue;
     }
 
+    const fieldName = selection.name.value;
+    const responseKey = selection.alias?.value ?? fieldName;
     const selectedField: ResolverSelectedFields = (selectedFields[
-      selection.name.value
+      responseKey
     ] ??= Object.create(null));
+
+    if (responseKey !== fieldName) {
+      selectedField[SELECTION_FIELD_NAME] = fieldName;
+    }
 
     const fieldArguments = extractArgumentsFromAst(
       selection.arguments,
@@ -71,7 +79,7 @@ const collectSelectedFields = (
     );
 
     if (Object.keys(fieldArguments).length > 0) {
-      selectedField.__arguments = fieldArguments;
+      selectedField[SELECTION_ARGUMENTS] = fieldArguments;
     }
 
     if (isDefined(selection.selectionSet)) {
@@ -80,7 +88,7 @@ const collectSelectedFields = (
   }
 };
 
-// Null-prototype levels: a selected name such as __proto__ must stay an ordinary key
+// Null-prototype levels keep a client alias such as __proto__ an ordinary key
 export const getResolverSelectedFields = (
   info: SelectionInfo,
 ): ResolverSelectedFields => {

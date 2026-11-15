@@ -37,7 +37,7 @@ export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFa
       });
 
       try {
-        const { results: paginatedDuplicates } =
+        const { results: paginatedDuplicates, args: processedArgs } =
           await this.commonFindDuplicatesQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -53,6 +53,8 @@ export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFa
         return paginatedDuplicates.map((duplicate) =>
           typeORMObjectRecordsParser.createConnection({
             objectRecords: duplicate.records,
+            relationSelections:
+              processedArgs.selectedFieldsResult.relationSelections,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
             take: duplicate.records.length,
             totalCount: duplicate.totalCount,

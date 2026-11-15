@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -128,5 +129,38 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
       relationSelections: {},
     });
     expect(result.relationFieldsCount).toBe(1);
+  });
+});
+
+describe('GraphqlQuerySelectedFieldsParser composite fields', () => {
+  const personNameField = createMockField({
+    id: 'person-name-field',
+    name: 'name',
+    type: FieldMetadataType.FULL_NAME,
+  });
+  const personObject = createMockObject({
+    id: 'person-object-id',
+    nameSingular: 'person',
+    fieldIds: ['person-name-field'],
+  });
+
+  it('should skip an aliased __typename inside a composite field', () => {
+    const parser = new GraphqlQuerySelectedFieldsParser(
+      buildObjectMaps([personObject]),
+      buildFieldMaps([personNameField]),
+    );
+
+    const result = parser.parse(
+      {
+        name: {
+          firstName: {},
+          typeName: { [SELECTION_FIELD_NAME]: '__typename' },
+          first: { [SELECTION_FIELD_NAME]: 'firstName' },
+        },
+      },
+      personObject,
+    );
+
+    expect(result.select).toEqual({ nameFirstName: true });
   });
 });
