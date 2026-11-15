@@ -35,18 +35,18 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
         workspaceSchemaBuilderContext: internalContext,
       });
 
-      const shouldIncludeRecords =
-        Object.keys(
-          mergeFieldSelections({
-            selectedFields: mergeFieldSelections({
-              selectedFields,
-              fieldName: 'edges',
-            }),
-            fieldName: 'node',
-          }),
-        ).length > 0;
-
       try {
+        const shouldIncludeRecords =
+          Object.keys(
+            mergeFieldSelections({
+              selectedFields: mergeFieldSelections({
+                selectedFields,
+                fieldName: 'edges',
+              }),
+              fieldName: 'node',
+            }),
+          ).length > 0;
+
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
             resolverContext.flatObjectMetadataMaps,

@@ -8,6 +8,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
+import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
 
 type SelectionInfo = Pick<
@@ -68,7 +70,7 @@ const collectSelectedFields = (
     ] ??= Object.create(null));
 
     if (responseKey !== fieldName) {
-      selectedField.__fieldName = fieldName;
+      selectedField[SELECTION_FIELD_NAME] = fieldName;
     }
 
     const fieldArguments = extractArgumentsFromAst(
@@ -77,7 +79,7 @@ const collectSelectedFields = (
     );
 
     if (Object.keys(fieldArguments).length > 0) {
-      selectedField.__arguments = fieldArguments;
+      selectedField[SELECTION_ARGUMENTS] = fieldArguments;
     }
 
     if (isDefined(selection.selectionSet)) {

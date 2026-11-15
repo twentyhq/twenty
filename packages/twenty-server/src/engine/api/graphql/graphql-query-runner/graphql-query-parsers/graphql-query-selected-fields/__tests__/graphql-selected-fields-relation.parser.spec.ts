@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -150,8 +151,8 @@ describe('GraphqlQuerySelectedFieldsParser composite fields', () => {
       {
         name: {
           firstName: {},
-          typeName: { __fieldName: '__typename' },
-          first: { __fieldName: 'firstName' },
+          typeName: { [SELECTION_FIELD_NAME]: '__typename' },
+          first: { [SELECTION_FIELD_NAME]: 'firstName' },
         },
       },
       personObject,
