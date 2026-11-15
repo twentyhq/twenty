@@ -73,6 +73,7 @@ export const RecordTableWidgetProvider = ({
 
   const {
     fieldDefinitionByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
@@ -171,6 +172,7 @@ export const RecordTableWidgetProvider = ({
             labelIdentifierFieldMetadataItem,
             fieldMetadataItemByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
+            columnDescriptorByRecordFieldId,
             recordLimit,
           }}
         >

@@ -9,7 +9,7 @@ import {
   recordIndexAllRecordIdsComponentSelector,
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
@@ -68,6 +68,7 @@ export const useSetRecordTableData = ({
   const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
   const store = useStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   return useCallback(
     <T extends ObjectRecord>({
@@ -77,20 +78,7 @@ export const useSetRecordTableData = ({
       records: T[];
       currentRecordGroupId?: string;
     }) => {
-      for (const record of records) {
-        const currentRecord = store.get(
-          recordStoreFamilyState.atomFamily(record.id),
-        );
-
-        if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
-          const newRecord = {
-            ...(currentRecord ?? {}),
-            ...record,
-          } as T;
-
-          store.set(recordStoreFamilyState.atomFamily(record.id), newRecord);
-        }
-      }
+      upsertRecordsInStore({ partialRecords: records });
 
       const currentRowIds = currentRecordGroupId
         ? store.get(
@@ -143,6 +131,7 @@ export const useSetRecordTableData = ({
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
       store,
+      upsertRecordsInStore,
     ],
   );
 };

@@ -4,7 +4,6 @@ import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -33,10 +32,9 @@ export const useTriggerFetchPages = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
-  const { findManyRecordsLazyWithOffset, lookupRelationFieldNames } =
-    useLazyFindManyRecordsWithOffset({
-      objectNameSingular,
-    });
+  const { findManyRecordsLazyWithOffset } = useLazyFindManyRecordsWithOffset({
+    objectNameSingular,
+  });
 
   const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
     totalNumberOfRowsComponentState,
@@ -133,15 +131,7 @@ export const useTriggerFetchPages = () => {
             sliceStart + PAGING_FOR_UI_UPDATE,
           );
 
-          upsertRecordsInStore({
-            partialRecords: [
-              ...recordsSlice,
-              ...getLookupRelatedRecords({
-                records: recordsSlice,
-                lookupRelationFieldNames,
-              }),
-            ],
-          });
+          upsertRecordsInStore({ partialRecords: recordsSlice });
 
           loadRecordsAtRowIndexes({
             records: recordsSlice,
@@ -166,7 +156,6 @@ export const useTriggerFetchPages = () => {
       store,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
-      lookupRelationFieldNames,
     ],
   );
 

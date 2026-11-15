@@ -96,6 +96,7 @@ const createContentDecorator =
 
     const {
       fieldDefinitionByFieldMetadataItemId,
+      columnDescriptorByRecordFieldId,
       fieldMetadataItemByFieldMetadataItemId,
       labelIdentifierFieldMetadataItem,
       recordFieldByFieldMetadataItemId,
@@ -116,6 +117,7 @@ const createContentDecorator =
           recordIndexId: instanceId,
           viewBarInstanceId: instanceId,
           fieldDefinitionByFieldMetadataItemId,
+          columnDescriptorByRecordFieldId,
           fieldMetadataItemByFieldMetadataItemId,
           labelIdentifierFieldMetadataItem,
           recordFieldByFieldMetadataItemId,

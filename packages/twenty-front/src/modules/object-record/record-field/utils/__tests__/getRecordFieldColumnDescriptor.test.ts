@@ -1,6 +1,5 @@
-import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
 import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
-import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
+import { getRecordFieldColumnDescriptor } from '@/object-record/record-field/utils/getRecordFieldColumnDescriptor';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -16,48 +15,60 @@ const employeesField = getMockFieldMetadataItemOrThrow({
   fieldName: 'employees',
 });
 
-const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
-const getLookupTarget: GetRecordFieldLookupTarget = (params) =>
-  getRecordFieldLookupTarget({ ...params, objectMetadataItems });
+const lookupTarget = getRecordFieldLookupTarget({
+  recordField: { relationTargetFieldMetadataId: employeesField.id },
+  fieldMetadataItem: companyField,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+});
 
-describe('getRecordFieldColumnDisplay', () => {
-  it('shows the relation field for a plain column', () => {
+describe('getRecordFieldColumnDescriptor', () => {
+  it('describes a plain column with its own field', () => {
     expect(
-      getRecordFieldColumnDisplay({
+      getRecordFieldColumnDescriptor({
         recordField: {},
         fieldMetadataItem: companyField,
-        getLookupTarget,
+        lookupTarget: undefined,
+        isFilterable: true,
+        isSortable: true,
       }),
     ).toEqual({
+      lookupTarget: undefined,
+      isLookupColumn: false,
       label: companyField.label,
       icon: companyField.icon,
       description: companyField.description,
+      isFilterable: true,
+      isSortable: true,
     });
   });
 
-  it('shows the relation and the looked-up field for a lookup column', () => {
+  it('describes a lookup column with the looked-up field, without filter or sort', () => {
     expect(
-      getRecordFieldColumnDisplay({
-        recordField: { relationTargetFieldMetadataId: employeesField.id },
+      getRecordFieldColumnDescriptor({
+        recordField: {},
         fieldMetadataItem: companyField,
-        getLookupTarget,
+        lookupTarget,
+        isFilterable: true,
+        isSortable: true,
       }),
-    ).toEqual({
+    ).toMatchObject({
+      isLookupColumn: true,
       label: `${companyField.label} › ${employeesField.label}`,
       icon: employeesField.icon,
       description: employeesField.description,
+      isFilterable: false,
+      isSortable: false,
     });
   });
 
   it('prefers the custom column name', () => {
     expect(
-      getRecordFieldColumnDisplay({
-        recordField: {
-          settings: { label: 'Team size' },
-          relationTargetFieldMetadataId: employeesField.id,
-        },
+      getRecordFieldColumnDescriptor({
+        recordField: { settings: { label: 'Team size' } },
         fieldMetadataItem: companyField,
-        getLookupTarget,
+        lookupTarget,
+        isFilterable: true,
+        isSortable: true,
       }).label,
     ).toBe('Team size');
   });

@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type RecordFieldColumnDescriptor } from '@/object-record/record-field/types/RecordFieldColumnDescriptor';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { createRequiredContext } from '~/utils/createRequiredContext';
@@ -22,6 +23,7 @@ export type RecordIndexContextValue = {
     string,
     ColumnDefinition<FieldMetadata>
   >;
+  columnDescriptorByRecordFieldId: Record<string, RecordFieldColumnDescriptor>;
   recordLimit?: number;
 };
 

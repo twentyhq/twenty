@@ -28,7 +28,7 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const { recordGqlFields, relationAliases, lookupRelationFieldNames } =
+  const { recordGqlFields, relationAliases } =
     useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const apolloCoreClient = useApolloCoreClient();
@@ -110,6 +110,5 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   return {
     findManyRecordsLazyWithOffset,
-    lookupRelationFieldNames,
   };
 };
