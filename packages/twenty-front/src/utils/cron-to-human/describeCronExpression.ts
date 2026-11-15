@@ -78,11 +78,12 @@ export const describeCronExpression = (
           return t`from ${startTime} to ${endTime}`;
         });
         const lastWindow = windows.pop() ?? '';
-        const joinedWindows =
+        const remainingWindows = windows.join(', ');
+        descriptions.push(
           windows.length > 0
-            ? `${windows.join(', ')} and ${lastWindow}`
-            : lastWindow;
-        descriptions.push(t`every minute ${joinedWindows} UTC`);
+            ? t`every minute ${remainingWindows} and ${lastWindow} UTC`
+            : t`every minute ${lastWindow} UTC`,
+        );
       } else if (isListValue(parts.hours)) {
         const hoursList = parts.hours.split(',').map((hour) => hour.trim());
         const formattedHours = hoursList.map((hour) =>
