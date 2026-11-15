@@ -3,26 +3,12 @@ import {
   getFullHtmlEmailIfWholeBody,
   isDefined,
   isEmailDocumentShape,
-  parseEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 
 import { resolveEmailDocumentBindings } from 'src/engine/core-modules/email/utils/resolve-email-document-bindings.util';
+import { parseEmailDocumentOrThrow } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-email-document-or-throw.util';
 import { resolveWorkflowEmailTemplateString } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-workflow-email-template-string.util';
-
-const parseSerializedEmailDocumentOrThrow = (
-  serializedDocument: string,
-): EmailDocument => {
-  const parseResult = parseEmailDocument(
-    parseJson<unknown>(serializedDocument),
-  );
-
-  if (!parseResult.success) {
-    throw new Error(`Invalid workflow email document: ${parseResult.error}`);
-  }
-
-  return parseResult.document;
-};
 
 // A whole-body variable may itself hold a serialized email document
 export const resolveEmailBody = (
@@ -30,7 +16,7 @@ export const resolveEmailBody = (
   context: Record<string, unknown>,
 ): EmailDocument => {
   const documentWithVariableValues = resolveEmailDocumentBindings(
-    parseSerializedEmailDocumentOrThrow(body),
+    parseEmailDocumentOrThrow(parseJson<unknown>(body)),
     (value, stringContext) =>
       resolveWorkflowEmailTemplateString(value, context, {
         escapeValues: stringContext === 'html',
@@ -38,9 +24,11 @@ export const resolveEmailBody = (
   );
 
   const fullHtmlEmail = getFullHtmlEmailIfWholeBody(documentWithVariableValues);
+  const documentFromVariableValue = isDefined(fullHtmlEmail)
+    ? parseJson<unknown>(fullHtmlEmail)
+    : undefined;
 
-  return isDefined(fullHtmlEmail) &&
-    isEmailDocumentShape(parseJson<unknown>(fullHtmlEmail))
-    ? parseSerializedEmailDocumentOrThrow(fullHtmlEmail)
+  return isEmailDocumentShape(documentFromVariableValue)
+    ? parseEmailDocumentOrThrow(documentFromVariableValue)
     : documentWithVariableValues;
 };

@@ -304,6 +304,7 @@ export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
 export { EMAIL_TYPOGRAPHY } from './tiptap/email-typography';
+export { EMPTY_EMAIL_DOCUMENT } from './tiptap/empty-email-document';
 export { getFullHtmlEmailIfWholeBody } from './tiptap/get-full-html-email-if-whole-body';
 export { getTipTapFileUrlAttributeName } from './tiptap/get-tiptap-file-url-attribute-name';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';

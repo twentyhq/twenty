@@ -68,24 +68,6 @@ describe('SendEmailResolver errors', () => {
     });
   });
 
-  it('rejects a body that is not a serialized email document before composing', async () => {
-    const composeEmail = jest.fn();
-    const { resolver } = buildResolver(composeEmail);
-
-    const result = await resolver.sendEmail(
-      { ...input, body: '<p>body</p>' },
-      workspace,
-      USER_WORKSPACE_ID,
-      context,
-    );
-
-    expect(result).toEqual({
-      success: false,
-      error: 'fr-FR:The email content is invalid.',
-    });
-    expect(composeEmail).not.toHaveBeenCalled();
-  });
-
   it('returns the translated user-friendly message of a custom exception', async () => {
     const exception = new EmailToolException(
       'No connected account in this workspace can send email',

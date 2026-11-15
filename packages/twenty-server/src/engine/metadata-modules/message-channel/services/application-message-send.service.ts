@@ -14,7 +14,7 @@ import {
 import {
   isDefined,
   isNonEmptyArray,
-  parseCanonicalEmailDocument,
+  parseEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
@@ -634,9 +634,7 @@ export class ApplicationMessageSendService {
       return { text: text ?? '', recipients: null, email: null };
     }
 
-    const bodyParseResult = parseCanonicalEmailDocument(
-      parseJson<unknown>(email.body),
-    );
+    const bodyParseResult = parseEmailDocument(parseJson<unknown>(email.body));
 
     if (!bodyParseResult.success) {
       throw new MessageChannelException(

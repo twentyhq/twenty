@@ -130,27 +130,6 @@ describe('DraftEmailWorkflowAction', () => {
     );
   });
 
-  it('drafts an empty body when the stored body is blank', async () => {
-    await action.execute({
-      currentStepId: 'step-1',
-      steps: [
-        buildDraftEmailStep({
-          connectedAccountId: 'account-1',
-          recipients: { to: 'test@example.com' },
-          subject: 'Draft Test',
-          body: '  \n ',
-        }),
-      ],
-      context: {},
-      runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
-    });
-
-    expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
-      expect.objectContaining({ body: { type: 'text', text: '' } }),
-      expect.objectContaining({ workspaceId: 'workspace-1' }),
-    );
-  });
-
   it('persists a step log tagged with the DRAFT mode', async () => {
     await action.execute({
       currentStepId: 'step-1',
@@ -159,7 +138,6 @@ describe('DraftEmailWorkflowAction', () => {
           connectedAccountId: 'account-1',
           recipients: { to: 'test@example.com' },
           subject: 'Draft Test',
-          body: '',
         }),
       ],
       context: {},
@@ -223,7 +201,6 @@ describe('DraftEmailWorkflowAction', () => {
             connectedAccountId,
             recipients: { to: 'test@example.com' },
             subject: 'Draft Test',
-            body: '',
           }),
         ],
         context: {},

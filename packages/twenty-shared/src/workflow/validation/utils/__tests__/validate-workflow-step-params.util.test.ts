@@ -62,12 +62,11 @@ describe('validateWorkflowStepParams', () => {
         steps: [emailStepWithBody(body, type)],
       });
 
-    it('should accept an empty body and serialized email documents', () => {
+    it('should accept serialized email documents, with or without a schema version', () => {
       const content = [
         { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
       ];
 
-      expect(bodyIssues('')).toEqual([]);
       expect(bodyIssues(JSON.stringify({ type: 'doc', content }))).toEqual([]);
       expect(
         bodyIssues(
@@ -76,8 +75,9 @@ describe('validateWorkflowStepParams', () => {
       ).toEqual([]);
     });
 
-    it('should reject HTML and plain text bodies of send and draft steps', () => {
+    it('should reject empty, HTML and plain text bodies of send and draft steps', () => {
       for (const [body, type] of [
+        ['', 'SEND_EMAIL'],
         ['<p>Hi</p>', 'SEND_EMAIL'],
         ['Hi {{trigger.name}},\n\nThanks', 'DRAFT_EMAIL'],
       ] as const) {

@@ -123,10 +123,11 @@ describe('resolveEmailBody', () => {
           body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
         },
       }),
-    ).toThrow('Invalid workflow email document');
+    ).toThrow('Invalid email document');
   });
 
   it.each([
+    '',
     '<p>Hello {{trigger.name}}</p>',
     'Hi {{trigger.name}}',
     '{{code.body}}',
@@ -135,7 +136,7 @@ describe('resolveEmailBody', () => {
     (body) => {
       expect(() =>
         resolveEmailBody(body, { trigger: { name: 'Ada' }, code: {} }),
-      ).toThrow('Invalid workflow email document');
+      ).toThrow('Invalid email document');
     },
   );
 });

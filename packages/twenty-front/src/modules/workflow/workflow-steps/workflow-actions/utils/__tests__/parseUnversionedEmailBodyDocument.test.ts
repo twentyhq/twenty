@@ -11,7 +11,7 @@ describe('parseUnversionedEmailBodyDocument', () => {
       parseUnversionedEmailBodyDocument(
         JSON.stringify({ type: 'doc', content }),
       ),
-    ).toEqual({ type: 'doc', attrs: { schemaVersion: 1 }, content });
+    ).toEqual({ type: 'doc', content });
   });
 
   it('opens an empty editor for an HTML string', () => {

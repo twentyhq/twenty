@@ -4,11 +4,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   EMAIL_DOCUMENT_SCHEMA_VERSION,
   type EmailDocument,
+  EMPTY_EMAIL_DOCUMENT,
   parseCanonicalEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 
 import { type ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
+import { type BackfillEmptyWorkflowEmailBodiesCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794734527065-backfill-empty-workflow-email-bodies.command';
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
@@ -122,7 +124,9 @@ describe('Outbound email body formats (integration)', () => {
         connectedAccountId,
         recipients: { to: HANDLE, cc: '', bcc: '' },
         subject: `Email body format ${randomUUID()}`,
-        body: typeof body === 'string' ? '' : JSON.stringify(body),
+        body: JSON.stringify(
+          typeof body === 'string' ? EMPTY_EMAIL_DOCUMENT : body,
+        ),
       },
       payload,
       beforeRun: async (coreWorkflowVersionId) => {
@@ -311,25 +315,17 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('workflow email body stored as a string', () => {
-    it.each([
-      'Hi {{trigger.name}},\n\nSee you soon\nJane',
-      '<p>Hello {{trigger.name}}</p>',
-      '{{trigger.html}}',
-    ])(
-      'fails the step instead of guessing the format of %s',
-      async (body) => {
-        const run = await runEmailBodyWorkflow({
-          body,
-          payload: { name: 'Ada', html: '<h1>Report</h1>' },
-        });
+    it('fails the step instead of guessing the format', async () => {
+      const run = await runEmailBodyWorkflow({
+        body: '<p>Hello {{trigger.name}}</p>',
+        payload: { name: 'Ada' },
+      });
 
-        expect(run).toMatchObject({
-          stepStatus: 'FAILED',
-          stepError: expect.stringContaining('Invalid workflow email document'),
-        });
-      },
-      300000,
-    );
+      expect(run).toMatchObject({
+        stepStatus: 'FAILED',
+        stepError: expect.stringContaining('Invalid email document'),
+      });
+    }, 300000);
   });
 
   describe('send_email tool', () => {
@@ -375,7 +371,7 @@ describe('Outbound email body formats (integration)', () => {
 
       expect(output).toMatchObject({
         success: false,
-        error: expect.stringContaining('Invalid outbound email document'),
+        error: expect.stringContaining('Invalid email document'),
       });
       expect(await findPersistedMessageText(subject)).toBeUndefined();
     }, 300000);
@@ -394,6 +390,25 @@ describe('Outbound email body formats (integration)', () => {
 
       expect(result.success).toBe(true);
       expect(await findPersistedMessageText(subject)).toBe('From the composer');
+    }, 300000);
+
+    it('accepts a document saved without a schema version', async () => {
+      const subject = `Mutation unversioned ${randomUUID()}`;
+
+      const result = await sendEmail({
+        connectedAccountId,
+        to: HANDLE,
+        subject,
+        body: JSON.stringify({
+          type: 'doc',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
+          ],
+        }),
+      });
+
+      expect(result.success).toBe(true);
+      expect(await findPersistedMessageText(subject)).toBe('Hi');
     }, 300000);
 
     it('sends a composer email the user never typed into', async () => {
@@ -449,14 +464,20 @@ describe('Outbound email body formats (integration)', () => {
       });
     });
 
-    const runUpgradeCommand = (dryRun: boolean) =>
+    const runUpgradeCommand = (
+      dryRun: boolean,
+      commandClassName:
+        | 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand'
+        | 'BackfillEmptyWorkflowEmailBodiesCommand' = 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
+    ) =>
       getAppProviderByClassName<WorkspaceOrmManager>(
         'WorkspaceOrmManager',
       ).executeInWorkspaceContext(
         () =>
-          getAppProviderByClassName<ConvertWorkflowEmailBodiesToEmailDocumentsCommand>(
-            'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
-          ).runOnWorkspace({
+          getAppProviderByClassName<
+            | ConvertWorkflowEmailBodiesToEmailDocumentsCommand
+            | BackfillEmptyWorkflowEmailBodiesCommand
+          >(commandClassName).runOnWorkspace({
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             options: { dryRun },
             index: 0,
@@ -581,6 +602,36 @@ describe('Outbound email body formats (integration)', () => {
       },
       300000,
     );
+
+    it('sends a blank stored body once the backfill stores an empty document', async () => {
+      const serializedEmptyDocument = JSON.stringify(EMPTY_EMAIL_DOCUMENT);
+
+      await runSendEmailWorkflow({
+        body: ' ',
+        beforeRun: async (coreWorkflowVersionId) => {
+          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
+          await runUpgradeCommand(
+            true,
+            'BackfillEmptyWorkflowEmailBodiesCommand',
+          );
+
+          expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
+            workspaceBody: ' ',
+            coreBody: ' ',
+          });
+
+          await runUpgradeCommand(
+            false,
+            'BackfillEmptyWorkflowEmailBodiesCommand',
+          );
+
+          expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
+            workspaceBody: serializedEmptyDocument,
+            coreBody: serializedEmptyDocument,
+          });
+        },
+      });
+    }, 300000);
 
     it('sends the same email from a versionless document before and after the upgrade', async () => {
       const body = JSON.stringify({

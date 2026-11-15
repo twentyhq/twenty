@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { EMPTY_EMAIL_DOCUMENT } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -284,38 +285,19 @@ describe('SendEmailWorkflowAction', () => {
       });
     });
 
-    it('should reject an invalid structured email document', async () => {
-      await expect(
-        executeWithBody(
-          JSON.stringify({
-            type: 'doc',
-            content: [{ type: 'unknownBlock' }],
-          }),
-        ),
-      ).rejects.toThrow('Invalid workflow email document');
+    it('should not run the tool when the body is not an email document', async () => {
+      await expect(executeWithBody('')).rejects.toThrow(
+        'Invalid email document',
+      );
 
       expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
     });
 
-    it.each(['{{trigger.name}}\n{{trigger.email}}', '{"key":"value"}'])(
-      'should reject a body that is not a serialized email document: %s',
-      async (body) => {
-        await expect(executeWithBody(body)).rejects.toThrow(
-          'Invalid workflow email document',
-        );
+    it('should send an empty document when the step has no body', async () => {
+      await executeWithBody(undefined);
 
-        expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
-      },
-    );
-
-    it.each(['', undefined])(
-      'should send an empty text body when the step has none: %p',
-      async (body) => {
-        await executeWithBody(body);
-
-        expect(executedBody()).toEqual({ type: 'text', text: '' });
-      },
-    );
+      expect(executedBody()).toEqual(EMPTY_EMAIL_DOCUMENT);
+    });
   });
 
   describe('sender resolution', () => {
@@ -327,7 +309,6 @@ describe('SendEmailWorkflowAction', () => {
             connectedAccountId,
             recipients: { to: 'test@example.com' },
             subject: 'Test',
-            body: '',
           }),
         ],
         context: {},
@@ -445,7 +426,6 @@ describe('SendEmailWorkflowAction', () => {
           buildSendEmailStep({
             ...emailInput,
             fromHandle: 'sales@company.com',
-            body: '',
           }),
         ],
         context: {},
@@ -465,7 +445,6 @@ describe('SendEmailWorkflowAction', () => {
           buildSendEmailStep({
             ...emailInput,
             fromHandle: '{{trigger.email}}',
-            body: '',
           }),
         ],
         context: { trigger: { email: 'john@example.com' } },
@@ -499,7 +478,7 @@ describe('SendEmailWorkflowAction', () => {
           currentStepId: 'step-1',
           steps: [
             {
-              ...buildSendEmailStep({ ...emailInput, body: '' }),
+              ...buildSendEmailStep(emailInput),
               type: WorkflowActionType.DRAFT_EMAIL,
             } as WorkflowAction,
           ],

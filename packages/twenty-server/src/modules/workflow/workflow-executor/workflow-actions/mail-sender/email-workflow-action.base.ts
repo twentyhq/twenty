@@ -1,10 +1,10 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import {
   canConnectedAccountPerformEmailOperation,
   type EmailDocument,
+  EMPTY_EMAIL_DOCUMENT,
   isDefined,
   isValidUuid,
   parseJson,
@@ -59,12 +59,9 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected override async toToolInput(
     resolvedInput: WorkflowSendEmailActionInput,
   ): Promise<ToolInput> {
-    // New steps are created with an empty body, and the 2-47 command left blank ones unconverted
     return {
       ...resolvedInput,
-      body: isNonEmptyString(resolvedInput.body?.trim())
-        ? parseJson<EmailDocument>(resolvedInput.body)
-        : { type: 'text', text: '' },
+      body: parseJson<EmailDocument>(resolvedInput.body),
     };
   }
 
@@ -80,9 +77,11 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         inputWithoutBody,
         context,
       ) as typeof inputWithoutBody),
-      body: isNonEmptyString(body?.trim())
-        ? JSON.stringify(resolveEmailBody(body, context))
-        : body,
+      body: JSON.stringify(
+        isDefined(body)
+          ? resolveEmailBody(body, context)
+          : EMPTY_EMAIL_DOCUMENT,
+      ),
     };
   }
 
