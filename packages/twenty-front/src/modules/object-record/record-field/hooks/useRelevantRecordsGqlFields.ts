@@ -1,3 +1,5 @@
+import { useRecordIndexAggregateColumns } from '@/object-record/record-column-aggregate/hooks/useRecordIndexAggregateColumns';
+import { addAggregatesToRecordGqlFields } from '@/object-record/record-column-aggregate/utils/addAggregatesToRecordGqlFields';
 import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -40,6 +42,7 @@ export const useRelevantRecordsGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const lookupColumns = useRecordIndexLookupColumns();
+  const aggregateColumns = useRecordIndexAggregateColumns();
 
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
@@ -74,14 +77,17 @@ export const useRelevantRecordsGqlFields = ({
     ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
-  const allDepthOneGqlFields = addLookupTargetsToRecordGqlFields({
-    recordGqlFields: generateDepthRecordGqlFieldsFromFields({
-      objectMetadataItems,
-      sourceObjectMetadataItem: objectMetadataItem,
-      fields: fieldMetadataItemsToUse,
-      depth: 1,
+  const allDepthOneGqlFields = addAggregatesToRecordGqlFields({
+    recordGqlFields: addLookupTargetsToRecordGqlFields({
+      recordGqlFields: generateDepthRecordGqlFieldsFromFields({
+        objectMetadataItems,
+        sourceObjectMetadataItem: objectMetadataItem,
+        fields: fieldMetadataItemsToUse,
+        depth: 1,
+      }),
+      lookupColumns,
     }),
-    lookupColumns,
+    aggregateColumns,
   });
 
   const coreRecordReferenceFieldsRecordGqlFields =

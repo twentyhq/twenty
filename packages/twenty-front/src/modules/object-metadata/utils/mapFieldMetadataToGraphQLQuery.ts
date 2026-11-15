@@ -10,6 +10,8 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
+import { CONNECTION_AGGREGATES_GQL_FIELDS_KEY } from '@/object-record/graphql/record-gql-fields/constants/ConnectionAggregatesGqlFieldsKey';
+import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
@@ -244,9 +246,19 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
+    const connectionAggregatesGqlFields =
+      relationRecordGqlFields?.[CONNECTION_AGGREGATES_GQL_FIELDS_KEY];
+    const connectionAggregatesSelection = isRecordGqlFieldsNode(
+      connectionAggregatesGqlFields,
+    )
+      ? Object.keys(connectionAggregatesGqlFields)
+          .map((aggregateGqlField) => `  ${aggregateGqlField}\n`)
+          .join('')
+      : '';
+
     return doNotTranslate(`${gqlField}
 {
-  edges {
+${connectionAggregatesSelection}  edges {
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,

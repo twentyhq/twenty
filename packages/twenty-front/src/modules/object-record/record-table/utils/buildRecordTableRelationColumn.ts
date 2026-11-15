@@ -3,18 +3,23 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { getPositionBetween } from '~/utils/getPositionBetween';
 
-const LOOKUP_COLUMN_SIZE = 150;
+const RELATION_COLUMN_SIZE = 150;
 
-// Goes after the last column of its relation, so lookups of one relation stay grouped
-export const buildRecordTableLookupColumn = ({
+export type RecordTableRelationColumnTarget = Pick<
+  RecordField,
+  'relationTargetFieldMetadataId' | 'relationAggregateOperation'
+>;
+
+// Goes after the last column of its relation, so columns of one relation stay grouped
+export const buildRecordTableRelationColumn = ({
   relationFieldMetadataItemId,
-  relationTargetFieldMetadataId,
+  relationTargetFieldMetadataId = null,
+  relationAggregateOperation = null,
   recordFields,
 }: {
   relationFieldMetadataItemId: string;
-  relationTargetFieldMetadataId: string;
   recordFields: Pick<RecordField, 'fieldMetadataItemId' | 'position'>[];
-}): RecordField => {
+} & RecordTableRelationColumnTarget): RecordField => {
   const positions = recordFields.map(({ position }) => position);
   const relationPositions = recordFields
     .filter(
@@ -37,6 +42,7 @@ export const buildRecordTableLookupColumn = ({
     id: v4(),
     fieldMetadataItemId: relationFieldMetadataItemId,
     relationTargetFieldMetadataId,
+    relationAggregateOperation,
     position: getPositionBetween(
       previousPosition,
       isNonEmptyArray(followingPositions)
@@ -45,6 +51,6 @@ export const buildRecordTableLookupColumn = ({
     ),
     isVisible: true,
     isCanonical: false,
-    size: LOOKUP_COLUMN_SIZE,
+    size: RELATION_COLUMN_SIZE,
   };
 };

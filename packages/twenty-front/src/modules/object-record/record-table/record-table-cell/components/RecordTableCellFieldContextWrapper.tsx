@@ -1,3 +1,4 @@
+import { RecordTableCellAggregateFieldContext } from '@/object-record/record-column-aggregate/components/RecordTableCellAggregateFieldContext';
 import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -39,8 +40,8 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  const lookupTarget =
-    columnDescriptorByRecordFieldId[recordField.id]?.lookupTarget;
+  const columnDescriptor = columnDescriptorByRecordFieldId[recordField.id];
+  const lookupTarget = columnDescriptor?.lookupTarget;
 
   if (isDefined(lookupTarget)) {
     return (
@@ -69,7 +70,13 @@ export const RecordTableCellFieldContextWrapper = ({
           key={instanceId}
           recordField={recordField}
         >
-          {children}
+          {columnDescriptor?.isAggregateColumn === true ? (
+            <RecordTableCellAggregateFieldContext>
+              {children}
+            </RecordTableCellAggregateFieldContext>
+          ) : (
+            children
+          )}
         </RecordTableCellFieldContextGeneric>
       )}
     </RecordFieldComponentInstanceContext.Provider>

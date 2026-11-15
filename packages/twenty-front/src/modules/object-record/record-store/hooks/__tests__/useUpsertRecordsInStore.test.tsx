@@ -2,6 +2,9 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { RELATION_AGGREGATE_VALUES_RECORD_KEY } from '@/object-record/cache/constants/RelationAggregateValuesRecordKey';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -218,5 +221,58 @@ describe('useUpsertRecordsInStore', () => {
     });
 
     expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
+  });
+
+  it('should keep relation aggregates until a snapshot that selects them changes them', () => {
+    const recordId = 'test-record-5';
+
+    const { result } = renderHook(
+      () => {
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
+        const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+        return { recordStore, upsertRecordsInStore };
+      },
+      { wrapper: Wrapper },
+    );
+
+    const getCompanyRecord = (peopleConnection: RecordGqlConnection) =>
+      getRecordFromRecordNode({
+        recordNode: {
+          id: recordId,
+          __typename: 'Company',
+          name: 'Acme',
+          people: peopleConnection,
+        },
+      });
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [getCompanyRecord({ totalCount: 3, edges: [] })],
+      });
+    });
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [getCompanyRecord({ edges: [] })],
+      });
+    });
+
+    expect(
+      result.current.recordStore?.[RELATION_AGGREGATE_VALUES_RECORD_KEY],
+    ).toEqual({ people: { totalCount: 3 } });
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [getCompanyRecord({ totalCount: 0, edges: [] })],
+      });
+    });
+
+    expect(
+      result.current.recordStore?.[RELATION_AGGREGATE_VALUES_RECORD_KEY],
+    ).toEqual({ people: { totalCount: 0 } });
   });
 });

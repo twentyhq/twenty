@@ -8,6 +8,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
     isVisible
     isCanonical
     relationTargetFieldMetadataId
+    relationAggregateOperation
     position
     size
     aggregateOperation

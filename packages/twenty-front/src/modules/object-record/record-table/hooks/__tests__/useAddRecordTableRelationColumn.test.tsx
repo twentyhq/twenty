@@ -1,6 +1,7 @@
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
+import { useAddRecordTableRelationColumn } from '@/object-record/record-table/hooks/useAddRecordTableRelationColumn';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -32,13 +33,13 @@ const currentRecordFieldsAtom = currentRecordFieldsComponentState.atomFamily({
 });
 
 const renderAddHook = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useAddRecordTableLookupColumn(RECORD_TABLE_ID), {
+  renderHook(() => useAddRecordTableRelationColumn(RECORD_TABLE_ID), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <JotaiProvider store={store}>{children}</JotaiProvider>
     ),
   });
 
-describe('useAddRecordTableLookupColumn', () => {
+describe('useAddRecordTableRelationColumn', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -51,7 +52,7 @@ describe('useAddRecordTableLookupColumn', () => {
     const { result } = renderAddHook(store);
 
     const isAdded = await act(() =>
-      result.current.addRecordTableLookupColumn({
+      result.current.addRecordTableRelationColumn({
         relationFieldMetadataItemId: 'company-field',
         relationTargetFieldMetadataId: 'industry-field',
       }),
@@ -78,7 +79,34 @@ describe('useAddRecordTableLookupColumn', () => {
     });
   });
 
-  it('removes the lookup column when the save fails', async () => {
+  it('saves an aggregate column with its operation and target field', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [companyColumn]);
+    performViewFieldApiCreateMock.mockResolvedValue({ status: 'successful' });
+
+    const { result } = renderAddHook(store);
+
+    await act(() =>
+      result.current.addRecordTableRelationColumn({
+        relationFieldMetadataItemId: 'opportunities-field',
+        relationTargetFieldMetadataId: 'amount-field',
+        relationAggregateOperation: AggregateOperations.SUM,
+      }),
+    );
+
+    expect(performViewFieldApiCreateMock).toHaveBeenCalledWith({
+      inputs: [
+        expect.objectContaining({
+          fieldMetadataId: 'opportunities-field',
+          relationTargetFieldMetadataId: 'amount-field',
+          relationAggregateOperation: AggregateOperations.SUM,
+          isCanonical: false,
+        }),
+      ],
+    });
+  });
+
+  it('removes the column when the save fails', async () => {
     const store = createStore();
     store.set(currentRecordFieldsAtom, [companyColumn]);
     performViewFieldApiCreateMock.mockResolvedValue({ status: 'failed' });
@@ -86,7 +114,7 @@ describe('useAddRecordTableLookupColumn', () => {
     const { result } = renderAddHook(store);
 
     await act(async () => {
-      await result.current.addRecordTableLookupColumn({
+      await result.current.addRecordTableRelationColumn({
         relationFieldMetadataItemId: 'company-field',
         relationTargetFieldMetadataId: 'industry-field',
       });
