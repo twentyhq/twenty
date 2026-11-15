@@ -23,7 +23,10 @@ export const getRecordFieldColumnDisplay = ({
   return {
     label:
       recordField.settings?.label ??
-      formatLookupColumnLabel(fieldMetadataItem, lookupTargetFieldMetadataItem),
+      formatLookupColumnLabel({
+        fieldMetadataItem,
+        lookupTargetFieldMetadataItem,
+      }),
     icon: lookupTargetFieldMetadataItem?.icon ?? fieldMetadataItem.icon,
     description:
       lookupTargetFieldMetadataItem?.description ??

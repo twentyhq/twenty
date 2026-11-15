@@ -62,7 +62,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={columnDisplay?.label ?? ''}
+        label={columnDisplay?.label}
         description={columnDisplay?.description}
       />
     </StyledTitle>

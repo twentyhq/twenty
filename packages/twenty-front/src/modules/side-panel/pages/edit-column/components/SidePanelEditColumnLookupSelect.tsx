@@ -35,7 +35,10 @@ export const SidePanelEditColumnLookupSelect = ({
     .toSorted((a, b) => a.label.localeCompare(b.label))
     .map((field) => ({
       value: field.id,
-      label: formatLookupColumnLabel(fieldMetadataItem, field),
+      label: formatLookupColumnLabel({
+        fieldMetadataItem,
+        lookupTargetFieldMetadataItem: field,
+      }),
       Icon: getIcon(field.icon),
     }));
 
