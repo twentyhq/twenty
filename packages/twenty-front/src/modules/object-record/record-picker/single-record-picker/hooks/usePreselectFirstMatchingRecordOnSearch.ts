@@ -12,30 +12,24 @@ export const usePreselectFirstMatchingRecordOnSearch = ({
   firstMatchingRecordId: string | undefined;
   preselect: (recordId: string) => void;
 }) => {
-  const [
-    searchFilterWithPreselectedMatch,
-    setSearchFilterWithPreselectedMatch,
-  ] = useState<string | undefined>(undefined);
+  const [prevSearchFilter, setPrevSearchFilter] = useState(searchFilter);
+  const [hasPreselected, setHasPreselected] = useState(false);
+
+  if (searchFilter !== prevSearchFilter) {
+    setPrevSearchFilter(searchFilter);
+    setHasPreselected(false);
+  }
 
   useEffect(() => {
-    if (!isNonEmptyString(searchFilter)) {
-      setSearchFilterWithPreselectedMatch(undefined);
+    if (!isNonEmptyString(searchFilter) || !isDefined(firstMatchingRecordId)) {
       return;
     }
 
-    if (
-      !isDefined(firstMatchingRecordId) ||
-      searchFilterWithPreselectedMatch === searchFilter
-    ) {
+    if (hasPreselected) {
       return;
     }
 
-    setSearchFilterWithPreselectedMatch(searchFilter);
+    setHasPreselected(true);
     preselect(firstMatchingRecordId);
-  }, [
-    searchFilter,
-    firstMatchingRecordId,
-    preselect,
-    searchFilterWithPreselectedMatch,
-  ]);
+  }, [searchFilter, firstMatchingRecordId, hasPreselected, preselect]);
 };

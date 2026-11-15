@@ -78,4 +78,24 @@ describe('usePreselectFirstMatchingRecordOnSearch', () => {
 
     expect(preselect).toHaveBeenCalledTimes(2);
   });
+
+  it('should preselect again when returning to a previous search after a search with no matches', () => {
+    const { preselect, rerender } = renderPreselectHook({
+      searchFilter: 'jo',
+      firstMatchingRecordId: 'record-1',
+    });
+
+    expect(preselect).toHaveBeenCalledTimes(1);
+    expect(preselect).toHaveBeenLastCalledWith('record-1');
+
+    rerender({ searchFilter: 'xyz', firstMatchingRecordId: undefined });
+
+    expect(preselect).toHaveBeenCalledTimes(1);
+
+    rerender({ searchFilter: 'jo', firstMatchingRecordId: 'record-1' });
+
+    expect(preselect).toHaveBeenCalledTimes(2);
+    expect(preselect).toHaveBeenLastCalledWith('record-1');
+  });
 });
+
