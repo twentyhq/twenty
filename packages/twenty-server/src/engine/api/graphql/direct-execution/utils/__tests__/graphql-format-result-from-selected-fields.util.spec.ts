@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -59,7 +60,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
   it('returns the type name under an aliased __typename', () => {
     const result = graphQLFormatResultFromSelectedFields(
       { id: 'record-id' },
-      { id: {}, kind: { __fieldName: '__typename' } },
+      { id: {}, kind: { [SELECTION_FIELD_NAME]: '__typename' } },
       'person',
       {
         flatObjectMetadataMaps,
