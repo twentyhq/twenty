@@ -10,6 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
@@ -194,6 +195,37 @@ describe('buildViewFiltersAndSortsUpsertFlatOperations', () => {
         positionInViewFilterGroup: null,
       }),
     ]);
+  });
+
+  it('does not update a root filter group sent without parent or position', () => {
+    const { viewFilterGroup } = buildViewFiltersAndSortsUpsertFlatOperations({
+      ...baseArgs,
+      flatViewFilterGroupMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: {
+          id: GROUP_ID,
+          universalIdentifier: GROUP_ID,
+          workspaceId: 'workspace-id',
+          applicationId: 'application-id',
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          viewId: VIEW_ID,
+          viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          parentViewFilterGroupId: null,
+          parentViewFilterGroupUniversalIdentifier: null,
+          positionInViewFilterGroup: null,
+          createdAt: NOW,
+          updatedAt: NOW,
+          deletedAt: null,
+        },
+        flatEntityMaps:
+          createEmptyFlatEntityMaps() as FlatEntityMaps<FlatViewFilterGroup>,
+      }),
+      viewFilterGroups: [
+        { id: GROUP_ID, logicalOperator: ViewFilterGroupLogicalOperator.AND },
+      ],
+    });
+
+    expect(viewFilterGroup.flatEntityToUpdate).toEqual([]);
   });
 
   it('leaves the children of an omitted kind untouched', () => {
