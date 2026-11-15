@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  FileFolder,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -53,8 +57,9 @@ const attachment = getFlatObjectMetadataMock({
 
 describe('CommonResultGettersService', () => {
   it('signs files of records loaded under an aliased relation', async () => {
+    const signFileByIdUrl = jest.fn().mockResolvedValue('signed-url');
     const service = new CommonResultGettersService({
-      signFileByIdUrl: jest.fn().mockResolvedValue('signed-url'),
+      signFileByIdUrl,
     } as unknown as FileUrlService);
 
     const processedRecord = await service.processRecord(
@@ -86,5 +91,11 @@ describe('CommonResultGettersService', () => {
         ],
       },
     ]);
+    expect(signFileByIdUrl).toHaveBeenCalledTimes(1);
+    expect(signFileByIdUrl).toHaveBeenCalledWith({
+      fileId: 'file-1',
+      workspaceId: 'workspace-id',
+      fileFolder: FileFolder.FilesField,
+    });
   });
 });
