@@ -9,6 +9,7 @@ import {
   type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
+import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -27,7 +28,7 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   computeReferences?: boolean;
   isRootLevel?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-  additionalSelections?: string[];
+  readableRelationsWithArguments?: ReadableRelationWithArguments[];
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -37,7 +38,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
-  additionalSelections = [],
+  readableRelationsWithArguments = [],
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -157,8 +158,21 @@ export const mapObjectMetadataToGraphQLQuery = ({
         objectPermissionsByObjectMetadataId,
       });
     })
+    .concat(
+      readableRelationsWithArguments.map(
+        ({ responseKey, relationWithArguments, relationFieldMetadataItem }) =>
+          mapFieldMetadataToGraphQLQuery({
+            objectMetadataItems,
+            gqlField: relationFieldMetadataItem.name,
+            fieldMetadata: relationFieldMetadataItem,
+            relationRecordGqlFields: relationWithArguments.recordGqlFields,
+            relationWithArgumentsResponseKey: responseKey,
+            computeReferences,
+            objectPermissionsByObjectMetadataId,
+          }),
+      ),
+    )
     .filter((field) => field !== '')
-    .concat(additionalSelections)
     .join('\n');
 
   return doNotTranslate(`{
