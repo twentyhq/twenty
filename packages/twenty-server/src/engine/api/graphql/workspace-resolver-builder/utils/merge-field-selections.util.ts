@@ -22,8 +22,7 @@ const throwConflictingArguments = (responseKey: string): never => {
   );
 };
 
-// Merged by record slot (field name and response key): one record value backs every
-// response path, so a reused response key with other arguments cannot be served.
+// One record value backs every response path of a slot, so differing arguments cannot be served
 const mergeSelections = (
   selections: ResolverSelectedFields[],
 ): ResolverSelectedFields => {
