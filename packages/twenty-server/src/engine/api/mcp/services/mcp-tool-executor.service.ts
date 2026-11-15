@@ -129,20 +129,18 @@ export class McpToolExecutorService {
     const tools = await Promise.all(
       Object.entries(toolSet)
         .filter(([, tool]) => isDefined(tool.inputSchema))
-        .map(
-          async ([name, tool]): Promise<McpListedTool> => ({
-            name,
-            // AI SDK v7 also allows a description resolver, which MCP clients cannot call
-            description: isString(tool.description)
-              ? tool.description
-              : undefined,
-            inputSchema: {
-              ...(await asSchema(tool.inputSchema).jsonSchema),
-              type: 'object',
-            },
-            annotations: tool.annotations,
-          }),
-        ),
+        .map(async ([name, tool]): Promise<McpListedTool> => ({
+          name,
+          // AI SDK v7 also allows a description resolver, which MCP clients cannot call
+          description: isString(tool.description)
+            ? tool.description
+            : undefined,
+          inputSchema: {
+            ...(await asSchema(tool.inputSchema).jsonSchema),
+            type: 'object',
+          },
+          annotations: tool.annotations,
+        })),
     );
 
     return { tools };
