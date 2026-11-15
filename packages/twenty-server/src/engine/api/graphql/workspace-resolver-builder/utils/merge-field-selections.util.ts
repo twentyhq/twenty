@@ -5,7 +5,6 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { computeRelationRecordKey } from 'src/engine/api/common/utils/compute-relation-record-key.util';
 import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
 import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { SELECTION_RESPONSE_KEY } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-response-key.constant';
@@ -22,7 +21,16 @@ const throwConflictingArguments = (responseKey: string): never => {
   );
 };
 
-// One record value backs every response path of a slot, so differing arguments cannot be served
+// GraphQL names cannot contain ':', so one response key can name different fields of a merged level
+const computeSlotKey = ({
+  fieldName,
+  responseKey,
+}: {
+  fieldName: string;
+  responseKey: string;
+}) => (responseKey === fieldName ? fieldName : `${fieldName}:${responseKey}`);
+
+// One relation value backs every response path of a slot, so differing arguments cannot be served
 const mergeSelections = (
   selections: ResolverSelectedFields[],
 ): ResolverSelectedFields => {
@@ -34,7 +42,7 @@ const mergeSelections = (
       fieldName,
       selection: childSelection,
     } of getSelectionEntries(selection)) {
-      const slotKey = computeRelationRecordKey({ fieldName, responseKey });
+      const slotKey = computeSlotKey({ fieldName, responseKey });
       const existingSelection: ResolverSelectedFields | undefined =
         merged[slotKey];
 

@@ -1,8 +1,9 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -62,12 +63,14 @@ const resolveTimelineActivityObjectColumnNames = ({
 
 export const addTimelineActivityObjectColumnsToSelect = ({
   select,
+  relationSelections,
   flatObjectMetadata,
   recordReadRestrictions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
+  relationSelections: CommonRelationSelections;
   flatObjectMetadata: FlatObjectMetadata;
   recordReadRestrictions: Pick<
     RecordReadRestrictions,
@@ -96,23 +99,19 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     flatObjectMetadata,
   );
 
-  for (const {
-    recordKey,
-    fieldName,
-    value: relationSelect,
-  } of getRecordFieldEntries(select)) {
-    const fieldId = fieldIdByName[fieldName];
-
-    if (!isDefined(fieldId) || typeof relationSelect !== 'object') {
-      continue;
-    }
-
+  for (const { responseKey, relationSelection } of getRelationSelectionEntries(
+    relationSelections,
+  )) {
+    const relationSelect = select[responseKey];
     const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldId,
+      flatEntityId: fieldIdByName[relationSelection.fieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     })?.relationTargetObjectMetadataId;
 
-    if (!isDefined(relationTargetObjectMetadataId)) {
+    if (
+      !isDefined(relationTargetObjectMetadataId) ||
+      typeof relationSelect !== 'object'
+    ) {
       continue;
     }
 
@@ -125,8 +124,9 @@ export const addTimelineActivityObjectColumnsToSelect = ({
       continue;
     }
 
-    extendedSelect[recordKey] = addTimelineActivityObjectColumnsToSelect({
+    extendedSelect[responseKey] = addTimelineActivityObjectColumnsToSelect({
       select: relationSelect,
+      relationSelections: relationSelection.relationSelections,
       flatObjectMetadata: targetFlatObjectMetadata,
       recordReadRestrictions,
       flatObjectMetadataMaps,

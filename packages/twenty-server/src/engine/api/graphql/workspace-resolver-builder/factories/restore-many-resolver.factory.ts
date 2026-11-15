@@ -37,7 +37,7 @@ export class RestoreManyResolverFactory implements WorkspaceResolverBuilderFacto
       });
 
       try {
-        const { results: records } =
+        const { results: records, args: processedArgs } =
           await this.commonRestoreManyQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -53,6 +53,8 @@ export class RestoreManyResolverFactory implements WorkspaceResolverBuilderFacto
         return records.map((record: ObjectRecord) =>
           typeORMObjectRecordsParser.processRecord({
             objectRecord: record,
+            relationSelections:
+              processedArgs.selectedFieldsResult.relationSelections,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
             take: 1,
             totalCount: 1,
