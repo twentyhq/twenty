@@ -1,3 +1,4 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldsEditableInMultiEditForm } from '@/object-record/record-update-multiple/utils/getFieldsEditableInMultiEditForm';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -35,7 +36,7 @@ const createMockObjectMetadataItem = ({
     updatableFields: fields.filter((field) =>
       updatableFieldIds.includes(field.id),
     ),
-  }) as any;
+  }) as EnrichedObjectMetadataItem;
 
 describe('getFieldsEditableInMultiEditForm', () => {
   it('should only return fields the member can both read and update', () => {
