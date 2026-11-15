@@ -16,6 +16,8 @@
     // version (skew protection). Cloudflare's edge cache still absorbs hot
     // paths, so this isn't a 5× Worker invocation tax in practice.
     "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none",
   },
   // Per-version preview URLs are how skew protection routes a stale request
   // to the old deployment: `<version>-<worker>.<account>.workers.dev`.

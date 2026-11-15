@@ -11103,9 +11103,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/env@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/env@npm:16.4.6"
+  checksum: 10c0/250195b2e55869e2dd3178e0445e8933f6a0919dd305eb4e64d68e55e426bc56b0612eb91a602d4d7bc15e8aedcc31dd93b9993d7d790bf3ad5f89f61fbebe97
+  languageName: node
+  linkType: hard
+
 "@next/swc-darwin-arm64@npm:16.4.1":
   version: 16.4.1
   resolution: "@next/swc-darwin-arm64@npm:16.4.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@next/swc-darwin-arm64@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-darwin-arm64@npm:16.4.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -11117,9 +11131,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-darwin-x64@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-darwin-x64@npm:16.4.6"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@next/swc-linux-arm64-gnu@npm:16.4.1":
   version: 16.4.1
   resolution: "@next/swc-linux-arm64-gnu@npm:16.4.1"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@next/swc-linux-arm64-gnu@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-linux-arm64-gnu@npm:16.4.6"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -11131,9 +11159,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-linux-arm64-musl@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-linux-arm64-musl@npm:16.4.6"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@next/swc-linux-x64-gnu@npm:16.4.1":
   version: 16.4.1
   resolution: "@next/swc-linux-x64-gnu@npm:16.4.1"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@next/swc-linux-x64-gnu@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-linux-x64-gnu@npm:16.4.6"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -11145,6 +11187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-linux-x64-musl@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-linux-x64-musl@npm:16.4.6"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@next/swc-win32-arm64-msvc@npm:16.4.1":
   version: 16.4.1
   resolution: "@next/swc-win32-arm64-msvc@npm:16.4.1"
@@ -11152,9 +11201,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-win32-arm64-msvc@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-win32-arm64-msvc@npm:16.4.6"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@next/swc-win32-x64-msvc@npm:16.4.1":
   version: 16.4.1
   resolution: "@next/swc-win32-x64-msvc@npm:16.4.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@next/swc-win32-x64-msvc@npm:16.4.6":
+  version: 16.4.6
+  resolution: "@next/swc-win32-x64-msvc@npm:16.4.6"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -11388,33 +11451,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@node-minify/core@npm:^9.0.2":
-  version: 9.0.2
-  resolution: "@node-minify/core@npm:9.0.2"
+"@node-minify/core@npm:^10.5.0":
+  version: 10.5.0
+  resolution: "@node-minify/core@npm:10.5.0"
   dependencies:
-    "@node-minify/utils": "npm:9.0.1"
-    glob: "npm:10.3.3"
-    mkdirp: "npm:3.0.1"
-  checksum: 10c0/52b321fa6593ca3767927b4259f6df58d71805cd120de55fdd0b0c38387ca7c002dc68cb830ff7659ebcb3480352b2ac54585f7704b87e0e2f91ad7f85873873
+    "@node-minify/utils": "npm:10.5.0"
+  checksum: 10c0/94633f89e1dc06e412a32e7a2a8d74cd372f8c5605bb4c7258df98317452260434818213060b9d9a384179eb72f017659f986ad2796afafd68ca7c4d36914e44
   languageName: node
   linkType: hard
 
-"@node-minify/terser@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "@node-minify/terser@npm:9.0.1"
+"@node-minify/terser@npm:^10.5.0":
+  version: 10.5.0
+  resolution: "@node-minify/terser@npm:10.5.0"
   dependencies:
-    "@node-minify/utils": "npm:9.0.1"
-    terser: "npm:5.36.0"
-  checksum: 10c0/c467a11e0689ee6940e9aa6358bed54a5a7c8dea20773a82f55aa22e7144e699839563e9b2e327ee73a5c5e7a89c3033b10716e4bb2722829d965738b8aac8fd
+    "@node-minify/utils": "npm:10.5.0"
+    terser: "npm:5.46.0"
+  checksum: 10c0/d87419f032d806a920ba6b79b7cd9b6c52ec89de989fcc5427a28eeb537b17f8ada3e040363b65208c42cba1c16b5cec8893e33a41db24107273720f4200eb33
   languageName: node
   linkType: hard
 
-"@node-minify/utils@npm:9.0.1":
-  version: 9.0.1
-  resolution: "@node-minify/utils@npm:9.0.1"
+"@node-minify/utils@npm:10.5.0":
+  version: 10.5.0
+  resolution: "@node-minify/utils@npm:10.5.0"
   dependencies:
-    gzip-size: "npm:6.0.0"
-  checksum: 10c0/73cd03724c68316b8baa6dbabed44cad94f294295940ec68d61a46167a3fd2d4d616fdd7d3ff94afa143a47fc96b2b6f14cf5a656b9a417916ae5a815f3eff22
+    fast-glob: "npm:^3.3.3"
+    gzip-size: "npm:7.0.0"
+  checksum: 10c0/faa9536e241b36c9978ffc8573fc42a1339d6b06885852180b48d9eb854546dde9dd5dc19f313b795a7d6f0adcb275952bfdedb02138c4d77d64b2ae4a9bb990
   languageName: node
   linkType: hard
 
@@ -12513,9 +12575,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opennextjs/aws@npm:4.1.12":
-  version: 4.1.12
-  resolution: "@opennextjs/aws@npm:4.1.12"
+"@opennextjs/aws@npm:4.1.16":
+  version: 4.1.16
+  resolution: "@opennextjs/aws@npm:4.1.16"
   dependencies:
     "@ast-grep/napi": "npm:^0.45.3"
     "@aws-sdk/client-cloudfront": "npm:3.984.0"
@@ -12523,8 +12585,8 @@ __metadata:
     "@aws-sdk/client-lambda": "npm:3.984.0"
     "@aws-sdk/client-s3": "npm:3.984.0"
     "@aws-sdk/client-sqs": "npm:3.984.0"
-    "@node-minify/core": "npm:^9.0.2"
-    "@node-minify/terser": "npm:^9.0.1"
+    "@node-minify/core": "npm:^10.5.0"
+    "@node-minify/terser": "npm:^10.5.0"
     "@tsconfig/node18": "npm:^18.2.7"
     aws4fetch: "npm:^1.0.20"
     chalk: "npm:^5.6.2"
@@ -12535,29 +12597,34 @@ __metadata:
     urlpattern-polyfill: "npm:^10.1.0"
     yaml: "npm:^2.9.1"
   peerDependencies:
-    next: ">=15.5.28 <16 || >=16.4.1"
+    diff: ^9.0.0
+    next: ">=15.5.29 <16 || >=16.4.5"
+  peerDependenciesMeta:
+    diff:
+      optional: true
   bin:
     open-next: dist/index.js
-  checksum: 10c0/772d81b5ff2136f54f59004a416c231168b6f8c3cc050b9a5debed9ebb295f9c5f7c8488a0decf632a6eed6044307ea6569b6ccc71fb83511e1c5ceef05e084a
+  checksum: 10c0/a3de040560b2dc5d52a0e148790f5d4109808eaaaadbf9eb034a2c58b8bacc1742895ef6e659f2105ac39a3b1871e4cb0033fa5ecc1105bf59399e63df0bcd3a
   languageName: node
   linkType: hard
 
-"@opennextjs/cloudflare@npm:^1.20.13":
-  version: 1.20.13
-  resolution: "@opennextjs/cloudflare@npm:1.20.13"
+"@opennextjs/cloudflare@npm:^1.20.17":
+  version: 1.20.17
+  resolution: "@opennextjs/cloudflare@npm:1.20.17"
   dependencies:
     "@ast-grep/napi": "npm:^0.45.3"
     "@dotenvx/dotenvx": "npm:^2.33.0"
-    "@opennextjs/aws": "npm:4.1.12"
+    "@opennextjs/aws": "npm:4.1.16"
     ci-info: "npm:^4.2.0"
     cloudflare: "npm:^4.4.1"
     comment-json: "npm:^4.5.1"
     enquirer: "npm:^2.4.1"
     glob: "npm:^13.0.6"
+    resolve.exports: "npm:^2.0.4"
     ts-tqdm: "npm:^0.8.6"
     yargs: "npm:^18.2.0"
   peerDependencies:
-    next: ">=15.5.28 <16 || >=16.4.1"
+    next: ">=15.5.29 <16 || >=16.4.5"
     rclone.js: ^0.6.6
     wrangler: ^4.148.0
   peerDependenciesMeta:
@@ -12565,7 +12632,7 @@ __metadata:
       optional: true
   bin:
     opennextjs-cloudflare: dist/cli/index.js
-  checksum: 10c0/73e78e9acbda7744825cc32f4b4895eae6d76a7b27cdef561c394bdb69a41b68ee3a2a781c27600b2bf17a0992a105c5cded852c029a94505658818298eaeb9a
+  checksum: 10c0/0498fbaafe81f9125ee9c44675171ec871f801f347cd0d839aa76ba37d58a5e27d5b9f082d4ec751d3b12315433d7589626def71eef81040123f0a5544131222
   languageName: node
   linkType: hard
 
@@ -23118,15 +23185,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.8.2":
-  version: 8.19.0
-  resolution: "acorn@npm:8.19.0"
-  bin:
-    acorn: bin/acorn
-  checksum: 10c0/21007e0ca638dd13d44a0ad26856b7a885cc6c4319cd2bc71694bc8ec3f0606c23ecd12b157e167f909d9d2b2d68d5b50fe3f54211b1aab7c3451a7c801fe62e
-  languageName: node
-  linkType: hard
-
 "address@npm:^2.0.1":
   version: 2.0.3
   resolution: "address@npm:2.0.3"
@@ -30276,7 +30334,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.5.0, glob@npm:^10.0.0, glob@npm:^10.3.10, glob@npm:^10.3.7, glob@npm:^10.5.0":
+"glob@npm:^10.0.0, glob@npm:^10.3.10, glob@npm:^10.3.7, glob@npm:^10.5.0":
   version: 10.5.0
   resolution: "glob@npm:10.5.0"
   dependencies:
@@ -30839,12 +30897,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gzip-size@npm:6.0.0":
-  version: 6.0.0
-  resolution: "gzip-size@npm:6.0.0"
+"gzip-size@npm:7.0.0":
+  version: 7.0.0
+  resolution: "gzip-size@npm:7.0.0"
   dependencies:
     duplexer: "npm:^0.1.2"
-  checksum: 10c0/4ccb924626c82125897a997d1c84f2377846a6ef57fbee38f7c0e6b41387fba4d00422274440747b58008b5d60114bac2349c2908e9aba55188345281af40a3f
+  checksum: 10c0/0bf63084d5fea0880f3607ecd361d4663aab26b9cb0d3e97ba77373a0246c8f8de57d8613ac4e57e1e6c28522dcee6f8682aae55c275b9262b66d2ffd698f72b
   languageName: node
   linkType: hard
 
@@ -36805,15 +36863,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:3.0.1, mkdirp@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mkdirp@npm:3.0.1"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
-  languageName: node
-  linkType: hard
-
 "mkdirp@npm:^0.5.6":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
@@ -36822,6 +36871,15 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 10c0/e2e2be789218807b58abced04e7b49851d9e46e88a2f9539242cc8a92c9b5c3a0b9bab360bd3014e02a140fc4fbc58e31176c408b493f8a2a6f4986bd7527b01
+  languageName: node
+  linkType: hard
+
+"mkdirp@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mkdirp@npm:3.0.1"
+  bin:
+    mkdirp: dist/cjs/src/bin.js
+  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
   languageName: node
   linkType: hard
 
@@ -37294,7 +37352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:16.4.1, next@npm:^16.4.1":
+"next@npm:16.4.1":
   version: 16.4.1
   resolution: "next@npm:16.4.1"
   dependencies:
@@ -37351,6 +37409,66 @@ __metadata:
   bin:
     next: dist/bin/next
   checksum: 10c0/9ad2634e8617c087296f33440b30efd4c7a62e1911bdf64d873160c97abbfd52b7540d635e6b517aaa9af153396c9ab61f2cf4425ed0a4a197dcbb566e5f1a87
+  languageName: node
+  linkType: hard
+
+"next@npm:^16.4.6":
+  version: 16.4.6
+  resolution: "next@npm:16.4.6"
+  dependencies:
+    "@next/env": "npm:16.4.6"
+    "@next/swc-darwin-arm64": "npm:16.4.6"
+    "@next/swc-darwin-x64": "npm:16.4.6"
+    "@next/swc-linux-arm64-gnu": "npm:16.4.6"
+    "@next/swc-linux-arm64-musl": "npm:16.4.6"
+    "@next/swc-linux-x64-gnu": "npm:16.4.6"
+    "@next/swc-linux-x64-musl": "npm:16.4.6"
+    "@next/swc-win32-arm64-msvc": "npm:16.4.6"
+    "@next/swc-win32-x64-msvc": "npm:16.4.6"
+    "@swc/helpers": "npm:0.5.23"
+    baseline-browser-mapping: "npm:^2.9.19"
+    caniuse-lite: "npm:^1.0.30001579"
+    postcss: "npm:8.5.23"
+    sharp: "npm:^0.35.5"
+    styled-jsx: "npm:5.1.6"
+  peerDependencies:
+    "@opentelemetry/api": ^1.1.0
+    "@playwright/test": ^1.51.1
+    babel-plugin-react-compiler: "*"
+    react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+    react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+    sass: ^1.3.0
+  dependenciesMeta:
+    "@next/swc-darwin-arm64":
+      optional: true
+    "@next/swc-darwin-x64":
+      optional: true
+    "@next/swc-linux-arm64-gnu":
+      optional: true
+    "@next/swc-linux-arm64-musl":
+      optional: true
+    "@next/swc-linux-x64-gnu":
+      optional: true
+    "@next/swc-linux-x64-musl":
+      optional: true
+    "@next/swc-win32-arm64-msvc":
+      optional: true
+    "@next/swc-win32-x64-msvc":
+      optional: true
+    sharp:
+      optional: true
+  peerDependenciesMeta:
+    "@opentelemetry/api":
+      optional: true
+    "@playwright/test":
+      optional: true
+    babel-plugin-react-compiler:
+      optional: true
+    sass:
+      optional: true
+  bin:
+    next: dist/bin/next
+  checksum: 10c0/c387dabdbe5f796afd67fe1cafb9c29ce5e1952335c5df730b04c3b6e2ffaba0837e36ca2b075a6d33bccd6bfb39cf4dc3f35f7fd61dbdfd0b365265fab742c4
   languageName: node
   linkType: hard
 
@@ -42095,6 +42213,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"resolve.exports@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "resolve.exports@npm:2.0.4"
+  checksum: 10c0/64ed3fceae664125f84900518a093f084c7b8c47c1dc915bc1e0f0505e9ea08f401423624d720d94d3b43605f1cde957160bf59c0a918af894507651b773d066
+  languageName: node
+  linkType: hard
+
 "resolve@npm:^1.14.2, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.8, resolve@npm:~1.22.1":
   version: 1.22.10
   resolution: "resolve@npm:1.22.10"
@@ -44977,17 +45102,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:5.36.0":
-  version: 5.36.0
-  resolution: "terser@npm:5.36.0"
+"terser@npm:5.46.0":
+  version: 5.46.0
+  resolution: "terser@npm:5.46.0"
   dependencies:
     "@jridgewell/source-map": "npm:^0.3.3"
-    acorn: "npm:^8.8.2"
+    acorn: "npm:^8.15.0"
     commander: "npm:^2.20.0"
     source-map-support: "npm:~0.5.20"
   bin:
     terser: bin/terser
-  checksum: 10c0/f4ed2bead19f64789ddcfb85b7cef78f3942f967b8890c54f57d1e35bc7d547d551c6a4c32210bce6ba45b1c738314bbfac6acbc6c762a45cd171777d0c120d9
+  checksum: 10c0/93ad468f13187c4f66b609bbfc00a6aee752007779ca3157f2c1ee063697815748d6010fd449a16c30be33213748431d5f54cc0224ba6a3fbbf5acd3582a4356
   languageName: node
   linkType: hard
 
@@ -46501,7 +46626,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^6.7.1"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
-    "@opennextjs/cloudflare": "npm:^1.20.13"
+    "@opennextjs/cloudflare": "npm:^1.20.17"
     "@tabler/icons-react": "npm:^3.41.1"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
@@ -46516,7 +46641,7 @@ __metadata:
     babel-plugin-react-compiler: "npm:1.0.0"
     jest-environment-jsdom: "npm:30.0.0-beta.3"
     lodash.isempty: "npm:^4.4.0"
-    next: "npm:^16.4.1"
+    next: "npm:^16.4.6"
     next-with-linaria: "npm:^1.3.0"
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
