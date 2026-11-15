@@ -1,5 +1,11 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -11,6 +17,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export type FieldMapsForObject = {
   fieldIdByName: Record<string, string>;
   fieldIdByJoinColumnName: Record<string, string>;
+  fieldIdByCompositeColumnName: Record<string, string>;
 };
 
 // flat snapshots are immutable per metadata version, so derived maps can be memoized by identity
@@ -35,6 +42,8 @@ export const buildFieldMapsFromFlatObjectMetadata = <
   // Callers look up client response keys, which must not resolve to Object.prototype members
   const fieldIdByName: Record<string, string> = Object.create(null);
   const fieldIdByJoinColumnName: Record<string, string> = Object.create(null);
+  const fieldIdByCompositeColumnName: Record<string, string> =
+    Object.create(null);
 
   const objectFields = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
@@ -55,11 +64,21 @@ export const buildFieldMapsFromFlatObjectMetadata = <
 
       fieldIdByJoinColumnName[joinColumnName] = field.id;
     }
+
+    if (isCompositeFieldMetadataType(field.type)) {
+      for (const compositeProperty of compositeTypeDefinitions.get(field.type)
+        ?.properties ?? []) {
+        fieldIdByCompositeColumnName[
+          computeCompositeColumnName(field.name, compositeProperty)
+        ] = field.id;
+      }
+    }
   }
 
   const fieldMaps = {
     fieldIdByName,
     fieldIdByJoinColumnName,
+    fieldIdByCompositeColumnName,
   };
 
   const cacheForFieldMaps =

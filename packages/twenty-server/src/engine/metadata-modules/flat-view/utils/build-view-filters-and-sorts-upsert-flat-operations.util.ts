@@ -278,15 +278,29 @@ const computeViewFilterOperations = ({
         deletedAt: null,
       });
     } else {
+      // Undefined keeps the stored value, null clears it
+      const viewFilterGroupId =
+        inputFilter.viewFilterGroupId === undefined
+          ? existingFilter.viewFilterGroupId
+          : inputFilter.viewFilterGroupId;
+      const positionInViewFilterGroup =
+        inputFilter.positionInViewFilterGroup === undefined
+          ? existingFilter.positionInViewFilterGroup
+          : inputFilter.positionInViewFilterGroup;
+      const subFieldName =
+        inputFilter.subFieldName === undefined
+          ? existingFilter.subFieldName
+          : inputFilter.subFieldName;
+
       const hasChanged =
         existingFilter.fieldMetadataId !== inputFilter.fieldMetadataId ||
         existingFilter.operand !== inputFilter.operand ||
         JSON.stringify(existingFilter.value) !==
           JSON.stringify(inputFilter.value) ||
-        existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
+        existingFilter.viewFilterGroupId !== viewFilterGroupId ||
         existingFilter.positionInViewFilterGroup !==
-          inputFilter.positionInViewFilterGroup ||
-        existingFilter.subFieldName !== inputFilter.subFieldName ||
+          positionInViewFilterGroup ||
+        existingFilter.subFieldName !== subFieldName ||
         existingFilter.relationTargetFieldMetadataId !==
           (inputFilter.relationTargetFieldMetadataId ?? null);
 
@@ -299,7 +313,7 @@ const computeViewFilterOperations = ({
           metadataName: 'viewFilter',
           foreignKeyValues: {
             fieldMetadataId: inputFilter.fieldMetadataId,
-            viewFilterGroupId: inputFilter.viewFilterGroupId,
+            viewFilterGroupId,
             relationTargetFieldMetadataId:
               inputFilter.relationTargetFieldMetadataId,
           },
@@ -315,20 +329,10 @@ const computeViewFilterOperations = ({
           fieldMetadataUniversalIdentifier,
           operand: inputFilter.operand ?? existingFilter.operand,
           value: inputFilter.value,
-          // Undefined keeps the stored value, null clears it
-          viewFilterGroupId:
-            inputFilter.viewFilterGroupId === undefined
-              ? existingFilter.viewFilterGroupId
-              : inputFilter.viewFilterGroupId,
+          viewFilterGroupId,
           viewFilterGroupUniversalIdentifier,
-          positionInViewFilterGroup:
-            inputFilter.positionInViewFilterGroup === undefined
-              ? existingFilter.positionInViewFilterGroup
-              : inputFilter.positionInViewFilterGroup,
-          subFieldName:
-            inputFilter.subFieldName === undefined
-              ? existingFilter.subFieldName
-              : inputFilter.subFieldName,
+          positionInViewFilterGroup,
+          subFieldName,
           relationTargetFieldMetadataId:
             inputFilter.relationTargetFieldMetadataId ?? null,
           relationTargetFieldMetadataUniversalIdentifier,
