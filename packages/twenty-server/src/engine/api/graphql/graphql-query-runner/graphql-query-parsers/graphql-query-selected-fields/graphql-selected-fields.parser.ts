@@ -240,7 +240,6 @@ export class GraphqlQuerySelectedFieldsParser {
     }
   }
 
-  // A relation's rows sit on the record under its response key, next to the object's own columns
   private assertRelationResponseKeyIsFreeOrThrow({
     responseKey,
     fieldName,
