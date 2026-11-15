@@ -950,6 +950,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'API key role assignments are reported as excluded, only agent roles are exported',
       webhookUniversalIdentifier:
         'webhook role assignments are reported as excluded, only agent roles are exported',
+      isAdditional:
+        'only member role assignments can be additional, and those are reported as excluded',
     },
   },
   {

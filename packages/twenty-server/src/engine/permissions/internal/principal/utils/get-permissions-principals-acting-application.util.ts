@@ -4,6 +4,7 @@ import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsPrincipalsWithRolesContext,
 } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 
 // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
@@ -26,7 +27,9 @@ export const getPermissionsPrincipalsActingApplication = ({
   if (
     applicationPrincipal.type === 'customApplication' ||
     (isPermissionMainPrincipalWorkspaceMember(mainPrincipal) &&
-      applicationPrincipal.roleId === mainPrincipal.roleId) ||
+      getPermissionsPrincipalsMainRoleIds({ mainPrincipal }).includes(
+        applicationPrincipal.roleId,
+      )) ||
     applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
     return undefined;

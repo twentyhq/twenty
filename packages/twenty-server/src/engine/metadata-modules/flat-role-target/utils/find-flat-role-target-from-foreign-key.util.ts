@@ -18,6 +18,8 @@ export const findFlatRoleTargetFromForeignKey = ({
   ).filter(isDefined);
 
   return allRoleTargets.find(
-    (roleTarget) => roleTarget[targetMetadataForeignKey] === targetId,
+    (roleTarget) =>
+      roleTarget[targetMetadataForeignKey] === targetId &&
+      !roleTarget.isAdditional,
   );
 };

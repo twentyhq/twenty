@@ -44,6 +44,7 @@ export class AccessGroupSyncService {
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
         'userWorkspaceRoleMap',
+        'userWorkspaceAdditionalRoleIdsMap',
         'flatWorkspaceMemberMaps',
       ],
     );

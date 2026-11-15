@@ -38,6 +38,7 @@ export class SettingPermissionsService {
     const {
       featureFlagsMap,
       userWorkspaceRoleMap,
+      userWorkspaceAdditionalRoleIdsMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
@@ -46,6 +47,7 @@ export class SettingPermissionsService {
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'featureFlagsMap',
       'userWorkspaceRoleMap',
+      'userWorkspaceAdditionalRoleIdsMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
@@ -77,6 +79,8 @@ export class SettingPermissionsService {
           principals: buildRolePermissionsPrincipals({
             workspaceId,
             roleId: flatRole.id,
+            additionalRoleIds:
+              userWorkspaceAdditionalRoleIdsMap[userWorkspaceId],
           }),
           rolesPermissions,
           flatObjectMetadataMaps,

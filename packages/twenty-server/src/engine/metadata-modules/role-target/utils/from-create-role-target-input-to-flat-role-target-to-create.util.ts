@@ -29,8 +29,13 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   flatRoleTargetsToDelete: FlatRoleTarget[];
 } => {
   const now = new Date();
-  const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
-    createRoleTargetInput;
+  const {
+    roleId,
+    targetId,
+    targetMetadataForeignKey,
+    universalIdentifier,
+    isAdditional = false,
+  } = createRoleTargetInput;
 
   const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
     {
@@ -61,6 +66,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     roleId,
     roleUniversalIdentifier,
     userWorkspaceId: null,
+    isAdditional,
     agentId: null,
     agentUniversalIdentifier,
     apiKeyId: null,
@@ -77,11 +83,14 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     [targetMetadataForeignKey]: targetId,
   };
 
-  const flatRoleTargetToDelete = findFlatRoleTargetFromForeignKey({
-    flatRoleTargetMaps,
-    targetMetadataForeignKey,
-    targetId,
-  });
+  // an additional role is added next to the assigned one, which only another assigned role replaces
+  const flatRoleTargetToDelete = isAdditional
+    ? undefined
+    : findFlatRoleTargetFromForeignKey({
+        flatRoleTargetMaps,
+        targetMetadataForeignKey,
+        targetId,
+      });
 
   return {
     flatRoleTargetToCreate: flatRoleTargetToCreate,

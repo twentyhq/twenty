@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_IS_ADDITIONAL_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-is-additional-to-role-target-upgrade-command-name.constant';
 import { ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-application-role-target-upgrade-command-name.constant';
 import { ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-webhook-id-to-role-target-upgrade-command-name.constant';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -23,10 +24,16 @@ import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webh
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('roleTarget')
-@Unique('IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE', [
-  'workspaceId',
-  'userWorkspaceId',
-])
+@Index(
+  'IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE',
+  ['workspaceId', 'userWorkspaceId'],
+  { unique: true, where: '"isAdditional" = false' },
+)
+@Index(
+  'IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE',
+  ['workspaceId', 'userWorkspaceId', 'roleId'],
+  { unique: true },
+)
 @Unique('IDX_ROLE_TARGET_UNIQUE_AGENT', ['workspaceId', 'agentId'])
 @Unique('IDX_ROLE_TARGET_UNIQUE_API_KEY', ['workspaceId', 'apiKeyId'])
 @Unique('IDX_ROLE_TARGET_UNIQUE_WEBHOOK', ['workspaceId', 'webhookId'])
@@ -59,6 +66,13 @@ export class RoleTargetEntity extends SyncableEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string | null;
+
+  // an additional role adds its grants to the role assigned to the user workspace
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_ADDITIONAL_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isAdditional: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   agentId: string | null;

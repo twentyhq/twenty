@@ -326,6 +326,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
       {
         ...owner,
         ...grantRoleTargetIdentity,
+        isAdditional: false,
         userWorkspaceId: null,
         agentUniversalIdentifier: null,
         apiKeyId: null,

@@ -7,6 +7,7 @@ import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/ac
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
+import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
@@ -23,7 +24,7 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   visitedObjectMetadataIds?: string[];
 }): AccessGroupWithoutCompactId[] => {
   const { principals, metadataMaps, flatObjectMetadata } = request;
-  const { roleId } = principals.mainPrincipal;
+  const mainRoleIds = getPermissionsPrincipalsMainRoleIds(principals);
   const nextVisitedObjectMetadataIds = [
     ...visitedObjectMetadataIds,
     flatObjectMetadata.id,
@@ -42,20 +43,22 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
 
       return [
         ...(areRecordIdsReadableByPrincipals(sourceRequest)
-          ? buildRoleAccessGroupsOrThrow({
-              roleId,
-              objectMetadataId: sourceFlatObjectMetadata.id,
-              objectRecordsPermissions:
-                metadataMaps.rolesPermissions[roleId]?.objects[
-                  sourceFlatObjectMetadata.id
-                ],
-              operationTypes: [request.operationType],
-              workspaceMembers,
-              flatFieldMetadataMaps,
-              isRelationHopEnabled: isRlsRelationHopEnabled(
-                metadataMaps.featureFlagsMap,
-              ),
-            })
+          ? mainRoleIds.flatMap((roleId) =>
+              buildRoleAccessGroupsOrThrow({
+                roleId,
+                objectMetadataId: sourceFlatObjectMetadata.id,
+                objectRecordsPermissions:
+                  metadataMaps.rolesPermissions[roleId]?.objects[
+                    sourceFlatObjectMetadata.id
+                  ],
+                operationTypes: [request.operationType],
+                workspaceMembers,
+                flatFieldMetadataMaps,
+                isRelationHopEnabled: isRlsRelationHopEnabled(
+                  metadataMaps.featureFlagsMap,
+                ),
+              }),
+            )
           : []),
         ...(isInherent &&
         !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
