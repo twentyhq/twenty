@@ -35,8 +35,7 @@ const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
     applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     type: FieldMetadataType.TEXT,
   }),
-  flatEntityMaps:
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+  flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
 // The view is created by the same migration, so only its universal identifier is known
@@ -95,7 +94,7 @@ const flatViewFilterMaps = [
 
 const flatViewSortMaps = addFlatEntityToFlatEntityMapsOrThrow({
   flatEntity: existingFlatViewSort,
-  flatEntityMaps: createEmptyFlatEntityMaps() as FlatEntityMaps<FlatViewSort>,
+  flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
 const baseArgs = {
@@ -172,8 +171,7 @@ describe('buildViewFiltersAndSortsUpsertFlatOperations', () => {
           viewFilterGroupUniversalIdentifier: GROUP_ID,
           positionInViewFilterGroup: 0,
         },
-        flatEntityMaps:
-          createEmptyFlatEntityMaps() as FlatEntityMaps<FlatViewFilter>,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
       }),
       viewFilters: [
         {
@@ -221,8 +219,7 @@ describe('buildViewFiltersAndSortsUpsertFlatOperations', () => {
           updatedAt: NOW,
           deletedAt: null,
         },
-        flatEntityMaps:
-          createEmptyFlatEntityMaps() as FlatEntityMaps<FlatViewFilterGroup>,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
       }),
       viewFilterGroups: [
         { id: GROUP_ID, logicalOperator: ViewFilterGroupLogicalOperator.AND },
