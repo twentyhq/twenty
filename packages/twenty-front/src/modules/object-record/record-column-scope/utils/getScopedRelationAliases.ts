@@ -3,6 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { getScopeViewPrefillViewFilters } from '@/object-record/record-column-scope/utils/getScopeViewPrefillViewFilters';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
@@ -96,6 +97,12 @@ export const getScopedRelationAliases = ({
         filter,
         orderBy,
         first: recordField.settings?.recordLimit ?? undefined,
+        prefillRecordFilters: isDefined(scopeView)
+          ? mapViewFiltersToFilters(
+              getScopeViewPrefillViewFilters(scopeView),
+              fieldMetadataItems,
+            )
+          : [],
       },
     ];
   });

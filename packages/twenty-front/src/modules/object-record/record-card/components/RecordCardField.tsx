@@ -126,7 +126,8 @@ export const RecordCardField = ({
         isDisplayModeFixHeight: true,
         triggerEvent: 'CLICK',
         anchorId,
-        scopedRelationAlias,
+        fieldValueKey: scopedRelationAlias?.alias,
+        prefillRecordFilters: scopedRelationAlias?.prefillRecordFilters,
         onMouseEnter: isAddedColumn ? undefined : onMouseEnter,
         onOpenEditMode: isAddedColumn ? () => undefined : undefined,
       }}

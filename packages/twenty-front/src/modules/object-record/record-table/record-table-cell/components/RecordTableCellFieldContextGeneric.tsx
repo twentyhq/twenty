@@ -151,7 +151,8 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
-        scopedRelationAlias,
+        fieldValueKey: scopedRelationAlias?.alias,
+        prefillRecordFilters: scopedRelationAlias?.prefillRecordFilters,
       }}
     >
       {children}
