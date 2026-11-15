@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { formatTime as formatCronTime } from '~/utils/format/formatTime';
@@ -86,7 +87,9 @@ export const getHoursDescription = (
 
     // Non-numeric minutes (*, */N, a range) cannot be formatted as a time;
     // the caller composes the minutes pattern description instead
-    if (formattedTimes.some((formattedTime) => formattedTime === '')) {
+    if (
+      formattedTimes.some((formattedTime) => !isNonEmptyString(formattedTime))
+    ) {
       return '';
     }
 
@@ -109,7 +112,7 @@ export const getHoursDescription = (
       appendUTC: true,
     });
 
-    if (formattedTime === '') {
+    if (!isNonEmptyString(formattedTime)) {
       return '';
     }
 

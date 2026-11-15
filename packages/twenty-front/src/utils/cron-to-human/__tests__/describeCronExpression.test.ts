@@ -164,6 +164,18 @@ describe('describeCronExpression', () => {
       );
     });
 
+    it('should describe minute ranges with listed hours', () => {
+      expect(describeCronExpression('0-30 9,17 * * *')).toBe(
+        'every minute from 09:00 to 09:30 and from 17:00 to 17:30 UTC',
+      );
+    });
+
+    it('should describe minute ranges with more than two listed hours', () => {
+      expect(describeCronExpression('0-30 9,12,17 * * *')).toBe(
+        'every minute from 09:00 to 09:30, from 12:00 to 12:30 and from 17:00 to 17:30 UTC',
+      );
+    });
+
     it('should describe listed minutes with a single hour', () => {
       expect(describeCronExpression('15,45 9 * * *')).toBe(
         'at minutes 15 and 45 between 09:00 and 09:59 UTC',

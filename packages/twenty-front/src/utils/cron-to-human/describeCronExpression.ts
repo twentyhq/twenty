@@ -61,18 +61,28 @@ export const describeCronExpression = (
       // inside the hour window instead of formatting the hour as a time
       if (isNumericRange(parts.minutes)) {
         const [startMinute, endMinute] = parts.minutes.split('-');
-        const startTime = formatCronTime({
-          hour: parts.hours,
-          minute: startMinute,
-          use24HourFormat: use24Hour,
+        // Listed hours each get their own window; formatting the raw hour
+        // list as a single time would silently drop every hour but the first
+        const hoursList = parts.hours.split(',').map((hour) => hour.trim());
+        const windows = hoursList.map((hour) => {
+          const startTime = formatCronTime({
+            hour,
+            minute: startMinute,
+            use24HourFormat: use24Hour,
+          });
+          const endTime = formatCronTime({
+            hour,
+            minute: endMinute,
+            use24HourFormat: use24Hour,
+          });
+          return t`from ${startTime} to ${endTime}`;
         });
-        const endTime = formatCronTime({
-          hour: parts.hours,
-          minute: endMinute,
-          use24HourFormat: use24Hour,
-          appendUTC: true,
-        });
-        descriptions.push(t`every minute from ${startTime} to ${endTime}`);
+        const lastWindow = windows.pop() ?? '';
+        const joinedWindows =
+          windows.length > 0
+            ? `${windows.join(', ')} and ${lastWindow}`
+            : lastWindow;
+        descriptions.push(t`every minute ${joinedWindows} UTC`);
       } else if (isListValue(parts.hours)) {
         const hoursList = parts.hours.split(',').map((hour) => hour.trim());
         const formattedHours = hoursList.map((hour) =>
