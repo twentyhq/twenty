@@ -301,6 +301,51 @@ describe('upsertViewFieldWithScope', () => {
     });
   });
 
+  it('keeps a filter in its group when the update omits the group', async () => {
+    const viewFieldId = v4();
+    const groupId = v4();
+    const filterId = v4();
+    const gqlFields = `scopeView { viewFilters { id value viewFilterGroupId } }`;
+    const buildScope = (filter: Record<string, unknown>) => ({
+      viewFilterGroups: [
+        { id: groupId, logicalOperator: ViewFilterGroupLogicalOperator.AND },
+      ],
+      viewFilters: [
+        {
+          id: filterId,
+          fieldMetadataId: testContext.actionItemNameFieldId,
+          operand: ViewFilterOperand.CONTAINS,
+          ...filter,
+        },
+      ],
+      viewSorts: [],
+    });
+
+    await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: {
+        ...buildColumnInput(viewFieldId),
+        scope: buildScope({ value: 'renewal', viewFilterGroupId: groupId }),
+      },
+    });
+
+    const {
+      data: { upsertViewFieldWithScope: updated },
+    } = await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: {
+        ...buildColumnInput(viewFieldId),
+        scope: buildScope({ value: 'churn' }),
+      },
+    });
+
+    expect(updated.scopeView?.viewFilters).toEqual([
+      { id: filterId, value: 'churn', viewFilterGroupId: groupId },
+    ]);
+  });
+
   it('clears the aggregate operation of a column saved with null', async () => {
     const viewFieldId = v4();
     const gqlFields = `viewField { aggregateOperation }`;
