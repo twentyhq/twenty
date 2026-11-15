@@ -2,9 +2,7 @@ import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { getScopeViewPrefillViewFilters } from '@/object-record/record-column-scope/utils/getScopeViewPrefillViewFilters';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useCreateJunctionRecordWithNestedTarget } from '@/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget';
@@ -17,15 +15,11 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RelationOneToManyFieldInput = () => {
-  const { fieldDefinition, recordId, scopedRelationAlias } =
+  const { fieldDefinition, recordId, prefillRecordFilters } =
     useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -78,14 +72,6 @@ export const RelationOneToManyFieldInput = () => {
     );
   }
 
-  const scopeView = useAtomFamilySelectorValue(
-    scopeViewFromOwnerViewFieldIdFamilySelector,
-    { ownerViewFieldId: scopedRelationAlias?.ownerViewFieldId ?? '' },
-  );
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
-  );
-
   const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
     fieldMetadataItem,
     objectMetadataItem,
@@ -94,12 +80,7 @@ export const RelationOneToManyFieldInput = () => {
     relationObjectMetadataItem,
     relationFieldMetadataItem,
     recordId,
-    prefillRecordFilters: isDefined(scopeView)
-      ? mapViewFiltersToFilters(
-          getScopeViewPrefillViewFilters(scopeView),
-          flattenedFieldMetadataItems,
-        )
-      : [],
+    prefillRecordFilters,
   });
 
   const {
