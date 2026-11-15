@@ -157,6 +157,43 @@ describe('Nested relation per-parent limit (e2e)', () => {
     expect(smallCompany.node.people.edges).toHaveLength(SMALL_PEOPLE_COUNT);
   });
 
+  it('counts every related record of each parent beyond the per-parent limit', async () => {
+    const queryData = findManyOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: `
+        id
+        people {
+          totalCount
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      `,
+      filter: { id: { in: [HOT_COMPANY_ID, SMALL_COMPANY_ID] } },
+    });
+
+    const response = await makeGraphqlApiRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const totalCountByCompanyId = Object.fromEntries(
+      response.body.data.companies.edges.map(
+        (edge: { node: { id: string; people: { totalCount: number } } }) => [
+          edge.node.id,
+          edge.node.people.totalCount,
+        ],
+      ),
+    );
+
+    expect(totalCountByCompanyId).toEqual({
+      [HOT_COMPANY_ID]: HOT_PEOPLE_COUNT,
+      [SMALL_COMPANY_ID]: SMALL_PEOPLE_COUNT,
+    });
+  });
+
   it('excludes soft-deleted records from the per-parent selection', async () => {
     const queryData = findManyOperationFactory({
       objectMetadataSingularName: 'company',
