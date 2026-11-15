@@ -70,4 +70,20 @@ describe('getViewSortsToDelete', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should delete a saved sort replaced by one on another sub-field', () => {
+    const savedSort = {
+      ...baseSort,
+      subFieldName: 'firstName',
+    } satisfies ViewSort;
+    const sortOnOtherSubField = {
+      ...baseSort,
+      id: 'sort-2',
+      subFieldName: 'lastName',
+    } satisfies ViewSort;
+
+    const result = getViewSortsToDelete([savedSort], [sortOnOtherSubField]);
+
+    expect(result).toEqual([savedSort]);
+  });
 });
