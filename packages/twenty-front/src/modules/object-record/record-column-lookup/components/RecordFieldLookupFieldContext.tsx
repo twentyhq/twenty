@@ -104,7 +104,10 @@ export const RecordFieldLookupFieldContext = ({
     ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
 
   const updateRelatedRecord = (params: RecordUpdateHookParams) =>
-    updateRecord?.(params, relationObjectMetadataItem.nameSingular);
+    updateRecord?.({
+      ...params,
+      objectNameSingular: relationObjectMetadataItem.nameSingular,
+    });
 
   return (
     <RecordFieldComponentInstanceContext.Provider

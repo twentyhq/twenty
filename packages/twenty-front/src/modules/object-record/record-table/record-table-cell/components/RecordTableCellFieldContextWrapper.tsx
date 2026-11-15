@@ -48,7 +48,6 @@ export const RecordTableCellFieldContextWrapper = ({
   const lookupTarget =
     columnDescriptorByRecordFieldId[recordField.id]?.lookupTarget;
 
-  // The lookup cell keys its own editor instance to the related record
   if (isDefined(lookupTarget)) {
     return (
       <RecordFieldLookupFieldContext
