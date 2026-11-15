@@ -14,7 +14,7 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useStore } from 'jotai';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type RecordGqlFields } from 'twenty-shared/types';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
@@ -31,6 +31,8 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
   const relationAliases = useScopedRelationAliases();
+  // oxlint-disable-next-line twenty/no-state-useref
+  const refreshQueueRef = useRef<Promise<unknown>>(Promise.resolve());
 
   const parentRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
@@ -81,32 +83,39 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
         return;
       }
 
-      await Promise.all(
-        arrayToChunks(parentRecordIds, QUERY_MAX_RECORDS).map(
-          async (parentRecordIdsChunk) => {
-            const { data } =
-              await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-                query: findManyRecordsQuery,
-                fetchPolicy: 'network-only',
-                variables: {
-                  filter: { id: { in: parentRecordIdsChunk } },
-                  limit: parentRecordIdsChunk.length,
-                  ...relationAliasVariables,
-                },
-              });
+      // Network-only refreshes can resolve out of order, so a stale response could overwrite a newer one
+      const refresh = refreshQueueRef.current.then(() =>
+        Promise.all(
+          arrayToChunks(parentRecordIds, QUERY_MAX_RECORDS).map(
+            async (parentRecordIdsChunk) => {
+              const { data } =
+                await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+                  query: findManyRecordsQuery,
+                  fetchPolicy: 'network-only',
+                  variables: {
+                    filter: { id: { in: parentRecordIdsChunk } },
+                    limit: parentRecordIdsChunk.length,
+                    ...relationAliasVariables,
+                  },
+                });
 
-            const recordConnection = data?.[objectMetadataItem.namePlural];
+              const recordConnection = data?.[objectMetadataItem.namePlural];
 
-            if (isDefined(recordConnection)) {
-              upsertRecordsInStore({
-                partialRecords: getRecordsFromRecordConnection({
-                  recordConnection,
-                }),
-              });
-            }
-          },
+              if (isDefined(recordConnection)) {
+                upsertRecordsInStore({
+                  partialRecords: getRecordsFromRecordConnection({
+                    recordConnection,
+                  }),
+                });
+              }
+            },
+          ),
         ),
       );
+
+      refreshQueueRef.current = refresh.catch(() => undefined);
+
+      await refresh;
     },
     [
       relationAliases,

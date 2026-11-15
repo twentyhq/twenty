@@ -256,7 +256,10 @@ const SidePanelEditColumnForm = ({
     : undefined;
 
   const columnNamePlaceholder = isDefined(fieldMetadataItem)
-    ? formatLookupColumnLabel(fieldMetadataItem, lookupTargetFieldMetadataItem)
+    ? formatLookupColumnLabel({
+        fieldMetadataItem,
+        lookupTargetFieldMetadataItem,
+      })
     : '';
 
   return (
