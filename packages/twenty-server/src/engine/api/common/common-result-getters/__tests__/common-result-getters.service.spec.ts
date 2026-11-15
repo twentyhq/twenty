@@ -62,8 +62,8 @@ describe('CommonResultGettersService', () => {
       signFileByIdUrl,
     } as unknown as FileUrlService);
 
-    const processedRecord = await service.processRecord(
-      {
+    const processedRecord = await service.processRecord({
+      record: {
         id: 'company-1',
         files: [
           {
@@ -72,12 +72,14 @@ describe('CommonResultGettersService', () => {
           },
         ],
       },
-      company,
-      buildFlatEntityMaps([company, attachment]),
-      buildFlatEntityMaps([attachmentsField, fileField]),
-      'workspace-id',
-      { files: { fieldName: 'attachments', relationSelections: {} } },
-    );
+      flatObjectMetadata: company,
+      flatObjectMetadataMaps: buildFlatEntityMaps([company, attachment]),
+      flatFieldMetadataMaps: buildFlatEntityMaps([attachmentsField, fileField]),
+      workspaceId: 'workspace-id',
+      relationSelections: {
+        files: { fieldName: 'attachments', relationSelections: {} },
+      },
+    });
 
     expect(processedRecord.files).toEqual([
       {
