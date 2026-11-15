@@ -2769,6 +2769,7 @@ export interface Mutation {
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertViewFieldWithScope: ViewFieldWithScope
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -4287,6 +4288,12 @@ export interface ViewFieldSettings {
     label?: Scalars['String']
     recordLimit?: Scalars['Int']
     __typename: 'ViewFieldSettings'
+}
+
+export interface ViewFieldWithScope {
+    scopeView?: View
+    viewField: ViewField
+    __typename: 'ViewFieldWithScope'
 }
 
 export interface ViewFilter {
@@ -7659,6 +7666,7 @@ export interface MutationGenqlSelection{
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertViewFieldWithScope?: (ViewFieldWithScopeGenqlSelection & { __args: {input: UpsertViewFieldWithScopeInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -9198,6 +9206,12 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UpsertViewFieldWithScopeInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],
+/** The id of the view field, created when it does not exist */
+id: Scalars['UUID'],isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),
+/** The filters and sorts scoping the related records; without filters or sorts the scope is removed */
+scope?: (ViewFieldScopeInput | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
+
 export interface UpsertViewWidgetInput {
 /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
 view?: (UpsertViewWidgetViewSettingsInput | null),
@@ -9228,7 +9242,7 @@ openRecordIn?: (ViewOpenRecordIn | null),shouldHideEmptyGroups?: (Scalars['Boole
 /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
 type?: (ViewType | null)}
 
-export interface UpsertViewWidgetViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null)}
+export interface UpsertViewWidgetViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null)}
 
 export interface UsageAnalyticsGenqlSelection{
     periodEnd?: boolean | number
@@ -9580,6 +9594,8 @@ export interface ViewFieldGroupGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ViewFieldScopeInput {viewFilterGroups: UpsertViewWidgetViewFilterGroupInput[],viewFilters: UpsertViewWidgetViewFilterInput[],viewSorts: UpsertViewWidgetViewSortInput[]}
+
 export interface ViewFieldSettingsGenqlSelection{
     label?: boolean | number
     recordLimit?: boolean | number
@@ -9588,6 +9604,13 @@ export interface ViewFieldSettingsGenqlSelection{
 }
 
 export interface ViewFieldSettingsInput {label?: (Scalars['String'] | null),recordLimit?: (Scalars['Int'] | null)}
+
+export interface ViewFieldWithScopeGenqlSelection{
+    scopeView?: ViewGenqlSelection
+    viewField?: ViewFieldGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface ViewFilterGenqlSelection{
     createdAt?: boolean | number
@@ -12727,6 +12750,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isViewFieldSettings = (obj?: { __typename?: any } | null): obj is ViewFieldSettings => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldSettings"')
       return ViewFieldSettings_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ViewFieldWithScope_possibleTypes: string[] = ['ViewFieldWithScope']
+    export const isViewFieldWithScope = (obj?: { __typename?: any } | null): obj is ViewFieldWithScope => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldWithScope"')
+      return ViewFieldWithScope_possibleTypes.includes(obj.__typename)
     }
     
 

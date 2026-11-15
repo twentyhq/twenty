@@ -9,6 +9,7 @@ import { getMockCreateObjectInput } from 'test/integration/metadata/suites/objec
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { upsertViewFieldWithScope } from 'test/integration/metadata/suites/view-field/utils/upsert-view-field-with-scope.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
@@ -257,6 +258,53 @@ describe('View field showing a field of the related record', () => {
       expect(JSON.stringify(response.errors)).toContain(expectedMessage);
     },
   );
+
+  it('saves and updates a lookup column with its scope in one request', async () => {
+    const viewFieldId = v4();
+    const upsertLookupViewField = (
+      relationTargetFieldMetadataId: string | null,
+    ) =>
+      upsertViewFieldWithScope({
+        expectToFail: false,
+        gqlFields: `viewField { ${LOOKUP_VIEW_FIELD_GQL_FIELDS} }`,
+        input: {
+          id: viewFieldId,
+          viewId: testContext.dealViewId,
+          fieldMetadataId: testContext.dealCompanyFieldId,
+          isCanonical: false,
+          relationTargetFieldMetadataId,
+        },
+      });
+
+    const { data: created } = await upsertLookupViewField(
+      testContext.companyIndustryFieldId,
+    );
+
+    expect(
+      created.upsertViewFieldWithScope.viewField.relationTargetFieldMetadataId,
+    ).toBe(testContext.companyIndustryFieldId);
+
+    const { data: cleared } = await upsertLookupViewField(null);
+
+    expect(
+      cleared.upsertViewFieldWithScope.viewField.relationTargetFieldMetadataId,
+    ).toBeNull();
+  });
+
+  it('rejects an invalid related record field saved with its scope', async () => {
+    const response = await upsertViewFieldWithScope({
+      expectToFail: true,
+      input: {
+        id: v4(),
+        viewId: testContext.dealViewId,
+        fieldMetadataId: testContext.dealCompanyFieldId,
+        isCanonical: false,
+        relationTargetFieldMetadataId: testContext.companyDealsFieldId,
+      },
+    });
+
+    expect(JSON.stringify(response.errors)).toContain('cannot be a relation');
+  });
 
   it('removes the column when the related record field is deleted', async () => {
     const tierFieldId = await createTextField(
