@@ -620,29 +620,32 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     );
   });
 
-  it('rejects a relation alias that reuses the name of another field', async () => {
-    const response = await makeGraphqlApiRequest({
-      query: gql`
-        query AliasedCompanies($filter: CompanyFilterInput) {
-          companies(filter: $filter) {
-            edges {
-              node {
-                name: people(first: 1) {
-                  totalCount
+  it.each(['name', 'addressAddressCity'])(
+    'rejects a relation alias that reuses the column %s',
+    async (responseKey) => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query AliasedCompanies($filter: CompanyFilterInput) {
+            companies(filter: $filter) {
+              edges {
+                node {
+                  ${responseKey}: people(first: 1) {
+                    totalCount
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
-    });
+        `,
+        variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
+      });
 
-    expect(response.body.data?.companies ?? null).toBeNull();
-    expect(response.body.errors?.[0]?.message).toContain(
-      'Response key "name" of relation "people" is already used on company',
-    );
-  });
+      expect(response.body.data?.companies ?? null).toBeNull();
+      expect(response.body.errors?.[0]?.message).toContain(
+        `Response key "${responseKey}" of relation "people" is already used on company`,
+      );
+    },
+  );
 
   it('ignores cursor arguments on a nested relation', async () => {
     const response = await findCompaniesWithPeople(

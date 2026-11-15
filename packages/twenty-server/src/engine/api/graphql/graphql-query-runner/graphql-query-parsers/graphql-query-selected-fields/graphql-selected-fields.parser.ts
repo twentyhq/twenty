@@ -255,11 +255,14 @@ export class GraphqlQuerySelectedFieldsParser {
       'relationSelections' | 'aggregate'
     >;
   }): void {
-    const { fieldIdByName, fieldIdByJoinColumnName } =
-      buildFieldMapsFromFlatObjectMetadata(
-        this.flatFieldMetadataMaps,
-        flatObjectMetadata,
-      );
+    const {
+      fieldIdByName,
+      fieldIdByJoinColumnName,
+      fieldIdByCompositeColumnName,
+    } = buildFieldMapsFromFlatObjectMetadata(
+      this.flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
     const isTakenByAnotherSelection =
       isDefined(accumulator.relationSelections[responseKey]) ||
@@ -267,7 +270,8 @@ export class GraphqlQuerySelectedFieldsParser {
     const isTakenByAColumn =
       responseKey !== fieldName &&
       (isDefined(fieldIdByName[responseKey]) ||
-        isDefined(fieldIdByJoinColumnName[responseKey]));
+        isDefined(fieldIdByJoinColumnName[responseKey]) ||
+        isDefined(fieldIdByCompositeColumnName[responseKey]));
 
     if (isTakenByAnotherSelection || isTakenByAColumn) {
       throw new CommonQueryRunnerException(
