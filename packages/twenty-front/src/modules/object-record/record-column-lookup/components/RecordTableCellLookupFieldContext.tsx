@@ -88,7 +88,10 @@ export const RecordTableCellLookupFieldContext = ({
     ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
 
   const updateRelatedRecord = (params: RecordUpdateHookParams) =>
-    updateRecord?.(params, relationObjectMetadataItem.nameSingular);
+    updateRecord?.({
+      ...params,
+      objectNameSingular: relationObjectMetadataItem.nameSingular,
+    });
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -110,7 +113,7 @@ export const RecordTableCellLookupFieldContext = ({
           displayedMaxRows: 1,
           isRecordFieldReadOnly:
             !isDefined(relatedRecord) ||
-            isRowReadOnly === true ||
+            isRowReadOnly ||
             isRecordTableCellsNonEditable ||
             isLookupTargetRestricted ||
             isRecordFieldReadOnly({
