@@ -211,7 +211,7 @@ export class ViewFieldWithScopeUpsertService {
             update: Object.fromEntries(
               Object.entries({
                 ...editableProperties,
-                aggregateOperation: aggregateOperation ?? undefined,
+                aggregateOperation,
                 relationTargetFieldMetadataId,
               }).filter(([, value]) => value !== undefined),
             ),

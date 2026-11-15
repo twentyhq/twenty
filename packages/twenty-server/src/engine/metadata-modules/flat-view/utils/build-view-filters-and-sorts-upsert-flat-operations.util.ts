@@ -118,12 +118,15 @@ const computeViewFilterGroupOperations = ({
     } else {
       const logicalOperator =
         inputGroup.logicalOperator ?? existingGroup.logicalOperator;
+      // undefined keeps the saved value, null moves the group to the root
       const positionInViewFilterGroup =
-        inputGroup.positionInViewFilterGroup ??
-        existingGroup.positionInViewFilterGroup;
+        inputGroup.positionInViewFilterGroup === undefined
+          ? existingGroup.positionInViewFilterGroup
+          : inputGroup.positionInViewFilterGroup;
       const resolvedParentId =
-        inputGroup.parentViewFilterGroupId ??
-        existingGroup.parentViewFilterGroupId;
+        inputGroup.parentViewFilterGroupId === undefined
+          ? existingGroup.parentViewFilterGroupId
+          : inputGroup.parentViewFilterGroupId;
 
       const hasChanged =
         logicalOperator !== existingGroup.logicalOperator ||

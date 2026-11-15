@@ -10,6 +10,7 @@ import { findOneView } from 'test/integration/metadata/suites/view/utils/find-on
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import {
+  AggregateOperations,
   FieldMetadataType,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -246,6 +247,82 @@ describe('upsertViewFieldWithScope', () => {
     const { data } = await findOneView({ viewId: scopeViewId });
 
     expect(data.getView).toBeNull();
+  });
+
+  it('moves a nested filter group to the root when its parent is set to null', async () => {
+    const viewFieldId = v4();
+    const rootGroupId = v4();
+    const nestedGroupId = v4();
+    const gqlFields = `scopeView { viewFilterGroups { id parentViewFilterGroupId } }`;
+    const buildScope = (nestedGroupParentId: string | null) => ({
+      viewFilterGroups: [
+        {
+          id: rootGroupId,
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        },
+        {
+          id: nestedGroupId,
+          logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          parentViewFilterGroupId: nestedGroupParentId,
+        },
+      ],
+      viewFilters: [
+        {
+          id: v4(),
+          fieldMetadataId: testContext.actionItemNameFieldId,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'renewal',
+          viewFilterGroupId: nestedGroupId,
+        },
+      ],
+      viewSorts: [],
+    });
+
+    await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: {
+        ...buildColumnInput(viewFieldId),
+        scope: buildScope(rootGroupId),
+      },
+    });
+
+    const {
+      data: { upsertViewFieldWithScope: moved },
+    } = await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: { ...buildColumnInput(viewFieldId), scope: buildScope(null) },
+    });
+
+    expect(moved.scopeView?.viewFilterGroups).toContainEqual({
+      id: nestedGroupId,
+      parentViewFilterGroupId: null,
+    });
+  });
+
+  it('clears the aggregate operation of a column saved with null', async () => {
+    const viewFieldId = v4();
+    const gqlFields = `viewField { aggregateOperation }`;
+
+    await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: {
+        ...buildColumnInput(viewFieldId),
+        aggregateOperation: AggregateOperations.COUNT,
+      },
+    });
+
+    const {
+      data: { upsertViewFieldWithScope: cleared },
+    } = await upsertViewFieldWithScope({
+      expectToFail: false,
+      gqlFields,
+      input: { ...buildColumnInput(viewFieldId), aggregateOperation: null },
+    });
+
+    expect(cleared.viewField.aggregateOperation).toBeNull();
   });
 
   it('gives a new scope the visibility and creator of the view holding its column', async () => {
