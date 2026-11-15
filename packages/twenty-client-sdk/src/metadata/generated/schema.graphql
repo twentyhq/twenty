@@ -3842,6 +3842,7 @@ type Mutation {
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  upsertViewFieldWithScope(input: UpsertViewFieldWithScopeInput!): ViewFieldWithScope!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
@@ -5995,6 +5996,26 @@ type UpsertRowLevelPermissionPredicatesResult {
   predicates: [RowLevelPermissionPredicate!]!
 }
 
+input UpsertViewFieldWithScopeInput {
+  aggregateOperation: AggregateOperations
+  fieldMetadataId: UUID!
+
+  """The id of the view field, created when it does not exist"""
+  id: UUID!
+  isCanonical: Boolean
+  isVisible: Boolean
+  position: Float
+  relationTargetFieldMetadataId: UUID
+
+  """
+  The filters and sorts scoping the related records; without filters or sorts the scope is removed
+  """
+  scope: ViewFieldScopeInput
+  settings: ViewFieldSettingsInput
+  size: Float
+  viewId: UUID!
+}
+
 input UpsertViewWidgetInput {
   """
   View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.
@@ -6075,6 +6096,7 @@ input UpsertViewWidgetViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  subFieldName: String
 }
 
 type UsageAnalytics {
@@ -6446,6 +6468,12 @@ type ViewFieldGroup {
   workspaceId: UUID!
 }
 
+input ViewFieldScopeInput {
+  viewFilterGroups: [UpsertViewWidgetViewFilterGroupInput!]!
+  viewFilters: [UpsertViewWidgetViewFilterInput!]!
+  viewSorts: [UpsertViewWidgetViewSortInput!]!
+}
+
 type ViewFieldSettings {
   label: String
   recordLimit: Int
@@ -6454,6 +6482,11 @@ type ViewFieldSettings {
 input ViewFieldSettingsInput {
   label: String
   recordLimit: Int
+}
+
+type ViewFieldWithScope {
+  scopeView: View
+  viewField: ViewField!
 }
 
 type ViewFilter {
