@@ -35,7 +35,7 @@ export class MergeManyResolverFactory implements WorkspaceResolverBuilderFactory
       });
 
       try {
-        const { results: record } =
+        const { results: record, args: processedArgs } =
           await this.commonMergeManyQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -50,6 +50,8 @@ export class MergeManyResolverFactory implements WorkspaceResolverBuilderFactory
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
+          relationSelections:
+            processedArgs.selectedFieldsResult.relationSelections,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,
