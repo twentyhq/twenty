@@ -28,7 +28,17 @@ export const useSaveCurrentViewColumn = () => {
       viewField,
       columnScope,
     }: {
-      viewField: Omit<ViewField, 'definition'>;
+      viewField: Pick<
+        ViewField,
+        | 'id'
+        | 'fieldMetadataId'
+        | 'isVisible'
+        | 'isCanonical'
+        | 'position'
+        | 'size'
+        | 'aggregateOperation'
+        | 'settings'
+      >;
       columnScope?: ColumnScope;
     }) => {
       const currentViewId = store.get(currentViewIdCallbackState);

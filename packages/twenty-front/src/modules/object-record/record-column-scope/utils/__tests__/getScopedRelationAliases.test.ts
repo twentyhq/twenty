@@ -1,6 +1,7 @@
 import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
 import { ViewFilterOperand, ViewSortDirection } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -47,7 +48,7 @@ const getAliases = ({
     ],
     fieldMetadataItemByFieldMetadataItemId: { [peopleField.id]: peopleField },
     scopeViewsByOwnerViewFieldIdMap: new Map(
-      scopeView ? [[PEOPLE_COLUMN_ID, scopeView]] : [],
+      isDefined(scopeView) ? [[PEOPLE_COLUMN_ID, scopeView]] : [],
     ),
     objectMetadataItems,
     fieldMetadataItems: personObjectMetadataItem.fields,
