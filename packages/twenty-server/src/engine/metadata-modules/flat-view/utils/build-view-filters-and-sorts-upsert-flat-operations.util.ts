@@ -394,6 +394,7 @@ const computeViewSortOperations = ({
         viewId,
         viewUniversalIdentifier,
         direction: inputSort.direction ?? ViewSortDirection.ASC,
+        subFieldName: inputSort.subFieldName ?? null,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,
@@ -401,7 +402,9 @@ const computeViewSortOperations = ({
     } else {
       const hasChanged =
         existingSort.fieldMetadataId !== inputSort.fieldMetadataId ||
-        existingSort.direction !== inputSort.direction;
+        existingSort.direction !== inputSort.direction ||
+        (inputSort.subFieldName !== undefined &&
+          existingSort.subFieldName !== inputSort.subFieldName);
 
       if (hasChanged) {
         const { fieldMetadataUniversalIdentifier } =
@@ -420,6 +423,10 @@ const computeViewSortOperations = ({
           fieldMetadataId: inputSort.fieldMetadataId,
           fieldMetadataUniversalIdentifier,
           direction: inputSort.direction ?? existingSort.direction,
+          subFieldName:
+            inputSort.subFieldName === undefined
+              ? existingSort.subFieldName
+              : inputSort.subFieldName,
           updatedAt: now,
         });
       }
