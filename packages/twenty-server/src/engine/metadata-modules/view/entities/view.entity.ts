@@ -85,10 +85,8 @@ export type ViewOverrides = {
 ])
 @Index('IDX_VIEW_MAIN_GROUP_BY_FIELD_METADATA', ['mainGroupByFieldMetadataId'])
 @Index('IDX_VIEW_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
-@Index('IDX_VIEW_OWNER_VIEW_FIELD_ID_UNIQUE', ['ownerViewFieldId'], {
-  unique: true,
-  where: '"deletedAt" IS NULL',
-})
+// One scope view per column is a validator rule, so an app can swap scope views in one sync
+@Index('IDX_VIEW_OWNER_VIEW_FIELD_ID', ['ownerViewFieldId'])
 @Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
