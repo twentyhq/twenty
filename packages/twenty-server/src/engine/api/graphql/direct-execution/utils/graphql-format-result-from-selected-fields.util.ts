@@ -382,12 +382,16 @@ const backfillNullValuesAndComputeTypeNameForGroupByConnection = (
     context,
   );
 
-  if ('__typename' in selectedFields) {
-    formatted.__typename = getGroupByConnectionTypename(objectNameSingular);
-  }
+  for (const { responseKey, fieldName } of getSelectionEntries(
+    selectedFields,
+  )) {
+    if (fieldName === '__typename') {
+      formatted[responseKey] = getGroupByConnectionTypename(objectNameSingular);
+    }
 
-  if ('groupByDimensionValues' in selectedFields) {
-    formatted.groupByDimensionValues = connection.groupByDimensionValues;
+    if (fieldName === 'groupByDimensionValues') {
+      formatted[responseKey] = connection.groupByDimensionValues;
+    }
   }
 
   return formatted;

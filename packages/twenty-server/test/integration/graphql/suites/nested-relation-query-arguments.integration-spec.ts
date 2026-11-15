@@ -453,6 +453,31 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('rejects a relation alias that reuses the name of a selected aggregate', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedCompanies($filter: CompanyFilterInput) {
+          companies(filter: $filter) {
+            totalCount
+            edges {
+              node {
+                totalCount: people(first: 1) {
+                  totalCount
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
+    });
+
+    expect(response.body.data?.companies ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.message).toContain(
+      'Response key "totalCount" of relation "people" is already used on company',
+    );
+  });
+
   it('keeps aliases named like internal selection data as ordinary fields', async () => {
     const response = await makeGraphqlApiRequest({
       query: gql`
