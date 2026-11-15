@@ -5,10 +5,16 @@ import {
   type GraphQLResolveInfo,
   type SelectionSetNode,
 } from 'graphql';
+import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
 import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
 type SelectionInfo = Pick<
   GraphQLResolveInfo,
@@ -61,14 +67,27 @@ const collectSelectedFields = (
       continue;
     }
 
-    const selectedField: ResolverSelectedFields = (selectedFields[
-      selection.name.value
-    ] ??= Object.create(null));
+    const fieldName = selection.name.value;
+    const isAlreadySelected = isDefined(selectedFields[fieldName]);
+    const selectedField: ResolverSelectedFields = (selectedFields[fieldName] ??=
+      Object.create(null));
 
     const fieldArguments = extractArgumentsFromAst(
       selection.arguments,
       info.variableValues,
     );
+
+    // Selections are keyed by field name, so aliases of one field share a single set of arguments
+    if (
+      isAlreadySelected &&
+      !isEqual(selectedField.__arguments ?? {}, fieldArguments)
+    ) {
+      throw new CommonQueryRunnerException(
+        `Conflicting arguments for "${fieldName}": every selection of a field must use the same arguments`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
 
     if (Object.keys(fieldArguments).length > 0) {
       selectedField.__arguments = fieldArguments;

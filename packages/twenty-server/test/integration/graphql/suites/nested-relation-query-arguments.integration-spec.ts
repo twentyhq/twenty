@@ -213,6 +213,26 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     );
   });
 
+  it('rejects aliases of one relation with different arguments', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: `
+          id
+          firstPerson: people(first: 1) { totalCount }
+          twoPeople: people(first: 2) { totalCount }
+        `,
+        filter: { id: { in: [FIRST_COMPANY_ID] } },
+      }),
+    );
+
+    expect(response.body.data?.companies ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.message).toContain(
+      'Conflicting arguments for "people"',
+    );
+  });
+
   it('ignores cursor arguments on a nested relation', async () => {
     const response = await findCompaniesWithPeople(
       'people(last: 1, after: "cursor", orderBy: [{ jobTitle: AscNullsLast }])',

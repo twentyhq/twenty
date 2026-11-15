@@ -66,6 +66,44 @@ describe('getResolverSelectedFields', () => {
     ).toEqual({ filter: { city: { eq: 'Paris' } } });
   });
 
+  it('rejects aliases of one relation with different arguments', () => {
+    expect(() =>
+      getSelectedFields(`
+        query {
+          companies {
+            edges {
+              node {
+                firstPerson: people(first: 1) { totalCount }
+                twoPeople: people(first: 2) { totalCount }
+              }
+            }
+          }
+        }
+      `),
+    ).toThrow('Conflicting arguments for "people"');
+  });
+
+  it('accepts aliases of one relation with the same arguments', () => {
+    expect(
+      getSelectedFields(`
+        query {
+          companies {
+            edges {
+              node {
+                firstPerson: people(first: 1) { totalCount }
+                samePerson: people(first: 1) { edges { node { id } } }
+              }
+            }
+          }
+        }
+      `).edges.node.people,
+    ).toEqual({
+      __arguments: { first: 1 },
+      totalCount: {},
+      edges: { node: { id: {} } },
+    });
+  });
+
   it('merges fragments and inline fragments and honours skip and include', () => {
     expect(
       getSelectedFields(
