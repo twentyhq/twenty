@@ -35,7 +35,7 @@ export class RestoreOneResolverFactory implements WorkspaceResolverBuilderFactor
       });
 
       try {
-        const { results: record } =
+        const { results: record, args: processedArgs } =
           await this.commonRestoreOneQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -50,6 +50,8 @@ export class RestoreOneResolverFactory implements WorkspaceResolverBuilderFactor
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
+          relationSelections:
+            processedArgs.selectedFieldsResult.relationSelections,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,

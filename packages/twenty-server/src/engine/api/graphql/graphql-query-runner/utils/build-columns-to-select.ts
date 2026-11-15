@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -14,19 +14,19 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const buildColumnsToSelect = ({
   select,
-  relations,
+  relationSelections,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: Record<string, unknown>;
-  relations: Record<string, unknown>;
+  relationSelections: CommonRelationSelections;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
   const requiredRelationColumns = getRequiredRelationColumns(
-    relations,
+    relationSelections,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -48,15 +48,15 @@ export const buildColumnsToSelect = ({
 };
 
 const getRequiredRelationColumns = (
-  relations: Record<string, unknown>,
+  relationSelections: CommonRelationSelections,
   flatObjectMetadata: FlatObjectMetadata,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ): string[] => {
   const requiredColumns: string[] = [];
   const selectedRelationFieldNames = new Set(
-    getRecordFieldEntries(relations)
-      .filter(({ value }) => isDefined(value))
+    Object.values(relationSelections)
+      .filter(isDefined)
       .map(({ fieldName }) => fieldName),
   );
 
