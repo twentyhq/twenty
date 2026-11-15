@@ -299,6 +299,9 @@ export class ViewWidgetUpsertService {
           flatViewMaps,
           flatViewFilterGroupMaps:
             viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
+          removedViewFilterGroupIds: new Set(
+            viewFilterGroupOperations.filterGroupsToRemove.map(({ id }) => id),
+          ),
         })
       : EMPTY_FILTER_OPS;
 
@@ -759,6 +762,7 @@ export class ViewWidgetUpsertService {
     flatFieldMetadataMaps,
     flatViewMaps,
     flatViewFilterGroupMaps,
+    removedViewFilterGroupIds,
   }: {
     inputFilters: UpsertViewWidgetViewFilterInput[];
     existingViewFilters: FlatViewFilter[];
@@ -770,6 +774,7 @@ export class ViewWidgetUpsertService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
     flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
+    removedViewFilterGroupIds: Set<string>;
   }): {
     filtersToCreate: FlatViewFilter[];
     filtersToUpdate: FlatViewFilter[];
@@ -857,11 +862,18 @@ export class ViewWidgetUpsertService {
           deletedAt: null,
         });
       } else {
+        // The saved group may be removed by this same upsert
+        const isExistingGroupKept =
+          isDefined(existingFilter.viewFilterGroupId) &&
+          !removedViewFilterGroupIds.has(existingFilter.viewFilterGroupId);
         const viewFilterGroupId =
-          inputFilter.viewFilterGroupId ?? existingFilter.viewFilterGroupId;
+          inputFilter.viewFilterGroupId ??
+          (isExistingGroupKept ? existingFilter.viewFilterGroupId : null);
         const positionInViewFilterGroup =
           inputFilter.positionInViewFilterGroup ??
-          existingFilter.positionInViewFilterGroup;
+          (isExistingGroupKept
+            ? existingFilter.positionInViewFilterGroup
+            : null);
         const subFieldName =
           inputFilter.subFieldName ?? existingFilter.subFieldName;
 
