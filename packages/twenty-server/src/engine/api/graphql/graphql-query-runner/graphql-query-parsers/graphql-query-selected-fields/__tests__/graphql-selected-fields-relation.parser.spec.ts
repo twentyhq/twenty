@@ -127,36 +127,3 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     expect(result.relationFieldsCount).toBe(1);
   });
 });
-
-describe('GraphqlQuerySelectedFieldsParser composite fields', () => {
-  const personNameField = createMockField({
-    id: 'person-name-field',
-    name: 'name',
-    type: FieldMetadataType.FULL_NAME,
-  });
-  const personObject = createMockObject({
-    id: 'person-object-id',
-    nameSingular: 'person',
-    fieldIds: ['person-name-field'],
-  });
-
-  it('should skip an aliased __typename inside a composite field', () => {
-    const parser = new GraphqlQuerySelectedFieldsParser(
-      buildObjectMaps([personObject]),
-      buildFieldMaps([personNameField]),
-    );
-
-    const result = parser.parse(
-      {
-        name: {
-          firstName: {},
-          typeName: { __fieldName: '__typename' },
-          first: { __fieldName: 'firstName' },
-        },
-      },
-      personObject,
-    );
-
-    expect(result.select).toEqual({ nameFirstName: true });
-  });
-});

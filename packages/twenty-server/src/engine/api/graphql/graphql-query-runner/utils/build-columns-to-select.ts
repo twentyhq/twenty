@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -54,11 +53,6 @@ const getRequiredRelationColumns = (
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ): string[] => {
   const requiredColumns: string[] = [];
-  const selectedRelationFieldNames = new Set(
-    getRecordFieldEntries(relations)
-      .filter(({ value }) => isDefined(value))
-      .map(({ fieldName }) => fieldName),
-  );
 
   for (const fieldId of flatObjectMetadata.fieldIds) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -67,8 +61,10 @@ const getRequiredRelationColumns = (
     });
 
     if (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)) {
+      const relationValue = relations[fieldMetadata.name];
+
       if (
-        !selectedRelationFieldNames.has(fieldMetadata.name) ||
+        !isDefined(relationValue) ||
         fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
         continue;
@@ -96,7 +92,9 @@ const getRequiredRelationColumns = (
         continue;
       }
 
-      if (!selectedRelationFieldNames.has(fieldMetadata.name)) {
+      const relationValue = relations[fieldMetadata.name];
+
+      if (!isDefined(relationValue)) {
         continue;
       }
 

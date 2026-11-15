@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   GroupByResolverArgs,
@@ -12,7 +14,6 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
-import { mergeFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/merge-field-selections.util';
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
@@ -36,15 +37,8 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
       });
 
       const shouldIncludeRecords =
-        Object.keys(
-          mergeFieldSelections({
-            selectedFields: mergeFieldSelections({
-              selectedFields,
-              fieldName: 'edges',
-            }),
-            fieldName: 'node',
-          }),
-        ).length > 0;
+        isDefined(selectedFields.edges?.node) &&
+        Object.keys(selectedFields.edges?.node).length > 0;
 
       try {
         const typeORMObjectRecordsParser =

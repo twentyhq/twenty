@@ -13,7 +13,6 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 import { FilesFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/files-field-query-result-getter.handler';
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -124,20 +123,9 @@ export class CommonResultGettersService {
       flatObjectMetadata,
       context,
     );
-    const recordFieldEntries = getRecordFieldEntries(record).flatMap(
-      (recordFieldEntry) => {
-        const fieldMetadata = fieldMetadataByName.get(
-          recordFieldEntry.fieldName,
-        );
-
-        return isDefined(fieldMetadata)
-          ? [{ ...recordFieldEntry, fieldMetadata }]
-          : [];
-      },
-    );
-    const recordFieldMetadataList = [
-      ...new Set(recordFieldEntries.map(({ fieldMetadata }) => fieldMetadata)),
-    ];
+    const recordFieldMetadataList = Object.keys(record)
+      .map((recordFieldName) => fieldMetadataByName.get(recordFieldName))
+      .filter(isDefined);
 
     const fieldHandlers = new Set(
       recordFieldMetadataList
@@ -152,25 +140,25 @@ export class CommonResultGettersService {
       ...fieldHandlers,
     ];
 
+    const relationFields = recordFieldMetadataList.filter(
+      (recordFieldMetadata) =>
+        isFlatFieldMetadataOfType(
+          recordFieldMetadata,
+          FieldMetadataType.RELATION,
+        ),
+    );
+
     const relationFieldsProcessedMap = {} as Record<
       string,
       QueryResultFieldValue
     >;
 
-    for (const {
-      recordKey,
-      fieldMetadata: relationField,
-      value: recordFieldValue,
-    } of recordFieldEntries) {
-      if (
-        !isFlatFieldMetadataOfType(relationField, FieldMetadataType.RELATION)
-      ) {
-        continue;
-      }
-
+    for (const relationField of relationFields) {
       if (!isDefined(relationField.relationTargetObjectMetadataId)) {
         throw new Error('Relation target object metadata id is not defined');
       }
+
+      const recordFieldValue = record[relationField.name];
 
       if (!isDefined(recordFieldValue)) {
         continue;
@@ -182,15 +170,15 @@ export class CommonResultGettersService {
           flatEntityMaps: context.flatObjectMetadataMaps,
         });
 
-      relationFieldsProcessedMap[recordKey] =
+      relationFieldsProcessedMap[relationField.name] =
         relationField.settings?.relationType === RelationType.ONE_TO_MANY
           ? await this.processRecordArrayWithContext(
-              recordFieldValue,
+              record[relationField.name],
               targetFlatObjectMetadata,
               context,
             )
           : await this.processRecordWithContext(
-              recordFieldValue,
+              record[relationField.name],
               targetFlatObjectMetadata,
               context,
             );

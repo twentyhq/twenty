@@ -16,7 +16,6 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -96,12 +95,8 @@ export class ProcessNestedRelationsHelper {
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
   ): Promise<void> {
-    const processRelationTasks = getRecordFieldEntries(relations).map(
-      ({
-        recordKey: sourceFieldName,
-        fieldName: sourceRelationFieldName,
-        value: nestedRelations,
-      }) =>
+    const processRelationTasks = Object.entries(relations).map(
+      ([sourceFieldName, nestedRelations]) =>
         this.processRelation({
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
@@ -109,7 +104,6 @@ export class ProcessNestedRelationsHelper {
           parentObjectRecords,
           parentObjectRecordsAggregatedValues,
           sourceFieldName,
-          sourceRelationFieldName,
           nestedRelations,
           aggregate,
           limit,
@@ -136,7 +130,6 @@ export class ProcessNestedRelationsHelper {
     parentObjectRecords,
     parentObjectRecordsAggregatedValues,
     sourceFieldName,
-    sourceRelationFieldName,
     nestedRelations,
     aggregate,
     limit,
@@ -154,7 +147,6 @@ export class ProcessNestedRelationsHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
-    sourceRelationFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
     // Mixes this level's aggregation fields with each nested relation's own map
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -173,7 +165,7 @@ export class ProcessNestedRelationsHelper {
     );
 
     const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMaps.fieldIdByName[sourceRelationFieldName],
+      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -196,7 +188,7 @@ export class ProcessNestedRelationsHelper {
 
     if (!sourceFieldMetadata.settings) {
       throw new GraphqlQueryRunnerException(
-        `Relation settings not found for field ${sourceRelationFieldName}`,
+        `Relation settings not found for field ${sourceFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
@@ -208,7 +200,7 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName: sourceRelationFieldName,
+        sourceFieldName,
         fieldMaps,
       });
 
@@ -231,7 +223,7 @@ export class ProcessNestedRelationsHelper {
         sourceFieldName,
         relatedRecordJoinColumnName: 'id',
         parentRecordJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
-          name: sourceRelationFieldName,
+          name: sourceFieldName,
         }),
         relationType,
         selectedFields,
@@ -262,7 +254,7 @@ export class ProcessNestedRelationsHelper {
     });
 
     const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: sourceRelationFieldName,
+      name: sourceFieldName,
     });
 
     const relationIds = getUniqueRelationIds({
@@ -276,7 +268,7 @@ export class ProcessNestedRelationsHelper {
       !isDefined(targetRelationName)
     ) {
       throw new GraphqlQueryRunnerException(
-        `Could not resolve target relation for one-to-many field ${sourceRelationFieldName}`,
+        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );

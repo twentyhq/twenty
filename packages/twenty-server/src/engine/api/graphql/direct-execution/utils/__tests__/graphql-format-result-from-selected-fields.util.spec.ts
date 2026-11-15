@@ -56,29 +56,13 @@ const formatPerson = (phones: unknown) =>
   );
 
 describe('graphQLFormatResultFromSelectedFields', () => {
-  it('returns the type name under an aliased __typename', () => {
-    const result = graphQLFormatResultFromSelectedFields(
-      { id: 'record-id' },
-      { id: {}, kind: { __fieldName: '__typename' } },
-      'person',
-      {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular: { person: PERSON_ID },
-        method: 'findOne',
-      },
-    );
-
-    expect(result).toEqual({ id: 'record-id', kind: 'Person' });
-  });
-
   it('projects selected sub-fields of an object-typed composite sub-field', () => {
     expect(
       formatPerson({
         primaryPhoneNumber: '123456789',
         additionalPhones: [{ number: '987654321', callingCode: '+33' }],
       }),
-    ).toEqual({
+    ).toStrictEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: [
@@ -98,7 +82,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',
       }),
-    ).toEqual({
+    ).toStrictEqual({
       phones: {
         primaryPhoneNumber: '123456789',
         additionalPhones: '[{"number":"987654321"}]',

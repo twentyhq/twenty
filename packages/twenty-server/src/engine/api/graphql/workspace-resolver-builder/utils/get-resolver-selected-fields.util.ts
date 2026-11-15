@@ -61,15 +61,9 @@ const collectSelectedFields = (
       continue;
     }
 
-    const fieldName = selection.name.value;
-    const responseKey = selection.alias?.value ?? fieldName;
     const selectedField: ResolverSelectedFields = (selectedFields[
-      responseKey
+      selection.name.value
     ] ??= Object.create(null));
-
-    if (responseKey !== fieldName) {
-      selectedField.__fieldName = fieldName;
-    }
 
     const fieldArguments = extractArgumentsFromAst(
       selection.arguments,
@@ -86,8 +80,7 @@ const collectSelectedFields = (
   }
 };
 
-// Keyed by response key so aliases of one field keep their own arguments and selections.
-// Null-prototype levels: a client alias such as __proto__ must stay an ordinary key.
+// Null-prototype levels: a selected name such as __proto__ must stay an ordinary key
 export const getResolverSelectedFields = (
   info: SelectionInfo,
 ): ResolverSelectedFields => {

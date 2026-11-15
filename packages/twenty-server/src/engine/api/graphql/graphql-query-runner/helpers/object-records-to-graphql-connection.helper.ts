@@ -14,7 +14,6 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
@@ -191,18 +190,6 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
     // oxlint-disable-next-line typescript/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
-    const aliasedRecordKeysByFieldName = new Map<string, string[]>();
-
-    for (const { recordKey, fieldName } of getRecordFieldEntries(
-      objectRecord,
-    )) {
-      if (recordKey !== fieldName) {
-        aliasedRecordKeysByFieldName.set(fieldName, [
-          ...(aliasedRecordKeysByFieldName.get(fieldName) ?? []),
-          recordKey,
-        ]);
-      }
-    }
 
     for (const fieldId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -243,57 +230,52 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         const isToManyRelation =
           fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
-        for (const relationRecordKey of [
-          fieldMetadata.name,
-          ...(aliasedRecordKeysByFieldName.get(fieldMetadata.name) ?? []),
-        ]) {
-          const objectValue =
-            !isDefined(objectRecord[relationRecordKey]) && isToManyRelation
-              ? []
-              : objectRecord[relationRecordKey];
+        const objectValue =
+          !isDefined(objectRecord[fieldMetadata.name]) && isToManyRelation
+            ? []
+            : objectRecord[fieldMetadata.name];
 
-          if (!isDefined(objectValue)) {
-            continue;
-          }
+        if (!isDefined(objectValue)) {
+          continue;
+        }
 
-          if (Array.isArray(objectValue)) {
-            processedObjectRecord[relationRecordKey] = this.createConnection({
-              objectRecords: objectValue,
-              parentObjectRecord: objectRecord,
-              objectRecordsAggregatedValues:
-                objectRecordsAggregatedValues[relationRecordKey],
-              selectedAggregatedFields:
-                selectedAggregatedFields[relationRecordKey],
-              objectName: targetObjectMetadata.nameSingular,
-              take,
-              totalCount:
-                objectRecordsAggregatedValues[relationRecordKey]?.[
-                  objectRecord.id
-                ]?.totalCount ?? objectValue.length,
-              order,
-              hasNextPage: false,
-              hasPreviousPage: false,
-              depth: depth + 1,
-            });
-          } else if (isPlainObject(objectValue)) {
-            const targetObjectMetadataOrThrow = getTargetObjectMetadataOrThrow(
-              fieldMetadata,
-              this.flatObjectMetadataMaps,
-            );
+        if (Array.isArray(objectValue)) {
+          processedObjectRecord[fieldMetadata.name] = this.createConnection({
+            objectRecords: objectValue,
+            parentObjectRecord: objectRecord,
+            objectRecordsAggregatedValues:
+              objectRecordsAggregatedValues[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
+            objectName: targetObjectMetadata.nameSingular,
+            take,
+            totalCount:
+              objectRecordsAggregatedValues[fieldMetadata.name]?.[
+                objectRecord.id
+              ]?.totalCount ?? objectValue.length,
+            order,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            depth: depth + 1,
+          });
+        } else if (isPlainObject(objectValue)) {
+          const targetObjectMetadataOrThrow = getTargetObjectMetadataOrThrow(
+            fieldMetadata,
+            this.flatObjectMetadataMaps,
+          );
 
-            processedObjectRecord[relationRecordKey] = this.processRecord({
-              objectRecord: objectValue,
-              objectRecordsAggregatedValues:
-                objectRecordsAggregatedValues[relationRecordKey],
-              selectedAggregatedFields:
-                selectedAggregatedFields[relationRecordKey],
-              objectName: targetObjectMetadataOrThrow.nameSingular,
-              take,
-              totalCount,
-              order,
-              depth: depth + 1,
-            });
-          }
+          processedObjectRecord[fieldMetadata.name] = this.processRecord({
+            objectRecord: objectValue,
+            objectRecordsAggregatedValues:
+              objectRecordsAggregatedValues[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
+            objectName: targetObjectMetadataOrThrow.nameSingular,
+            take,
+            totalCount,
+            order,
+            depth: depth + 1,
+          });
         }
         continue;
       }

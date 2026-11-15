@@ -32,15 +32,14 @@ const getSelectedFields = (
 };
 
 describe('getResolverSelectedFields', () => {
-  it('keys aliases of one relation separately with their own arguments', () => {
+  it('keeps the arguments of a relation next to its selection', () => {
     expect(
       getSelectedFields(`
         query {
           companies {
             edges {
               node {
-                people { edges { node { id } } }
-                nextPerson: people(first: 1, orderBy: [{ name: AscNullsLast }]) {
+                people(first: 1, orderBy: [{ name: AscNullsLast }]) {
                   edges { node { id } }
                 }
               }
@@ -49,9 +48,7 @@ describe('getResolverSelectedFields', () => {
         }
       `).edges.node,
     ).toEqual({
-      people: { edges: { node: { id: {} } } },
-      nextPerson: {
-        __fieldName: 'people',
+      people: {
         __arguments: { first: 1, orderBy: [{ name: 'AscNullsLast' }] },
         edges: { node: { id: {} } },
       },
@@ -90,13 +87,13 @@ describe('getResolverSelectedFields', () => {
     ).toEqual({ id: {}, domainName: { primaryLinkUrl: {} } });
   });
 
-  it('keeps an alias named __proto__ as an ordinary key', () => {
+  it('keeps a field named __proto__ as an ordinary key', () => {
     const selectedFields = getSelectedFields(`
       query {
         companies {
           edges {
             node {
-              __proto__: id
+              __proto__(first: 1) { id }
             }
           }
         }
@@ -106,9 +103,12 @@ describe('getResolverSelectedFields', () => {
     expect(
       Object.prototype.hasOwnProperty.call(selectedFields, '__proto__'),
     ).toBe(true);
-    expect(selectedFields['__proto__']).toEqual({ __fieldName: 'id' });
+    expect(selectedFields['__proto__']).toEqual({
+      __arguments: { first: 1 },
+      id: {},
+    });
     expect(
-      Object.prototype.hasOwnProperty.call(Object.prototype, '__fieldName'),
+      Object.prototype.hasOwnProperty.call(Object.prototype, '__arguments'),
     ).toBe(false);
   });
 });

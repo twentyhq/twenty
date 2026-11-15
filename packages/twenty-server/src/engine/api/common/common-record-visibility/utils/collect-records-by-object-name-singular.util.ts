@@ -1,11 +1,11 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const collectRecordsByObjectNameSingular = ({
@@ -25,6 +25,29 @@ export const collectRecordsByObjectNameSingular = ({
     string,
     Set<ObjectRecord>
   >();
+  const relationFieldsByObjectMetadataId = new Map<
+    string,
+    OrmFlatFieldMetadata[]
+  >();
+
+  const getRelationFields = (objectMetadata: FlatObjectMetadata) => {
+    const cachedRelationFields = relationFieldsByObjectMetadataId.get(
+      objectMetadata.id,
+    );
+
+    if (isDefined(cachedRelationFields)) {
+      return cachedRelationFields;
+    }
+
+    const relationFields = getFlatFieldsFromFlatObjectMetadata(
+      objectMetadata,
+      flatFieldMetadataMaps,
+    ).filter(isMorphOrRelationFlatFieldMetadata);
+
+    relationFieldsByObjectMetadataId.set(objectMetadata.id, relationFields);
+
+    return relationFields;
+  };
 
   const visit = ({
     record,
@@ -45,26 +68,13 @@ export const collectRecordsByObjectNameSingular = ({
       );
     }
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      objectMetadata,
-    );
+    for (const relationField of getRelationFields(objectMetadata)) {
+      const relationValue = record[relationField.name];
 
-    for (const { fieldName, value: relationValue } of getRecordFieldEntries(
-      record,
-    )) {
-      const fieldId = fieldIdByName[fieldName];
-
-      if (!isDefined(relationValue) || !isDefined(fieldId)) {
-        continue;
-      }
-
-      const relationField = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      if (!isDefined(relationField?.relationTargetObjectMetadataId)) {
+      if (
+        !isDefined(relationValue) ||
+        !isDefined(relationField.relationTargetObjectMetadataId)
+      ) {
         continue;
       }
 

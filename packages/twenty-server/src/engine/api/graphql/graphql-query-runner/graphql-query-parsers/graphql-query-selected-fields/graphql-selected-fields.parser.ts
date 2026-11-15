@@ -8,14 +8,10 @@ import {
   isMorphRelationHead,
 } from 'twenty-shared/utils';
 
-import { computeRelationRecordKey } from 'src/engine/api/common/utils/compute-relation-record-key.util';
 import { type NestedRelationQueryArgsByFieldName } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args-by-field-name.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
-import { getFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-selections.util';
-import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
-import { mergeFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/merge-field-selections.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -23,7 +19,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type GraphqlQuerySelectedFieldsResult = {
@@ -117,9 +112,25 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        this.parseRelationFieldSelections(
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
+
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
+          accumulator.select[joinColumnName] = true;
+        }
+
+        const graphqlSelectedFieldValue =
+          graphqlSelectedFields[fieldMetadata.name];
+
+        if (!isDefined(graphqlSelectedFieldValue)) {
+          continue;
+        }
+
+        this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          graphqlSelectedFields,
+          fieldMetadata.name,
+          graphqlSelectedFieldValue,
           accumulator,
           isFromOneToManyRelation,
         );
@@ -146,9 +157,25 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        this.parseRelationFieldSelections(
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
+
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
+          accumulator.select[joinColumnName] = true;
+        }
+
+        const graphqlSelectedFieldValue =
+          graphqlSelectedFields[fieldMetadata.name];
+
+        if (!isDefined(graphqlSelectedFieldValue)) {
+          continue;
+        }
+
+        this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          graphqlSelectedFields,
+          fieldMetadata.name,
+          graphqlSelectedFieldValue,
           accumulator,
           isFromOneToManyRelation,
         );
@@ -156,22 +183,17 @@ export class GraphqlQuerySelectedFieldsParser {
         continue;
       }
 
-      const fieldSelections = getFieldSelections({
-        selectedFields: graphqlSelectedFields,
-        fieldName: fieldMetadata.name,
-      });
-
-      if (fieldSelections.length === 0) {
-        continue;
-      }
-
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        const graphqlSelectedFieldValue =
+          graphqlSelectedFields[fieldMetadata.name];
+
+        if (!isDefined(graphqlSelectedFieldValue)) {
+          continue;
+        }
+
         const compositeResult = this.parseCompositeField(
           fieldMetadata,
-          mergeFieldSelections({
-            selectedFields: graphqlSelectedFields,
-            fieldName: fieldMetadata.name,
-          }),
+          graphqlSelectedFieldValue,
         );
 
         Object.assign(accumulator.select, compositeResult);
@@ -179,46 +201,12 @@ export class GraphqlQuerySelectedFieldsParser {
         continue;
       }
 
-      accumulator.select[fieldMetadata.name] = true;
-    }
-  }
+      const graphqlSelectedFieldValue =
+        graphqlSelectedFields[fieldMetadata.name];
 
-  private parseRelationFieldSelections(
-    fieldMetadata:
-      | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    graphqlSelectedFields: Partial<Record<string, any>>,
-    accumulator: GraphqlQuerySelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
-    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: fieldMetadata.name,
-    });
-
-    if (
-      getFieldSelections({
-        selectedFields: graphqlSelectedFields,
-        fieldName: joinColumnName,
-      }).length > 0
-    ) {
-      accumulator.select[joinColumnName] = true;
-    }
-
-    for (const { responseKey, selection } of getFieldSelections({
-      selectedFields: graphqlSelectedFields,
-      fieldName: fieldMetadata.name,
-    })) {
-      this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
-        fieldMetadata,
-        computeRelationRecordKey({
-          fieldName: fieldMetadata.name,
-          responseKey,
-        }),
-        selection,
-        accumulator,
-        isFromOneToManyRelation,
-      );
+      if (isDefined(graphqlSelectedFieldValue)) {
+        accumulator.select[fieldMetadata.name] = true;
+      }
     }
   }
 
@@ -236,13 +224,7 @@ export class GraphqlQuerySelectedFieldsParser {
       accumulator,
     );
 
-    const node = mergeFieldSelections({
-      selectedFields: mergeFieldSelections({
-        selectedFields: graphqlSelectedFields,
-        fieldName: 'edges',
-      }),
-      fieldName: 'node',
-    });
+    const node = graphqlSelectedFields.edges.node;
 
     this.parseRecordFields(
       node,
@@ -256,12 +238,7 @@ export class GraphqlQuerySelectedFieldsParser {
     // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): boolean {
-    return (
-      getFieldSelections({
-        selectedFields: graphqlSelectedFields,
-        fieldName: 'edges',
-      }).length > 0
-    );
+    return Object.keys(graphqlSelectedFields).includes('edges');
   }
 
   private parseCompositeField(
@@ -279,12 +256,12 @@ export class GraphqlQuerySelectedFieldsParser {
       );
     }
 
-    return getSelectionEntries(fieldValue)
-      .filter(({ fieldName: subFieldName }) => subFieldName !== '__typename')
+    return Object.keys(fieldValue)
+      .filter((subFieldKey) => subFieldKey !== '__typename')
       .reduce(
-        (acc, { fieldName: subFieldName }) => {
+        (acc, subFieldKey) => {
           const subFieldMetadata = compositeType.properties.find(
-            (property) => property.name === subFieldName,
+            (property) => property.name === subFieldKey,
           );
 
           if (!subFieldMetadata) {
@@ -293,7 +270,7 @@ export class GraphqlQuerySelectedFieldsParser {
             );
           }
 
-          const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldName)}`;
+          const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
           acc[fullFieldName] = true;
 
