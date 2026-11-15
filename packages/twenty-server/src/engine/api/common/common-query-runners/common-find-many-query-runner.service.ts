@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 
-import {
-  QUERY_MAX_RECORDS,
-  QUERY_MAX_RECORDS_FROM_RELATION,
-} from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,11 +44,7 @@ import {
   buildOrderByFromLeaves,
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -233,21 +226,19 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
-    if (isDefined(args.selectedFieldsResult.relationSelections)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        parentObjectRecordsAggregatedValues,
-        relationSelections: args.selectedFieldsResult.relationSelections,
-        aggregate: args.selectedFieldsResult.aggregate,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-    }
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem: flatObjectMetadata,
+      parentObjectRecords: objectRecords,
+      parentObjectRecordsAggregatedValues,
+      relationSelections: args.selectedFieldsResult.relationSelections,
+      aggregate: args.selectedFieldsResult.aggregate,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      authContext,
+      selectedFields: args.selectedFieldsResult.select,
+      ...this.getNestedRelationsReadPathOptions(),
+    });
 
     return {
       records: objectRecords,
@@ -287,23 +278,23 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return results.records;
   }
 
-  async processQueryResult(
-    queryResult: CommonFindManyOutput,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-    relationSelections: CommonRelationSelections,
-  ): Promise<CommonFindManyOutput> {
+  async processQueryResult({
+    queryResult,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    authContext,
+    relationSelections,
+  }: CommonQueryResultProcessingArgs<CommonFindManyOutput>): Promise<CommonFindManyOutput> {
     const processedRecords =
-      await this.commonResultGettersService.processRecordArray(
-        queryResult.records,
+      await this.commonResultGettersService.processRecordArray({
+        records: queryResult.records,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        authContext.workspace.id,
+        workspaceId: authContext.workspace.id,
         relationSelections,
-      );
+      });
 
     return {
       ...queryResult,
