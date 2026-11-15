@@ -45,7 +45,6 @@ const buildScopeViewManifest = ({
                     STANDARD_OBJECTS.company.fields.people.universalIdentifier,
                   position: 1,
                   isCanonical: false,
-                  settings: { label: 'Key person', recordLimit: 1 },
                 },
               ]
             : [],
