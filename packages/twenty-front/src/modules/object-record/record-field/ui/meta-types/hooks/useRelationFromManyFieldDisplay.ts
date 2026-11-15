@@ -16,7 +16,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 
 export const useRelationFromManyFieldDisplay = () => {
-  const { recordId, fieldDefinition, maxWidth, scopedRelationAlias } =
+  const { recordId, fieldDefinition, maxWidth, fieldValueKey } =
     useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -41,7 +41,7 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
-    scopedRelationAlias?.alias ?? fieldName,
+    fieldValueKey ?? fieldName,
     fieldDefinition,
   );
 
