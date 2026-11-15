@@ -4,7 +4,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,11 +13,16 @@ const APP_ROLE_ID = uuidv4();
 const COMPANY_VIEW_ID = uuidv4();
 const PEOPLE_VIEW_FIELD_ID = uuidv4();
 const SCOPE_VIEW_ID = uuidv4();
+const REPLACEMENT_SCOPE_VIEW_ID = uuidv4();
 
 const buildScopeViewManifest = ({
   withPeopleViewField,
+  scopeViewUniversalIdentifier = SCOPE_VIEW_ID,
+  companyViewVisibility,
 }: {
   withPeopleViewField: boolean;
+  scopeViewUniversalIdentifier?: string;
+  companyViewVisibility?: ViewVisibility;
 }) =>
   buildBaseManifest({
     appId: APP_ID,
@@ -31,6 +36,7 @@ const buildScopeViewManifest = ({
             STANDARD_OBJECTS.company.universalIdentifier,
           type: ViewType.TABLE,
           icon: 'IconTable',
+          visibility: companyViewVisibility,
           fields: withPeopleViewField
             ? [
                 {
@@ -45,7 +51,7 @@ const buildScopeViewManifest = ({
             : [],
         },
         {
-          universalIdentifier: SCOPE_VIEW_ID,
+          universalIdentifier: scopeViewUniversalIdentifier,
           name: 'Key people',
           objectUniversalIdentifier:
             STANDARD_OBJECTS.person.universalIdentifier,
@@ -120,5 +126,50 @@ describe('Sync application should succeed when a view field and its scope view a
     expect(JSON.stringify(errors)).toContain(
       'A view field cannot be removed while the view scoping it is kept',
     );
+  });
+
+  it('refuses a visibility change on the view holding a scoped column when the scope view keeps the old one', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildScopeViewManifest({
+        withPeopleViewField: true,
+        companyViewVisibility: ViewVisibility.UNLISTED,
+      }),
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'A view scoping a view field must share the visibility of the view holding that field',
+    );
+  });
+
+  it('replaces a scope view under a new identifier in one sync', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildScopeViewManifest({
+        withPeopleViewField: true,
+        scopeViewUniversalIdentifier: REPLACEMENT_SCOPE_VIEW_ID,
+      }),
+      expectToFail: false,
+    });
+
+    expect(isDefined(errors)).toBe(false);
+
+    const {
+      data: { getViews: views },
+    } = await findViews({
+      expectToFail: false,
+      gqlFields: `
+        universalIdentifier
+        ownerViewFieldId
+      `,
+    });
+
+    expect(
+      views.some((view) => view.universalIdentifier === SCOPE_VIEW_ID),
+    ).toBe(false);
+    expect(
+      views.find(
+        (view) => view.universalIdentifier === REPLACEMENT_SCOPE_VIEW_ID,
+      )?.ownerViewFieldId,
+    ).toBeDefined();
   });
 });
