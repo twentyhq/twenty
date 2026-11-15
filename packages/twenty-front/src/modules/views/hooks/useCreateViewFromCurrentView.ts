@@ -6,7 +6,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
+import { useCopyColumnScopes } from '@/object-record/record-column-scope/hooks/useCopyColumnScopes';
 import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
@@ -45,7 +45,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { performViewFieldApiCreate } = usePerformViewFieldApiPersist();
 
-  const { copyColumnScopes } = useSaveColumnScope();
+  const { copyColumnScopes } = useCopyColumnScopes();
 
   const { performViewSortApiCreate } = usePerformViewSortApiPersist();
 
@@ -198,7 +198,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
       if (
         fieldResult.status === 'failed' ||
-        !(await copyColumnScopes({ newViewFieldIdByViewFieldId }))
+        !(await copyColumnScopes({
+          viewFieldsToCopy,
+          newViewId,
+          newViewFieldIdByViewFieldId,
+        }))
       ) {
         return undefined;
       }

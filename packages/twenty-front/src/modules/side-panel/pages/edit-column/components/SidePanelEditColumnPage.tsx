@@ -2,7 +2,6 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -23,14 +22,18 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { useSaveCurrentViewColumn } from '@/views/hooks/useSaveCurrentViewColumn';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { parseRecordLimitInput } from '@/views/utils/parseRecordLimitInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
@@ -125,7 +128,8 @@ const SidePanelEditColumnForm = ({
   const { goBackFromSidePanel, removePageFromSidePanelHistory } =
     useSidePanelHistory();
   const { upsertRecordField } = useUpsertRecordField(recordTableId);
-  const { saveViewFields } = useSaveCurrentViewFields();
+  const { saveCurrentViewColumn } = useSaveCurrentViewColumn();
+  const store = useStore();
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
@@ -133,7 +137,6 @@ const SidePanelEditColumnForm = ({
     });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { saveColumnScope } = useSaveColumnScope();
 
   const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
     SidePanelPageComponentInstanceContext,
@@ -184,30 +187,35 @@ const SidePanelEditColumnForm = ({
       },
     };
 
-    const areSettingsSaved = await saveViewFields([
-      mapRecordFieldToViewField(updatedRecordField),
-    ]);
+    const isColumnSaved = await saveCurrentViewColumn({
+      viewField: mapRecordFieldToViewField(updatedRecordField),
+      columnScope: isDefined(relationObjectMetadataItem)
+        ? {
+            recordFilters: store.get(
+              currentRecordFiltersComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+            recordFilterGroups: store.get(
+              currentRecordFilterGroupsComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+            recordSorts: store.get(
+              currentRecordSortsComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+          }
+        : undefined,
+    });
 
-    if (!areSettingsSaved) {
+    if (!isColumnSaved) {
       setIsSaving(false);
       return;
     }
 
     upsertRecordField(updatedRecordField);
-
-    if (isDefined(relationObjectMetadataItem)) {
-      const isScopeSaved = await saveColumnScope({
-        scopeInstanceId,
-        ownerViewFieldId: recordField.id,
-        relationObjectMetadataId: relationObjectMetadataItem.id,
-        scopeView,
-      });
-
-      if (!isScopeSaved) {
-        setIsSaving(false);
-        return;
-      }
-    }
 
     // The user may have opened another page while saving
     removePageFromSidePanelHistory(sidePanelPageId);
@@ -274,7 +282,8 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={!parsedRecordLimit.isValid || isSaving}
+            disabled={!parsedRecordLimit.isValid}
+            loading={isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"

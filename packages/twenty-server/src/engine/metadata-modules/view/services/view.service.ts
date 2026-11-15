@@ -14,6 +14,7 @@ import { computeScopeFlatViewsFollowingVisibility } from 'src/engine/metadata-mo
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { inheritScopeViewOwnerVisibility } from 'src/engine/metadata-modules/flat-view/utils/inherit-scope-view-owner-visibility.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
@@ -102,7 +103,6 @@ export class ViewService {
         flatViewFieldMaps: existingFlatViewFieldMaps,
       });
 
-    // A scope view is part of its owner column, so it shares the visibility of the view holding that column
     const ownerFlatViewField = isDefined(createViewInput.ownerViewFieldId)
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: createViewInput.ownerViewFieldId,
@@ -116,12 +116,10 @@ export class ViewService {
         })
       : undefined;
     const flatViewToCreate = isDefined(ownerParentFlatView)
-      ? {
-          ...inputFlatView,
-          visibility: ownerParentFlatView.visibility,
-          createdByUserWorkspaceId:
-            ownerParentFlatView.createdByUserWorkspaceId,
-        }
+      ? inheritScopeViewOwnerVisibility({
+          flatViewToCreate: inputFlatView,
+          ownerParentFlatView,
+        })
       : inputFlatView;
 
     const validateAndBuildResult =
