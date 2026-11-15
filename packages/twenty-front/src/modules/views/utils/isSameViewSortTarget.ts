@@ -1,8 +1,18 @@
 import { type ViewSort } from '@/views/types/ViewSort';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+
+type ViewSortTarget = Pick<
+  ViewSort,
+  'fieldMetadataId' | 'direction' | 'subFieldName'
+>;
 
 export const isSameViewSortTarget = (
-  viewSortA: Pick<ViewSort, 'fieldMetadataId' | 'direction'>,
-  viewSortB: Pick<ViewSort, 'fieldMetadataId' | 'direction'>,
+  viewSortA: ViewSortTarget,
+  viewSortB: ViewSortTarget,
 ): boolean =>
   viewSortA.fieldMetadataId === viewSortB.fieldMetadataId &&
-  viewSortA.direction === viewSortB.direction;
+  viewSortA.direction === viewSortB.direction &&
+  compareStrictlyExceptForNullAndUndefined(
+    viewSortA.subFieldName,
+    viewSortB.subFieldName,
+  );
