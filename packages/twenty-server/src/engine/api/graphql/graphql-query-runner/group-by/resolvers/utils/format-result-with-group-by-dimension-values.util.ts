@@ -5,7 +5,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -21,6 +22,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  relationSelections = {},
   processRecord,
 }: {
   groupsResult: Record<string, unknown>[];
@@ -31,6 +33,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   flatObjectMetadata?: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps?: FlatEntityMaps<OrmFlatFieldMetadata>;
+  relationSelections?: CommonRelationSelections;
 }): Promise<CommonGroupByOutputItem[]> => {
   const formattedResult: CommonGroupByOutputItem[] = [];
 
@@ -64,7 +67,7 @@ export const formatResultWithGroupByDimensionValues = async ({
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
               ),
-              ...getAliasedRelations(record),
+              ...getAliasedRelationValues(record, relationSelections),
             }),
         ),
       );
@@ -110,11 +113,17 @@ export const formatResultWithGroupByDimensionValues = async ({
 };
 
 // formatResult only keeps field names, and aliased relations are attached already formatted
-const getAliasedRelations = (record: Record<string, unknown>) =>
+const getAliasedRelationValues = (
+  record: Record<string, unknown>,
+  relationSelections: CommonRelationSelections,
+) =>
   Object.fromEntries(
-    getRecordFieldEntries(record)
-      .filter(({ recordKey, fieldName }) => recordKey !== fieldName)
-      .map(({ recordKey, value }) => [recordKey, value]),
+    getRelationSelectionEntries(relationSelections)
+      .filter(
+        ({ responseKey, relationSelection }) =>
+          responseKey !== relationSelection.fieldName,
+      )
+      .map(({ responseKey }) => [responseKey, record[responseKey]]),
   );
 
 const createGroupKey = (
