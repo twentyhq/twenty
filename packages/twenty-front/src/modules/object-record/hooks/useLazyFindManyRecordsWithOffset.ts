@@ -9,8 +9,8 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
@@ -28,16 +28,17 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
-    objectMetadataItem,
-  });
+  const { recordGqlFields, relationAliases } =
+    useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { findManyRecordsQuery, relationAliasVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      relationAliases,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -68,6 +69,7 @@ export const useLazyFindManyRecordsWithOffset = ({
           query: findManyRecordsQuery,
           variables: {
             ...params,
+            ...relationAliasVariables,
             limit,
             offset,
           },
@@ -100,6 +102,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       apolloCoreClient,
       findManyRecordsQuery,
       params,
+      relationAliasVariables,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

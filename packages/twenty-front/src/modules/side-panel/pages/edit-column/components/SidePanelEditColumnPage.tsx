@@ -1,14 +1,20 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelEditColumnScopeSection } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnScopeSection';
 import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -16,15 +22,21 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { useSaveCurrentViewColumn } from '@/views/hooks/useSaveCurrentViewColumn';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
+import { parseRecordLimitInput } from '@/views/utils/parseRecordLimitInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -115,25 +127,51 @@ const SidePanelEditColumnForm = ({
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
   const { goBackFromSidePanel, removePageFromSidePanelHistory } =
     useSidePanelHistory();
-  const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
-    SidePanelPageComponentInstanceContext,
-  );
   const { upsertRecordField } = useUpsertRecordField(recordTableId);
-  const { saveViewFields } = useSaveCurrentViewFields();
+  const { saveCurrentViewColumn } = useSaveCurrentViewColumn();
+  const store = useStore();
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
       fieldMetadataItemId: recordField.fieldMetadataItemId,
     });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
+    SidePanelPageComponentInstanceContext,
+  );
+  const scopeInstanceId = `edit-column-scope-${sidePanelPageId}`;
+
+  const scopeView = useAtomFamilySelectorValue(
+    scopeViewFromOwnerViewFieldIdFamilySelector,
+    { ownerViewFieldId: recordField.id },
+  );
+
+  const relationObjectMetadataItem =
+    isDefined(fieldMetadataItem) &&
+    isPlainOneToManyRelationField(fieldMetadataItem)
+      ? findRelationTargetObjectMetadataItem({
+          fieldMetadataItem,
+          objectMetadataItems,
+        })
+      : undefined;
+
   const [columnName, setColumnName] = useState(
     recordField.settings?.label ?? '',
+  );
+  const [recordLimit, setRecordLimit] = useState(
+    recordField.settings?.recordLimit?.toString() ?? '',
+  );
+
+  const parsedRecordLimit = parseRecordLimitInput(
+    isDefined(relationObjectMetadataItem) ? recordLimit : '',
   );
 
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveClick = async () => {
-    if (isSaving) {
+    if (!parsedRecordLimit.isValid || isSaving) {
       return;
     }
 
@@ -144,18 +182,36 @@ const SidePanelEditColumnForm = ({
     const updatedRecordField: RecordField = {
       ...recordField,
       settings: {
-        ...recordField.settings,
         label: isNonEmptyString(trimmedColumnName) ? trimmedColumnName : null,
+        recordLimit: parsedRecordLimit.recordLimit,
       },
     };
 
-    const isSaved = await saveViewFields([
-      mapRecordFieldToViewField(updatedRecordField),
-    ]);
+    const isColumnSaved = await saveCurrentViewColumn({
+      viewField: mapRecordFieldToViewField(updatedRecordField),
+      columnScope: isDefined(relationObjectMetadataItem)
+        ? {
+            recordFilters: store.get(
+              currentRecordFiltersComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+            recordFilterGroups: store.get(
+              currentRecordFilterGroupsComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+            recordSorts: store.get(
+              currentRecordSortsComponentState.atomFamily({
+                instanceId: scopeInstanceId,
+              }),
+            ),
+          }
+        : undefined,
+    });
 
-    setIsSaving(false);
-
-    if (!isSaved) {
+    if (!isColumnSaved) {
+      setIsSaving(false);
       return;
     }
 
@@ -197,6 +253,22 @@ const SidePanelEditColumnForm = ({
           placeholder={fieldMetadataItem?.label}
           fullWidth
         />
+        {isDefined(relationObjectMetadataItem) && (
+          <SidePanelGroup heading={t`Related records`}>
+            <SidePanelEditColumnScopeSection
+              scopeInstanceId={scopeInstanceId}
+              scopeView={scopeView}
+              relationObjectMetadataItem={relationObjectMetadataItem}
+              recordLimit={recordLimit}
+              recordLimitError={
+                parsedRecordLimit.isValid
+                  ? undefined
+                  : t`Enter a whole number from 1 to ${QUERY_MAX_RECORDS_FROM_RELATION}`
+              }
+              onRecordLimitChange={setRecordLimit}
+            />
+          </SidePanelGroup>
+        )}
       </StyledContent>
       <SidePanelFooter
         actions={[
@@ -210,7 +282,8 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={isSaving}
+            disabled={!parsedRecordLimit.isValid}
+            loading={isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"

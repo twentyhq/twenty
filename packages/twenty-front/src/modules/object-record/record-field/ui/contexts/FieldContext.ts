@@ -2,6 +2,7 @@ import { createContext, type MouseEvent } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 
 export type RecordUpdateHookParams = {
@@ -42,6 +43,8 @@ export type GenericFieldContextType = {
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;
+  fieldValueKey?: string;
+  prefillRecordFilters?: RecordFilter[];
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

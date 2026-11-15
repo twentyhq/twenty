@@ -11,6 +11,7 @@ export const useOpenRecordTableCellFromCell = () => {
     recordId,
     fieldDefinition,
     isRecordFieldReadOnly: isReadOnly,
+    fieldValueKey,
   } = useContext(FieldContext);
 
   const { recordField } = useContext(RecordTableCellContext);
@@ -30,6 +31,7 @@ export const useOpenRecordTableCellFromCell = () => {
       cellPosition,
       recordId,
       recordFieldId: recordField.id,
+      fieldValueKey,
       fieldDefinition,
       isReadOnly,
       initialValue,

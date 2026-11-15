@@ -27,11 +27,13 @@ export const useOpenRelationFromManyFieldInput = () => {
   const openRelationFromManyFieldInput = useCallback(
     ({
       fieldName,
+      fieldValueKey = fieldName,
       objectNameSingular,
       recordId,
       prefix,
     }: {
       fieldName: string;
+      fieldValueKey?: string;
       objectNameSingular: string;
       recordId: string;
       prefix?: string;
@@ -44,7 +46,10 @@ export const useOpenRelationFromManyFieldInput = () => {
 
       const fieldValue =
         (store.get(
-          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+          recordStoreFamilySelector.selectorFamily({
+            recordId,
+            fieldName: fieldValueKey,
+          }),
         ) as FieldRelationValue<FieldRelationFromManyValue>) ?? [];
 
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
@@ -70,8 +75,12 @@ export const useOpenRelationFromManyFieldInput = () => {
           };
         });
 
+      // Scoped values only carry identifier fields, so merge rather than replace
       for (const record of fieldValue) {
-        store.set(recordStoreFamilyState.atomFamily(record.id), record);
+        store.set(
+          recordStoreFamilyState.atomFamily(record.id),
+          (existingRecord) => ({ ...existingRecord, ...record }),
+        );
       }
 
       store.set(

@@ -19,7 +19,8 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RelationOneToManyFieldInput = () => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, prefillRecordFilters } =
+    useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
@@ -79,6 +80,7 @@ export const RelationOneToManyFieldInput = () => {
     relationObjectMetadataItem,
     relationFieldMetadataItem,
     recordId,
+    prefillRecordFilters,
   });
 
   const {

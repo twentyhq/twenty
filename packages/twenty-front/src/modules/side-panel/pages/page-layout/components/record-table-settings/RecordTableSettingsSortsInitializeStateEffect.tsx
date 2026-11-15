@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
 type RecordTableSettingsSortsInitializeStateEffectProps = {
-  view: View;
+  view: Pick<View, 'viewSorts'>;
 };
 
 export const RecordTableSettingsSortsInitializeStateEffect = ({

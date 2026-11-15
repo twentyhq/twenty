@@ -1,6 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -50,6 +51,10 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const updateRecord = useContext(RecordTableUpdateContext);
+
+  const scopedRelationAlias = useContext(ScopedRelationAliasesContext).find(
+    ({ ownerViewFieldId }) => ownerViewFieldId === recordField.id,
+  );
 
   if (!isDefined(fieldMetadataItem)) {
     return null;
@@ -146,6 +151,8 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
+        fieldValueKey: scopedRelationAlias?.alias,
+        prefillRecordFilters: scopedRelationAlias?.prefillRecordFilters,
       }}
     >
       {children}

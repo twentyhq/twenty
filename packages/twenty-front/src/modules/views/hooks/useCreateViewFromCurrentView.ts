@@ -6,6 +6,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useCopyColumnScopes } from '@/object-record/record-column-scope/hooks/useCopyColumnScopes';
 import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
@@ -43,6 +44,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   );
 
   const { performViewFieldApiCreate } = usePerformViewFieldApiPersist();
+
+  const { copyColumnScopes } = useCopyColumnScopes();
 
   const { performViewSortApiCreate } = usePerformViewSortApiPersist();
 
@@ -170,29 +173,37 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         throw new Error(doNotTranslate('Failed to create view'));
       }
 
+      const viewFieldsToCopy = sourceView.viewFields.filter((viewField) =>
+        isRecordFieldSupportedByViewType({ recordField: viewField, viewType }),
+      );
+
+      const newViewFieldIdByViewFieldId = new Map(
+        viewFieldsToCopy.map((viewField) => [viewField.id, v4()]),
+      );
+
       const fieldResult = await performViewFieldApiCreate({
-        inputs: sourceView.viewFields
-          .filter((viewField) =>
-            isRecordFieldSupportedByViewType({
-              recordField: viewField,
-              viewType,
-            }),
-          )
-          .map((viewField) => ({
-            id: v4(),
-            fieldMetadataId: viewField.fieldMetadataId,
-            position: viewField.position,
-            isVisible: viewField.isVisible,
-            isCanonical: viewField.isCanonical,
-            size: viewField.size,
-            aggregateOperation: viewField.aggregateOperation,
-            viewFieldGroupId: viewField.viewFieldGroupId,
-            settings: getViewFieldSettingsInput(viewField.settings),
-            viewId: newViewId,
-          })),
+        inputs: viewFieldsToCopy.map((viewField) => ({
+          id: newViewFieldIdByViewFieldId.get(viewField.id),
+          fieldMetadataId: viewField.fieldMetadataId,
+          position: viewField.position,
+          isVisible: viewField.isVisible,
+          isCanonical: viewField.isCanonical,
+          size: viewField.size,
+          aggregateOperation: viewField.aggregateOperation,
+          viewFieldGroupId: viewField.viewFieldGroupId,
+          settings: getViewFieldSettingsInput(viewField.settings),
+          viewId: newViewId,
+        })),
       });
 
-      if (fieldResult.status === 'failed') {
+      if (
+        fieldResult.status === 'failed' ||
+        !(await copyColumnScopes({
+          viewFieldsToCopy,
+          newViewId,
+          newViewFieldIdByViewFieldId,
+        }))
+      ) {
         return undefined;
       }
 
@@ -284,6 +295,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       anyFieldFilterValue,
       objectMetadataItem,
       performViewFieldApiCreate,
+      copyColumnScopes,
       store,
       currentRecordFilterGroups,
       currentRecordFilters,
