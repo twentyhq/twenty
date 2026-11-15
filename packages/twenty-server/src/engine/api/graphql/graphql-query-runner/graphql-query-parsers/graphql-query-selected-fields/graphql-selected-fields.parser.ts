@@ -228,7 +228,7 @@ export class GraphqlQuerySelectedFieldsParser {
         responseKey,
         fieldName: fieldMetadata.name,
         flatObjectMetadata,
-        relationSelections: accumulator.relationSelections,
+        accumulator,
       });
 
       this.graphqlQuerySelectedFieldsRelationParser.parseRelationField({
@@ -245,12 +245,15 @@ export class GraphqlQuerySelectedFieldsParser {
     responseKey,
     fieldName,
     flatObjectMetadata,
-    relationSelections,
+    accumulator,
   }: {
     responseKey: string;
     fieldName: string;
     flatObjectMetadata: FlatObjectMetadata;
-    relationSelections: CommonRelationSelections;
+    accumulator: Pick<
+      GraphqlQuerySelectedFieldsResult,
+      'relationSelections' | 'aggregate'
+    >;
   }): void {
     const { fieldIdByName, fieldIdByJoinColumnName } =
       buildFieldMapsFromFlatObjectMetadata(
@@ -258,13 +261,15 @@ export class GraphqlQuerySelectedFieldsParser {
         flatObjectMetadata,
       );
 
-    const isTakenByAnotherRelation = isDefined(relationSelections[responseKey]);
+    const isTakenByAnotherSelection =
+      isDefined(accumulator.relationSelections[responseKey]) ||
+      isDefined(accumulator.aggregate[responseKey]);
     const isTakenByAColumn =
       responseKey !== fieldName &&
       (isDefined(fieldIdByName[responseKey]) ||
         isDefined(fieldIdByJoinColumnName[responseKey]));
 
-    if (isTakenByAnotherRelation || isTakenByAColumn) {
+    if (isTakenByAnotherSelection || isTakenByAColumn) {
       throw new CommonQueryRunnerException(
         `Response key "${responseKey}" of relation "${fieldName}" is already used on ${flatObjectMetadata.nameSingular}`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
