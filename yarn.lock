@@ -19413,15 +19413,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-fields@npm:^1.3.6":
-  version: 1.3.9
-  resolution: "@types/graphql-fields@npm:1.3.9"
-  dependencies:
-    graphql: "npm:*"
-  checksum: 10c0/47cf1b6f8c3e8b16ae79d83632b0721b77ff81bb045642af6633bffb932abf8a67b4cc1872e5ce3ad8fb2972a42ce64f2150c7d3a3c4415d16d8673de8a4113b
-  languageName: node
-  linkType: hard
-
 "@types/graphql-upload@npm:^16.0.7":
   version: 16.0.7
   resolution: "@types/graphql-upload@npm:16.0.7"
@@ -30585,13 +30576,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-fields@npm:2.0.3":
-  version: 2.0.3
-  resolution: "graphql-fields@npm:2.0.3"
-  checksum: 10c0/943c6ac8dba1320c1b81873e9e847aaec073d952de988f0d77047aafe7bef60c743ebc5974cf04fe27477e33d9c067a5bd45d95c784d64c37a1e743fd3a23b0d
-  languageName: node
-  linkType: hard
-
 "graphql-language-service@npm:^5.5.1, graphql-language-service@npm:^5.5.2":
   version: 5.5.2
   resolution: "graphql-language-service@npm:5.5.2"
@@ -30774,7 +30758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:*, graphql@npm:16.14.2, graphql@npm:^16.12.0, graphql@npm:^16.3.0, graphql@npm:^16.8.1":
+"graphql@npm:16.14.2, graphql@npm:^16.12.0, graphql@npm:^16.3.0, graphql@npm:^16.8.1":
   version: 16.14.2
   resolution: "graphql@npm:16.14.2"
   checksum: 10c0/a95a96961eaff55cc9fe9d31fae6f33499ac988b972d07ea5085024cb1333f515b902f376e7393a5489aa82200a8aff3eb96580e4d1b69d702ed19b6eb1ce97a
@@ -46204,7 +46188,6 @@ __metadata:
     "@types/bytes": "npm:^3.1.1"
     "@types/express": "npm:^4.17.13"
     "@types/express-session": "npm:^1.18.0"
-    "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^16.0.7"
     "@types/html-to-text": "npm:^9.0.4"
     "@types/ioredis-mock": "npm:8.2.8"
@@ -46265,7 +46248,6 @@ __metadata:
     gaxios: "npm:8.3.2"
     googleapis: "npm:188.0.0"
     graphql: "npm:16.14.2"
-    graphql-fields: "npm:2.0.3"
     graphql-redis-subscriptions: "npm:2.7.0"
     graphql-scalars: "npm:1.23.0"
     graphql-subscriptions: "npm:2.0.0"
