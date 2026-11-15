@@ -5,6 +5,7 @@ import { type CommonRelationSelections } from 'src/engine/api/common/types/commo
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -66,12 +67,12 @@ export const collectRecordsByObjectNameSingular = ({
         continue;
       }
 
-      const relationField = findFlatEntityByIdInFlatEntityMaps({
+      const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: fieldId,
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
-      if (!isDefined(relationField?.relationTargetObjectMetadataId)) {
+      if (!isDefined(relationField.relationTargetObjectMetadataId)) {
         continue;
       }
 
