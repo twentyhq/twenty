@@ -46,10 +46,17 @@ export const useUpsertRecordsInStore = () => {
           return;
         }
 
-        // Comparing only the fields present keeps a partial related record from rewriting a fuller one
+        const filteredCurrentRecord = isDefined(gqlFields)
+          ? filterRecordOnGqlFields({
+              record: currentRecord,
+              recordGqlFields: gqlFields,
+            })
+          : currentRecord;
+
+        // Comparing only the selected fields present keeps a thinner snapshot from rewriting a fuller stored one
         const hasChangedField = Object.entries(filteredPartialRecord).some(
           ([fieldName, value]) =>
-            !fastDeepEqual(currentRecord[fieldName], value),
+            !fastDeepEqual(filteredCurrentRecord[fieldName], value),
         );
 
         if (hasChangedField) {
