@@ -35,7 +35,7 @@ export class FindOneResolverFactory implements WorkspaceResolverBuilderFactoryIn
           workspaceSchemaBuilderContext: internalContext,
         });
 
-        const { results: record } =
+        const { results: record, args: processedArgs } =
           await this.commonFindOneQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,
@@ -50,6 +50,8 @@ export class FindOneResolverFactory implements WorkspaceResolverBuilderFactoryIn
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
+          relationSelections:
+            processedArgs.selectedFieldsResult.relationSelections,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,

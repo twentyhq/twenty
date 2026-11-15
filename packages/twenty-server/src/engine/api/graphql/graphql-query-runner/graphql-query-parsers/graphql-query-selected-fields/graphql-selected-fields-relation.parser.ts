@@ -29,15 +29,21 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
 
-  parseRelationField(
+  parseRelationField({
+    fieldMetadata,
+    responseKey,
+    fieldValue,
+    accumulator,
+    isFromOneToManyRelation,
+  }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    fieldKey: string,
-    fieldValue: ResolverSelectedFields,
-    accumulator: GraphqlQuerySelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+    responseKey: string;
+    fieldValue: ResolverSelectedFields;
+    accumulator: GraphqlQuerySelectedFieldsResult;
+    isFromOneToManyRelation?: boolean;
+  }): void {
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
     }
@@ -48,8 +54,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     if (isFromOneToManyRelation && isOneToManyRelation) {
       accumulator.hasAtLeastTwoNestedOneToManyRelations = true;
     }
-
-    accumulator.relations[fieldKey] = true;
 
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
       throw new Error(
@@ -72,12 +76,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       isFromOneToManyRelation || isOneToManyRelation,
     );
 
-    accumulator.select[fieldKey] = {
+    accumulator.select[responseKey] = {
       id: true,
       ...relationAccumulator.select,
     };
-    accumulator.relations[fieldKey] = relationAccumulator.relations;
-    accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
+    accumulator.aggregate[responseKey] = relationAccumulator.aggregate;
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +
       relationAccumulator.relationFieldsCount +
@@ -88,12 +91,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
 
     const graphqlArguments = fieldValue[SELECTION_ARGUMENTS];
 
-    accumulator.nestedRelationQueryArgsByFieldName[fieldKey] = {
+    accumulator.relationSelections[responseKey] = {
+      fieldName: fieldMetadata.name,
       ...(isOneToManyRelation && isPlainObject(graphqlArguments)
         ? this.resolveQueryArgs(graphqlArguments, targetObjectMetadata)
         : {}),
-      nestedRelationQueryArgsByFieldName:
-        relationAccumulator.nestedRelationQueryArgsByFieldName,
+      relationSelections: relationAccumulator.relationSelections,
     };
   }
 
