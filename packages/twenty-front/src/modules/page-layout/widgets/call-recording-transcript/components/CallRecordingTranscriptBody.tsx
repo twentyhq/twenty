@@ -24,7 +24,10 @@ const StyledRecordingLayout = styled.div<{ hasTranscriptEntries: boolean }>`
     hasTranscriptEntries ? 'grid' : 'flex'};
   flex: ${({ hasTranscriptEntries }) => (hasTranscriptEntries ? '1' : 'none')};
   flex-direction: column;
-  grid-template-rows: auto minmax(0, 1fr);
+  // The video row shares its height with the transcript: a wide widget would
+  // otherwise size the row from the viewport's 16/9 width and hide the
+  // transcript entirely.
+  grid-template-rows: minmax(0, 50%) minmax(0, 1fr);
   min-height: ${({ hasTranscriptEntries }) =>
     hasTranscriptEntries ? '0' : '100%'};
 `;

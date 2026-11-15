@@ -14,6 +14,7 @@ const StyledVideoViewport = styled.div`
   aspect-ratio: 16 / 9;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
+  max-height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
