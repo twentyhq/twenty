@@ -162,4 +162,61 @@ describe('useUpsertRecordsInStore', () => {
 
     expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
   });
+
+  it('should keep a richer stored relation when the selected fields are unchanged', () => {
+    const recordId = 'test-record-4';
+
+    const { result } = renderHook(
+      () => {
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
+        const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+        return { recordStore, upsertRecordsInStore };
+      },
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [
+          {
+            id: recordId,
+            __typename: 'Person',
+            name: 'John Doe',
+            company: {
+              id: 'company-1',
+              __typename: 'Company',
+              name: 'Acme',
+              domainName: 'acme.com',
+            },
+          },
+        ],
+      });
+    });
+
+    const recordAfterFirstUpsert = result.current.recordStore;
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [
+          {
+            id: recordId,
+            __typename: 'Person',
+            name: 'John Doe',
+            company: { id: 'company-1', __typename: 'Company', name: 'Acme' },
+          },
+        ],
+        recordGqlFields: {
+          id: true,
+          name: true,
+          company: { id: true, name: true },
+        },
+      });
+    });
+
+    expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
+  });
 });

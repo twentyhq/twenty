@@ -46,6 +46,38 @@ const isObjectRecordOrderBy = (
 const isNonNegativeInteger = (value: unknown): value is number =>
   typeof value === 'number' && Number.isInteger(value) && value >= 0;
 
+const parseFilter = (filter: unknown): ObjectRecordFilter | undefined => {
+  if (!isDefined(filter)) {
+    return undefined;
+  }
+
+  return isObjectRecordFilter(filter)
+    ? filter
+    : throwInvalidQueryInput('Invalid argument: "filter" must be an object');
+};
+
+const parseOrderBy = (orderBy: unknown): ObjectRecordOrderBy | undefined => {
+  if (!isDefined(orderBy)) {
+    return undefined;
+  }
+
+  return isObjectRecordOrderBy(orderBy)
+    ? new OrderByArgProcessorService().process({ orderBy })
+    : throwInvalidQueryInput('Invalid argument: "orderBy" must be an array');
+};
+
+const parseFirst = (first: unknown): number | undefined => {
+  if (!isDefined(first)) {
+    return undefined;
+  }
+
+  return isNonNegativeInteger(first)
+    ? first
+    : throwInvalidQueryInput(
+        'Invalid argument: "first" must be a non-negative integer',
+      );
+};
+
 // Cursor and offset arguments are accepted but ignored on nested relations, as they always were
 export const extractNestedRelationQueryArgs = (
   graphqlArguments: Record<string, unknown>,
@@ -58,27 +90,9 @@ export const extractNestedRelationQueryArgs = (
     throwInvalidQueryInput(`Argument not allowed: ${unknownArgumentName}`);
   }
 
-  const { filter, orderBy, first } = graphqlArguments;
-
-  if (isDefined(filter) && !isObjectRecordFilter(filter)) {
-    throwInvalidQueryInput('Invalid argument: "filter" must be an object');
-  }
-
-  if (isDefined(orderBy) && !isObjectRecordOrderBy(orderBy)) {
-    throwInvalidQueryInput('Invalid argument: "orderBy" must be an array');
-  }
-
-  if (isDefined(first) && !isNonNegativeInteger(first)) {
-    throwInvalidQueryInput(
-      'Invalid argument: "first" must be a non-negative integer',
-    );
-  }
-
   return {
-    filter: isObjectRecordFilter(filter) ? filter : undefined,
-    orderBy: isObjectRecordOrderBy(orderBy)
-      ? new OrderByArgProcessorService().process({ orderBy })
-      : undefined,
-    first: isNonNegativeInteger(first) ? first : undefined,
+    filter: parseFilter(graphqlArguments.filter),
+    orderBy: parseOrderBy(graphqlArguments.orderBy),
+    first: parseFirst(graphqlArguments.first),
   };
 };

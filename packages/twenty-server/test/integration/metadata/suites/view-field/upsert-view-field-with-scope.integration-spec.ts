@@ -17,6 +17,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -189,6 +190,9 @@ describe('upsertViewFieldWithScope', () => {
     });
 
     const scopeViewId = created.scopeView?.id;
+
+    assertIsDefinedOrThrow(scopeViewId);
+
     const ungroupedFilterId = v4();
 
     const {
@@ -239,7 +243,7 @@ describe('upsertViewFieldWithScope', () => {
     expect(cleared.scopeView).toBeNull();
     expect(cleared.viewField.settings).toMatchObject({ label: null });
 
-    const { data } = await findOneView({ viewId: scopeViewId ?? '' });
+    const { data } = await findOneView({ viewId: scopeViewId });
 
     expect(data.getView).toBeNull();
   });
