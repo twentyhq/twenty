@@ -39,6 +39,7 @@ import {
   CommonQueryExecutionResult,
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
@@ -206,12 +207,7 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<CommonInput<Args>>;
 
   protected abstract processQueryResult(
-    queryResult: Output,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-    relationSelections: CommonRelationSelections,
+    args: CommonQueryResultProcessingArgs<Output>,
   ): Promise<Output>;
 
   protected getResultRecords(results: Output): ObjectRecord[] {
@@ -339,14 +335,14 @@ export abstract class CommonBaseQueryRunnerService<
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
     recordReadRestrictions: RecordReadRestrictions;
   }): Promise<Output> {
-    const resultWithGetters = await this.processQueryResult(
-      results,
+    const resultWithGetters = await this.processQueryResult({
+      queryResult: results,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
       relationSelections,
-    );
+    });
 
     await this.commonRecordVisibilityService.applyVisibilityRestrictions({
       records: this.getResultRecords(resultWithGetters),
