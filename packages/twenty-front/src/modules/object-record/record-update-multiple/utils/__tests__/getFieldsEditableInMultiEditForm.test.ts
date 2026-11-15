@@ -100,7 +100,7 @@ describe('getFieldsEditableInMultiEditForm', () => {
     });
 
     const objectMetadataItem = createMockObjectMetadataItem({
-      fields: [amountField, nameField],
+      fields: [nameField, amountField],
       readableFieldIds: ['field-amount', 'field-name'],
       updatableFieldIds: ['field-amount', 'field-name'],
     });
