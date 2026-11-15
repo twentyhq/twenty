@@ -14,6 +14,7 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { RECORD_BOARD_CARD_DND_TYPE } from '@/object-record/record-board/record-board-dnd/constants/RecordBoardCardDndType';
+import { useIsRecordBoardCardDragDisabled } from '@/object-record/record-board/record-board-card/hooks/useIsRecordBoardCardDragDisabled';
 
 const StyledDraggableContainer = styled.div<{
   isDragDisabled: boolean;
@@ -63,6 +64,12 @@ export const RecordBoardCardContextProvider = ({
     isRecordBoardDropProcessingComponentState,
   );
 
+  const isRecordBoardCardDragDisabled =
+    useIsRecordBoardCardDragDisabled(recordId);
+
+  const isDragDisabled =
+    isRecordBoardDropProcessing || isRecordBoardCardDragDisabled;
+
   return (
     <RecordBoardCardContext.Provider
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
@@ -74,12 +81,10 @@ export const RecordBoardCardContextProvider = ({
         type={RECORD_BOARD_CARD_DND_TYPE}
         accept={RECORD_BOARD_CARD_DND_TYPE}
         data={{ recordId }}
-        disabled={isRecordBoardDropProcessing || isRecordBoardCellsNonEditable}
+        disabled={isDragDisabled}
       >
         <StyledDraggableContainer
-          isDragDisabled={
-            isRecordBoardDropProcessing || isRecordBoardCellsNonEditable
-          }
+          isDragDisabled={isDragDisabled}
           id={`record-board-card-${columnIndex}-${rowIndex}`}
           data-selectable-id={recordId}
           data-select-disable
