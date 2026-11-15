@@ -6,20 +6,32 @@ import { isDefined } from 'twenty-shared/utils';
 export const getScopeViewPrefillViewFilters = (
   scopeView: Pick<View, 'viewFilters' | 'viewFilterGroups'>,
 ) => {
-  const andRootViewFilterGroupIds = new Set(
-    (scopeView.viewFilterGroups ?? [])
-      .filter(
-        (viewFilterGroup) =>
-          !isDefined(viewFilterGroup.parentViewFilterGroupId) &&
-          viewFilterGroup.logicalOperator ===
-            ViewFilterGroupLogicalOperator.AND,
-      )
-      .map((viewFilterGroup) => viewFilterGroup.id),
+  const viewFilterGroupById = new Map(
+    (scopeView.viewFilterGroups ?? []).map((viewFilterGroup) => [
+      viewFilterGroup.id,
+      viewFilterGroup,
+    ]),
   );
+
+  const isRequiredViewFilterGroup = (viewFilterGroupId: string): boolean => {
+    const viewFilterGroup = viewFilterGroupById.get(viewFilterGroupId);
+
+    if (
+      !isDefined(viewFilterGroup) ||
+      viewFilterGroup.logicalOperator !== ViewFilterGroupLogicalOperator.AND
+    ) {
+      return false;
+    }
+
+    return (
+      !isDefined(viewFilterGroup.parentViewFilterGroupId) ||
+      isRequiredViewFilterGroup(viewFilterGroup.parentViewFilterGroupId)
+    );
+  };
 
   return scopeView.viewFilters.filter(
     (viewFilter) =>
       !isDefined(viewFilter.viewFilterGroupId) ||
-      andRootViewFilterGroupIds.has(viewFilter.viewFilterGroupId),
+      isRequiredViewFilterGroup(viewFilter.viewFilterGroupId),
   );
 };
