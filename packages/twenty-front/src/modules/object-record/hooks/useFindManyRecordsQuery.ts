@@ -4,6 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
+import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
   type QueryCursorDirection,
@@ -15,11 +17,13 @@ export const useFindManyRecordsQuery = ({
   recordGqlFields,
   computeReferences,
   cursorDirection = 'after',
+  relationAliases,
 }: {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
+  relationAliases?: RecordGqlRelationAlias[];
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -38,6 +42,7 @@ export const useFindManyRecordsQuery = ({
         computeReferences,
         cursorDirection,
         objectPermissionsByObjectMetadataId,
+        relationAliases,
       }),
     [
       objectMetadataItem,
@@ -46,10 +51,17 @@ export const useFindManyRecordsQuery = ({
       computeReferences,
       cursorDirection,
       objectPermissionsByObjectMetadataId,
+      relationAliases,
     ],
+  );
+
+  const relationAliasVariables = useMemo(
+    () => getRecordGqlRelationAliasVariables(relationAliases),
+    [relationAliases],
   );
 
   return {
     findManyRecordsQuery,
+    relationAliasVariables,
   };
 };
