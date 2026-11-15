@@ -9,11 +9,10 @@ import {
 } from '@nestjs/graphql';
 
 import { type GraphQLResolveInfo } from 'graphql';
-import graphqlFields from 'graphql-fields';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -45,6 +44,8 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { getFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-selections.util';
+import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
 
 const FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -195,10 +196,15 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const selectedFields = graphqlFields(info);
+    const selectedFields = getResolverSelectedFields(info);
 
     const [applicationTokenPair, applicationVariables] = await Promise.all([
-      isDefined(selectedFields.applicationTokenPair)
+      isNonEmptyArray(
+        getFieldSelections({
+          selectedFields,
+          fieldName: 'applicationTokenPair',
+        }),
+      )
         ? this.applicationTokenService.generateApplicationTokenPair({
             applicationId: dto.applicationId,
             workspaceId: workspace.id,
@@ -206,7 +212,12 @@ export class FrontComponentResolver {
             userId: user.id,
           })
         : undefined,
-      isDefined(selectedFields.applicationVariables)
+      isNonEmptyArray(
+        getFieldSelections({
+          selectedFields,
+          fieldName: 'applicationVariables',
+        }),
+      )
         ? this.getPublicApplicationVariables({
             workspaceId: workspace.id,
             applicationId: dto.applicationId,
