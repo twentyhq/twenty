@@ -307,6 +307,8 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
     }
 
     if (connectionFieldName === 'edges') {
+      const edgeSelectionEntries = getSelectionEntries(subFields);
+
       formatted[key] = connection.edges.map((edge) => {
         const edgeFormatted: Record<string, unknown> = Object.create(null);
 
@@ -314,7 +316,7 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
           responseKey: edgeKey,
           fieldName: edgeFieldName,
           selection: edgeSubFields,
-        } of getSelectionEntries(subFields)) {
+        } of edgeSelectionEntries) {
           if (edgeFieldName === '__typename') {
             edgeFormatted[edgeKey] = getEdgeTypename(objectNameSingular);
             continue;
