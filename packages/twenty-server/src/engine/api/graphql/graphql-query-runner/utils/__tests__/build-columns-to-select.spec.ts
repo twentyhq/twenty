@@ -186,13 +186,44 @@ describe('buildColumnsToSelect', () => {
       },
     };
 
-    const relations = {
-      company: {},
+    const relationSelections = {
+      company: { fieldName: 'company', relationSelections: {} },
     };
 
     const result = buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    expect(result).toEqual({
+      nameFirstName: true,
+      companyId: true,
+      id: true,
+    });
+  });
+
+  it('should select the join column of a many-to-one relation selected only under an alias', () => {
+    const flatObjectMetadata = buildMockFlatObjectMetadata([
+      nameFieldId,
+      companyFieldId,
+    ]);
+    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+      nameField,
+      companyRelationField,
+    ]);
+    const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
+      flatObjectMetadata,
+      companyObjectMetadata,
+    ]);
+
+    const result = buildColumnsToSelect({
+      select: { nameFirstName: true, employer: { id: true } },
+      relationSelections: {
+        employer: { fieldName: 'company', relationSelections: {} },
+      },
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -224,11 +255,11 @@ describe('buildColumnsToSelect', () => {
       nameLastName: true,
     };
 
-    const relations = {};
+    const relationSelections = {};
 
     const result = buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -261,11 +292,11 @@ describe('buildColumnsToSelect', () => {
       company: { id: true },
     };
 
-    const relations = {};
+    const relationSelections = {};
 
     const result = buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -295,13 +326,13 @@ describe('buildColumnsToSelect', () => {
       nameFirstName: true,
     };
 
-    const relations = {
-      name: {}, // This is not a relation field
+    const relationSelections = {
+      name: { fieldName: 'name', relationSelections: {} },
     };
 
     const result = buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -345,13 +376,13 @@ describe('buildColumnsToSelect', () => {
       nameFirstName: true,
     };
 
-    const relations = {
-      company: {},
+    const relationSelections = {
+      company: { fieldName: 'company', relationSelections: {} },
     };
 
     const result = buildColumnsToSelect({
       select,
-      relations,
+      relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
