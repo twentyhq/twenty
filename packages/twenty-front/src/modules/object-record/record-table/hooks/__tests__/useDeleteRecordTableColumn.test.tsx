@@ -15,7 +15,13 @@ jest.mock('@/views/hooks/internal/usePerformViewFieldApiPersist', () => ({
 
 const RECORD_TABLE_ID = 'record-table-id';
 
-const buildRecordField = (id: string, position: number): RecordField => ({
+const buildRecordField = ({
+  id,
+  position,
+}: {
+  id: string;
+  position: number;
+}): RecordField => ({
   id,
   fieldMetadataItemId: `field-${id}`,
   position,
@@ -23,8 +29,8 @@ const buildRecordField = (id: string, position: number): RecordField => ({
   size: 100,
 });
 
-const nameColumn = buildRecordField('name-column', 0);
-const extraColumn = buildRecordField('extra-column', 1);
+const nameColumn = buildRecordField({ id: 'name-column', position: 0 });
+const extraColumn = buildRecordField({ id: 'extra-column', position: 1 });
 
 const currentRecordFieldsAtom = currentRecordFieldsComponentState.atomFamily({
   instanceId: RECORD_TABLE_ID,
@@ -53,11 +59,9 @@ describe('useDeleteRecordTableColumn', () => {
 
     const { result } = renderDeleteHook(store);
 
-    let isDeleted = false;
-
-    await act(async () => {
-      isDeleted = await result.current.deleteRecordTableColumn(extraColumn.id);
-    });
+    const isDeleted = await act(() =>
+      result.current.deleteRecordTableColumn(extraColumn.id),
+    );
 
     expect(isDeleted).toBe(true);
     expect(performViewFieldApiDestroyMock).toHaveBeenCalledTimes(1);
