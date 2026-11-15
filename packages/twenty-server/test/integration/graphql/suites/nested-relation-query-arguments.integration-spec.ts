@@ -482,6 +482,35 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('serves relations aliased with Object.prototype member names', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedPeople($filter: PersonFilterInput) {
+          people(filter: $filter) {
+            edges {
+              node {
+                constructor: company {
+                  id
+                }
+                toString: company {
+                  name
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { eq: buildPersonId(1) } } },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const [{ node }] = response.body.data.people.edges;
+
+    expect(node.constructor).toEqual({ id: FIRST_COMPANY_ID });
+    expect(node.toString).toEqual({ name: 'Nested arguments company one' });
+  });
+
   it('serves a response key reused for different fields under separate aliases', async () => {
     const response = await makeGraphqlApiRequest({
       query: gql`
