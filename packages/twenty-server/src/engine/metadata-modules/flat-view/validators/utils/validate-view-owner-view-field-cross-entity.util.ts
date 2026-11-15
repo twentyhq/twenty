@@ -10,6 +10,7 @@ import {
   type OrchestratorFailureReport,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
@@ -20,8 +21,9 @@ type OwnerViewFieldValidationMaps = Pick<
 
 const getOwnerViewFieldErrorMessages = ({
   scopeView,
+  ownerViewField,
+  scopeViewCount,
   optimisticUniversalFlatMaps,
-  ownerViewFieldUniversalIdentifier,
 }: {
   scopeView: Pick<
     UniversalFlatView,
@@ -31,8 +33,9 @@ const getOwnerViewFieldErrorMessages = ({
     | 'visibility'
     | 'createdByUserWorkspaceId'
   >;
+  ownerViewField: UniversalFlatViewField | undefined;
+  scopeViewCount: number;
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
-  ownerViewFieldUniversalIdentifier: string;
 }) => {
   if (scopeView.type !== ViewType.TABLE_WIDGET) {
     return {
@@ -40,11 +43,6 @@ const getOwnerViewFieldErrorMessages = ({
       userFriendlyMessage: msg`Invalid column scope`,
     };
   }
-
-  const ownerViewField = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: ownerViewFieldUniversalIdentifier,
-    flatEntityMaps: optimisticUniversalFlatMaps.flatViewFieldMaps,
-  });
 
   if (!isDefined(ownerViewField)) {
     return {
@@ -115,14 +113,6 @@ const getOwnerViewFieldErrorMessages = ({
     };
   }
 
-  const scopeViewCount = Object.values(
-    optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
-  ).filter(
-    (flatView) =>
-      flatView?.ownerViewFieldUniversalIdentifier ===
-      ownerViewFieldUniversalIdentifier,
-  ).length;
-
   if (scopeViewCount > 1) {
     return {
       message: t`A view field can be scoped by only one view`,
@@ -153,20 +143,36 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     viewField: [],
   };
 
+  const scopeViews = Object.values(
+    optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
+  ).filter(
+    (
+      flatView,
+    ): flatView is UniversalFlatView & {
+      ownerViewFieldUniversalIdentifier: string;
+    } => isDefined(flatView?.ownerViewFieldUniversalIdentifier),
+  );
+
+  const scopeViewCountByOwnerViewFieldUniversalIdentifier = new Map<
+    string,
+    number
+  >();
+
+  for (const { ownerViewFieldUniversalIdentifier } of scopeViews) {
+    scopeViewCountByOwnerViewFieldUniversalIdentifier.set(
+      ownerViewFieldUniversalIdentifier,
+      (scopeViewCountByOwnerViewFieldUniversalIdentifier.get(
+        ownerViewFieldUniversalIdentifier,
+      ) ?? 0) + 1,
+    );
+  }
+
   // A workspace caller relies on the database cascade; an application must drop the scope views it keeps declaring
   if (!isWorkspaceCaller) {
-    const ownerViewFieldUniversalIdentifiersOfKeptScopeViews = new Set(
-      Object.values(
-        optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
-      )
-        .map((flatView) => flatView?.ownerViewFieldUniversalIdentifier)
-        .filter(isDefined),
-    );
-
     for (const { universalIdentifier } of orchestratorActionsReport.viewField
       .delete) {
       if (
-        !ownerViewFieldUniversalIdentifiersOfKeptScopeViews.has(
+        !scopeViewCountByOwnerViewFieldUniversalIdentifier.has(
           universalIdentifier,
         )
       ) {
@@ -207,47 +213,33 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     ),
   );
 
-  // A scope view is re-checked when it changes or when the view holding its owner column does
-  const scopeViewsToValidate = [
-    ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
-      scopeView: flatEntity,
-      type: 'create' as const,
-    })),
-    ...Object.values(
-      optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatView) =>
-          !createdViewUniversalIdentifiers.has(flatView.universalIdentifier) &&
-          (updatedViewUniversalIdentifiers.has(flatView.universalIdentifier) ||
-            (isDefined(flatView.ownerViewFieldUniversalIdentifier) &&
-              updatedViewUniversalIdentifiers.has(
-                findFlatEntityByUniversalIdentifier({
-                  universalIdentifier:
-                    flatView.ownerViewFieldUniversalIdentifier,
-                  flatEntityMaps: optimisticUniversalFlatMaps.flatViewFieldMaps,
-                })?.viewUniversalIdentifier ?? '',
-              ))),
-      )
-      .map((flatView) => ({ scopeView: flatView, type: 'update' as const })),
-  ];
+  for (const scopeView of scopeViews) {
+    const ownerViewField = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: scopeView.ownerViewFieldUniversalIdentifier,
+      flatEntityMaps: optimisticUniversalFlatMaps.flatViewFieldMaps,
+    });
+    const isCreated = createdViewUniversalIdentifiers.has(
+      scopeView.universalIdentifier,
+    );
+    const isAffectedByViewUpdate =
+      updatedViewUniversalIdentifiers.has(scopeView.universalIdentifier) ||
+      (isDefined(ownerViewField) &&
+        updatedViewUniversalIdentifiers.has(
+          ownerViewField.viewUniversalIdentifier,
+        ));
 
-  for (const { scopeView, type } of scopeViewsToValidate) {
-    const ownerViewFieldUniversalIdentifier =
-      scopeView?.ownerViewFieldUniversalIdentifier;
-
-    if (
-      !isDefined(scopeView) ||
-      !isDefined(ownerViewFieldUniversalIdentifier)
-    ) {
+    if (!isCreated && !isAffectedByViewUpdate) {
       continue;
     }
 
     const errorMessages = getOwnerViewFieldErrorMessages({
       scopeView,
+      ownerViewField,
+      scopeViewCount:
+        scopeViewCountByOwnerViewFieldUniversalIdentifier.get(
+          scopeView.ownerViewFieldUniversalIdentifier,
+        ) ?? 0,
       optimisticUniversalFlatMaps,
-      ownerViewFieldUniversalIdentifier,
     });
 
     if (!isDefined(errorMessages)) {
@@ -259,7 +251,7 @@ export const validateViewOwnerViewFieldCrossEntity = ({
         universalIdentifier: scopeView.universalIdentifier,
       },
       metadataName: 'view',
-      type,
+      type: isCreated ? 'create' : 'update',
     });
 
     failedValidation.errors.push({

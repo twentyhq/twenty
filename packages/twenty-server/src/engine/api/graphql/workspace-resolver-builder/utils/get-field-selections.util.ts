@@ -1,8 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
-import { getSelectedFieldName } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selected-field-name.util';
-import { isSelectionMetaKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/is-selection-meta-key.util';
+import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
 
 export const getFieldSelections = ({
   selectedFields,
@@ -10,12 +7,7 @@ export const getFieldSelections = ({
 }: {
   selectedFields: ResolverSelectedFields;
   fieldName: string;
-}): { responseKey: string; selection: ResolverSelectedFields }[] =>
-  Object.entries(selectedFields)
-    .filter(
-      ([responseKey, selection]) =>
-        isDefined(selection) &&
-        !isSelectionMetaKey(responseKey) &&
-        getSelectedFieldName({ responseKey, selection }) === fieldName,
-    )
-    .map(([responseKey, selection]) => ({ responseKey, selection }));
+}) =>
+  getSelectionEntries(selectedFields).filter(
+    (selectionEntry) => selectionEntry.fieldName === fieldName,
+  );
