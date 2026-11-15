@@ -198,6 +198,7 @@ export class ViewFieldWithScopeUpsertService {
       fieldMetadataId,
       isCanonical,
       aggregateOperation,
+      relationTargetFieldMetadataId,
       scope: _scope,
       ...editableProperties
     } = input;
@@ -211,11 +212,13 @@ export class ViewFieldWithScopeUpsertService {
               Object.entries({
                 ...editableProperties,
                 aggregateOperation: aggregateOperation ?? undefined,
+                relationTargetFieldMetadataId,
               }).filter(([, value]) => value !== undefined),
             ),
           },
           flatViewFieldMaps: flatMaps.flatViewFieldMaps,
           flatViewFieldGroupMaps: flatMaps.flatViewFieldGroupMaps,
+          flatFieldMetadataMaps: flatMaps.flatFieldMetadataMaps,
           callerApplicationUniversalIdentifier:
             flatApplication.universalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
@@ -241,6 +244,8 @@ export class ViewFieldWithScopeUpsertService {
           fieldMetadataId,
           isCanonical,
           aggregateOperation: aggregateOperation ?? undefined,
+          relationTargetFieldMetadataId:
+            relationTargetFieldMetadataId ?? undefined,
         },
         flatApplication,
         flatFieldMetadataMaps: flatMaps.flatFieldMetadataMaps,

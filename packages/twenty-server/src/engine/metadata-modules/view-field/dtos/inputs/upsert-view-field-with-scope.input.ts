@@ -57,6 +57,11 @@ export class UpsertViewFieldWithScopeInput {
   aggregateOperation?: AggregateOperations | null;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
+
+  @IsOptional()
   @Type(() => ViewFieldSettingsInput)
   @ValidateNested()
   @Field(() => ViewFieldSettingsInput, { nullable: true })

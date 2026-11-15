@@ -8406,6 +8406,7 @@ export type UpsertViewFieldWithScopeInput = {
   isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   /** The filters and sorts scoping the related records; without filters or sorts the scope is removed */
   scope?: InputMaybe<ViewFieldScopeInput>;
   settings?: InputMaybe<ViewFieldSettingsInput>;
