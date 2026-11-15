@@ -5,7 +5,6 @@ type ViewOwnership = Pick<
   'visibility' | 'createdByUserWorkspaceId'
 >;
 
-// A scope view is part of its owner column, so it shares the visibility of the view holding that column
 export const inheritScopeViewOwnerVisibility = <
   TFlatView extends ViewOwnership,
 >({

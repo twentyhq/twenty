@@ -37,7 +37,7 @@ const computeViewFilterGroupOperations = ({
   flatViewMaps,
   flatViewFilterGroupMaps,
 }: {
-  inputFilterGroups: UpsertViewWidgetViewFilterGroupInput[];
+  inputFilterGroups: UpsertViewWidgetViewFilterGroupInput[] | undefined;
   existingViewFilterGroups: FlatViewFilterGroup[];
   viewId: string;
   workspaceId: string;
@@ -52,6 +52,15 @@ const computeViewFilterGroupOperations = ({
   filterGroupsToRemove: FlatViewFilterGroup[];
   optimisticFlatViewFilterGroupMaps: FlatViewFilterGroupMaps;
 } => {
+  if (!isDefined(inputFilterGroups)) {
+    return {
+      filterGroupsToCreate: [],
+      filterGroupsToUpdate: [],
+      filterGroupsToRemove: [],
+      optimisticFlatViewFilterGroupMaps: flatViewFilterGroupMaps,
+    };
+  }
+
   const filterGroupsToCreate: FlatViewFilterGroup[] = [];
   const filterGroupsToUpdate: FlatViewFilterGroup[] = [];
   const inputFilterGroupIds = new Set(
@@ -181,7 +190,7 @@ const computeViewFilterOperations = ({
   flatViewMaps,
   flatViewFilterGroupMaps,
 }: {
-  inputFilters: UpsertViewWidgetViewFilterInput[];
+  inputFilters: UpsertViewWidgetViewFilterInput[] | undefined;
   existingViewFilters: FlatViewFilter[];
   viewId: string;
   workspaceId: string;
@@ -196,6 +205,10 @@ const computeViewFilterOperations = ({
   filtersToUpdate: FlatViewFilter[];
   filtersToRemove: FlatViewFilter[];
 } => {
+  if (!isDefined(inputFilters)) {
+    return { filtersToCreate: [], filtersToUpdate: [], filtersToRemove: [] };
+  }
+
   const filtersToCreate: FlatViewFilter[] = [];
   const filtersToUpdate: FlatViewFilter[] = [];
   const inputFilterIds = new Set(
@@ -360,7 +373,7 @@ const computeViewSortOperations = ({
   flatFieldMetadataMaps,
   flatViewMaps,
 }: {
-  inputSorts: UpsertViewWidgetViewSortInput[];
+  inputSorts: UpsertViewWidgetViewSortInput[] | undefined;
   existingViewSorts: FlatViewSort[];
   viewId: string;
   workspaceId: string;
@@ -374,6 +387,10 @@ const computeViewSortOperations = ({
   sortsToUpdate: FlatViewSort[];
   sortsToRemove: FlatViewSort[];
 } => {
+  if (!isDefined(inputSorts)) {
+    return { sortsToCreate: [], sortsToUpdate: [], sortsToRemove: [] };
+  }
+
   const sortsToCreate: FlatViewSort[] = [];
   const sortsToUpdate: FlatViewSort[] = [];
   const inputSortIds = new Set(
@@ -502,52 +519,39 @@ export const buildViewFiltersAndSortsUpsertFlatOperations = ({
     now,
   };
 
-  const viewFilterGroupOperations = isDefined(viewFilterGroups)
-    ? computeViewFilterGroupOperations({
-        inputFilterGroups: viewFilterGroups,
-        existingViewFilterGroups: Object.values(
-          flatViewFilterGroupMaps.byUniversalIdentifier,
-        )
-          .filter(isDefined)
-          .filter((group) => group.viewId === viewId),
-        ...upsertContext,
-        flatViewMaps,
-        flatViewFilterGroupMaps,
-      })
-    : {
-        filterGroupsToCreate: [],
-        filterGroupsToUpdate: [],
-        filterGroupsToRemove: [],
-        optimisticFlatViewFilterGroupMaps: flatViewFilterGroupMaps,
-      };
+  const viewFilterGroupOperations = computeViewFilterGroupOperations({
+    inputFilterGroups: viewFilterGroups,
+    existingViewFilterGroups: Object.values(
+      flatViewFilterGroupMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((group) => group.viewId === viewId),
+    ...upsertContext,
+    flatViewMaps,
+    flatViewFilterGroupMaps,
+  });
 
-  const viewFilterOperations = isDefined(viewFilters)
-    ? computeViewFilterOperations({
-        inputFilters: viewFilters,
-        existingViewFilters: Object.values(
-          flatViewFilterMaps.byUniversalIdentifier,
-        )
-          .filter(isDefined)
-          .filter((filter) => filter.viewId === viewId),
-        ...upsertContext,
-        flatFieldMetadataMaps,
-        flatViewMaps,
-        flatViewFilterGroupMaps:
-          viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
-      })
-    : { filtersToCreate: [], filtersToUpdate: [], filtersToRemove: [] };
+  const viewFilterOperations = computeViewFilterOperations({
+    inputFilters: viewFilters,
+    existingViewFilters: Object.values(flatViewFilterMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((filter) => filter.viewId === viewId),
+    ...upsertContext,
+    flatFieldMetadataMaps,
+    flatViewMaps,
+    flatViewFilterGroupMaps:
+      viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
+  });
 
-  const viewSortOperations = isDefined(viewSorts)
-    ? computeViewSortOperations({
-        inputSorts: viewSorts,
-        existingViewSorts: Object.values(flatViewSortMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .filter((sort) => sort.viewId === viewId),
-        ...upsertContext,
-        flatFieldMetadataMaps,
-        flatViewMaps,
-      })
-    : { sortsToCreate: [], sortsToUpdate: [], sortsToRemove: [] };
+  const viewSortOperations = computeViewSortOperations({
+    inputSorts: viewSorts,
+    existingViewSorts: Object.values(flatViewSortMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((sort) => sort.viewId === viewId),
+    ...upsertContext,
+    flatFieldMetadataMaps,
+    flatViewMaps,
+  });
 
   const removalContext = {
     workspaceCustomApplicationUniversalIdentifier:
