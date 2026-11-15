@@ -19,10 +19,10 @@ const buildFlatEntityMaps = <
 >(
   flatEntities: TFlatEntity[],
 ): FlatEntityMaps<TFlatEntity> =>
-  flatEntities.reduce(
+  flatEntities.reduce<FlatEntityMaps<TFlatEntity>>(
     (flatEntityMaps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-    createEmptyFlatEntityMaps() as FlatEntityMaps<TFlatEntity>,
+    createEmptyFlatEntityMaps(),
   );
 
 const attachmentsField = getFlatFieldMetadataMock({
