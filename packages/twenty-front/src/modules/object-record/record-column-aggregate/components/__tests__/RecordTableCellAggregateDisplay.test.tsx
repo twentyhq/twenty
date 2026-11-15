@@ -20,13 +20,16 @@ const amountField = getMockFieldMetadataItemOrThrow({
   fieldName: 'amount',
 });
 
-const getAggregateTarget = (
-  fieldName: string,
+const getAggregateTarget = ({
+  fieldName,
+  recordField,
+}: {
+  fieldName: string;
   recordField: Pick<
     RecordField,
     'relationAggregateOperation' | 'relationTargetFieldMetadataId'
-  >,
-) => {
+  >;
+}) => {
   const aggregateTarget = getRecordFieldAggregateTarget({
     recordField,
     fieldMetadataItem: getMockFieldMetadataItemOrThrow({
@@ -77,8 +80,11 @@ const renderAggregateDisplay = (
 describe('RecordTableCellAggregateDisplay', () => {
   it('shows the number of related records', () => {
     renderAggregateDisplay(
-      getAggregateTarget('people', {
-        relationAggregateOperation: AggregateOperations.COUNT,
+      getAggregateTarget({
+        fieldName: 'people',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.COUNT,
+        },
       }),
     );
 
@@ -87,9 +93,12 @@ describe('RecordTableCellAggregateDisplay', () => {
 
   it('shows a currency total from its micros', () => {
     renderAggregateDisplay(
-      getAggregateTarget('opportunities', {
-        relationAggregateOperation: AggregateOperations.SUM,
-        relationTargetFieldMetadataId: amountField.id,
+      getAggregateTarget({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.SUM,
+          relationTargetFieldMetadataId: amountField.id,
+        },
       }),
     );
 
@@ -98,9 +107,12 @@ describe('RecordTableCellAggregateDisplay', () => {
 
   it('stays empty when the aggregate has no value', () => {
     const { container } = renderAggregateDisplay(
-      getAggregateTarget('opportunities', {
-        relationAggregateOperation: AggregateOperations.AVG,
-        relationTargetFieldMetadataId: amountField.id,
+      getAggregateTarget({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.AVG,
+          relationTargetFieldMetadataId: amountField.id,
+        },
       }),
     );
 

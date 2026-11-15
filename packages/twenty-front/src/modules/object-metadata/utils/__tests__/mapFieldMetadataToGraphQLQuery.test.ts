@@ -1,17 +1,16 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { CONNECTION_AGGREGATES_GQL_FIELDS_KEY } from '@/object-record/graphql/record-gql-fields/constants/ConnectionAggregatesGqlFieldsKey';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { normalizeGQLField } from '~/testing/utils/normalizeGQLField';
 
 const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',
 );
 
-const companyObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
-  (item) => item.nameSingular === 'company',
-);
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
-if (!personObjectMetadataItem || !companyObjectMetadataItem) {
+if (!personObjectMetadataItem) {
   throw new Error('Object metadata not found');
 }
 

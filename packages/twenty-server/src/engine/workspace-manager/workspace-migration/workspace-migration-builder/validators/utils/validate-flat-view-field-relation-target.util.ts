@@ -85,10 +85,23 @@ const validateRelationTargetFlatFieldMetadata = ({
 };
 
 const validateRelationLookup = ({
-  flatViewField: { relationTargetFieldMetadataUniversalIdentifier },
+  flatViewField: {
+    isCanonical,
+    relationTargetFieldMetadataUniversalIdentifier,
+  },
   flatFieldMetadata,
   flatFieldMetadataMaps,
 }: FlatViewFieldRelationTargetValidationArgs): FlatEntityValidationError<ViewExceptionCode>[] => {
+  if (isCanonical) {
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Only non-canonical view fields can show a related record field`,
+        userFriendlyMessage: msg`Only added columns can show a field of the related record`,
+      },
+    ];
+  }
+
   if (
     !isRelationUniversalFlatFieldMetadataOfType({
       flatFieldMetadata,
@@ -119,12 +132,23 @@ const validateRelationLookup = ({
 
 const validateRelationAggregate = ({
   flatViewField: {
+    isCanonical,
     relationTargetFieldMetadataUniversalIdentifier,
     relationAggregateOperation,
   },
   flatFieldMetadata,
   flatFieldMetadataMaps,
 }: FlatViewFieldRelationTargetValidationArgs): FlatEntityValidationError<ViewExceptionCode>[] => {
+  if (isCanonical) {
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Only non-canonical view fields can show an aggregate of related records`,
+        userFriendlyMessage: msg`Only added columns can show a calculation on related records`,
+      },
+    ];
+  }
+
   if (
     !isRelationUniversalFlatFieldMetadataOfType({
       flatFieldMetadata,
@@ -220,7 +244,6 @@ export const validateFlatViewFieldRelationTarget = (
   args: FlatViewFieldRelationTargetValidationArgs,
 ): FlatEntityValidationError<ViewExceptionCode>[] => {
   const {
-    isCanonical,
     relationTargetFieldMetadataUniversalIdentifier,
     relationAggregateOperation,
   } = args.flatViewField;
@@ -230,22 +253,6 @@ export const validateFlatViewFieldRelationTarget = (
     !isDefined(relationAggregateOperation)
   ) {
     return [];
-  }
-
-  if (isCanonical) {
-    return [
-      isDefined(relationAggregateOperation)
-        ? {
-            code: ViewExceptionCode.INVALID_VIEW_DATA,
-            message: t`Only non-canonical view fields can show an aggregate of related records`,
-            userFriendlyMessage: msg`Only added columns can show a calculation on related records`,
-          }
-        : {
-            code: ViewExceptionCode.INVALID_VIEW_DATA,
-            message: t`Only non-canonical view fields can show a related record field`,
-            userFriendlyMessage: msg`Only added columns can show a field of the related record`,
-          },
-    ];
   }
 
   return isDefined(relationAggregateOperation)

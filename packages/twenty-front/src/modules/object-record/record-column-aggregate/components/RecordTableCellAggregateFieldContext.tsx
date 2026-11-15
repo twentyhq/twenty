@@ -1,7 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type ReactNode, useContext } from 'react';
 
-// An aggregate is computed by the server, so its cell never opens an input
 export const RecordTableCellAggregateFieldContext = ({
   isAggregatedFieldReadable,
   children,
