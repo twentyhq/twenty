@@ -32,7 +32,7 @@ export type OrderByLeaf = {
   fieldMetadata: OrmFlatFieldMetadata;
 } & (
   | // Scalar columns, including join columns addressed directly (e.g. companyId)
-  { kind: 'scalar' }
+    { kind: 'scalar' }
   | { kind: 'composite'; compositeProperty: CompositeProperty }
   | {
       kind: 'relation';
