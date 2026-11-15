@@ -68,12 +68,13 @@ export class GraphqlQuerySelectedFieldsParser {
     flatObjectMetadata: FlatObjectMetadata,
     isFromOneToManyRelation?: boolean,
   ): GraphqlQuerySelectedFieldsResult {
+    // Keyed by client response keys, so an alias such as constructor or __proto__ stays an ordinary key
     const accumulator: GraphqlQuerySelectedFieldsResult = {
-      select: {},
-      aggregate: {},
+      select: Object.create(null),
+      aggregate: Object.create(null),
       relationFieldsCount: 0,
       hasAtLeastTwoNestedOneToManyRelations: false,
-      relationSelections: {},
+      relationSelections: Object.create(null),
     };
 
     if (this.isRootConnection(graphqlSelectedFields)) {
