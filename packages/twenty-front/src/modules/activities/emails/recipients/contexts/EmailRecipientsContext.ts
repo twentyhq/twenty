@@ -7,10 +7,10 @@ import { createRequiredContext } from '~/utils/createRequiredContext';
 export type EmailRecipientsContextType = {
   recipientsByFieldId: EmailRecipientsByFieldId;
   draggedRecipients: DraggedEmailRecipients | null;
-  setFieldRecipients: (
-    fieldId: EmailRecipientsFieldId,
-    recipients: EmailRecipient[],
-  ) => void;
+  setFieldRecipients: (args: {
+    fieldId: EmailRecipientsFieldId;
+    recipients: EmailRecipient[];
+  }) => void;
 };
 
 export const [EmailRecipientsContextProvider, useEmailRecipientsContext] =

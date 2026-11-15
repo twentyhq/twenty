@@ -124,7 +124,7 @@ export const EmailRecipientsFieldInput = ({
     useEmailRecipientsContext();
   const recipients = recipientsByFieldId[fieldId];
   const onChange = (nextRecipients: EmailRecipient[]) =>
-    setFieldRecipients(fieldId, nextRecipients);
+    setFieldRecipients({ fieldId, recipients: nextRecipients });
   const draggedSourceIndices =
     draggedRecipients?.fieldId === fieldId ? draggedRecipients.indices : null;
   const excludedSuggestionKeys = Object.values(recipientsByFieldId)
