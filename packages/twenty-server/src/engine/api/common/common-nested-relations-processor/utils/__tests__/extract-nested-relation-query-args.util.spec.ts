@@ -29,6 +29,16 @@ describe('extractNestedRelationQueryArgs', () => {
     expect(extractNestedRelationQueryArgs({ first: 0 })).toEqual({ first: 0 });
   });
 
+  it('treats null arguments as unset', () => {
+    expect(
+      extractNestedRelationQueryArgs({
+        filter: null,
+        orderBy: null,
+        first: null,
+      }),
+    ).toEqual({});
+  });
+
   it('ignores cursor, offset and unset arguments', () => {
     expect(
       extractNestedRelationQueryArgs({
