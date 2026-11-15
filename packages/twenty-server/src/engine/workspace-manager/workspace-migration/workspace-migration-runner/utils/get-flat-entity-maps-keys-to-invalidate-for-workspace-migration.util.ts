@@ -21,10 +21,17 @@ const EXTRA_AFFECTED_METADATA_NAMES: Partial<
   fieldMetadataOption: ['fieldMetadata'],
 };
 
-// Their deletion cascades row-level permission predicates in the database, which fields aggregate
+// Their deletion cascades in the database: rules take the predicates fields aggregate, and objects, fields and view
+// fields take the view fields' scope views with their children (and the scope views' ids leave their objects' viewIds)
+const SCOPE_VIEW_CASCADE_AFFECTED_METADATA_NAMES =
+  getMetadataRelatedMetadataNames('view');
+
 const EXTRA_DELETE_AFFECTED_METADATA_NAMES: Partial<
   Record<AllMetadataName, AllMetadataName[]>
 > = {
+  objectMetadata: SCOPE_VIEW_CASCADE_AFFECTED_METADATA_NAMES,
+  fieldMetadata: SCOPE_VIEW_CASCADE_AFFECTED_METADATA_NAMES,
+  viewField: SCOPE_VIEW_CASCADE_AFFECTED_METADATA_NAMES,
   role: ['fieldMetadata'],
   rowLevelPermissionPredicateGroup: ['fieldMetadata'],
   rowLevelPermissionRule: ['fieldMetadata'],
