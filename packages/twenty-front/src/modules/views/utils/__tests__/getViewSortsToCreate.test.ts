@@ -55,6 +55,14 @@ describe('getViewSortsToCreate', () => {
     expect(result).toEqual([newSortWithDifferentFieldMetadataId]);
   });
 
+  it('should not recreate a saved sort that came back under a new id', () => {
+    const sortBackOnItsField = { ...baseSort, id: 'sort-2' } satisfies ViewSort;
+
+    const result = getViewSortsToCreate([baseSort], [sortBackOnItsField]);
+
+    expect(result).toEqual([]);
+  });
+
   it('should handle empty arrays for both inputs', () => {
     const currentViewSorts: ViewSort[] = [];
     const newViewSorts: ViewSort[] = [];
