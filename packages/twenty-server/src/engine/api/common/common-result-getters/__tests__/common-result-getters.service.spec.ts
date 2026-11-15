@@ -65,7 +65,7 @@ describe('CommonResultGettersService', () => {
     const processedRecord = await service.processRecord(
       {
         id: 'company-1',
-        'attachments::files': [
+        files: [
           {
             id: 'attachment-1',
             file: [{ fileId: 'file-1', label: 'a.png', extension: 'png' }],
@@ -76,9 +76,10 @@ describe('CommonResultGettersService', () => {
       buildFlatEntityMaps([company, attachment]),
       buildFlatEntityMaps([attachmentsField, fileField]),
       'workspace-id',
+      { files: { fieldName: 'attachments', relationSelections: {} } },
     );
 
-    expect(processedRecord['attachments::files']).toEqual([
+    expect(processedRecord.files).toEqual([
       {
         id: 'attachment-1',
         file: [

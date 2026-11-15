@@ -39,6 +39,7 @@ import {
   CommonQueryExecutionResult,
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -210,6 +211,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<Output>;
 
   protected getResultRecords(results: Output): ObjectRecord[] {
@@ -287,6 +289,8 @@ export abstract class CommonBaseQueryRunnerService<
           ...processedArgs.selectedFieldsResult,
           select: addTimelineActivityObjectColumnsToSelect({
             select: processedArgs.selectedFieldsResult.select,
+            relationSelections:
+              processedArgs.selectedFieldsResult.relationSelections,
             flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
             recordReadRestrictions:
               extendedQueryRunnerContext.recordReadRestrictions,
@@ -303,6 +307,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     return this.enrichResultsWithGettersAndHooks({
       results,
+      relationSelections: processedArgs.selectedFieldsResult.relationSelections,
       operationName: this.operationName,
       authContext: extendedQueryRunnerContext.authContext,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
@@ -315,6 +320,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private async enrichResultsWithGettersAndHooks({
     results,
+    relationSelections,
     operationName,
     authContext,
     flatObjectMetadata,
@@ -324,6 +330,7 @@ export abstract class CommonBaseQueryRunnerService<
     recordReadRestrictions,
   }: {
     results: Output;
+    relationSelections: CommonRelationSelections;
     operationName: CommonQueryNames;
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
@@ -338,11 +345,13 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
+      relationSelections,
     );
 
     await this.commonRecordVisibilityService.applyVisibilityRestrictions({
       records: this.getResultRecords(resultWithGetters),
       flatObjectMetadata,
+      relationSelections,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,

@@ -22,7 +22,6 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
-import { computeRelationRecordKey } from 'src/engine/api/common/utils/compute-relation-record-key.util';
 import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
 import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -143,9 +142,7 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
       fieldName,
       context,
     );
-    const recordKey = isDefined(relationInfo)
-      ? computeRelationRecordKey({ fieldName, responseKey: key })
-      : fieldName;
+    const recordKey = isDefined(relationInfo) ? key : fieldName;
 
     if (!isDefined(record[recordKey])) {
       formatted[key] = null;
