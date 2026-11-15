@@ -10,14 +10,13 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
-  const { recordGqlFields, relationAliases, columnQueryFingerprint } =
+  const { recordGqlFields, columnQueryFingerprint } =
     useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
     useLazyFindManyRecords({
       ...params,
       recordGqlFields,
-      relationAliases,
     });
 
   return {

@@ -28,16 +28,15 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const { recordGqlFields, relationAliases } =
+  const { recordGqlFields } =
     useRecordIndexTableColumnQuery(objectMetadataItem);
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery, relationAliasVariables } =
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
     useFindManyRecordsQuery({
       objectNameSingular,
       recordGqlFields,
-      relationAliases,
     });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
@@ -69,9 +68,9 @@ export const useLazyFindManyRecordsWithOffset = ({
           query: findManyRecordsQuery,
           variables: {
             ...params,
-            ...relationAliasVariables,
             limit,
             offset,
+            ...relationsWithArgumentsVariables,
           },
         });
 
@@ -102,7 +101,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       apolloCoreClient,
       findManyRecordsQuery,
       params,
-      relationAliasVariables,
+      relationsWithArgumentsVariables,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

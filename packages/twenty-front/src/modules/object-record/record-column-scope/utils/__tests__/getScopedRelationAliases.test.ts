@@ -1,7 +1,10 @@
 import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
 import { ViewFilterOperand, ViewSortDirection } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationWithArgumentsResponseKey,
+  isDefined,
+} from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -61,7 +64,12 @@ describe('getScopedRelationAliases', () => {
     expect(getAliases({ recordLimit: 2 })).toEqual([
       expect.objectContaining({
         ownerViewFieldId: PEOPLE_COLUMN_ID,
-        alias: 'scope_202020200000400080000000000000c1',
+        alias: computeRelationWithArgumentsResponseKey({
+          relationFieldName: 'people',
+          filter: {},
+          orderBy: [{ position: 'AscNullsFirst' }],
+          first: 2,
+        }),
         fieldName: 'people',
         filter: {},
         orderBy: [{ position: 'AscNullsFirst' }],
