@@ -196,9 +196,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   async processQueryResult({
     queryResult,
-  }: CommonQueryResultProcessingArgs<CommonGroupByOutputItem[]>): Promise<
-    CommonGroupByOutputItem[]
-  > {
+  }: Pick<
+    CommonQueryResultProcessingArgs<CommonGroupByOutputItem[]>,
+    'queryResult'
+  >): Promise<CommonGroupByOutputItem[]> {
     return queryResult;
   }
 
