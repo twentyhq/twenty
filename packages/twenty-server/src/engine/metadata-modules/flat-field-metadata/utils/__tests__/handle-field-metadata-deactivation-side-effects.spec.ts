@@ -86,13 +86,35 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
   });
 
   it('deletes lookup view fields that show the deactivated field', () => {
-    const lookupViewField = {
+    const lookupViewField: FlatViewField = {
       id: 'lookup-view-field-id',
       universalIdentifier: 'lookup-view-field-universal-identifier',
+      workspaceId: 'workspace-id',
       applicationId: 'application-id',
+      applicationUniversalIdentifier: 'application-universal-identifier',
       fieldMetadataId: 'relation-field-id',
+      fieldMetadataUniversalIdentifier: 'relation-field-universal-identifier',
+      viewId: 'view-id',
+      viewUniversalIdentifier: 'view-universal-identifier',
+      viewFieldGroupId: null,
+      viewFieldGroupUniversalIdentifier: null,
+      isVisible: true,
+      size: 150,
+      position: 1,
+      aggregateOperation: null,
+      settings: null,
       relationTargetFieldMetadataId: 'target-field-id',
-    } as FlatViewField;
+      relationTargetFieldMetadataUniversalIdentifier:
+        'target-field-universal-identifier',
+      isActive: true,
+      isSystemSideEffect: false,
+      isCanonical: false,
+      overrides: null,
+      universalOverrides: null,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+      deletedAt: null,
+    };
     const fromFlatFieldMetadata = getFlatFieldMetadataMock({
       id: 'target-field-id',
       objectMetadataId: 'object-id',
