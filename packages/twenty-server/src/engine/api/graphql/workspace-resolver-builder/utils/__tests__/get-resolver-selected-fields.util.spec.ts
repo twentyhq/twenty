@@ -1,6 +1,9 @@
 import { Kind, parse, type FragmentDefinitionNode } from 'graphql';
 
+import { SELECTION_ARGUMENTS } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-arguments.constant';
+import { SELECTION_FIELD_NAME } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-field-name.constant';
 import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
 
 const getSelectedFields = (
   query: string,
@@ -51,8 +54,11 @@ describe('getResolverSelectedFields', () => {
     ).toEqual({
       people: { edges: { node: { id: {} } } },
       nextPerson: {
-        __fieldName: 'people',
-        __arguments: { first: 1, orderBy: [{ name: 'AscNullsLast' }] },
+        [SELECTION_FIELD_NAME]: 'people',
+        [SELECTION_ARGUMENTS]: {
+          first: 1,
+          orderBy: [{ name: 'AscNullsLast' }],
+        },
         edges: { node: { id: {} } },
       },
     });
@@ -65,7 +71,7 @@ describe('getResolverSelectedFields', () => {
           companies { edges { node { people(filter: $filter) { totalCount } } } }
         }`,
         { filter: { city: { eq: 'Paris' } } },
-      ).edges.node.people.__arguments,
+      ).edges.node.people[SELECTION_ARGUMENTS],
     ).toEqual({ filter: { city: { eq: 'Paris' } } });
   });
 
@@ -106,9 +112,47 @@ describe('getResolverSelectedFields', () => {
     expect(
       Object.prototype.hasOwnProperty.call(selectedFields, '__proto__'),
     ).toBe(true);
-    expect(selectedFields['__proto__']).toEqual({ __fieldName: 'id' });
+    expect(selectedFields['__proto__']).toEqual({
+      [SELECTION_FIELD_NAME]: 'id',
+    });
     expect(
-      Object.prototype.hasOwnProperty.call(Object.prototype, '__fieldName'),
+      Object.prototype.hasOwnProperty.call(
+        Object.prototype,
+        SELECTION_FIELD_NAME,
+      ),
     ).toBe(false);
+  });
+
+  it('keeps aliases named like internal selection data as ordinary keys', () => {
+    const selectedFields = getSelectedFields(`
+      query {
+        companies {
+          edges {
+            node {
+              __arguments: name
+              employer: accountOwner {
+                __fieldName: id
+              }
+            }
+          }
+        }
+      }
+    `).edges.node;
+
+    expect(getSelectionEntries(selectedFields)).toEqual([
+      {
+        responseKey: '__arguments',
+        fieldName: 'name',
+        selection: { [SELECTION_FIELD_NAME]: 'name' },
+      },
+      {
+        responseKey: 'employer',
+        fieldName: 'accountOwner',
+        selection: {
+          [SELECTION_FIELD_NAME]: 'accountOwner',
+          __fieldName: { [SELECTION_FIELD_NAME]: 'id' },
+        },
+      },
+    ]);
   });
 });
