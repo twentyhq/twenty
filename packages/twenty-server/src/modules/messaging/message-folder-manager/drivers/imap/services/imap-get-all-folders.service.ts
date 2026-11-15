@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow, type ListResponse } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -78,6 +79,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         : mailbox.parentPath,
     }));
     const existingExternalIdsByNormalizedId = new Map<string, string>();
+    const existingExternalIdsByPath = new Map<string, string>();
 
     for (const folder of existingFolders) {
       if (isDefined(folder.externalId)) {
@@ -85,6 +87,12 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
           normalizeImapUnicode(folder.externalId, client),
           folder.externalId,
         );
+
+        const folderPath = getImapFolderPath(folder.externalId, client);
+
+        if (isNonEmptyString(folderPath)) {
+          existingExternalIdsByPath.set(folderPath, folder.externalId);
+        }
       }
     }
 
@@ -108,9 +116,12 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     ) {
       const uidValidity = await this.getUidValidity(client, sentMailbox);
 
+      // A failed uidValidity read must not change the folder's identity:
+      // falling back to the bare path would recreate the folder and clear its
+      // isSynced selection under the SELECTED_FOLDERS import policy.
       const normalizedExternalId = uidValidity
         ? `${sentFolderPath}:${uidValidity.toString()}`
-        : sentFolderPath;
+        : (existingExternalIdsByPath.get(sentFolderPath) ?? sentFolderPath);
       const externalId =
         existingExternalIdsByNormalizedId.get(normalizedExternalId) ??
         normalizedExternalId;
@@ -137,7 +148,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       const uidValidity = await this.getUidValidity(client, mailbox);
       const normalizedExternalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
-        : mailbox.path;
+        : (existingExternalIdsByPath.get(mailbox.path) ?? mailbox.path);
       const externalId =
         existingExternalIdsByNormalizedId.get(normalizedExternalId) ??
         normalizedExternalId;
