@@ -453,6 +453,107 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     });
   });
 
+  it('keeps aliases named like internal selection data as ordinary fields', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedPeople($filter: PersonFilterInput) {
+          people(filter: $filter) {
+            edges {
+              node {
+                employer: company {
+                  __fieldName: id
+                  __arguments: name
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { eq: buildPersonId(1) } } },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const [{ node }] = response.body.data.people.edges;
+
+    expect(node.employer).toEqual({
+      __fieldName: FIRST_COMPANY_ID,
+      __arguments: 'Nested arguments company one',
+    });
+  });
+
+  it('serves a response key reused for different fields under separate aliases', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedCompanies($filter: CompanyFilterInput) {
+          companies(filter: $filter) {
+            byName: edges {
+              node {
+                value: name
+                people(first: 1) {
+                  totalCount
+                }
+              }
+            }
+            byId: edges {
+              node {
+                value: id
+                people(first: 1) {
+                  edges {
+                    node {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { byName, byId } = response.body.data.companies;
+
+    expect(byName[0].node.value).toBe('Nested arguments company one');
+    expect(byName[0].node.people.totalCount).toBe(3);
+    expect(byId[0].node.value).toBe(FIRST_COMPANY_ID);
+    expect(byId[0].node.people.edges).toHaveLength(1);
+  });
+
+  it('rejects a relation reused under separate aliases with other arguments', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query AliasedCompanies($filter: CompanyFilterInput) {
+          companies(filter: $filter) {
+            first: edges {
+              node {
+                people(first: 1) {
+                  totalCount
+                }
+              }
+            }
+            second: edges {
+              node {
+                people(first: 2) {
+                  totalCount
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { filter: { id: { in: [FIRST_COMPANY_ID] } } },
+    });
+
+    expect(response.body.data?.companies ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.message).toContain(
+      'Conflicting arguments for "people"',
+    );
+  });
+
   it('ignores cursor arguments on a nested relation', async () => {
     const response = await findCompaniesWithPeople(
       'people(last: 1, after: "cursor", orderBy: [{ jobTitle: AscNullsLast }])',
