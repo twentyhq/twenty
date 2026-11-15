@@ -207,7 +207,6 @@ export const validateViewOwnerViewFieldCrossEntity = ({
     ),
   );
 
-  // A scope view is re-checked when it changes or when the view holding its owner column does
   const scopeViewsToValidate = [
     ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
       scopeView: flatEntity,
@@ -234,13 +233,9 @@ export const validateViewOwnerViewFieldCrossEntity = ({
   ];
 
   for (const { scopeView, type } of scopeViewsToValidate) {
-    const ownerViewFieldUniversalIdentifier =
-      scopeView?.ownerViewFieldUniversalIdentifier;
+    const { ownerViewFieldUniversalIdentifier } = scopeView;
 
-    if (
-      !isDefined(scopeView) ||
-      !isDefined(ownerViewFieldUniversalIdentifier)
-    ) {
+    if (!isDefined(ownerViewFieldUniversalIdentifier)) {
       continue;
     }
 
