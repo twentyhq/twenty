@@ -14,6 +14,7 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  computeRelationWithArgumentsResponseKey,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -88,15 +89,22 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
+    const first = recordField.settings?.recordLimit ?? undefined;
+
     return [
       {
         ownerViewFieldId: recordField.id,
-        alias: `scope_${recordField.id.replaceAll('-', '')}`,
+        alias: computeRelationWithArgumentsResponseKey({
+          relationFieldName: fieldMetadataItem.name,
+          filter,
+          orderBy,
+          first,
+        }),
         fieldName: fieldMetadataItem.name,
         relationObjectMetadataItem,
         filter,
         orderBy,
-        first: recordField.settings?.recordLimit ?? undefined,
+        first,
         prefillRecordFilters: isDefined(scopeView)
           ? mapViewFiltersToFilters(
               getScopeViewPrefillViewFilters(scopeView),

@@ -1,6 +1,7 @@
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
+import { triggerUpdateRelationsWithArgumentsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsWithArgumentsOptimisticEffect';
 import {
   FieldMetadataType,
   type ObjectRecordsPermissions,
@@ -178,6 +179,26 @@ const triggerUpdateRelationOptimisticEffect = ({
     { strict: true },
   );
   if (noDiff && !isDeletion) {
+    // The record stays attached, but its new values may move it in or out of its target's filtered copies
+    if (
+      relation.type === RelationType.MANY_TO_ONE &&
+      isDefined(updatedSourceRecord) &&
+      isDefined(updatedFieldValueOnSourceRecord)
+    ) {
+      triggerUpdateRelationsWithArgumentsOptimisticEffect({
+        cache,
+        sourceObjectMetadataItem,
+        sourceRecordId: updatedSourceRecord.id,
+        attachedSourceRecord: updatedSourceRecord,
+        targetObjectMetadataItem: fullTargetObjectMetadataItem,
+        fieldNameOnTargetRecord: targetFieldMetadataFullObject.name,
+        targetRecordId: updatedFieldValueOnSourceRecord.id,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
+      });
+    }
+
     return;
   }
 

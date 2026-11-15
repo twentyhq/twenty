@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
-import { mapRecordGqlRelationAliasesToGraphQLQuery } from '@/object-record/graphql/utils/mapRecordGqlRelationAliasesToGraphQLQuery';
+import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
+import { getRelationsWithArgumentsVariableDefinitions } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariableDefinitions';
 import {
   type ObjectRecordsPermissions,
   type RecordGqlFields,
@@ -16,21 +16,22 @@ export const generateGroupByRecordsQuery = ({
   recordGqlFields,
   computeReferences,
   objectPermissionsByObjectMetadataId,
-  relationAliases,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-  relationAliases?: RecordGqlRelationAlias[];
 }) => {
-  const { variableDefinitions, selections } =
-    mapRecordGqlRelationAliasesToGraphQLQuery({
-      relationAliases,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    });
+  const readableRelationsWithArguments = getReadableRelationsWithArguments({
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields,
+    objectPermissionsByObjectMetadataId,
+  });
+  const variableDefinitions = getRelationsWithArgumentsVariableDefinitions(
+    readableRelationsWithArguments,
+  );
 
   return gql`
 query GroupBy${capitalize(
@@ -58,7 +59,7 @@ query GroupBy${capitalize(
         recordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
-        additionalSelections: selections,
+        readableRelationsWithArguments,
       })}
       cursor
     }

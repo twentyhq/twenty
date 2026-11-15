@@ -3,7 +3,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
-import { getRecordGqlRelationAliasVariables } from '@/object-record/graphql/utils/getRecordGqlRelationAliasVariables';
+import { useRelationsWithArgumentsVariables } from '@/object-record/hooks/useRelationsWithArgumentsVariables';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggregate/utils/generateGroupsRecordsGroupByQuery';
 
@@ -33,13 +33,13 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const apolloCoreClient = useApolloCoreClient();
 
-  const {
-    combinedFilters,
-    orderBy,
+  const { combinedFilters, orderBy, recordGqlFields, recordGroupsLimit } =
+    useRecordIndexGroupCommonQueryVariables();
+
+  const relationsWithArgumentsVariables = useRelationsWithArgumentsVariables({
+    objectMetadataItem,
     recordGqlFields,
-    recordGroupsLimit,
-    relationAliases,
-  } = useRecordIndexGroupCommonQueryVariables();
+  });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -50,14 +50,12 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
         objectMetadataItems,
         objectPermissionsByObjectMetadataId,
         recordGqlFields,
-        relationAliases,
       }),
     [
       objectMetadataItem,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       recordGqlFields,
-      relationAliases,
     ],
   );
 
@@ -79,14 +77,14 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
       },
       orderByForRecords: orderBy,
       limit: recordGroupsLimit,
-      ...getRecordGqlRelationAliasVariables(relationAliases),
+      ...relationsWithArgumentsVariables,
     }),
     [
       combinedFilters,
       groupByGqlInput,
       orderBy,
       recordGroupsLimit,
-      relationAliases,
+      relationsWithArgumentsVariables,
     ],
   );
 

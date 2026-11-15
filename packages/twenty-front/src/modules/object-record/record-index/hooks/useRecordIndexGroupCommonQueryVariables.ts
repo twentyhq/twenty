@@ -1,8 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -10,6 +8,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -70,12 +69,10 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
+  const { recordGqlFields } = useRecordIndexTableColumnQuery(
     objectMetadataItem,
-    additionalFieldMetadataIds: [recordIndexGroupFieldMetadataItem?.id],
-  });
-
-  const relationAliases = useScopedRelationAliases();
+    [recordIndexGroupFieldMetadataItem?.id],
+  );
 
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
@@ -105,7 +102,6 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   return {
     combinedFilters,
     recordGqlFields,
-    relationAliases,
     orderBy,
     recordGroupsLimit,
   };

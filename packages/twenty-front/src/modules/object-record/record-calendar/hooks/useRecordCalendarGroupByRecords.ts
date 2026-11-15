@@ -5,8 +5,7 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { useGroupByRecordsQuery } from '@/object-record/hooks/useGroupByRecordsQuery';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/hooks/useRecordCalendarQueryDateRangeFilter';
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
@@ -31,10 +30,10 @@ export const useRecordCalendarGroupByRecords = (
     recordIndexCalendarFieldMetadataIdComponentState,
   );
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
+  const { recordGqlFields } = useRecordIndexTableColumnQuery(
     objectMetadataItem,
-    additionalFieldMetadataIds: [recordIndexCalendarFieldMetadataId],
-  });
+    [recordIndexCalendarFieldMetadataId],
+  );
 
   const { dateRangeFilter } =
     useRecordCalendarQueryDateRangeFilter(selectedDate);
@@ -63,14 +62,11 @@ export const useRecordCalendarGroupByRecords = (
         ]
       : undefined;
 
-  const relationAliases = useScopedRelationAliases();
-
-  const { groupByRecordsQuery, relationAliasVariables } =
+  const { groupByRecordsQuery, relationsWithArgumentsVariables } =
     useGroupByRecordsQuery({
       objectNameSingular: objectMetadataItem.nameSingular,
       recordGqlFields,
       computeReferences: false,
-      relationAliases,
     });
 
   const apolloCoreClient = useApolloCoreClient();
@@ -86,7 +82,7 @@ export const useRecordCalendarGroupByRecords = (
       groupBy,
       filter: dateRangeFilter,
       orderByForRecords,
-      ...relationAliasVariables,
+      ...relationsWithArgumentsVariables,
     },
   });
 
