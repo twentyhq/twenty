@@ -2232,6 +2232,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
+      'Send AI providers a signed link to files when this server is public. Turn off when the server URL looks public but providers cannot reach it, for example behind a VPN, or when file links must not leave this server. Files are then sent as bytes.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_SIGNED_FILE_URLS_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
       'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
     type: ConfigVariableType.STRING,
   })

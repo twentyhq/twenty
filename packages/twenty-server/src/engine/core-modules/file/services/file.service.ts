@@ -19,6 +19,7 @@ import {
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
 import { FileRemoteContentService } from 'src/engine/core-modules/file/file-remote-content/services/file-remote-content.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
@@ -39,6 +40,7 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileRemoteContentService: FileRemoteContentService,
+    private readonly fileUrlService: FileUrlService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -87,15 +89,15 @@ export class FileService {
     });
   }
 
-  async getFileStreamById({
+  async getFileById({
     fileId,
     workspaceId,
-    allowedFileFolders = [FileFolder.Workflow],
+    allowedFileFolders,
   }: {
     fileId: string;
     workspaceId: string;
-    allowedFileFolders?: FileFolder[];
-  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    allowedFileFolders: FileFolder[];
+  }): Promise<FileEntity | null> {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
@@ -108,10 +110,60 @@ export class FileService {
     }
 
     const [fileFolder] = file.path.split('/');
+    const isFileFolderAllowed = allowedFileFolders.some(
+      (allowedFileFolder) => allowedFileFolder === fileFolder,
+    );
 
-    if (!allowedFileFolders.includes(fileFolder as FileFolder)) {
-      return null;
-    }
+    return isFileFolderAllowed ? file : null;
+  }
+
+  async getFileBySignedUrl({
+    fileUrl,
+    workspaceId,
+  }: {
+    fileUrl: string;
+    workspaceId: string;
+  }): Promise<FileEntity | null> {
+    const signedFile = await this.fileUrlService.resolveSignedFileUrl({
+      fileUrl,
+      workspaceId,
+    });
+
+    return isDefined(signedFile)
+      ? this.getFileById({
+          fileId: signedFile.fileId,
+          workspaceId,
+          allowedFileFolders: [signedFile.fileFolder],
+        })
+      : null;
+  }
+
+  async getFileStreamById({
+    fileId,
+    workspaceId,
+    allowedFileFolders = [FileFolder.Workflow],
+  }: {
+    fileId: string;
+    workspaceId: string;
+    allowedFileFolders?: FileFolder[];
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const file = await this.getFileById({
+      fileId,
+      workspaceId,
+      allowedFileFolders,
+    });
+
+    return isDefined(file) ? this.getFileStream({ file, workspaceId }) : null;
+  }
+
+  async getFileStream({
+    file,
+    workspaceId,
+  }: {
+    file: FileEntity;
+    workspaceId: string;
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const [fileFolder] = file.path.split('/');
 
     if (file.status === FILE_STATUS.REMOTE) {
       return this.fileRemoteContentService.openRemoteContent({
