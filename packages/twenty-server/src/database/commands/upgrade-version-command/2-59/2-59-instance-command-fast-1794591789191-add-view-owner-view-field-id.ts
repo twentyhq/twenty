@@ -10,7 +10,7 @@ export class AddViewOwnerViewFieldIdFastInstanceCommand implements FastInstanceC
       'ALTER TABLE "core"."view" ADD "ownerViewFieldId" uuid',
     );
     await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_VIEW_OWNER_VIEW_FIELD_ID_UNIQUE" ON "core"."view" ("ownerViewFieldId") WHERE "deletedAt" IS NULL',
+      'CREATE INDEX "IDX_VIEW_OWNER_VIEW_FIELD_ID" ON "core"."view" ("ownerViewFieldId") ',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."view" ADD CONSTRAINT "FK_9f78e8f3cf14039defb273274cc" FOREIGN KEY ("ownerViewFieldId") REFERENCES "core"."viewField"("id") ON DELETE CASCADE ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED',
@@ -22,7 +22,7 @@ export class AddViewOwnerViewFieldIdFastInstanceCommand implements FastInstanceC
       'ALTER TABLE "core"."view" DROP CONSTRAINT "FK_9f78e8f3cf14039defb273274cc"',
     );
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_VIEW_OWNER_VIEW_FIELD_ID_UNIQUE"',
+      'DROP INDEX "core"."IDX_VIEW_OWNER_VIEW_FIELD_ID"',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."view" DROP COLUMN "ownerViewFieldId"',

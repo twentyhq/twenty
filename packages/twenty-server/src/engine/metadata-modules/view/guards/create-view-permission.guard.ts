@@ -18,16 +18,12 @@ export class CreateViewPermissionGuard implements CanActivate {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
 
-    let visibility: ViewVisibility = ViewVisibility.WORKSPACE;
-
     const args = gqlContext.getArgs();
 
     // Only the REST body is the view input; a GraphQL body also carries query and variables
     const input = args?.input ?? request.body;
-
-    if (input?.visibility) {
-      visibility = input.visibility as ViewVisibility;
-    }
+    const visibility: ViewVisibility =
+      input?.visibility || ViewVisibility.WORKSPACE;
 
     return this.viewAccessService.canUserCreateView({
       visibility,
