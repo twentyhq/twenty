@@ -73,7 +73,7 @@ export class UpsertViewFieldWithScopeInput {
   @Field(() => ViewFieldScopeInput, {
     nullable: true,
     description:
-      'The filters and sorts scoping the related records; without filters or sorts the scope is removed',
+      'The filters and sorts scoping the related records. Omit it to keep the current scope; null, or a scope without filters or sorts, removes it',
   })
   scope?: ViewFieldScopeInput | null;
 }
