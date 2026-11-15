@@ -25,12 +25,12 @@ export const buildColumnsToSelect = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
-  const requiredRelationColumns = getRequiredRelationColumns(
+  const requiredRelationColumns = getRequiredRelationColumns({
     relationSelections,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  );
+  });
 
   const fieldsToSelect: Record<string, boolean> = Object.entries(select)
     .filter(
@@ -47,12 +47,17 @@ export const buildColumnsToSelect = ({
   return result;
 };
 
-const getRequiredRelationColumns = (
-  relationSelections: CommonRelationSelections,
-  flatObjectMetadata: FlatObjectMetadata,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-): string[] => {
+const getRequiredRelationColumns = ({
+  relationSelections,
+  flatObjectMetadata,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  relationSelections: CommonRelationSelections;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): string[] => {
   const requiredColumns: string[] = [];
   const selectedRelationFieldNames = new Set(
     Object.values(relationSelections)
