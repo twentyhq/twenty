@@ -88,8 +88,7 @@ const collectSelectedFields = (
   }
 };
 
-// Keyed by response key so aliases of one field keep their own arguments and selections.
-// Null-prototype levels: a client alias such as __proto__ must stay an ordinary key.
+// Null-prototype levels keep a client alias such as __proto__ an ordinary key
 export const getResolverSelectedFields = (
   info: SelectionInfo,
 ): ResolverSelectedFields => {
