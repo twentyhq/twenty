@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ViewSortDirection } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -23,4 +23,9 @@ export class UpsertViewWidgetViewSortInput {
     defaultValue: ViewSortDirection.ASC,
   })
   direction?: ViewSortDirection;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  subFieldName?: string | null;
 }
