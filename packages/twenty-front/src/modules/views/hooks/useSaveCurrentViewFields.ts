@@ -1,3 +1,5 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -30,19 +32,19 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useCallback(
     async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
       if (!canPersistChanges) {
-        return;
+        return false;
       }
 
       const currentViewId = store.get(currentViewIdCallbackState);
 
       if (!currentViewId) {
-        return;
+        return false;
       }
 
       const view = getViewFromState(currentViewId);
 
       if (!isDefined(view)) {
-        return;
+        return false;
       }
 
       const currentViewFields = view.viewFields;
@@ -56,6 +58,10 @@ export const useSaveCurrentViewFields = () => {
             { viewFieldsToCreate, viewFieldsToUpdate },
             viewFieldToCreateOrUpdate,
           ) => {
+            const settings = getViewFieldSettingsInput(
+              viewFieldToCreateOrUpdate.settings,
+            );
+
             const createViewFieldInput: CreateViewFieldInput = {
               id: viewFieldToCreateOrUpdate.id,
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
@@ -64,6 +70,10 @@ export const useSaveCurrentViewFields = () => {
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
+              ...(isCanonicalRecordField(viewFieldToCreateOrUpdate)
+                ? {}
+                : { isCanonical: false }),
+              ...(isDefined(settings) ? { settings } : {}),
             };
             const existingField = currentViewFields.find(
               (currentViewField) =>
@@ -80,7 +90,13 @@ export const useSaveCurrentViewFields = () => {
               };
             }
 
+            const areSettingsUnchanged = isDeeplyEqual(
+              getViewFieldSettingsInput(existingField.settings),
+              settings,
+            );
+
             if (
+              areSettingsUnchanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -115,6 +131,7 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
+                      ...(areSettingsUnchanged ? {} : { settings }),
                     },
                   },
                 },
@@ -127,10 +144,15 @@ export const useSaveCurrentViewFields = () => {
           },
         );
 
-      await Promise.all([
+      const [createResult, updateResult] = await Promise.all([
         performViewFieldApiCreate({ inputs: viewFieldsToCreate }),
         performViewFieldApiUpdate(viewFieldsToUpdate),
       ]);
+
+      return (
+        createResult.status === 'successful' &&
+        updateResult.status === 'successful'
+      );
     },
     [
       store,
