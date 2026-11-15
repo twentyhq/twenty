@@ -17,6 +17,11 @@ export const RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE: Partial<
     AggregateOperations.MIN,
     AggregateOperations.MAX,
   ],
+  [FieldMetadataType.RATING]: [
+    AggregateOperations.AVG,
+    AggregateOperations.MIN,
+    AggregateOperations.MAX,
+  ],
   [FieldMetadataType.DATE]: [AggregateOperations.MIN, AggregateOperations.MAX],
   [FieldMetadataType.DATE_TIME]: [
     AggregateOperations.MIN,
