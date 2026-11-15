@@ -1,23 +1,11 @@
 import { computeScopedRelationArgs } from '@/object-record/record-column-scope/utils/computeScopedRelationArgs';
 import { ViewFilterOperand, ViewSortDirection } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
-
-const getTaskFieldOrThrow = (fieldName: string) => {
-  const field = taskObjectMetadataItem.fields.find(
-    ({ name }) => name === fieldName,
-  );
-
-  if (!isDefined(field)) {
-    throw new Error(`Task field ${fieldName} not found`);
-  }
-
-  return field;
-};
 
 describe('computeScopedRelationArgs', () => {
   it('only limits related records when the column has no scope view', () => {
@@ -38,8 +26,14 @@ describe('computeScopedRelationArgs', () => {
   });
 
   it('turns the scope view filters and sorts into nested arguments', () => {
-    const titleField = getTaskFieldOrThrow('title');
-    const dueAtField = getTaskFieldOrThrow('dueAt');
+    const titleField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskObjectMetadataItem,
+      fieldName: 'title',
+    });
+    const dueAtField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskObjectMetadataItem,
+      fieldName: 'dueAt',
+    });
 
     const { filter, orderBy, first } = computeScopedRelationArgs({
       scopeView: {
