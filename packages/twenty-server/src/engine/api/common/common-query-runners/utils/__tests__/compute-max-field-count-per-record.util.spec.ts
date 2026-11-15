@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -57,11 +58,11 @@ const flatFieldMetadataMaps = buildFlatEntityMaps([peopleField, companyField]);
 const computeFor = (
   flatObjectMetadata: FlatObjectMetadata,
   select: CommonSelectedFields,
-  relations: CommonSelectedFields,
+  relationSelections: CommonRelationSelections,
   recordLimitPerOneToManyRelation = 60,
 ) =>
   computeMaxFieldCountPerRecord({
-    selectedFieldsResult: { select, relations },
+    selectedFieldsResult: { select, relationSelections },
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -82,14 +83,18 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor(
         person,
         { id: true, company: { id: true, name: true } },
-        { company: {} },
+        { company: { fieldName: 'company', relationSelections: {} } },
       ),
     ).toBe(3);
   });
 
   it('should multiply the fields of a one-to-many relation by its limit', () => {
     expect(
-      computeFor(company, { id: true, people: { id: true } }, { people: {} }),
+      computeFor(
+        company,
+        { id: true, people: { id: true } },
+        { people: { fieldName: 'people', relationSelections: {} } },
+      ),
     ).toBe(61);
   });
 
@@ -98,9 +103,26 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor(
         company,
         { id: true, people: { id: true, company: { id: true, name: true } } },
-        { people: { company: {} } },
+        {
+          people: {
+            fieldName: 'people',
+            relationSelections: {
+              company: { fieldName: 'company', relationSelections: {} },
+            },
+          },
+        },
       ),
     ).toBe(181);
+  });
+
+  it('should count an aliased relation like the relation it reads', () => {
+    expect(
+      computeFor(
+        company,
+        { id: true, keyPeople: { id: true } },
+        { keyPeople: { fieldName: 'people', relationSelections: {} } },
+      ),
+    ).toBe(61);
   });
 
   it('should use the given one-to-many limit', () => {
@@ -108,7 +130,7 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor(
         company,
         { id: true, people: { id: true } },
-        { people: {} },
+        { people: { fieldName: 'people', relationSelections: {} } },
         5,
       ),
     ).toBe(6);
@@ -119,7 +141,7 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor(
         company,
         { id: true, people: { id: true } },
-        { people: {} },
+        { people: { fieldName: 'people', relationSelections: {} } },
         0,
       ),
     ).toBe(1);

@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -27,6 +26,7 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -66,7 +66,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      relationSelections: args.selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -90,21 +90,16 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relationSelections)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
+        relationSelections: args.selectedFieldsResult.relationSelections,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
@@ -139,6 +134,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord(
       queryResult,
@@ -146,6 +142,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext.workspace.id,
+      relationSelections,
     );
   }
 
