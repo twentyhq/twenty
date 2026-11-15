@@ -662,8 +662,10 @@ export class RoleService {
         isDefined(flatRoleTarget) && roleIds.includes(flatRoleTarget.roleId),
     );
 
-    const flatRoleTargetsToCreate = flatRoleTargetsToDelete.flatMap(
-      (flatRoleTarget) =>
+    // an additional target goes with its role: its holder keeps an assigned role and needs no replacement
+    const flatRoleTargetsToCreate = flatRoleTargetsToDelete
+      .filter(({ isAdditional }) => !isAdditional)
+      .flatMap((flatRoleTarget) =>
         ROLE_TARGET_FOREIGN_KEY_PROPERTIES.flatMap(
           (targetMetadataForeignKey) => {
             const targetId = flatRoleTarget[targetMetadataForeignKey];
@@ -693,7 +695,7 @@ export class RoleService {
             ];
           },
         ),
-    );
+      );
 
     return { flatRoleTargetsToCreate, flatRoleTargetsToDelete };
   }

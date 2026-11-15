@@ -2,10 +2,10 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-// an application acting with the main role (itself as main, or OAuth-only) adds no limit of its own
+// an application acting with the assigned role (itself as main, or OAuth-only) adds no limit of its own.
+// One that only matches an additional role still limits: the member holds more than that role
 export const getPermissionsPrincipalsLimitingRoleIds = ({
   mainPrincipal,
   limitingPrincipal,
@@ -18,9 +18,7 @@ export const getPermissionsPrincipalsLimitingRoleIds = ({
     [
       limitingPrincipal?.roleId,
       applicationPrincipal.type === 'customApplication' ||
-      getPermissionsPrincipalsMainRoleIds({ mainPrincipal }).includes(
-        applicationPrincipal.roleId,
-      )
+      applicationPrincipal.roleId === mainPrincipal.roleId
         ? undefined
         : applicationPrincipal.roleId,
     ].filter(isDefined),
