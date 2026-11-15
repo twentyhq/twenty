@@ -1,3 +1,4 @@
+import { Test } from '@nestjs/testing';
 import {
   FieldMetadataType,
   FileFolder,
@@ -5,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -58,9 +59,13 @@ const attachment = getFlatObjectMetadataMock({
 describe('CommonResultGettersService', () => {
   it('signs files of records loaded under an aliased relation', async () => {
     const signFileByIdUrl = jest.fn().mockResolvedValue('signed-url');
-    const service = new CommonResultGettersService({
-      signFileByIdUrl,
-    } as unknown as FileUrlService);
+    const module = await Test.createTestingModule({
+      providers: [
+        CommonResultGettersService,
+        { provide: FileUrlService, useValue: { signFileByIdUrl } },
+      ],
+    }).compile();
+    const service = module.get(CommonResultGettersService);
 
     const processedRecord = await service.processRecord({
       record: {
