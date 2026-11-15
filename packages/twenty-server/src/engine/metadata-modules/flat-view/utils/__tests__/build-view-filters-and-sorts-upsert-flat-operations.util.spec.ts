@@ -153,11 +153,11 @@ describe('buildViewFiltersAndSortsUpsertFlatOperations', () => {
     expect(viewFilter.flatEntityToUpdate).toEqual([
       expect.objectContaining({ id: KEPT_FILTER_ID, value: 'initech' }),
     ]);
-    expect(viewFilter.flatEntityToDelete.map(({ id }) => id)).toEqual([
-      REMOVED_FILTER_ID,
+    expect(viewFilter.flatEntityToDelete).toEqual([
+      expect.objectContaining({ id: REMOVED_FILTER_ID }),
     ]);
-    expect(viewSort.flatEntityToDelete.map(({ id }) => id)).toEqual([
-      REMOVED_SORT_ID,
+    expect(viewSort.flatEntityToDelete).toEqual([
+      expect.objectContaining({ id: REMOVED_SORT_ID }),
     ]);
   });
 
