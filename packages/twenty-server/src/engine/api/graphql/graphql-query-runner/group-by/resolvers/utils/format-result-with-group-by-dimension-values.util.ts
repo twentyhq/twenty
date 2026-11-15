@@ -5,6 +5,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -20,6 +22,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  relationSelections = {},
   processRecord,
 }: {
   groupsResult: Record<string, unknown>[];
@@ -30,6 +33,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   flatObjectMetadata?: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps?: FlatEntityMaps<OrmFlatFieldMetadata>;
+  relationSelections?: CommonRelationSelections;
 }): Promise<CommonGroupByOutputItem[]> => {
   const formattedResult: CommonGroupByOutputItem[] = [];
 
@@ -56,14 +60,15 @@ export const formatResultWithGroupByDimensionValues = async ({
       const records = await Promise.all(
         ((entry.records as Array<Record<string, unknown>>) ?? []).map(
           async (record) =>
-            await processRecord(
-              formatResult(
+            await processRecord({
+              ...formatResult<ObjectRecord>(
                 record,
                 flatObjectMetadata,
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
               ),
-            ),
+              ...getAliasedRelationValues(record, relationSelections),
+            }),
         ),
       );
 
@@ -106,6 +111,20 @@ export const formatResultWithGroupByDimensionValues = async ({
 
   return formattedResult;
 };
+
+// formatResult only keeps field names, and aliased relations are attached already formatted
+const getAliasedRelationValues = (
+  record: Record<string, unknown>,
+  relationSelections: CommonRelationSelections,
+) =>
+  Object.fromEntries(
+    getRelationSelectionEntries(relationSelections)
+      .filter(
+        ({ responseKey, relationSelection }) =>
+          responseKey !== relationSelection.fieldName,
+      )
+      .map(({ responseKey }) => [responseKey, record[responseKey]]),
+  );
 
 const createGroupKey = (
   group: Record<string, unknown>,
