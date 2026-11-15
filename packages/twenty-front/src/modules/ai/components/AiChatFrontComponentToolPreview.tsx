@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatFrontComponentPreview } from '@/ai/components/AiChatFrontComponentPreview';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
-import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
+import { useAiChatPendingToolCalls } from '@/ai/hooks/useAiChatPendingToolCalls';
 import { getFrontComponentDraftId } from '@/ai/utils/getFrontComponentDraftId';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 
@@ -18,7 +18,7 @@ export const AiChatFrontComponentToolPreview = ({
   isStreaming,
 }: AiChatFrontComponentToolPreviewProps) => {
   const draftId = getFrontComponentDraftId(toolPart);
-  const pendingToolCalls = useAgentChatPendingToolCalls();
+  const pendingToolCalls = useAiChatPendingToolCalls();
 
   if (
     isDefined(draftId) &&

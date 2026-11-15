@@ -450,7 +450,7 @@ Per le eliminazioni permanenti, usa `.destroyed`.
 | `condizione`                       | [Espressione di regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare. `precedente.\<field>` lo legge prima di un aggiornamento. Richiede `objectUniversalIdentifier`. |
 | `batchMode`                        | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                              |
 
-La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge i campi del record stesso; una relazione molti-a-uno viene letta tramite il relativo id, ad esempio `companyId`.
+La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge il record nel modo in cui lo restituisce l'API, come una regola di convalida: `company.id` per l'azienda correlata, `company.employees > 100` per uno dei suoi campi. I campi correlati vengono letti quando l'evento viene inviato, con le autorizzazioni dell'applicazione, quindi un record correlato che l'applicazione non può leggere viene considerato vuoto. `previous.` riguarda solo i campi del record stesso.
 
 <Note>
   Il precedente `databaseEventTriggerSettings`, con `eventName` (ad esempio

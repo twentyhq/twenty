@@ -162,9 +162,16 @@ export const getConflictingFields = (
       continue;
     }
 
+    const isUniqueFieldIndexIgnoringDeletedRecords =
+      flatIndexMetadata.flatIndexFieldMetadatas.length === 1 &&
+      flatIndexMetadata.indexWhereClause === '"deletedAt" IS NULL';
+
     conflictingFieldGroups.push({
       baseFields: indexConflictingFields.baseFields,
       conflictingProperties: indexConflictingFields.conflictingProperties,
+      ...(isUniqueFieldIndexIgnoringDeletedRecords
+        ? { isIgnoringDeletedRecords: true }
+        : {}),
     });
   }
 

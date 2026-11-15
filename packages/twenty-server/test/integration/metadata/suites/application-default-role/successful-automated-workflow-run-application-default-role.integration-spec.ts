@@ -31,7 +31,7 @@ const findWorkflowRuns = async (
   const response = await workflowGraphqlRequest(
     `query WorkflowRuns($coreWorkflowId: UUID!) {
       workflowRuns(filter: { coreWorkflowId: { eq: $coreWorkflowId } }) {
-        edges { node { status state createdBy { context { applicationId } } } }
+        edges { node { status state createdBy { source context { applicationId } } } }
       }
     }`,
     { coreWorkflowId },

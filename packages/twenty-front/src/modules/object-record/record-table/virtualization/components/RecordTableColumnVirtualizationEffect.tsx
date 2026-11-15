@@ -5,7 +5,7 @@ import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-tab
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldIdComponentState } from '@/object-record/record-table/states/resizedRecordFieldIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { RECORD_TABLE_COLUMN_VIRTUALIZATION_OVERSCAN_WIDTH } from '@/object-record/record-table/virtualization/constants/RecordTableColumnVirtualizationOverscanWidth';
 import { recordTableRenderedColumnRangeComponentState } from '@/object-record/record-table/virtualization/states/recordTableRenderedColumnRangeComponentState';
@@ -24,8 +24,8 @@ export const RecordTableColumnVirtualizationEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const resizedFieldMetadataId = useAtomComponentStateValue(
-    resizedFieldMetadataIdComponentState,
+  const resizedRecordFieldId = useAtomComponentStateValue(
+    resizedRecordFieldIdComponentState,
   );
 
   const resizeFieldOffset = useAtomComponentStateValue(
@@ -61,7 +61,7 @@ export const RecordTableColumnVirtualizationEffect = () => {
           return { size: firstColumnWidthOverride };
         }
 
-        return recordField.fieldMetadataItemId === resizedFieldMetadataId
+        return recordField.id === resizedRecordFieldId
           ? { size: recordField.size + resizeFieldOffset }
           : recordField;
       },
@@ -121,7 +121,7 @@ export const RecordTableColumnVirtualizationEffect = () => {
     store,
     visibleRecordFields,
     recordTableWidth,
-    resizedFieldMetadataId,
+    resizedRecordFieldId,
     resizeFieldOffset,
     firstColumnWidthOverride,
     isRecordTableDragColumnHidden,

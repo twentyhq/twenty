@@ -42,6 +42,16 @@ twenty app build
 
 Aceasta verifică tipurile și împachetează aplicația într-un snapshot CLI temporar. Folosește `--json` pentru a inspecta manifestul și metadatele artefactului. `twenty app publish` creează pachetul propriu-zis; nu este necesară o compilare separată a arhivei tarball.
 
+Buildurile păstrează fișierele de intrare pentru frontend și funcțiile logice, fișierele ajutătoare locale și tipurile importate de acestea, configurația TypeScript locală, precum și CSS-ul și resursele imbricate. Căile și octeții originali sunt păstrați într-un inventar al surselor. Dependențele din `node_modules`, fișierele fără legătură și importurile din afara directorului aplicației (inclusiv țintele legăturilor simbolice) sunt excluse din inventar. Aceste excluderi nu împiedică buildurile aplicațiilor existente. Dacă utilizați `package.json#files`, includeți aceste surse păstrate, altfel publicarea raportează fișierele lipsă. Pachetele instalate mai vechi trebuie reconstruite și publicate pentru a obține acest inventar. Acest lucru nu extinde încă fișierele pe care `twenty app pull` le restaurează.
+
+### Compatibilitatea inventarului sursă
+
+Încărcarea inventarului sursă complet necesită serverul Twenty **2.59.0 sau o versiune ulterioară**. Actualizați serverul înainte de a utiliza `twenty app apply` sau `twenty app dev` cu CSS, JavaScript, imagini sau fonturi importate. Serverele mai vechi acceptă doar `.ts`, `.tsx` și `.json` în folderul sursă și resping tipurile de fișiere suplimentare. Compilările locale funcționează în continuare fără un server; acest CLI nu omite automat sursele pentru serverele mai vechi.
+
+### Conflicte între căile surselor și ale pachetelor
+
+Dacă o compilare raportează `Application source \<path> collides with a built application file`, un fișier original ar suprascrie rezultatul generat. De exemplu, `src/run.ts` produce `src/run.mjs`, astfel încât o altă intrare nu poate importa un fișier sursă existent la `src/run.mjs`. Redenumiți fișierul importat (de exemplu, în `src/run-helper.mjs`) și actualizați importurile acestuia, apoi compilați din nou. CLI-ul se oprește înainte de a copia fișierul aflat în conflict.
+
 ## Implementare pe un server (tarball)
 
 Pentru aplicațiile pe care nu le dorești disponibile public — instrumente proprietare, integrări doar pentru enterprise sau build-uri experimentale — poți implementa un tarball direct pe un server Twenty.

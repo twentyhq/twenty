@@ -1,7 +1,8 @@
 import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 import crypto from 'crypto';
 import { readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
+import { collectApplicationSourceFiles } from '@/app/bundles/collect-application-source-files';
 import {
   computeDependencyFileChecksum,
   computePackageJsonChecksum,
@@ -31,7 +32,10 @@ import { FRONT_COMPONENT_TRANSLATIONS_KEY } from '@/app/bundles/constants/front-
 export type AppBuildOptions = {
   appPath: string;
   manifest: Manifest;
-  filePaths: EntityFilePaths;
+  filePaths: Pick<
+    EntityFilePaths,
+    'logicFunctions' | 'frontComponents' | 'publicAssets'
+  >;
   generatedAssets?: GeneratedAsset[];
   outputDir?: string;
   dereferenceSymlinks?: boolean;
@@ -61,7 +65,7 @@ export const buildApplication = async (
   const builtFileInfos = new Map<string, BuiltFileInfo>();
 
   const collectFileBuilt: OnFileBuiltCallback = (event) => {
-    builtFileInfos.set(event.builtPath, {
+    builtFileInfos.set(`${event.fileFolder}:${event.builtPath}`, {
       checksum: event.checksum,
       builtPath: event.builtPath,
       sourcePath: event.sourcePath,
@@ -87,7 +91,7 @@ export const buildApplication = async (
       }
     : undefined;
 
-  await esbuildOneShotBuild({
+  const logicBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
     fileFolder: FileFolder.BuiltLogicFunction,
@@ -119,7 +123,8 @@ export const buildApplication = async (
         })
       : null;
 
-  await esbuildOneShotBuild({
+  const styleInputs: string[] = [];
+  const frontBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
     fileFolder: FileFolder.BuiltFrontComponent,
@@ -136,6 +141,7 @@ export const buildApplication = async (
         : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
+          onSourceFiles: (paths) => styleInputs.push(...paths),
           getSharedDependenciesBuildContext: () =>
             sharedDependenciesBuildContext,
         }),
@@ -145,13 +151,36 @@ export const buildApplication = async (
     onFileBuilt: collectFileBuilt,
   });
 
+  const sourcePaths = collectApplicationSourceFiles({
+    appPath: options.appPath,
+    entryPaths: [...logicFunctions, ...frontComponents],
+    buildInputs: [
+      ...Object.keys(logicBuild?.inputs ?? {}).map((path) => resolve(path)),
+      ...Object.keys(frontBuild?.inputs ?? {}).map((path) => resolve(path)),
+      ...styleInputs,
+    ],
+  });
+  const builtPaths = new Set(
+    [...builtFileInfos.values()].map(({ builtPath }) => builtPath),
+  );
+  for (const sourcePath of [
+    ...sourcePaths,
+    ...options.filePaths.publicAssets,
+  ]) {
+    if (builtPaths.has(join(relativeOutputDir, sourcePath))) {
+      throw new Error(
+        `Application source ${sourcePath} collides with a built application file. Rename the source file.`,
+      );
+    }
+  }
+
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Source,
-    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
+    filePaths: sourcePaths,
     collectFileBuilt,
     outputDir: relativeOutputDir,
-    dereferenceSymlinks: options.dereferenceSymlinks,
+    dereferenceSymlinks: true,
   });
 
   await copyStaticFiles({

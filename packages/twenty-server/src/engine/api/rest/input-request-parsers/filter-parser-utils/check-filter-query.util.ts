@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   type FilterQuoteCharacter,
   getOpenQuoteAfterCharacter,
-} from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/get-open-quote-after-character.util';
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,

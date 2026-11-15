@@ -125,12 +125,11 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title:
-      'when filePath has an invalid extension for Source (.js instead of .ts)',
+    title: 'when filePath has an invalid extension for Source (.sh)',
     context: {
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'Source',
-      filePath: 'src/index.js',
+      filePath: 'src/install.sh',
     },
   },
   {

@@ -10,6 +10,7 @@ export enum MessageChannelExceptionCode {
   MESSAGE_CHANNEL_OWNERSHIP_VIOLATION = 'MESSAGE_CHANNEL_OWNERSHIP_VIOLATION',
   EMAIL_GROUP_NOT_CONFIGURED = 'EMAIL_GROUP_NOT_CONFIGURED',
   EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN = 'EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN',
+  MESSAGE_ATTACHMENT_STORAGE_FAILED = 'MESSAGE_ATTACHMENT_STORAGE_FAILED',
 }
 
 const getMessageChannelExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getMessageChannelExceptionUserFriendlyMessage = (
       return msg`Email group is not configured on this server.`;
     case MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN:
       return msg`Sending from an email group is available once your workspace is on a paid plan and has been billed.`;
+    case MessageChannelExceptionCode.MESSAGE_ATTACHMENT_STORAGE_FAILED:
+      return msg`Message attachments could not be saved. Please retry.`;
     default:
       assertUnreachable(code);
   }

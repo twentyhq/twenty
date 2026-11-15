@@ -2,6 +2,7 @@ import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isDestructiveAppPlanAction } from '@/app/deployment/is-destructive-app-plan-action';
+import { groupAppPlanCascades } from '@/app/deployment/group-app-plan-cascades';
 import {
   type AppPlanAction,
   type AppPlanSummary,
@@ -178,7 +179,46 @@ const formatUpdateAttributeLines = (
   });
 };
 
-const formatBlock = (action: AppPlanAction, stream: NodeJS.WriteStream) => {
+const formatCascadeLine = ({
+  cascades,
+  stream,
+}: {
+  cascades: AppPlanAction[];
+  stream: NodeJS.WriteStream;
+}) => {
+  const countByMetadataName = new Map<string, number>();
+
+  for (const cascade of cascades) {
+    countByMetadataName.set(
+      cascade.metadataName,
+      (countByMetadataName.get(cascade.metadataName) ?? 0) + 1,
+    );
+  }
+
+  const counts = [...countByMetadataName.entries()]
+    .sort(
+      ([nameA, countA], [nameB, countB]) =>
+        countB - countA || nameA.localeCompare(nameB),
+    )
+    .map(([metadataName, count]) => `${count} ${metadataName}`)
+    .join(', ');
+
+  return colorText(
+    'red',
+    `  - also destroys ${cascades.length} dependent ${cascades.length === 1 ? 'entity' : 'entities'}: ${counts}`,
+    stream,
+  );
+};
+
+const formatBlock = ({
+  action,
+  cascades,
+  stream,
+}: {
+  action: AppPlanAction;
+  cascades: AppPlanAction[];
+  stream: NodeJS.WriteStream;
+}) => {
   const attributeLines =
     action.type === 'update'
       ? formatUpdateAttributeLines(action, stream)
@@ -186,14 +226,74 @@ const formatBlock = (action: AppPlanAction, stream: NodeJS.WriteStream) => {
 
   return action.type === 'update' && attributeLines.length === 0
     ? undefined
-    : [formatBlockHeader(action, stream), ...attributeLines].join('\n');
+    : [
+        formatBlockHeader(action, stream),
+        ...attributeLines,
+        ...(cascades.length > 0
+          ? [formatCascadeLine({ cascades, stream })]
+          : []),
+      ].join('\n');
 };
 
-const formatDestructiveWarning = (
-  actions: AppPlanAction[],
-  stream: NodeJS.WriteStream,
-) => {
-  const destructiveActions = actions.filter(isDestructiveAppPlanAction);
+// A dropped table takes its own columns, so only fields on other objects are named.
+const countFieldsOnOtherObjects = ({
+  action,
+  cascades,
+}: {
+  action: Pick<
+    AppPlanAction,
+    'metadataName' | 'universalIdentifier' | 'flatEntity'
+  >;
+  cascades: AppPlanAction[];
+}) => {
+  const rootObjectUniversalIdentifier =
+    action.metadataName === 'objectMetadata'
+      ? action.universalIdentifier
+      : action.flatEntity?.objectMetadataUniversalIdentifier;
+
+  return cascades.filter(
+    (cascade) =>
+      cascade.metadataName === 'fieldMetadata' &&
+      cascade.flatEntity?.objectMetadataUniversalIdentifier !==
+        rootObjectUniversalIdentifier,
+  ).length;
+};
+
+const formatDestructiveConsequence = ({
+  action,
+  cascades,
+}: {
+  action: Pick<
+    AppPlanAction,
+    'metadataName' | 'universalIdentifier' | 'flatEntity'
+  >;
+  cascades: AppPlanAction[];
+}) => {
+  const consequence =
+    action.metadataName === 'objectMetadata'
+      ? 'drops the table and all its rows'
+      : 'drops the column and its data';
+  const fieldsOnOtherObjects = countFieldsOnOtherObjects({ action, cascades });
+
+  if (fieldsOnOtherObjects === 0) {
+    return consequence;
+  }
+
+  const fieldLabel = fieldsOnOtherObjects === 1 ? 'field' : 'fields';
+
+  return `${consequence}, and ${fieldsOnOtherObjects} ${fieldLabel} on other objects`;
+};
+
+const formatDestructiveWarning = ({
+  primaryActions,
+  cascadesByRoot,
+  stream,
+}: {
+  primaryActions: AppPlanAction[];
+  cascadesByRoot: Map<AppPlanAction, AppPlanAction[]>;
+  stream: NodeJS.WriteStream;
+}) => {
+  const destructiveActions = primaryActions.filter(isDestructiveAppPlanAction);
 
   return [
     boldText(
@@ -207,11 +307,12 @@ const formatDestructiveWarning = (
     ...destructiveActions.map((action) =>
       colorText(
         'red',
-        `  - ${formatDataValue(action.metadataName)} ${formatPlanValue(getActionEntityName(action))}: ${
-          action.metadataName === 'objectMetadata'
-            ? 'drops the table and all its rows'
-            : 'drops the column and its data'
-        }`,
+        `  - ${formatDataValue(action.metadataName)} ${formatPlanValue(getActionEntityName(action))}: ${formatDestructiveConsequence(
+          {
+            action,
+            cascades: cascadesByRoot.get(action) ?? [],
+          },
+        )}`,
         stream,
       ),
     ),
@@ -238,8 +339,16 @@ export const formatAppPlanActions = ({
     return 'No changes. Twenty metadata matches your manifest.';
   }
 
-  const blocks = sortActions(actions)
-    .map((action) => formatBlock(action, stream))
+  const { primaryActions, cascadesByRoot } = groupAppPlanCascades(actions);
+
+  const blocks = sortActions(primaryActions)
+    .map((action) =>
+      formatBlock({
+        action,
+        cascades: cascadesByRoot.get(action) ?? [],
+        stream,
+      }),
+    )
     .filter(isDefined);
 
   return [
@@ -248,11 +357,22 @@ export const formatAppPlanActions = ({
     blocks.join('\n\n'),
     '',
     `Plan: ${colorText('green', `${summary.create} to add`, stream)}, ${colorText('yellow', `${summary.update} to change`, stream)}, ${colorText('red', `${summary.delete} to destroy`, stream)}.`,
+    ...(summary.cascaded > 0
+      ? [
+          dimText(
+            `${summary.cascaded} of the ${summary.delete} deletions cascade from the ones listed above.`,
+            stream,
+          ),
+        ]
+      : []),
     ...(!isDefined(inferDeletionFromMissingEntities) && summary.delete > 0
       ? [dimText(NO_PRUNE_HINT, stream)]
       : []),
     ...(summary.destructive > 0
-      ? ['', formatDestructiveWarning(actions, stream)]
+      ? [
+          '',
+          formatDestructiveWarning({ primaryActions, cascadesByRoot, stream }),
+        ]
       : []),
   ].join('\n');
 };

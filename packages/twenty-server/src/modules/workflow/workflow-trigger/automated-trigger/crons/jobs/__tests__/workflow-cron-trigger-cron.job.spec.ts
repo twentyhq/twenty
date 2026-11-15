@@ -4,6 +4,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
@@ -12,6 +16,8 @@ import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-t
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
+import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 const WORKSPACE_1 = '20202020-0000-0000-0000-000000000001';
 const WORKSPACE_2 = '20202020-0000-0000-0000-000000000002';
@@ -49,6 +55,19 @@ const mockWorkflowCoreSyncService = {
 
 const mockWorkflowVersionCoreSyncService = {
   findCoreVersionById: jest.fn(),
+  resolveDispatchedCoreVersionId: jest.fn(
+    async ({
+      coreWorkflowVersionId,
+      lastPublishedCoreWorkflowVersionId,
+    }: {
+      coreWorkflowVersionId?: string | null;
+      lastPublishedCoreWorkflowVersionId?: string | null;
+    }) => coreWorkflowVersionId ?? lastPublishedCoreWorkflowVersionId,
+  ),
+};
+
+const mockCoreWorkflowRunnerService = {
+  createFailedRun: jest.fn(),
 };
 
 const buildCronTrigger = (index: number) => ({
@@ -134,6 +153,11 @@ describe('WorkflowCronTriggerCronJob', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowCronTriggerCronJob,
+        WorkflowTriggerDispatchWorkspaceService,
+        {
+          provide: CoreWorkflowRunnerService,
+          useValue: mockCoreWorkflowRunnerService,
+        },
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: mockWorkspaceRepository,
@@ -249,6 +273,83 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         },
+      );
+    });
+
+    it('should record a failed run when the queue refuses a trigger job and keep dispatching', async () => {
+      mockMessageQueueService.add.mockRejectedValueOnce(
+        new MessageQueueException(
+          'Job memory limit reached',
+          MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+          {
+            requestedBytes: 2048,
+            availableBytes: 512,
+            refusedGroupKeys: [`workspace:${WORKSPACE_1}`],
+          },
+        ),
+      );
+      mockCacheStorageService.hashGetValues.mockResolvedValue(
+        [1, 2].map((index) =>
+          JSON.stringify({
+            workspaceId: WORKSPACE_1,
+            workflowId: `workflow-${index}`,
+            pattern: '* * * * *',
+          }),
+        ),
+      );
+
+      await job.handle();
+
+      expect(mockMessageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(
+        mockCoreWorkflowRunnerService.createFailedRun,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockCoreWorkflowRunnerService.createFailedRun,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: WORKSPACE_1,
+          coreWorkflowVersionId: 'core-version-1',
+          payload: {},
+          error:
+            'Workflow could not start: queue memory limit reached (requested: 2048 bytes, available: 512 bytes). Try again when queued jobs have finished.',
+        }),
+      );
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should report a failure to record the refused dispatch', async () => {
+      mockMessageQueueService.add.mockRejectedValueOnce(
+        new MessageQueueException(
+          'Job too large',
+          MessageQueueExceptionCode.JOB_TOO_LARGE,
+          { index: 0, sizeBytes: 6_000_000, maxBytes: 5_242_880 },
+        ),
+      );
+      mockCoreWorkflowRunnerService.createFailedRun.mockRejectedValueOnce(
+        new Error('database unavailable'),
+      );
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).toHaveBeenCalledWith(
+        [
+          new Error(
+            `Failed to record the refused trigger dispatch of workflow workflow-1 in workspace ${WORKSPACE_1} (JOB_TOO_LARGE): database unavailable`,
+          ),
+        ],
+        { workspace: { id: WORKSPACE_1 } },
       );
     });
 

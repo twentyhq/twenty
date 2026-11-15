@@ -1,0 +1,1 @@
+export const MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER = '{mcpServerUrl}';

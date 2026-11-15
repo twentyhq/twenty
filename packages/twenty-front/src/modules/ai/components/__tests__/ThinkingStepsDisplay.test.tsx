@@ -88,11 +88,13 @@ const createToolPart = ({
   output = { result: { ok: true } },
   state = 'output-available',
   type = 'tool-web_search',
+  errorText,
 }: {
   type?: `tool-${string}`;
   input?: Record<string, unknown>;
   output?: unknown;
   state?: string;
+  errorText?: string;
 } = {}): ThinkingStepPart =>
   ({
     type,
@@ -100,6 +102,7 @@ const createToolPart = ({
     input,
     output,
     state,
+    errorText,
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
@@ -331,6 +334,46 @@ describe('ThinkingStepsDisplay', () => {
       expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
       expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
     });
+  });
+
+  it('should display output/input tabs for a tool step loaded from history', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [createToolPart({ errorText: '' })],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /searched the web for crm software/i,
+      }),
+    );
+
+    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
+  });
+
+  it('should display the error of a failed tool step', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart({
+          output: undefined,
+          state: 'output-error',
+          errorText: 'Search provider unavailable',
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /searched the web for crm software/i,
+      }),
+    );
+
+    expect(screen.getByText('Search provider unavailable')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
   });
 
   it('should show the records a tool step found when its row is expanded', async () => {

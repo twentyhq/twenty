@@ -101,13 +101,24 @@ Roagă-ți asistentul AI să interacționeze cu CRM-ul tău:
 
 ## Instrumente disponibile
 
-Odată conectat, serverul MCP listează instrumentele pe care conexiunea ta le poate utiliza, cu schemele lor de intrare: `find_many_companies`, `create_one_person`, `list_workflows` și alte câteva sute. Asistentul tău le apelează după nume. Instrumentele pentru obiecte sau funcții ale aplicației create în timp ce ești conectat apar după reconectare.
+Odată conectat, serverul MCP listează aceleași instrumente în fiecare spațiu de lucru:
+
+* **Instrumentele pentru înregistrări** primesc obiectul ca argument: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` și `merge_records`. De exemplu, `find_records({ objectName: "company", select: ["name"] })`.
+* **Instrumentele de descoperire** îi indică asistentului ce conține spațiul dvs. de lucru: `list_object_metadata_names` pentru obiecte și `get_field_metadata` pentru câmpurile unui obiect.
+* **Instrumente de metadate** pentru citirea și modificarea modelului de date, cum ar fi `get_object_metadata` sau `create_field_metadata`.
+* **Instrumentele meta** oferă acces la orice altceva, inclusiv la Workflows, vizualizări, tablouri de bord, e-mail și funcțiile aplicațiilor instalate: `get_tool_catalog` pentru a explora o categorie, `learn_tools` pentru schemele de intrare și `execute_tool` pentru a rula un instrument.
+
+Deoarece lista nu depinde de obiectele dvs., rămâne validă pentru clienții care o stochează, cum ar fi aplicațiile publicate într-un director.
+
+### Mod direct
+
+Conectați-vă la `/mcp?mode=direct` pentru a lista în schimb câte un instrument pentru fiecare obiect și operațiune, fiecare cu schema de intrare exactă a obiectului respectiv: `find_many_companies`, `create_one_person` și câteva sute în plus. Instrumentele pentru obiectele create în timp ce sunteți conectat apar după reconectare.
 
 Este necesar un client care încarcă instrumente la cerere, așa cum fac implicit Claude, Claude Code, Codex și OpenCode. Un client care încarcă inițial fiecare definiție de instrument, inclusiv Claude Code cu căutarea de instrumente dezactivată, poate rămâne fără context.
 
 ### Modul meta
 
-Pentru clienții care încarcă toate instrumentele în avans, conectați-vă la `/mcp?mode=meta`. În schimb, acesta listează câteva meta-instrumente:
+Conectați-vă la `/mcp?mode=meta` pentru a lista doar câteva instrumente meta:
 
 1. **`learn_tools`** — obține schema de intrare pentru instrumente specifice
 2. **`execute_tool`** — rulează un instrument

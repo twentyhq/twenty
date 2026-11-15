@@ -3,14 +3,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type EntityManager, In } from 'typeorm';
+import { type EntityManager, In, IsNull } from 'typeorm';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
-import { type BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
@@ -80,5 +80,27 @@ export class BillingArrangementService {
       workspaceId,
       grantedByUserId,
     });
+  }
+
+  async endLimitOverride({
+    workspaceId,
+    usageLimitId,
+    revokedByUserId,
+    entityManager,
+  }: {
+    workspaceId: string;
+    usageLimitId: string;
+    revokedByUserId: string;
+    entityManager: EntityManager;
+  }): Promise<void> {
+    await this.billingArrangementRepository.withManager(entityManager).update(
+      workspaceId,
+      {
+        type: BillingArrangementType.LIMIT_OVERRIDE,
+        usageLimitId,
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date(), revokedByUserId },
+    );
   }
 }

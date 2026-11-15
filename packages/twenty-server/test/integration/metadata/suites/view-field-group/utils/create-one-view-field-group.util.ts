@@ -12,6 +12,7 @@ export const createOneViewFieldGroup = async ({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateViewFieldGroupInput>): CommonResponseBody<{
   createViewFieldGroup: ViewFieldGroupDTO;
 }> => {
@@ -20,7 +21,7 @@ export const createOneViewFieldGroup = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

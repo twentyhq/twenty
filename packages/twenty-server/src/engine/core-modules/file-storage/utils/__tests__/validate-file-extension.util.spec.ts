@@ -1,8 +1,22 @@
 import { FileFolder } from 'twenty-shared/types';
 
+import { APPLICATION_SOURCE_ENTRY_EXTENSIONS } from 'src/engine/core-modules/file-storage/constants/application-source-entry-extensions.constant';
 import { validateFileExtension } from 'src/engine/core-modules/file-storage/utils/validate-file-extension.util';
 
 describe('validateFileExtension', () => {
+  it.each(['.png', '.css', '.woff2', '.mjs'])(
+    'keeps %s out of application entry paths',
+    (extension) => {
+      expect(
+        validateFileExtension({
+          resourcePath: `src/entry${extension}`,
+          fileFolder: FileFolder.Source,
+          allowedExtensions: APPLICATION_SOURCE_ENTRY_EXTENSIONS,
+        }).isValid,
+      ).toBe(false);
+    },
+  );
+
   it.each([
     {
       title: 'BuiltLogicFunction with .mjs',
@@ -43,6 +57,18 @@ describe('validateFileExtension', () => {
     },
   );
 
+  it.each(['.mjs', '.js', '.json', '.css', '.png', '.woff2'])(
+    'accepts retained source files with %s',
+    (extension) => {
+      expect(
+        validateFileExtension({
+          resourcePath: `src/imported${extension}`,
+          fileFolder: FileFolder.Source,
+        }),
+      ).toEqual({ isValid: true });
+    },
+  );
+
   it.each([
     {
       title: 'BuiltLogicFunction with .js',
@@ -60,8 +86,8 @@ describe('validateFileExtension', () => {
       fileFolder: FileFolder.BuiltLogicFunction,
     },
     {
-      title: 'Source with .mjs',
-      resourcePath: 'src/index.mjs',
+      title: 'Source with .sh',
+      resourcePath: 'src/index.sh',
       fileFolder: FileFolder.Source,
     },
     {

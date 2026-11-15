@@ -67,7 +67,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
     );
 
     if (isDefined(existingRecordField)) {
-      updateRecordField(fieldMetadataId, { isVisible: true });
+      updateRecordField(existingRecordField.id, { isVisible: true });
       onFieldUpdated?.(existingRecordField.id, { isVisible: true });
       return;
     }

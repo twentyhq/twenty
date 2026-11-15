@@ -60,6 +60,130 @@ export class CoreWorkflowRunnerService {
     source: ActorMetadata;
     workflowRunId?: string;
   }) {
+    const {
+      workflow,
+      workflowVersion,
+      trigger,
+      steps,
+      workspaceWorkflowVersionId,
+    } = await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
+
+    const subscriptionInactiveReason =
+      await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
+
+    if (isDefined(subscriptionInactiveReason)) {
+      this.logger.log(
+        `Cannot execute billed function for this workspace: ${subscriptionInactiveReason}`,
+      );
+    }
+
+    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
+    const isManualTrigger = trigger.type === WorkflowTriggerType.MANUAL;
+    const status = isHardThrottled
+      ? WorkflowRunStatus.FAILED
+      : isManualTrigger
+        ? WorkflowRunStatus.ENQUEUED
+        : WorkflowRunStatus.NOT_STARTED;
+    const createdBy = buildWorkflowRunCreatedBy({
+      source,
+      workflowApplicationId: workflow.applicationId,
+    });
+    const createdWorkflowRunId =
+      await this.workflowRunWorkspaceService.createCoreWorkflowRun({
+        coreWorkflowId: workflow.id,
+        coreWorkflowVersionId: workflowVersion.id,
+        workspaceWorkflowVersionId,
+        workflowName: workflow.name,
+        trigger,
+        steps,
+        createdBy,
+        workflowRunId,
+        status,
+        triggerPayload: payload,
+        error: isHardThrottled ? 'Throttle limit reached' : undefined,
+        workspaceId,
+      });
+
+    if (isHardThrottled) {
+      return { workflowRunId: createdWorkflowRunId };
+    }
+
+    if (isManualTrigger) {
+      const scope =
+        await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
+          workspaceId,
+          coreWorkflowId: workflow.id,
+        });
+
+      await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({
+        workspaceId,
+        workflowRunId: createdWorkflowRunId,
+        scope,
+      });
+    } else {
+      await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
+        workspaceId,
+      );
+      await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
+        WorkflowRunEnqueueJob.name,
+        { workspaceId, isCacheMode: true },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
+      );
+    }
+
+    return { workflowRunId: createdWorkflowRunId };
+  }
+
+  async createFailedRun({
+    workspaceId,
+    coreWorkflowVersionId,
+    payload,
+    source,
+    error,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+    payload: object;
+    source: ActorMetadata;
+    error: string;
+  }): Promise<string> {
+    const {
+      workflow,
+      workflowVersion,
+      trigger,
+      steps,
+      workspaceWorkflowVersionId,
+    } = await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
+
+    return this.workflowRunWorkspaceService.createCoreWorkflowRun({
+      coreWorkflowId: workflow.id,
+      coreWorkflowVersionId: workflowVersion.id,
+      workspaceWorkflowVersionId,
+      workflowName: workflow.name,
+      trigger,
+      steps,
+      createdBy: buildWorkflowRunCreatedBy({
+        source,
+        workflowApplicationId: workflow.applicationId,
+      }),
+      status: WorkflowRunStatus.FAILED,
+      triggerPayload: payload,
+      error,
+      workspaceId,
+      shouldSkipEventEmission: true,
+    });
+  }
+
+  private async resolveRunDefinition({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }) {
     const workflowVersion =
       await this.workflowVersionCoreSyncService.findCoreVersionById(
         workspaceId,
@@ -102,74 +226,13 @@ export class CoreWorkflowRunnerService {
       );
     }
 
-    const subscriptionInactiveReason =
-      await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
-
-    if (isDefined(subscriptionInactiveReason)) {
-      this.logger.log(
-        `Cannot execute billed function for this workspace: ${subscriptionInactiveReason}`,
-      );
-    }
-
-    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
-    const isManualTrigger =
-      workflowVersion.triggers[0].type === WorkflowTriggerType.MANUAL;
-    const status = isHardThrottled
-      ? WorkflowRunStatus.FAILED
-      : isManualTrigger
-        ? WorkflowRunStatus.ENQUEUED
-        : WorkflowRunStatus.NOT_STARTED;
-    const createdBy = buildWorkflowRunCreatedBy({
-      source,
-      workflowApplicationId: workflow.applicationId,
-    });
-    const createdWorkflowRunId =
-      await this.workflowRunWorkspaceService.createCoreWorkflowRun({
-        coreWorkflowId: workflow.id,
-        coreWorkflowVersionId: workflowVersion.id,
-        workspaceWorkflowVersionId,
-        workflowName: workflow.name,
-        trigger: workflowVersion.triggers[0],
-        steps: workflowVersion.steps,
-        createdBy,
-        workflowRunId,
-        status,
-        triggerPayload: payload,
-        error: isHardThrottled ? 'Throttle limit reached' : undefined,
-        workspaceId,
-      });
-
-    if (isHardThrottled) {
-      return { workflowRunId: createdWorkflowRunId };
-    }
-
-    if (isManualTrigger) {
-      const scope =
-        await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
-          workspaceId,
-          coreWorkflowId: workflow.id,
-        });
-
-      await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({
-        workspaceId,
-        workflowRunId: createdWorkflowRunId,
-        scope,
-      });
-    } else {
-      await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
-        workspaceId,
-      );
-      await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
-        WorkflowRunEnqueueJob.name,
-        { workspaceId, isCacheMode: true },
-        {
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
-    }
-
-    return { workflowRunId: createdWorkflowRunId };
+    return {
+      workflow,
+      workflowVersion,
+      trigger: workflowVersion.triggers[0],
+      steps: workflowVersion.steps,
+      workspaceWorkflowVersionId,
+    };
   }
 
   private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {

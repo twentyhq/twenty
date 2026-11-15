@@ -19,17 +19,17 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
 }));
 
 type HookProps = {
-  isPublished: boolean | undefined;
+  hasRuns: boolean | undefined;
   requestedVersionId: string | null;
 };
 
 const renderActiveTab = ({
-  initialIsPublished,
+  initialHasRuns,
   hash = '',
   requestedVersionId = null,
   storedTabId,
 }: {
-  initialIsPublished: boolean | undefined;
+  initialHasRuns: boolean | undefined;
   hash?: string;
   requestedVersionId?: string | null;
   storedTabId?: string;
@@ -49,14 +49,14 @@ const renderActiveTab = ({
   }
 
   return renderHook(
-    ({ isPublished, requestedVersionId }: HookProps) =>
+    ({ hasRuns, requestedVersionId }: HookProps) =>
       useCoreWorkflowShowPageActiveTab({
         coreWorkflowId: 'workflow-id',
-        isPublished,
+        hasRuns,
         requestedVersionId,
       }),
     {
-      initialProps: { isPublished: initialIsPublished, requestedVersionId },
+      initialProps: { hasRuns: initialHasRuns, requestedVersionId },
       wrapper: ({ children }) => (
         <JotaiProvider store={store}>
           <MemoryRouter initialEntries={[`/workflow/workflow-id${hash}`]}>
@@ -69,41 +69,41 @@ const renderActiveTab = ({
 };
 
 describe('useCoreWorkflowShowPageActiveTab', () => {
-  it('opens Overview for a published workflow', () => {
-    const { result } = renderActiveTab({ initialIsPublished: true });
+  it('opens Overview for a workflow with runs', () => {
+    const { result } = renderActiveTab({ initialHasRuns: true });
 
     expect(result.current).toBe('overview');
   });
 
-  it('opens Flow for a draft workflow', () => {
-    const { result } = renderActiveTab({ initialIsPublished: false });
+  it('opens Flow for a workflow without runs', () => {
+    const { result } = renderActiveTab({ initialHasRuns: false });
 
     expect(result.current).toBe('flow');
   });
 
-  it('picks the default once the workflow has loaded', () => {
+  it('picks the default once the run insights have loaded', () => {
     const { result, rerender } = renderActiveTab({
-      initialIsPublished: undefined,
+      initialHasRuns: undefined,
     });
 
-    rerender({ isPublished: true, requestedVersionId: null });
+    rerender({ hasRuns: true, requestedVersionId: null });
 
     expect(result.current).toBe('overview');
   });
 
-  it('stays on Flow when the draft is published from the page', () => {
+  it('stays on Flow when the first run starts from the page', () => {
     const { result, rerender } = renderActiveTab({
-      initialIsPublished: false,
+      initialHasRuns: false,
     });
 
-    rerender({ isPublished: true, requestedVersionId: null });
+    rerender({ hasRuns: true, requestedVersionId: null });
 
     expect(result.current).toBe('flow');
   });
 
   it('follows the hash over the default', () => {
     const { result } = renderActiveTab({
-      initialIsPublished: false,
+      initialHasRuns: false,
       hash: '#runs',
     });
 
@@ -112,7 +112,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
 
   it('reopens the last viewed tab', () => {
     const { result } = renderActiveTab({
-      initialIsPublished: true,
+      initialHasRuns: true,
       storedTabId: 'runs',
     });
 
@@ -121,7 +121,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
 
   it('opens Flow for a requested version even after another tab was viewed', () => {
     const { result } = renderActiveTab({
-      initialIsPublished: true,
+      initialHasRuns: true,
       storedTabId: 'overview',
       requestedVersionId: 'version-id',
     });

@@ -56,6 +56,8 @@ export type {
   ConnectionCallbackResult,
   IdentifyAccountPayload,
   IdentifyAccountResult,
+  MarkAppThreadAsReadPayload,
+  SendAppMessageAttachment,
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,

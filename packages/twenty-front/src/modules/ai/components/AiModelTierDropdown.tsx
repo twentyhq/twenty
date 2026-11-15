@@ -9,7 +9,7 @@ import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/aiChatUserSelectedModelTierState';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -37,13 +37,13 @@ export const AiModelTierDropdown = ({
   const tiers = useAiModelTiers();
   const { chatTier } = useWorkspaceAiModelTiers();
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const [agentChatUserSelectedModelTier, setAgentChatUserSelectedModelTier] =
-    useAtomState(agentChatUserSelectedModelTierState);
+  const [aiChatUserSelectedModelTier, setAiChatUserSelectedModelTier] =
+    useAtomState(aiChatUserSelectedModelTierState);
 
   // The setup chat always runs on the fast tier server-side.
   const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
 
-  const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
+  const selectedTier = aiChatUserSelectedModelTier ?? workspaceTier;
   const selectedResolvedTier = tiers[AI_MODEL_TIERS.indexOf(selectedTier)];
 
   const tierLabel = isDefined(selectedResolvedTier.model)
@@ -51,7 +51,7 @@ export const AiModelTierDropdown = ({
     : selectedResolvedTier.label;
 
   const handleTierChange = (tier: AiModelTier) => {
-    setAgentChatUserSelectedModelTier(tier === workspaceTier ? null : tier);
+    setAiChatUserSelectedModelTier(tier === workspaceTier ? null : tier);
   };
 
   return (

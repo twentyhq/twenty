@@ -71,6 +71,7 @@ const resolveOutcome = ({
     principals,
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
         [READ_ONLY_ROLE_ID]: {
