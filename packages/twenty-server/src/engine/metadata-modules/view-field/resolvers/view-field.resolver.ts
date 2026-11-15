@@ -1,7 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -9,7 +10,10 @@ import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dto
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
+import { UpsertViewFieldWithScopeInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/upsert-view-field-with-scope.input';
+import { ViewFieldWithScopeDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field-with-scope.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { ViewFieldWithScopeUpsertService } from 'src/engine/metadata-modules/view-field/services/view-field-with-scope-upsert.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-child-entity-permission.guard';
@@ -22,7 +26,10 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(AccessPolicyGuard(VIEW_FIELD_ACCESS_POLICY))
 export class ViewFieldResolver {
-  constructor(private readonly viewFieldService: ViewFieldService) {}
+  constructor(
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewFieldWithScopeUpsertService: ViewFieldWithScopeUpsertService,
+  ) {}
 
   @Query(() => [ViewFieldDTO])
   async getViewFields(
@@ -85,6 +92,23 @@ export class ViewFieldResolver {
   ): Promise<ViewFieldDTO[]> {
     return await this.viewFieldService.createMany({
       createViewFieldInputs,
+      workspaceId,
+    });
+  }
+
+  // The view field's current view and the input view are both guarded; the service requires them to match
+  @Mutation(() => ViewFieldWithScopeDTO)
+  @UseGuards(
+    ViewChildEntityPermissionGuard('viewField'),
+    CreateViewChildEntityPermissionGuard,
+  )
+  @UsePipes(ResolverValidationPipe)
+  async upsertViewFieldWithScope(
+    @Args('input') input: UpsertViewFieldWithScopeInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewFieldWithScopeDTO> {
+    return await this.viewFieldWithScopeUpsertService.upsertViewFieldWithScope({
+      input,
       workspaceId,
     });
   }
