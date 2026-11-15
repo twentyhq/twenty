@@ -223,7 +223,7 @@ export class GraphqlQuerySelectedFieldsParser {
       selectedFields: graphqlSelectedFields,
       fieldName: fieldMetadata.name,
     })) {
-      this.assertRelationResponseKeyIsFree({
+      this.assertRelationResponseKeyIsFreeOrThrow({
         responseKey,
         fieldName: fieldMetadata.name,
         flatObjectMetadata,
@@ -241,7 +241,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   // A relation's rows sit on the record under its response key, next to the object's own columns
-  private assertRelationResponseKeyIsFree({
+  private assertRelationResponseKeyIsFreeOrThrow({
     responseKey,
     fieldName,
     flatObjectMetadata,

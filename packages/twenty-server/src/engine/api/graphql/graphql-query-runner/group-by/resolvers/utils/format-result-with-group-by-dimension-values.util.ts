@@ -54,6 +54,16 @@ export const formatResultWithGroupByDimensionValues = async ({
       );
     }
 
+    // formatResult only keeps field names, and aliased relations are attached already formatted
+    const aliasedRelationResponseKeys = getRelationSelectionEntries(
+      relationSelections,
+    )
+      .filter(
+        ({ responseKey, relationSelection }) =>
+          responseKey !== relationSelection.fieldName,
+      )
+      .map(({ responseKey }) => responseKey);
+
     for (const entry of recordsResult) {
       const groupKey = createGroupKey(entry, groupByDefinitions);
 
@@ -67,7 +77,12 @@ export const formatResultWithGroupByDimensionValues = async ({
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
               ),
-              ...getAliasedRelationValues(record, relationSelections),
+              ...Object.fromEntries(
+                aliasedRelationResponseKeys.map((responseKey) => [
+                  responseKey,
+                  record[responseKey],
+                ]),
+              ),
             }),
         ),
       );
@@ -111,20 +126,6 @@ export const formatResultWithGroupByDimensionValues = async ({
 
   return formattedResult;
 };
-
-// formatResult only keeps field names, and aliased relations are attached already formatted
-const getAliasedRelationValues = (
-  record: Record<string, unknown>,
-  relationSelections: CommonRelationSelections,
-) =>
-  Object.fromEntries(
-    getRelationSelectionEntries(relationSelections)
-      .filter(
-        ({ responseKey, relationSelection }) =>
-          responseKey !== relationSelection.fieldName,
-      )
-      .map(({ responseKey }) => [responseKey, record[responseKey]]),
-  );
 
 const createGroupKey = (
   group: Record<string, unknown>,
