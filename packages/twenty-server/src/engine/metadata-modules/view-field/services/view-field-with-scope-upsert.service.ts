@@ -293,6 +293,19 @@ export class ViewFieldWithScopeUpsertService {
           !isDefined(flatView.deletedAt),
       );
 
+    if (scope === undefined) {
+      return {
+        scopeViewId: existingScopeFlatViews[0]?.id ?? null,
+        flatEntityOperations: {
+          view: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [],
+          },
+        },
+      };
+    }
+
     const hasScope =
       isDefined(scope) &&
       (isNonEmptyArray(scope.viewFilters) || isNonEmptyArray(scope.viewSorts));
