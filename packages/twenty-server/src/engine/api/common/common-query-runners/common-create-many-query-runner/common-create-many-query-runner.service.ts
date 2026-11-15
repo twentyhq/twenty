@@ -4,13 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  Brackets,
-  FindOptionsRelations,
-  In,
-  InsertResult,
-  ObjectLiteral,
-} from 'typeorm';
+import { Brackets, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
@@ -55,6 +49,7 @@ import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/recor
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
 import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
 
@@ -201,7 +196,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
-    if (!args.selectedFieldsResult.relations) {
+    if (!args.selectedFieldsResult.relationSelections) {
       return;
     }
 
@@ -210,16 +205,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: records,
-      relations: args.selectedFieldsResult.relations as Record<
-        string,
-        FindOptionsRelations<ObjectLiteral>
-      >,
+      relationSelections: args.selectedFieldsResult.relationSelections,
       limit: QUERY_MAX_RECORDS,
       authContext,
       repository,
       selectedFields: args.selectedFieldsResult.select,
-      nestedRelationQueryArgsByFieldName:
-        args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
       ...nestedRelationsReadPathOptions,
     });
   }
@@ -287,7 +277,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
         select: selectedFieldsResult.select,
-        relations: selectedFieldsResult.relations,
+        relationSelections: selectedFieldsResult.relationSelections,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -383,7 +373,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const columnsToReturn = buildColumnsToReturn({
       select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      relationSelections: selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -723,7 +713,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      relationSelections: selectedFieldsResult.relationSelections,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -757,6 +747,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<ObjectRecord[]> {
     return await this.commonResultGettersService.processRecordArray(
       queryResult,
@@ -764,6 +755,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext.workspace.id,
+      relationSelections,
     );
   }
 
