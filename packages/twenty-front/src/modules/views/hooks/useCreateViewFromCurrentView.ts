@@ -16,6 +16,7 @@ import { usePerformViewSortApiPersist } from '@/views/hooks/internal/usePerformV
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
+import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
@@ -172,12 +173,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         throw new Error(doNotTranslate('Failed to create view'));
       }
 
+      const viewFieldsToCopy = sourceView.viewFields.filter((viewField) =>
+        isRecordFieldSupportedByViewType({ recordField: viewField, viewType }),
+      );
+
       const newViewFieldIdByViewFieldId = new Map(
-        sourceView.viewFields.map((viewField) => [viewField.id, v4()]),
+        viewFieldsToCopy.map((viewField) => [viewField.id, v4()]),
       );
 
       const fieldResult = await performViewFieldApiCreate({
-        inputs: sourceView.viewFields.map((viewField) => ({
+        inputs: viewFieldsToCopy.map((viewField) => ({
           id: newViewFieldIdByViewFieldId.get(viewField.id),
           fieldMetadataId: viewField.fieldMetadataId,
           position: viewField.position,
@@ -195,7 +200,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
       if (
         fieldResult.status === 'failed' ||
-        !(await copyColumnScopes(newViewFieldIdByViewFieldId))
+        !(await copyColumnScopes({ newViewFieldIdByViewFieldId }))
       ) {
         return undefined;
       }

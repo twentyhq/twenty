@@ -17,7 +17,7 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -71,7 +71,6 @@ export const useSaveColumnScope = () => {
               icon: 'IconFilter',
               objectMetadataId: relationObjectMetadataId,
               type: ViewType.TABLE_WIDGET,
-              visibility: ViewVisibility.WORKSPACE,
               ownerViewFieldId,
             },
           },
@@ -140,7 +139,11 @@ export const useSaveColumnScope = () => {
   );
 
   const copyColumnScopes = useCallback(
-    async (newViewFieldIdByViewFieldId: Map<string, string>) => {
+    async ({
+      newViewFieldIdByViewFieldId,
+    }: {
+      newViewFieldIdByViewFieldId: Map<string, string>;
+    }) => {
       const scopeViewsByOwnerViewFieldId = store.get(
         scopeViewsByOwnerViewFieldIdMapSelector.atom,
       );

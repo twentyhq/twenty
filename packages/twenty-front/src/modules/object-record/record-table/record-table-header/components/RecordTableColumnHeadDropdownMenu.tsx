@@ -1,3 +1,4 @@
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -6,15 +7,15 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useAddRecordTableColumn } from '@/object-record/record-table/hooks/useAddRecordTableColumn';
 import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
+import { buildRecordTableColumnToAdd } from '@/object-record/record-table/utils/buildRecordTableColumnToAdd';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
@@ -22,6 +23,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
@@ -45,8 +47,8 @@ export const RecordTableColumnHeadDropdownMenu = ({
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
 
-  const { visibleRecordFields, objectMetadataItems } =
-    useRecordTableContextOrThrow();
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
 
   const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
@@ -125,10 +127,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const isLookupColumn =
     isDefined(fieldMetadataItem) &&
     isDefined(
-      getRecordFieldLookupTarget({
+      getLookupTarget({
         recordField,
         fieldMetadataItem,
-        objectMetadataItems,
       }),
     );
   const isFilterable = filterableAndSortable.isFilterable && !isLookupColumn;
@@ -152,19 +153,23 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
     ContextStoreComponentInstanceContext,
   );
-  const { addRecordTableColumn } = useAddRecordTableColumn(recordTableId);
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
+  const store = useStore();
 
-  const handleAddColumnClick = async () => {
-    const addedRecordField = await addRecordTableColumn(recordField);
-
-    if (!isDefined(addedRecordField)) {
-      return;
-    }
+  const handleAddColumnClick = () => {
+    const recordFieldToCreate = buildRecordTableColumnToAdd({
+      sourceRecordField: recordField,
+      recordFields: store.get(
+        currentRecordFieldsComponentState.atomFamily({
+          instanceId: recordTableId,
+        }),
+      ),
+    });
 
     openEditColumnInSidePanel({
       recordTableId,
-      recordFieldId: addedRecordField.id,
+      recordFieldId: recordFieldToCreate.id,
+      recordFieldToCreate,
       contextStoreInstanceId,
     });
   };

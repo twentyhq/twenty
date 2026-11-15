@@ -1,18 +1,15 @@
 import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
-import { isDefined } from 'twenty-shared/utils';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-const peopleField = getMockObjectMetadataItemOrThrow('company').fields.find(
-  ({ name }) => name === 'people',
-);
-
-if (!isDefined(peopleField)) {
-  throw new Error('company.people not found');
-}
+const peopleField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+  fieldName: 'people',
+});
 
 const PEOPLE_COLUMN = {
   id: '20202020-0000-4000-8000-0000000000c1',

@@ -1,31 +1,32 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 
 export const getRecordFieldColumnDisplay = ({
   recordField,
   fieldMetadataItem,
-  objectMetadataItems,
+  getLookupTarget,
 }: {
   recordField: Pick<RecordField, 'settings' | 'relationTargetFieldMetadataId'>;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'label' | 'icon' | 'description' | 'type' | 'relation'
   >;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  getLookupTarget: GetRecordFieldLookupTarget;
 }) => {
-  const lookupTargetFieldMetadataItem = getRecordFieldLookupTarget({
+  const lookupTargetFieldMetadataItem = getLookupTarget({
     recordField,
     fieldMetadataItem,
-    objectMetadataItems,
   })?.lookupTargetFieldMetadataItem;
 
   return {
     label:
       recordField.settings?.label ??
-      formatLookupColumnLabel(fieldMetadataItem, lookupTargetFieldMetadataItem),
+      formatLookupColumnLabel({
+        fieldMetadataItem,
+        lookupTargetFieldMetadataItem,
+      }),
     icon: lookupTargetFieldMetadataItem?.icon ?? fieldMetadataItem.icon,
     description:
       lookupTargetFieldMetadataItem?.description ??

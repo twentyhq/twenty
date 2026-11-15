@@ -38,7 +38,6 @@ const getChangedRecords = (
   }
 };
 
-// A parent is affected when it lists a changed record, or a changed record now points to it
 export const getScopedRelationAffectedParentRecordIds = ({
   operation,
   parentRecordIds,

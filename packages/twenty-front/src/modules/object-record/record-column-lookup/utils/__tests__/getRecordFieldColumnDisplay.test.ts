@@ -1,3 +1,5 @@
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -15,6 +17,8 @@ const employeesField = getMockFieldMetadataItemOrThrow({
 });
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+const getLookupTarget: GetRecordFieldLookupTarget = (params) =>
+  getRecordFieldLookupTarget({ ...params, objectMetadataItems });
 
 describe('getRecordFieldColumnDisplay', () => {
   it('shows the relation field for a plain column', () => {
@@ -22,7 +26,7 @@ describe('getRecordFieldColumnDisplay', () => {
       getRecordFieldColumnDisplay({
         recordField: {},
         fieldMetadataItem: companyField,
-        objectMetadataItems,
+        getLookupTarget,
       }),
     ).toEqual({
       label: companyField.label,
@@ -36,7 +40,7 @@ describe('getRecordFieldColumnDisplay', () => {
       getRecordFieldColumnDisplay({
         recordField: { relationTargetFieldMetadataId: employeesField.id },
         fieldMetadataItem: companyField,
-        objectMetadataItems,
+        getLookupTarget,
       }),
     ).toEqual({
       label: `${companyField.label} › ${employeesField.label}`,
@@ -53,7 +57,7 @@ describe('getRecordFieldColumnDisplay', () => {
           relationTargetFieldMetadataId: employeesField.id,
         },
         fieldMetadataItem: companyField,
-        objectMetadataItems,
+        getLookupTarget,
       }).label,
     ).toBe('Team size');
   });

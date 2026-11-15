@@ -1,6 +1,5 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type GetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/GetRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,7 +11,7 @@ export type LookupColumn = {
 export const getLookupColumns = ({
   recordFields,
   fieldMetadataItemByFieldMetadataItemId,
-  objectMetadataItems,
+  getLookupTarget,
 }: {
   recordFields: Pick<
     RecordField,
@@ -22,17 +21,16 @@ export const getLookupColumns = ({
     string,
     FieldMetadataItem | undefined
   >;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  getLookupTarget: GetRecordFieldLookupTarget;
 }): LookupColumn[] =>
   recordFields.flatMap((recordField) => {
     const fieldMetadataItem =
       fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
     const lookupTarget = isDefined(fieldMetadataItem)
-      ? getRecordFieldLookupTarget({
+      ? getLookupTarget({
           recordField,
           fieldMetadataItem,
-          objectMetadataItems,
         })
       : undefined;
 

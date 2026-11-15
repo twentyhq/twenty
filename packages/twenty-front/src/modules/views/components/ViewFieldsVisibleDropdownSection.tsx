@@ -1,6 +1,6 @@
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -41,7 +41,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
       viewBarId: recordIndexId,
     });
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
@@ -123,7 +123,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const columnDisplay = getRecordFieldColumnDisplay({
                     recordField,
                     fieldMetadataItem,
-                    objectMetadataItems,
+                    getLookupTarget,
                   });
 
                   return (

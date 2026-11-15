@@ -69,10 +69,6 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
-    const isSettingsUpdate =
-      isDefined(flatEntityUpdate.settings) ||
-      isDefined(flatEntityUpdate.universalOverrides);
-
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
@@ -81,28 +77,19 @@ export class FlatViewFieldValidatorService {
 
     if (isDefined(flatFieldMetadata)) {
       validationResult.errors.push(
-        ...(isSettingsUpdate
-          ? validateFlatViewFieldSettings({
-              settings: resolveEffectiveUniversalFlatEntityProperty({
-                metadataName: 'viewField',
-                universalFlatEntity: updatedFlatViewField,
-                property: 'settings',
-              }),
-              isCanonical: updatedFlatViewField.isCanonical,
-              flatFieldMetadata,
-            })
-          : []),
+        ...validateFlatViewFieldSettings({
+          settings: resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: updatedFlatViewField,
+            property: 'settings',
+          }),
+          isCanonical: updatedFlatViewField.isCanonical,
+          flatFieldMetadata,
+        }),
         ...validateFlatViewFieldRelationTarget({
           flatViewField: updatedFlatViewField,
           flatFieldMetadata,
-          relationTargetFlatFieldMetadata: isDefined(
-            updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier,
-          )
-            ? flatFieldMetadataMaps.byUniversalIdentifier[
-                updatedFlatViewField
-                  .relationTargetFieldMetadataUniversalIdentifier
-              ]
-            : undefined,
+          flatFieldMetadataMaps,
         }),
       );
     }
@@ -255,20 +242,10 @@ export class FlatViewFieldValidatorService {
           isCanonical: flatViewFieldToValidate.isCanonical,
           flatFieldMetadata,
         }),
-      );
-
-      validationResult.errors.push(
         ...validateFlatViewFieldRelationTarget({
           flatViewField: flatViewFieldToValidate,
           flatFieldMetadata,
-          relationTargetFlatFieldMetadata: isDefined(
-            flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
-          )
-            ? flatFieldMetadataMaps.byUniversalIdentifier[
-                flatViewFieldToValidate
-                  .relationTargetFieldMetadataUniversalIdentifier
-              ]
-            : undefined,
+          flatFieldMetadataMaps,
         }),
       );
     }

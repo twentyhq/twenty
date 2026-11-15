@@ -118,13 +118,8 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-          name: fieldMetadata.name,
-        });
-
         this.parseRelationFieldSelections(
           fieldMetadata,
-          joinColumnName,
           graphqlSelectedFields,
           accumulator,
           isFromOneToManyRelation,
@@ -152,13 +147,8 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-          name: fieldMetadata.name,
-        });
-
         this.parseRelationFieldSelections(
           fieldMetadata,
-          joinColumnName,
           graphqlSelectedFields,
           accumulator,
           isFromOneToManyRelation,
@@ -194,17 +184,19 @@ export class GraphqlQuerySelectedFieldsParser {
     }
   }
 
-  // Each alias of a relation is loaded and returned under its own record key
   private parseRelationFieldSelections(
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
       | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    joinColumnName: string,
     // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     accumulator: GraphqlQuerySelectedFieldsResult,
     isFromOneToManyRelation?: boolean,
   ): void {
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+      name: fieldMetadata.name,
+    });
+
     if (
       getFieldSelections({
         selectedFields: graphqlSelectedFields,

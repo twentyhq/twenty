@@ -25,7 +25,7 @@ const StyledAddButtonContainer = styled.div`
 `;
 
 type RecordTableSettingsSortsContentProps = {
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   onUpdate?: () => void;
 };
 

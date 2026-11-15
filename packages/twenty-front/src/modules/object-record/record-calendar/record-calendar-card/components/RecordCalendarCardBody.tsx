@@ -5,13 +5,12 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { getRecordCardFieldInstanceIdPrefix } from '@/object-record/record-card/utils/getRecordCardFieldInstanceIdPrefix';
 import { RecordCardLookupInlineCell } from '@/object-record/record-card/components/RecordCardLookupInlineCell';
 import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -24,11 +23,9 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordCalendarCardBodyProps = {
@@ -74,13 +71,9 @@ export const RecordCalendarCardBody = ({
     visibleRecordFieldsComponentSelector,
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
 
   const scopedRelationAliases = useScopedRelationAliases();
-
-  const isColumnSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
-  );
 
   const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
     (recordField) =>
@@ -125,18 +118,15 @@ export const RecordCalendarCardBody = ({
 
         const anchorId = `${fieldInstanceIdPrefix}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`;
 
-        const lookupTarget = isColumnSettingsEnabled
-          ? getRecordFieldLookupTarget({
-              recordField,
-              fieldMetadataItem,
-              objectMetadataItems,
-            })
-          : undefined;
+        const lookupTarget = getLookupTarget({
+          recordField,
+          fieldMetadataItem,
+        });
 
         const { label } = getRecordFieldColumnDisplay({
           recordField,
           fieldMetadataItem,
-          objectMetadataItems,
+          getLookupTarget,
         });
 
         if (isDefined(lookupTarget)) {

@@ -1,7 +1,7 @@
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -41,7 +41,7 @@ export const RecordTableColumnHead = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getLookupTarget = useGetRecordFieldLookupTarget();
   const { getIcon } = useIcons();
   const fieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
@@ -50,7 +50,7 @@ export const RecordTableColumnHead = ({
     ? getRecordFieldColumnDisplay({
         recordField,
         fieldMetadataItem,
-        objectMetadataItems,
+        getLookupTarget,
       })
     : undefined;
 
@@ -62,7 +62,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={columnDisplay?.label ?? ''}
+        label={columnDisplay?.label}
         description={columnDisplay?.description}
       />
     </StyledTitle>

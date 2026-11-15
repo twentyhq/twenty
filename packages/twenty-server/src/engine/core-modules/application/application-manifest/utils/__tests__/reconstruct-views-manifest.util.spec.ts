@@ -812,6 +812,80 @@ describe('reconstructViewsManifest', () => {
     });
   });
 
+  it('should export a scope view only when its owner view field is exported', () => {
+    const buildScopeView = (universalIdentifier: string, owner: string) =>
+      buildFlatView({
+        viewManifest: {
+          universalIdentifier,
+          name: 'Scope',
+          objectUniversalIdentifier: PET_UID,
+          type: ViewType.TABLE_WIDGET,
+          ownerViewFieldUniversalIdentifier: owner,
+        },
+      });
+
+    const { views, coverage } = reconstructViewsManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        views: [
+          buildFlatView({ viewManifest: ALL_PETS_VIEW_MANIFEST }),
+          buildFlatView({
+            viewManifest: {
+              universalIdentifier: NAMELESS_VIEW_UID,
+              name: '',
+              objectUniversalIdentifier: PET_UID,
+            },
+          }),
+          buildScopeView('exported-scope-view', 'exported-owner'),
+          buildScopeView('orphan-scope-view', 'unexported-owner'),
+        ],
+        viewFields: [
+          buildFlatViewField({
+            viewFieldManifest: {
+              universalIdentifier: 'exported-owner',
+              fieldMetadataUniversalIdentifier: AGE_FIELD_UID,
+              position: 1,
+              isCanonical: false,
+            },
+            viewUniversalIdentifier: ALL_PETS_VIEW_UID,
+          }),
+          buildFlatViewField({
+            viewFieldManifest: {
+              universalIdentifier: 'unexported-owner',
+              fieldMetadataUniversalIdentifier: AGE_FIELD_UID,
+              position: 1,
+              isCanonical: false,
+            },
+            viewUniversalIdentifier: NAMELESS_VIEW_UID,
+          }),
+          buildFlatViewField({
+            viewFieldManifest: {
+              universalIdentifier: 'scope-view-field',
+              fieldMetadataUniversalIdentifier: NAME_FIELD_UID,
+              position: 0,
+            },
+            viewUniversalIdentifier: 'exported-scope-view',
+          }),
+        ],
+      }),
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
+    });
+
+    expect(views.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
+      [ALL_PETS_VIEW_UID, 'exported-scope-view'],
+    );
+    expect(views[1].fields).toEqual([
+      expect.objectContaining({ universalIdentifier: 'scope-view-field' }),
+    ]);
+    expect(statusOf(coverage, 'orphan-scope-view')).toEqual({
+      metadataName: 'view',
+      universalIdentifier: 'orphan-scope-view',
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'view scoping a view field that is not exported',
+    });
+  });
+
   it('should tell a view on an unsupported application object apart from a view on an object outside the application', () => {
     const { views, coverage } = reconstructViewsManifest({
       applicationAllFlatEntityMaps: buildMaps({

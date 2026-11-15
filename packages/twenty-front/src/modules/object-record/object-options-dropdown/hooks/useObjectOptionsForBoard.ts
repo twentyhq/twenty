@@ -6,6 +6,7 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -159,7 +160,8 @@ export const useObjectOptionsForBoard = ({
           isDefined(updatedFieldDefinition.recordFieldId)
             ? recordFieldToFind.id === updatedFieldDefinition.recordFieldId
             : recordFieldToFind.fieldMetadataItemId ===
-              updatedFieldDefinition.fieldMetadataId,
+                updatedFieldDefinition.fieldMetadataId &&
+              isCanonicalRecordField(recordFieldToFind),
       );
 
       const noExistingRecordField = !isDefined(corresponingRecordField);
