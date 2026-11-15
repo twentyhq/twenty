@@ -2,20 +2,14 @@ import { msg, t } from '@lingui/core/macro';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-
-type RelationTargetFlatFieldMetadata = Pick<
-  UniversalFlatFieldMetadata,
-  | 'type'
-  | 'universalSettings'
-  | 'objectMetadataUniversalIdentifier'
-  | 'relationTargetObjectMetadataUniversalIdentifier'
->;
 
 export const validateFlatViewFieldRelationTarget = ({
   flatViewField: {
@@ -29,12 +23,8 @@ export const validateFlatViewFieldRelationTarget = ({
     UniversalFlatViewField,
     'isCanonical' | 'relationTargetFieldMetadataUniversalIdentifier'
   >;
-  flatFieldMetadata: RelationTargetFlatFieldMetadata;
-  flatFieldMetadataMaps: {
-    byUniversalIdentifier: Partial<
-      Record<string, RelationTargetFlatFieldMetadata>
-    >;
-  };
+  flatFieldMetadata: UniversalFlatFieldMetadata;
+  flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
     return [];
@@ -65,10 +55,10 @@ export const validateFlatViewFieldRelationTarget = ({
     ];
   }
 
-  const relationTargetFlatFieldMetadata =
-    flatFieldMetadataMaps.byUniversalIdentifier[
-      relationTargetFieldMetadataUniversalIdentifier
-    ];
+  const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (
     !isDefined(relationTargetFlatFieldMetadata) ||
