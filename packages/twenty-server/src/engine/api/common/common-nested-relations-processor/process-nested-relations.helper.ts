@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -453,7 +453,10 @@ export class ProcessNestedRelationsHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
 
-    if (aggregateForRelation) {
+    if (
+      isDefined(aggregateForRelation) &&
+      !isEmptyObject(aggregateForRelation)
+    ) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
       this.applyNestedRelationFilterToBuilder({
