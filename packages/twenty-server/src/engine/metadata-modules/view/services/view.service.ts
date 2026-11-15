@@ -91,7 +91,7 @@ export class ViewService {
       },
     );
 
-    const { flatViewToCreate, flatViewGroupsToCreate } =
+    const { flatViewToCreate: inputFlatView, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({
         createViewInput,
         createdByUserWorkspaceId,
@@ -100,8 +100,29 @@ export class ViewService {
         flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatViewFieldMaps: existingFlatViewFieldMaps,
-        flatViewMaps: existingFlatViewMaps,
       });
+
+    // A scope view is part of its owner column, so it shares the visibility of the view holding that column
+    const ownerFlatViewField = isDefined(createViewInput.ownerViewFieldId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: createViewInput.ownerViewFieldId,
+          flatEntityMaps: existingFlatViewFieldMaps,
+        })
+      : undefined;
+    const ownerParentFlatView = isDefined(ownerFlatViewField)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: ownerFlatViewField.viewId,
+          flatEntityMaps: existingFlatViewMaps,
+        })
+      : undefined;
+    const flatViewToCreate = isDefined(ownerParentFlatView)
+      ? {
+          ...inputFlatView,
+          visibility: ownerParentFlatView.visibility,
+          createdByUserWorkspaceId:
+            ownerParentFlatView.createdByUserWorkspaceId,
+        }
+      : inputFlatView;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
