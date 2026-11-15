@@ -464,12 +464,15 @@ describe('Outbound email body formats (integration)', () => {
       });
     });
 
-    const runUpgradeCommand = (
-      dryRun: boolean,
-      commandClassName:
+    const runUpgradeCommand = ({
+      dryRun,
+      commandClassName = 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
+    }: {
+      dryRun: boolean;
+      commandClassName?:
         | 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand'
-        | 'BackfillEmptyWorkflowEmailBodiesCommand' = 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
-    ) =>
+        | 'BackfillEmptyWorkflowEmailBodiesCommand';
+    }) =>
       getAppProviderByClassName<WorkspaceOrmManager>(
         'WorkspaceOrmManager',
       ).executeInWorkspaceContext(
@@ -496,14 +499,14 @@ describe('Outbound email body formats (integration)', () => {
           coreBody: legacyBody,
         });
 
-        await runUpgradeCommand(true);
+        await runUpgradeCommand({ dryRun: true });
 
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
           workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
-        await runUpgradeCommand(false);
+        await runUpgradeCommand({ dryRun: false });
 
         const convertedBodies = await readStoredBodies(coreWorkflowVersionId);
 
@@ -514,7 +517,7 @@ describe('Outbound email body formats (integration)', () => {
           ).success,
         ).toBe(true);
 
-        await runUpgradeCommand(false);
+        await runUpgradeCommand({ dryRun: false });
 
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual(
           convertedBodies,
@@ -550,7 +553,7 @@ describe('Outbound email body formats (integration)', () => {
             coreWorkflowVersionId,
           );
 
-          await runUpgradeCommand(false);
+          await runUpgradeCommand({ dryRun: false });
 
           expect(await readEmailStepNames(coreWorkflowVersionId)).toEqual(
             namesBeforeUpgrade,
@@ -610,20 +613,20 @@ describe('Outbound email body formats (integration)', () => {
         body: ' ',
         beforeRun: async (coreWorkflowVersionId) => {
           await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
-          await runUpgradeCommand(
-            true,
-            'BackfillEmptyWorkflowEmailBodiesCommand',
-          );
+          await runUpgradeCommand({
+            dryRun: true,
+            commandClassName: 'BackfillEmptyWorkflowEmailBodiesCommand',
+          });
 
           expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
             workspaceBody: ' ',
             coreBody: ' ',
           });
 
-          await runUpgradeCommand(
-            false,
-            'BackfillEmptyWorkflowEmailBodiesCommand',
-          );
+          await runUpgradeCommand({
+            dryRun: false,
+            commandClassName: 'BackfillEmptyWorkflowEmailBodiesCommand',
+          });
 
           expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
             workspaceBody: serializedEmptyDocument,

@@ -286,7 +286,7 @@ describe('SendEmailWorkflowAction', () => {
     });
 
     it('should not run the tool when the body is not an email document', async () => {
-      await expect(executeWithBody('')).rejects.toThrow(
+      await expect(executeWithBody('<p>Hello</p>')).rejects.toThrow(
         'Invalid email document',
       );
 

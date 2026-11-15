@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
@@ -77,8 +78,9 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         inputWithoutBody,
         context,
       ) as typeof inputWithoutBody),
+      // Blank bodies stay valid until the 2-59 backfill reaches them, and in runs that snapshot their steps
       body: JSON.stringify(
-        isDefined(body)
+        isNonEmptyString(body?.trim())
           ? resolveEmailBody(body, context)
           : EMPTY_EMAIL_DOCUMENT,
       ),
