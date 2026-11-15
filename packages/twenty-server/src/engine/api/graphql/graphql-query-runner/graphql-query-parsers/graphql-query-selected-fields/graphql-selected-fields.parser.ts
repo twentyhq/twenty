@@ -6,6 +6,7 @@ import {
   capitalize,
   isDefined,
   isMorphRelationHead,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import {
@@ -165,7 +166,7 @@ export class GraphqlQuerySelectedFieldsParser {
         fieldName: fieldMetadata.name,
       });
 
-      if (fieldSelections.length === 0) {
+      if (!isNonEmptyArray(fieldSelections)) {
         continue;
       }
 
@@ -208,10 +209,12 @@ export class GraphqlQuerySelectedFieldsParser {
     });
 
     if (
-      getFieldSelections({
-        selectedFields: graphqlSelectedFields,
-        fieldName: joinColumnName,
-      }).length > 0
+      isNonEmptyArray(
+        getFieldSelections({
+          selectedFields: graphqlSelectedFields,
+          fieldName: joinColumnName,
+        }),
+      )
     ) {
       accumulator.select[joinColumnName] = true;
     }
@@ -306,11 +309,11 @@ export class GraphqlQuerySelectedFieldsParser {
     // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): boolean {
-    return (
+    return isNonEmptyArray(
       getFieldSelections({
         selectedFields: graphqlSelectedFields,
         fieldName: 'edges',
-      }).length > 0
+      }),
     );
   }
 

@@ -49,9 +49,9 @@ import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/recor
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
 import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -196,10 +196,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
-    if (!args.selectedFieldsResult.relationSelections) {
-      return;
-    }
-
     await this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -741,22 +737,22 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return upsertedRecords as ObjectRecord[];
   }
 
-  async processQueryResult(
-    queryResult: ObjectRecord[],
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-    relationSelections: CommonRelationSelections,
-  ): Promise<ObjectRecord[]> {
-    return await this.commonResultGettersService.processRecordArray(
-      queryResult,
+  async processQueryResult({
+    queryResult,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    authContext,
+    relationSelections,
+  }: CommonQueryResultProcessingArgs<ObjectRecord[]>): Promise<ObjectRecord[]> {
+    return await this.commonResultGettersService.processRecordArray({
+      records: queryResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      authContext.workspace.id,
+      workspaceId: authContext.workspace.id,
       relationSelections,
-    );
+    });
   }
 
   private getRecordWithoutCreatedBy(
