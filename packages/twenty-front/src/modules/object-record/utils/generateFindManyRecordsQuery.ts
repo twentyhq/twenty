@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
+import { mapRecordGqlRelationAliasesToGraphQLQuery } from '@/object-record/graphql/utils/mapRecordGqlRelationAliasesToGraphQLQuery';
 import {
   type ObjectRecordsPermissions,
   type QueryCursorDirection,
@@ -16,6 +18,7 @@ export const generateFindManyRecordsQuery = ({
   computeReferences,
   cursorDirection,
   objectPermissionsByObjectMetadataId,
+  relationAliases,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -23,14 +26,23 @@ export const generateFindManyRecordsQuery = ({
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-}) => gql`
+  relationAliases?: RecordGqlRelationAlias[];
+}) => {
+  const { variableDefinitions, selections } =
+    mapRecordGqlRelationAliasesToGraphQLQuery({
+      relationAliases,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    });
+
+  return gql`
 query FindMany${capitalize(
-  objectMetadataItem.namePlural,
-)}($filter: ${capitalize(
-  objectMetadataItem.nameSingular,
-)}FilterInput, $orderBy: [${capitalize(
-  objectMetadataItem.nameSingular,
-)}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int) {
+    objectMetadataItem.namePlural,
+  )}($filter: ${capitalize(
+    objectMetadataItem.nameSingular,
+  )}FilterInput, $orderBy: [${capitalize(
+    objectMetadataItem.nameSingular,
+  )}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${variableDefinitions}) {
   ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy, ${
     cursorDirection === 'before'
       ? 'last: $limit, before: $lastCursor'
@@ -43,6 +55,7 @@ query FindMany${capitalize(
         recordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
+        additionalSelections: selections,
       })}
       cursor
     }
@@ -56,3 +69,4 @@ query FindMany${capitalize(
   }
 }
 `;
+};
