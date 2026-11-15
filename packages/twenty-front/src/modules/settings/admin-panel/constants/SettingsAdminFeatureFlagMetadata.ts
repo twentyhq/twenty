@@ -96,4 +96,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`HTTP requests in the logic function runtime`,
     description: msg`Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda.`,
   },
+  [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
+    label: msg`Lookup columns`,
+    description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
+  },
 };

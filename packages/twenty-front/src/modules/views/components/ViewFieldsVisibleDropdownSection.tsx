@@ -8,6 +8,7 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -39,6 +40,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
       viewBarId: recordIndexId,
     });
 
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
@@ -117,6 +119,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
+                  const columnDescriptor =
+                    columnDescriptorByRecordFieldId[recordField.id];
 
                   return (
                     <DraggableItem
@@ -128,7 +132,10 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           key={recordField.id}
                           startIcon={
                             <ApplicationStackIcon
-                              Icon={getIcon(fieldMetadataItem.icon)}
+                              Icon={getIcon(
+                                columnDescriptor?.icon ??
+                                  fieldMetadataItem.icon,
+                              )}
                               applicationId={fieldMetadataItem.applicationId}
                             />
                           }
@@ -160,7 +167,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           }
                           dragHandleVisibility="always"
                         >
-                          {fieldMetadataItem.label}
+                          {columnDescriptor?.label ?? fieldMetadataItem.label}
                         </DraggableListRow>
                       }
                     />

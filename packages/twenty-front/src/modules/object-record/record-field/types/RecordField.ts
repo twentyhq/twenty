@@ -8,4 +8,5 @@ export type RecordField = {
   isCanonical?: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  relationTargetFieldMetadataId?: string | null;
 };

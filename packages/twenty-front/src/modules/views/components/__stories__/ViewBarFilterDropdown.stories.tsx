@@ -88,6 +88,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
+        columnDescriptorByRecordFieldId,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
@@ -114,6 +115,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
+            columnDescriptorByRecordFieldId,
             fieldMetadataItemByFieldMetadataItemId,
           }}
         >

@@ -1,10 +1,15 @@
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getRecordFieldColumnDescriptor } from '@/object-record/record-field/utils/getRecordFieldColumnDescriptor';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { isDefined } from 'twenty-shared/utils';
+import { useMemo } from 'react';
+import { findById, isDefined } from 'twenty-shared/utils';
 
 export const useRecordIndexFieldMetadataDerivedStates = (
   objectMetadataItem: EnrichedObjectMetadataItem | undefined,
@@ -48,6 +53,58 @@ export const useRecordIndexFieldMetadataDerivedStates = (
       )
     : {};
 
+  const getLookupTarget = useGetRecordFieldLookupTarget();
+  const filterableFieldMetadataItems = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    { objectMetadataItemId: objectMetadataItem?.id ?? '' },
+  );
+  const sortableFieldMetadataItems = useAtomFamilySelectorValue(
+    availableFieldMetadataItemsForSortFamilySelector,
+    { objectMetadataItemId: objectMetadataItem?.id ?? '' },
+  );
+
+  // Keyed by record field: lookup columns share their relation field
+  const columnDescriptorByRecordFieldId = useMemo(
+    () =>
+      Object.fromEntries(
+        currentRecordFields.flatMap((recordField) => {
+          const fieldMetadataItem = objectMetadataItem?.fields.find(
+            findById(recordField.fieldMetadataItemId),
+          );
+
+          if (!isDefined(fieldMetadataItem)) {
+            return [];
+          }
+
+          return [
+            [
+              recordField.id,
+              getRecordFieldColumnDescriptor({
+                fieldMetadataItem,
+                lookupTarget: getLookupTarget({
+                  recordField,
+                  fieldMetadataItem,
+                }),
+                isFilterable: filterableFieldMetadataItems.some(
+                  findById(fieldMetadataItem.id),
+                ),
+                isSortable: sortableFieldMetadataItems.some(
+                  findById(fieldMetadataItem.id),
+                ),
+              }),
+            ],
+          ];
+        }),
+      ),
+    [
+      currentRecordFields,
+      objectMetadataItem,
+      getLookupTarget,
+      filterableFieldMetadataItems,
+      sortableFieldMetadataItems,
+    ],
+  );
+
   const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
     labelIdentifierFieldMetadataItemSelector,
     {
@@ -60,5 +117,6 @@ export const useRecordIndexFieldMetadataDerivedStates = (
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
     recordFieldByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
   };
 };
