@@ -38,7 +38,13 @@ const testContext = {
   companyViewId: '',
 };
 
-const createTextField = async (objectMetadataId: string, name: string) => {
+const createTextField = async ({
+  objectMetadataId,
+  name,
+}: {
+  objectMetadataId: string;
+  name: string;
+}) => {
   const {
     data: {
       createOneField: { id },
@@ -162,14 +168,14 @@ describe('View field showing a field of the related record', () => {
     assertIsDefinedOrThrow(companyDealsField);
 
     testContext.companyDealsFieldId = companyDealsField.id;
-    testContext.companyIndustryFieldId = await createTextField(
-      companyObjectId,
-      'industry',
-    );
-    testContext.dealNextStepFieldId = await createTextField(
-      dealObjectId,
-      'nextStep',
-    );
+    testContext.companyIndustryFieldId = await createTextField({
+      objectMetadataId: companyObjectId,
+      name: 'industry',
+    });
+    testContext.dealNextStepFieldId = await createTextField({
+      objectMetadataId: dealObjectId,
+      name: 'nextStep',
+    });
     testContext.dealViewId = await createView(dealObjectId);
     testContext.companyViewId = await createView(companyObjectId);
   });
@@ -259,10 +265,10 @@ describe('View field showing a field of the related record', () => {
   );
 
   it('removes the column when the related record field is deleted', async () => {
-    const tierFieldId = await createTextField(
-      testContext.companyObjectId,
-      'tier',
-    );
+    const tierFieldId = await createTextField({
+      objectMetadataId: testContext.companyObjectId,
+      name: 'tier',
+    });
 
     const {
       data: { createViewField },
