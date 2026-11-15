@@ -63,6 +63,7 @@ import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-v
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -200,6 +201,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     _flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     _flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     _authContext: WorkspaceAuthContext,
+    _relationSelections: CommonRelationSelections,
   ): Promise<CommonGroupByOutputItem[]> {
     return queryResult;
   }
@@ -529,7 +531,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const aggregateCount = Object.keys(selectedFieldsResult.aggregate).filter(
       (aggregateName) =>
-        !isDefined(selectedFieldsResult.relations[aggregateName]),
+        !isDefined(selectedFieldsResult.relationSelections[aggregateName]),
     ).length;
 
     const recordFieldCount = args.includeRecords

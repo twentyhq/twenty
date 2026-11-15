@@ -24,6 +24,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonRestoreOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -76,6 +77,7 @@ export class CommonRestoreOneQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord(
       queryResult,
@@ -83,6 +85,7 @@ export class CommonRestoreOneQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext.workspace.id,
+      relationSelections,
     );
   }
 
