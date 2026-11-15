@@ -61,10 +61,11 @@ export const RecordTableSettingsSortsContent = ({
     onUpdate?.();
   };
 
+  // A saved sort cannot change its field, so a new field makes a new sort
   const handleFieldChange = (sortId: string, fieldMetadataId: string) => {
     setCurrentRecordSorts(
       currentRecordSorts.map((sort) =>
-        sort.id === sortId ? { ...sort, fieldMetadataId } : sort,
+        sort.id === sortId ? { ...sort, id: uuidv4(), fieldMetadataId } : sort,
       ),
     );
     onUpdate?.();
