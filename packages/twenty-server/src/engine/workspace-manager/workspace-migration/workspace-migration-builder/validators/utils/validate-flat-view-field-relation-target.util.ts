@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -70,6 +71,22 @@ export const validateFlatViewFieldRelationTarget = ({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`The related record field must belong to the relation target object`,
         userFriendlyMessage: msg`The field must belong to the related object`,
+      },
+    ];
+  }
+
+  if (
+    !resolveEffectiveUniversalFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      universalFlatEntity: relationTargetFlatFieldMetadata,
+      property: 'isActive',
+    })
+  ) {
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`The related record field must be active`,
+        userFriendlyMessage: msg`A deactivated field cannot be shown in a column`,
       },
     ];
   }
