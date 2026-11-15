@@ -6,6 +6,7 @@ import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
@@ -55,6 +56,7 @@ export class RoleService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationService: ApplicationService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
@@ -239,6 +241,11 @@ export class RoleService {
         'Multiple validation errors occurred while creating role',
       );
     }
+
+    // a role gets its system rules and grants from the sync
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     const { flatRoleMaps: recomputedFlatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

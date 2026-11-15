@@ -134,7 +134,14 @@ export class ChannelVisibilityRuleSyncService {
       {
         workspaceId,
         isSystemBuild: true,
-        inputs: rolesObjectRules.map(({ predicatesInput }) => predicatesInput),
+        inputs: [
+          ...rolesObjectRules.map(({ predicatesInput }) => predicatesInput),
+          ...(await this.buildAttachmentRules({
+            workspaceId,
+            objectIdByName,
+            fieldIdByObjectIdAndName,
+          })),
+        ],
       },
     );
     await this.fieldPermissionService.upsertManyFieldPermissions({
@@ -144,6 +151,126 @@ export class ChannelVisibilityRuleSyncService {
         .map(({ fieldPermissionsInput }) => fieldPermissionsInput)
         .filter(({ fieldPermissions }) => fieldPermissions.length > 0),
     });
+  }
+
+  // A role keeps the attachments it reached through its role wide grant, except the ones of a message, which follow the message.
+  // A role an admin already set up on attachments, with a grant or rules of their own, is left as they decided.
+  private async buildAttachmentRules({
+    workspaceId,
+    objectIdByName,
+    fieldIdByObjectIdAndName,
+  }: {
+    workspaceId: string;
+    objectIdByName: Record<string, string | undefined>;
+    fieldIdByObjectIdAndName: Map<string, string>;
+  }): Promise<UpsertRowLevelPermissionPredicatesInput[]> {
+    const objectMetadataId = objectIdByName.attachment;
+    const targetMessageFieldMetadataId = isDefined(objectMetadataId)
+      ? fieldIdByObjectIdAndName.get(
+          buildFieldByObjectIdAndNameKey(objectMetadataId, 'targetMessage'),
+        )
+      : undefined;
+
+    if (
+      !isDefined(objectMetadataId) ||
+      !isDefined(targetMessageFieldMetadataId)
+    ) {
+      return [];
+    }
+
+    const {
+      flatRoleMaps,
+      flatObjectPermissionMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatRoleMaps',
+            'flatObjectPermissionMaps',
+            'flatRowLevelPermissionPredicateGroupMaps',
+          ],
+        },
+      );
+    const roleIdsWithObjectPermission = new Set(
+      Object.values(flatObjectPermissionMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (objectPermission) =>
+            objectPermission.objectMetadataId === objectMetadataId,
+        )
+        .map(({ roleId }) => roleId),
+    );
+    const predicateGroupIdsByRoleId = new Map<string, string[]>();
+
+    for (const predicateGroup of Object.values(
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+    )) {
+      if (
+        isDefined(predicateGroup) &&
+        !isDefined(predicateGroup.deletedAt) &&
+        predicateGroup.objectMetadataId === objectMetadataId
+      ) {
+        predicateGroupIdsByRoleId.set(predicateGroup.roleId, [
+          ...(predicateGroupIdsByRoleId.get(predicateGroup.roleId) ?? []),
+          predicateGroup.id,
+        ]);
+      }
+    }
+
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatRole) => !isPersonalRole(flatRole))
+      .flatMap((flatRole) => {
+        const buildId = (kind: string) =>
+          v5(
+            `${flatRole.id}:${objectMetadataId}:notOfMessage:${kind}`,
+            PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+          );
+        const hasOwnRules = (
+          predicateGroupIdsByRoleId.get(flatRole.id) ?? []
+        ).some((predicateGroupId) => predicateGroupId !== buildId('group'));
+
+        if (
+          !flatRole.canReadAllObjectRecords ||
+          roleIdsWithObjectPermission.has(flatRole.id) ||
+          hasOwnRules
+        ) {
+          return [];
+        }
+
+        return [
+          {
+            roleId: flatRole.id,
+            objectMetadataId,
+            canReadRecords: true,
+            canCreateRecords: flatRole.canCreateAllObjectRecords,
+            canUpdateRecords: flatRole.canUpdateAllObjectRecords,
+            canSoftDeleteRecords: flatRole.canSoftDeleteAllObjectRecords,
+            canDestroyRecords: flatRole.canDestroyAllObjectRecords,
+            predicateGroups: [
+              {
+                id: buildId('group'),
+                objectMetadataId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                positionInRowLevelPermissionPredicateGroup: 0,
+              },
+            ],
+            predicates: [
+              {
+                id: buildId('predicate'),
+                fieldMetadataId: targetMessageFieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+                value: null,
+                rowLevelPermissionPredicateGroupId: buildId('group'),
+                positionInRowLevelPermissionPredicateGroup: 0,
+              },
+            ],
+          },
+        ];
+      });
   }
 
   // without the default, a role that relied on it would lose every system object the day the flag turns on

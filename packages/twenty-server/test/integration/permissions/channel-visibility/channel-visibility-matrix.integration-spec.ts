@@ -44,6 +44,12 @@ const SUBJECT_MESSAGE_CHANNEL_ID = '20202020-e2f1-49b5-85d2-5d3a3386990e';
 const UNASSOCIATED_MESSAGE_ID = '20202020-c4a1-4000-8000-000000000001';
 const FULL_MESSAGE_ATTACHMENT_ID = '20202020-c4a1-4000-8000-000000000002';
 const METADATA_MESSAGE_ATTACHMENT_ID = '20202020-c4a1-4000-8000-000000000003';
+const OTHER_ATTACHMENT_ID = '20202020-c4a1-4000-8000-000000000004';
+const ATTACHMENT_IDS = [
+  FULL_MESSAGE_ATTACHMENT_ID,
+  METADATA_MESSAGE_ATTACHMENT_ID,
+  OTHER_ATTACHMENT_ID,
+];
 const SAMPLE_SIZE = 4;
 const LEVELS: ChannelVisibilityLevel[] = ['full', 'subject', 'metadata'];
 const LEVEL_RANK: Record<ChannelVisibilityLevel, number> = {
@@ -292,6 +298,11 @@ describe('Channel visibility matrix (integration)', () => {
       );
     }
 
+    await query(
+      `INSERT INTO "${SCHEMA}"."attachment" (id, name) VALUES ($1, 'other.txt') ON CONFLICT (id) DO NOTHING`,
+      [OTHER_ATTACHMENT_ID],
+    );
+
     for (const featureFlag of FLAGS) {
       await updateFeatureFlag({
         featureFlag,
@@ -305,7 +316,7 @@ describe('Channel visibility matrix (integration)', () => {
 
   afterAll(async () => {
     await query(`DELETE FROM "${SCHEMA}"."attachment" WHERE id = ANY($1)`, [
-      [FULL_MESSAGE_ATTACHMENT_ID, METADATA_MESSAGE_ATTACHMENT_ID],
+      ATTACHMENT_IDS,
     ]);
     await query(`DELETE FROM "${SCHEMA}"."message" WHERE id = $1`, [
       UNASSOCIATED_MESSAGE_ID,
@@ -797,29 +808,16 @@ describe('Channel visibility matrix (integration)', () => {
     );
   }, 240000);
 
-  it('leaves message attachments to the role: its grant reads them all, and without it they follow the message at full level only', async () => {
-    const member = VIEWERS[1];
-    const [{ memberRoleId }] = await query<{ memberRoleId: string }>(
-      `SELECT id AS "memberRoleId" FROM core."role" WHERE "workspaceId" = $1 AND label = 'Member'`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
-    const [{ objectMetadataId }] = await query<{ objectMetadataId: string }>(
-      `SELECT id AS "objectMetadataId" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'attachment'`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
-    const readAttachmentIdsAsMember = async (): Promise<string[]> => {
+  it('keeps a role on the attachments that are not of a message, lets the ones of a message follow it at full level, and lets a granted role read them all', async () => {
+    const readAttachmentIds = async (token: string): Promise<string[]> => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'attachment',
           objectMetadataPluralName: 'attachments',
           gqlFields: 'id',
-          filter: {
-            id: {
-              in: [FULL_MESSAGE_ATTACHMENT_ID, METADATA_MESSAGE_ATTACHMENT_ID],
-            },
-          },
+          filter: { id: { in: ATTACHMENT_IDS } },
         }),
-        member.token,
+        token,
       );
 
       expect(response.body.errors).toBeUndefined();
@@ -828,29 +826,27 @@ describe('Channel visibility matrix (integration)', () => {
         .map(({ node }: { node: { id: string } }) => node.id)
         .sort();
     };
+    const member = VIEWERS[1];
 
-    expect(await readAttachmentIdsAsMember()).toEqual([
-      FULL_MESSAGE_ATTACHMENT_ID,
-      METADATA_MESSAGE_ATTACHMENT_ID,
-    ]);
+    for (const viewer of [VIEWERS[0], member]) {
+      expect(await readAttachmentIds(viewer.token)).toEqual([
+        FULL_MESSAGE_ATTACHMENT_ID,
+        OTHER_ATTACHMENT_ID,
+      ]);
+    }
 
+    const [{ memberRoleId }] = await query<{ memberRoleId: string }>(
+      `SELECT id AS "memberRoleId" FROM core."role" WHERE "workspaceId" = $1 AND label = 'Member'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    const [{ objectMetadataId }] = await query<{ objectMetadataId: string }>(
+      `SELECT id AS "objectMetadataId" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'attachment'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
     const client = request(`http://localhost:${APP_PORT}`);
     const { roleId } = await createCustomRoleWithObjectPermissions({
-      label: 'Reads no attachment on its own',
+      label: 'Reads every attachment',
     });
-    const denyResponse = await makeMetadataApiRequest(
-      createUpsertObjectPermissionsOperation(roleId, [
-        {
-          objectMetadataId,
-          canReadObjectRecords: false,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-        },
-      ]),
-    );
-
-    expect(denyResponse.body.errors).toBeUndefined();
 
     await updateWorkspaceMemberRole({
       client,
@@ -860,9 +856,21 @@ describe('Channel visibility matrix (integration)', () => {
     await syncRules();
 
     try {
-      expect(await readAttachmentIdsAsMember()).toEqual([
+      expect(await readAttachmentIds(member.token)).toEqual([
         FULL_MESSAGE_ATTACHMENT_ID,
+        OTHER_ATTACHMENT_ID,
       ]);
+
+      const grantResponse = await makeMetadataApiRequest(
+        createUpsertObjectPermissionsOperation(roleId, [
+          { objectMetadataId, canReadObjectRecords: true },
+        ]),
+      );
+
+      expect(grantResponse.body.errors).toBeUndefined();
+      await syncRules();
+
+      expect(await readAttachmentIds(member.token)).toEqual(ATTACHMENT_IDS);
     } finally {
       await updateWorkspaceMemberRole({
         client,

@@ -11,4 +11,6 @@ export const CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.calendarEvent.universalIdentifier,
   STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
   STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
+  // a role reaches attachments through the system rule that leaves out the ones of a message
+  STANDARD_OBJECTS.attachment.universalIdentifier,
 ];

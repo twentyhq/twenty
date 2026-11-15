@@ -34,6 +34,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ChannelVisibilityRuleSyncListener,
     SyncChannelVisibilityRulesJob,
   ],
-  exports: [PersonalRoleService, ChannelVisibilityRuleSyncService],
+  exports: [
+    PersonalRoleService,
+    ChannelVisibilityRuleSyncService,
+    ChannelVisibilityRuleSyncSchedulerService,
+  ],
 })
 export class ChannelVisibilityModule {}
