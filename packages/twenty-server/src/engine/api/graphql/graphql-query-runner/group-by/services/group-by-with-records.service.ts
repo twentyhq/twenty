@@ -134,14 +134,14 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
       relationSelections: selectedFieldsResult.relationSelections,
       processRecord: (record: ObjectRecord) =>
-        this.commonResultGettersService.processRecord(
+        this.commonResultGettersService.processRecord({
           record,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          authContext.workspace.id,
-          selectedFieldsResult.relationSelections,
-        ),
+          workspaceId: authContext.workspace.id,
+          relationSelections: selectedFieldsResult.relationSelections,
+        }),
     });
   }
 
