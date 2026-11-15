@@ -155,18 +155,23 @@ export class ViewFieldService {
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewFieldGroupMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps', 'flatViewFieldGroupMaps'],
-        },
-      );
+      flatFieldMetadataMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFieldMaps',
+          'flatViewFieldGroupMaps',
+          'flatFieldMetadataMaps',
+        ],
+      },
+    );
 
     const optimisticallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
         flatViewFieldMaps: existingFlatViewFieldMaps,
         flatViewFieldGroupMaps,
+        flatFieldMetadataMaps,
         updateViewFieldInput,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,

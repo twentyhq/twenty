@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { handleFieldMetadataDeactivationSideEffects } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-field-metadata-deactivation-side-effects.util';
 
@@ -82,5 +83,37 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
 
     expect(result.flatViewsToDelete).toEqual([view]);
     expect(result.flatViewsToUpdate).toEqual([]);
+  });
+
+  it('deletes lookup view fields that show the deactivated field', () => {
+    const lookupViewField = {
+      id: 'lookup-view-field-id',
+      universalIdentifier: 'lookup-view-field-universal-identifier',
+      applicationId: 'application-id',
+      fieldMetadataId: 'relation-field-id',
+      relationTargetFieldMetadataId: 'target-field-id',
+    } as FlatViewField;
+    const fromFlatFieldMetadata = getFlatFieldMetadataMock({
+      id: 'target-field-id',
+      objectMetadataId: 'object-id',
+      universalIdentifier: 'target-field-universal-identifier',
+      type: FieldMetadataType.TEXT,
+    });
+
+    const result = handleFieldMetadataDeactivationSideEffects({
+      fromFlatFieldMetadata,
+      toFlatFieldMetadata: {
+        ...fromFlatFieldMetadata,
+        isActive: false,
+      },
+      ...getEmptyRelatedMaps(),
+      flatViewMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: lookupViewField,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      }),
+    });
+
+    expect(result.flatViewFieldsToDelete).toEqual([lookupViewField]);
   });
 });

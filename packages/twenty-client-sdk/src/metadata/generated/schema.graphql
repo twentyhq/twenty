@@ -1966,6 +1966,7 @@ input CreateViewFieldInput {
   isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettingsInput
   size: Float = 0
   viewFieldGroupId: UUID
@@ -5767,6 +5768,7 @@ input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
   position: Float
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettingsInput
   size: Float
   viewFieldGroupId: UUID
@@ -6416,6 +6418,7 @@ type ViewField {
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
   position: Float!
+  relationTargetFieldMetadataId: UUID
   settings: ViewFieldSettings
   size: Float!
   universalIdentifier: UUID!
