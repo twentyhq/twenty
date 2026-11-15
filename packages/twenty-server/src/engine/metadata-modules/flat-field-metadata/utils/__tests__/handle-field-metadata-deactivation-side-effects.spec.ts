@@ -105,6 +105,7 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
       relationTargetFieldMetadataId: 'target-field-id',
       relationTargetFieldMetadataUniversalIdentifier:
         'target-field-universal-identifier',
+      relationAggregateOperation: null,
       isActive: true,
       isSystemSideEffect: false,
       isCanonical: false,

@@ -27,6 +27,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   viewFieldGroupUniversalIdentifier?: string;
   isCanonical?: boolean;
   relationTargetFieldMetadataUniversalIdentifier?: string;
+  relationAggregateOperation?: AggregateOperations;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {

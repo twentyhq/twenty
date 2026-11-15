@@ -4405,6 +4405,9 @@ export default {
             "position": [
                 8
             ],
+            "relationAggregateOperation": [
+                32
+            ],
             "relationTargetFieldMetadataId": [
                 564
             ],
@@ -15315,6 +15318,9 @@ export default {
             "position": [
                 8
             ],
+            "relationAggregateOperation": [
+                32
+            ],
             "relationTargetFieldMetadataId": [
                 564
             ],
@@ -16693,6 +16699,9 @@ export default {
             ],
             "position": [
                 8
+            ],
+            "relationAggregateOperation": [
+                32
             ],
             "relationTargetFieldMetadataId": [
                 564

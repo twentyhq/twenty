@@ -40,6 +40,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
       'viewId',
       'viewFieldGroupId',
       'relationTargetFieldMetadataId',
+      'relationAggregateOperation',
     ],
   );
 
@@ -84,6 +85,8 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
+    relationAggregateOperation:
+      createViewFieldInput.relationAggregateOperation ?? null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

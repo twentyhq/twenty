@@ -1,0 +1,2 @@
+export const ADD_VIEW_FIELD_RELATION_AGGREGATE_OPERATION_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddViewFieldRelationAggregateOperationFastInstanceCommand_1794783282953';
