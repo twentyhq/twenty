@@ -135,6 +135,34 @@ describe('getRecordFieldAggregateTarget', () => {
     },
   );
 
+  it('keeps an aggregate of a field the user cannot read, marked unreadable', () => {
+    const objectMetadataItemsWithoutReadableAmount = objectMetadataItems.map(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === opportunity.id
+          ? {
+              ...objectMetadataItem,
+              readableFields: objectMetadataItem.readableFields.filter(
+                ({ id }) => id !== amountField.id,
+              ),
+            }
+          : objectMetadataItem,
+    );
+
+    expect(
+      getRecordFieldAggregateTarget({
+        recordField: {
+          relationAggregateOperation: AggregateOperations.SUM,
+          relationTargetFieldMetadataId: amountField.id,
+        },
+        fieldMetadataItem: opportunitiesField,
+        objectMetadataItems: objectMetadataItemsWithoutReadableAmount,
+      }),
+    ).toMatchObject({
+      aggregatedFieldMetadataItem: { id: amountField.id },
+      isAggregatedFieldReadable: false,
+    });
+  });
+
   it('ignores a view field without aggregate operation', () => {
     expect(
       getRecordFieldAggregateTarget({

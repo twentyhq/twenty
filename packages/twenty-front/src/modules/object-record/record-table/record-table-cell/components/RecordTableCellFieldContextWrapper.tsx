@@ -70,8 +70,12 @@ export const RecordTableCellFieldContextWrapper = ({
           key={instanceId}
           recordField={recordField}
         >
-          {columnDescriptor?.isAggregateColumn === true ? (
-            <RecordTableCellAggregateFieldContext>
+          {isDefined(columnDescriptor?.aggregateTarget) ? (
+            <RecordTableCellAggregateFieldContext
+              isAggregatedFieldReadable={
+                columnDescriptor.aggregateTarget.isAggregatedFieldReadable
+              }
+            >
               {children}
             </RecordTableCellAggregateFieldContext>
           ) : (

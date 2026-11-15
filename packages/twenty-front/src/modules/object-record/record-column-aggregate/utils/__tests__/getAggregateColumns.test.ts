@@ -1,6 +1,7 @@
 import { getAggregateColumns } from '@/object-record/record-column-aggregate/utils/getAggregateColumns';
 import { getRecordFieldAggregateTarget } from '@/object-record/record-column-aggregate/utils/getRecordFieldAggregateTarget';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { isDefined } from 'twenty-shared/utils';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -31,5 +32,26 @@ describe('getAggregateColumns', () => {
     ).toEqual([
       { relationFieldName: 'people', aggregateGqlFieldName: 'totalCount' },
     ]);
+  });
+
+  it('leaves out an aggregate of a field the user cannot read', () => {
+    const aggregateTarget = getRecordFieldAggregateTarget({
+      recordField: { relationAggregateOperation: AggregateOperations.COUNT },
+      fieldMetadataItem: peopleField,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+    });
+
+    expect(
+      getAggregateColumns({
+        recordFields: [{ id: 'count' }],
+        columnDescriptorByRecordFieldId: {
+          count: {
+            aggregateTarget: isDefined(aggregateTarget)
+              ? { ...aggregateTarget, isAggregatedFieldReadable: false }
+              : undefined,
+          },
+        },
+      }),
+    ).toEqual([]);
   });
 });

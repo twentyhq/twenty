@@ -1,6 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getAggregatedFieldMetadataItems } from '@/object-record/record-column-aggregate/utils/getAggregatedFieldMetadataItems';
 import { RELATION_AGGREGATE_OPERATIONS_BY_FIELD_TYPE } from '@/object-record/record-column-aggregate/constants/RelationAggregateOperationsByFieldType';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -17,6 +16,7 @@ export type RecordFieldAggregateTarget = {
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   aggregateOperation: ExtendedAggregateOperations;
   aggregatedFieldMetadataItem: FieldMetadataItem | undefined;
+  isAggregatedFieldReadable: boolean;
   aggregateGqlFieldName: string;
 };
 
@@ -53,8 +53,9 @@ export const getRecordFieldAggregateTarget = ({
 
   const isCount = relationAggregateOperation === AggregateOperations.COUNT;
 
+  // Resolved from all fields so an unreadable target stays an aggregate column, shown as forbidden
   const aggregatedFieldMetadataItem = isDefined(relationTargetFieldMetadataId)
-    ? getAggregatedFieldMetadataItems(relationObjectMetadataItem).find(
+    ? relationObjectMetadataItem.fields.find(
         findById(relationTargetFieldMetadataId),
       )
     : undefined;
@@ -92,6 +93,11 @@ export const getRecordFieldAggregateTarget = ({
     relationObjectMetadataItem,
     aggregateOperation,
     aggregatedFieldMetadataItem,
+    isAggregatedFieldReadable:
+      !isDefined(aggregatedFieldMetadataItem) ||
+      relationObjectMetadataItem.readableFields.some(
+        findById(aggregatedFieldMetadataItem.id),
+      ),
     aggregateGqlFieldName,
   };
 };

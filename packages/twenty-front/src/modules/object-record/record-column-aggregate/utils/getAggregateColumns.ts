@@ -21,7 +21,8 @@ export const getAggregateColumns = ({
     const aggregateTarget =
       columnDescriptorByRecordFieldId[id]?.aggregateTarget;
 
-    return isDefined(aggregateTarget)
+    return isDefined(aggregateTarget) &&
+      aggregateTarget.isAggregatedFieldReadable
       ? [
           {
             relationFieldName: aggregateTarget.relationFieldName,
