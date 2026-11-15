@@ -1,11 +1,14 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -60,13 +63,15 @@ const resolveTimelineActivityObjectColumnNames = ({
 
 export const addTimelineActivityObjectColumnsToSelect = ({
   select,
+  relationSelections,
   flatObjectMetadata,
   recordReadRestrictions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'fieldIds'>;
+  relationSelections: CommonRelationSelections;
+  flatObjectMetadata: FlatObjectMetadata;
   recordReadRestrictions: Pick<
     RecordReadRestrictions,
     'unreadableFieldMetadataIds'
@@ -89,24 +94,29 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     }
   }
 
-  for (const fieldId of flatObjectMetadata.fieldIds) {
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldId,
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  );
+
+  for (const { responseKey, relationSelection } of getRelationSelectionEntries(
+    relationSelections,
+  )) {
+    const relationSelect = select[responseKey];
+    const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldIdByName[relationSelection.fieldName],
       flatEntityMaps: flatFieldMetadataMaps,
-    });
-    const relationSelect = isDefined(flatFieldMetadata)
-      ? select[flatFieldMetadata.name]
-      : undefined;
+    })?.relationTargetObjectMetadataId;
 
     if (
-      !isDefined(flatFieldMetadata?.relationTargetObjectMetadataId) ||
+      !isDefined(relationTargetObjectMetadataId) ||
       typeof relationSelect !== 'object'
     ) {
       continue;
     }
 
     const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+      flatEntityId: relationTargetObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
@@ -114,14 +124,14 @@ export const addTimelineActivityObjectColumnsToSelect = ({
       continue;
     }
 
-    extendedSelect[flatFieldMetadata.name] =
-      addTimelineActivityObjectColumnsToSelect({
-        select: relationSelect,
-        flatObjectMetadata: targetFlatObjectMetadata,
-        recordReadRestrictions,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
+    extendedSelect[responseKey] = addTimelineActivityObjectColumnsToSelect({
+      select: relationSelect,
+      relationSelections: relationSelection.relationSelections,
+      flatObjectMetadata: targetFlatObjectMetadata,
+      recordReadRestrictions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 
   return extendedSelect;

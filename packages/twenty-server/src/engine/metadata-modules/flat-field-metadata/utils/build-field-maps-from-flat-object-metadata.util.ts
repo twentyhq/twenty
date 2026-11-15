@@ -32,8 +32,9 @@ export const buildFieldMapsFromFlatObjectMetadata = <
     return cachedFieldMaps;
   }
 
-  const fieldIdByName: Record<string, string> = {};
-  const fieldIdByJoinColumnName: Record<string, string> = {};
+  // Callers look up client response keys, which must not resolve to Object.prototype members
+  const fieldIdByName: Record<string, string> = Object.create(null);
+  const fieldIdByJoinColumnName: Record<string, string> = Object.create(null);
 
   const objectFields = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
