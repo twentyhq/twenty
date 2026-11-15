@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { differenceInYears, parseISO } from 'date-fns';
+import { differenceInYears, isPast, parseISO } from 'date-fns';
 
 import { NEVER_EXPIRE_DELTA_IN_YEARS } from '@/settings/developers/constants/NeverExpireDeltaInYears';
 import { beautifyDateDiff } from '~/utils/date-utils';
@@ -16,8 +16,7 @@ export const isExpired = (expiresAt: string | null) => {
   if (!isNonEmptyString(expiresAt) || doesNeverExpire(expiresAt)) {
     return false;
   }
-  const dateDiff = beautifyDateDiff(expiresAt, undefined, true);
-  return dateDiff.includes('-');
+  return isPast(parseISO(expiresAt));
 };
 
 export const formatExpiration = (
@@ -28,9 +27,15 @@ export const formatExpiration = (
   if (!isNonEmptyString(expiresAt) || doesNeverExpire(expiresAt)) {
     return withExpiresMention ? t`Never expires` : t`Never`;
   }
-  const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
-  if (dateDiff.includes('-')) {
+  if (isExpired(expiresAt)) {
     return t`Expired`;
+  }
+  const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
+  // beautifyDateDiff counts whole days, so it is empty under 24 hours
+  if (!isNonEmptyString(dateDiff)) {
+    return withExpiresMention
+      ? t`Expires in less than a day`
+      : t`In less than a day`;
   }
   return withExpiresMention ? t`Expires in ${dateDiff}` : t`In ${dateDiff}`;
 };
