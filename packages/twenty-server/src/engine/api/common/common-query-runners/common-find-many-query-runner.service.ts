@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
   ObjectRecordFilter,
@@ -52,6 +51,7 @@ import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspa
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 
 @Injectable()
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -156,7 +156,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const columnsToSelect = {
       ...buildColumnsToSelect({
         select: args.selectedFieldsResult.select,
-        relations: args.selectedFieldsResult.relations,
+        relationSelections: args.selectedFieldsResult.relationSelections,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -233,23 +233,18 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
+    if (isDefined(args.selectedFieldsResult.relationSelections)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
         parentObjectRecordsAggregatedValues,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
+        relationSelections: args.selectedFieldsResult.relationSelections,
         aggregate: args.selectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
@@ -298,6 +293,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
+    relationSelections: CommonRelationSelections,
   ): Promise<CommonFindManyOutput> {
     const processedRecords =
       await this.commonResultGettersService.processRecordArray(
@@ -306,6 +302,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         authContext.workspace.id,
+        relationSelections,
       );
 
     return {
