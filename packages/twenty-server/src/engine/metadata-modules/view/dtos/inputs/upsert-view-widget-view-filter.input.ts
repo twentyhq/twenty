@@ -41,12 +41,12 @@ export class UpsertViewWidgetViewFilterInput {
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   positionInViewFilterGroup?: number | null;
 
   @IsOptional()
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   subFieldName?: string | null;
 
   @IsOptional()
