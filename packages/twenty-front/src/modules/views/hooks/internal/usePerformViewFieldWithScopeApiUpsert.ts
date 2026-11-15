@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
+import { getScopeViewItemsToRemoveFromDraft } from '@/views/utils/getScopeViewItemsToRemoveFromDraft';
 import { scopeViewsByOwnerViewFieldIdMapSelector } from '@/views/states/selectors/scopeViewsByOwnerViewFieldIdMapSelector';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -42,28 +43,12 @@ export const usePerformViewFieldWithScopeApiUpsert = () => {
             .get(scopeViewsByOwnerViewFieldIdMapSelector.atom)
             .get(input.id);
 
-          // The server diffs the scope by id, so dropping the previous children keeps only those it returns
           if (isDefined(previousScopeView)) {
-            removeFromDraft({
-              key: 'viewFilters',
-              itemIds: previousScopeView.viewFilters.map(({ id }) => id),
-            });
-            removeFromDraft({
-              key: 'viewFilterGroups',
-              itemIds: (previousScopeView.viewFilterGroups ?? []).map(
-                ({ id }) => id,
-              ),
-            });
-            removeFromDraft({
-              key: 'viewSorts',
-              itemIds: previousScopeView.viewSorts.map(({ id }) => id),
-            });
-
-            if (previousScopeView.id !== upserted.scopeView?.id) {
-              removeFromDraft({
-                key: 'views',
-                itemIds: [previousScopeView.id],
-              });
+            for (const removal of getScopeViewItemsToRemoveFromDraft({
+              previousScopeView,
+              nextScopeViewId: upserted.scopeView?.id,
+            })) {
+              removeFromDraft(removal);
             }
           }
 
