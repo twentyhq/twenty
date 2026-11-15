@@ -6005,6 +6005,7 @@ input UpsertViewFieldWithScopeInput {
   isCanonical: Boolean
   isVisible: Boolean
   position: Float
+  relationTargetFieldMetadataId: UUID
 
   """
   The filters and sorts scoping the related records; without filters or sorts the scope is removed

@@ -9208,7 +9208,7 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
 
 export interface UpsertViewFieldWithScopeInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],
 /** The id of the view field, created when it does not exist */
-id: Scalars['UUID'],isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),
+id: Scalars['UUID'],isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),
 /** The filters and sorts scoping the related records; without filters or sorts the scope is removed */
 scope?: (ViewFieldScopeInput | null),settings?: (ViewFieldSettingsInput | null),size?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
