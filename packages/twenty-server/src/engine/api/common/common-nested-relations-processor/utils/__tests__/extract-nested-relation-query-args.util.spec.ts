@@ -2,7 +2,7 @@ import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nes
 
 describe('extractNestedRelationQueryArgs', () => {
   it('returns no arguments when the field has none', () => {
-    expect(extractNestedRelationQueryArgs(undefined)).toEqual({});
+    expect(extractNestedRelationQueryArgs({})).toEqual({});
   });
 
   it('extracts filter, orderBy and first', () => {

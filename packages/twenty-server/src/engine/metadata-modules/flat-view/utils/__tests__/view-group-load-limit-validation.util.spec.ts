@@ -119,7 +119,6 @@ const createViewWithGroupLoadLimit = (groupLoadLimit?: number) =>
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatViewFieldMaps: createEmptyFlatEntityMaps(),
-    flatViewMaps,
     flatObjectMetadataMaps,
   });
 

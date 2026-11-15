@@ -14,8 +14,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { getFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-selections.util';
-import { getSelectedFieldName } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selected-field-name.util';
-import { isSelectionMetaKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/is-selection-meta-key.util';
+import { getSelectionEntries } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-selection-entries.util';
 import { mergeFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/merge-field-selections.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -280,17 +279,10 @@ export class GraphqlQuerySelectedFieldsParser {
       );
     }
 
-    return Object.keys(fieldValue)
-      .filter(
-        (subFieldKey) =>
-          subFieldKey !== '__typename' && !isSelectionMetaKey(subFieldKey),
-      )
+    return getSelectionEntries(fieldValue)
+      .filter(({ fieldName: subFieldName }) => subFieldName !== '__typename')
       .reduce(
-        (acc, subFieldKey) => {
-          const subFieldName = getSelectedFieldName({
-            responseKey: subFieldKey,
-            selection: fieldValue[subFieldKey],
-          });
+        (acc, { fieldName: subFieldName }) => {
           const subFieldMetadata = compositeType.properties.find(
             (property) => property.name === subFieldName,
           );

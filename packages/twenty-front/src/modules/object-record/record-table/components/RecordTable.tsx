@@ -2,6 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
@@ -10,7 +12,6 @@ import { RecordTableContent } from '@/object-record/record-table/components/Reco
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
 import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedCellEffect';
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
-import { RecordTableScopedRelationsRefreshEffect } from '@/object-record/record-column-scope/components/RecordTableScopedRelationsRefreshEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
@@ -33,6 +34,8 @@ export const RecordTable = () => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
+
+  const scopedRelationAliases = useScopedRelationAliases();
 
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
@@ -85,7 +88,7 @@ export const RecordTable = () => {
   };
 
   return (
-    <>
+    <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
       {canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'read',
@@ -97,7 +100,6 @@ export const RecordTable = () => {
           />
           <RecordTableScrollToFocusedCellEffect />
           <RecordTableScrollToFocusedRowEffect />
-          <RecordTableScopedRelationsRefreshEffect />
         </>
       )}
       {isRecordTableInitialLoading &&
@@ -115,6 +117,6 @@ export const RecordTable = () => {
           recordTableId={recordTableId}
         />
       )}
-    </>
+    </ScopedRelationAliasesContext.Provider>
   );
 };
