@@ -425,7 +425,7 @@ export class ProcessNestedRelationsHelper {
     aggregate: Record<string, any>;
     responseKey: string;
     targetObjectNameSingular: string;
-    relationSelection: CommonRelationSelection;
+    relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
     relationQueryParser: GraphqlQueryParser;
     // oxlint-disable-next-line typescript/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
@@ -552,7 +552,7 @@ export class ProcessNestedRelationsHelper {
     column: string;
     ids: string[];
     perParentLimit: number;
-    relationSelection: CommonRelationSelection;
+    relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
     relationQueryParser: GraphqlQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
