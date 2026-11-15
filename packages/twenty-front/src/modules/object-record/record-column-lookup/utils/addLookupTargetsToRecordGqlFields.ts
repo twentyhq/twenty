@@ -13,15 +13,17 @@ export const addLookupTargetsToRecordGqlFields = ({
     (gqlFields, { relationFieldName, lookupTargetFieldName }) => {
       const relationGqlFields = gqlFields[relationFieldName];
 
-      return isPlainObject(relationGqlFields)
-        ? {
-            ...gqlFields,
-            [relationFieldName]: {
-              ...relationGqlFields,
-              [lookupTargetFieldName]: true,
-            },
-          }
-        : gqlFields;
+      if (!isPlainObject(relationGqlFields)) {
+        return gqlFields;
+      }
+
+      return {
+        ...gqlFields,
+        [relationFieldName]: {
+          ...relationGqlFields,
+          [lookupTargetFieldName]: true,
+        },
+      };
     },
     recordGqlFields,
   );
