@@ -117,12 +117,12 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        this.parseRelationFieldSelections(
+        this.parseRelationFieldSelections({
           fieldMetadata,
           graphqlSelectedFields,
           accumulator,
           isFromOneToManyRelation,
-        );
+        });
 
         continue;
       }
@@ -146,12 +146,12 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        this.parseRelationFieldSelections(
+        this.parseRelationFieldSelections({
           fieldMetadata,
           graphqlSelectedFields,
           accumulator,
           isFromOneToManyRelation,
-        );
+        });
 
         continue;
       }
@@ -183,15 +183,20 @@ export class GraphqlQuerySelectedFieldsParser {
     }
   }
 
-  private parseRelationFieldSelections(
+  private parseRelationFieldSelections({
+    fieldMetadata,
+    graphqlSelectedFields,
+    accumulator,
+    isFromOneToManyRelation,
+  }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
     // oxlint-disable-next-line typescript/no-explicit-any
-    graphqlSelectedFields: Partial<Record<string, any>>,
-    accumulator: GraphqlQuerySelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
+    graphqlSelectedFields: Partial<Record<string, any>>;
+    accumulator: GraphqlQuerySelectedFieldsResult;
+    isFromOneToManyRelation?: boolean;
+  }): void {
     const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
       name: fieldMetadata.name,
     });
