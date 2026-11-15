@@ -106,9 +106,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
         flatObjectMetadataMaps: this.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.flatFieldMetadataMaps,
       }),
-      orderBy: isDefined(orderBy)
-        ? [...orderBy, DEFAULT_ID_ORDER_BY_TIEBREAKER]
-        : undefined,
+      // first pages a LIMIT per parent, which needs an order to be deterministic
+      orderBy:
+        isDefined(orderBy) || isDefined(first)
+          ? [...(orderBy ?? []), DEFAULT_ID_ORDER_BY_TIEBREAKER]
+          : undefined,
       first,
     };
   }
