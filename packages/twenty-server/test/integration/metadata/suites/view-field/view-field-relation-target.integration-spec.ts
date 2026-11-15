@@ -12,7 +12,7 @@ import { findViewFields } from 'test/integration/metadata/suites/view-field/util
 import { upsertViewFieldWithScope } from 'test/integration/metadata/suites/view-field/utils/upsert-view-field-with-scope.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -160,9 +160,7 @@ describe('View field showing a field of the related record', () => {
           field.object?.id === companyObjectId && field.name === 'deals',
       );
 
-    if (!isDefined(companyDealsField)) {
-      throw new Error('Inverse deals relation field was not created');
-    }
+    assertIsDefinedOrThrow(companyDealsField);
 
     testContext.companyDealsFieldId = companyDealsField.id;
     testContext.companyIndustryFieldId = await createTextField(
