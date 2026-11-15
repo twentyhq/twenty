@@ -16,7 +16,7 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
-import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/get-field-name-from-relation-record-key.util';
+import { getRecordFieldEntries } from 'src/engine/api/common/utils/get-record-field-entries.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -96,8 +96,12 @@ export class ProcessNestedRelationsHelper {
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
   ): Promise<void> {
-    const processRelationTasks = Object.entries(relations).map(
-      ([sourceFieldName, nestedRelations]) =>
+    const processRelationTasks = getRecordFieldEntries(relations).map(
+      ({
+        recordKey: sourceFieldName,
+        fieldName: sourceRelationFieldName,
+        value: nestedRelations,
+      }) =>
         this.processRelation({
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
@@ -105,6 +109,7 @@ export class ProcessNestedRelationsHelper {
           parentObjectRecords,
           parentObjectRecordsAggregatedValues,
           sourceFieldName,
+          sourceRelationFieldName,
           nestedRelations,
           aggregate,
           limit,
@@ -131,6 +136,7 @@ export class ProcessNestedRelationsHelper {
     parentObjectRecords,
     parentObjectRecordsAggregatedValues,
     sourceFieldName,
+    sourceRelationFieldName,
     nestedRelations,
     aggregate,
     limit,
@@ -148,6 +154,7 @@ export class ProcessNestedRelationsHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
+    sourceRelationFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
     // Mixes this level's aggregation fields with each nested relation's own map
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -164,9 +171,6 @@ export class ProcessNestedRelationsHelper {
       flatFieldMetadataMaps,
       parentObjectMetadataItem,
     );
-
-    const sourceRelationFieldName =
-      getFieldNameFromRelationRecordKey(sourceFieldName);
 
     const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldMaps.fieldIdByName[sourceRelationFieldName],
