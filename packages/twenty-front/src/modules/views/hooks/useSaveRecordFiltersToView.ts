@@ -15,7 +15,7 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToView = () => {
   const store = useStore();
@@ -173,7 +173,7 @@ export const useSaveRecordFiltersToView = () => {
       }
 
       // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
-      if (viewFilterGroupIdsToDestroy.length > 0) {
+      if (isNonEmptyArray(viewFilterGroupIdsToDestroy)) {
         const destroyedIdsSet = new Set(viewFilterGroupIdsToDestroy);
 
         store.set(metadataStoreState.atomFamily('viewFilters'), (prev) => ({
