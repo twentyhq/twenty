@@ -258,22 +258,21 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
     };
 
     // approved calls skip the tool's input validation, and an edit can drop the body
-    if (approvedProposal.template === 'email') {
-      const parsedEmailArguments = EmailToolInputZodSchema.safeParse(
-        approvedProposal.arguments,
-      );
+    const parsedEmailArguments =
+      approvedProposal.template === 'email'
+        ? EmailToolInputZodSchema.safeParse(approvedProposal.arguments)
+        : null;
 
-      if (!parsedEmailArguments.success) {
-        return buildApprovalCompletion({
-          success: false,
-          message: `The user approved the email, but its arguments are invalid, so nothing was run: ${z.prettifyError(parsedEmailArguments.error)}. Propose it again if it is still needed.`,
-          result: {
-            status: 'failed',
-            proposal: approvedProposal,
-            error: 'The approved email is invalid, so nothing was run.',
-          },
-        });
-      }
+    if (isDefined(parsedEmailArguments) && !parsedEmailArguments.success) {
+      return buildApprovalCompletion({
+        success: false,
+        message: `The user approved the email, but its arguments are invalid, so nothing was run: ${z.prettifyError(parsedEmailArguments.error)}. Propose it again if it is still needed.`,
+        result: {
+          status: 'failed',
+          proposal: approvedProposal,
+          error: 'The approved email is invalid, so nothing was run.',
+        },
+      });
     }
 
     // the call was claimed as running before this, so it must end with an outcome rather than a throw
