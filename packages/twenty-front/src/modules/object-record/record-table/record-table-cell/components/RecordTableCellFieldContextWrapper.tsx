@@ -21,7 +21,7 @@ export const RecordTableCellFieldContextWrapper = ({
   recordField,
   children,
 }: RecordTableCellFieldContextWrapperProps) => {
-  const { recordId } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
   const {
     fieldMetadataItemByFieldMetadataItemId,
@@ -60,7 +60,9 @@ export const RecordTableCellFieldContextWrapper = ({
           lookupTarget.lookupTargetFieldMetadataItem
         }
         instanceIdPrefix={getRecordTableCellInputIdPrefix(recordField.id)}
-        isNonEditable={isRecordTableCellsNonEditable}
+        isNonEditable={
+          isRecordTableCellsNonEditable || isRecordReadOnly === true
+        }
         displayedMaxRows={1}
       >
         {children}
