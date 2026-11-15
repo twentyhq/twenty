@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -12,7 +11,7 @@ export const useOpenRecordTableCellFromCell = () => {
     recordId,
     fieldDefinition,
     isRecordFieldReadOnly: isReadOnly,
-    scopedRelationViewFieldId,
+    scopedRelationAlias,
   } = useContext(FieldContext);
 
   const { recordField } = useContext(RecordTableCellContext);
@@ -32,9 +31,7 @@ export const useOpenRecordTableCellFromCell = () => {
       cellPosition,
       recordId,
       recordFieldId: recordField.id,
-      fieldValueKey: isDefined(scopedRelationViewFieldId)
-        ? getScopedRelationAlias(scopedRelationViewFieldId)
-        : undefined,
+      fieldValueKey: scopedRelationAlias?.alias,
       fieldDefinition,
       isReadOnly,
       initialValue,
