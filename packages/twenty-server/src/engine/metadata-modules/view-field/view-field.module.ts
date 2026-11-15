@@ -4,6 +4,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ViewFieldController } from 'src/engine/metadata-modules/view-field/controllers/view-field.controller';
 import { ViewFieldResolver } from 'src/engine/metadata-modules/view-field/resolvers/view-field.resolver';
+import { ViewFieldWithScopeUpsertService } from 'src/engine/metadata-modules/view-field/services/view-field-with-scope-upsert.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view/view-permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -16,7 +17,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewPermissionsModule,
   ],
   controllers: [ViewFieldController],
-  providers: [ViewFieldResolver, ViewFieldService],
+  providers: [
+    ViewFieldResolver,
+    ViewFieldService,
+    ViewFieldWithScopeUpsertService,
+  ],
   exports: [ViewFieldService],
 })
 export class ViewFieldModule {}
