@@ -23,17 +23,14 @@ export const useRecordTableSettingsDescriptions = ({
   const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === sourceObjectMetadataId,
-  );
-  const viewObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === view?.objectMetadataId,
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === (view?.objectMetadataId ?? sourceObjectMetadataId),
   );
 
   const recordIndexId =
-    isDefined(view) && isDefined(viewObjectMetadataItem)
+    isDefined(view) && isDefined(objectMetadataItem)
       ? getRecordIndexIdFromObjectNamePluralAndViewId(
-          viewObjectMetadataItem.namePlural,
+          objectMetadataItem.namePlural,
           view.id,
         )
       : PLACEHOLDER_INSTANCE_ID;
@@ -46,7 +43,7 @@ export const useRecordTableSettingsDescriptions = ({
   const activeVisibleFieldLabels: Array<string | undefined> = isDefined(view)
     ? visibleRecordFields.map(
         (field) =>
-          viewObjectMetadataItem?.fields.find(
+          objectMetadataItem?.fields.find(
             (metaField) => metaField.id === field.fieldMetadataItemId,
           )?.label,
       )
@@ -58,7 +55,7 @@ export const useRecordTableSettingsDescriptions = ({
     .filter((filter) => !isCurrentRecordViewFilter(filter))
     .map(
       (filter) =>
-        viewObjectMetadataItem?.fields.find(
+        objectMetadataItem?.fields.find(
           (field) => field.id === filter.fieldMetadataId,
         )?.label,
     );
@@ -67,12 +64,12 @@ export const useRecordTableSettingsDescriptions = ({
     view?.viewSorts ?? []
   ).map(
     (sort) =>
-      viewObjectMetadataItem?.fields.find(
+      objectMetadataItem?.fields.find(
         (field) => field.id === sort.fieldMetadataId,
       )?.label,
   );
 
-  const sourceDescription = sourceObjectMetadataItem?.labelPlural;
+  const sourceDescription = objectMetadataItem?.labelPlural;
 
   const fieldsDescription =
     activeVisibleFieldLabels.length === 1

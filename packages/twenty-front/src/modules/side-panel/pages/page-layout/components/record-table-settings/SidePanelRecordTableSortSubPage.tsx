@@ -3,19 +3,18 @@ import { useRecordTableWidgetInEditModeView } from '@/side-panel/pages/page-layo
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelRecordTableSortSubPage = () => {
-  const { pageLayoutId, widgetId, viewId, view } =
+  const { pageLayoutId, widgetInEditMode, view } =
     useRecordTableWidgetInEditModeView();
 
-  if (!isDefined(widgetId) || !isDefined(viewId) || !isDefined(view)) {
+  if (!isDefined(widgetInEditMode) || !isDefined(view)) {
     return null;
   }
 
   return (
     <RecordTableSettingsSorts
-      viewId={viewId}
-      widgetId={widgetId}
+      view={view}
+      widgetId={widgetInEditMode.id}
       pageLayoutId={pageLayoutId}
-      objectMetadataId={view.objectMetadataId}
     />
   );
 };

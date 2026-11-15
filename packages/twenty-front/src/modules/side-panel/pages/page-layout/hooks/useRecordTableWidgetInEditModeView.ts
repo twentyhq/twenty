@@ -19,5 +19,5 @@ export const useRecordTableWidgetInEditModeView = () => {
     pageLayoutId,
   });
 
-  return { pageLayoutId, widgetId: widgetInEditMode?.id, viewId, view };
+  return { pageLayoutId, widgetInEditMode, viewId, view };
 };
