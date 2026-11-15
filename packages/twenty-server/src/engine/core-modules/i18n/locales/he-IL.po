@@ -11325,7 +11325,7 @@ msgstr "קריאה וכתיבה"
 #. js-lingui-id: qYjUEb
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Read File"
-msgstr ""
+msgstr "קרא קובץ"
 
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
