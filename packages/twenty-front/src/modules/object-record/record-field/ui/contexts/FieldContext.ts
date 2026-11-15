@@ -1,3 +1,4 @@
+import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { createContext, type MouseEvent } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -42,7 +43,7 @@ export type GenericFieldContextType = {
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;
-  scopedRelationViewFieldId?: string;
+  scopedRelationAlias?: ScopedRelationAlias;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

@@ -1,14 +1,13 @@
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
-import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
+import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
@@ -48,7 +47,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { t } = useLingui();
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const getLookupTarget = useGetRecordFieldLookupTarget();
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
 
   const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
@@ -113,27 +112,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const filterableAndSortable = useAtomFamilySelectorValue(
-    isFieldMetadataItemFilterableAndSortableSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
-
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
       fieldMetadataItemId: recordField.fieldMetadataItemId,
     });
 
-  // Filter and sort would act on the relation itself, not on the looked-up field
-  const isLookupColumn =
-    isDefined(fieldMetadataItem) &&
-    isDefined(
-      getLookupTarget({
-        recordField,
-        fieldMetadataItem,
-      }),
-    );
-  const isFilterable = filterableAndSortable.isFilterable && !isLookupColumn;
-  const isSortable = filterableAndSortable.isSortable && !isLookupColumn;
+  const columnDescriptor = columnDescriptorByRecordFieldId[recordField.id];
+  const isFilterable = columnDescriptor?.isFilterable === true;
+  const isSortable = columnDescriptor?.isSortable === true;
 
   const canConfigureColumns = useCanConfigureRecordTableColumns();
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -144,7 +130,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     isCanonical &&
     isDefined(fieldMetadataItem) &&
     (isPlainOneToManyRelationField(fieldMetadataItem) ||
-      isManyToOneRelationField(fieldMetadataItem));
+      isPlainManyToOneRelationField(fieldMetadataItem));
   const canEditColumn = canConfigureColumns && !isCanonical;
   const canDeleteColumn = canPersistChanges && !isCanonical;
   const canHide = isLabelIdentifier !== true && isCanonical;

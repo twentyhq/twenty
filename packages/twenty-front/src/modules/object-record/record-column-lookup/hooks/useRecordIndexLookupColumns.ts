@@ -1,4 +1,3 @@
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { getLookupColumns } from '@/object-record/record-column-lookup/utils/getLookupColumns';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -9,29 +8,15 @@ export const useRecordIndexLookupColumns = () => {
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
-  const getLookupTarget = useGetRecordFieldLookupTarget();
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
 
-  // Memoized: both results feed query fingerprints and loader dependencies
-  const lookupColumns = useMemo(
+  // Memoized: feeds query fingerprints and loader dependencies
+  return useMemo(
     () =>
       getLookupColumns({
         recordFields: visibleRecordFields,
-        fieldMetadataItemByFieldMetadataItemId,
-        getLookupTarget,
+        columnDescriptorByRecordFieldId,
       }),
-    [
-      visibleRecordFields,
-      fieldMetadataItemByFieldMetadataItemId,
-      getLookupTarget,
-    ],
+    [visibleRecordFields, columnDescriptorByRecordFieldId],
   );
-
-  const lookupRelationFieldNames = useMemo(
-    () => lookupColumns.map(({ relationFieldName }) => relationFieldName),
-    [lookupColumns],
-  );
-
-  return { lookupColumns, lookupRelationFieldNames };
 };

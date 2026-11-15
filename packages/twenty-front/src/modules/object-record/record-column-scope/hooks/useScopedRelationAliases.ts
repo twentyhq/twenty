@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
-import { type RecordGqlRelationAlias } from '@/object-record/graphql/types/RecordGqlRelationAlias';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -13,7 +13,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-export const useScopedRelationAliases = (): RecordGqlRelationAlias[] => {
+export const useScopedRelationAliases = (): ScopedRelationAlias[] => {
   const isColumnSettingsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
   );

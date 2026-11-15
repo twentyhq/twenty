@@ -7,6 +7,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -67,7 +68,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'fieldIds'>;
+  flatObjectMetadata: FlatObjectMetadata;
   recordReadRestrictions: Pick<
     RecordReadRestrictions,
     'unreadableFieldMetadataIds'
@@ -90,22 +91,9 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     }
   }
 
-  const relationTargetObjectMetadataIdByFieldName = new Map<string, string>(
-    flatObjectMetadata.fieldIds.flatMap((fieldId) => {
-      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      return isDefined(flatFieldMetadata?.relationTargetObjectMetadataId)
-        ? [
-            [
-              flatFieldMetadata.name,
-              flatFieldMetadata.relationTargetObjectMetadataId,
-            ] as const,
-          ]
-        : [];
-    }),
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
   );
 
   for (const {
@@ -113,13 +101,18 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     fieldName,
     value: relationSelect,
   } of getRecordFieldEntries(select)) {
-    const relationTargetObjectMetadataId =
-      relationTargetObjectMetadataIdByFieldName.get(fieldName);
+    const fieldId = fieldIdByName[fieldName];
 
-    if (
-      !isDefined(relationTargetObjectMetadataId) ||
-      typeof relationSelect !== 'object'
-    ) {
+    if (!isDefined(fieldId) || typeof relationSelect !== 'object') {
+      continue;
+    }
+
+    const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    })?.relationTargetObjectMetadataId;
+
+    if (!isDefined(relationTargetObjectMetadataId)) {
       continue;
     }
 

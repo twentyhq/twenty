@@ -2,7 +2,6 @@ import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
-import { type NestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/utils/extract-nested-relation-query-args.util';
 import {
@@ -99,7 +98,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
   private resolveQueryArgs(
     graphqlArguments: Record<string, unknown>,
     targetObjectMetadata: FlatObjectMetadata,
-  ): Omit<NestedRelationQueryArgs, 'nestedRelationQueryArgsByFieldName'> {
+  ) {
     const { filter, orderBy, first } =
       extractNestedRelationQueryArgs(graphqlArguments);
 
