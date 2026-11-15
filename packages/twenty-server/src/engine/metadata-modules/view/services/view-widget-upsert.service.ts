@@ -862,7 +862,6 @@ export class ViewWidgetUpsertService {
           deletedAt: null,
         });
       } else {
-        // The saved group may be removed by this same upsert
         const isExistingGroupKept =
           isDefined(existingFilter.viewFilterGroupId) &&
           !removedViewFilterGroupIds.has(existingFilter.viewFilterGroupId);
