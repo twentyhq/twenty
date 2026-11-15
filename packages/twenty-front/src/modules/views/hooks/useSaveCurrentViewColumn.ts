@@ -37,6 +37,7 @@ export const useSaveCurrentViewColumn = () => {
         | 'position'
         | 'size'
         | 'aggregateOperation'
+        | 'relationTargetFieldMetadataId'
         | 'settings'
       >;
       columnScope?: ColumnScope;
@@ -56,6 +57,8 @@ export const useSaveCurrentViewColumn = () => {
         position: viewField.position,
         size: viewField.size,
         aggregateOperation: viewField.aggregateOperation,
+        relationTargetFieldMetadataId:
+          viewField.relationTargetFieldMetadataId ?? null,
         settings: getViewFieldSettingsInput(viewField.settings),
         scope: isDefined(columnScope)
           ? buildViewFieldScopeInput(columnScope)

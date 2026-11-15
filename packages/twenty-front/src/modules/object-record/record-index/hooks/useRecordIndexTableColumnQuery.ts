@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useMemo } from 'react';
@@ -9,18 +10,20 @@ export const useRecordIndexTableColumnQuery = (
 ) => {
   const recordGqlFields = useRelevantRecordsGqlFields({ objectMetadataItem });
   const relationAliases = useScopedRelationAliases();
+  const lookupColumns = useRecordIndexLookupColumns();
 
   const columnQueryFingerprint = useMemo(
     () =>
-      JSON.stringify(
+      JSON.stringify([
         relationAliases.map(({ alias, filter, orderBy, first }) => [
           alias,
           filter,
           orderBy,
           first,
         ]),
-      ),
-    [relationAliases],
+        lookupColumns,
+      ]),
+    [relationAliases, lookupColumns],
   );
 
   return { recordGqlFields, relationAliases, columnQueryFingerprint };

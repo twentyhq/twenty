@@ -74,6 +74,14 @@ export const useSaveCurrentViewFields = () => {
                 ? {}
                 : { isCanonical: false }),
               ...(isDefined(settings) ? { settings } : {}),
+              ...(isDefined(
+                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+              )
+                ? {
+                    relationTargetFieldMetadataId:
+                      viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+                  }
+                : {}),
             };
             const existingField = currentViewFields.find(
               (currentViewField) =>
@@ -95,8 +103,13 @@ export const useSaveCurrentViewFields = () => {
               settings,
             );
 
+            const isRelationTargetUnchanged =
+              (existingField.relationTargetFieldMetadataId ?? null) ===
+              (viewFieldToCreateOrUpdate.relationTargetFieldMetadataId ?? null);
+
             if (
               areSettingsUnchanged &&
+              isRelationTargetUnchanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -132,6 +145,13 @@ export const useSaveCurrentViewFields = () => {
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
                       ...(areSettingsUnchanged ? {} : { settings }),
+                      ...(isRelationTargetUnchanged
+                        ? {}
+                        : {
+                            relationTargetFieldMetadataId:
+                              viewFieldToCreateOrUpdate.relationTargetFieldMetadataId ??
+                              null,
+                          }),
                     },
                   },
                 },

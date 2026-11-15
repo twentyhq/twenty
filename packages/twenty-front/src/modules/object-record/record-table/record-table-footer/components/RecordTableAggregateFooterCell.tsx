@@ -7,6 +7,7 @@ import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-tab
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
@@ -89,6 +90,7 @@ export const RecordTableAggregateFooterCell = ({
   currentRecordGroupId?: string;
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
 
   const { fieldMetadataId, viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
@@ -103,9 +105,14 @@ export const RecordTableAggregateFooterCell = ({
     isRecordTableColumnResizableComponentState,
   );
 
+  // A total over a lookup counts a related record once per row that links to it
+  const isLookupColumn =
+    columnDescriptorByRecordFieldId[viewFieldId]?.isLookupColumn === true;
+
   const isFooterReadOnly =
-    useIsRecordTableWidgetAggregateNonInteractive() ??
-    !isRecordTableColumnResizable;
+    (useIsRecordTableWidgetAggregateNonInteractive() ??
+      !isRecordTableColumnResizable) ||
+    isLookupColumn;
 
   const recordField = visibleRecordFields.find(findById(viewFieldId));
 
@@ -129,7 +136,7 @@ export const RecordTableAggregateFooterCell = ({
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
         {isFooterReadOnly ? (
-          hasAggregateOperationForViewField ? (
+          hasAggregateOperationForViewField && !isLookupColumn ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}
               dropdownId={`${viewFieldId}-footer-readonly`}

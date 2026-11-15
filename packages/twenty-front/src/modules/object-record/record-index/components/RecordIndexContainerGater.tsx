@@ -62,6 +62,7 @@ export const RecordIndexContainerGater = memo(() => {
 
   const {
     fieldDefinitionByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
@@ -98,6 +99,7 @@ export const RecordIndexContainerGater = memo(() => {
         labelIdentifierFieldMetadataItem,
         fieldMetadataItemByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,
+        columnDescriptorByRecordFieldId,
       }}
     >
       <ViewComponentInstanceContext.Provider

@@ -1,3 +1,4 @@
+import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -7,6 +8,7 @@ import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/reco
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextWrapperProps = {
   children: ReactNode;
@@ -22,6 +24,7 @@ export const RecordTableCellFieldContextWrapper = ({
   const {
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
+    columnDescriptorByRecordFieldId,
   } = useRecordIndexContextOrThrow();
 
   const fieldMetadataItem =
@@ -35,6 +38,26 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
+
+  const lookupTarget =
+    columnDescriptorByRecordFieldId[recordField.id]?.lookupTarget;
+
+  // The lookup cell keys its own editor instance to the related record
+  if (isDefined(lookupTarget)) {
+    return (
+      <RecordTableCellLookupFieldContext
+        key={instanceId}
+        recordFieldId={recordField.id}
+        fieldMetadataItem={fieldMetadataItem}
+        relationObjectMetadataItem={lookupTarget.relationObjectMetadataItem}
+        lookupTargetFieldMetadataItem={
+          lookupTarget.lookupTargetFieldMetadataItem
+        }
+      >
+        {children}
+      </RecordTableCellLookupFieldContext>
+    );
+  }
 
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>

@@ -23,7 +23,7 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
   return {
     findManyRecordsLazy,
     fetchMoreRecordsLazy,
-    // A column's scope changes loaded cells without changing the filter or sort
+    // A column's scope or lookup changes loaded cells without changing the filter or sort
     queryIdentifier: `${queryIdentifier}${columnQueryFingerprint}`,
   };
 };

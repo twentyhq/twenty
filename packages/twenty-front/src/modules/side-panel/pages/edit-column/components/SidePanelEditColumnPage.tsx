@@ -2,6 +2,8 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
+import { formatLookupColumnLabel } from '@/object-record/record-column-lookup/utils/formatLookupColumnLabel';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -10,6 +12,7 @@ import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/uti
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelEditColumnLookupSelect } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnLookupSelect';
 import { SidePanelEditColumnScopeSection } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnScopeSection';
 import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -37,7 +40,7 @@ import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
@@ -148,24 +151,34 @@ const SidePanelEditColumnForm = ({
     { ownerViewFieldId: recordField.id },
   );
 
-  const relationObjectMetadataItem =
+  const relationObjectMetadataItem = isDefined(fieldMetadataItem)
+    ? findRelationTargetObjectMetadataItem({
+        fieldMetadataItem,
+        objectMetadataItems,
+      })
+    : undefined;
+
+  const isScopableColumn =
+    isDefined(relationObjectMetadataItem) &&
     isDefined(fieldMetadataItem) &&
-    isPlainOneToManyRelationField(fieldMetadataItem)
-      ? findRelationTargetObjectMetadataItem({
-          fieldMetadataItem,
-          objectMetadataItems,
-        })
-      : undefined;
+    isPlainOneToManyRelationField(fieldMetadataItem);
+
+  const isLookupableColumn =
+    isDefined(relationObjectMetadataItem) &&
+    isDefined(fieldMetadataItem) &&
+    isPlainManyToOneRelationField(fieldMetadataItem);
 
   const [columnName, setColumnName] = useState(
     recordField.settings?.label ?? '',
   );
+  const [relationTargetFieldMetadataId, setRelationTargetFieldMetadataId] =
+    useState(recordField.relationTargetFieldMetadataId ?? null);
   const [recordLimit, setRecordLimit] = useState(
     recordField.settings?.recordLimit?.toString() ?? '',
   );
 
   const parsedRecordLimit = parseRecordLimitInput(
-    isDefined(relationObjectMetadataItem) ? recordLimit : '',
+    isScopableColumn ? recordLimit : '',
   );
 
   const [isSaving, setIsSaving] = useState(false);
@@ -181,6 +194,7 @@ const SidePanelEditColumnForm = ({
 
     const updatedRecordField: RecordField = {
       ...recordField,
+      relationTargetFieldMetadataId,
       settings: {
         label: isNonEmptyString(trimmedColumnName) ? trimmedColumnName : null,
         recordLimit: parsedRecordLimit.recordLimit,
@@ -189,7 +203,7 @@ const SidePanelEditColumnForm = ({
 
     const isColumnSaved = await saveCurrentViewColumn({
       viewField: mapRecordFieldToViewField(updatedRecordField),
-      columnScope: isDefined(relationObjectMetadataItem)
+      columnScope: isScopableColumn
         ? {
             recordFilters: store.get(
               currentRecordFiltersComponentState.atomFamily({
@@ -230,6 +244,20 @@ const SidePanelEditColumnForm = ({
 
   const FieldIcon = getIcon(fieldMetadataItem?.icon);
 
+  const lookupTargetFieldMetadataItem =
+    isLookupableColumn && isDefined(relationTargetFieldMetadataId)
+      ? relationObjectMetadataItem.fields.find(
+          findById(relationTargetFieldMetadataId),
+        )
+      : undefined;
+
+  const columnNamePlaceholder = isDefined(fieldMetadataItem)
+    ? formatLookupColumnLabel({
+        fieldMetadataItem,
+        lookupTargetFieldMetadataItem,
+      })
+    : '';
+
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
       <PageCardHeader
@@ -246,14 +274,22 @@ const SidePanelEditColumnForm = ({
         }
       />
       <StyledContent>
+        {isLookupableColumn && (
+          <SidePanelEditColumnLookupSelect
+            fieldMetadataItem={fieldMetadataItem}
+            relationObjectMetadataItem={relationObjectMetadataItem}
+            relationTargetFieldMetadataId={relationTargetFieldMetadataId}
+            onChange={setRelationTargetFieldMetadataId}
+          />
+        )}
         <TextInput
           label={t`Column name`}
           value={columnName}
           onChange={setColumnName}
-          placeholder={fieldMetadataItem?.label}
+          placeholder={columnNamePlaceholder}
           fullWidth
         />
-        {isDefined(relationObjectMetadataItem) && (
+        {isScopableColumn && (
           <SidePanelGroup heading={t`Related records`}>
             <SidePanelEditColumnScopeSection
               scopeInstanceId={scopeInstanceId}

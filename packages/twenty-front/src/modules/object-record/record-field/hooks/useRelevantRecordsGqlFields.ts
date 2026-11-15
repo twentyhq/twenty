@@ -1,9 +1,11 @@
+import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
+import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
@@ -37,6 +39,7 @@ export const useRelevantRecordsGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const lookupColumns = useRecordIndexLookupColumns();
 
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
@@ -71,11 +74,14 @@ export const useRelevantRecordsGqlFields = ({
     ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
-  const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
-    objectMetadataItems,
-    sourceObjectMetadataItem: objectMetadataItem,
-    fields: fieldMetadataItemsToUse,
-    depth: 1,
+  const allDepthOneGqlFields = addLookupTargetsToRecordGqlFields({
+    recordGqlFields: generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems,
+      sourceObjectMetadataItem: objectMetadataItem,
+      fields: fieldMetadataItemsToUse,
+      depth: 1,
+    }),
+    lookupColumns,
   });
 
   const coreRecordReferenceFieldsRecordGqlFields =
