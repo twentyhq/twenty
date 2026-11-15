@@ -90,25 +90,25 @@ export class CommonResultGettersService {
 
   public processRecordArray({
     records,
-    ...args
+    ...resultGettersArgs
   }: ResultGettersArgs & { records: ObjectRecord[] }): Promise<ObjectRecord[]> {
     return this.processRecordArrayWithContext({
       records,
-      flatObjectMetadata: args.flatObjectMetadata,
-      relationSelections: args.relationSelections,
-      context: this.buildContext(args),
+      flatObjectMetadata: resultGettersArgs.flatObjectMetadata,
+      relationSelections: resultGettersArgs.relationSelections,
+      context: this.buildContext(resultGettersArgs),
     });
   }
 
   public processRecord({
     record,
-    ...args
+    ...resultGettersArgs
   }: ResultGettersArgs & { record: ObjectRecord }): Promise<ObjectRecord> {
     return this.processRecordWithContext({
       record,
-      flatObjectMetadata: args.flatObjectMetadata,
-      relationSelections: args.relationSelections,
-      context: this.buildContext(args),
+      flatObjectMetadata: resultGettersArgs.flatObjectMetadata,
+      relationSelections: resultGettersArgs.relationSelections,
+      context: this.buildContext(resultGettersArgs),
     });
   }
 
