@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxDefaultSelectedThreadListSource';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { isInboxSelectedThreadListSourceAccessible } from '@/inbox/utils/isInboxSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
@@ -33,7 +33,7 @@ export const useRefreshInboxChannels = () => {
       return;
     }
 
-    store.set(inboxChannelsState.atom, channels);
+    store.set(aiChatChannelsState.atom, channels);
 
     if (
       !isInboxSelectedThreadListSourceAccessible({

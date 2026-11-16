@@ -19,8 +19,8 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 const updateAgentChatThreadInboxState = jest.fn();
 
-jest.mock('@/inbox/hooks/useUpdateInboxThreadStatus', () => ({
-  useUpdateInboxThreadStatus: () => ({
+jest.mock('@/ai/hooks/useUpdateAiChatThreadStatus', () => ({
+  useUpdateAiChatThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));

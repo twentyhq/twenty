@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { InboxThreadTriageButtons } from '@/inbox/components/InboxThreadTriageButtons';
-import { INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/inbox/constants/InboxThreadStatusActionByTriageStatus';
+import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadStatusActionByTriageStatus';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { useExecuteInboxThreadStatusAction } from '@/inbox/hooks/useExecuteInboxThreadStatusAction';
-import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
+import { useExecuteAiChatThreadStatusAction } from '@/ai/hooks/useExecuteAiChatThreadStatusAction';
+import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 
 type InboxThreadRowTriageProps = {
   threadId: string;
@@ -14,17 +14,17 @@ export const InboxThreadRowTriage = ({
   threadId,
 }: InboxThreadRowTriageProps) => {
   const { status, isInChannel } = useInboxThreadTriage({ threadId });
-  const { executeInboxThreadStatusAction, isPending } =
-    useExecuteInboxThreadStatusAction();
+  const { executeAiChatThreadStatusAction, isPending } =
+    useExecuteAiChatThreadStatusAction();
 
   if (!isDefined(status)) {
     return null;
   }
 
-  const moveToStatus = (nextStatus: InboxThreadTriageStatus) => {
-    void executeInboxThreadStatusAction({
+  const moveToStatus = (nextStatus: AiChatThreadTriageStatus) => {
+    void executeAiChatThreadStatusAction({
       threadIds: [threadId],
-      action: INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS[nextStatus],
+      action: AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS[nextStatus],
       isInChannel,
     });
   };

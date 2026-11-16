@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { getInboxThreadChannelStatus } from '@/inbox/utils/getInboxThreadChannelStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
@@ -35,7 +35,7 @@ export const inboxThreadMemberStateByThreadIdFamilySelector =
         Object.fromEntries(
           threadIds.map((threadId) => {
             const inboxStatus = get(
-              inboxThreadMemberStateFamilySelector,
+              aiChatThreadMemberStateFamilySelector,
               threadId,
             );
             const thread = get(aiChatThreadRecordFamilySelector, threadId);

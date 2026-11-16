@@ -1,4 +1,4 @@
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -35,7 +35,7 @@ export const SidePanelAskAiInfo = () => {
     <StyledContainer>
       <HeaderIdentifier title={displayLabel} />
       {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
-        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+        <InboxThreadDetailsDropdown threadId={currentAiChatThread} />
       )}
     </StyledContainer>
   );

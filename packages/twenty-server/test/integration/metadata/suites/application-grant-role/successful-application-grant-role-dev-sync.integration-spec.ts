@@ -17,7 +17,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type FieldManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -48,7 +48,7 @@ const scopingFieldManifest: FieldManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
 
-const INITIAL_REQUESTED_ROLE: RoleManifest = {
+const INITIAL_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
   universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Grant test requested role',
   canAccessAllTools: false,
@@ -78,7 +78,7 @@ const INITIAL_REQUESTED_ROLE: RoleManifest = {
   ],
 };
 
-const CHANGED_REQUESTED_ROLE: RoleManifest = {
+const CHANGED_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
   ...INITIAL_REQUESTED_ROLE,
   canAccessAllTools: true,
   permissionFlagUniversalIdentifiers: [],
@@ -101,7 +101,9 @@ const CHANGED_REQUESTED_ROLE: RoleManifest = {
   ],
 };
 
-const syncRequestedRole = async (requestedRole: RoleManifest) => {
+const syncRequestedRole = async (
+  requestedRole: LegacyCompliantRoleManifest,
+) => {
   const { errors } = await syncApplication({
     manifest: buildBaseManifest({
       appId: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -148,7 +150,7 @@ describe('Application grant on dev sync', () => {
     });
   });
 
-  it('creates a grant owned by the workspace custom application, equal to the requested role without its RLS', async () => {
+  it('creates a grant owned by the workspace custom application, equal to the requested role with its rule grants on all records', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
@@ -178,6 +180,14 @@ describe('Application grant on dev sync', () => {
     expect(requestedSnapshot.rowLevelPermissionPredicates).toHaveLength(1);
     expect(grantSnapshot).toEqual({
       ...requestedSnapshot,
+      objectPermissions: requestedSnapshot.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          canReadObjectRecords: true,
+          canCreateObjectRecords: true,
+          canUpdateObjectRecords: true,
+        }),
+      ),
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
     });
@@ -203,8 +213,16 @@ describe('Application grant on dev sync', () => {
 
     const grantSnapshot = await findRolePermissionSnapshot(grant!.role.id);
 
+    const requestedSnapshot = await findRolePermissionSnapshot(requestedRoleId);
+
     expect(grantSnapshot).toEqual({
-      ...(await findRolePermissionSnapshot(requestedRoleId)),
+      ...requestedSnapshot,
+      objectPermissions: requestedSnapshot.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          canReadObjectRecords: true,
+        }),
+      ),
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
     });

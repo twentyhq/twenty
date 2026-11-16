@@ -50,6 +50,9 @@ export class ViewFieldDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 

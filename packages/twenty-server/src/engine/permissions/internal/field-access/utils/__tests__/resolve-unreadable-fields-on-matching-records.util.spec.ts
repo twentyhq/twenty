@@ -119,6 +119,7 @@ const resolve = ({
         flatEntityMaps: createEmptyFlatEntityMaps(),
       }),
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: {},
       rolesPermissions: {
         [MEMBER_ROLE_ID]: {

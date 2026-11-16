@@ -16,6 +16,7 @@ type SelectInputProps = {
   onClear?: () => void;
   clearLabel?: string;
   onAddSelectOption?: (optionName: string) => void;
+  isExistingOptionName?: (optionName: string) => boolean;
 };
 
 export const SelectInput = ({
@@ -25,6 +26,7 @@ export const SelectInput = ({
   options,
   value,
   onAddSelectOption,
+  isExistingOptionName,
 }: SelectInputProps) => {
   const { t } = useLingui();
   const [searchFilter, setSearchFilter] = useState('');
@@ -99,6 +101,7 @@ export const SelectInput = ({
         searchFilter={searchFilter}
         filteredOptions={filteredOptions}
         onAddSelectOption={onAddSelectOption}
+        isExistingOptionName={isExistingOptionName}
       />
     </>
   );

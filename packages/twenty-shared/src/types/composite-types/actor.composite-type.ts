@@ -34,7 +34,7 @@ export const actorCompositeType: CompositeType = {
             label: `${FieldActorSource[key].toLowerCase()}`,
             value: key,
             position: index,
-          }) satisfies Required<FieldMetadataDefaultOption>,
+          }) satisfies FieldMetadataDefaultOption & { id: string },
       ),
     },
     {

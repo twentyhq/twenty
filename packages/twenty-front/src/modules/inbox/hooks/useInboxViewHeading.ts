@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/inbox/constants/InboxThreadPresetFilterIcons';
 import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/inbox/constants/InboxThreadPresetFilterLabels';
-import { useInboxChannelIcon } from '@/inbox/hooks/useInboxChannelIcon';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { useAiChatChannelIcon } from '@/ai/hooks/useAiChatChannelIcon';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { getInboxChannelViewLabel } from '@/inbox/utils/getInboxChannelViewLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,10 +18,10 @@ export const useInboxViewHeading = () => {
     inboxSelectedThreadListSource.type === 'channel'
       ? inboxSelectedThreadListSource.channelView
       : undefined;
-  const channel = useAtomStateValue(inboxChannelsState)?.find(
+  const channel = useAtomStateValue(aiChatChannelsState)?.find(
     ({ id }) => id === inboxSelectedChannelView?.channelId,
   );
-  const ChannelIcon = useInboxChannelIcon(channel?.icon);
+  const ChannelIcon = useAiChatChannelIcon(channel?.icon);
 
   if (inboxSelectedThreadListSource.type === 'presetFilter') {
     return {

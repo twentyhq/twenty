@@ -12,8 +12,8 @@ import {
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { INBOX_THREAD_LIST_FILTER } from '@/inbox/constants/InboxThreadListFilter';
-import { INBOX_THREAD_LIST_RECORD_GQL_FIELDS } from '@/inbox/constants/InboxThreadListRecordGqlFields';
+import { AI_CHAT_THREADS_FILTER } from '@/ai/constants/AiChatThreadsFilter';
+import { AI_CHAT_THREAD_RECORD_GQL_FIELDS } from '@/ai/constants/AiChatThreadRecordGqlFields';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAiChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -92,13 +92,13 @@ export const useFetchAiChatThreadsPage = () => {
           query: generateFindManyRecordsQuery({
             objectMetadataItem: chatObjectMetadataItem,
             objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
-            recordGqlFields: INBOX_THREAD_LIST_RECORD_GQL_FIELDS,
+            recordGqlFields: AI_CHAT_THREAD_RECORD_GQL_FIELDS,
             objectPermissionsByObjectMetadataId,
           }),
           variables: {
             filter: isDefined(threadIdFilter)
-              ? { and: [INBOX_THREAD_LIST_FILTER, threadIdFilter] }
-              : INBOX_THREAD_LIST_FILTER,
+              ? { and: [AI_CHAT_THREADS_FILTER, threadIdFilter] }
+              : AI_CHAT_THREADS_FILTER,
             orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,
             lastCursor,

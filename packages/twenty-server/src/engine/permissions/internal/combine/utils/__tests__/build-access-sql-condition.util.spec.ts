@@ -94,6 +94,7 @@ const fullAccessByObjectId = {
 
 const metadataMaps: PermissionsMetadataMaps = {
   flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+  flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
   flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
   rolesPermissions: {
     [FULL_ACCESS_ROLE_ID]: fullAccessByObjectId,

@@ -236,6 +236,7 @@ describe('access group propagation progress (integration)', () => {
 
     roleId = data.createOneRole.id;
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    // Other specs empty the person table, and a compute over no record never reaches a batch
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
       [personId],

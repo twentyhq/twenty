@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
@@ -30,7 +30,7 @@ export const SettingsRolePermissionsInboxChannelTableRow = ({
     cursor={isEditable ? 'pointer' : 'default'}
   >
     <TableCell gap={themeCssVariables.spacing[2]}>
-      <InboxChannelIcon channel={channel} />
+      <AiChatChannelIcon channel={channel} />
       <StyledName>{channel.name}</StyledName>
     </TableCell>
     <TableCell

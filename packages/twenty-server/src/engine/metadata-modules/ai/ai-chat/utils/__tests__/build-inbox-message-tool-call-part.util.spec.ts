@@ -68,7 +68,7 @@ describe('buildInboxMessageToolCallPart', () => {
       arguments: {
         recipients: { to: 'team@acme.com', cc: '', bcc: '' },
         subject: 'Recap',
-        body: '<p>Here is the recap.</p><p>Jane</p>',
+        body: 'Here is the recap.\n\nJane',
       },
       summary: 'Send the call recap to the team',
     };
@@ -85,6 +85,24 @@ describe('buildInboxMessageToolCallPart', () => {
             status: 'pending',
             proposal: {
               ...emailCall,
+              arguments: {
+                ...emailCall.arguments,
+                body: {
+                  type: 'doc',
+                  attrs: { schemaVersion: 1 },
+                  content: [
+                    {
+                      type: 'paragraph',
+                      content: [
+                        { type: 'text', text: 'Here is the recap.' },
+                        { type: 'hardBreak' },
+                        { type: 'hardBreak' },
+                        { type: 'text', text: 'Jane' },
+                      ],
+                    },
+                  ],
+                },
+              },
               toolLabel: 'Send Email',
               template: 'email',
               alternativeToolNames: ['draft_email'],

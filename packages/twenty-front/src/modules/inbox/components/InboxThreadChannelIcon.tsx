@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { useTheme } from 'twenty-ui/theme';
 
-import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
-import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,7 +24,7 @@ export const InboxThreadChannelIcon = ({
 }: InboxThreadChannelIconProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const channel = useAtomStateValue(inboxChannelsState)?.find(
+  const channel = useAtomStateValue(aiChatChannelsState)?.find(
     ({ id }) => id === thread.channelId,
   );
   const inboxSelectedChannelView = useAtomStateValue(
@@ -42,7 +42,7 @@ export const InboxThreadChannelIcon = ({
 
   return (
     <StyledChannelIcon title={channelName}>
-      <InboxChannelIcon channel={channel} size={theme.icon.size.sm} />
+      <AiChatChannelIcon channel={channel} size={theme.icon.size.sm} />
       <VisuallyHidden>{t`In ${channelName}`}</VisuallyHidden>
     </StyledChannelIcon>
   );

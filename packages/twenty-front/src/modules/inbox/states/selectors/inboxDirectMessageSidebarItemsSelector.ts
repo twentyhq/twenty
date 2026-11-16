@@ -1,10 +1,10 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
-import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/inbox/utils/getInboxDirectMessagePeerWorkspaceMemberIds';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -29,7 +29,7 @@ export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
     return sortChatThreadsByLastActivityDesc(directMessageThreads).map(
       (thread) => {
         const [peerWorkspaceMemberId] =
-          getInboxDirectMessagePeerWorkspaceMemberIds({
+          getAiChatDirectMessagePeerWorkspaceMemberIds({
             thread,
             currentWorkspaceMemberId,
           });
@@ -37,7 +37,7 @@ export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
           ({ id }) => id === peerWorkspaceMemberId,
         );
         const { isUnread } = get(
-          inboxThreadMemberStateFamilySelector,
+          aiChatThreadMemberStateFamilySelector,
           thread.id,
         );
 

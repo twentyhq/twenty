@@ -1210,7 +1210,7 @@ export default {
             "requestedIframeMediaPermissions": [
                 326
             ],
-            "runOnUserPreferences": [
+            "runHealthCheckOnUserPreferences": [
                 1
             ],
             "settingsCustomTabFrontComponentId": [
@@ -1825,9 +1825,6 @@ export default {
             ],
             "connectionProviders": [
                 62
-            ],
-            "hasUserHealthCheck": [
-                1
             ],
             "settingsMenuItems": [
                 521
@@ -4404,6 +4401,9 @@ export default {
             ],
             "position": [
                 8
+            ],
+            "relationTargetFieldMetadataId": [
+                564
             ],
             "size": [
                 8
@@ -15341,6 +15341,9 @@ export default {
             "position": [
                 8
             ],
+            "relationTargetFieldMetadataId": [
+                564
+            ],
             "size": [
                 8
             ],
@@ -16719,6 +16722,9 @@ export default {
             ],
             "position": [
                 8
+            ],
+            "relationTargetFieldMetadataId": [
+                564
             ],
             "size": [
                 8

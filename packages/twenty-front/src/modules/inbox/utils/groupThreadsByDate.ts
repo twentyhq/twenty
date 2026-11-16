@@ -1,0 +1,154 @@
+import { t } from '@lingui/core/macro';
+import { differenceInCalendarDays, startOfWeek } from 'date-fns';
+import { CalendarStartDay } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AiChatThreadDateGroup } from '@/ai/types/AiChatThreadDateGroup';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
+
+const RECENT_THREAD_DAY_COUNT = 7;
+const COMPACT_DATE_GROUP_IDS = ['today', 'this-week', 'earlier'];
+
+const getMonthGroupId = (date: Date) =>
+  `month:${date.getFullYear()}-${date.getMonth() + 1}`;
+
+const formatMonthGroupTitle = (date: Date) =>
+  new Intl.DateTimeFormat(undefined, {
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+
+const getDaysSinceWeekStart = ({
+  today,
+  calendarStartDay,
+}: {
+  today: Date;
+  calendarStartDay: CalendarStartDay;
+}) =>
+  differenceInCalendarDays(
+    today,
+    startOfWeek(today, {
+      weekStartsOn:
+        calendarStartDay === CalendarStartDay.SYSTEM
+          ? CalendarStartDay.MONDAY
+          : calendarStartDay,
+    }),
+  );
+
+const getCompactPastThreadDateGroup = ({
+  daysSinceActivity,
+  daysSinceWeekStart,
+}: {
+  daysSinceActivity: number;
+  daysSinceWeekStart: number;
+}): Omit<AiChatThreadDateGroup, 'threads'> => {
+  if (daysSinceActivity <= daysSinceWeekStart) {
+    return {
+      id: 'this-week',
+      title: t`This week`,
+    };
+  }
+
+  return {
+    id: 'earlier',
+    title: t`Earlier`,
+  };
+};
+
+const getThreadDateGroup = ({
+  threadActivityAt,
+  today,
+  variant,
+  daysSinceWeekStart,
+}: {
+  threadActivityAt: Date;
+  today: Date;
+  variant: AiChatThreadRowVariant;
+  daysSinceWeekStart: number;
+}): Omit<AiChatThreadDateGroup, 'threads'> => {
+  const daysSinceActivity = differenceInCalendarDays(today, threadActivityAt);
+  const isToday = daysSinceActivity === 0;
+  const isUpcomingCompactThread =
+    variant === 'compact' && daysSinceActivity < 0;
+
+  if (isToday || isUpcomingCompactThread) {
+    return {
+      id: 'today',
+      title: t`Today`,
+    };
+  }
+
+  if (variant === 'compact') {
+    return getCompactPastThreadDateGroup({
+      daysSinceActivity,
+      daysSinceWeekStart,
+    });
+  }
+
+  if (daysSinceActivity === 1) {
+    return {
+      id: 'yesterday',
+      title: t`Yesterday`,
+    };
+  }
+
+  if (daysSinceActivity >= 2 && daysSinceActivity <= RECENT_THREAD_DAY_COUNT) {
+    return {
+      id: 'previous-7-days',
+      title: t`Previous 7 days`,
+    };
+  }
+
+  return {
+    id: getMonthGroupId(threadActivityAt),
+    title: formatMonthGroupTitle(threadActivityAt),
+  };
+};
+
+export const groupThreadsByDate = ({
+  threads,
+  today = new Date(),
+  variant = 'default',
+  calendarStartDay = CalendarStartDay.MONDAY,
+}: {
+  threads: AiChatThreadRecord[];
+  today?: Date;
+  variant?: AiChatThreadRowVariant;
+  calendarStartDay?: CalendarStartDay;
+}): AiChatThreadDateGroup[] => {
+  const groupedThreadsByDate = new Map<string, AiChatThreadDateGroup>();
+  const daysSinceWeekStart = getDaysSinceWeekStart({ today, calendarStartDay });
+
+  for (const thread of threads) {
+    const threadDateGroup = getThreadDateGroup({
+      threadActivityAt: new Date(getAiChatThreadLastActivityAt(thread)),
+      today,
+      variant,
+      daysSinceWeekStart,
+    });
+    const existingThreadDateGroup = groupedThreadsByDate.get(
+      threadDateGroup.id,
+    );
+
+    if (isDefined(existingThreadDateGroup)) {
+      existingThreadDateGroup.threads.push(thread);
+
+      continue;
+    }
+
+    groupedThreadsByDate.set(threadDateGroup.id, {
+      ...threadDateGroup,
+      threads: [thread],
+    });
+  }
+
+  if (variant === 'compact') {
+    return COMPACT_DATE_GROUP_IDS.map((groupId) =>
+      groupedThreadsByDate.get(groupId),
+    ).filter(isDefined);
+  }
+
+  return [...groupedThreadsByDate.values()];
+};

@@ -6,7 +6,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
-import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/inbox/utils/getInboxDirectMessagePeerWorkspaceMemberIds';
+import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -38,7 +38,7 @@ export const InboxDirectMessageTitle = ({
   );
 
   const [peerWorkspaceMemberId] = isDefined(thread)
-    ? getInboxDirectMessagePeerWorkspaceMemberIds({
+    ? getAiChatDirectMessagePeerWorkspaceMemberIds({
         thread,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
       })

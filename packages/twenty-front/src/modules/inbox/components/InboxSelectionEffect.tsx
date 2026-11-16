@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -28,7 +28,7 @@ export const InboxSelectionEffect = ({
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
   const { scope: selectedThreadScope } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateFamilySelector,
+    aiChatThreadMemberStateFamilySelector,
     selectedThreadId ?? '',
   );
   const isSelectedThreadInInbox =

@@ -1,4 +1,4 @@
-import { useExecuteInboxThreadStatusAction } from '@/inbox/hooks/useExecuteInboxThreadStatusAction';
+import { useExecuteAiChatThreadStatusAction } from '@/ai/hooks/useExecuteAiChatThreadStatusAction';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { type AgentChatInboxAction } from '~/generated-metadata/graphql';
@@ -11,11 +11,11 @@ export const InboxThreadInboxCommand = ({
   action,
 }: InboxThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const { executeInboxThreadStatusAction } =
-    useExecuteInboxThreadStatusAction();
+  const { executeAiChatThreadStatusAction } =
+    useExecuteAiChatThreadStatusAction();
 
   const handleExecute = () =>
-    executeInboxThreadStatusAction({
+    executeAiChatThreadStatusAction({
       threadIds: selectedRecords.map(({ id }) => id),
       action,
       isInChannel: selectedRecords.every(

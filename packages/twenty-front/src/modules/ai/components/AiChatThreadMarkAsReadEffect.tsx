@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { useUpdateInboxThreadStatus } from '@/inbox/hooks/useUpdateInboxThreadStatus';
+import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
 import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadOpenViewCountState } from '@/ai/states/aiChatThreadOpenViewCountState';
@@ -38,7 +38,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
     aiChatThreadParticipantsState,
   );
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
-  const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
+  const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
