@@ -495,7 +495,7 @@ describe('app connection OAuth callback', () => {
   });
 
   it('returns to where the flow started with a short message when the token exchange fails', async () => {
-    const redirectLocation = `/settings/accounts/applications/${provider.applicationId}#connections`;
+    const redirectLocation = `/settings/app-preferences/${provider.applicationId}#connections`;
 
     const redirect = await callback(
       await authorize({ redirectLocation }),
@@ -503,7 +503,7 @@ describe('app connection OAuth callback', () => {
     );
 
     expect(redirect.pathname).toBe(
-      `/settings/accounts/applications/${provider.applicationId}`,
+      `/settings/app-preferences/${provider.applicationId}`,
     );
     expect(redirect.hash).toBe('#connections');
     expect(redirect.searchParams.get('errorMessage')).toBe(
@@ -534,7 +534,7 @@ describe('app connection OAuth callback', () => {
     );
 
     it.each(['http://', '//'])(
-      'falls back to the accounts page when redirectLocation is the malformed %s',
+      'falls back to the app preferences page when redirectLocation is the malformed %s',
       async (redirectLocation) => {
         const fallbackRedirect = await requestAuthorization({
           providerName: UNKNOWN_PROVIDER_NAME,
@@ -545,7 +545,7 @@ describe('app connection OAuth callback', () => {
         });
 
         expect(redirect.origin).toBe(fallbackRedirect.origin);
-        expect(redirect.pathname).toBe('/settings/accounts');
+        expect(redirect.pathname).toBe('/settings/app-preferences');
         expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
       },
     );
@@ -589,7 +589,7 @@ describe('app connection OAuth callback', () => {
     expect(redirect.searchParams.get('errorMessage')).toContain(
       'invalid or expired',
     );
-    expect(redirect.pathname).toBe('/settings/accounts');
+    expect(redirect.pathname).toBe('/settings/app-preferences');
     expect(tokenExchanges).toEqual([]);
     expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
     expect(await readAccounts()).toEqual([]);

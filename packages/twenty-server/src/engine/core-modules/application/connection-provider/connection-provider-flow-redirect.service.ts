@@ -123,7 +123,7 @@ export class ConnectionProviderFlowRedirectService {
   }) {
     const { pathname, searchParams, hash } = this.parseRedirectLocation({
       redirectLocation,
-      fallbackPathname: getSettingsPath(SettingsPath.Accounts),
+      fallbackPathname: getSettingsPath(SettingsPath.AppPreferences),
     });
 
     return res.redirect(

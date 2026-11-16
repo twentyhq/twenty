@@ -1847,17 +1847,9 @@ msgstr "الوصول إلى بيانات مساحة العمل من عميل MCP
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
-#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "الحساب"
-
-#. js-lingui-id: 9o6rjW
-#: src/utils/title-utils.ts
-msgid "Account - Settings"
-msgstr "الحساب - الإعدادات"
 
 #. js-lingui-id: gW0DoU
 #: src/pages/settings/accounts/SettingsAccountsConfiguration.tsx
@@ -1882,14 +1874,7 @@ msgstr "إعدادات الحساب"
 
 #. js-lingui-id: bPwFdf
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
-#: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/pages/settings/accounts/SettingsNewAccount.tsx
-#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Accounts"
 msgstr "الحسابات"
 
@@ -2172,7 +2157,6 @@ msgstr "إضافة سير عمل"
 
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -3988,11 +3972,6 @@ msgstr "عملية التطبيق"
 msgid "App owner workspace"
 msgstr "مساحة عمل مالك التطبيق"
 
-#. js-lingui-id: MAyGac
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "App preferences"
-msgstr "تفضيلات التطبيق"
-
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "App URL"
@@ -5517,7 +5496,6 @@ msgstr "caldav.example.com"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
@@ -5528,11 +5506,6 @@ msgstr "تقويم"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
 msgstr "يتطلب الوصول إلى التقويم موافقة"
-
-#. js-lingui-id: xs1oZl
-#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
-msgid "Calendar accounts"
-msgstr "حسابات التقويم"
 
 #. js-lingui-id: DZrVwO
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -5602,13 +5575,6 @@ msgstr "عرض التقويم"
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar widget"
 msgstr "عنصر واجهة التقويم"
-
-#. js-lingui-id: EUpfsd
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
-#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
-msgid "Calendars"
-msgstr "التقاويم"
 
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -7240,11 +7206,6 @@ msgstr "تكوين وكلاء الذكاء الاصطناعي"
 msgid "Configure an SSO connection"
 msgstr "تهيئة اتصال SSO"
 
-#. js-lingui-id: QTNsSm
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-msgid "Configure and customize your calendar preferences."
-msgstr "قم بتهيئة وتخصيص تفضيلات التقويم الخاصة بك."
-
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure CalDAV settings to sync your calendar events."
@@ -7325,11 +7286,6 @@ msgstr "قم بتكوين الرسائل الإلكترونية التي يجب 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Configure what events should get synced"
 msgstr "اضبط الأحداث التي يجب مزامنتها"
-
-#. js-lingui-id: Bh4GBD
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-msgid "Configure your emails and calendar settings."
-msgstr "ضبط إعدادات بريدك الإلكتروني والتقويم."
 
 #. js-lingui-id: Hdg9b3
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -7517,11 +7473,6 @@ msgstr "اربط حساب {0} الخاص بك بهذا التطبيق ليستخ
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Connected"
 msgstr "متصل"
-
-#. js-lingui-id: 9TzudL
-#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
-msgid "Connected accounts"
-msgstr "الحسابات المتصلة"
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -11264,11 +11215,6 @@ msgstr "وإلا إذا"
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#. js-lingui-id: 6SIWKr
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-msgid "Email accounts"
-msgstr "حسابات البريد الإلكتروني"
-
 #. js-lingui-id: ATGYL1
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -11430,13 +11376,9 @@ msgstr "الرسائل الإلكترونية"
 
 #. js-lingui-id: BXEcos
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
@@ -18194,11 +18136,6 @@ msgstr "إدارة أعضاء مساحة العمل"
 msgid "Manage workspace preferences"
 msgstr "إدارة تفضيلات مساحة العمل"
 
-#. js-lingui-id: FyFNsd
-#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
-msgid "Manage your internet accounts."
-msgstr "إدارة حساباتك على الإنترنت."
-
 #. js-lingui-id: waFx9W
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Managed"
@@ -24655,11 +24592,6 @@ msgstr "إعادة ترتيب الحقل"
 msgid "Reorder options"
 msgstr "إعادة ترتيب الخيارات"
 
-#. js-lingui-id: Jtm0TT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
-msgstr "استبدل إعدادات الحسابات بتفضيلات التطبيق، المبنية حول الحسابات والتطبيقات التي تستخدمها."
-
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
@@ -26969,11 +26901,6 @@ msgstr "تعيين كافتراضي"
 msgid "Set as Primary"
 msgstr "تعيين كأساسي"
 
-#. js-lingui-id: V7fgiB
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-msgid "Set email visibility, manage your blocklist and more."
-msgstr "اضبط خصوصية البريد الإلكتروني، وإدارة قائمة الحظر والمزيد."
-
 #. js-lingui-id: qFjlHh
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
@@ -27078,7 +27005,6 @@ msgstr "جارٍ إعداد <0>قاعدة البيانات</0> الخاصة بك
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
-#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -32192,11 +32118,9 @@ msgstr "مفيد لجداول الربط/المحورية"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
