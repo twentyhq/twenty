@@ -2,6 +2,7 @@ import { createAppTarball } from 'test/integration/metadata/suites/application/u
 
 type RegistryVersionMetadata = {
   name: string | null;
+  version: string;
   dist: { tarball: string };
 };
 
@@ -43,6 +44,7 @@ export const buildNpmRegistryPackage = async ({
     tarballBuffer,
     metadata: {
       name: metadataName,
+      version,
       dist: { tarball: tarballUrl },
     },
   };

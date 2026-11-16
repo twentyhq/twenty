@@ -2759,6 +2759,27 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'URL of the signed app catalog published by Twenty Connect. When set, an npm app only installs in a version the catalog approves and whose tarball matches the approved sha512. Leave empty to skip the catalog check',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  APP_CATALOG_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Ed25519 public keys (base64url) trusted to sign the app catalog. A catalog signed by any other key is rejected',
+    type: ConfigVariableType.ARRAY,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  APP_CATALOG_PUBLIC_KEYS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,

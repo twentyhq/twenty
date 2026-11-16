@@ -15,6 +15,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
+import { AppCatalogService } from 'src/engine/core-modules/application/application-package/app-catalog.service';
+import { assertMatchingTarballIntegrity } from 'src/engine/core-modules/application/application-package/utils/assert-matching-tarball-integrity.util';
 import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
@@ -50,8 +52,20 @@ export type ResolvedPackage = {
 
 const registryVersionMetadataSchema = z.object({
   name: z.string(),
-  dist: z.object({ tarball: z.string().optional() }).optional(),
+  version: z.string(),
+  dist: z
+    .object({
+      tarball: z.string().optional(),
+      integrity: z.string().optional(),
+    })
+    .optional(),
 });
+
+type RegistryArtifact = {
+  tarballUrl: string;
+  version: string;
+  integrity?: string;
+};
 
 @Injectable()
 export class ApplicationPackageFetcherService implements OnModuleInit {
@@ -61,6 +75,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly appCatalogService: AppCatalogService,
     // Tarball lookup keyed by ApplicationRegistration id (catalog rows have null ownerWorkspaceId).
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
@@ -141,12 +156,14 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       assertValidNpmPackageName(packageName);
       assertValidNpmVersionSpec(version);
 
-      return await this.fetchRegistryTarballUrlOrThrow(
+      const registryArtifact = await this.fetchRegistryArtifactOrThrow(
         this.twentyConfigService.get('APP_REGISTRY_URL'),
         packageName,
         version,
         this.twentyConfigService.get('APP_REGISTRY_TOKEN'),
       );
+
+      return registryArtifact.tarballUrl;
     } catch (error) {
       if (!(error instanceof ApplicationException)) {
         throw error;
@@ -186,18 +203,28 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       assertValidNpmVersionSpec(versionSpec);
 
-      const tarballUrl = await this.fetchRegistryTarballUrlOrThrow(
+      const registryArtifact = await this.fetchRegistryArtifactOrThrow(
         registryUrl,
         sourcePackage,
         versionSpec,
         authToken,
       );
+      const tarballUrl = registryArtifact.tarballUrl;
+      const integrity =
+        (await this.appCatalogService.findRequiredIntegrity({
+          packageName: sourcePackage,
+          version: registryArtifact.version,
+        })) ?? registryArtifact.integrity;
 
       const tarballBuffer = await this.downloadTarball(
         tarballUrl,
         registryUrl,
         authToken,
       );
+
+      if (isDefined(integrity)) {
+        assertMatchingTarballIntegrity({ tarball: tarballBuffer, integrity });
+      }
 
       const tarballPath = join(workDir, 'package.tgz');
 
@@ -321,12 +348,12 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
-  private async fetchRegistryTarballUrlOrThrow(
+  private async fetchRegistryArtifactOrThrow(
     registryUrl: string,
     sourcePackage: string,
     versionSpec: string,
     authToken?: string,
-  ): Promise<string> {
+  ): Promise<RegistryArtifact> {
     const encodedName = encodeURIComponent(sourcePackage);
     const encodedVersionSpec = encodeURIComponent(versionSpec);
     const baseUrl = registryUrl.replace(/\/$/, '');
@@ -387,7 +414,11 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
     }
 
-    return tarballUrl;
+    return {
+      tarballUrl,
+      version: metadata.version,
+      integrity: metadata.dist?.integrity,
+    };
   }
 
   private async downloadTarball(
