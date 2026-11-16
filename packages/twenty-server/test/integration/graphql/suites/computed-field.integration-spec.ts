@@ -394,15 +394,6 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
-    it('PROBE plain relation arguments', async () => {
-      const [alphaProject] = await findProjects({
-        gqlFields: 'tasks(first: 1) { totalCount }',
-        filter: { id: { eq: ALPHA_PROJECT_ID } },
-      });
-
-      expect(alphaProject.tasks).toEqual({ totalCount: 3 });
-    });
-
     it('leaves the relation it derives from untouched', async () => {
       const [alphaProject] = await findProjects({
         gqlFields: 'tasks { totalCount }',
