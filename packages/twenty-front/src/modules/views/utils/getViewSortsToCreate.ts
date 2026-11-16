@@ -1,8 +1,8 @@
 import { type ViewSort } from '@/views/types/ViewSort';
-import { isSameViewSortTarget } from '@/views/utils/isSameViewSortTarget';
+import { isViewSortOnSameField } from '@/views/utils/isViewSortOnSameField';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
-// Mirrors getViewSortsToDelete, which keeps a saved sort with the same target
+// A sort on a saved sort's field updates it instead, see getViewSortsToUpdate
 export const getViewSortsToCreate = (
   currentViewSorts: ViewSort[],
   newViewSorts: ViewSort[],
@@ -14,7 +14,7 @@ export const getViewSortsToCreate = (
           compareStrictlyExceptForNullAndUndefined(
             currentViewSort.id,
             newViewSort.id,
-          ) || isSameViewSortTarget(currentViewSort, newViewSort),
+          ) || isViewSortOnSameField(currentViewSort, newViewSort),
       ),
   );
 };
