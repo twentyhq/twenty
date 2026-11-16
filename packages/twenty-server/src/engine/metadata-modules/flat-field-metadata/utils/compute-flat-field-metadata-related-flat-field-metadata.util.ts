@@ -17,19 +17,17 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   flatFieldMetadata: FlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadata[] => {
-  if (!hasInverseRelationField(flatFieldMetadata)) {
-    return [];
-  }
-
   if (
     isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
   ) {
-    return [
-      findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-        flatFieldMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ];
+    return hasInverseRelationField(flatFieldMetadata)
+      ? [
+          findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
+            flatFieldMetadata,
+            flatFieldMetadataMaps,
+          }),
+        ]
+      : [];
   }
 
   if (
