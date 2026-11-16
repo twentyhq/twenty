@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isComputedField } from 'twenty-shared/utils';
+import { hasInverseRelationField } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -17,8 +17,7 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   flatFieldMetadata: FlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadata[] => {
-  // A filtered relation borrows the inverse field of the relation it derives from
-  if (isComputedField(flatFieldMetadata)) {
+  if (!hasInverseRelationField(flatFieldMetadata)) {
     return [];
   }
 

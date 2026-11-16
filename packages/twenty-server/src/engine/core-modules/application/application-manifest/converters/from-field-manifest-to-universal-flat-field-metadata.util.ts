@@ -1,5 +1,10 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import {
+  hasInverseRelationField,
+  isComputedField,
+  isDefined,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   type RelationAndMorphRelationFieldMetadataType,
@@ -36,10 +41,9 @@ const getRelationTargetUniversalIdentifiers = (
     };
   }
 
-  // A filtered relation has no inverse field
+  // Only a computed relation reads through the inverse field of another relation
   const isMissingInverseField =
-    !fieldManifest.relationTargetFieldMetadataUniversalIdentifier &&
-    fieldManifest.computation?.kind !== 'FILTERED_RELATION';
+    !hasInverseRelationField(fieldManifest) && !isComputedField(fieldManifest);
 
   if (
     isMissingInverseField ||

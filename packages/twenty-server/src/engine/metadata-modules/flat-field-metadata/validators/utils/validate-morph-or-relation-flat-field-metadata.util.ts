@@ -100,7 +100,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   workspaceId,
   additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
-  // A filtered relation has no inverse field of its own: the relation it derives from is checked with its computation
+  // A computed relation is validated through its computation, which names the relation it reads through
   if (isComputedField(universalFlatFieldMetadataToValidate)) {
     return [];
   }

@@ -1,5 +1,5 @@
 import {
-  isComputedField,
+  hasInverseRelationField,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
@@ -72,7 +72,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
 
       if (
         isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-        !isComputedField(flatFieldMetadata) &&
+        hasInverseRelationField(flatFieldMetadata) &&
         flatFieldMetadata.relationTargetObjectMetadataId !==
           objectMetadataToDeleteId
       ) {
