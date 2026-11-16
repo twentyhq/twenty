@@ -6,7 +6,7 @@ import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/f
 import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
@@ -22,15 +22,11 @@ const findTimelineActivityTargetObjectMetadataIds = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Set<string> => {
   const timelineActivityFlatObjectMetadata =
-    findFlatEntityByUniversalIdentifier({
+    findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
       universalIdentifier:
         STANDARD_OBJECTS.timelineActivity.universalIdentifier,
     });
-
-  if (!isDefined(timelineActivityFlatObjectMetadata)) {
-    return new Set();
-  }
 
   return new Set(
     findManyFlatEntityByIdInFlatEntityMaps({
