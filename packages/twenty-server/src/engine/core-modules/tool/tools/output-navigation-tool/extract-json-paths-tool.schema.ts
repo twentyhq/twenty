@@ -11,7 +11,7 @@ export const ExtractJsonPathsInputZodSchema = z.object({
     .min(1)
     .max(20)
     .describe(
-      'JSONPath-lite expressions to extract in a single pass over the file, e.g. ["$.failedStepLogs["step-id"].entries[0:5]", "$.status"]. Each supports dot notation, bracket keys, array index, slicing [start:end] and a single-level wildcard [*]. Filters and recursive descent are not supported (use code_interpreter for those). All paths share the same maxItems and maxDepth, and each is resolved independently so one failing path does not discard the others.',
+      'JSONPath-lite expressions to extract in a single pass over the file, e.g. ["$.failedStepLogs["step-id"].entries[0:5]", "$.status"]. Each supports dot notation, bracket keys, array index, slicing [start:end] and a single-level wildcard [*]. A wildcard skips children that lack the rest of the path, so two wildcard paths may not line up by index. Filters and recursive descent are not supported (use code_interpreter for those). All paths share the same maxItems and maxDepth, and each is resolved independently so one failing path does not discard the others.',
     ),
   maxItems: z
     .number()
