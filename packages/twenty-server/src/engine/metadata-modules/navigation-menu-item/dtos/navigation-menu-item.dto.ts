@@ -69,6 +69,15 @@ export class NavigationMenuItemDTO {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  parentId?: string;
+
+  // TODO(@thomtrp): remove the deprecated folderId alias once API clients use parentId
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use parentId instead.',
+  })
   folderId?: string;
 
   @IsUUID()

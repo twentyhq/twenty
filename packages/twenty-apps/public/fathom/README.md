@@ -27,3 +27,8 @@ AI credits based on the model's token usage.
 - **Calendar links need one clear match.** A Call Recording is linked to a
   calendar event only when its meeting link and scheduled time point to exactly
   one event.
+- **New calls arrive once Fathom finishes the summary.** Calls without an
+  automatic Fathom summary, such as past Fathom's free-plan limit or very short
+  calls, don't sync on their own.
+- **Changes in Fathom don't flow back.** Editing, unsharing or deleting a call
+  in Fathom leaves the Twenty copy as it was.

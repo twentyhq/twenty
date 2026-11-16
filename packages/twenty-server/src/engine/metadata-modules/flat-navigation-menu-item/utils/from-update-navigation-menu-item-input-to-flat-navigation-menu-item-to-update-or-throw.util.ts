@@ -50,18 +50,18 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
       updatedAt: new Date().toISOString(),
     };
 
-    if (updates.folderId !== undefined) {
-      const { folderUniversalIdentifier } =
+    if (updates.parentId !== undefined) {
+      const { parentUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({
           metadataName: 'navigationMenuItem',
           foreignKeyValues: {
-            folderId: flatNavigationMenuItemToUpdate.folderId,
+            parentId: flatNavigationMenuItemToUpdate.parentId,
           },
           flatEntityMaps: { flatNavigationMenuItemMaps },
         });
 
-      flatNavigationMenuItemToUpdate.folderUniversalIdentifier =
-        folderUniversalIdentifier;
+      flatNavigationMenuItemToUpdate.parentUniversalIdentifier =
+        parentUniversalIdentifier;
     }
 
     if (updates.pageLayoutId !== undefined) {

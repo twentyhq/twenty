@@ -1210,7 +1210,7 @@ export default {
             "requestedIframeMediaPermissions": [
                 326
             ],
-            "runOnUserPreferences": [
+            "runHealthCheckOnUserPreferences": [
                 1
             ],
             "settingsCustomTabFrontComponentId": [
@@ -1825,9 +1825,6 @@ export default {
             ],
             "connectionProviders": [
                 62
-            ],
-            "hasUserHealthCheck": [
-                1
             ],
             "settingsMenuItems": [
                 520
@@ -4032,6 +4029,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [
@@ -10137,19 +10137,6 @@ export default {
                     ]
                 }
             ],
-            "upgradeApplication": [
-                1,
-                {
-                    "appRegistrationId": [
-                        4,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        4,
-                        "String!"
-                    ]
-                }
-            ],
             "uploadAppTarball": [
                 86,
                 {
@@ -10394,6 +10381,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [
@@ -14870,6 +14860,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [

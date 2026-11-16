@@ -96,6 +96,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       installedApplications {
+        runHealthCheckOnUserPreferences
         id
         name
         description

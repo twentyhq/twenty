@@ -1,9 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import { applyLayoutToRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/applyLayoutToRecordTableWidgetViewSnapshot';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
-import { getRecordTableWidgetViewSnapshotWithLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewSnapshotWithLayout';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -83,7 +83,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
     defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
   }) => {
     setWidgetViewDraft((widgetViewDraft) =>
-      getRecordTableWidgetViewSnapshotWithLayout({
+      applyLayoutToRecordTableWidgetViewSnapshot({
         widgetViewSnapshot: widgetViewDraft,
         targetViewType,
         defaultGroupByFieldMetadataItem,

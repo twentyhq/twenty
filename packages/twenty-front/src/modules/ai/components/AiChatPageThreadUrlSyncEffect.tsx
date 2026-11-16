@@ -7,13 +7,10 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadP
 import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
 import { useSwitchAiChatThreadWithDraft } from '@/ai/hooks/useSwitchAiChatThreadWithDraft';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
-import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatPageThreadUrlSyncEffect = () => {
@@ -28,11 +25,8 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const currentAiChatThreadData = useAtomStateValue(
     currentAiChatThreadDataSelector,
   );
-  const areAiChatThreadsLoaded = isDefined(
-    useAtomFamilyStateValue(
-      inboxThreadListFamilyState,
-      getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
-    ),
+  const hasInitializedAiChatThreads = useAtomStateValue(
+    hasInitializedAiChatThreadsState,
   );
   const { switchThreadWithDraft } = useSwitchAiChatThreadWithDraft();
   const { loadAiChatThread } = useLoadAiChatThread();
@@ -54,7 +48,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       return;
     }
 
-    if (areAiChatThreadsLoaded && !isDefined(currentAiChatThreadData)) {
+    if (hasInitializedAiChatThreads && !isDefined(currentAiChatThreadData)) {
       let isCurrentThread = true;
 
       void loadAiChatThread(selectedThreadId).then((chatThread) => {
@@ -74,7 +68,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
     isNewThreadRoute,
     currentAiChatThread,
     currentAiChatThreadData,
-    areAiChatThreadsLoaded,
+    hasInitializedAiChatThreads,
     loadAiChatThread,
     switchThreadWithDraft,
     switchToNewChat,

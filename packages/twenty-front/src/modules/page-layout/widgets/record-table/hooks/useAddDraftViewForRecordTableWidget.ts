@@ -6,7 +6,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
 import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutDefaultFields';
-import { getRecordTableWidgetViewSnapshotWithLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewSnapshotWithLayout';
+import { applyLayoutToRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/applyLayoutToRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -46,7 +46,7 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
       objectMetadataItem: EnrichedObjectMetadataItem;
       targetViewType?: RecordTableWidgetLayoutViewType;
     }) => {
-      const snapshot = getRecordTableWidgetViewSnapshotWithLayout({
+      const snapshot = applyLayoutToRecordTableWidgetViewSnapshot({
         widgetViewSnapshot:
           buildRecordTableWidgetViewSnapshot(objectMetadataItem),
         targetViewType,

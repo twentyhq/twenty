@@ -20,6 +20,8 @@ export function PartnerTestimonials() {
     <SectionShell
       background={<NotchedCardShape cardScheme="dark" />}
       fullBleedBackground
+      // Without it, a light section above collapses the top padding and the notch cuts the eyebrow.
+      keepsTopRhythm
       rhythm="spacious"
       scheme="light"
     >

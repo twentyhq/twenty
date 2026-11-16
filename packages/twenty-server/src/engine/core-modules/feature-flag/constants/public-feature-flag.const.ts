@@ -14,6 +14,15 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
+    key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    metadata: {
+      label: 'Inbox',
+      description:
+        'Share AI chat threads with teammates and triage them from a shared inbox',
+      icon: 'IconInbox',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
       label: 'New REST Metadata API Format',

@@ -15,6 +15,7 @@ export function buildPartnerApplicationRequestBody(
     twentyExperience: state.twentyExperience,
     twentyExperienceNotes: state.twentyExperienceNotes.trim(),
     twentyExperienceProofLink: state.twentyExperienceProofLink.trim(),
+    acceptsTerms: state.acceptsTerms,
   };
 
   if (state.linkedin.trim()) body.linkedin = state.linkedin.trim();
