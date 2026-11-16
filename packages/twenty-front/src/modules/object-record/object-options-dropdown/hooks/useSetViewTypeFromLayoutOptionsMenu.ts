@@ -27,7 +27,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { loadRecordIndexStates } = useLoadRecordIndexStates();
+  const { loadRecordIndexStates, syncRecordIndexViewFields } =
+    useLoadRecordIndexStates();
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
@@ -83,6 +84,10 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
           setRecordIndexViewType(viewType);
           await updateCurrentView(updateCurrentViewParams);
+          syncRecordIndexViewFields(
+            { ...currentView, type: viewType },
+            objectMetadataItem,
+          );
           return;
         }
         case ViewType.TABLE:
@@ -93,6 +98,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
+          // Extra columns depend on the view type, and nothing else reloads the fields on this switch
+          syncRecordIndexViewFields(
+            { ...currentView, type: viewType },
+            objectMetadataItem,
+          );
           return;
         }
         case ViewType.CALENDAR: {
@@ -144,6 +154,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       updateCurrentView,
       availableFieldsForCalendar,
       loadRecordIndexStates,
+      syncRecordIndexViewFields,
       objectMetadataItem,
       contextStoreInstanceId,
     ],
