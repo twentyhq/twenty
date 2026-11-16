@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isComputedField, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -65,10 +66,76 @@ export class ProcessNestedRelationsHelper {
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
+    await this.loadMissingComputedFields(args);
     await this.processNestedRelationsWithLimiter(
       args,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
+  }
+
+  // A write returns stored columns only, so the computed fields its response selects are read afterwards
+  private async loadMissingComputedFields<
+    T extends ObjectRecord = ObjectRecord,
+  >({
+    flatFieldMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    selectedFields,
+    repository,
+    useReplica = false,
+  }: ProcessNestedRelationsArgs<T>): Promise<void> {
+    const selectedComputedFieldNames = getFlatFieldsFromFlatObjectMetadata(
+      parentObjectMetadataItem,
+      flatFieldMetadataMaps,
+    )
+      .filter(
+        (flatFieldMetadata) =>
+          isComputedField(flatFieldMetadata) &&
+          selectedFields[flatFieldMetadata.name] === true,
+      )
+      .map(({ name }) => name);
+
+    const recordsMissingComputedFields = parentObjectRecords.filter((record) =>
+      selectedComputedFieldNames.some(
+        (computedFieldName) => record[computedFieldName] === undefined,
+      ),
+    );
+
+    if (recordsMissingComputedFields.length === 0) {
+      return;
+    }
+
+    const { nameSingular } = parentObjectMetadataItem;
+    const parentObjectRepository =
+      repository ??
+      this.workspaceOrmManager.getRepository(nameSingular, { useReplica });
+
+    const computedRecords = await parentObjectRepository
+      .createQueryBuilder(nameSingular)
+      .setFindOptions({
+        select: Object.fromEntries(
+          ['id', ...selectedComputedFieldNames].map((columnName) => [
+            columnName,
+            true,
+          ]),
+        ),
+      })
+      .where(`"${nameSingular}"."id" IN (:...recordIds)`, {
+        recordIds: recordsMissingComputedFields.map(({ id }) => id),
+      })
+      .withDeleted()
+      .getMany<ObjectRecord>();
+
+    const computedRecordById = new Map(
+      computedRecords.map((computedRecord) => [
+        computedRecord.id,
+        computedRecord,
+      ]),
+    );
+
+    for (const record of recordsMissingComputedFields) {
+      Object.assign(record, computedRecordById.get(record.id));
+    }
   }
 
   private async processNestedRelationsWithLimiter<
