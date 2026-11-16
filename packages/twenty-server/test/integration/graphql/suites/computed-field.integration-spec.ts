@@ -1088,7 +1088,7 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
-    it('follows a rename while the feature flag is off, but refuses a new expression', async () => {
+    it('follows a rename and takes a new expression while the feature flag is off, but refuses a new computed field', async () => {
       const {
         data: {
           createOneField: { id: discountFieldId },
@@ -1139,14 +1139,26 @@ describe('Computed fields (e2e)', () => {
           'rebate',
         ]);
 
-        const { errors } = await updateOneFieldMetadata({
-          expectToFail: true,
+        await updateOneFieldMetadata({
+          expectToFail: false,
           input: {
             idToUpdate: discountedBudgetFieldId,
             updatePayload: {
               computation: { kind: 'FORMULA', expression: 'budget - 1' },
             },
           },
+        });
+
+        expect((await findComputation(discountedBudget)).expression).toBe(
+          'budget - 1',
+        );
+
+        const { errors } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name: 'halfBudget',
+          type: FieldMetadataType.NUMBER,
+          computation: { kind: 'FORMULA', expression: 'budget / 2' },
+          expectToFail: true,
         });
 
         expect(JSON.stringify(errors)).toContain(
