@@ -48,9 +48,17 @@ vi.mock(
 const setRestResponses = ({
   unlinkedTeamsUsers = [],
   workspaceMembers = [],
+  hasAutoMatchFailed = false,
+  matchResult = {
+    success: true,
+    message: 'Matched 1 Teams user by email.',
+    failedCount: 0,
+  },
 }: {
   unlinkedTeamsUsers?: TeamsUserSearchOption[];
   workspaceMembers?: WorkspaceMemberFixture[];
+  hasAutoMatchFailed?: boolean;
+  matchResult?: Record<string, unknown>;
 } = {}) => {
   restGetMock.mockImplementation((path: string) => {
     if (path === '/rest/teamsUserLinks') {
@@ -70,7 +78,12 @@ const setRestResponses = ({
         success: true,
         teamsUsers: unlinkedTeamsUsers,
         hasMore: false,
+        hasAutoMatchFailed,
       });
+    }
+
+    if (path === '/s/teams-user-links/match') {
+      return Promise.resolve(matchResult);
     }
 
     if (path === '/s/teams-user-links/set') {
@@ -174,6 +187,65 @@ describe('TeamsUserLinksSettings', () => {
     expect(enqueueSnackbarMock).toHaveBeenCalledWith({
       message: 'Linked',
       variant: 'success',
+    });
+  });
+
+  it('runs the email auto-link from the settings and shows its summary', async () => {
+    render(<TeamsUserLinksSettings />);
+
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole('button', { name: 'Auto-link by email' }),
+    );
+
+    expect(
+      await screen.findByText('Matched 1 Teams user by email.'),
+    ).toBeTruthy();
+    expect(
+      restPostMock.mock.calls.filter(
+        (call) => call[0] === '/s/teams-user-links/match',
+      ),
+    ).toHaveLength(1);
+    expect(
+      restPostMock.mock.calls.filter(
+        (call) => call[0] === '/s/teams-user-links/unlinked',
+      ).length,
+    ).toBeGreaterThan(1);
+    expect(screen.queryByText('Email auto-link did not finish')).toBeNull();
+  });
+
+  it('warns when the last auto-link run did not finish', async () => {
+    setRestResponses({ hasAutoMatchFailed: true });
+
+    render(<TeamsUserLinksSettings />);
+
+    expect(
+      await screen.findByText('Email auto-link did not finish'),
+    ).toBeTruthy();
+  });
+
+  it('reports a failed auto-link run as an error', async () => {
+    setRestResponses({
+      matchResult: {
+        success: false,
+        message: 'Could not match Teams users',
+        error: 'Microsoft Graph request failed (403)',
+      },
+    });
+
+    render(<TeamsUserLinksSettings />);
+
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole('button', { name: 'Auto-link by email' }),
+    );
+
+    expect(
+      await screen.findByText('Email auto-link did not finish'),
+    ).toBeTruthy();
+    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
+      message: 'Microsoft Graph request failed (403)',
+      variant: 'error',
     });
   });
 });
