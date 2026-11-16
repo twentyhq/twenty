@@ -14,11 +14,11 @@ const RUN = {
 };
 
 describe('workflowRunSchema', () => {
-  it('should load a run that has no legacy workflow version link', () => {
+  it('should load a run without workflowVersionId', () => {
     expect(workflowRunSchema.safeParse(RUN).success).toBe(true);
   });
 
-  it('should still load a run that has a legacy workflow version link', () => {
+  it('should load a run with workflowVersionId', () => {
     expect(
       workflowRunSchema.safeParse({
         ...RUN,
