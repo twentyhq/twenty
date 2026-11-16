@@ -17,7 +17,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -106,7 +106,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
         applicationId: mcpServer.applicationId,
         providerName: connectionProvider.name,
         transientToken,
-        ...(reconnectingConnectedAccountId && {
+        ...(isDefined(reconnectingConnectedAccountId) && {
           reconnectingConnectedAccountId,
         }),
       });
