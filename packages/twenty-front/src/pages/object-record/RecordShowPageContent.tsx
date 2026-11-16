@@ -13,6 +13,7 @@ export type RecordShowPageParameters = {
 export const RecordShowPageContent = ({
   parameters,
   headerActions,
+  headerTitle,
   headerTitlePrefix,
   headerTitleAccessory,
   headerTitleMode,
@@ -20,6 +21,7 @@ export const RecordShowPageContent = ({
 }: {
   parameters: RecordShowPageParameters;
   headerActions?: ReactNode;
+  headerTitle?: ReactNode;
   headerTitlePrefix?: ReactNode;
   headerTitleAccessory?: ReactNode;
   headerTitleMode?: RecordShowPageHeaderTitleMode;
@@ -43,6 +45,7 @@ export const RecordShowPageContent = ({
       loading={loading}
       error={error}
       headerActions={headerActions}
+      headerTitle={headerTitle}
       headerTitlePrefix={headerTitlePrefix}
       headerTitleAccessory={headerTitleAccessory}
       headerTitleMode={headerTitleMode}

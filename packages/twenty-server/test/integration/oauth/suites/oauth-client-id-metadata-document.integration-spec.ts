@@ -29,7 +29,17 @@ const NATIVE_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
   logoUri: null,
   redirectUris: ['http://localhost/callback', 'http://127.0.0.1/callback'],
 };
-const DOCUMENTS = [WEB_CLIENT_DOCUMENT, NATIVE_CLIENT_DOCUMENT];
+const VERIFIED_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://chatgpt.com/oauth/client.json',
+  clientName: 'ChatGPT',
+  logoUri: null,
+  redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
+};
+const DOCUMENTS = [
+  WEB_CLIENT_DOCUMENT,
+  NATIVE_CLIENT_DOCUMENT,
+  VERIFIED_CLIENT_DOCUMENT,
+];
 const DOCUMENT_CLIENT_IDS = DOCUMENTS.map(({ clientId }) => clientId);
 const WEB_CLIENT_CALLBACK = WEB_CLIENT_DOCUMENT.redirectUris[0];
 
@@ -38,11 +48,13 @@ const authorizeAppMutation = gql`
     $clientId: String!
     $redirectUrl: String!
     $codeChallenge: String
+    $resource: String
   ) {
     authorizeApp(
       clientId: $clientId
       redirectUrl: $redirectUrl
       codeChallenge: $codeChallenge
+      resource: $resource
     ) {
       redirectUrl
     }
@@ -55,6 +67,16 @@ const findApplicationRegistrationByClientIdQuery = gql`
       name
       logoUrl
       oAuthScopes
+    }
+  }
+`;
+
+const findClientVerificationQuery = gql`
+  query FindClientVerification($clientId: String!) {
+    findApplicationRegistrationByClientId(clientId: $clientId) {
+      name
+      isVerified
+      isClaimingVerifiedClientName
     }
   }
 `;
@@ -98,14 +120,16 @@ describe('OAuth client ID metadata documents (integration)', () => {
   const requestAuthorization = ({
     clientId,
     redirectUrl,
+    resource,
   }: {
     clientId: string;
     redirectUrl: string;
+    resource?: string;
   }) =>
     makeMetadataApiRequest(
       {
         query: authorizeAppMutation,
-        variables: { clientId, redirectUrl, codeChallenge },
+        variables: { clientId, redirectUrl, codeChallenge, resource },
       },
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
@@ -202,6 +226,30 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
     });
 
+    it('should verify a client only when its document URL is on the verified list', async () => {
+      const lookUpVerification = async (clientId: string) => {
+        const response = await makeMetadataApiRequest(
+          { query: findClientVerificationQuery, variables: { clientId } },
+          null,
+        );
+
+        return response.body.data.findApplicationRegistrationByClientId;
+      };
+
+      expect(
+        await lookUpVerification(VERIFIED_CLIENT_DOCUMENT.clientId),
+      ).toEqual({
+        name: 'ChatGPT',
+        isVerified: true,
+        isClaimingVerifiedClientName: false,
+      });
+      expect(await lookUpVerification(WEB_CLIENT_DOCUMENT.clientId)).toEqual({
+        name: 'ChatGPT',
+        isVerified: false,
+        isClaimingVerifiedClientName: true,
+      });
+    });
+
     it('should authorize, exchange and refresh with the document URL as client id', async () => {
       const firstAuthorization = await requestAuthorization({
         clientId: WEB_CLIENT_DOCUMENT.clientId,
@@ -243,6 +291,17 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(response.body.errors?.[0]?.message).toContain(
         'redirectUrl mismatch',
       );
+      expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
+    });
+
+    it('should refuse a resource this server does not serve, without registering the client', async () => {
+      const response = await requestAuthorization({
+        clientId: NATIVE_CLIENT_DOCUMENT.clientId,
+        redirectUrl: 'http://localhost:53124/callback',
+        resource: 'https://mcp.attacker.example.com/mcp',
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain('Unknown resource');
       expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
     });
 

@@ -126,6 +126,7 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
         },
         flatObjectMetadataMaps,
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       },
     },
     workspaceMembers: [],

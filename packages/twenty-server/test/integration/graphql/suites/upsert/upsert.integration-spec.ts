@@ -230,7 +230,7 @@ describe('upsert (createMany with upsert:true)', () => {
     );
   });
 
-  it('should restore a soft-deleted record matched on its unique fields only', async () => {
+  it('should create a new record rather than restore a soft-deleted record matched on its unique fields only', async () => {
     const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
@@ -269,9 +269,58 @@ describe('upsert (createMany with upsert:true)', () => {
 
     const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(upsertedRecord.id).toEqual(createdRecord.id);
+    expect(upsertedRecord.id).not.toEqual(createdRecord.id);
     expect(upsertedRecord.deletedAt).toBeNull();
-    expect(upsertedRecord.name).toEqual('originalRecord');
+    expect(upsertedRecord.name).not.toEqual('originalRecord');
+  });
+
+  it('should update the live record rather than restore a soft-deleted record holding the same unique fields', async () => {
+    const uniqueFields = {
+      firstUniqueTestField: 'reusedAfterDeletion',
+      secondUniqueTestField: 'reusedAfterDeletionSecond',
+    };
+
+    const deletedRecordResponse = await makeGraphqlApiRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [{ ...uniqueFields, name: 'deletedRecord' }],
+        upsert: false,
+      },
+    });
+    const deletedRecord =
+      deletedRecordResponse.body.data.createTestRecordObjects[0];
+
+    await makeGraphqlApiRequest({
+      query: deleteRecordsQuery,
+      variables: { filter: { id: { eq: deletedRecord.id } } },
+    });
+
+    const liveRecordResponse = await makeGraphqlApiRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [{ ...uniqueFields, name: 'liveRecord' }],
+        upsert: false,
+      },
+    });
+    const liveRecord = liveRecordResponse.body.data.createTestRecordObjects[0];
+
+    const upsertResponse = await makeGraphqlApiRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [{ ...uniqueFields, name: 'updatedLiveRecord' }],
+        upsert: true,
+      },
+    });
+
+    expect(liveRecord.id).not.toEqual(deletedRecord.id);
+    expect(upsertResponse.body.data.createTestRecordObjects).toEqual([
+      {
+        ...uniqueFields,
+        id: liveRecord.id,
+        name: 'updatedLiveRecord',
+        deletedAt: null,
+      },
+    ]);
   });
 
   it('should update and restore updated soft-deleted record', async () => {

@@ -49,6 +49,17 @@ jest.mock(
   () => ({ EmailThreadWidgetContent: () => <div>Email thread</div> }),
 );
 
+jest.mock(
+  '@/page-layout/widgets/email-thread/components/MessageThreadMarkAsReadEffect',
+  () => ({
+    MessageThreadMarkAsReadEffect: ({
+      messageThreadId,
+    }: {
+      messageThreadId: string;
+    }) => <div>Marks {messageThreadId} as read</div>,
+  }),
+);
+
 const renderWidget = () =>
   render(
     <I18nProvider i18n={i18n}>
@@ -92,6 +103,20 @@ describe('MessageThreadWidget', () => {
     renderWidget();
 
     expect(screen.getByText('Chat thread')).toBeInTheDocument();
+  });
+
+  it('marks the thread as read from both the chat and the email layouts', () => {
+    mockChannel(MessageChannelType.APP);
+    const { unmount } = renderWidget();
+
+    expect(screen.getByText('Marks thread-id as read')).toBeInTheDocument();
+
+    unmount();
+    mockChannel(MessageChannelType.EMAIL);
+    renderWidget();
+
+    expect(screen.getByText('Email thread')).toBeInTheDocument();
+    expect(screen.getByText('Marks thread-id as read')).toBeInTheDocument();
   });
 
   it('subscribes to new messages of the thread', () => {

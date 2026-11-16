@@ -1,0 +1,398 @@
+import gql from 'graphql-tag';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+
+const GET_TIMELINE_THREADS = gql`
+  query GetTimelineThreadsFromObjectRecord(
+    $objectNameSingular: String!
+    $recordId: UUID!
+    $page: Int!
+    $pageSize: Int!
+    $channel: TimelineThreadChannelFilterInput
+  ) {
+    getTimelineThreadsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      page: $page
+      pageSize: $pageSize
+      channel: $channel
+    ) {
+      totalNumberOfThreads
+      timelineThreads {
+        id
+        channel {
+          type
+          provider
+          applicationId
+        }
+      }
+    }
+  }
+`;
+
+const GET_TIMELINE_THREAD_CHANNELS = gql`
+  query GetTimelineThreadChannelsFromObjectRecord(
+    $objectNameSingular: String!
+    $recordId: UUID!
+  ) {
+    getTimelineThreadChannelsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+    ) {
+      type
+      provider
+      applicationId
+    }
+  }
+`;
+
+const COMPANY_ID = '20202020-c4a1-4000-8000-000000000001';
+const SYNCED_THREAD_ID = '20202020-c4a1-4000-8000-000000000002';
+const SYNCED_MESSAGE_ID = '20202020-c4a1-4000-8000-000000000003';
+const SYNCED_THREAD_TARGET_ID = '20202020-c4a1-4000-8000-000000000004';
+const SYNCED_ASSOCIATION_ID = '20202020-c4a1-4000-8000-000000000005';
+const MANUAL_THREAD_ID = '20202020-c4a1-4000-8000-000000000006';
+const MANUAL_MESSAGE_ID = '20202020-c4a1-4000-8000-000000000007';
+const MANUAL_THREAD_TARGET_ID = '20202020-c4a1-4000-8000-000000000008';
+const SYNCED_PARTICIPANT_ID = '20202020-c4a1-4000-8000-000000000009';
+const SYNCED_REPLY_MESSAGE_ID = '20202020-c4a1-4000-8000-00000000000b';
+const SYNCED_REPLY_ASSOCIATION_ID = '20202020-c4a1-4000-8000-00000000000c';
+const MANUAL_PARTICIPANT_ID = '20202020-c4a1-4000-8000-00000000000a';
+
+const FIXTURES: { objectMetadataSingularName: string; id: string }[] = [
+  {
+    objectMetadataSingularName: 'messageParticipant',
+    id: SYNCED_PARTICIPANT_ID,
+  },
+  {
+    objectMetadataSingularName: 'messageParticipant',
+    id: MANUAL_PARTICIPANT_ID,
+  },
+  {
+    objectMetadataSingularName: 'messageThreadTarget',
+    id: SYNCED_THREAD_TARGET_ID,
+  },
+  {
+    objectMetadataSingularName: 'messageThreadTarget',
+    id: MANUAL_THREAD_TARGET_ID,
+  },
+  { objectMetadataSingularName: 'message', id: SYNCED_MESSAGE_ID },
+  { objectMetadataSingularName: 'message', id: SYNCED_REPLY_MESSAGE_ID },
+  { objectMetadataSingularName: 'message', id: MANUAL_MESSAGE_ID },
+  { objectMetadataSingularName: 'messageThread', id: SYNCED_THREAD_ID },
+  { objectMetadataSingularName: 'messageThread', id: MANUAL_THREAD_ID },
+  { objectMetadataSingularName: 'company', id: COMPANY_ID },
+];
+
+const GOOGLE_EMAIL_CHANNEL = {
+  type: 'EMAIL',
+  provider: 'google',
+  applicationId: null,
+};
+
+const createRecord = async ({
+  objectMetadataSingularName,
+  data,
+}: {
+  objectMetadataSingularName: string;
+  data: object;
+}) => {
+  const response = await makeGraphqlApiRequest(
+    createOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      data,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+};
+
+const requestChannels = (token?: string) =>
+  makeGraphqlApiRequest(
+    {
+      query: GET_TIMELINE_THREAD_CHANNELS,
+      variables: { objectNameSingular: 'company', recordId: COMPANY_ID },
+    },
+    token,
+  );
+
+const assignRoleToPhil = (roleId: string) =>
+  updateWorkspaceMemberRole({
+    expectToFail: false,
+    input: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL, roleId },
+  });
+
+const requestChannelsAsPhilWithoutReadAccessTo = async (
+  objectNameSingular: string,
+) => {
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
+    input: { filter: {}, paging: { first: 1000 } },
+    gqlFields: 'id nameSingular',
+  });
+  const objectMetadataId = objects.find(
+    (objectMetadata) => objectMetadata.nameSingular === objectNameSingular,
+  )?.id;
+
+  jestExpectToBeDefined(objectMetadataId);
+  const guestRoleId = (await findOneRoleByLabel({ label: 'Guest' })).id;
+  const { data } = await createOneRole({
+    expectToFail: false,
+    input: {
+      label: `Timeline channels without ${objectNameSingular} read`,
+      canUpdateAllSettings: false,
+      canAccessAllTools: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+    },
+  });
+  const restrictedRoleId = data.createOneRole.id;
+
+  try {
+    await upsertObjectPermissions({
+      expectToFail: false,
+      input: {
+        roleId: restrictedRoleId,
+        objectPermissions: [
+          {
+            objectMetadataId,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        ],
+      },
+    });
+    await assignRoleToPhil(restrictedRoleId);
+
+    return await requestChannels(APPLE_PHIL_GUEST_ACCESS_TOKEN);
+  } finally {
+    try {
+      await assignRoleToPhil(guestRoleId);
+    } finally {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: restrictedRoleId },
+      });
+    }
+  }
+};
+
+const requestThreads = ({
+  channel,
+  page = 1,
+  pageSize = 1,
+}: {
+  channel?: object;
+  page?: number;
+  pageSize?: number;
+}) =>
+  makeGraphqlApiRequest({
+    query: GET_TIMELINE_THREADS,
+    variables: {
+      objectNameSingular: 'company',
+      recordId: COMPANY_ID,
+      page,
+      pageSize,
+      channel,
+    },
+  });
+
+describe('timeline thread channel filter (integration)', () => {
+  beforeAll(async () => {
+    await createRecord({
+      objectMetadataSingularName: 'company',
+      data: {
+        id: COMPANY_ID,
+        name: 'Channel Filter Co',
+      },
+    });
+
+    for (const [threadId, messageId, targetId, participantId, receivedAt] of [
+      [
+        SYNCED_THREAD_ID,
+        SYNCED_MESSAGE_ID,
+        SYNCED_THREAD_TARGET_ID,
+        SYNCED_PARTICIPANT_ID,
+        0,
+      ],
+      [
+        MANUAL_THREAD_ID,
+        MANUAL_MESSAGE_ID,
+        MANUAL_THREAD_TARGET_ID,
+        MANUAL_PARTICIPANT_ID,
+        60_000,
+      ],
+    ] as const) {
+      await createRecord({
+        objectMetadataSingularName: 'messageThread',
+        data: { id: threadId },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'message',
+        data: {
+          id: messageId,
+          messageThreadId: threadId,
+          subject: 'Channel filter thread',
+          text: 'Channel filter body',
+          receivedAt: new Date(Date.now() + receivedAt).toISOString(),
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        data: {
+          id: participantId,
+          messageId,
+          role: 'FROM',
+          handle: 'channel.filter@example.com',
+          displayName: 'Channel Filter',
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'messageThreadTarget',
+        data: {
+          id: targetId,
+          messageThreadId: threadId,
+          targetCompanyId: COMPANY_ID,
+        },
+      });
+    }
+
+    await createRecord({
+      objectMetadataSingularName: 'message',
+      data: {
+        id: SYNCED_REPLY_MESSAGE_ID,
+        messageThreadId: SYNCED_THREAD_ID,
+        subject: 'Channel filter thread',
+        text: 'Channel filter reply',
+        receivedAt: new Date(Date.now() + 120_000).toISOString(),
+      },
+    });
+
+    for (const [associationId, messageId] of [
+      [SYNCED_ASSOCIATION_ID, SYNCED_MESSAGE_ID],
+      [SYNCED_REPLY_ASSOCIATION_ID, SYNCED_REPLY_MESSAGE_ID],
+    ]) {
+      await globalThis.testDataSource.query(
+        `INSERT INTO "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation"
+          (id, "messageId", "messageThreadId", "messageChannelId", "messageExternalId")
+          VALUES ($1, $2, $3, $4, $5)`,
+        [
+          associationId,
+          messageId,
+          SYNCED_THREAD_ID,
+          MESSAGE_CHANNEL_DATA_SEED_IDS.TIM,
+          `channel-filter-external-id-${messageId}`,
+        ],
+      );
+    }
+  });
+
+  afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation" WHERE id = ANY($1)`,
+      [[SYNCED_ASSOCIATION_ID, SYNCED_REPLY_ASSOCIATION_ID]],
+    );
+
+    for (const { objectMetadataSingularName, id } of FIXTURES) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName,
+          gqlFields: 'id',
+          recordId: id,
+        }),
+      );
+    }
+  });
+
+  it('lists only the channels the record conversations use', async () => {
+    const response = await requestChannels();
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.getTimelineThreadChannelsFromObjectRecord,
+    ).toEqual([GOOGLE_EMAIL_CHANNEL]);
+  });
+
+  it('keeps every conversation without a channel filter', async () => {
+    const response = await requestThreads({ pageSize: 10 });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.getTimelineThreadsFromObjectRecord
+        .totalNumberOfThreads,
+    ).toBe(2);
+  });
+
+  it('counts and pages only the conversations of the selected channel', async () => {
+    const response = await requestThreads({ channel: GOOGLE_EMAIL_CHANNEL });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { totalNumberOfThreads, timelineThreads } =
+      response.body.data.getTimelineThreadsFromObjectRecord;
+
+    expect(totalNumberOfThreads).toBe(1);
+    expect(timelineThreads).toEqual([
+      { id: SYNCED_THREAD_ID, channel: GOOGLE_EMAIL_CHANNEL },
+    ]);
+
+    const nextPageResponse = await requestThreads({
+      channel: GOOGLE_EMAIL_CHANNEL,
+      page: 2,
+    });
+
+    expect(
+      nextPageResponse.body.data.getTimelineThreadsFromObjectRecord
+        .timelineThreads,
+    ).toEqual([]);
+  });
+
+  it('returns nothing for a channel no conversation uses', async () => {
+    const response = await requestThreads({
+      channel: {
+        type: 'EMAIL',
+        provider: 'microsoft',
+        applicationId: null,
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.getTimelineThreadsFromObjectRecord).toEqual({
+      totalNumberOfThreads: 0,
+      timelineThreads: [],
+    });
+  });
+
+  it.each(['company', 'messageThread'])(
+    'lists no channel to a member who cannot read %s records',
+    async (objectNameSingular) => {
+      const response =
+        await requestChannelsAsPhilWithoutReadAccessTo(objectNameSingular);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.getTimelineThreadChannelsFromObjectRecord,
+      ).toEqual([]);
+    },
+  );
+});

@@ -111,8 +111,32 @@ export class ApplicationAuthorizationService {
     return await this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')
       .innerJoinAndSelect('applicationAuthorization.application', 'application')
+      .leftJoinAndSelect(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
       .where('applicationAuthorization.userId = :userId', { userId })
       .andWhere('applicationAuthorization.workspaceId = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('applicationAuthorization.revokedAt IS NULL')
+      .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
+      .getMany();
+  }
+
+  async findActiveAuthorizationsForWorkspace({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<ApplicationAuthorizationEntity[]> {
+    return await this.applicationAuthorizationRepository
+      .createQueryBuilder('applicationAuthorization')
+      .innerJoinAndSelect('applicationAuthorization.application', 'application')
+      .leftJoinAndSelect(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .where('applicationAuthorization.workspaceId = :workspaceId', {
         workspaceId,
       })
       .andWhere('applicationAuthorization.revokedAt IS NULL')
@@ -144,6 +168,16 @@ export class ApplicationAuthorizationService {
     });
   }
 
+  async revokeAuthorizationByIdForWorkspace({
+    authorizationId,
+    workspaceId,
+  }: {
+    authorizationId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return await this.revokeMatching({ id: authorizationId, workspaceId });
+  }
+
   async revokeAuthorizationForApplication({
     userId,
     applicationId,
@@ -158,6 +192,7 @@ export class ApplicationAuthorizationService {
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }
+      | { id: string; workspaceId: string }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(

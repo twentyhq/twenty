@@ -18,6 +18,7 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
 import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { ReadFileTool } from 'src/engine/core-modules/tool/tools/read-file-tool/read-file-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
@@ -58,6 +59,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ExtractJsonPathsTool,
     SearchOutputTool,
     ShareRecordTool,
+    ReadFileTool,
     ToolOutputSpillService,
     provideWorkspaceScopedRepository(FileEntity),
   ],
@@ -75,6 +77,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ExtractJsonPathsTool,
     SearchOutputTool,
     ShareRecordTool,
+    ReadFileTool,
     ToolOutputSpillService,
   ],
 })

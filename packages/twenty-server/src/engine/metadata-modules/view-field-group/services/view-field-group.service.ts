@@ -4,8 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-create-view-field-group-input-to-flat-view-field-group-to-create.util';
 import { fromDestroyViewFieldGroupInputToFlatViewFieldGroupOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util';
@@ -20,6 +22,7 @@ import {
   ViewFieldGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -276,17 +279,32 @@ export class ViewFieldGroupService {
     });
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-  ): Promise<ViewFieldGroupDTO[]> {
-    const { flatViewFieldGroupMaps } =
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldGroupDTO[]> {
+    const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewMaps'],
         },
       );
+
+    if (
+      !this.isParentViewAvailableToUser({
+        viewId: viewId,
+        flatViewMaps,
+        userWorkspaceId,
+      })
+    ) {
+      return [];
+    }
 
     return Object.values(flatViewFieldGroupMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -295,15 +313,20 @@ export class ViewFieldGroupService {
       .sort((a, b) => a.position - b.position);
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewFieldGroupDTO | null> {
-    const { flatViewFieldGroupMaps } =
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldGroupDTO> {
+    const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewMaps'],
         },
       );
 
@@ -316,9 +339,45 @@ export class ViewFieldGroupService {
       !isDefined(flatViewFieldGroup) ||
       isDefined(flatViewFieldGroup.deletedAt)
     ) {
-      return null;
+      throw new ViewFieldGroupException(
+        `View field group with id ${id} not found`,
+        ViewFieldGroupExceptionCode.VIEW_FIELD_GROUP_NOT_FOUND,
+      );
+    }
+
+    if (
+      !this.isParentViewAvailableToUser({
+        viewId: flatViewFieldGroup.viewId,
+        flatViewMaps,
+        userWorkspaceId,
+      })
+    ) {
+      throw new ViewFieldGroupException(
+        `View field group with id ${id} not found`,
+        ViewFieldGroupExceptionCode.VIEW_FIELD_GROUP_NOT_FOUND,
+      );
     }
 
     return fromFlatViewFieldGroupToViewFieldGroupDto(flatViewFieldGroup);
+  }
+
+  private isParentViewAvailableToUser({
+    viewId,
+    flatViewMaps,
+    userWorkspaceId,
+  }: {
+    viewId: string;
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    userWorkspaceId: string | undefined;
+  }): boolean {
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    return (
+      isDefined(flatView) &&
+      isViewAvailableToUser({ flatView, userWorkspaceId })
+    );
   }
 }

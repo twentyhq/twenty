@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { AiChatProvider } from '@/ai/components/AiChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
+import { InboxEffects } from '@/inbox/components/InboxEffects';
 import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
@@ -65,7 +66,8 @@ export const WorkspaceAppProviders = () => {
                   >
                     <AppToaster />
                     <ErrorMessageEffect />
-                    <AgentChatProvider>
+                    <AiChatProvider>
+                      <InboxEffects />
                       <DialogComponentInstanceContext.Provider
                         value={{ instanceId: 'dialog-manager' }}
                       >
@@ -91,7 +93,7 @@ export const WorkspaceAppProviders = () => {
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>
-                    </AgentChatProvider>
+                    </AiChatProvider>
                   </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />

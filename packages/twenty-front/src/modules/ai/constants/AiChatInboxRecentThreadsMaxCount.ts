@@ -1,1 +1,0 @@
-export const AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT = 5;

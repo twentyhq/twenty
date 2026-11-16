@@ -110,6 +110,7 @@ export default defineObject({
 - `isSearchable: true`, on a field, includes its values in the object's full-text search (global search and the command menu). It requires the object itself to be searchable and a text-compatible field type. An omitted value means not searchable, except for the object's label identifier field, which is always searchable and cannot be opted out. Each sync enforces the declared state, so a field toggled searchable from Settings reverts on your app's next sync unless the manifest declares it.
 - `isAuditLogged: false`, on a field, keeps its changes out of the record timeline. It defaults to `true`, except on a `POSITION` field, whose changes render blank in the timeline and are never logged. Set it on fields your app rewrites on a schedule, such as a last-contact timestamp or a rollup relation, so each sync does not add an activity row to every record it touches. An update whose whole diff is made of non audit logged fields produces no timeline activity at all. Like `isSearchable`, each sync enforces the declared state.
 - `disabledFieldPermissionActions`, on a field, lists field permissions that cannot be granted on it: `'canReadFieldValue'`, `'canUpdateFieldValue'` or both, the same flags a role sets per field. Users, API keys, agents and other apps never get these actions on the field, whatever their role grants, and saving a field permission that grants one of them fails. Your app's own logic functions keep them. For example, `['canUpdateFieldValue']` keeps a value your app computes or syncs, such as a status or a score, read-only for everyone else. It also works on fields you add to objects you don't own with `defineField()`.
+- A select or multi-select option can carry its own `id`. When set, it must be a lowercase UUID (version 4 or later) and belong to one option only: a sync fails if two fields share an option `id`.
 - Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
 - You can scaffold new objects with `twenty app add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
 
@@ -145,6 +146,17 @@ For `SELECT` and `MULTI_SELECT`, provide a non-empty `options` array of objects.
 When provided, `color` must be one of: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 
 Both `defineObject()` and `defineField()` return validation errors for unsupported colors or option entries that are null, primitives, or arrays.
+
+#### Workspace changes to your options
+
+A workspace can relabel, recolor, reorder and deactivate the options your app ships, and add options of its own. It cannot remove your options or change their `value`.
+
+These changes are kept when your app is synced again. Changing an option's `label`, `color` or `position` in your app changes the default, not what a workspace already overrode. Options the workspace added and options it deactivated stay as they are.
+
+When you read a field's `options` from the metadata API, two properties describe that workspace state. Twenty sets them; your app does not declare them:
+
+- `isActive: false` marks an option the workspace deactivated. Records keep the value, but it is no longer offered when picking a value.
+- `applicationId` is present on an option that another application than the field's owns, such as an option the workspace added to your field. It is read-only and ignored when you write options.
 
 ## Default values
 

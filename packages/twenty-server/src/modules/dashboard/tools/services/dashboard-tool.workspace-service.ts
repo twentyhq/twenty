@@ -1,86 +1,77 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
-
 import { type ToolSet } from 'ai';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
-import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
-import { createDeleteDashboardWidgetTool } from 'src/modules/dashboard/tools/delete-dashboard-widget.tool';
-import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
+import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
 
 @Injectable()
 export class DashboardToolWorkspaceService {
-  private readonly deps: DashboardToolDependencies;
-
   constructor(
-    pageLayoutService: PageLayoutService,
-    pageLayoutTabService: PageLayoutTabService,
-    pageLayoutWidgetService: PageLayoutWidgetService,
-    workspaceOrmManager: WorkspaceOrmManager,
-    recordPositionService: RecordPositionService,
-    applicationService: ApplicationService,
-    flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-  ) {
-    this.deps = {
-      pageLayoutService,
-      pageLayoutTabService,
-      pageLayoutWidgetService,
-      workspaceOrmManager,
-      recordPositionService,
-      applicationService,
-      flatEntityMapsCacheService,
-    };
-  }
+    private readonly pageLayoutService: PageLayoutService,
+    private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly recordPositionService: RecordPositionService,
+    private readonly applicationService: ApplicationService,
+    private readonly pageLayoutToolService: PageLayoutToolService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {}
 
-  generateDashboardTools(
-    workspaceId: string,
-    authContext: WorkspaceAuthContext,
-  ): ToolSet {
-    const context = { workspaceId };
-    const contextWithPermissions = { workspaceId, authContext };
+  generateDashboardTools({
+    workspaceId,
+    authContext,
+    callingApplication,
+  }: {
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): ToolSet {
+    const dependencies: PageLayoutToolDependencies = {
+      pageLayoutService: this.pageLayoutService,
+      pageLayoutTabService: this.pageLayoutTabService,
+      pageLayoutWidgetService: this.pageLayoutWidgetService,
+      workspaceOrmManager: this.workspaceOrmManager,
+      recordPositionService: this.recordPositionService,
+      applicationService: this.applicationService,
+      flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+      pageLayoutToolService: this.pageLayoutToolService,
+    };
+    const context = {
+      workspaceId,
+      callingApplication,
+      workspaceCustomApplicationId:
+        authContext.workspace.workspaceCustomApplicationId ?? undefined,
+    };
+    const contextWithPermissions = { ...context, authContext };
 
     const createCompleteDashboard = createCreateCompleteDashboardTool(
-      this.deps,
+      dependencies,
       contextWithPermissions,
     );
-    const listDashboards = createListDashboardsTool(
-      this.deps,
-      contextWithPermissions,
-    );
+    const listDashboards = createListDashboardsTool({
+      dependencies,
+      context: contextWithPermissions,
+    });
     const getDashboard = createGetDashboardTool(
-      this.deps,
+      dependencies,
       contextWithPermissions,
     );
-    const addDashboardTab = createAddDashboardTabTool(this.deps, context);
-    const addDashboardWidget = createAddDashboardWidgetTool(this.deps, context);
-    const updateDashboardWidget = createUpdateDashboardWidgetTool(
-      this.deps,
-      context,
-    );
-    const deleteDashboardWidget = createDeleteDashboardWidgetTool(
-      this.deps,
-      context,
-    );
-
     return {
       [createCompleteDashboard.name]: createCompleteDashboard,
       [listDashboards.name]: listDashboards,
       [getDashboard.name]: getDashboard,
-      [addDashboardTab.name]: addDashboardTab,
-      [addDashboardWidget.name]: addDashboardWidget,
-      [updateDashboardWidget.name]: updateDashboardWidget,
-      [deleteDashboardWidget.name]: deleteDashboardWidget,
     };
   }
 }

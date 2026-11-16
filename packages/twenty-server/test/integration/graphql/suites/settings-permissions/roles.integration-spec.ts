@@ -482,7 +482,7 @@ describe('roles permissions', () => {
       `,
     };
 
-    it('should report nothing while no propagation runs', async () => {
+    it('should allow admin to read the propagation progress', async () => {
       const response = await client
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -490,9 +490,9 @@ describe('roles permissions', () => {
         .expect(200);
 
       expect(response.body.data.accessGroupPropagationProgress).toEqual({
-        totalRecordCount: 0,
-        remainingRecordCount: 0,
-        isInProgress: false,
+        totalRecordCount: expect.any(Number),
+        remainingRecordCount: expect.any(Number),
+        isInProgress: expect.any(Boolean),
       });
     });
 

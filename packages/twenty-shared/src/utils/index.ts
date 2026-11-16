@@ -85,6 +85,7 @@ export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldM
 export { isFieldMetadataEligibleForRecordForm } from './fieldMetadata/isFieldMetadataEligibleForRecordForm';
 export { isFieldMetadataEnumKind } from './fieldMetadata/isFieldMetadataEnumKind';
 export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
+export { isFieldMetadataOptionActive } from './fieldMetadata/isFieldMetadataOptionActive';
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataSupportedInGroupBy } from './fieldMetadata/isFieldMetadataSupportedInGroupBy';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
@@ -134,10 +135,16 @@ export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/r
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
 export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
+export type { FilterQuoteCharacter } from './filter/get-open-quote-after-character';
+export { getOpenQuoteAfterCharacter } from './filter/get-open-quote-after-character';
+export { getFieldOrSubFieldType } from './filter/getFieldOrSubFieldType';
+export { getRlsPredicateCompatibleWorkspaceMemberFieldTypes } from './filter/getRlsPredicateCompatibleWorkspaceMemberFieldTypes';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
 export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
+export { isWorkspaceMemberFieldCompatibleWithRlsPredicate } from './filter/isWorkspaceMemberFieldCompatibleWithRlsPredicate';
 export { mapRLSOperandToRecordFilterOperand } from './filter/mapRLSOperandToRecordFilterOperand';
+export { splitFilterArrayItems } from './filter/split-filter-array-items';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,
@@ -206,6 +213,7 @@ export {
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
 export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { isFilterValueExpectedAsArray } from './filter/utils/validation-schemas/isFilterValueExpectedAsArray';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
@@ -235,6 +243,10 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
+export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
+export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
+export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
+export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';

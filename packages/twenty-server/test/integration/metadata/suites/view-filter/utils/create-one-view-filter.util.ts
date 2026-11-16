@@ -14,6 +14,7 @@ export const createOneViewFilter = async ({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateViewFilterFactoryInput>): CommonResponseBody<{
   createViewFilter: ViewFilterDTO;
 }> => {
@@ -22,7 +23,7 @@ export const createOneViewFilter = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

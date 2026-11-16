@@ -93,6 +93,10 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
+A workspace can relabel, recolor, reorder and deactivate the options an app ships, and add its own; it cannot remove them or change their `value`. Those changes survive later syncs, so changing an option's `label`, `color` or `position` in the app only changes the default. In a field's `options` read from the metadata API, `isActive: false` marks an option the workspace deactivated, and a read-only `applicationId` is present on an option owned by another application than the field, such as one the workspace added. Twenty sets both; do not declare them in the app.
+
+An option can carry its own `id`. When set, it must be a lowercase UUID (version 4 or later) used by one option only: a sync fails if two fields share an option `id`.
+
 ### Relations
 
 A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `twenty app add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:

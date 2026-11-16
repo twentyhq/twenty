@@ -26,6 +26,7 @@ type SyncDeleteAction = {
   metadataName: AllMetadataName;
   universalIdentifier: string;
   flatEntity?: SyncActionFlatEntity;
+  cascadedFromUniversalIdentifier?: string;
 };
 
 export type SyncAction = SyncCreateAction | SyncUpdateAction | SyncDeleteAction;

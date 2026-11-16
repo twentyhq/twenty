@@ -62,13 +62,13 @@ export class DatabaseEventTriggerConditionService {
         principals,
         objectMetadataId,
       });
-    const fieldsHiddenOnMatchingRecords =
-      await this.recordFieldPermissionsReadService.findFieldsHiddenOnMatchingRecords(
+    const unreadableFieldsSQLConditions =
+      await this.recordFieldPermissionsReadService.buildUnreadableFieldsSQLConditions(
         { principals, objectMetadataId, tableAlias: 'relatedRecord' },
       );
     const hiddenFieldIds = new Set([
       ...unreadableFieldIds,
-      ...fieldsHiddenOnMatchingRecords.flatMap(
+      ...unreadableFieldsSQLConditions.flatMap(
         ({ fieldMetadataIds }) => fieldMetadataIds,
       ),
     ]);

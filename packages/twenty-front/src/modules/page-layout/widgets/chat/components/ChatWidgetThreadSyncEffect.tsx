@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect, useState } from 'react';
 
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { useSwitchAiChatThreadWithDraft } from '@/ai/hooks/useSwitchAiChatThreadWithDraft';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 type ChatWidgetThreadSyncEffectProps = {
@@ -13,7 +13,7 @@ export const ChatWidgetThreadSyncEffect = ({
   threadId,
 }: ChatWidgetThreadSyncEffectProps) => {
   const store = useStore();
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+  const { switchThreadWithDraft } = useSwitchAiChatThreadWithDraft();
   const [syncedThreadId, setSyncedThreadId] = useState<string | null>(null);
 
   useLayoutEffect(() => {

@@ -6,12 +6,15 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
@@ -64,28 +67,29 @@ export const useEmailComposerState = ({
   }
 
   const { connectedAccountId, fromHandle } = sender;
-  const [to, setTo] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialTo),
-  );
-  const [cc, setCc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialCc),
-  );
-  const [bcc, setBcc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialBcc),
-  );
+  const [recipientsByFieldId, setRecipientsByFieldId] =
+    useState<EmailRecipientsByFieldId>(() => ({
+      to: parseEmailRecipients(initialTo),
+      cc: parseEmailRecipients(initialCc),
+      bcc: parseEmailRecipients(initialBcc),
+    }));
+  const { to, cc, bcc } = recipientsByFieldId;
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
-  const [showCcBcc, setShowCcBcc] = useState(
-    initialCc.length > 0 || initialBcc.length > 0,
-  );
   const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
   const isSendingThroughAppSender =
     isDefined(appReplyTarget) &&
     appReplyTarget.connectedAccountId === connectedAccountId;
 
-  // app sends carry no files: hide them, including uploads that finish after switching to the app
-  const files = isSendingThroughAppSender ? [] : attachedFiles;
+  const isMessageAttachmentEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+  );
+
+  const canAttachFiles =
+    !isSendingThroughAppSender || isMessageAttachmentEnabled;
+
+  const files = canAttachFiles ? attachedFiles : [];
 
   const { sendEmail, loading: isSendingEmail } = useSendEmail();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
@@ -135,7 +139,7 @@ export const useEmailComposerState = ({
         body,
         inReplyTo: defaultInReplyTo || undefined,
       };
-      const emailKey = JSON.stringify(email);
+      const emailKey = JSON.stringify({ email, files });
 
       // a retry of the same email reuses its key so the server does not deliver it twice
       const idempotencyKey =
@@ -151,6 +155,7 @@ export const useEmailComposerState = ({
           messageThreadId: appReplyTarget.messageThreadId,
           idempotencyKey,
           email,
+          attachments: files,
         });
 
         setPendingAppSend(null);
@@ -212,20 +217,15 @@ export const useEmailComposerState = ({
     connectedAccountId,
     fromHandle,
     setSender,
-    to,
-    setTo,
-    cc,
-    setCc,
-    bcc,
-    setBcc,
+    recipientsByFieldId,
+    setRecipientsByFieldId,
     subject,
     setSubject,
     body,
     setBody,
-    showCcBcc,
-    setShowCcBcc,
     files,
     setFiles,
+    canAttachFiles,
     handleSend,
     loading,
     canSend,

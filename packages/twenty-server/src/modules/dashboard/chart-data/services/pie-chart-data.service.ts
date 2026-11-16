@@ -59,11 +59,19 @@ export class PieChartDataService {
         );
       }
 
-      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+      } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+            flatMapsKeys: [
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+              'flatFieldMetadataOptionMaps',
+            ],
           },
         );
 
@@ -95,6 +103,7 @@ export class PieChartDataService {
       const groupByField = getFieldMetadata(
         configuration.groupByFieldMetadataId,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       );
 
       const limit =

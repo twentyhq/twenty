@@ -13,6 +13,11 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockEnqueueToast = jest.fn();
+let mockIsMessageAttachmentEnabled = false;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsMessageAttachmentEnabled,
+}));
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -164,6 +169,7 @@ const renderAppComposerState = ({
 describe('useEmailComposerState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsMessageAttachmentEnabled = false;
   });
 
   it('sends from the connected account when no alias was picked', async () => {
@@ -380,6 +386,41 @@ describe('useEmailComposerState', () => {
     });
 
     expect(result.current.files).toEqual([{ id: 'file-1', name: 'deck.pdf' }]);
+  });
+
+  it('sends attachments through the app when message attachments are enabled', async () => {
+    mockIsMessageAttachmentEnabled = true;
+
+    const onSent = jest.fn();
+    const attachments = [{ id: 'file-1', name: 'deck.pdf' }];
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        {
+          ...createSendAppChannelMessageMock(() => true),
+          request: {
+            query: SEND_APP_CHANNEL_MESSAGE,
+            variables: ({ input }) =>
+              JSON.stringify(input.email) ===
+                JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
+              JSON.stringify(input.attachments) === JSON.stringify(attachments),
+          },
+        } satisfies SendAppChannelMessageMockedResponse,
+      ],
+      onSent,
+    });
+
+    expect(result.current.canAttachFiles).toBe(true);
+
+    act(() => {
+      result.current.setFiles(attachments);
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

@@ -220,6 +220,11 @@ msgstr "'n paneelbord"
 msgid "A database event trigger in this application is invalid."
 msgstr "’n Databasisgebeurtenissneller in hierdie toepassing is ongeldig."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr ""
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -277,6 +282,11 @@ msgstr "'n Skakel wat in 'n veldtog nagespoor word"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "’n Bemarkings-e-pos kan slegs op ’n slag aan een ontvanger gestuur word, sodat elke persoon hul eie uitteken-skakel kry."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "’n Boodskap benodig teks of ten minste een aanhangsel."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +328,11 @@ msgstr "’n Geneste-relasie-widget moet die tabeluitleg gebruik."
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "'n Netwerkfout het voorgekom tydens toegang tot die kalender."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr "’n Nie-kanonieke aansigveld kan nie die etiketidentifiseerderveld gebruik nie"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -394,6 +409,16 @@ msgstr "'n Rekord met hierdie waarde bestaan reeds."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "’n Opname van ’n vergadering"
+
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr ""
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr ""
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -573,10 +598,20 @@ msgstr "'n Sigveldfout het voorgekom."
 msgid "A view field group error occurred."
 msgstr "'n Aansigveldgroepfout het voorgekom."
 
+#. js-lingui-id: syBxwN
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter cannot stay in a view filter group that is being removed"
+msgstr ""
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
 msgstr "'n Sigfilterfout het voorgekom."
+
+#. js-lingui-id: yPKHXO
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter group cannot stay under a parent group that is being removed"
+msgstr ""
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -1208,6 +1243,11 @@ msgstr "’n Uitvoer loop reeds in hierdie werkruimte. Wag asseblief totdat dit 
 msgid "An external service took too long to respond."
 msgstr "’n Eksterne diens het te lank geneem om te reageer."
 
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr "’n Ekstra kolom kan nie die rekordnaam wys nie"
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
@@ -1216,7 +1256,7 @@ msgstr "'n Indeksmetadata-fout het voorgekom."
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
-msgstr " 80Nag \\b0aan vergelykings \\b8met ten minste een veld"
+msgstr ""
 
 #. js-lingui-id: KvWKJI
 #: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
@@ -2717,6 +2757,11 @@ msgstr "Kan nie 'n predikaat wysig om sy rol van {existingRoleIdentifier} na {up
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Kan nie die laaste administrateur uit die werksruimte verwyder nie."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr "Kan nie die laaste bedieneradministrateur verwyder nie. Verleen eers bedieneradministrateurtoegang aan 'n ander gebruiker in die administrasiepaneel."
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2959,6 +3004,11 @@ msgstr "Kletsgesprekke gekoppel aan die kontak"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Kletsgesprekke gekoppel aan die geleentheid"
+
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Kies 'n aktiewe oortjie en 'n legstukposisie wat by die uitlegmodus pas."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3454,6 +3504,11 @@ msgstr "Verbindingsverskaffer met naam {0} bestaan reeds vir hierdie toepassing"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Verbindingsverskaffer met tipe 'custom' moet na ’n authorize- en ’n callback-logiese funksie verwys"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "Verbindingsverskaffer met tipe 'oauth-discovery' benodig 'n HTTP- of HTTPS-oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3996,7 +4051,6 @@ msgstr "Aangepaste objek kort 'n etiket-identifiseerveld."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/permissions/permissions.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Gepasmaakte rolle is deel van die Organization Plan."
 
@@ -4331,8 +4385,8 @@ msgid "Default Task Layout"
 msgstr "Verstek taak-uitleg"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standaardwaarde \"{defaultValue}\" moet een van die opsiewaardes wees"
 
@@ -5075,6 +5129,11 @@ msgstr "Verryk"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Voer 'n naam tussen 1 en {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakters en ondersteunde voorkomsopsies vir die assistent in."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "Voer 'n API-sleutel in."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5343,6 +5402,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Eksterne opname-ID"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr "Ekstra kolomme word nie hier ondersteun nie"
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5385,11 +5449,6 @@ msgstr "Kon nie rekord skep nie."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "Kon nie lêer {fileId} verwyder nie"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Kon nie werke uitvee nie. Probeer asseblief weer later."
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5482,6 +5541,11 @@ msgstr "Kenmerkkonfigurasie nie gevind nie."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Februarie"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr "Veld \"{fieldName}\" kan nie met werkspasielid-veld \"{workspaceMemberFieldName}\" vergelyk word nie; hul tipes is nie versoenbaar nie"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6162,6 +6226,11 @@ msgstr "frontComponentId mag nie ingestel word wanneer engineComponentKey TRIGGE
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Versoek vir front-end-komponentbouer oorskry die limiet van 6 MiB. Verminder die programafhanklikhede of die grootte van die gegenereerde SDK."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Voorkantkomponent nie gevind nie."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8466,6 +8535,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Merk as ongelees"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Die logikafunksie om gesprekke as gelees te merk \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" is nie in hierdie toepassing gevind nie"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8657,6 +8731,11 @@ msgstr "Boodskap"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Boodskap"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Boodskapaanhangsels kon nie gestoor word nie. Probeer asseblief weer."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9502,6 +9581,11 @@ msgstr "Geen geldige ontvangers gespesifiseer nie"
 msgid "No verified sending domain matches this from address."
 msgstr "Geen geverifieerde stuurdomein kom ooreen met hierdie Van-adres nie."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr "Nie-kanonieke aansigvelde word nie in legstukaansigte ondersteun nie"
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9749,6 +9833,11 @@ msgstr "OAuth-toegang is geweier."
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "Die OAuth-verbindingsverskaffer se oauth-konfigurasieblok ontbreek"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "OAuth-ontdekkingsverbindingsverskaffer benodig die URL van die hulpbron waarby dit aanmeld"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9968,6 +10057,11 @@ msgstr "Een of meer omleidings-URI's is ongeldig."
 msgid "One or more requested scopes are invalid."
 msgstr "Een of meer versoekte scopes is ongeldig."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr ""
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -9987,6 +10081,16 @@ msgstr "Slegs 'n geskeduleerde of gestuurde veldtog kan gekanselleer word."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Slegs ’n bedieneradministrateur kan herstelkodes vir hierdie lid bestuur."
+
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr "Slegs ’n werkspasielid kan verander wie ’n workflow sien"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr ""
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10018,6 +10122,11 @@ msgstr "Enigste fout"
 msgid "Only field restrictions are allowed."
 msgstr "Slegs veldbeperkings word toegelaat."
 
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr ""
+
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
 msgid "Only one full-height widget is allowed per tab"
@@ -10030,7 +10139,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Slegs die toepassing wat hierdie agent besit, kan sy snellers verander"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Slegs die persoon wat hierdie werkvloei geskep het, kan verander wie dit sien"
 
@@ -10197,6 +10306,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Geleentheid stadium"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "Opsie \"{optionLabel}\" kom saam met die veld en kan nie verwyder word nie. Deaktiveer dit eerder."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10213,12 +10328,6 @@ msgstr "Opsie id is ongeldig"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Opsie id word vereis"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Opsie-id moet 'n kleinletter-UUID van weergawe 4 of later wees"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -11252,6 +11361,11 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Lees en skryf"
 
+#. js-lingui-id: qYjUEb
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Read File"
+msgstr "Lees lêer"
+
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12160,6 +12274,11 @@ msgstr "Ryvlak-toestemmingsreël om by te werk nie gevind nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Ryvlak-toestemmingsreël met hierdie universele identifiseerder bestaan reeds"
+
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "Toestemmings vir rekords op rylvlak wat velde versteek of sluit, benodig ten minste een predikaatgroep."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13704,6 +13823,12 @@ msgstr "Die agent wat hierdie stap moet uitvoer, is nie gevind nie."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Die agent waarna jy soek, kon nie gevind word nie. Dit mag verwyder gewees het of jy mag nie toegang daartoe hê nie."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "Die API-waarde van opsie \"{optionLabel}\" kom saam met die veld en kan nie verander word nie."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13806,7 +13931,7 @@ msgstr "Die voorwaarde van ’n databasisgebeurtenissneller moet teks wees"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Die voorwaarde van 'n agent-sneller is ongeldig"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13883,6 +14008,12 @@ msgstr "Die skepper van die rekord"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Die datum wat die boodskap ontvang is"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Die verstekopsie kan nie gedeaktiveer word nie"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -13962,6 +14093,11 @@ msgstr "Die veld \"{field}\" kan nie opgedateer word nie. Kontak asseblief jou w
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The field configured for this widget could not be found."
 msgstr "Die veld wat vir hierdie widget gekonfigureer is, kon nie gevind word nie."
+
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr ""
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14059,6 +14195,11 @@ msgstr "Die logiese funksie wat die gekoppelde rekening identifiseer, is nie gev
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "Die logiese funksie wat die verbinding begin, is nie gevind nie."
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Die logikafunksie waarmee hierdie boodskapverskaffer gesprekke as gelees merk, is nie in sy toepassing gevind nie."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14226,6 +14367,26 @@ msgstr "Die verskaffer is tydelik nie beskikbaar nie. Probeer asseblief later we
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Die inhoud van die ontvangde e-pos is nie meer beskikbaar nie."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr ""
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr ""
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr ""
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr ""
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14688,6 +14849,11 @@ msgstr "Hierdie geselsie is nie in ’n kanaal nie."
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "Hierdie kode behoort aan ’n gepubliseerde werkvloeiweergawe. Wysig dit vanaf ’n konsep."
 
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr ""
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -14793,6 +14959,11 @@ msgstr "Hierdie funksie is gratis vir tot {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} sit
 msgid "This feature is not enabled."
 msgstr "Hierdie kenmerk is nie geaktiveer nie."
 
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr "Hierdie veld kan nie met hierdie werkspasielid-veld vergelyk word nie"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14865,6 +15036,11 @@ msgstr "Hierdie lêeroplaai is reeds afgehandel."
 msgid "This form no longer waits for an answer."
 msgstr "Hierdie vorm wag nie meer vir ’n antwoord nie."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Hierdie voorkantkomponent is nie op hierdie bladsyuitleg beskikbaar nie."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14924,6 +15100,21 @@ msgstr "Hierdie logtabel is nie geldig nie."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Hierdie MCP-metode word nie ondersteun nie."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Hierdie MCP-bediener behoort aan 'n ander toepassing, dus kan hierdie werkvloei dit nie gebruik nie."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Hierdie MCP-bediener is onaktief. Aktiveer dit voordat jy sy nutsmiddels toets."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Hierdie MCP-bediener is nie vir hierdie werkvloei beskikbaar nie."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15215,6 +15406,16 @@ msgstr "Hierdie SVG is te groot om verwerk te word."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Hierdie tydlynaktiwiteitsaksie word nie ondersteun nie"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Hierdie nutsmiddel word nie meer deur sy MCP-bediener aangebied nie."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Hierdie nutsmiddel kan data verander. Bevestig die toets voordat jy dit uitvoer."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17008,6 +17209,11 @@ msgstr "Ons kon nie die verbinding voltooi nie. Probeer asseblief weer."
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Ons kon nie die rekening identifiseer wat jy gemagtig het nie. Probeer asseblief weer."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Ons kon nie hierdie gesprek as gelees merk nie."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17017,6 +17223,11 @@ msgstr "Ons kon nie jou boodskap stuur nie. Probeer asseblief weer."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Ons kon nie die verbinding begin nie. Probeer asseblief weer."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Ons kon nie hierdie sleutel verifieer nie. Gaan dit na, of probeer later weer as die diens nie beskikbaar is nie."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17226,6 +17437,11 @@ msgstr "Wie die toegang ontvang"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Waarom die toegang verleen is"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Widget-konfigurasie word vereis."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

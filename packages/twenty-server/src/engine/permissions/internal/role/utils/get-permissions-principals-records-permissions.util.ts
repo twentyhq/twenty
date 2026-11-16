@@ -10,7 +10,10 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
   metadataMaps,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: PermissionsMetadataMaps;
+  metadataMaps: Pick<
+    PermissionsMetadataMaps,
+    'rolesPermissions' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  >;
 }): RoleRecordsPermissions =>
   computePrincipalsRecordsPermissions({
     principals,

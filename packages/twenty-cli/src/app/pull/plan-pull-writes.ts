@@ -11,13 +11,17 @@ import { writePullEntityFile } from '@/app/pull/write-pull-entity-file';
 import { dirname, posix } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
-export type PullWriteKind = PullEntityKind | 'translation' | 'dependency';
+export type PullWriteKind =
+  | PullEntityKind
+  | 'translation'
+  | 'dependency'
+  | 'publicAsset';
 
-export type PullWrite = {
+export type PullWrite<TContent extends string | Buffer = string | Buffer> = {
   kind: PullWriteKind;
   universalIdentifier: string;
   relativePath: string;
-  content: string;
+  content: TContent;
   requiredSdkExports: string[];
   isRegeneration: boolean;
 };

@@ -365,7 +365,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   );
 
   it.each([false, true])(
-    'bills the core-owned spender mapping (mirrorless=%s)',
+    'bills the core workflow as spender (mirrorless=%s)',
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
       const charge = jest.spyOn(global.workflowTestServices.quota, 'charge');
@@ -382,7 +382,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         events: [
           expect.objectContaining({
             spenders: {
-              workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+              workflowId: fixture.coreWorkflowId,
               applicationId: workspace.workspaceCustomApplicationId,
             },
           }),

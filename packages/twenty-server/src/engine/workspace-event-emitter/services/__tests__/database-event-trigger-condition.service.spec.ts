@@ -106,7 +106,7 @@ const buildService = async ({
           findUnreadableFields: jest
             .fn()
             .mockResolvedValue(new Set(unreadableFieldIds)),
-          findFieldsHiddenOnMatchingRecords: jest
+          buildUnreadableFieldsSQLConditions: jest
             .fn()
             .mockResolvedValue(
               hiddenFieldIds.length > 0
