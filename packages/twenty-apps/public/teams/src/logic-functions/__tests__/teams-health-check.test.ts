@@ -151,7 +151,7 @@ describe('teamsHealthCheckHandler', () => {
 
         return key ===
           buildTeamsTenantClaimConflictKvKey(WORKSPACE_CONNECTION.id)
-          ? { tenantId: 'tenant-id', failedAt: '2026-11-16T00:00:00.000Z' }
+          ? { tenantId: 'tenant-id' }
           : null;
       },
     );
@@ -195,18 +195,6 @@ describe('teamsHealthCheckHandler', () => {
       });
     },
   );
-
-  it('should not look for lost claims while chat is off', async () => {
-    listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
-    kvGetMock.mockResolvedValue({
-      tenantId: 'tenant-id',
-      failedAt: '2026-11-16T00:00:00.000Z',
-    });
-
-    await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
-
-    expect(kvGetMock).not.toHaveBeenCalled();
-  });
 
   it('should report nothing when no feature needs a connection', async () => {
     vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'false');

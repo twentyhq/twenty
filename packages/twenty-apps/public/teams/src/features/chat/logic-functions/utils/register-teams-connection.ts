@@ -5,14 +5,15 @@ import {
   kv,
 } from 'twenty-sdk/logic-function';
 
+import { type TeamsTenantClaimConflict } from 'src/features/chat/logic-functions/types/teams-tenant-claim-conflict.type';
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
+import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
 import { claimTeamsTenant } from 'src/features/chat/logic-functions/utils/claim-teams-tenant';
 import { deleteTeamsTenantClaimConflict } from 'src/features/chat/logic-functions/utils/delete-teams-tenant-claim-conflict';
 import { fetchTeamsTenantId } from 'src/features/chat/logic-functions/utils/fetch-teams-tenant-id';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { matchTeamsDirectoryByEmail } from 'src/features/chat/logic-functions/utils/match-teams-directory-by-email';
 import { releaseTeamsConnectionTenant } from 'src/features/chat/logic-functions/utils/release-teams-connection-tenant';
-import { saveTeamsTenantClaimConflict } from 'src/features/chat/logic-functions/utils/save-teams-tenant-claim-conflict';
 import { TEAMS_GRAPH_DIRECTORY_SCOPE } from 'src/features/transcripts/constants/teams-oauth-config';
 import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
@@ -79,10 +80,12 @@ export const registerTeamsConnection = async ({
 
   const isTenantClaimed = await claimTeamsTenant({ tenantId, workspaceId });
 
-  // The hook's failures are swallowed, so a lost claim is recorded, not thrown.
   if (!isTenantClaimed) {
     await kv.delete(connectedAccountTenantKvKey);
-    await saveTeamsTenantClaimConflict({ connectedAccountId, tenantId });
+    await kv.set<TeamsTenantClaimConflict>(
+      buildTeamsTenantClaimConflictKvKey(connectedAccountId),
+      { tenantId },
+    );
 
     return { claimedTenantId: null, conflictingTenantId: tenantId };
   }

@@ -6,7 +6,6 @@ import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-func
 import { fetchCurrentWorkspaceIdOrThrow } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw';
 import { isTeamsTenantHeldByAnotherWorkspace } from 'src/features/chat/logic-functions/utils/is-teams-tenant-held-by-another-workspace';
 
-// A record outlives its conflict once another connection reclaims the tenant.
 export const findTeamsTenantClaimConflicts = async ({
   connectedAccountIds,
 }: {

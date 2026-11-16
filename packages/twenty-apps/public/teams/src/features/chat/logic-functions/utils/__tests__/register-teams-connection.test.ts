@@ -131,7 +131,6 @@ describe('registerTeamsConnection', () => {
     );
     expect(kvSetMock).toHaveBeenNthCalledWith(3, CLAIM_CONFLICT_KV_KEY, {
       tenantId: TENANT_ID,
-      failedAt: expect.any(String),
     });
     expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(
       CONNECTED_ACCOUNT_TENANT_KV_KEY,

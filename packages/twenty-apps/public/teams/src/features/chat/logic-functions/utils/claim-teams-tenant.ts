@@ -15,7 +15,6 @@ export const claimTeamsTenant = async ({
 
     return true;
   } catch (error) {
-    // Reading the claim back tells a refusal apart from a transient failure.
     if (await isTeamsTenantHeldByAnotherWorkspace({ tenantId, workspaceId })) {
       return false;
     }
