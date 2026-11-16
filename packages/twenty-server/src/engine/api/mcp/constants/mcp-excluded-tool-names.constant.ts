@@ -3,5 +3,6 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 export const MCP_EXCLUDED_TOOL_NAMES = new Set([
   'code_interpreter',
   'http_request',
+  'read_file',
   ...OUTPUT_NAVIGATION_TOOL_NAMES,
 ]);
