@@ -1,6 +1,8 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
+import { ViewType } from '@/views/types/ViewType';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -115,5 +117,27 @@ describe('useDeleteRecordTableColumn', () => {
       nameColumn,
       extraColumn,
     ]);
+  });
+
+  it('does not put an extra column back when the view switched to a layout without extra columns', async () => {
+    const store = createStore();
+    const nonCanonicalColumn = { ...extraColumn, isCanonical: false };
+    store.set(currentRecordFieldsAtom, [nameColumn, nonCanonicalColumn]);
+    performViewFieldApiDestroyMock.mockImplementation(async () => {
+      store.set(
+        recordIndexViewTypeState.atomFamily({ instanceId: RECORD_TABLE_ID }),
+        ViewType.CALENDAR,
+      );
+
+      return { status: 'failed' };
+    });
+
+    const { result } = renderDeleteHook(store);
+
+    await act(async () => {
+      await result.current.deleteRecordTableColumn(nonCanonicalColumn.id);
+    });
+
+    expect(store.get(currentRecordFieldsAtom)).toEqual([nameColumn]);
   });
 });

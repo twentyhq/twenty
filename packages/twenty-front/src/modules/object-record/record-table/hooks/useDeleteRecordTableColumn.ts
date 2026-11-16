@@ -1,4 +1,6 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useStore } from 'jotai';
@@ -49,9 +51,18 @@ export const useDeleteRecordTableColumn = (recordTableId: string) => {
           (recordField) => recordField.id === recordFieldId,
         );
         const deletedRecordField = previousRecordFields[deletedIndex];
+        // The layout may have switched meanwhile, and only tables show extra columns
+        const viewType = store.get(
+          recordIndexViewTypeState.atomFamily({ instanceId: recordTableId }),
+        );
 
         store.set(currentRecordFieldsAtom, (latestRecordFields) =>
           !isDefined(deletedRecordField) ||
+          (isDefined(viewType) &&
+            !isRecordFieldSupportedByViewType({
+              recordField: deletedRecordField,
+              viewType,
+            })) ||
           latestRecordFields.some(({ id }) => id === recordFieldId)
             ? latestRecordFields
             : latestRecordFields.toSpliced(deletedIndex, 0, deletedRecordField),
