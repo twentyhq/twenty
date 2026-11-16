@@ -195,6 +195,53 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 }
 ```
 
+## Computed fields
+
+A field with a `computation` stores nothing: its value is calculated by the database each time it is read. It can be selected, filtered and sorted like any other field, and it cannot be written.
+
+| Kind | Value | Field type |
+| --- | --- | --- |
+| `FORMULA` | An expression over the record's own fields | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
+| `ROLLUP` | A count, sum, average, minimum or maximum over the records of a one-to-many relation | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
+| `FILTERED_RELATION` | Some of the records of a one-to-many relation | `RELATION` (one-to-many) |
+
+```ts
+{
+  universalIdentifier: 'a3f1c0de-5678-4f00-9abc-000000000001',
+  name: 'openTaskCount',
+  type: FieldType.NUMBER,
+  label: 'Open tasks',
+  computation: {
+    kind: 'ROLLUP',
+    relationFieldName: 'tasks',
+    operation: 'COUNT',
+    filter: "status != 'DONE'",
+  },
+},
+{
+  universalIdentifier: 'a3f1c0de-5678-4f00-9abc-000000000002',
+  name: 'budgetPerTask',
+  type: FieldType.NUMBER,
+  label: 'Budget per task',
+  computation: {
+    kind: 'FORMULA',
+    expression: 'round(budget / openTaskCount, 2)',
+  },
+}
+```
+
+- **Rollup:** `operation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no `expression`; the others aggregate `expression`, evaluated on each related record. `filter` keeps only the related records for which it is true.
+- **Filtered relation:** `filter`, `orderBy` and `limit` narrow the relation named by `relationFieldName`. A query can narrow it further with its own arguments, never widen it.
+- **Expressions** reference fields by name:
+  - a sub-field of a composite field as `amount.amountMicros`;
+  - a field of a to-one relation as `company.name`;
+  - other computed fields by their name.
+- **Operators:** `+ - * / %`, `== != < <= > >=`, `and or not`, `value in [a, b]`, `condition ? a : b`. Text goes in single quotes.
+- **Functions:** `if`, `coalesce`, `isDefined`, `isEmpty`, `min`, `max`, `round`, `abs`, `ceil`, `floor`, `trunc`, `concat`, `lower`, `upper`, `length`, `daysBetween`, `daysSince`. `now` and `today` give the current time and date.
+- A value only reflects the related records its reader is allowed to see.
+- A field that a computed field reads cannot be deleted or renamed until the computed field is updated or deleted.
+- A stored field cannot become computed, or the other way around.
+
 ## What's next
 
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.

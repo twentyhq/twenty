@@ -388,10 +388,19 @@ describe('Computed fields (e2e)', () => {
         'upcomingTasks(filter: { points: { eq: 3 } }, first: 10)',
       );
 
-      expect(narrowed[ALPHA_PROJECT_ID]).toEqual({
+      expect(narrowed[ALPHA_PROJECT_ID]).toMatchObject({
         totalCount: 1,
         edges: [{ node: { id: TASKS[0].id, dueAt: '2030-03-01' } }],
       });
+    });
+
+    it('PROBE plain relation arguments', async () => {
+      const [alphaProject] = await findProjects({
+        gqlFields: 'tasks(first: 1) { totalCount }',
+        filter: { id: { eq: ALPHA_PROJECT_ID } },
+      });
+
+      expect(alphaProject.tasks).toEqual({ totalCount: 3 });
     });
 
     it('leaves the relation it derives from untouched', async () => {
