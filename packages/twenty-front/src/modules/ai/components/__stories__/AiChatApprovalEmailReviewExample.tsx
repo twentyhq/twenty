@@ -39,14 +39,16 @@ export const AiChatApprovalEmailReviewExample = ({
 
   const handleDraftChange = ({
     emailId,
-    draft,
+    update,
   }: {
     emailId: string;
-    draft: AiChatApprovalReviewEmailDraft;
+    update: (
+      draft: AiChatApprovalReviewEmailDraft,
+    ) => AiChatApprovalReviewEmailDraft;
   }) => {
     setEmails((currentEmails) =>
       currentEmails.map((email) =>
-        email.id === emailId ? { ...email, draft } : email,
+        email.id === emailId ? { ...email, draft: update(email.draft) } : email,
       ),
     );
   };
