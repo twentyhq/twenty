@@ -7,7 +7,7 @@ import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/r
 import { isDefined } from 'twenty-shared/utils';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
-// The relations a field widget can show as an embedded view. System objects (attachments, note targets) come last so a new widget defaults to a business relation.
+// System objects (attachments, note targets) come last so a new widget defaults to a business relation.
 export const getRelatedRecordsWidgetSources = ({
   fieldMetadataItems,
   objectMetadataItems,

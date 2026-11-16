@@ -3,12 +3,10 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
-import { useCreateRecordPageRelatedRecordsWidget } from '@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
 import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { styled } from '@linaria/react';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
@@ -16,12 +14,9 @@ import {
   IconListSearch,
   IconNotes,
   IconPlus,
-  IconTable,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { ViewType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -70,26 +65,12 @@ export const RecordPageAddWidgetSection = ({
 
   const { createRecordPageNoteWidget } = useCreateRecordPageNoteWidget();
 
-  const { targetObjectNameSingular } = useTargetRecord();
-
-  const { createRecordPageRelatedRecordsWidget, relatedRecordsLayoutOptions } =
-    useCreateRecordPageRelatedRecordsWidget({
-      objectNameSingular: targetObjectNameSingular,
-    });
-
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
 
   const { insertCreatedWidgetAtContext } = useInsertCreatedWidgetAtContext();
 
-  const handleCreateWidget = (
-    createWidget: () => PageLayoutWidget | undefined,
-  ) => {
+  const handleCreateWidget = (createWidget: () => PageLayoutWidget) => {
     const widget = createWidget();
-
-    if (!isDefined(widget)) {
-      return;
-    }
-
     insertCreatedWidgetAtContext({ newWidgetId: widget.id, insertionContext });
   };
 
@@ -125,29 +106,6 @@ export const RecordPageAddWidgetSection = ({
         >
           {t`Field`}
         </ListItemButton>
-        {isNonEmptyArray(relatedRecordsLayoutOptions) && (
-          <ListItemButton
-            startIcon={
-              <ListItemIconContainer>
-                <IconTable
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              </ListItemIconContainer>
-            }
-            description={t`Related records as a table`}
-            onClick={() =>
-              handleCreateWidget(() =>
-                createRecordPageRelatedRecordsWidget({
-                  tabId,
-                  layoutViewType: ViewType.TABLE_WIDGET,
-                }),
-              )
-            }
-          >
-            {t`Table`}
-          </ListItemButton>
-        )}
         <ListItemButton
           startIcon={
             <ListItemIconContainer>

@@ -6,19 +6,19 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { getRelatedRecordsWidgetLayoutOptions } from '@/page-layout/widgets/field/utils/getRelatedRecordsWidgetLayoutOptions';
 import { getRelatedRecordsWidgetSources } from '@/page-layout/widgets/field/utils/getRelatedRecordsWidgetSources';
 import { isRelatedRecordsWidgetSourceAvailableForLayout } from '@/page-layout/widgets/field/utils/isRelatedRecordsWidgetSourceAvailableForLayout';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { applyLayoutToRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/applyLayoutToRecordTableWidgetViewSnapshot';
-import { getRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
+import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 export const useCreateRecordPageRelatedRecordsWidget = ({
   objectNameSingular,
@@ -58,27 +58,9 @@ export const useCreateRecordPageRelatedRecordsWidget = ({
     objectMetadataItems,
   });
 
-  const hasSourceAvailableForLayout = (
-    layoutViewType: RecordTableWidgetLayoutViewType,
-  ) =>
-    relatedRecordsWidgetSources.some((relatedRecordsWidgetSource) =>
-      isRelatedRecordsWidgetSourceAvailableForLayout({
-        relatedRecordsWidgetSource,
-        layoutViewType,
-      }),
-    );
-
-  // Empty when the object has no relation to list, so pickers hide the whole section.
-  const relatedRecordsLayoutOptions = isNonEmptyArray(
+  const relatedRecordsLayoutOptions = getRelatedRecordsWidgetLayoutOptions(
     relatedRecordsWidgetSources,
-  )
-    ? getRecordTableWidgetLayoutPickerOptions({
-        isKanbanAvailable: hasSourceAvailableForLayout(ViewType.KANBAN_WIDGET),
-        isCalendarAvailable: hasSourceAvailableForLayout(
-          ViewType.CALENDAR_WIDGET,
-        ),
-      })
-    : [];
+  );
 
   const createRecordPageRelatedRecordsWidget = ({
     tabId,

@@ -7,9 +7,6 @@ const mockNavigateToMoreWidgets = jest.fn();
 const mockCreateRecordPageNoteWidget = jest.fn(() => ({ id: 'new-note' }));
 const mockCreateRecordPageFieldWidget = jest.fn(() => ({ id: 'new-field' }));
 const mockCreateRecordPageFieldsWidget = jest.fn(() => ({ id: 'new-fields' }));
-const mockCreateRecordPageRelatedRecordsWidget = jest.fn(() => ({
-  id: 'new-table',
-}));
 const mockInsertCreatedWidgetAtContext = jest.fn();
 
 jest.mock('twenty-ui/icon', () => ({
@@ -37,20 +34,6 @@ jest.mock('@/page-layout/hooks/useCreateRecordPageFieldsWidget', () => ({
   useCreateRecordPageFieldsWidget: () => ({
     createRecordPageFieldsWidget: mockCreateRecordPageFieldsWidget,
   }),
-}));
-
-jest.mock(
-  '@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget',
-  () => ({
-    useCreateRecordPageRelatedRecordsWidget: () => ({
-      createRecordPageRelatedRecordsWidget:
-        mockCreateRecordPageRelatedRecordsWidget,
-      relatedRecordsLayoutOptions: [{ viewType: 'TABLE_WIDGET' }],
-    }),
-  }),
-);
-jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
-  useTargetRecord: () => ({ targetObjectNameSingular: 'company' }),
 }));
 
 jest.mock('@/page-layout/hooks/useInsertCreatedWidgetAtContext', () => ({
@@ -86,20 +69,6 @@ describe('RecordPageAddWidgetSection', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
-  });
-
-  it('creates a table of related records in the current tab', async () => {
-    render(<RecordPageAddWidgetSection />);
-    await userEvent.setup().click(screen.getByText('Table'));
-    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledTimes(1);
-    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledWith({
-      tabId: 'tab-1',
-      layoutViewType: 'TABLE_WIDGET',
-    });
-    expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith({
-      newWidgetId: 'new-table',
-      insertionContext: null,
-    });
   });
 
   it('creates a Note in the current tab through the shared creator', async () => {

@@ -17,6 +17,7 @@ import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPositi
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { RELATED_RECORDS_WIDGET_LAYOUT_DESCRIPTIONS } from '@/page-layout/widgets/field/constants/RelatedRecordsWidgetLayoutDescriptions';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -410,6 +411,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           <CommandMenuItem
             Icon={IconListDetails}
             label={t`Fields group`}
+            description={t`Group multiple fields from this record`}
             id="fields"
             onClick={handleCreateFieldsWidget}
           />
@@ -418,6 +420,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           <CommandMenuItem
             Icon={IconListSearch}
             label={t`Field`}
+            description={t`Single field with smart formats`}
             id="field"
             onClick={handleCreateFieldWidget}
           />
@@ -448,7 +451,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
                   description={
                     isDefined(unavailableReason)
                       ? t(unavailableReason)
-                      : undefined
+                      : t(RELATED_RECORDS_WIDGET_LAYOUT_DESCRIPTIONS[viewType])
                   }
                   id={viewType}
                   disabled={isDisabled}
