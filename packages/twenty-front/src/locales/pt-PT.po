@@ -962,7 +962,7 @@ msgstr "{minutes} min {seconds} s"
 #. js-lingui-id: 8XkSLi
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "{minutesDescription} {hourWindowsList} UTC"
-msgstr ""
+msgstr "{minutesDescription} {hourWindowsList} UTC"
 
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -12681,7 +12681,7 @@ msgstr "Expira em {dateDiff}"
 #. js-lingui-id: jwf/kT
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in less than a day"
-msgstr ""
+msgstr "Expira em menos de um dia"
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -12898,7 +12898,7 @@ msgstr "Falha ao cancelar campanha"
 #. js-lingui-id: Rw92kd
 #: src/modules/settings/applications/hooks/useRunApplicationHealthCheck.ts
 msgid "Failed to check the app's health."
-msgstr ""
+msgstr "Falha ao verificar a integridade do aplicativo."
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14197,7 +14197,7 @@ msgstr "de {startDay} a {endDay}"
 #. js-lingui-id: UQW3I0
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "from {startTime} to {endTime}"
-msgstr ""
+msgstr "de {startTime} a {endTime}"
 
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15693,7 +15693,7 @@ msgstr "Em {listName}"
 #. js-lingui-id: k4hbKL
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In less than a day"
-msgstr ""
+msgstr "Em menos de um dia"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx

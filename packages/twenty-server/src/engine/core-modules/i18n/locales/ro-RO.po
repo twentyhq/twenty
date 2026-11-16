@@ -223,7 +223,7 @@ msgstr "Un declanșator de eveniment al bazei de date din această aplicație nu
 #. js-lingui-id: RRhkpY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
-msgstr ""
+msgstr "Un câmp dezactivat nu poate fi afișat într-o coloană"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -413,12 +413,12 @@ msgstr "O înregistrare a unei întâlniri"
 #. js-lingui-id: p5HHUZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr ""
+msgstr "Un câmp de înregistrare asociată poate fi afișat numai într-un câmp de relație de tip mulți-la-unu"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
-msgstr ""
+msgstr "Relația unei înregistrări asociate nu poate fi afișată într-o coloană"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -601,7 +601,7 @@ msgstr "A apărut o eroare a grupului de câmpuri al vizualizării."
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
-msgstr ""
+msgstr "Un filtru de vizualizare nu poate rămâne într-un grup de filtre de vizualizare care este eliminat"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -611,7 +611,7 @@ msgstr "A apărut o eroare a filtrului de vizualizare."
 #. js-lingui-id: yPKHXO
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter group cannot stay under a parent group that is being removed"
-msgstr ""
+msgstr "Un grup de filtre de vizualizare nu poate rămâne sub un grup părinte care este eliminat"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -1596,7 +1596,7 @@ msgstr "Aplicații"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Apps preferences"
-msgstr ""
+msgstr "Preferințe aplicații"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6353,7 +6353,7 @@ msgstr "Mergi la Setările AI"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
-msgstr ""
+msgstr "Accesează preferințele aplicațiilor"
 
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10036,7 +10036,7 @@ msgstr "Unul sau mai multe scopuri solicitate sunt nevalide."
 #. js-lingui-id: A69o8a
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record can show a field of that record"
-msgstr ""
+msgstr "Numai o coloană care face legătura către o singură înregistrare poate afișa un câmp al acelei înregistrări"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,7 +10066,7 @@ msgstr "Doar un membru al spațiului de lucru poate schimba cine vede un flux de
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
-msgstr ""
+msgstr "Numai coloanele adăugate pot afișa un câmp al înregistrării asociate"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10101,7 +10101,7 @@ msgstr "Sunt permise doar restricțiile de câmp."
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only non-canonical view fields can show a related record field"
-msgstr ""
+msgstr "Numai câmpurile de vizualizare necanonice pot afișa un câmp de înregistrare asociată"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14073,7 +14073,7 @@ msgstr "Câmpul configurat pentru acest widget nu a putut fi găsit."
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The field must belong to the related object"
-msgstr ""
+msgstr "Câmpul trebuie să aparțină obiectului asociat"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14347,22 +14347,22 @@ msgstr "Conținutul e-mailului primit nu mai este disponibil."
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field cannot be a relation"
-msgstr ""
+msgstr "Câmpul de înregistrare asociată nu poate fi o relație"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must be active"
-msgstr ""
+msgstr "Câmpul de înregistrare asociată trebuie să fie activ"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
-msgstr ""
+msgstr "Câmpul de înregistrare asociată trebuie să aparțină obiectului-țintă al relației"
 
 #. js-lingui-id: bb3jnG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Câmpul de înregistrare asociată al unei coloane deținute de o aplicație nu poate fi modificat"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14828,7 +14828,7 @@ msgstr "Acest cod aparține unei versiuni publicate de flux de lucru. Editați-l
 #. js-lingui-id: t/Gj4r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
-msgstr ""
+msgstr "Această coloană provine dintr-o aplicație, astfel că câmpul de înregistrare asociată pe care îl afișează nu poate fi modificat"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

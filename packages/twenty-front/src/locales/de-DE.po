@@ -962,7 +962,7 @@ msgstr "{minutes} Min. {seconds} Sek."
 #. js-lingui-id: 8XkSLi
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "{minutesDescription} {hourWindowsList} UTC"
-msgstr ""
+msgstr "{minutesDescription} {hourWindowsList} UTC"
 
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -12681,7 +12681,7 @@ msgstr "Läuft ab in {dateDiff}"
 #. js-lingui-id: jwf/kT
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in less than a day"
-msgstr ""
+msgstr "Läuft in weniger als einem Tag ab"
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -12898,7 +12898,7 @@ msgstr "Kampagne konnte nicht abgebrochen werden"
 #. js-lingui-id: Rw92kd
 #: src/modules/settings/applications/hooks/useRunApplicationHealthCheck.ts
 msgid "Failed to check the app's health."
-msgstr ""
+msgstr "Überprüfung des Zustands der App fehlgeschlagen."
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14197,7 +14197,7 @@ msgstr "von {startDay} bis {endDay}"
 #. js-lingui-id: UQW3I0
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "from {startTime} to {endTime}"
-msgstr ""
+msgstr "von {startTime} bis {endTime}"
 
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15693,7 +15693,7 @@ msgstr "In {listName}"
 #. js-lingui-id: k4hbKL
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In less than a day"
-msgstr ""
+msgstr "In weniger als einem Tag"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
