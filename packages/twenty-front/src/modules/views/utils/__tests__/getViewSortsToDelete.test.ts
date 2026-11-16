@@ -54,7 +54,7 @@ describe('getViewSortsToDelete', () => {
     expect(result).toEqual([]);
   });
 
-  it('should not delete sorts that match in both fieldMetadataId and direction', () => {
+  it('should not delete a saved sort that came back under a new id', () => {
     const existingSort = { ...baseSort };
     const matchingSort = {
       id: 'sort-2',
@@ -71,7 +71,7 @@ describe('getViewSortsToDelete', () => {
     expect(result).toEqual([]);
   });
 
-  it('should delete a saved sort replaced by one on another sub-field', () => {
+  it('should keep a saved sort replaced by one on another sub-field', () => {
     const savedSort = {
       ...baseSort,
       subFieldName: 'firstName',
@@ -84,6 +84,18 @@ describe('getViewSortsToDelete', () => {
 
     const result = getViewSortsToDelete([savedSort], [sortOnOtherSubField]);
 
-    expect(result).toEqual([savedSort]);
+    expect(result).toEqual([]);
+  });
+
+  it('should keep a saved sort that came back with another direction', () => {
+    const sortBackInOtherDirection = {
+      ...baseSort,
+      id: 'sort-2',
+      direction: ViewSortDirection.DESC,
+    } satisfies ViewSort;
+
+    const result = getViewSortsToDelete([baseSort], [sortBackInOtherDirection]);
+
+    expect(result).toEqual([]);
   });
 });
