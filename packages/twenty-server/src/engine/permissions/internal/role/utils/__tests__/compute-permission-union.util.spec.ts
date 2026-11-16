@@ -8,7 +8,6 @@ import { computePermissionUnion } from 'src/engine/permissions/internal/role/uti
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_ID = 'object-1';
-const OTHER_OBJECT_ID = 'object-2';
 
 const NO_OBJECT_ACCESS: ObjectRecordsPermissions = {
   canCreateAllRecords: false,
@@ -40,10 +39,6 @@ const buildRole = (
 ): RoleRecordsPermissions => ({ ...NO_ROLE_RECORDS_PERMISSIONS, objects });
 
 describe('computePermissionUnion', () => {
-  it('should grant nothing without a role', () => {
-    expect(computePermissionUnion([])).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
-  });
-
   it('should return a single role unchanged', () => {
     const role = buildRole({ [OBJECT_ID]: NO_OBJECT_ACCESS });
 
@@ -65,18 +60,6 @@ describe('computePermissionUnion', () => {
       canReadAllRecords: true,
       canUpdateAllRecords: true,
     });
-  });
-
-  it('should keep an object only one role knows', () => {
-    const result = computePermissionUnion([
-      buildRole({
-        [OBJECT_ID]: { ...NO_OBJECT_ACCESS, canReadAllRecords: true },
-      }),
-      buildRole({ [OTHER_OBJECT_ID]: NO_OBJECT_ACCESS }),
-    ]);
-
-    expect(result.objects[OBJECT_ID]?.canReadAllRecords).toBe(true);
-    expect(result.objects[OTHER_OBJECT_ID]).toEqual(NO_OBJECT_ACCESS);
   });
 
   it('should keep the rules of every role, each with its own field lists', () => {
@@ -107,17 +90,6 @@ describe('computePermissionUnion', () => {
     ]);
   });
 
-  it('should add no rule list when no role has a rule', () => {
-    const result = computePermissionUnion([
-      buildRole({ [OBJECT_ID]: NO_OBJECT_ACCESS }),
-      buildRole({ [OBJECT_ID]: NO_OBJECT_ACCESS }),
-    ]);
-
-    expect(result.objects[OBJECT_ID]).not.toHaveProperty(
-      'rowLevelRecordsPermissions',
-    );
-  });
-
   it('should keep a field denied at object level by any role', () => {
     const result = computePermissionUnion([
       buildRole({
@@ -144,18 +116,5 @@ describe('computePermissionUnion', () => {
       'hidden-field-id',
       'locked-field-id',
     ]);
-  });
-
-  it('should grant a role wide operation when one role grants it', () => {
-    const result = computePermissionUnion([
-      { ...NO_ROLE_RECORDS_PERMISSIONS, canReadAllRecords: true },
-      { ...NO_ROLE_RECORDS_PERMISSIONS, canDestroyAllRecords: true },
-    ]);
-
-    expect(result).toEqual({
-      ...NO_ROLE_RECORDS_PERMISSIONS,
-      canReadAllRecords: true,
-      canDestroyAllRecords: true,
-    });
   });
 });

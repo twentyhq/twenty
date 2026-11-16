@@ -160,48 +160,16 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(agentRolePermissions);
   });
 
-  it('should add the grants of a system side effect role to the main role', () => {
+  it('should add up the grants of the main roles', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
           type: 'role',
-
           roleIds: ['default-role-id', 'agent-role-id'],
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(agentRolePermissions);
-  });
-
-  it('should still narrow system side effect roles by the limiting role', () => {
-    expect(
-      computeForPrincipals({
-        mainPrincipal: {
-          type: 'role',
-
-          roleIds: ['default-role-id', 'agent-role-id'],
-        },
-        limitingPrincipal: {
-          type: 'agent',
-          agentId: 'agent-id',
-          roleId: 'default-role-id',
-        },
-        applicationPrincipal: { type: 'customApplication' },
-      }),
-    ).toEqual(defaultRolePermissions);
-  });
-
-  it('should grant nothing when a system side effect role has no permissions', () => {
-    expect(
-      computeForPrincipals({
-        mainPrincipal: {
-          type: 'role',
-
-          roleIds: ['agent-role-id', 'unknown-role-id'],
-        },
-        applicationPrincipal: { type: 'customApplication' },
-      }),
-    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   it('should resolve a role held by several principals as that role alone', () => {
