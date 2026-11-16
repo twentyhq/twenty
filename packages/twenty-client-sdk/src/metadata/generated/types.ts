@@ -3986,7 +3986,7 @@ export default {
                 4
             ],
             "signInScope": [
-                179
+                180
             ],
             "url": [
                 4
@@ -6870,7 +6870,7 @@ export default {
                 4
             ],
             "signInScope": [
-                179
+                180
             ],
             "tools": [
                 373
@@ -14783,7 +14783,7 @@ export default {
                 4
             ],
             "signInScope": [
-                179
+                180
             ],
             "url": [
                 4
