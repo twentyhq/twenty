@@ -664,7 +664,6 @@ export class RoleService {
         isDefined(flatRoleTarget) && roleIds.includes(flatRoleTarget.roleId),
     );
 
-    // a system held target goes with its role: its holder keeps an assigned role and needs no replacement
     const rebinds = flatRoleTargetsOfDeletedRoles
       .filter(({ isSystemSideEffect }) => !isSystemSideEffect)
       .flatMap((flatRoleTarget) =>
@@ -698,7 +697,6 @@ export class RoleService {
           },
         ),
       );
-    // a rebind also replaces the system held target its holder may already have for the default role
     const flatRoleTargetsToDelete = [
       ...new Map(
         [

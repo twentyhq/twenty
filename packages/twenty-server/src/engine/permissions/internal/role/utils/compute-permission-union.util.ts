@@ -10,7 +10,6 @@ const unionObjectRecordsPermissions = (
   const isGrantedToAllRecordsBySomeRole = (
     isGranted: (objectRecordsPermissions: ObjectRecordsPermissions) => boolean,
   ) => objectRecordsPermissionsPerRole.some(isGranted);
-  // A field denied by any role stays denied, so adding a role never reveals a field
   const unionFields = (
     inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields',
   ): string[] => [

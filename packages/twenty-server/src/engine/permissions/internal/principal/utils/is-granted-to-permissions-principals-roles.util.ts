@@ -4,7 +4,6 @@ import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/
 import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-// main roles add up, limiting roles each have to agree
 export const isGrantedToPermissionsPrincipalsRoles = ({
   principals,
   isGrantedToRole,

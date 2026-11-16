@@ -77,7 +77,6 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     targetApplicationUniversalIdentifier: null,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
-    // the system finds its own target again through its identifier, whichever instance wrote it
     universalIdentifier:
       universalIdentifier ??
       (isSystemSideEffect
@@ -93,7 +92,6 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     [targetMetadataForeignKey]: targetId,
   };
 
-  // a system held role is added next to the assigned one, which only another assigned role replaces
   const flatRoleTargetsToDelete = isSystemSideEffect
     ? []
     : Object.values(flatRoleTargetMaps.byUniversalIdentifier)

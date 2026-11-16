@@ -67,7 +67,6 @@ export class RoleTargetEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string | null;
 
-  // held by the system next to the role assigned to the user workspace, to which it adds its grants
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME,

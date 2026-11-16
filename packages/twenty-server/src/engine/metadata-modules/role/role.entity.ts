@@ -93,7 +93,6 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @Column({ nullable: false, default: false })
   canBeAssignedToApplications: boolean;
 
-  // created and maintained by the system: not listed, and not changed through the API
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME,
