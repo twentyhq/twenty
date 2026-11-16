@@ -1,7 +1,4 @@
-import {
-  LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS,
-  type LegacyCompliantRoleManifest,
-} from '@/application/roleManifestType';
+import { LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS } from '@/application/roleManifestType';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type LegacyRoleRecordsPermissionsManifestKey =
@@ -11,10 +8,10 @@ type LegacyRoleRecordsPermissionsManifestKey =
 export const getDeclaredLegacyRoleRecordsPermissionsKeys = ({
   role,
 }: {
-  role: Pick<
-    LegacyCompliantRoleManifest,
-    LegacyRoleRecordsPermissionsManifestKey
-  >;
+  // Only presence is read, so the SDK role config with its looser enum values fits too
+  role: {
+    [Key in LegacyRoleRecordsPermissionsManifestKey]?: boolean | unknown[];
+  };
 }): LegacyRoleRecordsPermissionsManifestKey[] =>
   LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS.filter((key) => {
     const value = role[key];

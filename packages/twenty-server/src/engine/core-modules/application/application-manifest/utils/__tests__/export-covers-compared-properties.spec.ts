@@ -114,6 +114,7 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   position: 0,
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {

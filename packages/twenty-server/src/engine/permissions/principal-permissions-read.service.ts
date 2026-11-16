@@ -51,11 +51,11 @@ export class PrincipalPermissionsReadService {
   }): Promise<PermissionsPrincipalsWithRolesContext> {
     const {
       userWorkspaceRoleMap,
-      userWorkspaceAdditionalRoleIdsMap,
+      userWorkspaceSystemSideEffectRoleIdsMap,
       flatRoleMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
-      'userWorkspaceAdditionalRoleIdsMap',
+      'userWorkspaceSystemSideEffectRoleIdsMap',
       'flatRoleMaps',
     ]);
     const flatRole = findUserWorkspaceFlatRoleOrThrow({
@@ -67,7 +67,8 @@ export class PrincipalPermissionsReadService {
     return buildRolePermissionsPrincipals({
       workspaceId,
       roleId: flatRole.id,
-      additionalRoleIds: userWorkspaceAdditionalRoleIdsMap[userWorkspaceId],
+      systemSideEffectRoleIds:
+        userWorkspaceSystemSideEffectRoleIdsMap[userWorkspaceId],
     });
   }
 
@@ -83,14 +84,14 @@ export class PrincipalPermissionsReadService {
     const workspaceId = authContext.workspace.id;
     const {
       userWorkspaceRoleMap,
-      userWorkspaceAdditionalRoleIdsMap,
+      userWorkspaceSystemSideEffectRoleIdsMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
       flatRoleTargetByApplicationIdMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
-      'userWorkspaceAdditionalRoleIdsMap',
+      'userWorkspaceSystemSideEffectRoleIdsMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
       'flatRoleTargetByApplicationIdMaps',
@@ -101,7 +102,7 @@ export class PrincipalPermissionsReadService {
       authContext,
       roleMaps: {
         userWorkspaceRoleMap,
-        userWorkspaceAdditionalRoleIdsMap,
+        userWorkspaceSystemSideEffectRoleIdsMap,
         apiKeyRoleMap,
         flatRoleTargetByAgentIdMaps,
         flatRoleTargetByApplicationIdMaps,

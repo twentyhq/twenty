@@ -7592,11 +7592,11 @@ __metadata:
   linkType: hard
 
 "@hono/node-server@npm:^1.19.9 || ^2.0.5":
-  version: 2.1.5
-  resolution: "@hono/node-server@npm:2.1.5"
+  version: 2.1.8
+  resolution: "@hono/node-server@npm:2.1.8"
   peerDependencies:
     hono: ^4 || ^5.0.0-0
-  checksum: 10c0/3c3d5ffcc4a229e532530729b64db623493171bcda7b40ffbac3a46489884f700c881439d8c0d0413cd18793458ca252acedf6a9c13c8c3a024037e47974cacb
+  checksum: 10c0/16900425ef58e908d2d3e12c44206663165ae07d267e68dbc987ac6c1b3f977bbac6b9566be60171efb60d230aeb7c559f4865cd6ff68c50ca99514320d711eb
   languageName: node
   linkType: hard
 
@@ -31314,9 +31314,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.13.13
-  resolution: "hono@npm:4.13.13"
-  checksum: 10c0/c8524e685a59b4f23a9bea15385eeac5622218949db251cb871b20fd9ef673b751b44ccdee6c22b3df56e5ed4c1b1cebad17b518bdc1823039da39b53ef9c1cf
+  version: 4.13.18
+  resolution: "hono@npm:4.13.18"
+  checksum: 10c0/c04462570fe9dcdf820b633e6c22d33d414d7608abbed7daadd3ad7c594b2670b4790a16b613658e952367a12082a21f0b556d021c17ccbbc70758eefd80badc
   languageName: node
   linkType: hard
 
@@ -46547,8 +46547,8 @@ __metadata:
     twenty-shared: "workspace:*"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    zapier-platform-cli: "npm:^19.0.0"
-    zapier-platform-core: "npm:19.0.0"
+    zapier-platform-cli: "npm:^19.3.0"
+    zapier-platform-core: "npm:19.3.0"
     zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
@@ -49405,16 +49405,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zapier-platform-cli@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-cli@npm:19.0.0"
+"zapier-platform-cli@npm:^19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-cli@npm:19.3.0"
   dependencies:
     "@oclif/core": "npm:4.5.2"
     "@oclif/plugin-autocomplete": "npm:3.2.34"
     "@oclif/plugin-help": "npm:6.2.32"
     "@oclif/plugin-not-found": "npm:3.2.62"
     "@oclif/plugin-version": "npm:2.2.32"
-    adm-zip: "npm:0.5.16"
+    adm-zip: "npm:0.6.1"
     archiver: "npm:7.0.1"
     chrono-node: "npm:2.8.3"
     cli-table3: "npm:0.6.5"
@@ -49441,27 +49441,27 @@ __metadata:
     semver: "npm:7.7.2"
     string-length: "npm:4.0.2"
     through2: "npm:4.0.2"
-    tmp: "npm:0.2.5"
+    tmp: "npm:0.2.6"
     traverse: "npm:0.6.11"
     update-notifier: "npm:7.3.1"
     yeoman-environment: "npm:4.4.3"
     yeoman-generator: "npm:7.5.1"
   bin:
     zapier-platform: src/bin/run
-  checksum: 10c0/518e297cf6b82a9fa674a9704c970e4490db744127193b9e82b9e456aec537982ffee4c9d8f0df6206c7cef162749af62f9cc2dc872552701ce968b169f7a110
+  checksum: 10c0/eb28a3c3d8fb276e617db48513efd03b8633cdf2db3bb61b84df5c72328b46f676f93aa2a46030f7ea34479303a42beeb81ab025a6c8b48ccd1338951089a794
   languageName: node
   linkType: hard
 
-"zapier-platform-core@npm:19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-core@npm:19.0.0"
+"zapier-platform-core@npm:19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-core@npm:19.3.0"
   dependencies:
     "@types/node": "npm:^20.3.1"
     "@zapier/secret-scrubber": "npm:^1.1.2"
     content-disposition: "npm:0.5.4"
     dotenv: "npm:17.2.1"
     fernet: "npm:^0.3.3"
-    form-data: "npm:4.0.5"
+    form-data: "npm:4.0.6"
     json-schema-to-ts: "npm:3.1.1"
     lodash: "npm:4.18.1"
     mime-types: "npm:3.0.1"
@@ -49469,7 +49469,7 @@ __metadata:
     node-fetch: "npm:2.7.0"
     oauth-sign: "npm:0.9.0"
     semver: "npm:7.7.2"
-    zapier-platform-schema: "npm:19.0.0"
+    zapier-platform-schema: "npm:19.3.0"
   peerDependencies:
     zapier-platform-legacy-scripting-runner: ">=3"
   dependenciesMeta:
@@ -49478,18 +49478,18 @@ __metadata:
   peerDependenciesMeta:
     zapier-platform-legacy-scripting-runner:
       optional: true
-  checksum: 10c0/e62ef43837bc1de725d096e1425305aba9eff9548671cf720297b3040f7544364b51d580514ea15fdce859756f3bf0df1fc76899e0ade0538c98bfbc4c326167
+  checksum: 10c0/5eb215857d5816d6ce8327e2ecb7aad77647c4e19cd3d9752653b5a66b90eea29e2aa45b8c39a69480dadefff0392d6b5e91438bef3ba38db3cb60431c6f0a44
   languageName: node
   linkType: hard
 
-"zapier-platform-schema@npm:19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-schema@npm:19.0.0"
+"zapier-platform-schema@npm:19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-schema@npm:19.3.0"
   dependencies:
     json-metaschema: "npm:1.3.0"
     jsonschema: "npm:1.5.0"
     lodash: "npm:4.18.1"
-  checksum: 10c0/353d25e090045d171d940a5250eafed584954e4814f4d02a93677909fd660654d263e685d78756cb8f792caa8077145bad1a9ef1e6c5094fbbb9b85f8362455e
+  checksum: 10c0/cf3f9cb5e77199357c1f7cb2413fc54c6df053311dc96db6e5e9a4e530c4d4a2258d40e800b6f5957f3bccc9212065043ad71b4bd65e756983636a5866835a86
   languageName: node
   linkType: hard
 

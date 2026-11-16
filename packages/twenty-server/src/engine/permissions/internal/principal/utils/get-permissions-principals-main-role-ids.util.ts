@@ -7,6 +7,6 @@ export const getPermissionsPrincipalsMainRoleIds = ({
 }: Pick<PermissionsPrincipalsWithRolesContext, 'mainPrincipal'>): string[] => [
   ...new Set([
     mainPrincipal.roleId,
-    ...(mainPrincipal.additionalRoleIds ?? []),
+    ...(mainPrincipal.systemSideEffectRoleIds ?? []),
   ]),
 ];

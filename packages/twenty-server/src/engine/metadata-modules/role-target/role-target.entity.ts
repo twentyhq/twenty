@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-is-system-side-effect-to-role-and-role-target-upgrade-command-name.constant';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-is-system-side-effect-to-role-and-role-target-upgrade-command-name.constant';
 import { ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-application-role-target-upgrade-command-name.constant';
 import { ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-webhook-id-to-role-target-upgrade-command-name.constant';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';

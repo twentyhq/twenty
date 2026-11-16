@@ -13,11 +13,11 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-type WithAdditionalRoleIds<TPrincipal> = TPrincipal & {
-  additionalRoleIds?: string[];
+type WithSystemSideEffectRoleIds<TPrincipal> = TPrincipal & {
+  systemSideEffectRoleIds?: string[];
 };
 
-export type PermissionsMainPrincipalWithRole = WithAdditionalRoleIds<
+export type PermissionsMainPrincipalWithRole = WithSystemSideEffectRoleIds<
   | WithRoleId<PermissionsWorkspaceMemberPrincipal>
   | WithRoleId<PermissionsApiKeyPrincipal>
   | WithRoleId<PermissionsAgentPrincipal>

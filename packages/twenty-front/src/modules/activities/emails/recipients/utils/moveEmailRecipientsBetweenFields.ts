@@ -1,12 +1,8 @@
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { mergeEmailRecipients } from '@/activities/emails/recipients/utils/mergeEmailRecipients';
 import { toSpliced } from '~/utils/array/toSpliced';
-
-export type EmailRecipientsByFieldId = Record<
-  EmailRecipientsFieldId,
-  EmailRecipient[]
->;
 
 // Both lists share recipient objects, so identity comparison is enough.
 const areRecipientListsEqual = (

@@ -23,17 +23,17 @@ type AccessGroupWorkspaceMemberMaps = Pick<
 
 const groupWorkspaceMembersByRoleId = ({
   userWorkspaceRoleMap,
-  userWorkspaceAdditionalRoleIdsMap,
+  userWorkspaceSystemSideEffectRoleIdsMap,
   flatWorkspaceMemberMaps,
 }: {
   userWorkspaceRoleMap: Record<string, string>;
-  userWorkspaceAdditionalRoleIdsMap: Record<string, string[]>;
+  userWorkspaceSystemSideEffectRoleIdsMap: Record<string, string[]>;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): Map<string, RlsWorkspaceMember[]> => {
   const workspaceMembersByRoleId = new Map<string, RlsWorkspaceMember[]>();
   const userWorkspaceRoleIds = [
     ...Object.entries(userWorkspaceRoleMap),
-    ...Object.entries(userWorkspaceAdditionalRoleIdsMap).flatMap(
+    ...Object.entries(userWorkspaceSystemSideEffectRoleIdsMap).flatMap(
       ([userWorkspaceId, roleIds]) =>
         roleIds.map((roleId): [string, string] => [userWorkspaceId, roleId]),
     ),
@@ -63,7 +63,7 @@ export const buildWorkspaceAccessGroups = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   userWorkspaceRoleMap,
-  userWorkspaceAdditionalRoleIdsMap = {},
+  userWorkspaceSystemSideEffectRoleIdsMap = {},
   flatWorkspaceMemberMaps,
 }: {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
@@ -71,7 +71,7 @@ export const buildWorkspaceAccessGroups = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   userWorkspaceRoleMap: Record<string, string>;
-  userWorkspaceAdditionalRoleIdsMap?: Record<string, string[]>;
+  userWorkspaceSystemSideEffectRoleIdsMap?: Record<string, string[]>;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): {
   accessGroups: AccessGroupWithoutCompactId[];
@@ -79,7 +79,7 @@ export const buildWorkspaceAccessGroups = ({
 } => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
-    userWorkspaceAdditionalRoleIdsMap,
+    userWorkspaceSystemSideEffectRoleIdsMap,
     flatWorkspaceMemberMaps,
   });
   const accessGroupByGroupHash = new Map<string, AccessGroupWithoutCompactId>();

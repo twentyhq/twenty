@@ -13,7 +13,7 @@ import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/f
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
+import { isGrantedToPermissionsPrincipalsRoles } from 'src/engine/permissions/internal/principal/utils/is-granted-to-permissions-principals-roles.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -38,7 +38,7 @@ export class SettingPermissionsService {
     const {
       featureFlagsMap,
       userWorkspaceRoleMap,
-      userWorkspaceAdditionalRoleIdsMap,
+      userWorkspaceSystemSideEffectRoleIdsMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
@@ -47,7 +47,7 @@ export class SettingPermissionsService {
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'featureFlagsMap',
       'userWorkspaceRoleMap',
-      'userWorkspaceAdditionalRoleIdsMap',
+      'userWorkspaceSystemSideEffectRoleIdsMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
@@ -79,8 +79,8 @@ export class SettingPermissionsService {
           principals: buildRolePermissionsPrincipals({
             workspaceId,
             roleId: flatRole.id,
-            additionalRoleIds:
-              userWorkspaceAdditionalRoleIdsMap[userWorkspaceId],
+            systemSideEffectRoleIds:
+              userWorkspaceSystemSideEffectRoleIdsMap[userWorkspaceId],
           }),
           rolesPermissions,
           flatObjectMetadataMaps,
@@ -136,11 +136,15 @@ export class SettingPermissionsService {
     return (
       (!isDefined(runtimeLimitingRole) ||
         (runtimeLimitingRole.permissionFlags[permissionFlag] ?? false)) &&
-      this.isPermissionFlagGrantedToRoles({
-        roleIds: getPermissionsPrincipalsRoleIds(principals),
-        permissionFlag,
-        flatRoleMaps,
-        flatRolePermissionFlagMaps,
+      isGrantedToPermissionsPrincipalsRoles({
+        principals,
+        isGrantedToRole: (roleId) =>
+          this.isPermissionFlagGrantedToRoles({
+            roleIds: [roleId],
+            permissionFlag,
+            flatRoleMaps,
+            flatRolePermissionFlagMaps,
+          }),
       })
     );
   }

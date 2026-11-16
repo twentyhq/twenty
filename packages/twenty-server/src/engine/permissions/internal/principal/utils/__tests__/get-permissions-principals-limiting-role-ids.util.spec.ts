@@ -52,10 +52,13 @@ describe('getPermissionsPrincipalsLimitingRoleIds', () => {
     ).toEqual([]);
   });
 
-  it('keeps an application that only matches an additional role of the main principal', () => {
+  it('keeps an application that only matches a system side effect role of the main principal', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal: { ...mainPrincipal, additionalRoleIds: ['extra-role'] },
+        mainPrincipal: {
+          ...mainPrincipal,
+          systemSideEffectRoleIds: ['extra-role'],
+        },
         applicationPrincipal: {
           type: 'application',
           roleId: 'extra-role',

@@ -18,7 +18,7 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
+import { isGrantedToPermissionsPrincipalsRoles } from 'src/engine/permissions/internal/principal/utils/is-granted-to-permissions-principals-roles.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
@@ -343,9 +343,13 @@ export class RecordSharingReadService {
       });
     const canAccessAllRecords =
       isDefined(principals) &&
-      canRolesAccessAllRecords({
-        roleIds: getPermissionsPrincipalsRoleIds(principals),
-        roleIdsWithAllRecordsAccess,
+      isGrantedToPermissionsPrincipalsRoles({
+        principals,
+        isGrantedToRole: (roleId) =>
+          canRolesAccessAllRecords({
+            roleIds: [roleId],
+            roleIdsWithAllRecordsAccess,
+          }),
       });
     const shares = await this.recordPermissionReadRepository.findRecordShares({
       workspaceId,

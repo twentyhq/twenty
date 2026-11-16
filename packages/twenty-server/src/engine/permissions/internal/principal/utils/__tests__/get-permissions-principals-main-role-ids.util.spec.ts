@@ -1,7 +1,7 @@
 import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 
 describe('getPermissionsPrincipalsMainRoleIds', () => {
-  it('lists the main role alone when it holds no additional role', () => {
+  it('lists the main role alone when it holds no system side effect role', () => {
     expect(
       getPermissionsPrincipalsMainRoleIds({
         mainPrincipal: {
@@ -19,7 +19,7 @@ describe('getPermissionsPrincipalsMainRoleIds', () => {
         mainPrincipal: {
           type: 'workspaceMember',
           roleId: 'main-role',
-          additionalRoleIds: ['personal-role', 'main-role'],
+          systemSideEffectRoleIds: ['personal-role', 'main-role'],
           workspaceMemberId: 'member-1',
         },
       }),

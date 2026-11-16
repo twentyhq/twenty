@@ -159,26 +159,26 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(agentRolePermissions);
   });
 
-  it('should add the grants of an additional role to the main role', () => {
+  it('should add the grants of a system side effect role to the main role', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
           type: 'role',
           roleId: 'default-role-id',
-          additionalRoleIds: ['agent-role-id'],
+          systemSideEffectRoleIds: ['agent-role-id'],
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(agentRolePermissions);
   });
 
-  it('should still narrow additional roles by the limiting role', () => {
+  it('should still narrow system side effect roles by the limiting role', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
           type: 'role',
           roleId: 'default-role-id',
-          additionalRoleIds: ['agent-role-id'],
+          systemSideEffectRoleIds: ['agent-role-id'],
         },
         limitingPrincipal: {
           type: 'agent',
@@ -190,13 +190,13 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(defaultRolePermissions);
   });
 
-  it('should grant nothing when an additional role has no permissions', () => {
+  it('should grant nothing when a system side effect role has no permissions', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
           type: 'role',
           roleId: 'agent-role-id',
-          additionalRoleIds: ['unknown-role-id'],
+          systemSideEffectRoleIds: ['unknown-role-id'],
         },
         applicationPrincipal: { type: 'customApplication' },
       }),

@@ -12,6 +12,7 @@ import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
+import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -71,9 +72,10 @@ export class RecordEventPermissionsReadService {
     const metadataMaps = await loadMetadataMaps();
 
     if (
-      getPermissionsPrincipalsRoleIds(principals).some(
-        (roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]),
-      )
+      [
+        ...getPermissionsPrincipalsRoleIds(principals),
+        ...getPermissionsPrincipalsMainRoleIds(principals),
+      ].some((roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]))
     ) {
       return [];
     }
