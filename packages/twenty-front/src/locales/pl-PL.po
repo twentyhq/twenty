@@ -959,6 +959,11 @@ msgstr "{minutes} min"
 msgid "{minutes}m {seconds}s"
 msgstr "{minutes} min {seconds} s"
 
+#. js-lingui-id: 8XkSLi
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "{minutesDescription} {hourWindowsList} UTC"
+msgstr ""
+
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "{morphRelationCount, plural, one {# Object} other {# Objects}}"
@@ -12409,6 +12414,7 @@ msgstr "co godzinę"
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "every minute"
 msgstr "co minutę"
 
@@ -12729,6 +12735,11 @@ msgstr "Wygasa za"
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in {dateDiff}"
 msgstr "Wygasa za {dateDiff}"
+
+#. js-lingui-id: jwf/kT
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Expires in less than a day"
+msgstr ""
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -14236,6 +14247,11 @@ msgstr "Od {0} zostanie naliczona opłata w wysokości {priceLabel}."
 msgid "from {startDay} to {endDay}"
 msgstr "od {startDay} do {endDay}"
 
+#. js-lingui-id: UQW3I0
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "from {startTime} to {endTime}"
+msgstr ""
+
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "front component"
@@ -15726,6 +15742,11 @@ msgstr "Za {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "Za {listName}"
+
+#. js-lingui-id: k4hbKL
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "In less than a day"
+msgstr ""
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx

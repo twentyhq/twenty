@@ -954,6 +954,11 @@ msgstr "{minutes}m"
 msgid "{minutes}m {seconds}s"
 msgstr "{minutes}m {seconds}s"
 
+#. js-lingui-id: 8XkSLi
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "{minutesDescription} {hourWindowsList} UTC"
+msgstr "{minutesDescription} {hourWindowsList} UTC"
+
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "{morphRelationCount, plural, one {# Object} other {# Objects}}"
@@ -12404,6 +12409,7 @@ msgstr "every hour"
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "every minute"
 msgstr "every minute"
 
@@ -12724,6 +12730,11 @@ msgstr "Expires in"
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in {dateDiff}"
 msgstr "Expires in {dateDiff}"
+
+#. js-lingui-id: jwf/kT
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Expires in less than a day"
+msgstr "Expires in less than a day"
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -14231,6 +14242,11 @@ msgstr "From {0}, you will be charged {priceLabel}."
 msgid "from {startDay} to {endDay}"
 msgstr "from {startDay} to {endDay}"
 
+#. js-lingui-id: UQW3I0
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "from {startTime} to {endTime}"
+msgstr "from {startTime} to {endTime}"
+
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "front component"
@@ -15721,6 +15737,11 @@ msgstr "In {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "In {listName}"
+
+#. js-lingui-id: k4hbKL
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "In less than a day"
+msgstr "In less than a day"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx

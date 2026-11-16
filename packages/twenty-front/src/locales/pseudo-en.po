@@ -954,6 +954,11 @@ msgstr ""
 msgid "{minutes}m {seconds}s"
 msgstr ""
 
+#. js-lingui-id: 8XkSLi
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "{minutesDescription} {hourWindowsList} UTC"
+msgstr ""
+
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "{morphRelationCount, plural, one {# Object} other {# Objects}}"
@@ -12404,6 +12409,7 @@ msgstr ""
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "every minute"
 msgstr ""
 
@@ -12687,6 +12693,11 @@ msgstr ""
 #. js-lingui-id: 1RvVK1
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in {dateDiff}"
+msgstr ""
+
+#. js-lingui-id: jwf/kT
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Expires in less than a day"
 msgstr ""
 
 #. js-lingui-id: VJKLVq
@@ -14195,6 +14206,11 @@ msgstr ""
 msgid "from {startDay} to {endDay}"
 msgstr ""
 
+#. js-lingui-id: UQW3I0
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "from {startTime} to {endTime}"
+msgstr ""
+
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "front component"
@@ -15684,6 +15700,11 @@ msgstr ""
 #. js-lingui-id: deCrc/
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
+msgstr ""
+
+#. js-lingui-id: k4hbKL
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "In less than a day"
 msgstr ""
 
 #. js-lingui-id: /LCAwL

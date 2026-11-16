@@ -220,6 +220,11 @@ msgstr "לוח בקרה"
 msgid "A database event trigger in this application is invalid."
 msgstr "מפעיל אירועי מסד נתונים ביישום זה אינו תקין."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr ""
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -404,6 +409,16 @@ msgstr "רשומה עם ערך זה כבר קיימת."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "הקלטה של פגישה"
+
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr ""
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr ""
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10033,6 +10048,11 @@ msgstr "אחת או יותר מכתובות ה-URI להפניה מחדש אינ�
 msgid "One or more requested scopes are invalid."
 msgstr "אחד או יותר מתחומי הגישה המבוקשים אינם תקינים."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr ""
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -10057,6 +10077,11 @@ msgstr "רק מנהל שרת יכול לנהל קודי שחזור עבור חב
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "רק חבר במרחב העבודה יכול לשנות מי רואה תהליך עבודה"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr ""
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10087,6 +10112,11 @@ msgstr "שגיאה יחידה"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "מותרות רק הגבלות שדה."
+
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr ""
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14055,6 +14085,11 @@ msgstr "לא ניתן לעדכן את השדה \"{field}\". אנא פנה למנ
 msgid "The field configured for this widget could not be found."
 msgstr "השדה שהוגדר עבור ווידג׳ט זה לא נמצא."
 
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -14323,6 +14358,26 @@ msgstr "הספק אינו זמין זמנית. נא לנסות שוב מאוחר
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "תוכן האימייל שהתקבל אינו זמין עוד."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr ""
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr ""
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr ""
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr ""
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14784,6 +14839,11 @@ msgstr "צ'אט זה אינו נמצא בערוץ."
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "קוד זה שייך לגרסת זרימת עבודה שפורסמה. ערוך אותו מטיוטה."
+
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr ""
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

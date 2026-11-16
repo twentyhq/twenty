@@ -220,6 +220,11 @@ msgstr "Ένας πίνακας ελέγχου"
 msgid "A database event trigger in this application is invalid."
 msgstr "Ένα έναυσμα συμβάντος βάσης δεδομένων σε αυτή την εφαρμογή δεν είναι έγκυρο."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr ""
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -404,6 +409,16 @@ msgstr "Υπάρχει ήδη εγγραφή με αυτήν την τιμή."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Μια ηχογράφηση μιας συνάντησης"
+
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr ""
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr ""
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10033,6 +10048,11 @@ msgstr "Μία ή περισσότερες διευθύνσεις URI ανακα
 msgid "One or more requested scopes are invalid."
 msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσβασης δεν είναι έγκυρα."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr ""
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -10057,6 +10077,11 @@ msgstr "Μόνο ένας διαχειριστής διακομιστή μπορ
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Μόνο ένα μέλος του χώρου εργασίας μπορεί να αλλάξει ποιος βλέπει μια ροή εργασίας"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr ""
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10087,6 +10112,11 @@ msgstr "Μοναδικό σφάλμα"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Επιτρέπονται μόνο περιορισμοί πεδίων."
+
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr ""
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14055,6 +14085,11 @@ msgstr "Το πεδίο \"{field}\" δεν μπορεί να ενημερωθε�
 msgid "The field configured for this widget could not be found."
 msgstr "Το πεδίο που έχει ρυθμιστεί για αυτό το γραφικό στοιχείο δεν βρέθηκε."
 
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -14323,6 +14358,26 @@ msgstr "Ο πάροχος δεν είναι προσωρινά διαθέσιμ�
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Το περιεχόμενο του ληφθέντος email δεν είναι πλέον διαθέσιμο."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr ""
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr ""
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr ""
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr ""
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14784,6 +14839,11 @@ msgstr "Αυτή η συνομιλία δεν βρίσκεται σε κανάλ
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "Αυτός ο κώδικας ανήκει σε δημοσιευμένη έκδοση ροής εργασίας. Επεξεργαστείτε τον από ένα πρόχειρο."
+
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr ""
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
