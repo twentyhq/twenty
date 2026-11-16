@@ -89,7 +89,10 @@ import {
 import { getStoredColumnNames } from 'src/engine/twenty-orm/table-shape/utils/get-stored-column-names.util';
 import { buildComputedColumnSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import {
+  type QueryBuilderContext,
+  WorkspaceSelectQueryBuilder,
+} from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
@@ -190,7 +193,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.options.executor.execute(compiled) as Promise<T[]>;
   }
 
-  createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
+  createQueryBuilder(
+    alias?: string,
+    options?: Pick<QueryBuilderContext, 'computedColumnSqlContext'>,
+  ): WorkspaceSelectQueryBuilder {
     return new WorkspaceSelectQueryBuilder(
       alias ?? this.options.tableShape.nameSingular,
       {
@@ -201,6 +207,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
+        computedColumnSqlContext: options?.computedColumnSqlContext,
       },
     );
   }
@@ -1897,7 +1904,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.resolveComputedColumns(queryBuilder);
   }
 
-  // Loops because the SQL of a computed column can itself read other computed columns
+  // Loops because a computed column can itself read other computed columns
   async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
@@ -1921,13 +1928,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         queryBuilder.setComputedColumnSql({
           alias,
           columnName,
-          ...(await buildComputedColumnSql({
+          computedColumnSql: await buildComputedColumnSql({
             flatFieldMetadata,
             alias,
             repository: this.getRepositoryForObjectMetadataId(
               tableShape.objectMetadataId,
             ),
-          })),
+            context: queryBuilder.computedColumnSqlContext,
+          }),
         });
       }
     }

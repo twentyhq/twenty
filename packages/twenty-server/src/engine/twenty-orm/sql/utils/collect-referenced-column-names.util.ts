@@ -1,4 +1,5 @@
 import {
+  type ColumnSelection,
   type OrderByClause,
   type SelectClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -12,12 +13,16 @@ export const collectReferencedColumnNames = ({
   extraSelectClauses,
   orderByClauses,
   distinctOnExpressions = [],
+  columnSelections = [],
+  conditionExpressions = [],
 }: {
   mainAlias: string;
   mainAliasColumnNames: string[];
   extraSelectClauses: SelectClause[];
   orderByClauses: OrderByClause[];
   distinctOnExpressions?: string[];
+  columnSelections?: ColumnSelection[];
+  conditionExpressions?: string[];
 }): Record<string, string[]> => {
   const columnNamesByAlias: Record<string, Set<string>> = {
     [mainAlias]: new Set(mainAliasColumnNames),
@@ -52,6 +57,18 @@ export const collectReferencedColumnNames = ({
       expression,
     ) ?? []) {
       addColumnName(mainAlias, columnName);
+    }
+  }
+
+  for (const { alias, columnName } of columnSelections) {
+    addColumnName(alias, columnName);
+  }
+
+  for (const conditionExpression of conditionExpressions) {
+    for (const [, alias, columnName] of conditionExpression.matchAll(
+      QUALIFIED_COLUMN_REFERENCE,
+    )) {
+      addColumnName(alias, columnName);
     }
   }
 
