@@ -16,7 +16,7 @@ import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/h
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
@@ -69,17 +69,16 @@ export const useCreateRecordPageRelatedRecordsWidget = ({
     );
 
   // Empty when the object has no relation to list, so pickers hide the whole section.
-  const relatedRecordsLayoutOptions =
-    relatedRecordsWidgetSources.length > 0
-      ? getRecordTableWidgetLayoutPickerOptions({
-          isKanbanAvailable: hasSourceAvailableForLayout(
-            ViewType.KANBAN_WIDGET,
-          ),
-          isCalendarAvailable: hasSourceAvailableForLayout(
-            ViewType.CALENDAR_WIDGET,
-          ),
-        })
-      : [];
+  const relatedRecordsLayoutOptions = isNonEmptyArray(
+    relatedRecordsWidgetSources,
+  )
+    ? getRecordTableWidgetLayoutPickerOptions({
+        isKanbanAvailable: hasSourceAvailableForLayout(ViewType.KANBAN_WIDGET),
+        isCalendarAvailable: hasSourceAvailableForLayout(
+          ViewType.CALENDAR_WIDGET,
+        ),
+      })
+    : [];
 
   const createRecordPageRelatedRecordsWidget = ({
     tabId,

@@ -5,7 +5,6 @@ import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
-// Returns the same snapshot when the layout lacks the field it needs, so callers can skip the state update.
 export const applyLayoutToRecordTableWidgetViewSnapshot = ({
   widgetViewSnapshot,
   targetViewType,

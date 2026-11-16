@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ViewType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -125,7 +125,7 @@ export const RecordPageAddWidgetSection = ({
         >
           {t`Field`}
         </ListItemButton>
-        {relatedRecordsLayoutOptions.length > 0 && (
+        {isNonEmptyArray(relatedRecordsLayoutOptions) && (
           <ListItemButton
             startIcon={
               <ListItemIconContainer>

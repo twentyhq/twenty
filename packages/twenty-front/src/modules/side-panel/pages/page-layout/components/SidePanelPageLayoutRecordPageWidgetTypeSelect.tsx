@@ -36,6 +36,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import {
   isDefined,
   isFrontComponentAvailableInWidgetPicker,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import {
   IconApps,
@@ -304,9 +305,21 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
+  const selectableRelatedRecordsLayoutOptions =
+    relatedRecordsLayoutOptions.filter(({ isDisabled }) => !isDisabled);
+
   const handleCreateRelatedRecordsWidget = (
     layoutViewType: RecordTableWidgetLayoutViewType,
   ) => {
+    // Checked before removing the widget being replaced, so an unavailable layout never drops it.
+    const isLayoutAvailable = selectableRelatedRecordsLayoutOptions.some(
+      ({ viewType }) => viewType === layoutViewType,
+    );
+
+    if (!isLayoutAvailable) {
+      return;
+    }
+
     const replacePositionIndex = getExistingWidgetPositionIndex();
     removeExistingWidgetIfReplacing();
 
@@ -382,9 +395,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     ],
   );
 
-  const selectableRelatedRecordsLayoutOptions =
-    relatedRecordsLayoutOptions.filter(({ isDisabled }) => !isDisabled);
-
   const selectableItemIds = [
     'fields',
     'field',
@@ -423,7 +433,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         </SelectableListItem>
       </SidePanelGroup>
 
-      {relatedRecordsLayoutOptions.length > 0 && (
+      {isNonEmptyArray(relatedRecordsLayoutOptions) && (
         <SidePanelGroup heading={t`Related records`}>
           {relatedRecordsLayoutOptions.map(
             ({ viewType, Icon, label, isDisabled, unavailableReason }) => (
