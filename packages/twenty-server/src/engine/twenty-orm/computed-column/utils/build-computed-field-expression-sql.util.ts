@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  ComputedFieldExpressionError,
   getComputedFieldExpressionFieldPaths,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type CompiledComputedFieldExpression } from 'src/engine/metadata-modules/computed-field/types/compiled-computed-field-expression.type';
 import { type SqlWithParameters } from 'src/engine/metadata-modules/computed-field/types/sql-with-parameters.type';
 import { buildOrmComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-orm-computed-field-schema-reader.util';
@@ -186,7 +186,7 @@ export const buildComputedFieldExpressionSql = async ({
       const fieldSql = fieldSqlByPath.get(path.join('.'));
 
       if (!isDefined(fieldSql)) {
-        throw new ComputedFieldExpressionException(
+        throw new ComputedFieldExpressionError(
           `"${path.join('.')}" cannot be read`,
         );
       }

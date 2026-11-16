@@ -1,14 +1,21 @@
-import { COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES } from '@/constants/ComputedFieldExpressionVariableNames';
-import { parseComputedFieldExpression } from '@/utils/computed-field/parseComputedFieldExpression';
+import { type ComputedFieldExpressionNode } from '@/types/ComputedFieldExpressionNode';
+import { getComputedFieldExpressionNodeChildren } from '@/utils/computed-field/internal/getComputedFieldExpressionNodeChildren';
+import { parseComputedFieldExpressionOrThrow } from '@/utils/computed-field/parseComputedFieldExpressionOrThrow';
 
-const VARIABLE_NAMES: readonly string[] =
-  COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES;
+const collectFieldPaths = (node: ComputedFieldExpressionNode): string[][] =>
+  node.kind === 'fieldPath'
+    ? [node.path]
+    : getComputedFieldExpressionNodeChildren(node).flatMap(collectFieldPaths);
 
 // "amount.amountMicros" reads as ['amount', 'amountMicros']: a composite sub-field or a field of a to-one relation
 export const getComputedFieldExpressionFieldPaths = (
   expression: string,
-): string[][] =>
-  parseComputedFieldExpression(expression)
-    .variables({ withMembers: true })
-    .filter((variable) => !VARIABLE_NAMES.includes(variable))
-    .map((variable) => variable.split('.'));
+): string[][] => {
+  const fieldPathByReadablePath = new Map(
+    collectFieldPaths(parseComputedFieldExpressionOrThrow(expression)).map(
+      (path) => [path.join('.'), path],
+    ),
+  );
+
+  return [...fieldPathByReadablePath.values()];
+};

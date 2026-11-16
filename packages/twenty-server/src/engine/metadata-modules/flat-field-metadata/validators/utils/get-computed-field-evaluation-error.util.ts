@@ -1,14 +1,17 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { COMPUTED_FIELD_VALUE_TYPES } from 'twenty-shared/constants';
 import {
+  type ComputedFieldValueType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import {
+  ComputedFieldExpressionError,
   getComputedFieldExpressionFieldPaths,
   isDefined,
+  parseComputedFieldExpressionOrThrow,
+  typeCheckComputedFieldExpressionOrThrow,
 } from 'twenty-shared/utils';
 
-import { COMPUTED_FIELD_SCALAR_TYPES } from 'src/engine/metadata-modules/computed-field/constants/computed-field-scalar-types.constant';
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
-import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
 import { type UniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/universal-computed-field-schema-reader.type';
-import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
 import { getComputedFieldValueTypeOrThrow } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type-or-throw.util';
 import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
 import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
@@ -27,7 +30,7 @@ const assertValueFitsType = ({
   subject: string;
 }): void => {
   if (isDefined(valueType) && !expectedTypes.includes(valueType)) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `${subject} is ${valueType.toLowerCase()}, expected ${expectedTypes.join(' or ').toLowerCase()}`,
     );
   }
@@ -42,7 +45,7 @@ const ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE: Record<
   [BOOLEAN]: [BOOLEAN],
   [DATE]: [DATE, DATE_TIME],
   [DATE_TIME]: [DATE, DATE_TIME],
-  [TEXT]: [...COMPUTED_FIELD_SCALAR_TYPES],
+  [TEXT]: [...COMPUTED_FIELD_VALUE_TYPES],
 };
 
 // Follows the computed fields the field reads, to refuse one that ends up reading itself
@@ -67,7 +70,7 @@ const assertComputationCanBeEvaluated = ({
   }
 
   if (readingFieldUniversalIdentifiers.includes(field.universalIdentifier)) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${field.name}" ends up reading itself`,
     );
   }
@@ -76,23 +79,17 @@ const assertComputationCanBeEvaluated = ({
     evaluatedObject: UniversalFlatObjectMetadata,
     expression: string,
   ): ComputedFieldValueType | undefined => {
-    const { type } = compileComputedFieldExpressionToSql({
-      expression,
-      resolveField: (path) => {
-        const { columnName, columnType } = resolveComputedFieldPathOrThrow({
-          path,
-          object: evaluatedObject,
-          schemaReader,
-        });
-
-        return {
-          sql: columnName,
-          type: getComputedFieldValueTypeOrThrow({
-            columnType,
-            readablePath: path.join('.'),
-          }),
-        };
-      },
+    const { type } = typeCheckComputedFieldExpressionOrThrow({
+      expression: parseComputedFieldExpressionOrThrow(expression),
+      getFieldType: (path) =>
+        getComputedFieldValueTypeOrThrow({
+          columnType: resolveComputedFieldPathOrThrow({
+            path,
+            object: evaluatedObject,
+            schemaReader,
+          }).columnType,
+          readablePath: path.join('.'),
+        }),
     });
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {
@@ -135,7 +132,7 @@ const assertComputationCanBeEvaluated = ({
 
     if (computation.operation === 'COUNT') {
       if (isDefined(computation.expression)) {
-        throw new ComputedFieldExpressionException(
+        throw new ComputedFieldExpressionError(
           'COUNT counts the related records and takes no expression; use the filter to count some of them',
         );
       }
@@ -144,7 +141,7 @@ const assertComputationCanBeEvaluated = ({
     }
 
     if (!isDefined(computation.expression)) {
-      throw new ComputedFieldExpressionException(
+      throw new ComputedFieldExpressionError(
         `${computation.operation} needs the expression to aggregate`,
       );
     }
@@ -163,13 +160,13 @@ const assertComputationCanBeEvaluated = ({
     return aggregatedType;
   };
 
-  const fieldType = COMPUTED_FIELD_SCALAR_TYPES.find(
+  const fieldType = COMPUTED_FIELD_VALUE_TYPES.find(
     (scalarType) => scalarType === field.type,
   );
 
   if (!isDefined(fieldType)) {
-    throw new ComputedFieldExpressionException(
-      `A computed field must be of type ${COMPUTED_FIELD_SCALAR_TYPES.join(', ')}`,
+    throw new ComputedFieldExpressionError(
+      `A computed field must be of type ${COMPUTED_FIELD_VALUE_TYPES.join(', ')}`,
     );
   }
 
@@ -199,7 +196,7 @@ export const getComputedFieldEvaluationError = ({
       readingFieldUniversalIdentifiers: [],
     });
   } catch (error) {
-    if (error instanceof ComputedFieldExpressionException) {
+    if (error instanceof ComputedFieldExpressionError) {
       return error.message;
     }
 

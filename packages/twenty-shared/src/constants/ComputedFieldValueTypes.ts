@@ -1,6 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
 
-export const COMPUTED_FIELD_SCALAR_TYPES = [
+export const COMPUTED_FIELD_VALUE_TYPES = [
   FieldMetadataType.NUMBER,
   FieldMetadataType.TEXT,
   FieldMetadataType.BOOLEAN,

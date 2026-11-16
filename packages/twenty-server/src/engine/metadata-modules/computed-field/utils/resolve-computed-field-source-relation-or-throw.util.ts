@@ -1,7 +1,10 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isComputedField, isDefined } from 'twenty-shared/utils';
+import {
+  ComputedFieldExpressionError,
+  isComputedField,
+  isDefined,
+} from 'twenty-shared/utils';
 
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -42,7 +45,7 @@ export const resolveComputedFieldSourceRelationOrThrow = <
     !isDefined(relatedObject) ||
     !isDefined(inverseField)
   ) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${relationFieldName}" must be a stored one-to-many relation of ${schemaReader.getObjectName(object)}`,
     );
   }

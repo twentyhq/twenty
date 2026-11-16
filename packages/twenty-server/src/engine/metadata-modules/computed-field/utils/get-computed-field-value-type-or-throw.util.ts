@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
-import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
+import {
+  type ComputedFieldValueType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import { ComputedFieldExpressionError, isDefined } from 'twenty-shared/utils';
 
 const VALUE_TYPE_BY_COLUMN_TYPE: Partial<
   Record<FieldMetadataType, ComputedFieldValueType>
@@ -29,7 +29,7 @@ export const getComputedFieldValueTypeOrThrow = ({
   const valueType = VALUE_TYPE_BY_COLUMN_TYPE[columnType];
 
   if (!isDefined(valueType)) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${readablePath}" is of a type (${columnType}) that expressions cannot read`,
     );
   }

@@ -3,11 +3,11 @@ import {
   type FieldMetadataComputationBindings,
 } from 'twenty-shared/types';
 import {
+  ComputedFieldExpressionError,
   getComputedFieldExpressionFieldPaths,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type ComputedFieldBindableSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-bindable-schema-field.type';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
@@ -17,7 +17,7 @@ const getFieldPathsOrThrow = (expression: string): string[][] => {
   try {
     return getComputedFieldExpressionFieldPaths(expression);
   } catch {
-    throw new ComputedFieldExpressionException('The expression cannot be read');
+    throw new ComputedFieldExpressionError('The expression cannot be read');
   }
 };
 
@@ -104,7 +104,7 @@ export const computeComputedFieldBindings = <
   try {
     return computeBindingsOrThrow(args);
   } catch (error) {
-    if (error instanceof ComputedFieldExpressionException) {
+    if (error instanceof ComputedFieldExpressionError) {
       return undefined;
     }
 

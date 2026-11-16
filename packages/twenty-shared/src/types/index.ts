@@ -73,9 +73,13 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ComputedFieldExpressionBinaryOperator } from './ComputedFieldExpressionBinaryOperator';
+export type { ComputedFieldExpressionFunction } from './ComputedFieldExpressionFunction';
 export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionName';
-export type { ComputedFieldExpressionInstruction } from './ComputedFieldExpressionInstruction';
+export type { ComputedFieldExpressionNode } from './ComputedFieldExpressionNode';
+export type { ComputedFieldExpressionUnaryOperator } from './ComputedFieldExpressionUnaryOperator';
 export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableName';
+export type { ComputedFieldValueType } from './ComputedFieldValueType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
@@ -352,6 +356,7 @@ export { StepLogicalOperator } from './StepFilters';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export type { TypedComputedFieldExpressionNode } from './TypedComputedFieldExpressionNode';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
