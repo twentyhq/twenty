@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -265,7 +265,7 @@ const renderDetails = async ({
     </MetadataAndApolloMocksWrapper>
   );
 
-  render(<AiChatThreadDetailsDropdown threadId={THREAD_ID} />, {
+  render(<InboxThreadDetailsDropdown threadId={THREAD_ID} />, {
     wrapper: Wrapper,
   });
 
@@ -278,7 +278,7 @@ const renderDetails = async ({
   );
 };
 
-describe('AiChatThreadDetailsDropdown', () => {
+describe('InboxThreadDetailsDropdown', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockThread.current = buildThread();

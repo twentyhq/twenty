@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
-import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
+import { getApplicationHealthBannerAppearance } from '@/settings/applications/utils/getApplicationHealthBannerAppearance';
 
 type SettingsApplicationHealthBannerProps = {
   healthStatus: ApplicationHealthStatus;

@@ -954,6 +954,11 @@ msgstr "{minutes}m"
 msgid "{minutes}m {seconds}s"
 msgstr "{minutes}m {seconds}s"
 
+#. js-lingui-id: 8XkSLi
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "{minutesDescription} {hourWindowsList} UTC"
+msgstr "{minutesDescription} {hourWindowsList} UTC"
+
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "{morphRelationCount, plural, one {# Object} other {# Objects}}"
@@ -2122,11 +2127,6 @@ msgstr "Add a recipient before sending"
 msgid "Add a recipient or a channel before sending."
 msgstr "Add a recipient or a channel before sending."
 
-#. js-lingui-id: YFSF0K
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Add a recipient to {label}"
-msgstr "Add a recipient to {label}"
-
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
 msgid "Add a related record"
@@ -2520,11 +2520,6 @@ msgstr "Add question"
 #: src/modules/ai/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "Add reaction"
-
-#. js-lingui-id: sJqK1O
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Add recipient"
-msgstr "Add recipient"
 
 #. js-lingui-id: AmiJYR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
@@ -5021,9 +5016,9 @@ msgid "Basic"
 msgstr "Basic"
 
 #. js-lingui-id: /xLNEx
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsReadonlyFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Bcc"
 msgstr "Bcc"
@@ -5950,9 +5945,9 @@ msgid "Catalog sync started. Try your lookup again in a moment."
 msgstr "Catalog sync started. Try your lookup again in a moment."
 
 #. js-lingui-id: RpYfjZ
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsReadonlyFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Cc"
 msgstr "Cc"
@@ -5963,8 +5958,7 @@ msgid "CC"
 msgstr "CC"
 
 #. js-lingui-id: Dgsw8A
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
 msgid "Cc/Bcc"
 msgstr "Cc/Bcc"
 
@@ -12415,6 +12409,7 @@ msgstr "every hour"
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "every minute"
 msgstr "every minute"
 
@@ -12735,6 +12730,11 @@ msgstr "Expires in"
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in {dateDiff}"
 msgstr "Expires in {dateDiff}"
+
+#. js-lingui-id: jwf/kT
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Expires in less than a day"
+msgstr "Expires in less than a day"
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -14242,6 +14242,11 @@ msgstr "From {0}, you will be charged {priceLabel}."
 msgid "from {startDay} to {endDay}"
 msgstr "from {startDay} to {endDay}"
 
+#. js-lingui-id: UQW3I0
+#: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
+msgid "from {startTime} to {endTime}"
+msgstr "from {startTime} to {endTime}"
+
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "front component"
@@ -15732,6 +15737,11 @@ msgstr "In {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "In {listName}"
+
+#. js-lingui-id: k4hbKL
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "In less than a day"
+msgstr "In less than a day"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -24328,7 +24338,7 @@ msgstr "Remove"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsReadonlyFields.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "Remove {0}"
@@ -30247,9 +30257,9 @@ msgstr "to"
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldRows.tsx
+#: src/modules/activities/emails/recipients/components/EmailRecipientsReadonlyFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "To"

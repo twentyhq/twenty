@@ -108,7 +108,9 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     await act(async () => {
-      await result.current.saveApplicationVariables();
+      await expect(result.current.saveApplicationVariables()).resolves.toBe(
+        true,
+      );
     });
 
     expect(updateApplicationVariable.mock.calls).toEqual([
@@ -162,7 +164,9 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     await act(async () => {
-      await result.current.saveApplicationVariables();
+      await expect(result.current.saveApplicationVariables()).resolves.toBe(
+        false,
+      );
     });
 
     expect(refetchApplicationVariables).not.toHaveBeenCalled();

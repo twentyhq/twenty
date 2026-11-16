@@ -3,23 +3,24 @@ import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { AiChatNewThreadPageActions } from '@/ai/components/AiChatNewThreadPageActions';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 
 type AiChatPageHeaderProps = {
+  icon: ReactNode;
   actionButton?: ReactNode;
 };
 
 export const AiChatPageHeader = ({
+  icon,
   actionButton,
-}: AiChatPageHeaderProps = {}) => {
+}: AiChatPageHeaderProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
 
   return (
     <PageCardHeader
-      icon={<InboxNewThreadListToggle />}
+      icon={icon}
       title={t`New chat`}
       actionButton={
         actionButton ??

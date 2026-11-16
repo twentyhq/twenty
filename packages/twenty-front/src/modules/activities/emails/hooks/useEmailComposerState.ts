@@ -23,6 +23,7 @@ import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/s
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailComposerDraft } from '@/activities/emails/types/EmailComposerDraft';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
 type UseEmailComposerStateArgs = {
@@ -60,7 +61,8 @@ export const useEmailComposerState = ({
       bcc: parseEmailRecipients(draftPrefill?.bcc ?? ''),
     },
     subject: draftPrefill?.subject ?? defaultSubject,
-    body: draftPrefill?.body ?? '',
+    body:
+      draftPrefill?.body ?? serializePlainTextAsAdvancedTextEditorDocument(''),
     files: [],
     pickedSender: null,
   }));
