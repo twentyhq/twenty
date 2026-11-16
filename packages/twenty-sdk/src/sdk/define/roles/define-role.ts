@@ -1,3 +1,4 @@
+import { getDeclaredLegacyRoleRecordsPermissionsKeys } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
@@ -129,6 +130,21 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
         );
       }
     }
+  }
+
+  // Same rule as the server sync: predicates may still sit next to recordsPermissions, grants may not
+  const conflictingDeprecatedKeys = isDefined(config.recordsPermissions)
+    ? getDeclaredLegacyRoleRecordsPermissionsKeys({ role: config }).filter(
+        (deprecatedKey) =>
+          deprecatedKey !== 'rowLevelPermissionPredicates' &&
+          deprecatedKey !== 'rowLevelPermissionPredicateGroups',
+      )
+    : [];
+
+  if (conflictingDeprecatedKeys.length > 0) {
+    errors.push(
+      `Role declares recordsPermissions together with the deprecated properties ${conflictingDeprecatedKeys.join(', ')}. Move them into recordsPermissions.`,
+    );
   }
 
   return createValidationResult({
