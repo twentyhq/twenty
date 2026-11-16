@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ProposedToolCall } from 'twenty-shared/ai';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
@@ -22,6 +23,12 @@ jest.mock(
     useEmailRecipientsResolution: () => ({
       resolutionByRecipientKey: new Map(),
     }),
+  }),
+);
+jest.mock(
+  '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions',
+  () => ({
+    useEmailRecipientSuggestions: () => ({ suggestions: [], error: undefined }),
   }),
 );
 jest.mock(
@@ -100,12 +107,19 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
-        <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
+        <ToastProvider>
+          <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
+        </ToastProvider>
       </Provider>
     </I18nProvider>,
   );
 
 describe('AiChatToolCallApprovalCard for an email', () => {
+  beforeAll(() => {
+    // jsdom has no PointerEvent, which the recipients' drag sensor checks on click
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   beforeEach(() => {
     answerAiChatToolCall.mockReset();
   });
