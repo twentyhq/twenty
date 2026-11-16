@@ -137,23 +137,16 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     : undefined;
 
   const handleCreateChartWidget = (graphType: GraphType) => {
-    if (
-      isExistingWidgetMissingOrDifferentType(
-        existingWidget?.type,
-        WidgetType.GRAPH,
-      )
-    ) {
-      if (isDefined(pageLayoutEditingWidgetId)) {
-        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
-      }
-
-      const fieldSelection = buildBarChartFieldSelection();
-      const newWidget = createPageLayoutGraphWidget({
-        fieldSelection,
-        graphType,
-      });
-      setPageLayoutEditingWidgetId(newWidget.id);
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
     }
+
+    const fieldSelection = buildBarChartFieldSelection();
+    const newWidget = createPageLayoutGraphWidget({
+      fieldSelection,
+      graphType,
+    });
+    setPageLayoutEditingWidgetId(newWidget.id);
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.DashboardChartSettings,
@@ -217,36 +210,29 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const handleCreateViewWidget = (
     targetViewType: RecordTableWidgetLayoutViewType,
   ) => {
-    if (
-      isExistingWidgetMissingOrDifferentType(
-        existingWidget?.type,
-        WidgetType.RECORD_TABLE,
-      )
-    ) {
-      if (isDefined(pageLayoutEditingWidgetId)) {
-        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
-      }
-
-      const newRecordTableWidget = createPageLayoutWidget({
-        type: WidgetType.RECORD_TABLE,
-        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
-        configuration: {
-          configurationType: WidgetConfigurationType.RECORD_TABLE,
-          isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
-        },
-        objectMetadataId: firstAvailableObjectMetadataItem?.id,
-      });
-
-      setPageLayoutEditingWidgetId(newRecordTableWidget.id);
-
-      addDraftViewForRecordTableWidget({
-        widgetId: newRecordTableWidget.id,
-        objectMetadataItem: firstAvailableObjectMetadataItem,
-        targetViewType,
-        defaultGroupByFieldMetadataItem,
-        defaultCalendarFieldMetadataItem,
-      });
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
     }
+
+    const newRecordTableWidget = createPageLayoutWidget({
+      type: WidgetType.RECORD_TABLE,
+      title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
+      configuration: {
+        configurationType: WidgetConfigurationType.RECORD_TABLE,
+        isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
+      },
+      objectMetadataId: firstAvailableObjectMetadataItem?.id,
+    });
+
+    setPageLayoutEditingWidgetId(newRecordTableWidget.id);
+
+    addDraftViewForRecordTableWidget({
+      widgetId: newRecordTableWidget.id,
+      objectMetadataItem: firstAvailableObjectMetadataItem,
+      targetViewType,
+      defaultGroupByFieldMetadataItem,
+      defaultCalendarFieldMetadataItem,
+    });
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
