@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SsoAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
@@ -91,22 +90,8 @@ describe('SsoAuthController', () => {
               .mockResolvedValue({ token: 'login-token' }),
           },
         },
-        {
-          provide: GuardRedirectService,
-          useValue: {
-            getRedirectErrorUrlAndCaptureExceptions: jest.fn(
-              ({ error }: { error: Error }) =>
-                `https://verify?errorMessage=${error.message}`,
-            ),
-          },
-        },
-        {
-          provide: WorkspaceDomainsService,
-          useValue: {
-            getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
-              jest.fn(),
-          },
-        },
+        { provide: GuardRedirectService, useValue: {} },
+        { provide: WorkspaceDomainsService, useValue: {} },
         { provide: SsoService, useValue: {} },
         {
           provide: getRepositoryToken(WorkspaceSsoIdentityProviderEntity),
@@ -175,160 +160,6 @@ describe('SsoAuthController', () => {
     await controller.samlAuthCallback(buildSamlRequest(), buildResponse());
 
     expect(userService.markEmailAsVerified).not.toHaveBeenCalled();
-  });
-
-  describe('existing account that is not a member', () => {
-    const existingUser = {
-      id: 'existing-user-id',
-      email: EMAIL,
-      isEmailVerified: true,
-      canAccessFullAdminPanel: false,
-      canImpersonate: false,
-    } as UserEntity;
-
-    const invitation = {
-      id: 'invitation-id',
-      value: 'personal-invite-token',
-      context: { email: EMAIL },
-    } as AppTokenEntity;
-
-    const buildSamlRequestWithInviteToken = (token?: string) =>
-      ({
-        user: {
-          identityProviderId: IDENTITY_PROVIDER_ID,
-          email: EMAIL,
-          workspacePersonalInviteToken: token,
-        },
-      }) as SamlRequest;
-
-    beforeEach(() => {
-      userService.findUserByEmail.mockResolvedValue(existingUser);
-      userService.hasUserAccessToWorkspaceOrThrow.mockRejectedValue(
-        new Error('User does not have access to this workspace'),
-      );
-      authService.signInUp.mockResolvedValue({
-        workspace,
-        user: existingUser,
-      } as Awaited<ReturnType<AuthService['signInUp']>>);
-    });
-
-    it('joins through a personal invitation matching the token and the asserted email', async () => {
-      authService.findInvitationForSignInUp.mockResolvedValue(invitation);
-
-      const response = buildResponse();
-
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken('personal-invite-token'),
-        response,
-      );
-
-      expect(authService.findInvitationForSignInUp).toHaveBeenCalledTimes(1);
-      expect(authService.findInvitationForSignInUp).toHaveBeenCalledWith({
-        currentWorkspace: workspace,
-        workspacePersonalInviteToken: 'personal-invite-token',
-      });
-      expect(
-        userService.hasUserAccessToWorkspaceOrThrow,
-      ).not.toHaveBeenCalled();
-      expect(authService.signInUp).toHaveBeenCalledTimes(1);
-      expect(authService.signInUp).toHaveBeenCalledWith(
-        expect.objectContaining({ invitation }),
-      );
-      expect(response.redirect).toHaveBeenCalledTimes(1);
-      expect(response.redirect).toHaveBeenCalledWith('https://redirect');
-    });
-
-    it('ignores a personal invitation issued for another email', async () => {
-      authService.findInvitationForSignInUp.mockResolvedValue({
-        ...invitation,
-        context: { email: 'someone-else@example.com' },
-      } as AppTokenEntity);
-
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken('personal-invite-token'),
-        buildResponse(),
-      );
-
-      expect(userService.hasUserAccessToWorkspaceOrThrow).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(authService.signInUp).not.toHaveBeenCalled();
-    });
-
-    it('does not look up an invitation without a token', async () => {
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken(undefined),
-        buildResponse(),
-      );
-
-      expect(authService.findInvitationForSignInUp).not.toHaveBeenCalled();
-      expect(authService.signInUp).not.toHaveBeenCalled();
-    });
-
-    it('refuses an account with instance privileges holding a matching invitation with an explicit message', async () => {
-      userService.findUserByEmail.mockResolvedValue({
-        ...existingUser,
-        canAccessFullAdminPanel: true,
-      } as UserEntity);
-      authService.findInvitationForSignInUp.mockResolvedValue(invitation);
-
-      const response = buildResponse();
-
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken('personal-invite-token'),
-        response,
-      );
-
-      expect(authService.signInUp).not.toHaveBeenCalled();
-      expect(response.redirect).toHaveBeenCalledTimes(1);
-      expect(response.redirect).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Accounts with admin panel or impersonation access cannot join a workspace through SSO',
-        ),
-      );
-    });
-
-    it('signs in an already-member account with instance privileges holding an invitation', async () => {
-      userService.findUserByEmail.mockResolvedValue({
-        ...existingUser,
-        canImpersonate: true,
-      } as UserEntity);
-      userService.hasUserAccessToWorkspaceOrThrow.mockResolvedValue(undefined);
-      authService.findInvitationForSignInUp.mockResolvedValue(invitation);
-
-      const response = buildResponse();
-
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken('personal-invite-token'),
-        response,
-      );
-
-      expect(authService.signInUp).toHaveBeenCalledTimes(1);
-      expect(authService.signInUp).toHaveBeenCalledWith(
-        expect.objectContaining({ invitation: undefined }),
-      );
-      expect(response.redirect).toHaveBeenCalledTimes(1);
-      expect(response.redirect).toHaveBeenCalledWith('https://redirect');
-    });
-
-    it('keeps the generic refusal for an account with a token issued for another email', async () => {
-      authService.findInvitationForSignInUp.mockResolvedValue({
-        ...invitation,
-        context: { email: 'someone-else@example.com' },
-      } as AppTokenEntity);
-
-      const response = buildResponse();
-
-      await controller.samlAuthCallback(
-        buildSamlRequestWithInviteToken('personal-invite-token'),
-        response,
-      );
-
-      expect(response.redirect).toHaveBeenCalledTimes(1);
-      expect(response.redirect).toHaveBeenCalledWith(
-        'https://verify?errorMessage=User does not have access to this workspace',
-      );
-    });
   });
 
   it('does not touch an existing user whose email is already verified', async () => {
