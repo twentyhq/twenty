@@ -7,21 +7,22 @@ import {
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { computeUpcomingCalendarEventHorizonEnd } from 'src/logic-functions/domain/compute-upcoming-calendar-event-horizon-end.util';
-import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { type UpcomingCalendarEvent } from 'src/logic-functions/types/upcoming-calendar-event.type';
 
-type CalendarEventIdNode = {
+type UpcomingCalendarEventNode = {
   id: string;
+  startsAt?: string | null;
 };
 
-export const fetchUpcomingCalendarEventIds = async (
+export const fetchUpcomingCalendarEvents = async (
   client: CoreApiClient,
   now: Date,
-): Promise<string[]> => {
+): Promise<UpcomingCalendarEvent[]> => {
   const nowIsoString = now.toISOString();
   const horizonEndIsoString =
     computeUpcomingCalendarEventHorizonEnd(now).toISOString();
 
-  const calendarEventNodes = await fetchAllNodes<CalendarEventIdNode>(
+  const calendarEventNodes = await fetchAllNodes<UpcomingCalendarEventNode>(
     async (afterCursor) => {
       const queryResult = await client.query({
         calendarEvents: {
@@ -58,18 +59,20 @@ export const fetchUpcomingCalendarEventIds = async (
           edges: {
             node: {
               id: true,
+              startsAt: true,
             },
           },
         },
       });
 
       return queryResult.calendarEvents as
-        | ConnectionPage<CalendarEventIdNode>
+        | ConnectionPage<UpcomingCalendarEventNode>
         | undefined;
     },
   );
 
-  return getUniqueSortedIds(
-    calendarEventNodes.map((calendarEvent) => calendarEvent.id),
-  );
+  return calendarEventNodes.map((calendarEvent) => ({
+    id: calendarEvent.id,
+    startsAt: calendarEvent.startsAt ?? undefined,
+  }));
 };
