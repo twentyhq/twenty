@@ -18,13 +18,11 @@ export const findStaleFathomMediaImports = async ({
   run: FathomMediaReconciliationRun;
   activeConnectedAccountIds: string[];
 }): Promise<FathomMediaReconciliationPage> => {
-  const importFromDisconnectedAccountFilter = {
-    fathomRecordingImports: {
-      connectedAccountId: { is: 'NOT_NULL' },
-      ...(isNonEmptyArray(activeConnectedAccountIds)
-        ? { not: { connectedAccountId: { in: activeConnectedAccountIds } } }
-        : {}),
-    },
+  const disconnectedAccountImportFilter = {
+    connectedAccountId: { is: 'NOT_NULL' },
+    ...(isNonEmptyArray(activeConnectedAccountIds)
+      ? { not: { connectedAccountId: { in: activeConnectedAccountIds } } }
+      : {}),
   };
 
   const queryResult = await coreApiClient.query({
@@ -41,7 +39,7 @@ export const findStaleFathomMediaImports = async ({
             {
               or: [
                 { startedAt: { gte: run.startedAfter } },
-                importFromDisconnectedAccountFilter,
+                { fathomRecordingImports: disconnectedAccountImportFilter },
               ],
             },
             ...(isNonEmptyString(run.afterId)
@@ -71,7 +69,7 @@ export const findStaleFathomMediaImports = async ({
                 },
                 {
                   status: { eq: 'PROCESSING' },
-                  ...importFromDisconnectedAccountFilter,
+                  fathomRecordingImports: disconnectedAccountImportFilter,
                 },
               ],
             },
