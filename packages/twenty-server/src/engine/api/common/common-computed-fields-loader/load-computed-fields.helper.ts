@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isComputedField } from 'twenty-shared/utils';
+import { isComputedField, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -45,7 +45,7 @@ export class LoadComputedFieldsHelper {
       ),
     );
 
-    if (recordsMissingComputedFields.length === 0) {
+    if (!isNonEmptyArray(recordsMissingComputedFields)) {
       return;
     }
 
