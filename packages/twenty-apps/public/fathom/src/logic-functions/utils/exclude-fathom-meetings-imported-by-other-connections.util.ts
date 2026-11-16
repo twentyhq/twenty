@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { type AppConnection } from 'twenty-sdk/logic-function';
 
 import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
@@ -8,11 +9,17 @@ export const excludeFathomMeetingsImportedByOtherConnections = async ({
   coreApiClient,
   meetings,
   connectedAccountId,
+  connectionScope,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   meetings: SerializedFathomMeeting[];
   connectedAccountId: string;
+  connectionScope: AppConnection['scope'];
 }): Promise<SerializedFathomMeeting[]> => {
+  if (connectionScope !== 'USER') {
+    return meetings;
+  }
+
   const identifiedMeetings = meetings.map((meeting) => ({
     meeting,
     callRecordingId: computeCallRecordingIdForFathomMeeting(

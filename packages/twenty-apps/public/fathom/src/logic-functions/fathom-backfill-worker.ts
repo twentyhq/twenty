@@ -115,13 +115,12 @@ export const fathomBackfillWorkerHandler = async (
     meetings: serializedMeetings,
   });
   const importableMeetings =
-    connection.scope === 'USER'
-      ? await excludeFathomMeetingsImportedByOtherConnections({
-          coreApiClient,
-          meetings: undeletedMeetings,
-          connectedAccountId: payload.connectedAccountId,
-        })
-      : undeletedMeetings;
+    await excludeFathomMeetingsImportedByOtherConnections({
+      coreApiClient,
+      meetings: undeletedMeetings,
+      connectedAccountId: payload.connectedAccountId,
+      connectionScope: connection.scope,
+    });
   const meetingBatches = chunkIntoBatches(
     importableMeetings,
     FATHOM_BACKFILL_BATCH_SIZE,
