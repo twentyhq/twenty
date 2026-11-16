@@ -40,6 +40,7 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
+import { hasAgentChatReplyContent } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-reply-content.util';
 import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -495,7 +496,7 @@ export class AgentTurnStreamService {
 
             if (
               isFinalizing ||
-              message.parts.length === 0 ||
+              !hasAgentChatReplyContent(message.parts) ||
               now - lastCheckpointAt < AGENT_CHAT_CHECKPOINT_INTERVAL_MS
             ) {
               continue;
@@ -639,7 +640,7 @@ export class AgentTurnStreamService {
       return null;
     }
 
-    if (replyParts.length === 0 || !isDefined(claim)) {
+    if (!hasAgentChatReplyContent(replyParts) || !isDefined(claim)) {
       await finishTurn();
 
       return { outcome, isAwaitingAnswer, threadBefore: null };

@@ -70,6 +70,13 @@ jest.mock('@/ai/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 
+const enqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast }),
+}));
+
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const DIRECT_MESSAGE_THREAD_ID = '20202020-0000-4000-8000-0000000000df';
@@ -1108,6 +1115,43 @@ describe('useAiChat', () => {
     });
 
     expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+  });
+
+  const sendToDeletedChat = async (outcome: SendChatMessageOutcome) => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: [outcome],
+      currentThreadId: EXISTING_THREAD_ID,
+    });
+
+    act(() => {
+      jotaiStore.set(recordStoreFamilyState.atomFamily(EXISTING_THREAD_ID), {
+        id: EXISTING_THREAD_ID,
+        __typename: 'AgentChatThread',
+        deletedAt: '2026-11-01T00:00:00.000Z',
+      });
+    });
+
+    await send(result);
+  };
+  const RESTORED_DELETED_CHAT_TOAST = expect.objectContaining({
+    status: 'success',
+    children: 'Your message restored this deleted chat',
+  });
+
+  it('tells the member their message restored a deleted chat', async () => {
+    await sendToDeletedChat('sent');
+
+    expect(enqueueToast).toHaveBeenCalledWith(RESTORED_DELETED_CHAT_TOAST);
+  });
+
+  it('does not announce a restore when the message to a deleted chat fails', async () => {
+    await sendToDeletedChat('failed');
+
+    expect(enqueueToast).not.toHaveBeenCalledWith(RESTORED_DELETED_CHAT_TOAST);
   });
 
   it('files a new chat into the channel it was started in, then forgets that channel', async () => {

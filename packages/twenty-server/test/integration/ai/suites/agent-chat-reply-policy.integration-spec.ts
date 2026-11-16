@@ -212,7 +212,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
       aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
     });
-    const threadId = await context.createThread(false);
+    const threadId = await context.createThread();
 
     await expect(
       shouldReply({ threadId, shouldAssistantReply: false }),
@@ -609,7 +609,7 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('executes an Ada-only message under both Never settings', async () => {
-    const threadId = await context.createThread(false);
+    const threadId = await context.createThread();
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
       assistantReplyContext: {

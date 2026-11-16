@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { retryChatMessageOperationFactory } from 'test/integration/graphql/utils/retry-chat-message-operation-factory.util';
+import { MOVE_THREAD } from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
 import { saveDirectMessageAssistantModeOperationFactory } from 'test/integration/graphql/utils/save-direct-message-assistant-mode-operation-factory.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -581,6 +582,34 @@ describe('Chat participation through the authenticated API', () => {
     expect((await context.readThread(threadId)).channelId).toBe(
       await context.findGeneralChannelIdOrThrow(),
     );
+  });
+
+  it('keeps Ada out of a chat she was left out of once it leaves its channel', async () => {
+    const threadId = context.registerThread();
+    const firstResponse = await sendChatParticipationMessage({
+      threadId,
+      channelId: await context.findGeneralChannelIdOrThrow(),
+      isAssistantParticipant: false,
+    });
+
+    expect(firstResponse.body.errors).toBeUndefined();
+    expect(firstResponse.body.data.sendChatMessage.streamId).toBeNull();
+
+    const moveResponse = await makeMetadataApiRequest({
+      query: MOVE_THREAD,
+      variables: { threadId, channelId: null },
+    });
+
+    expect(moveResponse.body.errors).toBeUndefined();
+
+    const response = await sendChatParticipationMessage({ threadId });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage.streamId).toBeNull();
+    expect(await context.readThread(threadId)).toMatchObject({
+      channelId: null,
+      isAssistantParticipant: false,
+    });
   });
 
   it('keeps Ada excluded for a cached client that omits the mention signal', async () => {

@@ -33,6 +33,7 @@ import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdS
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai/utils/getAiChatMessageAuthor';
 import { getAiChatMessageQuoteSource } from '@/ai/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai/utils/prependAiChatQuoteToText';
@@ -169,6 +170,10 @@ export const useAiChat = () => {
           ? unconfirmedFirstMessage.messageId
           : v4();
       const optimisticMessageCreatedAt = new Date().toISOString();
+      const isDeletedThread = isDefined(
+        store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
+          ?.deletedAt,
+      );
       const rollbackOptimisticRestore = applyOptimisticRestore({
         threadId,
         optimisticUpdatedAt: optimisticMessageCreatedAt,
@@ -254,6 +259,13 @@ export const useAiChat = () => {
               : undefined,
           },
         });
+
+        if (isDeletedThread) {
+          enqueueToast({
+            status: 'success',
+            children: t`Your message restored this deleted chat`,
+          });
+        }
 
         const isAssistantReplying =
           data?.sendChatMessage.queued ||
@@ -379,6 +391,7 @@ export const useAiChat = () => {
       applyOptimisticRestore,
       attachChatThreadToRecord,
       warnAboutParticipantMentionsNotAdded,
+      enqueueToast,
     ],
   );
 

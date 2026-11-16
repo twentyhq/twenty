@@ -216,6 +216,11 @@ export class AgentChatAssistantPolicyService {
         : AgentChatAudience.CONVERSATION;
     }
 
+    // a chat the assistant was left out of is not an assistant chat, even with a single member
+    if (!thread.isAssistantParticipant) {
+      return AgentChatAudience.CONVERSATION;
+    }
+
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
