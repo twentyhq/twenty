@@ -495,7 +495,7 @@ describe('app connection OAuth callback', () => {
   });
 
   it('returns to where the flow started with a short message when the token exchange fails', async () => {
-    const redirectLocation = `/settings/accounts/applications/${provider.applicationId}#connections`;
+    const redirectLocation = `/settings/app-preferences/${provider.applicationId}#connections`;
 
     const redirect = await callback(
       await authorize({ redirectLocation }),
@@ -503,7 +503,7 @@ describe('app connection OAuth callback', () => {
     );
 
     expect(redirect.pathname).toBe(
-      `/settings/accounts/applications/${provider.applicationId}`,
+      `/settings/app-preferences/${provider.applicationId}`,
     );
     expect(redirect.hash).toBe('#connections');
     expect(redirect.searchParams.get('errorMessage')).toBe(

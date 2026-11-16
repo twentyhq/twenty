@@ -47,7 +47,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}
-            onCancel={() => navigate(SettingsPath.Accounts)}
+            onCancel={() => navigate(SettingsPath.AppPreferences)}
             onSave={handleSubmit((data) => handleSave(data))}
           />
         }

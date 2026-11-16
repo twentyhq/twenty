@@ -12,6 +12,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
+import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
@@ -40,14 +41,12 @@ const LegacyAccountsRedirectHarness = ({
             </>
           ),
           children: [
-            ...[
-              SettingsPath.Accounts,
-              SettingsPath.AccountsConfiguration,
-              SettingsPath.ApplicationPreferences,
-            ].map((legacyAccountsPath) => ({
-              path: getSettingsPath(legacyAccountsPath),
-              element: <SettingsLegacyAccountsRedirect />,
-            })),
+            ...Object.keys(APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH).map(
+              (legacyAccountsPath) => ({
+                path: `/settings/${legacyAccountsPath}`,
+                element: <SettingsLegacyAccountsRedirect />,
+              }),
+            ),
             {
               path: `${getSettingsPath(SettingsPath.AppPreferences)}/*`,
               element: <CurrentLocation />,
