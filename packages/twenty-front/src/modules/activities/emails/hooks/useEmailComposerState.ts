@@ -3,9 +3,10 @@ import { type SetStateAction, useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
-import { useEmailComposerDraft } from '@/activities/emails/hooks/useEmailComposerDraft';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
@@ -62,7 +63,11 @@ export const useEmailComposerState = ({
     body: draftPrefill?.body ?? '',
     files: [],
   }));
-  const [storedDraft, setStoredDraft] = useEmailComposerDraft(draftKey);
+  const [storedDraft, setStoredDraft] = useComposerDraft({
+    draftFamilyState: emailComposerDraftFamilyState,
+    draftKey,
+    defaultDraft: null,
+  });
   const {
     recipientsByFieldId,
     subject,
