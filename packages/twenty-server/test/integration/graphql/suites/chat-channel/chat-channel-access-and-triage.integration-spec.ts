@@ -97,6 +97,15 @@ describe('Chat channel access and triage through the authenticated API', () => {
     expect(duplicateResponse.body.errors[0].extensions.code).toBe(
       'METADATA_VALIDATION_FAILED',
     );
+
+    const caseOnlyDuplicateResponse = await makeMetadataApiRequest({
+      query: CREATE_CHANNEL,
+      variables: { input: { name: 'general' } },
+    });
+
+    expect(caseOnlyDuplicateResponse.body.errors[0].extensions.code).toBe(
+      'METADATA_VALIDATION_FAILED',
+    );
   });
 
   it('leaves setting channels up to who manages AI settings', async () => {

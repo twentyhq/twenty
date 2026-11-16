@@ -9,11 +9,16 @@ export const validateAgentChatChannelNameUniqueness = ({
   existingFlatAgentChatChannels,
 }: {
   name: string;
-  existingFlatAgentChatChannels: UniversalFlatAgentChatChannel[];
+  existingFlatAgentChatChannels: Pick<UniversalFlatAgentChatChannel, 'name'>[];
 }): FlatEntityValidationError<AiExceptionCode>[] => {
   const errors: FlatEntityValidationError<AiExceptionCode>[] = [];
+  const lowerCaseName = name.toLowerCase();
 
-  if (existingFlatAgentChatChannels.some((channel) => channel.name === name)) {
+  if (
+    existingFlatAgentChatChannels.some(
+      (channel) => channel.name.toLowerCase() === lowerCaseName,
+    )
+  ) {
     errors.push({
       code: AiExceptionCode.INVALID_CHAT_CHANNEL_NAME,
       message: t`A channel named "${name}" already exists`,
