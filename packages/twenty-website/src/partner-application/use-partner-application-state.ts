@@ -42,6 +42,10 @@ export function usePartnerApplicationState() {
     (value: string[]) => dispatch({ type: 'SET_SKILLS', value }),
     [],
   );
+  const setAcceptsTerms = useCallback(
+    (value: boolean) => dispatch({ type: 'SET_ACCEPTS_TERMS', value }),
+    [],
+  );
   const goNext = useCallback(() => dispatch({ type: 'GO_NEXT' }), []);
   const goBack = useCallback(() => dispatch({ type: 'GO_BACK' }), []);
   const setSubmitting = useCallback(
@@ -65,6 +69,7 @@ export function usePartnerApplicationState() {
     toggleLanguage,
     toggleExperience,
     setSkills,
+    setAcceptsTerms,
     goNext,
     goBack,
     setSubmitting,

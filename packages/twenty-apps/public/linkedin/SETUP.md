@@ -28,7 +28,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 2. In **Settings → Applications → LinkedIn → Application registration**, set:
    - `UNIPILE_API_KEY`: the Unipile account key
    - `UNIPILE_WEBHOOK_SECRET`: the webhook endpoint's signing secret
-3. Members connect from **Settings → App preferences → LinkedIn**. This page needs the `IS_APP_PREFERENCES_ENABLED` feature flag on the workspace.
+3. Members connect from **Settings → App preferences → LinkedIn**.
 
 ## How it works
 

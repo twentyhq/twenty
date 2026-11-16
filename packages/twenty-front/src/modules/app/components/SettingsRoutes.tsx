@@ -16,15 +16,13 @@ import {
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
+import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
@@ -502,20 +500,6 @@ const SettingsAppPreferencesApp = lazy(() =>
   ),
 );
 
-const SettingsAccountsEmails = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
-    default: module.SettingsAccountsEmails,
-  })),
-);
-
-const SettingsAccountsCalendars = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
-    (module) => ({
-      default: module.SettingsAccountsCalendars,
-    }),
-  ),
-);
-
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
@@ -853,60 +837,15 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route element={<SettingsLegacyAccountsRedirect />}>
-        <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
-        <Route
-          path={SettingsPath.AccountsEmails}
-          element={<SettingsAccountsEmails />}
-        />
-        <Route
-          path={SettingsPath.AccountsCalendars}
-          element={<SettingsAccountsCalendars />}
-        />
-        <Route
-          path={SettingsPath.NewAccount}
-          element={<SettingsNewAccount />}
-        />
-        <Route
-          path={SettingsPath.AccountsConfiguration}
-          element={<SettingsAccountsConfiguration />}
-        />
-        <Route
-          path={SettingsPath.NewImapSmtpCaldavConnection}
-          element={<SettingsNewImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.EditImapSmtpCaldavConnection}
-          element={<SettingsEditImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.AccountDetail}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.BuiltInAccountApp}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.ApplicationPreferences}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-      </Route>
-    </Route>
-    <Route
-      element={
-        <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
-          requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
-        />
-      }
-    >
+      {Object.keys(APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH).map(
+        (legacyAccountsPath) => (
+          <Route
+            key={legacyAccountsPath}
+            path={legacyAccountsPath}
+            element={<SettingsLegacyAccountsRedirect />}
+          />
+        ),
+      )}
       <Route
         path={SettingsPath.AppPreferences}
         element={<SettingsAccounts />}

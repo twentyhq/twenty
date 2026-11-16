@@ -52,6 +52,12 @@ export function partnerApplicationReducer(
         fieldErrors: dropError(state.fieldErrors, 'twentyExperience'),
       };
     }
+    case 'SET_ACCEPTS_TERMS':
+      return {
+        ...state,
+        acceptsTerms: action.value,
+        fieldErrors: dropError(state.fieldErrors, 'acceptsTerms'),
+      };
     case 'SET_SKILLS':
       return { ...state, skills: action.value };
     case 'GO_NEXT': {
