@@ -27,8 +27,8 @@ export type WorkspaceTableShape = {
   schemaName: string;
   tableName: string;
   columnShapeByColumnName: Record<string, WorkspaceColumnShape>;
-  // Stored columns only: the default projection and writes never touch computed columns
-  columnNames: string[];
+  // The default projection and writes never touch computed columns
+  storedColumnNames: string[];
   computedColumnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
   hasDeletedAtColumn: boolean;

@@ -31,7 +31,7 @@ const companyTableShape: WorkspaceTableShape = {
     id: buildColumn('id'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'deletedAt'],
+  storedColumnNames: ['id', 'deletedAt'],
   computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
@@ -50,7 +50,7 @@ const personTableShape: WorkspaceTableShape = {
     updatedAt: buildColumn('updatedAt'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: [
+  storedColumnNames: [
     'id',
     'nameFirstName',
     'jobTitle',
@@ -255,7 +255,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         id: buildColumn('id'),
         updatedAt: buildColumn('updatedAt'),
       },
-      columnNames: ['id', 'updatedAt'],
+      storedColumnNames: ['id', 'updatedAt'],
       hasDeletedAtColumn: false,
     };
 
@@ -317,7 +317,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         id: buildColumn('id'),
         deletedAt: buildColumn('deletedAt'),
       },
-      columnNames: ['id', 'deletedAt'],
+      storedColumnNames: ['id', 'deletedAt'],
     };
 
     const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {

@@ -205,7 +205,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordReadRestrictions: this.recordReadRestrictions,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
-        onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
+        onBeforeExecute: (queryBuilder) =>
+          this.prepareForExecution({ queryBuilder }),
         formatResult: (records) => this.formatResult(records),
         computedColumnSqlContext: options?.computedColumnSqlContext,
       },
@@ -236,14 +237,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  async applyWriteRowLevelPermissions(
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    kind: MutationKind,
-  ): Promise<void> {
+  // Every step a select needs before it runs or is embedded, in one place so a caller cannot forget one
+  async prepareForExecution({
+    queryBuilder,
+    mutationKind,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    mutationKind?: MutationKind;
+  }): Promise<void> {
     await this.applyRowLevelPermissionPredicates(
       queryBuilder,
-      OPERATION_TYPE_BY_MUTATION_KIND[kind],
+      isDefined(mutationKind)
+        ? OPERATION_TYPE_BY_MUTATION_KIND[mutationKind]
+        : 'read',
     );
+    await this.validateQueryIsPermitted(queryBuilder);
+    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    await this.resolveComputedColumns(queryBuilder);
   }
 
   get internalContext(): WorkspaceInternalContext {
@@ -1451,11 +1461,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return queryBuilder.getMany<ObjectRecord>({ noFormatting: true });
     }
 
-    const { columnNames, columnShapeByColumnName } = this.options.tableShape;
+    const { storedColumnNames, columnShapeByColumnName } =
+      this.options.tableShape;
 
     return queryBuilder
       .select(
-        columnNames.filter((columnName) => {
+        storedColumnNames.filter((columnName) => {
           const columnShape = columnShapeByColumnName[columnName];
 
           return (
@@ -1895,17 +1906,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  private async onBeforeExecute(
-    queryBuilder: WorkspaceSelectQueryBuilder,
-  ): Promise<void> {
-    await this.applyRowLevelPermissionPredicates(queryBuilder);
-    await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
-    await this.resolveComputedColumns(queryBuilder);
-  }
-
   // Loops because a computed column can itself read other computed columns
-  async resolveComputedColumns(
+  private async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     for (

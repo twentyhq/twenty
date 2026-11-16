@@ -293,7 +293,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     }
 
     if (selection === this.alias && alias === undefined) {
-      this.explicitSelection = [...this.tableShape.columnNames];
+      this.explicitSelection = [...this.tableShape.storedColumnNames];
 
       return this;
     }

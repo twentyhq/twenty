@@ -61,6 +61,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       data: args.data,
     });
 
+    await this.loadComputedFieldsHelper.loadMissingComputedFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      records: updatedRecords,
+      selectedFields: args.selectedFieldsResult.select,
+    });
+
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,

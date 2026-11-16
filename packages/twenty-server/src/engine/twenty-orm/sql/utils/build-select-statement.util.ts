@@ -248,7 +248,7 @@ export const collectJoinedColumnProjections = (
       continue;
     }
 
-    for (const columnName of joinClause.targetTableShape.columnNames) {
+    for (const columnName of joinClause.targetTableShape.storedColumnNames) {
       addProjection(joinClause.alias, columnName);
     }
   }
@@ -284,7 +284,7 @@ export const buildProjection = (
     state.explicitSelection ??
     (selectedColumnNames.length > 0
       ? selectedColumnNames
-      : state.tableShape.columnNames);
+      : state.tableShape.storedColumnNames);
 
   const expressions = mainAliasColumnNames.map(
     (columnName) =>

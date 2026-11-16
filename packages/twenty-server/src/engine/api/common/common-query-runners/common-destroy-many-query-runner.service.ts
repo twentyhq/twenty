@@ -60,6 +60,13 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       kind: 'delete',
     });
 
+    await this.loadComputedFieldsHelper.loadMissingComputedFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      records: destroyedRecords,
+      selectedFields: args.selectedFieldsResult.select,
+    });
+
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,

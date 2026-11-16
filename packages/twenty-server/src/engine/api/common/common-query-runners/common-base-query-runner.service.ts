@@ -14,6 +14,7 @@ import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-pr
 import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
 import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
+import { LoadComputedFieldsHelper } from 'src/engine/api/common/common-computed-fields-loader/load-computed-fields.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import {
@@ -99,6 +100,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly workspaceOrmManager: WorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
+  @Inject()
+  protected readonly loadComputedFieldsHelper: LoadComputedFieldsHelper;
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
