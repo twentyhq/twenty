@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SAML callback sign-in existing accounts that are not members of the workspace refuses an existing account presenting an unknown personal invite token in RelayState 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
