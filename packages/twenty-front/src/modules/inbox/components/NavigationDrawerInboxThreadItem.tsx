@@ -3,7 +3,7 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 
-import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
 import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
@@ -70,7 +70,7 @@ export const NavigationDrawerInboxThreadItem = ({
       isUnread={isShownAsUnread}
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
-        <AiChatThreadActionsDropdown
+        <InboxThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}

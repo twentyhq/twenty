@@ -8,7 +8,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
+import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
 import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
@@ -254,7 +254,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
 
 const meta = {
   title: 'Modules/AI/AiChatThreadDetailsStatus',
-  component: AiChatThreadDetailsStatus,
+  component: InboxThreadDetailsStatus,
   decorators: [
     (Story, { parameters }) => (
       <MemoryRouter initialEntries={[parameters.path ?? '/inbox']}>
@@ -321,7 +321,7 @@ const meta = {
       ],
     },
   },
-} satisfies Meta<typeof AiChatThreadDetailsStatus>;
+} satisfies Meta<typeof InboxThreadDetailsStatus>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
