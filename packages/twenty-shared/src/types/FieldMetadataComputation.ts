@@ -9,14 +9,12 @@ export const FIELD_METADATA_ROLLUP_OPERATIONS = [
 export type FieldMetadataRollupOperation =
   (typeof FIELD_METADATA_ROLLUP_OPERATIONS)[number];
 
-// The value of the field is an expression over the record's own fields
 export type FieldMetadataFormulaComputation = {
   kind: 'FORMULA';
   expression: string;
 };
 
-// The value of the field aggregates the records of a one-to-many relation.
-// `expression` and `filter` are evaluated on each related record; COUNT takes no expression.
+// `expression` and `filter` are evaluated on each related record; COUNT takes no expression
 export type FieldMetadataRollupComputation = {
   kind: 'ROLLUP';
   relationFieldName: string;

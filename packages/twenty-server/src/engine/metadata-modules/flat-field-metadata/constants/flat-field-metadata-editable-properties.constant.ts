@@ -17,7 +17,6 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'settings',
   ],
   standard: [
-    'computation',
     'defaultValue',
     'description',
     'icon',
