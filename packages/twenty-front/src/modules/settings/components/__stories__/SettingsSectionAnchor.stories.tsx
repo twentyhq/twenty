@@ -32,7 +32,7 @@ export const Targeted: Story = {
     );
 
     await expect(section.parentElement).toHaveAttribute(
-      'data-highlighted',
+      'data-targeted',
       'true',
     );
   },
@@ -52,7 +52,7 @@ export const NotTargeted: Story = {
     );
 
     await expect(section.parentElement).toHaveAttribute(
-      'data-highlighted',
+      'data-targeted',
       'false',
     );
   },

@@ -63,6 +63,7 @@ export const SettingsSectionAnchor = ({
   return (
     <StyledAnchor
       {...{ [SETTINGS_SECTION_ANCHOR_DATA_ATTRIBUTE]: sectionId }}
+      data-targeted={isTargeted}
       data-highlighted={isHighlighted}
       onAnimationEnd={handleAnimationEnd}
     >
