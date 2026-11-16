@@ -657,15 +657,15 @@ export class RoleService {
 
     const activeApiKeyIds = new Set(activeApiKeys.flat().map(({ id }) => id));
 
-    const flatRoleTargetsToDelete = Object.values(
+    const flatRoleTargetsOfDeletedRoles = Object.values(
       flatRoleTargetMaps.byUniversalIdentifier,
     ).filter(
       (flatRoleTarget): flatRoleTarget is FlatRoleTarget =>
         isDefined(flatRoleTarget) && roleIds.includes(flatRoleTarget.roleId),
     );
 
-    // an additional target goes with its role: its holder keeps an assigned role and needs no replacement
-    const flatRoleTargetsToCreate = flatRoleTargetsToDelete
+    // a system held target goes with its role: its holder keeps an assigned role and needs no replacement
+    const rebinds = flatRoleTargetsOfDeletedRoles
       .filter(({ isSystemSideEffect }) => !isSystemSideEffect)
       .flatMap((flatRoleTarget) =>
         ROLE_TARGET_FOREIGN_KEY_PROPERTIES.flatMap(
@@ -693,12 +693,26 @@ export class RoleService {
                 flatAgentMaps,
                 flatWebhookMaps,
                 flatApplication: workspaceCustomFlatApplication,
-              }).flatRoleTargetToCreate,
+              }),
             ];
           },
         ),
       );
+    // a rebind also replaces the system held target its holder may already have for the default role
+    const flatRoleTargetsToDelete = [
+      ...new Map(
+        [
+          ...flatRoleTargetsOfDeletedRoles,
+          ...rebinds.flatMap((rebind) => rebind.flatRoleTargetsToDelete),
+        ].map((flatRoleTarget) => [flatRoleTarget.id, flatRoleTarget]),
+      ).values(),
+    ];
 
-    return { flatRoleTargetsToCreate, flatRoleTargetsToDelete };
+    return {
+      flatRoleTargetsToCreate: rebinds.map(
+        ({ flatRoleTargetToCreate }) => flatRoleTargetToCreate,
+      ),
+      flatRoleTargetsToDelete,
+    };
   }
 }
