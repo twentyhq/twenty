@@ -37,6 +37,13 @@ const canReadField = (
     flatFieldMetadata.id,
   );
 
+const canReadObject = async (
+  repository: WorkspaceRepository,
+): Promise<boolean> =>
+  !repository.recordReadRestrictions.unreadableObjectMetadataIds.has(
+    repository.flatObjectMetadata.id,
+  ) && !(await repository.isReadDisabled());
+
 // Row-level permissions of the subquery's object are applied before it is embedded:
 // a computed value only ever reflects records its reader could query directly
 const embedSubquery = async (
@@ -98,7 +105,7 @@ const buildFieldPathSql = async ({
 
   if (
     !canReadField(repository, toOneRelationHop.relationField) ||
-    (await targetRepository.isReadDisabled())
+    !(await canReadObject(targetRepository))
   ) {
     return undefined;
   }
@@ -200,7 +207,7 @@ const buildRollupSql = async ({
 
   if (
     !canReadField(repository, relationField) ||
-    (await relatedRepository.isReadDisabled())
+    !(await canReadObject(relatedRepository))
   ) {
     return undefined;
   }
