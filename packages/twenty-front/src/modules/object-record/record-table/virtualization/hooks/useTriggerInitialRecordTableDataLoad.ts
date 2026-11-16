@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
+import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -35,7 +36,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { recordLimit } = useRecordIndexContextOrThrow();
+  const { recordLimit, columnDescriptorByRecordFieldId } =
+    useRecordIndexContextOrThrow();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);
@@ -157,7 +159,15 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         if (isDefined(records)) {
-          upsertRecordsInStore({ partialRecords: records });
+          upsertRecordsInStore({
+            partialRecords: [
+              ...records,
+              ...getLookupRelatedRecords({
+                records,
+                columnDescriptorByRecordFieldId,
+              }),
+            ],
+          });
 
           loadRecordsAtRowIndexes({
             records,
@@ -207,6 +217,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       reapplyRowSelection,
       recordTableId,
       recordLimit,
+      columnDescriptorByRecordFieldId,
     ],
   );
 

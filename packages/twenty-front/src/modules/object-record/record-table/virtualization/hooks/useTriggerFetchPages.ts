@@ -4,6 +4,8 @@ import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
+import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -26,6 +28,7 @@ const TIME_BETWEEN_TWO_REQUESTS = 25;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
+  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
   const store = useStore();
 
@@ -131,7 +134,15 @@ export const useTriggerFetchPages = () => {
             sliceStart + PAGING_FOR_UI_UPDATE,
           );
 
-          upsertRecordsInStore({ partialRecords: recordsSlice });
+          upsertRecordsInStore({
+            partialRecords: [
+              ...recordsSlice,
+              ...getLookupRelatedRecords({
+                records: recordsSlice,
+                columnDescriptorByRecordFieldId,
+              }),
+            ],
+          });
 
           loadRecordsAtRowIndexes({
             records: recordsSlice,
@@ -156,6 +167,7 @@ export const useTriggerFetchPages = () => {
       store,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
+      columnDescriptorByRecordFieldId,
     ],
   );
 

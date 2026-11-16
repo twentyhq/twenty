@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { selectedRecordGroupTabIdComponentState } from '@/object-record/record-group/states/selectedRecordGroupTabIdComponentState';
@@ -19,14 +20,22 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
+import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const instanceId = 'record-index-id';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-      {children}
+      <RecordComponentInstanceContextsWrapper componentInstanceId={instanceId}>
+        <JestRecordIndexContextProviderWrapper
+          objectMetadataItem={getMockObjectMetadataItemOrThrow('task')}
+        >
+          {children}
+        </JestRecordIndexContextProviderWrapper>
+      </RecordComponentInstanceContextsWrapper>
     </ViewComponentInstanceContext.Provider>
   </JotaiProvider>
 );
