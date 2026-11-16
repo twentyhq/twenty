@@ -271,7 +271,11 @@ export class SsoAuthController {
             currentWorkspace.id,
           );
         } catch (error) {
-          if (!isDefined(personalInvitation)) {
+          const isAccessDenied =
+            error instanceof AuthException &&
+            error.code === AuthExceptionCode.FORBIDDEN_EXCEPTION;
+
+          if (!isAccessDenied || !isDefined(personalInvitation)) {
             throw error;
           }
 
