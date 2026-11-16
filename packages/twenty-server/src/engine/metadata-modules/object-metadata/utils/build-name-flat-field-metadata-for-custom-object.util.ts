@@ -40,6 +40,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     isSystemSideEffect: false,
     isUIEditable: true,
     disabledFieldPermissionActions: null,
+    computation: null,
     defaultValue: null,
     createdAt: now,
     updatedAt: now,

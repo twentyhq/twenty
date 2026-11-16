@@ -25,6 +25,7 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   // read by the timeline write path to drop non-audited fields
   'isAuditLogged',
   'disabledFieldPermissionActions',
+  'computation',
 ] as const satisfies readonly (keyof FlatFieldMetadata)[];
 
 export type OrmFlatFieldMetadataKey =

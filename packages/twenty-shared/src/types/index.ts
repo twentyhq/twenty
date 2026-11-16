@@ -95,6 +95,13 @@ export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEn
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
 export { FeatureFlagKey } from './FeatureFlagKey';
 export type {
+  FieldMetadataRollupOperation,
+  FieldMetadataFormulaComputation,
+  FieldMetadataRollupComputation,
+  FieldMetadataComputation,
+} from './FieldMetadataComputation';
+export { FIELD_METADATA_ROLLUP_OPERATIONS } from './FieldMetadataComputation';
+export type {
   FieldMetadataDefaultValueFunctionNames,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
