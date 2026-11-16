@@ -19,7 +19,7 @@ import {
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -612,7 +612,7 @@ export class WorkflowRunWorkspaceService {
   }
 
   private getInitState(
-    workflowVersion: Pick<WorkflowVersionWorkspaceEntity, 'trigger' | 'steps'>,
+    workflowVersion: Pick<WorkflowVersionEntity, 'trigger' | 'steps'>,
     triggerPayload: object,
     error?: string,
   ): WorkflowRunState | undefined {

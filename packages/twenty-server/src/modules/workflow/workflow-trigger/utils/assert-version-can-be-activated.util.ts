@@ -2,8 +2,8 @@ import { msg } from '@lingui/core/macro';
 
 import {
   WorkflowVersionStatus,
-  type WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+  type WorkflowVersionEntity,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -17,7 +17,7 @@ import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/uti
 
 export function assertVersionCanBeActivated(
   workflowVersion: Pick<
-    WorkflowVersionWorkspaceEntity,
+    WorkflowVersionEntity,
     'id' | 'status' | 'trigger' | 'steps'
   >,
   workflow: Pick<WorkflowEntity, 'lastPublishedVersionId'>,
@@ -46,7 +46,7 @@ export function assertVersionCanBeActivated(
 
 function assertVersionIsValid(
   workflowVersion: Pick<
-    WorkflowVersionWorkspaceEntity,
+    WorkflowVersionEntity,
     'id' | 'status' | 'trigger' | 'steps'
   >,
 ) {
