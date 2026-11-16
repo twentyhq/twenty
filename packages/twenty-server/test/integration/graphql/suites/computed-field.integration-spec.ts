@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -276,7 +277,7 @@ describe('Computed fields (e2e)', () => {
 
   afterAll(async () => {
     // Each object has a computed field reading the other, and a field read by a computed field cannot be deleted
-    if (projectBudgetFieldMetadataId !== '') {
+    if (isNonEmptyString(projectBudgetFieldMetadataId)) {
       await updateOneFieldMetadata({
         expectToFail: false,
         input: {
@@ -293,7 +294,7 @@ describe('Computed fields (e2e)', () => {
     for (const idToUpdate of [
       projectObjectMetadataId,
       taskObjectMetadataId,
-    ].filter((objectMetadataId) => objectMetadataId !== '')) {
+    ].filter(isNonEmptyString)) {
       await updateOneObjectMetadata({
         expectToFail: false,
         input: { idToUpdate, updatePayload: { isActive: false } },
@@ -679,6 +680,63 @@ describe('Computed fields (e2e)', () => {
       expect(JSON.stringify(deleteErrors)).toContain('would stop working');
 
       for (const idToDelete of [budgetWithBonusFieldId, bonusFieldId]) {
+        await updateOneFieldMetadata({
+          expectToFail: false,
+          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
+        });
+        await deleteOneFieldMetadata({
+          expectToFail: false,
+          input: { idToDelete },
+        });
+      }
+    });
+
+    it('rewrites a computed field created before the field it now reads', async () => {
+      const {
+        data: {
+          createOneField: { id: paddedBudgetFieldId },
+        },
+      } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'paddedBudget',
+        type: FieldMetadataType.NUMBER,
+        computation: { kind: 'FORMULA', expression: 'budget + 1' },
+      });
+      const {
+        data: {
+          createOneField: { id: paddingFieldId },
+        },
+      } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'padding',
+        type: FieldMetadataType.NUMBER,
+      });
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: paddedBudgetFieldId,
+          updatePayload: {
+            computation: {
+              kind: 'FORMULA',
+              expression: 'budget + coalesce(padding, 1)',
+            },
+          },
+        },
+      });
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: paddingFieldId,
+          updatePayload: { name: 'margin' },
+        },
+      });
+
+      expect(
+        (await findProjectValuesById('paddedBudget'))[ALPHA_PROJECT_ID],
+      ).toBe(101);
+
+      for (const idToDelete of [paddedBudgetFieldId, paddingFieldId]) {
         await updateOneFieldMetadata({
           expectToFail: false,
           input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },

@@ -117,7 +117,7 @@ export const buildWorkspaceTableShape = ({
   }
 
   const isComputedColumn = (columnName: string) =>
-    columnShapeByColumnName[columnName].isComputed === true;
+    columnShapeByColumnName[columnName].isComputed ?? false;
   const allColumnNames = Object.keys(columnShapeByColumnName);
 
   return {

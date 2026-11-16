@@ -18,7 +18,7 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 
 const MAX_TO_ONE_RELATION_HOPS = 3;
 
-export const resolveComputedFieldPath = <
+export const resolveComputedFieldPathOrThrow = <
   TObject,
   TField extends ComputedFieldSchemaField,
 >({
@@ -78,7 +78,7 @@ export const resolveComputedFieldPath = <
       );
     }
 
-    const targetResolution = resolveComputedFieldPath({
+    const targetResolution = resolveComputedFieldPathOrThrow({
       path: remainingPath,
       object: targetObject,
       schemaReader,

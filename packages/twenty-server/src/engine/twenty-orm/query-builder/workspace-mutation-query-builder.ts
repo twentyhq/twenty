@@ -83,7 +83,10 @@ export class WorkspaceMutationQueryBuilder {
   }
 
   returning(columns: string[]): this {
-    this.returningColumns = getStoredColumnNames(this.tableShape, columns);
+    this.returningColumns = getStoredColumnNames({
+      tableShape: this.tableShape,
+      columnNames: columns,
+    });
 
     return this;
   }

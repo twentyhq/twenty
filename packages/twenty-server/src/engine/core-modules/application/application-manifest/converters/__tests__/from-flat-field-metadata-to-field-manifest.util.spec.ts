@@ -103,7 +103,7 @@ const RELATION_FIELD_MANIFEST: Required<
   options: null,
   defaultValue: null,
   isNullable: true,
-  isUIEditable: true,
+  isUIEditable: false,
   disabledFieldPermissionActions: [],
   computation: {
     kind: 'ROLLUP',

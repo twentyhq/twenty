@@ -11,8 +11,7 @@ import {
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
-// A computed field reads other fields by name: deleting or renaming one of them is refused
-// while a computed field still reads it, instead of leaving a field that fails on every query
+// Refused instead of leaving a computed field that fails on every query
 export const validateComputedFieldsStillEvaluateCrossEntity = ({
   optimisticUniversalFlatMaps: {
     flatFieldMetadataMaps,

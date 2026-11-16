@@ -241,6 +241,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 - The response of a destroy returns computed fields empty: the record no longer exists.
 - A field that a computed field reads cannot be deleted until the computed field is updated or deleted. Renaming it updates the computed field.
 - A stored field cannot become computed, or the other way around.
+- A computed field is never editable in the UI: `isUIEditable` is always `false` on it.
 
 ## What's next
 

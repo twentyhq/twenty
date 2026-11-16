@@ -17,8 +17,8 @@ import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/comp
 import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
 import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
 import { getComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type.util';
-import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
-import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
+import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
+import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -87,8 +87,7 @@ const ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE: Record<
   [TEXT]: [...COMPUTED_FIELD_SCALAR_TYPES],
 };
 
-// Compiles every expression of the field, checks what it returns, then follows the computed fields
-// it reads to refuse a field that ends up reading itself
+// Follows the computed fields the field reads, to refuse one that ends up reading itself
 const assertComputationCanBeEvaluated = ({
   field,
   schemaReader,
@@ -122,7 +121,7 @@ const assertComputationCanBeEvaluated = ({
     const { type } = compileComputedFieldExpressionToSql({
       expression,
       resolveField: (path) => {
-        const { columnName, columnType } = resolveComputedFieldPath({
+        const { columnName, columnType } = resolveComputedFieldPathOrThrow({
           path,
           object: evaluatedObject,
           schemaReader,
@@ -140,7 +139,7 @@ const assertComputationCanBeEvaluated = ({
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {
       assertComputationCanBeEvaluated({
-        field: resolveComputedFieldPath({
+        field: resolveComputedFieldPathOrThrow({
           path,
           object: evaluatedObject,
           schemaReader,
@@ -162,7 +161,7 @@ const assertComputationCanBeEvaluated = ({
       return compileOn(object, computation.expression);
     }
 
-    const { relatedObject } = resolveComputedFieldSourceRelation({
+    const { relatedObject } = resolveComputedFieldSourceRelationOrThrow({
       relationFieldName: computation.relationFieldName,
       object,
       schemaReader,
@@ -291,8 +290,8 @@ export const validateFlatFieldMetadataComputation = ({
   }
 
   if (
-    flatFieldMetadataToValidate.isUnique === true ||
-    flatFieldMetadataToValidate.isSearchable === true ||
+    flatFieldMetadataToValidate.isUnique ||
+    flatFieldMetadataToValidate.isSearchable ||
     isDefined(flatFieldMetadataToValidate.defaultValue)
   ) {
     return buildError(
