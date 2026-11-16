@@ -32,7 +32,6 @@ export const fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow = ({
       properties: [...FLAT_MCP_SERVER_EDITABLE_PROPERTIES],
       update: editableUpdate,
     }),
-    // The migration diff compares the provider by its universal identifier
     ...(!isUndefined(connectionProviderUniversalIdentifier) && {
       connectionProviderUniversalIdentifier,
     }),

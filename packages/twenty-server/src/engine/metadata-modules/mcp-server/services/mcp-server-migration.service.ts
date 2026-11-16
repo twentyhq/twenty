@@ -27,15 +27,6 @@ export class McpServerMigrationService {
     );
   }
 
-  async getFlatMcpServerMaps(workspaceId: string) {
-    const { flatMcpServerMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatMcpServerMaps'] },
-      );
-
-    return flatMcpServerMaps;
-  }
-
   // Unknown ids pass through so the validator reports them instead of a lookup throwing first.
   async resolveConnectionProviderUniversalIdentifier({
     connectionProviderId,

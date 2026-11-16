@@ -118,7 +118,6 @@ export class McpServerClientService {
       }
     }
 
-    // The server may stop honoring a token before its assumed expiry; one refresh tells a stale token from a revoked account.
     const refreshedAccessToken =
       await this.mcpServerConnectedAccountService.refreshRejectedAccessTokenOrMarkAuthFailed(
         {
@@ -140,7 +139,6 @@ export class McpServerClientService {
         throw error;
       }
 
-      // A revoked token would otherwise keep being picked ahead of a fresh connection
       await this.mcpServerConnectedAccountService.markConnectedAccountAuthFailed(
         {
           connectedAccountId: connectedAccount.id,

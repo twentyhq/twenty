@@ -5,7 +5,6 @@ import { type ConnectionProviderScope } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
@@ -133,8 +132,9 @@ export class McpServerSignInService {
     workspaceId: string;
   }): Promise<boolean> {
     const flatMcpServer = findFlatMcpServerByIdOrThrow({
-      flatMcpServerMaps:
-        await this.mcpServerMigrationService.getFlatMcpServerMaps(workspaceId),
+      flatMcpServerMaps: (
+        await this.mcpServerMigrationService.getFlatMaps(workspaceId)
+      ).flatMcpServerMaps,
       mcpServerId,
     });
 
@@ -147,10 +147,6 @@ export class McpServerSignInService {
     const signInFlatConnectionProvider =
       await this.buildSignInFlatConnectionProviderIfRequired({
         mcpServer: flatMcpServer,
-        flatApplication: {
-          id: flatMcpServer.applicationId,
-          universalIdentifier: flatMcpServer.applicationUniversalIdentifier,
-        },
         scope: 'USER',
       });
 
@@ -158,8 +154,8 @@ export class McpServerSignInService {
       return false;
     }
 
-    const flatMcpServerMaps =
-      await this.mcpServerMigrationService.getFlatMcpServerMaps(workspaceId);
+    const { flatMcpServerMaps } =
+      await this.mcpServerMigrationService.getFlatMaps(workspaceId);
     const latestFlatMcpServer = findFlatMcpServerByIdOrThrow({
       flatMcpServerMaps,
       mcpServerId,
@@ -223,34 +219,33 @@ export class McpServerSignInService {
     isUrlChanged: boolean;
     scope: ConnectionProviderScope;
   }): Promise<FlatConnectionProvider | null> {
-    const flatApplication = {
-      id: flatMcpServer.applicationId,
-      universalIdentifier: flatMcpServer.applicationUniversalIdentifier,
-    };
-
     // Only a new URL can stop asking for sign-in; a scope change keeps the server's current answer.
     if (isUrlChanged) {
       return this.buildSignInFlatConnectionProviderIfRequired({
         mcpServer: flatMcpServer,
-        flatApplication,
         scope,
       });
     }
 
     return buildMcpServerSignInFlatConnectionProvider({
       mcpServer: flatMcpServer,
-      flatApplication,
       scope,
     });
   }
 
   async buildSignInFlatConnectionProviderIfRequired({
     mcpServer,
-    flatApplication,
     scope,
   }: {
-    mcpServer: Pick<FlatMcpServer, 'name' | 'label' | 'url' | 'workspaceId'>;
-    flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+    mcpServer: Pick<
+      FlatMcpServer,
+      | 'name'
+      | 'label'
+      | 'url'
+      | 'workspaceId'
+      | 'applicationId'
+      | 'applicationUniversalIdentifier'
+    >;
     scope: ConnectionProviderScope;
   }): Promise<FlatConnectionProvider | null> {
     const requiresSignIn = await this.mcpServerClientService.requiresSignIn({
@@ -259,11 +254,7 @@ export class McpServerSignInService {
     });
 
     return requiresSignIn
-      ? buildMcpServerSignInFlatConnectionProvider({
-          mcpServer,
-          flatApplication,
-          scope,
-        })
+      ? buildMcpServerSignInFlatConnectionProvider({ mcpServer, scope })
       : null;
   }
 
