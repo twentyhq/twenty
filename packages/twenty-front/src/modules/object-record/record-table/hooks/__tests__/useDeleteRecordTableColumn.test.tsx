@@ -13,6 +13,14 @@ jest.mock('@/views/hooks/internal/usePerformViewFieldApiPersist', () => ({
   }),
 }));
 
+const mockCanPersistChanges = jest.fn(() => true);
+
+jest.mock('@/views/hooks/useCanPersistViewChanges', () => ({
+  useCanPersistViewChanges: () => ({
+    canPersistChanges: mockCanPersistChanges(),
+  }),
+}));
+
 const RECORD_TABLE_ID = 'record-table-id';
 
 const buildRecordField = ({
@@ -46,6 +54,26 @@ const renderDeleteHook = (store: ReturnType<typeof createStore>) =>
 describe('useDeleteRecordTableColumn', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCanPersistChanges.mockReturnValue(true);
+  });
+
+  it('leaves the column in place when the view cannot be changed', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [nameColumn, extraColumn]);
+    mockCanPersistChanges.mockReturnValue(false);
+
+    const { result } = renderDeleteHook(store);
+
+    const isDeleted = await act(() =>
+      result.current.deleteRecordTableColumn(extraColumn.id),
+    );
+
+    expect(isDeleted).toBe(false);
+    expect(store.get(currentRecordFieldsAtom)).toEqual([
+      nameColumn,
+      extraColumn,
+    ]);
+    expect(performViewFieldApiDestroyMock).not.toHaveBeenCalled();
   });
 
   it('keeps the column removed when a view field sync brings it back while the delete is pending', async () => {
