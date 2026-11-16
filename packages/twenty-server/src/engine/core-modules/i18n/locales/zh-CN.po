@@ -223,7 +223,7 @@ msgstr "此应用程序中的数据库事件触发器无效。"
 #. js-lingui-id: RRhkpY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
-msgstr ""
+msgstr "已停用的字段无法显示在列中"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -413,12 +413,12 @@ msgstr "会议录音"
 #. js-lingui-id: p5HHUZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr ""
+msgstr "相关记录字段只能显示在多对一关系字段上"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
-msgstr ""
+msgstr "相关记录的关系无法显示在列中"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -601,7 +601,7 @@ msgstr "发生视图字段组错误。"
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
-msgstr ""
+msgstr "视图筛选器不能保留在正在删除的视图筛选器组中"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -611,7 +611,7 @@ msgstr "发生视图过滤器错误。"
 #. js-lingui-id: yPKHXO
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter group cannot stay under a parent group that is being removed"
-msgstr ""
+msgstr "视图筛选器组不能保留在正在删除的父组下"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -1596,7 +1596,7 @@ msgstr "应用"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Apps preferences"
-msgstr ""
+msgstr "应用首选项"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6353,7 +6353,7 @@ msgstr "转到 AI 设置"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
-msgstr ""
+msgstr "前往应用首选项"
 
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10036,7 +10036,7 @@ msgstr "一个或多个请求的作用域无效。"
 #. js-lingui-id: A69o8a
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record can show a field of that record"
-msgstr ""
+msgstr "只有链接到一条记录的列才能显示该记录的字段"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,7 +10066,7 @@ msgstr "只有工作区成员可以更改工作流的可见对象"
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
-msgstr ""
+msgstr "只有已添加的列才能显示相关记录的字段"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10101,7 +10101,7 @@ msgstr "仅允许字段限制。"
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only non-canonical view fields can show a related record field"
-msgstr ""
+msgstr "只有非规范视图字段才能显示相关记录字段"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14073,7 +14073,7 @@ msgstr "找不到为此小部件配置的字段。"
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The field must belong to the related object"
-msgstr ""
+msgstr "该字段必须属于相关对象"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14347,22 +14347,22 @@ msgstr "接收的电子邮件内容已不可用。"
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field cannot be a relation"
-msgstr ""
+msgstr "相关记录字段不能是关系"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must be active"
-msgstr ""
+msgstr "相关记录字段必须处于活动状态"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
-msgstr ""
+msgstr "相关记录字段必须属于关系目标对象"
 
 #. js-lingui-id: bb3jnG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "无法更改由应用程序拥有的列的相关记录字段"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14828,7 +14828,7 @@ msgstr "此代码属于已发布的工作流版本。请从草稿中编辑。"
 #. js-lingui-id: t/Gj4r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
-msgstr ""
+msgstr "此列来自应用程序，因此无法更改其显示的相关记录字段"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

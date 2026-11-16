@@ -962,7 +962,7 @@ msgstr "{minutes}ր {seconds}վ"
 #. js-lingui-id: 8XkSLi
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "{minutesDescription} {hourWindowsList} UTC"
-msgstr ""
+msgstr "{minutesDescription} {hourWindowsList} UTC"
 
 #. js-lingui-id: Rz4zRU
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -12681,7 +12681,7 @@ msgstr "Ժամկետը կլրանա {dateDiff}-ից"
 #. js-lingui-id: jwf/kT
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in less than a day"
-msgstr ""
+msgstr "Սպառվում է մեկ օրից պակաս ժամանակում"
 
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -12898,7 +12898,7 @@ msgstr "Չհաջողվեց չեղարկել արշավը"
 #. js-lingui-id: Rw92kd
 #: src/modules/settings/applications/hooks/useRunApplicationHealthCheck.ts
 msgid "Failed to check the app's health."
-msgstr ""
+msgstr "Չհաջողվեց ստուգել հավելվածի առողջական վիճակը։"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14197,7 +14197,7 @@ msgstr "{startDay}-ից մինչև {endDay}"
 #. js-lingui-id: UQW3I0
 #: src/utils/cron-to-human/descriptors/getMinutesWithinHoursDescription.ts
 msgid "from {startTime} to {endTime}"
-msgstr ""
+msgstr "{startTime}-ից մինչև {endTime}"
 
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15693,7 +15693,7 @@ msgstr "{listName}-ից"
 #. js-lingui-id: k4hbKL
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In less than a day"
-msgstr ""
+msgstr "Մեկ օրից պակաս ժամանակում"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
