@@ -10,7 +10,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,8 +22,8 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
 
 const buildRequestedRole = (
-  overrides: Partial<RoleManifest>,
-): RoleManifest => ({
+  overrides: Partial<LegacyCompliantRoleManifest>,
+): LegacyCompliantRoleManifest => ({
   universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Grant install requested role',
   objectPermissions: [
@@ -40,7 +40,7 @@ const uploadVersion = async ({
   requestedRole,
 }: {
   version: string;
-  requestedRole: RoleManifest;
+  requestedRole: LegacyCompliantRoleManifest;
 }) => {
   const tarball = await createAppTarball({
     'manifest.json': JSON.stringify(

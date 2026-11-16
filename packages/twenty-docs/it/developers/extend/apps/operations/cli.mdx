@@ -29,7 +29,7 @@ Gli esempi seguenti usano `twenty`. Sostituisci `twenty` con `npx twenty@latest`
 | `autenticazione` | Accedi, verifica e rimuovi le credenziali                                               |
 | `remote`         | Elenca, seleziona, rinomina e rimuovi le connessioni salvate allo spazio di lavoro      |
 | `metadati`       | Ispeziona oggetti e campi                                                               |
-| `data`           | Elenca e leggi i record                                                                 |
+| `data`           | Elenca, leggi ed esporta record                                                         |
 | `api`            | Invia richieste REST o GraphQL non elaborate                                            |
 | `apri`           | Apri lo spazio di lavoro nel browser                                                    |
 | `app`            | Crea, compila, sincronizza, esegui il debug e disinstalla app                           |
@@ -73,6 +73,21 @@ I comandi selezionano un workspace in questo ordine:
 
 `auth login --name \<name>` salva una connessione ma mantiene un valore predefinito esistente. Aggiungi `--use` oppure esegui `twenty remote use \<name>` per modificare il valore predefinito.
 
+### Dietro un proxy di autenticazione
+
+Se un proxy basato sull'identità come Cloudflare Access, Google IAP, Pomerium o oauth2-proxy si trova davanti al server, i comandi non riescono e restituiscono `PROXY_AUTH_REQUIRED`. Fornisci alla CLI le credenziali del proxy come intestazioni. Usa un comando che stampi credenziali aggiornate, oppure valori fissi per un token di servizio:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Entrambi vengono salvati nella connessione. Il comando stampa una riga `Name: value` per ogni intestazione. La CLI lo esegue nuovamente quando il proxy rifiuta le intestazioni e `PROXY_HEADERS_FAILED` segnala un comando non riuscito. In CI, imposta invece `TWENTY_PROXY_HEADERS` (un `Name: value` per riga) o `TWENTY_PROXY_HEADER_COMMAND`. Le intestazioni del proxy vengono inviate solo all'URL API della connessione e non possono sostituire `Authorization`. Consulta il [riferimento della CLI](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) per tutte le opzioni.
+
 ## Esplorazione dei dati
 
 ```bash filename="Terminal"
@@ -112,18 +127,18 @@ npx twenty@latest app dev
 
 Altri comandi dell'app:
 
-| Comando                       | Cosa fa                                                                           |
-| ----------------------------- | --------------------------------------------------------------------------------- |
-| `app add`                     | Genera lo scheletro di un oggetto, campo, funzione logica o altra entità          |
-| `app build` / `app typecheck` | Compila l'app o esegui il controllo dei tipi localmente                           |
-| `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe |
-| `app apply`                   | Compila, carica e sincronizza l'app                                               |
-| `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                              |
-| `app pull`                    | Ripristina metadati, traduzioni, dipendenze e sorgente del componente supportato  |
-| `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                        |
-| `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                             |
-| `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato              |
-| `app uninstall`               | Rimuovi l'app e tutto ciò che possiede dallo spazio di lavoro                     |
+| Comando                       | Cosa fa                                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `app add`                     | Genera lo scheletro di un oggetto, campo, funzione logica o altra entità                                                 |
+| `app build` / `app typecheck` | Compila l'app o esegui il controllo dei tipi localmente                                                                  |
+| `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe                                        |
+| `app apply`                   | Compila, carica e sincronizza l'app                                                                                      |
+| `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                                                                     |
+| `app pull`                    | Ripristina i metadati, le traduzioni, le dipendenze, le risorse pubbliche e il codice sorgente dei componenti supportati |
+| `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                                                               |
+| `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                                                                    |
+| `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato                                                     |
+| `app uninstall`               | Rimuovi l'app e tutto ciò che possiede dallo spazio di lavoro                                                            |
 
 Per impostazione predefinita, le definizioni mancanti dal codice sorgente vengono eliminate dallo spazio di lavoro. Passa `--no-prune` per mantenerli. L'applicazione Custom dell'area di lavoro li mantiene a meno che non passi `--prune`. L'eliminazione di oggetti o campi elimina anche i relativi dati, quindi richiede conferma. Per i dettagli, consulta [Sincronizzazione e ripristino](/it/developers/extend/apps/operations/sync-and-recovery).
 
@@ -181,3 +196,14 @@ L'output di build appartiene alla CLI. Non leggere `.twenty/output/manifest.json
 Il [riferimento dei comandi](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) descrive ogni flag, autorizzazione, formato di output e codice di uscita.
 
 <PageBanner illustration="card-page-cli" />
+
+## Esporta i record dello spazio di lavoro
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+```
+
+`data export` richiede l'autorizzazione **Export CSV** dello spazio di lavoro. Monitora l'avanzamento dell'esportazione sul server, quindi trasmette il CSV a `--output`. Le autorizzazioni per record e campi vengono applicate dal server. Non è necessario un progetto dell'app; seleziona una connessione salvata con `--remote` o usa le consuete credenziali dell'ambiente.
+
+Il file di output viene visualizzato solo dopo un download riuscito. I file esistenti vengono mantenuti a meno che non si passi `--force`. I download sono limitati a 1 GiB e 15 minuti. In caso di interruzione, esegui nuovamente l'esportazione; il link per il download non può essere riutilizzato. `--json` riporta l'ID dell'esportazione, il percorso, le dimensioni e la durata; `--format ndjson` trasmette anche l'avanzamento. Il CSV stesso viene scritto solo nel file specificato.

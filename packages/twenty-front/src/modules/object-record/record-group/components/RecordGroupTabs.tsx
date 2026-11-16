@@ -94,7 +94,7 @@ export const RecordGroupTabs = ({
 
   const recordGroupTabs = useMemo(
     () =>
-      [ALL_RECORD_GROUPS_TAB_ID, ...visibleRecordGroupIds].map(
+      [...visibleRecordGroupIds, ALL_RECORD_GROUPS_TAB_ID].map(
         (recordGroupTabId) => ({ id: recordGroupTabId }),
       ),
     [visibleRecordGroupIds],

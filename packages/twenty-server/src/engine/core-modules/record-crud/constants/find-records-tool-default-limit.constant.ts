@@ -1,0 +1,1 @@
+export const FIND_RECORDS_TOOL_DEFAULT_LIMIT = 10;

@@ -328,6 +328,33 @@ export class WorkflowVersionCoreSyncService {
     });
   }
 
+  async resolveDispatchedCoreVersionId({
+    workspaceId,
+    coreWorkflowVersionId,
+    workspaceWorkflowVersionId,
+    lastPublishedCoreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId?: string | null;
+    workspaceWorkflowVersionId?: string | null;
+    lastPublishedCoreWorkflowVersionId?: string | null;
+  }): Promise<string | undefined> {
+    if (isDefined(coreWorkflowVersionId)) {
+      return coreWorkflowVersionId;
+    }
+
+    if (isDefined(workspaceWorkflowVersionId)) {
+      return (
+        await this.findCoreVersionByWorkspaceVersionId(
+          workspaceId,
+          workspaceWorkflowVersionId,
+        )
+      )?.id;
+    }
+
+    return lastPublishedCoreWorkflowVersionId ?? undefined;
+  }
+
   async findCoreVersionByWorkspaceVersionId(
     workspaceId: string,
     workspaceWorkflowVersionId: string,

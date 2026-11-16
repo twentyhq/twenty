@@ -55,6 +55,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isOAuthResourceServedByOrigins } from 'src/engine/core-modules/application/application-oauth/utils/is-oauth-resource-served-by-origins.util';
 import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -663,6 +664,21 @@ export class AuthService {
       );
     }
 
+    const { resource } = authorizeAppInput;
+
+    if (
+      isDefined(resource) &&
+      !isOAuthResourceServedByOrigins({
+        resource,
+        origins: this.getServedOrigins({ workspace, requestBaseUrl }),
+      })
+    ) {
+      throw new AuthException(
+        `Unknown resource '${resource}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     if (resolvedClient.kind === 'clientIdMetadataDocument') {
       await this.oAuthClientRegistrationResolverService.registerClientIdMetadataDocumentClient(
         resolvedClient,
@@ -682,6 +698,7 @@ export class AuthService {
       clientId: applicationRegistration.oAuthClientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
+      ...(isDefined(resource) ? { resource } : {}),
     };
 
     const token = this.appTokenRepository.create({
@@ -715,6 +732,25 @@ export class AuthService {
     }
 
     return { redirectUrl: redirectUriValidation.parsed.toString() };
+  }
+
+  private getServedOrigins({
+    workspace,
+    requestBaseUrl,
+  }: {
+    workspace: WorkspaceDomainConfig;
+    requestBaseUrl: string;
+  }): string[] {
+    const { customUrl, subdomainUrl } =
+      this.workspaceDomainsService.getWorkspaceUrls(workspace);
+
+    return [
+      requestBaseUrl,
+      this.twentyConfigService.get('SERVER_URL'),
+      this.domainServerConfigService.getBaseUrl().toString(),
+      subdomainUrl,
+      customUrl,
+    ].filter(isDefined);
   }
 
   async updatePassword(

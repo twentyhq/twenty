@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
@@ -13,6 +13,8 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
+import { validateFlatViewFieldRelationTargetNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
 
 @Injectable()
@@ -26,7 +28,9 @@ export class FlatViewFieldValidatorService {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
       flatViewMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     },
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<'viewField', 'update'> {
@@ -65,6 +69,30 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
+    validationResult.errors.push(
+      ...validateFlatViewFieldRelationTargetNotOverridden({
+        existingFlatViewField,
+        updatedFlatViewField,
+        buildOptions,
+      }),
+    );
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        updatedFlatViewField.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (isDefined(flatFieldMetadata)) {
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: updatedFlatViewField,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
+    }
+
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: updatedFlatViewField.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
@@ -97,6 +125,7 @@ export class FlatViewFieldValidatorService {
 
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
+      updatedFlatViewField.isCanonical &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
@@ -205,6 +234,14 @@ export class FlatViewFieldValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: flatViewFieldToValidate,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
@@ -227,13 +264,16 @@ export class FlatViewFieldValidatorService {
         universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
         flatEntityMaps: optimisticFlatViewFieldMaps,
       });
-    const equivalentExistingFlatViewFieldExists = otherFlatViewFields.some(
-      (flatViewField) =>
-        flatViewField.viewUniversalIdentifier ===
-          flatViewFieldToValidate.viewUniversalIdentifier &&
-        flatViewField.fieldMetadataUniversalIdentifier ===
-          flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
-    );
+    const equivalentExistingFlatViewFieldExists =
+      flatViewFieldToValidate.isCanonical &&
+      otherFlatViewFields.some(
+        (flatViewField) =>
+          flatViewField.isCanonical &&
+          flatViewField.viewUniversalIdentifier ===
+            flatViewFieldToValidate.viewUniversalIdentifier &&
+          flatViewField.fieldMetadataUniversalIdentifier ===
+            flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
+      );
 
     if (equivalentExistingFlatViewFieldExists) {
       validationResult.errors.push({
@@ -259,7 +299,31 @@ export class FlatViewFieldValidatorService {
     }
 
     if (
+      !flatViewFieldToValidate.isCanonical &&
+      isWidgetViewType(flatView.type)
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Non-canonical view fields are not supported in widget views`,
+        userFriendlyMessage: msg`Extra columns are not supported here`,
+      });
+    }
+
+    if (
+      !flatViewFieldToValidate.isCanonical &&
+      flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
+        flatViewFieldToValidate.fieldMetadataUniversalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`A non-canonical view field cannot use the label identifier field`,
+        userFriendlyMessage: msg`An extra column cannot show the record name`,
+      });
+    }
+
+    if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
+      flatViewFieldToValidate.isCanonical &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatViewFieldToValidate.fieldMetadataUniversalIdentifier
     ) {
@@ -273,8 +337,9 @@ export class FlatViewFieldValidatorService {
       flatView.type !== ViewType.FIELDS_WIDGET &&
       otherFlatViewFields.some(
         (flatViewField) =>
+          flatViewField.isCanonical &&
           flatViewField.fieldMetadataUniversalIdentifier ===
-          flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+            flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       ) &&
       isViewFieldInLowestPosition({
         flatViewField: flatViewFieldToValidate,

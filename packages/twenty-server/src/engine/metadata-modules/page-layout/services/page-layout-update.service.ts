@@ -135,6 +135,7 @@ export class PageLayoutUpdateService {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
@@ -145,6 +146,7 @@ export class PageLayoutUpdateService {
           flatMapsKeys: [
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
             'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
@@ -172,6 +174,7 @@ export class PageLayoutUpdateService {
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatFrontComponentMaps,
         flatViewFieldGroupMaps,
         flatViewMaps,
@@ -470,6 +473,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
@@ -482,6 +486,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFieldMetadataOptionMaps'
     | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
@@ -513,6 +518,7 @@ export class PageLayoutUpdateService {
           workspaceCustomApplicationId,
           workspaceCustomApplicationUniversalIdentifier,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           flatFrontComponentMaps,
           flatViewFieldGroupMaps,
           flatViewMaps,
@@ -541,6 +547,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
@@ -555,6 +562,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFieldMetadataOptionMaps'
     | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
@@ -569,6 +577,7 @@ export class PageLayoutUpdateService {
       this.validateConfigurationFieldReferences({
         widgetInput,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
       });
     }
@@ -888,10 +897,12 @@ export class PageLayoutUpdateService {
   private validateConfigurationFieldReferences({
     widgetInput,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
   }: {
     widgetInput: UpdatePageLayoutWidgetWithIdInput;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): void {
     if (!isDefined(widgetInput.configuration)) {
@@ -903,6 +914,7 @@ export class PageLayoutUpdateService {
       widgetObjectMetadataId: widgetInput.objectMetadataId,
       widgetTitle: widgetInput.title,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
     });
 

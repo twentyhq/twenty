@@ -1,4 +1,8 @@
+import { createHash } from 'node:crypto';
+
 import { Logger } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   createMemoryHarness,
@@ -11,6 +15,7 @@ import {
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
 
 // Default harness: maxmemory 100_000 minus a 0.1 reserve, workspace share 0.1, application share 0.4
 const CAPACITY_BYTES = 90_000;
@@ -806,5 +811,82 @@ describe('BullMQDriver job memory scenarios', () => {
         replacementJob.sizeBytes,
       );
     });
+  });
+});
+
+describe('retained job payloads', () => {
+  beforeAll(silenceDriverLogs);
+
+  const enqueueOrThrow = async (
+    harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    payloadBytes: number,
+  ) => {
+    const jobId = await harness.enqueue({
+      label: 'retained',
+      payloadBytes,
+      options: { workspaceId: 'A', isWorkspaceJob: true },
+    });
+
+    if (!isDefined(jobId)) {
+      throw new Error('Expected an enqueued job');
+    }
+
+    return jobId;
+  };
+
+  it('replaces oversized successful job data with its size and hash', async () => {
+    const harness = await createMemoryHarness({
+      isEnabled: false,
+      maxJobSizeBytes: 1_000,
+    });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+    const storedJob = harness.storedJob(jobId);
+    const expectedData = {
+      memorySizeBytes: computeJobSizeBytes({
+        data: storedJob?.data,
+        options: storedJob?.opts,
+      }),
+      hash: createHash('sha256')
+        .update(JSON.stringify(storedJob?.data))
+        .digest('hex'),
+    };
+    const handler = jest.fn(
+      async ({ data }: { data: { payload?: string } }) => {
+        expect(data.payload).toHaveLength(2_000);
+      },
+    );
+
+    await harness.processJobOrThrow({ jobId, handler });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(harness.storedJob(jobId)?.data).toEqual(expectedData);
+    expect(expectedData.memorySizeBytes).toBeGreaterThan(1_000);
+  });
+
+  it('keeps successful job data under the maximum job size', async () => {
+    const harness = await createMemoryHarness({ maxJobSizeBytes: 10_000 });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+
+    await harness.processJobOrThrow({ jobId });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
+    expect(await harness.readUsedBytes('workspace:A')).toBe(0);
+  });
+
+  it('keeps oversized failed job data for a manual retry', async () => {
+    const harness = await createMemoryHarness({
+      isEnabled: false,
+      maxJobSizeBytes: 1_000,
+    });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+
+    await harness.processJobOrThrow({
+      jobId,
+      handler: async () => {
+        throw new Error('transient failure');
+      },
+    });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
   });
 });

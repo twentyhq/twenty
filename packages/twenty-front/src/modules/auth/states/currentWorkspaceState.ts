@@ -50,7 +50,7 @@ export type CurrentWorkspace = Pick<
   | 'aiAdditionalInstructions'
   | 'aiDataPolicy'
   | 'editableProfileFields'
-  | 'isInternalMessagesImportEnabled'
+  | 'isInternalImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
@@ -62,6 +62,7 @@ export type CurrentWorkspace = Pick<
     | 'universalIdentifier'
     | 'logoUrl'
     | 'createdAt'
+    | 'runHealthCheckOnUserPreferences'
   >[];
 };
 

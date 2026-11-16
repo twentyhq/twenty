@@ -5,7 +5,9 @@ describe('getSettingsPath', () => {
   it('should return settings path with correct prefix when no params or query params provided', () => {
     expect(getSettingsPath(SettingsPath.ProfilePage)).toBe('/settings/profile');
     expect(getSettingsPath(SettingsPath.General)).toBe('/settings/general');
-    expect(getSettingsPath(SettingsPath.Accounts)).toBe('/settings/accounts');
+    expect(getSettingsPath(SettingsPath.AppPreferences)).toBe(
+      '/settings/app-preferences',
+    );
   });
 
   it('should generate path with params using react-router generatePath', () => {
@@ -29,10 +31,12 @@ describe('getSettingsPath', () => {
     ).toBe('/settings/functions/func123');
 
     expect(
-      getSettingsPath(SettingsPath.EditImapSmtpCaldavConnection, {
+      getSettingsPath(SettingsPath.AppPreferencesEditImapSmtpCaldavConnection, {
         connectedAccountId: 'account123',
       }),
-    ).toBe('/settings/accounts/edit-imap-smtp-caldav-connection/account123');
+    ).toBe(
+      '/settings/app-preferences/accounts/account123/edit-imap-smtp-caldav-connection',
+    );
 
     expect(
       getSettingsPath(SettingsPath.ApplicationConnectionDetail, {

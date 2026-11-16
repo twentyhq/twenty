@@ -9,20 +9,20 @@ import { useTabListActiveTabId } from '@/ui/layout/tab-list/hooks/useTabListActi
 
 type UseCoreWorkflowShowPageActiveTabArgs = {
   coreWorkflowId: string;
-  isPublished: boolean | undefined;
+  hasRuns: boolean | undefined;
   requestedVersionId: string | null;
 };
 
 export const useCoreWorkflowShowPageActiveTab = ({
   coreWorkflowId,
-  isPublished,
+  hasRuns,
   requestedVersionId,
 }: UseCoreWorkflowShowPageActiveTabArgs): CoreWorkflowShowPageTabId => {
-  // Settled once loaded so publishing from the Flow tab does not switch to Overview
-  const [isPublishedOnLoad, setIsPublishedOnLoad] = useState(isPublished);
+  // Settled once loaded so a first run started from the Flow tab does not switch to Overview
+  const [hasRunsOnLoad, setHasRunsOnLoad] = useState(hasRuns);
 
-  if (!isDefined(isPublishedOnLoad) && isDefined(isPublished)) {
-    setIsPublishedOnLoad(isPublished);
+  if (!isDefined(hasRunsOnLoad) && isDefined(hasRuns)) {
+    setHasRunsOnLoad(hasRuns);
   }
 
   const canReadWorkflowRuns = useCanReadWorkflowRuns();
@@ -35,9 +35,9 @@ export const useCoreWorkflowShowPageActiveTab = ({
       ]
     : [CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW];
 
-  // Drafts have no runs yet and a requested version is opened to see its flow
+  // A requested version is opened to see its flow
   const defaultTabId =
-    isPublishedOnLoad && canReadWorkflowRuns && !isDefined(requestedVersionId)
+    hasRunsOnLoad && canReadWorkflowRuns && !isDefined(requestedVersionId)
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 

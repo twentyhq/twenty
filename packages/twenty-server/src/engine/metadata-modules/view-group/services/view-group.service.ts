@@ -21,8 +21,12 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -320,34 +324,66 @@ export class ViewGroupService {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewGroupEntity[]> {
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }
+
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewGroupEntity[]> {
+    return this.findManyVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
+    });
+  }
+
+  private async findManyVisibleToUser({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewGroupEntity[]> {
+    const viewGroups = await this.viewGroupRepository.find(workspaceId, {
       where: {
+        ...(isDefined(viewId) ? { viewId } : {}),
         deletedAt: IsNull(),
       },
       order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return viewGroups.filter(
+      (viewGroup) =>
+        isDefined(viewGroup.view) &&
+        isViewVisibleToUser(viewGroup.view, userWorkspaceId),
+    );
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-  ): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
-      where: {
-        viewId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
-    });
-  }
-
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewGroupEntity | null> {
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewGroupEntity> {
     const viewGroup = await this.viewGroupRepository.findOne(workspaceId, {
       where: {
         id,
@@ -356,6 +392,25 @@ export class ViewGroupService {
       relations: ['workspace', 'view'],
     });
 
-    return viewGroup || null;
+    if (
+      !isDefined(viewGroup) ||
+      !isDefined(viewGroup.view) ||
+      !isViewVisibleToUser(viewGroup.view, userWorkspaceId)
+    ) {
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          ),
+        },
+      );
+    }
+
+    return viewGroup;
   }
 }

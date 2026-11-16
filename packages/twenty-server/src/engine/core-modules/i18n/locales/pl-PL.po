@@ -220,6 +220,11 @@ msgstr "Pulpit"
 msgid "A database event trigger in this application is invalid."
 msgstr "Wyzwalacz zdarzenia bazy danych w tej aplikacji jest nieprawidłowy."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr "Nieaktywne pole nie może być wyświetlane w kolumnie"
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -277,6 +282,11 @@ msgstr "Link śledzony w kampanii"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Marketingową wiadomość e-mail można wysłać tylko do jednego odbiorcy naraz, więc każda osoba otrzymuje własny link do wypisania się."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Wiadomość wymaga tekstu lub co najmniej jednego załącznika."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +328,11 @@ msgstr "Zagnieżdżony widżet relacji musi używać układu tabeli."
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "Wystąpił błąd sieci podczas uzyskiwania dostępu do kalendarza."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr "Niekanoniczne pole widoku nie może używać pola identyfikatora etykiety"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -394,6 +409,16 @@ msgstr "Rekord z tą wartością już istnieje."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Nagranie spotkania"
+
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr "Pole powiązanego rekordu może być wyświetlane tylko w polu relacji wiele do jednego"
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr "Relacja powiązanego rekordu nie może być wyświetlana w kolumnie"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -573,10 +598,20 @@ msgstr "Wystąpił błąd pola widoku."
 msgid "A view field group error occurred."
 msgstr "Wystąpił błąd grupy pól widoku."
 
+#. js-lingui-id: syBxwN
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter cannot stay in a view filter group that is being removed"
+msgstr "Filtr widoku nie może pozostać w usuwanej grupie filtrów widoku"
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
 msgstr "Wystąpił błąd filtra widoku."
+
+#. js-lingui-id: yPKHXO
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter group cannot stay under a parent group that is being removed"
+msgstr "Grupa filtrów widoku nie może pozostać w usuwanej grupie nadrzędnej"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -688,12 +723,6 @@ msgstr "Właściciel konta dla firm"
 msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Właściciel Konta Dla Firm"
-
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "Konta"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1208,6 +1237,11 @@ msgstr "W tej przestrzeni roboczej trwa już eksport. Poczekaj, aż się zakońc
 msgid "An external service took too long to respond."
 msgstr "Zewnętrzna usługa zbyt długo odpowiadała."
 
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr "Dodatkowa kolumna nie może wyświetlać nazwy rekordu"
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
@@ -1557,6 +1591,12 @@ msgstr "Nie znaleziono zatwierdzonej domeny dostępu."
 msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "Aplikacje"
+
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "Preferencje aplikacji"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2405,12 +2445,6 @@ msgstr "Widok kalendarza musi mieć pole kalendarza"
 msgid "Calendar view must have a calendar layout"
 msgstr "Widok kalendarza musi mieć układ kalendarza"
 
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "Kalendarze"
-
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -2716,6 +2750,11 @@ msgstr "Nie można modyfikować predykatu tak, aby zmienić jego rolę z {existi
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Nie można usunąć ostatniego administratora z przestrzeni roboczej."
+
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr "Nie można usunąć ostatniego administratora serwera. Najpierw przyznaj innemu użytkownikowi uprawnienia administratora serwera w panelu administratora."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -3460,6 +3499,11 @@ msgstr "Dostawca połączenia o nazwie {0} już istnieje w tej aplikacji"
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Dostawca połączenia typu 'custom' musi odwoływać się do funkcji logiki authorize i callback"
 
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "Dostawca połączenia typu 'oauth-discovery' wymaga adresu HTTP lub HTTPS oauthDiscoveryConfig.resourceUrl"
+
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth' is missing oauthConfig"
@@ -4001,7 +4045,6 @@ msgstr "W obiekcie niestandardowym brakuje pola identyfikatora etykiety."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/permissions/permissions.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Role niestandardowe są dostępne w planie Organization."
 
@@ -4336,8 +4379,8 @@ msgid "Default Task Layout"
 msgstr "Domyślny układ zadania"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Domyślna wartość \"{defaultValue}\" musi być jedną z opcji"
 
@@ -4946,12 +4989,6 @@ msgstr "Weryfikacja adresu e-mail nie jest wymagana."
 msgid "Email verification not required."
 msgstr "Weryfikacja e-mailowa nie jest wymagana."
 
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "E-maile"
-
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5079,6 +5116,11 @@ msgstr "Wzbogać"
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Wprowadź nazwę o długości od 1 do {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znaków oraz obsługiwane opcje wyglądu asystenta."
+
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "Wprowadź klucz API."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5348,6 +5390,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Zewnętrzne ID nagrania"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr "Dodatkowe kolumny nie są tutaj obsługiwane"
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5390,11 +5437,6 @@ msgstr "Nie udało się utworzyć rekordu."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "Nie udało się usunąć pliku {fileId}"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Nie udało się usunąć zadań. Spróbuj ponownie później."
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5487,6 +5529,11 @@ msgstr "Nie znaleziono konfiguracji funkcji."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Luty"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr "Pole „{fieldName}” nie może być porównywane z polem członka obszaru roboczego „{workspaceMemberFieldName}”, ponieważ ich typy są niezgodne"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6290,12 +6337,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Przejdź do {objectLabelPlural}"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "Przejdź do ustawień kont"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6308,6 +6349,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "Przejdź do ustawień AI"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "Przejdź do preferencji aplikacji"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6319,12 +6366,6 @@ msgstr "Przejdź do ustawień aplikacji"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "Przejdź do ustawień rozliczeń"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "Przejdź do ustawień kalendarzy"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6349,12 +6390,6 @@ msgstr "Przejdź do ustawień deweloperskich"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "Przejdź do ustawień domen"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "Przejdź do ustawień e-maili"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -8476,6 +8511,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Oznacz jako nieprzeczytane"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Funkcja logiki oznaczania wątku jako przeczytanego \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" nie została znaleziona w tej aplikacji"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8667,6 +8707,11 @@ msgstr "Wiadomość"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Wiadomość"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Nie udało się zapisać załączników wiadomości. Spróbuj ponownie."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9512,6 +9557,11 @@ msgstr "Nie określono prawidłowych odbiorców"
 msgid "No verified sending domain matches this from address."
 msgstr "Żadna zweryfikowana domena nadawcza nie pasuje do tego adresu nadawcy."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr "Niekanoniczne pola widoku nie są obsługiwane w widokach widżetów"
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9759,6 +9809,11 @@ msgstr "Odmówiono dostępu OAuth."
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "Brakuje bloku konfiguracji oauth u dostawcy połączenia OAuth"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "Dostawca połączenia OAuth discovery wymaga adresu URL zasobu, do którego się loguje"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9978,6 +10033,11 @@ msgstr "Co najmniej jeden adres URI przekierowania jest nieprawidłowy."
 msgid "One or more requested scopes are invalid."
 msgstr "Co najmniej jeden z żądanych zakresów uprawnień jest nieprawidłowy."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr "Tylko kolumna łącząca z jednym rekordem może wyświetlać pole tego rekordu"
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -9997,6 +10057,16 @@ msgstr "Tylko zaplanowaną lub wysyłaną kampanię można anulować."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Tylko administrator serwera może zarządzać kodami odzyskiwania dla tego członka."
+
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr "Tylko członek obszaru roboczego może zmienić, kto widzi workflow"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr "Tylko dodane kolumny mogą wyświetlać pole powiązanego rekordu"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10028,6 +10098,11 @@ msgstr "Jedyny błąd"
 msgid "Only field restrictions are allowed."
 msgstr "Dozwolone są tylko ograniczenia pól."
 
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr "Tylko niekanoniczne pola widoku mogą wyświetlać pole powiązanego rekordu"
+
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
 msgid "Only one full-height widget is allowed per tab"
@@ -10040,7 +10115,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Tylko aplikacja będąca właścicielem tego agenta może zmieniać jego wyzwalacze"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Tylko osoba, która utworzyła ten przepływ pracy, może zmienić, kto go widzi"
 
@@ -10207,6 +10282,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Etap szansy"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "Opcja \"{optionLabel}\" jest dostarczana wraz z polem i nie można jej usunąć. Zamiast tego ją dezaktywuj."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10223,12 +10304,6 @@ msgstr "Identyfikator opcji jest nieprawidłowy"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Identyfikator opcji jest wymagany"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Id opcji musi być zapisanym małymi literami identyfikatorem UUID w wersji 4 lub nowszej"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -11262,6 +11337,11 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Odczyt i zapis"
 
+#. js-lingui-id: qYjUEb
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Read File"
+msgstr "Odczytaj plik"
+
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12170,6 +12250,11 @@ msgstr "Nie znaleziono reguły uprawnień na poziomie wiersza do aktualizacji"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Reguła uprawnień na poziomie wiersza z tym uniwersalnym identyfikatorem już istnieje"
+
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "Uprawnienia do rekordów na poziomie wiersza, które ukrywają lub blokują pola, wymagają co najmniej jednej grupy predykatów."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13714,6 +13799,12 @@ msgstr "Nie znaleziono agenta, którego ten krok powinien uruchomić."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Nie można znaleźć agenta, którego szukasz. Mógł zostać usunięty lub możesz nie mieć do niego dostępu."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "Wartość API opcji \"{optionLabel}\" jest dostarczana wraz z polem i nie można jej zmienić."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13894,6 +13985,12 @@ msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Data otrzymania wiadomości"
 
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Opcja domyślna nie może zostać dezaktywowana"
+
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role cannot be deleted as it is required for the workspace to function properly."
@@ -13972,6 +14069,11 @@ msgstr "Pole \"{field}\" nie może zostać zaktualizowane. Proszę skontaktować
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The field configured for this widget could not be found."
 msgstr "Nie można odnaleźć pola skonfigurowanego dla tego widżetu."
+
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr "Pole musi należeć do powiązanego obiektu"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14069,6 +14171,11 @@ msgstr "Nie znaleziono funkcji logiki identyfikującej połączone konto."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "Nie znaleziono funkcji logiki, która rozpoczyna połączenie."
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Funkcja logiki, której ten dostawca wiadomości używa do oznaczania wątków jako przeczytanych, nie została znaleziona w jego aplikacji."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14236,6 +14343,26 @@ msgstr "Dostawca jest tymczasowo niedostępny. Spróbuj ponownie później."
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Treść otrzymanej wiadomości e-mail nie jest już dostępna."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr "Pole powiązanego rekordu nie może być relacją"
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr "Pole powiązanego rekordu musi być aktywne"
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr "Pole powiązanego rekordu musi należeć do obiektu docelowego relacji"
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr "Pole powiązanego rekordu w kolumnie należącej do aplikacji nie może zostać zmienione"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14698,6 +14825,11 @@ msgstr "Ta rozmowa nie znajduje się w kanale."
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "Ten kod należy do opublikowanej wersji przepływu pracy. Edytuj go w wersji roboczej."
 
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr "Ta kolumna pochodzi z aplikacji, więc wyświetlane przez nią pole powiązanego rekordu nie może zostać zmienione"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -14802,6 +14934,11 @@ msgstr "Ta funkcja jest bezpłatna dla maksymalnie {MAX_SEATS_WITHOUT_ENTERPRISE
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
 msgstr "Ta funkcja nie jest włączona."
+
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr "To pole nie może być porównywane z tym polem członka obszaru roboczego"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14939,6 +15076,21 @@ msgstr "Ta tabela dziennika jest nieprawidłowa."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Ta metoda MCP nie jest obsługiwana."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Ten serwer MCP należy do innej aplikacji, więc ten przepływ pracy nie może go używać."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Ten serwer MCP jest nieaktywny. Aktywuj go przed przetestowaniem jego narzędzi."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Ten serwer MCP nie jest dostępny dla tego przepływu pracy."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15230,6 +15382,16 @@ msgstr "Ten plik SVG jest zbyt duży, aby go przetworzyć."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "To działanie aktywności na osi czasu nie jest obsługiwane"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "To narzędzie nie jest już oferowane przez jego serwer MCP."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "To narzędzie może zmienić dane. Potwierdź test przed jego uruchomieniem."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17023,6 +17185,11 @@ msgstr "Nie udało się sfinalizować połączenia. Spróbuj ponownie."
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Nie udało się zidentyfikować konta, które autoryzowano. Spróbuj ponownie."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Nie udało się oznaczyć tej rozmowy jako przeczytanej."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17032,6 +17199,11 @@ msgstr "Nie udało się wysłać Twojej wiadomości. Spróbuj ponownie."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Nie udało się rozpocząć połączenia. Spróbuj ponownie."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Nie mogliśmy zweryfikować tego klucza. Sprawdź go lub spróbuj ponownie później, jeśli usługa jest niedostępna."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

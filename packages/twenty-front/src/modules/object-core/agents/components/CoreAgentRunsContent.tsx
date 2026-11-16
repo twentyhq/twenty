@@ -22,13 +22,12 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Table } from '@/ui/layout/table/components/Table';
+import { CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS } from '@/object-core/agents/constants/CoreAgentRunsPollIntervalInMs';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GetAgentRunsDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-
-const RUNS_POLL_INTERVAL_MS = 10000;
 
 const StyledTurnsContainer = styled.div`
   flex: 1;
@@ -68,7 +67,7 @@ export const CoreAgentRunsContent = ({
   // runs start and settle outside this page, so the list refreshes while it is visible
   const { data, loading, error } = useQuery(GetAgentRunsDocument, {
     variables: { agentId },
-    pollInterval: RUNS_POLL_INTERVAL_MS,
+    pollInterval: CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS,
     skipPollAttempt: () => document.hidden,
   });
 

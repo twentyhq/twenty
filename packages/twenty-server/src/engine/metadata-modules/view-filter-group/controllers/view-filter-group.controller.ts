@@ -18,19 +18,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import {
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -58,11 +52,20 @@ export class ViewFilterGroupController {
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewFilterGroupService.findByViewId(workspace.id, viewId)
-      : await this.viewFilterGroupService.findByWorkspaceId(workspace.id);
+      ? await this.viewFilterGroupService.findByViewId({
+          workspaceId: workspace.id,
+          viewId,
+          userWorkspaceId,
+        })
+      : await this.viewFilterGroupService.findByWorkspaceId({
+          workspaceId: workspace.id,
+          userWorkspaceId,
+        });
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -71,29 +74,14 @@ export class ViewFilterGroupController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupDTO> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
+    return this.viewFilterGroupService.findByIdOrThrow({
       id,
-      workspace.id,
-    );
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-        {
-          userFriendlyMessage:
-            generateViewFilterGroupUserFriendlyExceptionMessage(
-              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-            ),
-        },
-      );
-    }
-
-    return viewFilterGroup;
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Post()

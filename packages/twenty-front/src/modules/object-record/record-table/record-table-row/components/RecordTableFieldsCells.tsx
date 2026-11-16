@@ -83,7 +83,7 @@ export const RecordTableFieldsCells = () => {
 
         return (
           <RecordTableFieldCell
-            key={recordField.fieldMetadataItemId}
+            key={recordField.id}
             recordField={recordField}
             recordFieldIndex={columnIndex}
             isSelected={isSelected}

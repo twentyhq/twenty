@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -12,6 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPendingBubble = styled(StyledChatMessageBubble)<{
@@ -72,13 +73,19 @@ export const ChatThreadPendingMessage = ({
       {isNonEmptyArray(pendingMessage.files) && (
         <StyledFiles isDimmed={isSending}>
           {pendingMessage.files.map((file, index) => (
-            <AgentChatFilePreview key={`${index}-${file.name}`} file={file} />
+            <AiChatFilePreview key={`${index}-${file.name}`} file={file} />
           ))}
         </StyledFiles>
       )}
       {pendingMessage.status === 'failed' && (
         <StyledFailedRow>
-          {t`Sending failed`}
+          {isNonEmptyString(pendingMessage.errorMessage) ? (
+            <Tooltip content={pendingMessage.errorMessage}>
+              <span tabIndex={0}>{t`Sending failed`}</span>
+            </Tooltip>
+          ) : (
+            t`Sending failed`
+          )}
           <LightIconButton
             aria-label={t`Retry`}
             disabled={isRetryDisabled}

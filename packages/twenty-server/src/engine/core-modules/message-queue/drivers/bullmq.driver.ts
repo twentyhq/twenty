@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import {
   Logger,
   type OnModuleDestroy,
@@ -479,9 +481,10 @@ export class BullMQDriver
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
-    this.workerMap[queueName].on('completed', (job) =>
-      this.releaseFinishedJobMemory({ queueName, job }),
-    );
+    this.workerMap[queueName].on('completed', (job) => {
+      void this.clearOversizedCompletedJobData(job);
+      this.releaseFinishedJobMemory({ queueName, job });
+    });
     this.workerMap[queueName].on('failed', (job) => {
       if (isDefined(job?.finishedOn)) {
         this.releaseFinishedJobMemory({ queueName, job });
@@ -893,6 +896,34 @@ export class BullMQDriver
       jobId,
       groupKeys: memoryGroupKeys,
     });
+  }
+
+  private async clearOversizedCompletedJobData(job: Job): Promise<void> {
+    const { memorySizeBytes: chargedSizeBytes }: BullMQJobsOptions = job.opts;
+    // A charged job was already sized at enqueue, so its payload is not serialized again here
+    const memorySizeBytes =
+      chargedSizeBytes ??
+      computeJobSizeBytes({ data: job.data, options: job.opts });
+
+    if (
+      memorySizeBytes <=
+      this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES')
+    ) {
+      return;
+    }
+
+    try {
+      await job.updateData({
+        memorySizeBytes,
+        hash: createHash('sha256')
+          .update(JSON.stringify(job.data) ?? '')
+          .digest('hex'),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   private releaseFinishedJobMemory({

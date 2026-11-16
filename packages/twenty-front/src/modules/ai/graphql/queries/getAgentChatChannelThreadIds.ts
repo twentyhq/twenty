@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const GET_AGENT_CHAT_CHANNEL_THREAD_IDS = gql`
+export const GET_INBOX_CHANNEL_THREAD_IDS = gql`
   query GetAgentChatChannelThreadIds(
     $channelId: UUID!
     $status: AgentChatChannelThreadStatus

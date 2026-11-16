@@ -1,10 +1,10 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
-import { isAgentChatQueuedMessageRemovable } from '@/ai/utils/isAgentChatQueuedMessageRemovable';
+import { isAiChatMessageOwn } from '@/ai/utils/isAiChatMessageOwn';
+import { isAiChatQueuedMessageRemovable } from '@/ai/utils/isAiChatQueuedMessageRemovable';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai/components/AiChatQueuedMessageList';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
@@ -12,7 +12,7 @@ import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageCo
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
-import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { aiChatQueuedMessagesFamilyState } from '@/ai/states/aiChatQueuedMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -41,31 +41,31 @@ export const AiChatQueuedMessages = () => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatQueuedMessages = useAtomFamilyStateValue(
-    agentChatQueuedMessagesFamilyState,
+  const aiChatQueuedMessages = useAtomFamilyStateValue(
+    aiChatQueuedMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
   const { deleteQueuedMessage } = useDeleteQueuedMessage();
 
   if (
     !isDefined(currentAiChatThread) ||
-    !isNonEmptyArray(agentChatQueuedMessages)
+    !isNonEmptyArray(aiChatQueuedMessages)
   ) {
     return null;
   }
 
-  const hasOtherSenders = agentChatQueuedMessages.some(
+  const hasOtherSenders = aiChatQueuedMessages.some(
     (message) =>
       isDefined(message.metadata?.senderWorkspaceMemberId) &&
-      !isAgentChatMessageOwn({
+      !isAiChatMessageOwn({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
         isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
       }),
   );
-  const messages = agentChatQueuedMessages.map((message) => {
+  const messages = aiChatQueuedMessages.map((message) => {
     const senderId = message.metadata?.senderWorkspaceMemberId;
-    const isCurrentWorkspaceMember = isAgentChatMessageOwn({
+    const isCurrentWorkspaceMember = isAiChatMessageOwn({
       message,
       currentWorkspaceMemberId: currentWorkspaceMember?.id,
       isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
@@ -73,7 +73,7 @@ export const AiChatQueuedMessages = () => {
     const queuedMessage = {
       id: message.id,
       text: message.parts.find((part) => part.type === 'text')?.text ?? '',
-      isRemovable: isAgentChatQueuedMessageRemovable({
+      isRemovable: isAiChatQueuedMessageRemovable({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
         isAiChatInboxEnabled,
@@ -93,7 +93,7 @@ export const AiChatQueuedMessages = () => {
       ...queuedMessage,
       sender: {
         id: senderId,
-        name: getAgentChatSenderLabel({
+        name: getAiChatSenderLabel({
           sender,
           isCurrentWorkspaceMember,
         }),

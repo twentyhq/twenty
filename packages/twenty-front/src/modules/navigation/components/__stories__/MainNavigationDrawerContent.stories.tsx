@@ -5,8 +5,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -56,13 +56,13 @@ const AiNavigationContent = () => {
       isImpersonating: false,
       twoFactorAuthenticationMethodSummary: null,
     });
-    setAgentChatThreadList(initialStore, [THREAD]);
+    setInboxThreadList(initialStore, [THREAD]);
     return initialStore;
   });
 
   // Persisted auth atoms must hydrate before capturing the permission snapshot.
   useEffect(() => {
-    setAgentChatThreadPermissions({
+    setAiChatThreadPermissions({
       store,
       threadId: THREAD.id,
       permissions: THREAD_PERMISSIONS,

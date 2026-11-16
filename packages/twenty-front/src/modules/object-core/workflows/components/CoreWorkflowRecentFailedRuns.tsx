@@ -23,11 +23,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { type GetCoreWorkflowRunInsightsQuery } from '~/generated/graphql';
+import { type CoreWorkflowRunInsights } from '@/object-core/workflows/types/CoreWorkflowRunInsights';
 
-type FailedRun = NonNullable<
-  GetCoreWorkflowRunInsightsQuery['coreWorkflowRunInsights']
->['recentFailedRuns'][number];
+type FailedRun = CoreWorkflowRunInsights['recentFailedRuns'][number];
 
 const StyledEmpty = styled.span`
   color: ${themeCssVariables.font.color.tertiary};

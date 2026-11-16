@@ -10,6 +10,7 @@ export type ViewField = {
   position: number;
   isActive: boolean;
   isVisible: boolean;
+  isCanonical?: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: string | null;

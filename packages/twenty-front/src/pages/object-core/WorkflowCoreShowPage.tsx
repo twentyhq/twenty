@@ -14,6 +14,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowShowPageActiveTab } from '@/object-core/workflows/components/CoreWorkflowShowPageActiveTab';
 import { CoreWorkflowShowPageTabList } from '@/object-core/workflows/components/CoreWorkflowShowPageTabList';
+import { useCanReadWorkflowRuns } from '@/object-core/workflows/hooks/useCanReadWorkflowRuns';
+import { useCoreWorkflowRunInsights } from '@/object-core/workflows/hooks/useCoreWorkflowRunInsights';
 import { useCoreWorkflowShowPageActiveTab } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab';
 import { getCoreWorkflowShowPageTabListComponentInstanceId } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabListComponentInstanceId';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
@@ -83,11 +85,14 @@ const CoreWorkflowShowContent = ({
     : currentVersion;
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
+  const canReadWorkflowRuns = useCanReadWorkflowRuns();
+  const runInsights = useCoreWorkflowRunInsights({
+    coreWorkflowId,
+    shouldSkip: !canReadWorkflowRuns,
+  });
   const activeTabId = useCoreWorkflowShowPageActiveTab({
     coreWorkflowId,
-    isPublished: isDefined(coreWorkflow)
-      ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
-      : undefined,
+    hasRuns: runInsights.hasRuns,
     requestedVersionId,
   });
   const { renameWorkflow } = useRenameCoreWorkflow({
@@ -105,7 +110,8 @@ const CoreWorkflowShowContent = ({
 
   if (
     (loading && !isDefined(record)) ||
-    (versions.loading && versions.coreWorkflowVersions.length === 0)
+    (versions.loading && versions.coreWorkflowVersions.length === 0) ||
+    !isDefined(runInsights.hasRuns)
   ) {
     return (
       <>
@@ -196,6 +202,9 @@ const CoreWorkflowShowContent = ({
             activeTabId={activeTabId}
             coreWorkflowId={coreWorkflowId}
             coreWorkflowVersions={versions.coreWorkflowVersions}
+            runInsights={runInsights.insights}
+            isLoadingRunInsights={runInsights.loading}
+            hasRunInsightsError={isDefined(runInsights.error)}
             flowTab={
               isDefined(selectedVersion) ? (
                 <CoreWorkflowEditor
