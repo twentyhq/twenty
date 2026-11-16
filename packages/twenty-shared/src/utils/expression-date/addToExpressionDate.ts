@@ -35,7 +35,6 @@ const toDuration = ({
   }
 };
 
-// The amount is truncated toward zero; a month added to the 31st lands on the month's last day
 export const addToExpressionDate = (
   value: unknown,
   amount: unknown,

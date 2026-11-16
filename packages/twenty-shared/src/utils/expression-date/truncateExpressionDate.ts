@@ -42,14 +42,14 @@ export const truncateExpressionDate = (
   }
 
   if (expressionDate.isDateOnly) {
-    return formatExpressionDate(
-      unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY'
-        ? expressionDate
-        : {
-            isDateOnly: true,
-            date: truncatePlainDate({ date: expressionDate.date, unit }),
-          },
-    );
+    if (unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY') {
+      return formatExpressionDate(expressionDate);
+    }
+
+    return formatExpressionDate({
+      isDateOnly: true,
+      date: truncatePlainDate({ date: expressionDate.date, unit }),
+    });
   }
 
   const { dateTime } = expressionDate;
