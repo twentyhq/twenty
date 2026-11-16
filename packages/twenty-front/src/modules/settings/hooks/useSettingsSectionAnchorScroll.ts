@@ -44,8 +44,7 @@ export const useSettingsSectionAnchorScroll = ({
       return;
     }
 
-    // Sections above can still be loading and push the anchor back out of
-    // view, so keep it in view until the user takes over the scrolling.
+    // Sections above may still load and push the anchor away until the user scrolls
     const resizeObserver = new ResizeObserver(scrollToAnchor);
     const stopFollowing = () => {
       resizeObserver.disconnect();
