@@ -2,7 +2,7 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 
 export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'position',
-  'folderId',
+  'parentId',
   'name',
   'link',
   'icon',

@@ -1,10 +1,23 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { Test } from '@nestjs/testing';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 
 describe('AdminPanelGuard', () => {
-  const guard = new AdminPanelGuard();
+  let guard: AdminPanelGuard;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        AdminPanelGuard,
+        { provide: TwentyConfigService, useValue: { get: () => undefined } },
+      ],
+    }).compile();
+
+    guard = moduleRef.get(AdminPanelGuard);
+  });
 
   it('should return true if user can access full admin panel', async () => {
     const mockContext = {

@@ -90,14 +90,14 @@ describe('NavigationMenuItem batch update should succeed', () => {
     });
   });
 
-  it('should update folderIds of multiple items at once', async () => {
-    const folderId = faker.string.uuid();
+  it('should update parentIds of multiple items at once', async () => {
+    const parentId = faker.string.uuid();
 
     const { data: createData } = await createManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
         {
-          id: folderId,
+          id: parentId,
           type: NavigationMenuItemType.FOLDER,
           name: 'Batch Folder',
           position: 1,
@@ -124,8 +124,8 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const { data: updateData } = await updateManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
-        { id: items[1].id, update: { folderId } },
-        { id: items[2].id, update: { folderId } },
+        { id: items[1].id, update: { parentId } },
+        { id: items[2].id, update: { parentId } },
       ],
     });
 
@@ -134,8 +134,8 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const updatedItems = updateData.updateManyNavigationMenuItems;
 
     expect(updatedItems).toHaveLength(2);
-    expect(updatedItems[0]).toMatchObject({ id: items[1].id, folderId });
-    expect(updatedItems[1]).toMatchObject({ id: items[2].id, folderId });
+    expect(updatedItems[0]).toMatchObject({ id: items[1].id, parentId });
+    expect(updatedItems[1]).toMatchObject({ id: items[2].id, parentId });
   });
 
   it('should return empty array for empty inputs', async () => {
