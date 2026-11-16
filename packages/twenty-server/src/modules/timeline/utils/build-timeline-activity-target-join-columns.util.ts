@@ -103,7 +103,6 @@ export const buildTimelineActivityTargetJoinColumns = ({
         const targetObjectMetadataId =
           flatFieldMetadata.relationTargetObjectMetadataId;
 
-        // A relation can reach objects the timeline has no target column for, like attachment.targetMessage
         if (
           !isDefined(targetObjectMetadataId) ||
           !timelineActivityTargetObjectMetadataIds.has(targetObjectMetadataId)

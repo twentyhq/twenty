@@ -26,7 +26,6 @@ const flatFieldMetadatas = Object.values(
   flatFieldMetadataMaps.byUniversalIdentifier,
 ).filter(isDefined);
 
-// The workspace cache fills fieldIds from the database, the standard builder leaves them empty
 const flatObjectMetadataMaps = addAllFlatEntitiesToFlatEntityMaps({
   flatEntities: Object.values(
     standardFlatObjectMetadataMaps.byUniversalIdentifier,
