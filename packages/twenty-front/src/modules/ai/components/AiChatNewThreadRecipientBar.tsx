@@ -1,16 +1,24 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useRef } from 'react';
+import {
+  type FormEvent,
+  type MouseEvent,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
-import { Dropdown } from 'twenty-ui/components/navigation';
+import { FormFieldRow } from 'twenty-ui/components/input';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useTheme } from 'twenty-ui/theme';
+import { Autocomplete, Input } from 'twenty-ui/primitives/input';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
+import { useAiChatNewThreadRecipientSuggestions } from '@/ai/hooks/useAiChatNewThreadRecipientSuggestions';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
@@ -20,9 +28,14 @@ import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMe
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -32,13 +45,45 @@ import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorks
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
+const ADD_RECIPIENTS_INPUT_MIN_WIDTH_PX = 80;
+
+const StyledRecipients = styled.div`
+  align-items: center;
+  cursor: text;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledAddRecipientsContainer = styled.div`
+  cursor: text;
+  display: flex;
+  flex: 1 0 ${ADD_RECIPIENTS_INPUT_MIN_WIDTH_PX}px;
+  min-height: ${themeCssVariables.spacing[8]};
+  min-width: 0;
+  padding-inline: ${themeCssVariables.spacing[2]};
+`;
+
 export const AiChatNewThreadRecipientBar = () => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const theme = useTheme();
-  const dropdownInstanceId = useId();
-  const recipientRowRef = useRef<HTMLDivElement>(null);
-  const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
+  const instanceId = useId();
+  const suggestionsDropdownId = `ai-chat-new-thread-recipients-${instanceId}`;
+  const addRecipientsInputFocusId = `${suggestionsDropdownId}-input`;
+  const addRecipientsInputRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState('');
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    suggestionsDropdownId,
+  );
+  const { openDropdown } = useOpenDropdown();
+  const { closeDropdown } = useCloseDropdown();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
@@ -66,6 +111,14 @@ export const AiChatNewThreadRecipientBar = () => {
   const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
     recipients.recipientWorkspaceMemberIds.includes(id),
   );
+  const {
+    isAssistantSuggested,
+    suggestedWorkspaceMembers,
+    suggestedChannels,
+    suggestionIds,
+    hasMoreSuggestions,
+    showMoreSuggestions,
+  } = useAiChatNewThreadRecipientSuggestions({ search, isDropdownOpen });
 
   const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
 
@@ -78,94 +131,148 @@ export const AiChatNewThreadRecipientBar = () => {
     return null;
   }
 
-  const focusAddRecipientsButton = () => {
-    addRecipientsButtonRef.current?.focus();
+  const focusAddRecipientsInput = () => {
+    addRecipientsInputRef.current?.focus();
+  };
+
+  const openSuggestions = () => {
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: suggestionsDropdownId,
+    });
+  };
+
+  const handleAddRecipientsInputFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: addRecipientsInputFocusId,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: addRecipientsInputFocusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleAddRecipientsInputBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: addRecipientsInputFocusId });
+    closeDropdown(suggestionsDropdownId);
+    setSearch('');
+  };
+
+  const handleAddRecipientsContainerChange = (
+    event: FormEvent<HTMLDivElement>,
+  ) => {
+    if (event.target instanceof HTMLInputElement && event.target.value === '') {
+      openSuggestions();
+    }
+  };
+
+  const handleRecipientsMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    focusAddRecipientsInput();
+    openSuggestions();
   };
 
   return (
-    <FormFieldRow
-      ref={recipientRowRef}
-      aria-label={t`Recipients`}
-      contentPaddingInline={0}
+    <AutocompleteRoot
+      dropdownId={suggestionsDropdownId}
+      items={suggestionIds}
+      value={search}
+      onValueChange={setSearch}
     >
-      {recipients.isAssistantParticipant && (
-        <ChatRecipientChip
-          label={assistantName}
-          avatar={<AiChatAssistantAvatar />}
-          onRemove={() => {
-            focusAddRecipientsButton();
-            setRecipients((current) => ({
-              ...current,
-              isAssistantParticipant: false,
-            }));
-          }}
-        />
-      )}
-      {recipientWorkspaceMembers.map((workspaceMember) => {
-        const label = getWorkspaceMemberNameOrEmail(workspaceMember);
-
-        return (
-          <ChatRecipientChip
-            key={workspaceMember.id}
-            label={label}
-            avatar={
-              <Avatar
-                name={label}
-                colorSeed={workspaceMember.id}
-                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                size="sm"
-                shape="circle"
-              />
-            }
-            onRemove={() => {
-              focusAddRecipientsButton();
-              setRecipients((current) => ({
-                ...current,
-                recipientWorkspaceMemberIds:
-                  current.recipientWorkspaceMemberIds.filter(
-                    (recipientId) => recipientId !== workspaceMember.id,
-                  ),
-              }));
-            }}
-          />
-        );
-      })}
-      {isDefined(channel) && (
-        <ChatRecipientChip
-          label={channel.name}
-          avatar={
-            <AiChatChannelIcon channel={channel} size={theme.icon.size.sm} />
-          }
-          onRemove={() => {
-            focusAddRecipientsButton();
-            setAiChatNewThreadChannelId(null);
-          }}
-        />
-      )}
-      <DropdownRoot
-        dropdownId={`ai-chat-new-thread-recipients-${dropdownInstanceId}`}
-        type="picker"
-        multiple
-      >
-        <Dropdown.Trigger
-          render={
-            <LightButton
-              ref={addRecipientsButtonRef}
-              emphasis="subtle"
-              size="sm"
-            >
-              {t`Add people or a channel`}
-            </LightButton>
-          }
-        />
-        <DropdownContent
-          anchor={recipientRowRef}
-          width={GenericDropdownContentWidth.ExtraLarge}
-          aria-label={t`Select recipients`}
+      <FormFieldRow aria-label={t`Recipients`} contentPaddingInline={0}>
+        <Autocomplete.InputGroup
+          render={<StyledRecipients onMouseDown={handleRecipientsMouseDown} />}
         >
-          <AiChatNewThreadRecipientPicker />
-        </DropdownContent>
-      </DropdownRoot>
-    </FormFieldRow>
+          {recipients.isAssistantParticipant && (
+            <ChatRecipientChip
+              label={assistantName}
+              avatar={<AiChatAssistantAvatar size={14} />}
+              onRemove={() => {
+                focusAddRecipientsInput();
+                setRecipients((current) => ({
+                  ...current,
+                  isAssistantParticipant: false,
+                }));
+              }}
+            />
+          )}
+          {recipientWorkspaceMembers.map((workspaceMember) => {
+            const label = getWorkspaceMemberNameOrEmail(workspaceMember);
+
+            return (
+              <ChatRecipientChip
+                key={workspaceMember.id}
+                label={label}
+                avatar={
+                  <Avatar
+                    name={label}
+                    colorSeed={workspaceMember.id}
+                    src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                    size="sm"
+                    shape="circle"
+                  />
+                }
+                onRemove={() => {
+                  focusAddRecipientsInput();
+                  setRecipients((current) => ({
+                    ...current,
+                    recipientWorkspaceMemberIds:
+                      current.recipientWorkspaceMemberIds.filter(
+                        (recipientId) => recipientId !== workspaceMember.id,
+                      ),
+                  }));
+                }}
+              />
+            );
+          })}
+          {isDefined(channel) && (
+            <ChatRecipientChip
+              label={channel.name}
+              avatar={
+                <AiChatChannelIcon
+                  channel={channel}
+                  size={theme.icon.size.sm}
+                />
+              }
+              onRemove={() => {
+                focusAddRecipientsInput();
+                setAiChatNewThreadChannelId(null);
+              }}
+            />
+          )}
+          <StyledAddRecipientsContainer
+            onMouseDown={handleRecipientsMouseDown}
+            onChange={handleAddRecipientsContainerChange}
+          >
+            <Autocomplete.Input
+              ref={addRecipientsInputRef}
+              type="text"
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={t`Add people or a channel`}
+              placeholder={t`Add people or a channel`}
+              render={<Input variant="plain" hasFocusRing={false} />}
+              onFocus={handleAddRecipientsInputFocus}
+              onBlur={handleAddRecipientsInputBlur}
+              onClick={openSuggestions}
+            />
+          </StyledAddRecipientsContainer>
+        </Autocomplete.InputGroup>
+      </FormFieldRow>
+      <AiChatNewThreadRecipientPicker
+        isAssistantSuggested={isAssistantSuggested}
+        suggestedWorkspaceMembers={suggestedWorkspaceMembers}
+        suggestedChannels={suggestedChannels}
+        hasMoreSuggestions={hasMoreSuggestions}
+        onShowMoreSuggestions={showMoreSuggestions}
+        onPick={() => setSearch('')}
+      />
+    </AutocompleteRoot>
   );
 };
