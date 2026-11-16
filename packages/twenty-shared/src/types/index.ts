@@ -94,13 +94,7 @@ export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEnd
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
 export { FeatureFlagKey } from './FeatureFlagKey';
-export type {
-  FieldMetadataRollupOperation,
-  FieldMetadataFormulaComputation,
-  FieldMetadataRollupComputation,
-  FieldMetadataComputation,
-} from './FieldMetadataComputation';
-export { FIELD_METADATA_ROLLUP_OPERATIONS } from './FieldMetadataComputation';
+export type { FieldMetadataComputation } from './FieldMetadataComputation';
 export type {
   FieldMetadataDefaultValueFunctionNames,
   FieldMetadataDefaultValueUuidFunction,
@@ -123,6 +117,7 @@ export {
   FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE,
   isFieldMetadataTypeWithDefaultValue,
 } from './FieldMetadataDefaultValue';
+export type { FieldMetadataFormulaComputation } from './FieldMetadataFormulaComputation';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type {
@@ -133,6 +128,8 @@ export {
   FieldMetadataDefaultOption,
   FieldMetadataComplexOption,
 } from './FieldMetadataOptions';
+export type { FieldMetadataRollupComputation } from './FieldMetadataRollupComputation';
+export type { FieldMetadataRollupOperation } from './FieldMetadataRollupOperation';
 export type {
   FieldNumberVariant,
   FieldCurrencyFormat,
