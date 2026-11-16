@@ -16,6 +16,7 @@ const minimalValid = {
   twentyExperience: ['WORKFLOWS'],
   twentyExperienceNotes: validExperienceNotes,
   twentyExperienceProofLink: 'https://www.loom.com/share/example',
+  acceptsTerms: true,
 };
 
 const fullValid = {
@@ -30,6 +31,39 @@ const fullValid = {
 };
 
 describe('partnerApplicationRequestSchema', () => {
+  it('adds https:// to links typed without it', () => {
+    const result = partnerApplicationRequestSchema.safeParse({
+      ...minimalValid,
+      website: 'analyticalengines.example',
+      calendarLink: 'cal.com/ada',
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.website).toBe('https://analyticalengines.example');
+    expect(result.data?.calendarLink).toBe('https://cal.com/ada');
+  });
+
+  it('rejects an email typed as a website', () => {
+    expect(
+      partnerApplicationRequestSchema.safeParse({
+        ...minimalValid,
+        website: 'ada@gmail.com',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects an application without the program terms accepted', () => {
+    expect(
+      partnerApplicationRequestSchema.safeParse({
+        ...minimalValid,
+        acceptsTerms: false,
+      }).success,
+    ).toBe(false);
+    const { acceptsTerms: _acceptsTerms, ...withoutTerms } = minimalValid;
+    expect(
+      partnerApplicationRequestSchema.safeParse(withoutTerms).success,
+    ).toBe(false);
+  });
+
   it('accepts the minimal required payload', () => {
     expect(
       partnerApplicationRequestSchema.safeParse(minimalValid).success,

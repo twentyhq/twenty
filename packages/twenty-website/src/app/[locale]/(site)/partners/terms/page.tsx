@@ -1,27 +1,23 @@
+import { msg } from '@lingui/core/macro';
+
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
-import {
-  AffiliateApply,
-  AffiliateAudiences,
-  AffiliateHero,
-  AffiliateIntegratorStrip,
-  AffiliateProgramTerms,
-} from '@/sections/affiliate-program';
-import { AffiliateProgramFaq } from '@/sections/faq';
+import { AffiliateProgramTermsDocument, LegalDocument } from '@/sections/legal';
 import { Menu } from '@/sections/menu';
 
-export const generateMetadata = buildRouteMetadata('affiliatePartners');
+export const generateMetadata = buildRouteMetadata('partnersTerms');
 
-export default async function AffiliateProgramPage({
+export default async function PartnerProgramTermsPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
@@ -30,6 +26,7 @@ export default async function AffiliateProgramPage({
     getRouteI18n(params),
     getCommunityStats(),
   ]);
+  const i18n = getServerI18n();
   const locale = resolveLocaleParam((await params).locale);
 
   return (
@@ -38,19 +35,17 @@ export default async function AffiliateProgramPage({
         data={buildBreadcrumbListJsonLd(
           [
             { name: 'Home', path: '/' },
-            { name: 'Affiliate program', path: '/affiliate-partners' },
+            { name: 'Partners', path: '/partners' },
+            { name: 'Partner program terms', path: '/partners/terms' },
           ],
           locale,
         )}
       />
       <Menu communityStats={communityStats} />
       <main>
-        <AffiliateHero />
-        <AffiliateProgramTerms />
-        <AffiliateAudiences />
-        <AffiliateIntegratorStrip />
-        <AffiliateProgramFaq />
-        <AffiliateApply />
+        <LegalDocument title={i18n._(msg`Partner Program Terms`)}>
+          <AffiliateProgramTermsDocument />
+        </LegalDocument>
       </main>
     </>
   );

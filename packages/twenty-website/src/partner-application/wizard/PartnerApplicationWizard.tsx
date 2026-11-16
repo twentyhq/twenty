@@ -157,6 +157,9 @@ function resolveFieldErrorMessage(
   if (errorValues.includes('too_short')) {
     return COPY.validation.notesTooShort;
   }
+  if (errorValues.includes('terms_required')) {
+    return COPY.validation.termsRequired;
+  }
   return COPY.validation.incompleteForm;
 }
 

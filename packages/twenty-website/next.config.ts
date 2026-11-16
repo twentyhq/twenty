@@ -139,6 +139,20 @@ const nextConfig: LinariaConfig = {
         destination: '/:locale/partners',
         permanent: true,
       },
+      // Partner pages moved under /partners; keep the old URLs' traffic.
+      ...[
+        ['/partners/become', '/partners/integrators'],
+        ['/partners/apply', '/partners/integrators'],
+        ['/affiliate-partners', '/partners/creators'],
+        ['/affiliate-partners/terms', '/partners/terms'],
+      ].flatMap(([source, destination]) => [
+        { source, destination, permanent: true },
+        {
+          source: `/:locale(${WEBSITE_LOCALE_LIST.join('|')})${source}`,
+          destination: `/:locale${destination}`,
+          permanent: true,
+        },
+      ]),
       {
         source: '/user-guide',
         destination: 'https://docs.twenty.com/user-guide/introduction',

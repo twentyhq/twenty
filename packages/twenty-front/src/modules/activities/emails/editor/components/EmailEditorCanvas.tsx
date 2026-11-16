@@ -11,6 +11,7 @@ import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCanvasBackdrop = styled.div`
+  align-self: flex-start;
   box-sizing: border-box;
   flex-grow: 1;
   min-height: 100%;
