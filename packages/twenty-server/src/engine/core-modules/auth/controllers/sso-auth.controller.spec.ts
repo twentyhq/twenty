@@ -222,6 +222,7 @@ describe('SsoAuthController', () => {
         response,
       );
 
+      expect(authService.findInvitationForSignInUp).toHaveBeenCalledTimes(1);
       expect(authService.findInvitationForSignInUp).toHaveBeenCalledWith({
         currentWorkspace: workspace,
         workspacePersonalInviteToken: 'personal-invite-token',
@@ -229,9 +230,11 @@ describe('SsoAuthController', () => {
       expect(
         userService.hasUserAccessToWorkspaceOrThrow,
       ).not.toHaveBeenCalled();
+      expect(authService.signInUp).toHaveBeenCalledTimes(1);
       expect(authService.signInUp).toHaveBeenCalledWith(
         expect.objectContaining({ invitation }),
       );
+      expect(response.redirect).toHaveBeenCalledTimes(1);
       expect(response.redirect).toHaveBeenCalledWith('https://redirect');
     });
 
@@ -246,7 +249,9 @@ describe('SsoAuthController', () => {
         buildResponse(),
       );
 
-      expect(userService.hasUserAccessToWorkspaceOrThrow).toHaveBeenCalled();
+      expect(userService.hasUserAccessToWorkspaceOrThrow).toHaveBeenCalledTimes(
+        1,
+      );
       expect(authService.signInUp).not.toHaveBeenCalled();
     });
 
@@ -275,6 +280,7 @@ describe('SsoAuthController', () => {
       );
 
       expect(authService.signInUp).not.toHaveBeenCalled();
+      expect(response.redirect).toHaveBeenCalledTimes(1);
       expect(response.redirect).toHaveBeenCalledWith(
         expect.stringContaining(
           'Accounts with admin panel or impersonation access cannot join a workspace through SSO',
@@ -297,9 +303,11 @@ describe('SsoAuthController', () => {
         response,
       );
 
+      expect(authService.signInUp).toHaveBeenCalledTimes(1);
       expect(authService.signInUp).toHaveBeenCalledWith(
         expect.objectContaining({ invitation: undefined }),
       );
+      expect(response.redirect).toHaveBeenCalledTimes(1);
       expect(response.redirect).toHaveBeenCalledWith('https://redirect');
     });
 
@@ -316,6 +324,7 @@ describe('SsoAuthController', () => {
         response,
       );
 
+      expect(response.redirect).toHaveBeenCalledTimes(1);
       expect(response.redirect).toHaveBeenCalledWith(
         'https://verify?errorMessage=User does not have access to this workspace',
       );

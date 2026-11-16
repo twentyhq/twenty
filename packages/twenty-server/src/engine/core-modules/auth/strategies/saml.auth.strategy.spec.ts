@@ -171,6 +171,7 @@ describe('SamlAuthStrategy.validate', () => {
 
     await strategy.validate(request, buildProfile(), done);
 
+    expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeNull();
     expect(done.mock.calls[0][1]).toEqual({
       identityProviderId: IDP_A,
