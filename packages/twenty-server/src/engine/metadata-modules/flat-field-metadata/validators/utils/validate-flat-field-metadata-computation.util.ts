@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
+import { FIELD_METADATA_ROLLUP_OPERATIONS } from 'twenty-shared/constants';
 import {
-  FIELD_METADATA_ROLLUP_OPERATIONS,
   type FieldMetadataComputation,
   FieldMetadataType,
 } from 'twenty-shared/types';
