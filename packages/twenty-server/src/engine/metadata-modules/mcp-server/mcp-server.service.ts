@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import compact from 'lodash.compact';
 import {
   getUrlSafely,
   isDefined,
@@ -110,9 +111,7 @@ export class McpServerService {
     await this.mcpServerMigrationService.runMigrationOrThrow({
       mcpServerOperation: { flatEntityToCreate: [flatMcpServerToCreate] },
       connectionProviderOperation: {
-        flatEntityToCreate: isDefined(signInFlatConnectionProvider)
-          ? [signInFlatConnectionProvider]
-          : [],
+        flatEntityToCreate: compact([signInFlatConnectionProvider]),
       },
       workspaceId,
       errorMessage:
@@ -176,9 +175,7 @@ export class McpServerService {
     await this.mcpServerMigrationService.runMigrationOrThrow({
       mcpServerOperation: { flatEntityToUpdate: [flatMcpServerToUpdate] },
       connectionProviderOperation: {
-        flatEntityToCreate: isDefined(signInFlatConnectionProvider)
-          ? [signInFlatConnectionProvider]
-          : [],
+        flatEntityToCreate: compact([signInFlatConnectionProvider]),
       },
       workspaceId,
       errorMessage:
