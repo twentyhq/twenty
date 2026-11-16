@@ -65,6 +65,7 @@ export const useEmailComposerState = ({
       draftPrefill?.body ?? serializePlainTextAsAdvancedTextEditorDocument(''),
     files: [],
     pickedSender: null,
+    pendingAppSend: null,
   }));
   const [storedDraft, setStoredDraft] = useComposerDraft({
     draftFamilyState: emailComposerDraftFamilyState,
@@ -77,6 +78,7 @@ export const useEmailComposerState = ({
     body,
     files: attachedFiles,
     pickedSender,
+    pendingAppSend,
   } = storedDraft ?? initialDraft;
   const { to, cc, bcc } = recipientsByFieldId;
 
@@ -139,10 +141,6 @@ export const useEmailComposerState = ({
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
   const { enqueueToast } = useToast();
-  const [pendingAppSend, setPendingAppSend] = useState<{
-    emailKey: string;
-    idempotencyKey: string;
-  } | null>(null);
   const loading = isSendingEmail || isSendingThroughApp;
 
   const recipientCount = to.length + cc.length + bcc.length;
@@ -191,7 +189,10 @@ export const useEmailComposerState = ({
           ? pendingAppSend.idempotencyKey
           : v4();
 
-      setPendingAppSend({ emailKey, idempotencyKey });
+      setStoredDraft((previousDraft) => ({
+        ...(previousDraft ?? initialDraft),
+        pendingAppSend: { emailKey, idempotencyKey },
+      }));
 
       try {
         const sentMessage = await sendAppChannelMessage({
@@ -202,7 +203,6 @@ export const useEmailComposerState = ({
           attachments: files,
         });
 
-        setPendingAppSend(null);
         setStoredDraft(null);
         onSent?.(sentMessage?.messageThreadId ?? null);
       } catch (error) {
@@ -257,6 +257,7 @@ export const useEmailComposerState = ({
     sendAppChannelMessage,
     enqueueToast,
     setStoredDraft,
+    initialDraft,
     onSent,
   ]);
 

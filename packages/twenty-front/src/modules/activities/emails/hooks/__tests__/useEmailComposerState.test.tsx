@@ -144,9 +144,11 @@ const createFailingSendAppChannelMessageMock = (
 const renderAppComposerState = ({
   mocks,
   onSent,
+  draftKey,
 }: {
   mocks: MockLink.MockedResponse[];
   onSent: (messageThreadId: string | null) => void;
+  draftKey?: string;
 }) =>
   renderHook(
     () =>
@@ -161,6 +163,7 @@ const renderAppComposerState = ({
           messageChannelId: 'channel-1',
           messageThreadId: 'message-thread-1',
         },
+        draftKey,
         onSent,
       }),
     {
@@ -299,6 +302,46 @@ describe('useEmailComposerState', () => {
 
     await act(async () => {
       await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a failed app reply with the same idempotency key after a remount', async () => {
+    const sentIdempotencyKeys: string[] = [];
+
+    const failedComposer = renderAppComposerState({
+      mocks: [
+        createFailingSendAppChannelMessageMock((idempotencyKey) => {
+          sentIdempotencyKeys.push(idempotencyKey);
+
+          return true;
+        }),
+      ],
+      onSent: jest.fn(),
+      draftKey: 'app-reply-retry-thread',
+    });
+
+    await act(async () => {
+      await failedComposer.result.current.handleSend();
+    });
+
+    failedComposer.unmount();
+
+    const onSent = jest.fn();
+    const remountedComposer = renderAppComposerState({
+      mocks: [
+        createSendAppChannelMessageMock(
+          (idempotencyKey) => idempotencyKey === sentIdempotencyKeys[0],
+        ),
+      ],
+      onSent,
+      draftKey: 'app-reply-retry-thread',
+    });
+
+    await act(async () => {
+      await remountedComposer.result.current.handleSend();
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');

@@ -12,4 +12,8 @@ export type EmailComposerDraft = {
     defaultConnectedAccountId: string;
     sender: ConnectedAccountSender;
   } | null;
+  pendingAppSend: {
+    emailKey: string;
+    idempotencyKey: string;
+  } | null;
 };
