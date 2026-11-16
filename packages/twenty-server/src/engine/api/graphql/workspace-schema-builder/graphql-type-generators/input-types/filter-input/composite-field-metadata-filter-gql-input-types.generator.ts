@@ -49,8 +49,9 @@ export class CompositeFieldMetadataFilterGqlInputTypeGenerator {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    for (const property of compositeType.properties) {
-      property.isRequired = false;
+    for (const compositeProperty of compositeType.properties) {
+      const property = { ...compositeProperty, isRequired: false };
+
       if (isMorphOrRelationFieldMetadataType(property.type)) {
         this.logger.error(
           'Relation fields are not supported in composite types',
