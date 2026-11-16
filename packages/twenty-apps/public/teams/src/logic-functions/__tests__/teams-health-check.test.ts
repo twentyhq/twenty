@@ -2,15 +2,25 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
+import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { teamsHealthCheckHandler } from 'src/logic-functions/teams-health-check';
 
-const { listTeamsConnectionsMock, kvGetMock, releaseFlags } = vi.hoisted(
-  () => ({
-    listTeamsConnectionsMock: vi.fn(),
-    kvGetMock: vi.fn(),
-    releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
-  }),
+const {
+  listTeamsConnectionsMock,
+  kvGetMock,
+  fetchCurrentWorkspaceIdMock,
+  releaseFlags,
+} = vi.hoisted(() => ({
+  listTeamsConnectionsMock: vi.fn(),
+  kvGetMock: vi.fn(),
+  fetchCurrentWorkspaceIdMock: vi.fn(),
+  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
+}));
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/fetch-current-workspace-id',
+  () => ({ fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock }),
 );
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -50,6 +60,7 @@ describe('teamsHealthCheckHandler', () => {
     vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
     listTeamsConnectionsMock.mockResolvedValue([]);
     kvGetMock.mockResolvedValue(null);
+    fetchCurrentWorkspaceIdMock.mockResolvedValue('this-workspace-id');
   });
 
   afterEach(() => {
@@ -127,16 +138,30 @@ describe('teamsHealthCheckHandler', () => {
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
-  it('should report chat as taken when the workspace connection lost its tenant claim', async () => {
+  const recordLostClaim = (claimingWorkspaceId: string | null) => {
+    kvGetMock.mockImplementation(
+      async (key: string, options?: { scope: string }) => {
+        if (options?.scope === 'SERVER') {
+          return key === buildTeamsTenantKvKey('tenant-id')
+            ? claimingWorkspaceId
+            : null;
+        }
+
+        return key ===
+          buildTeamsTenantClaimConflictKvKey(WORKSPACE_CONNECTION.id)
+          ? { tenantId: 'tenant-id', failedAt: '2026-11-16T00:00:00.000Z' }
+          : null;
+      },
+    );
+  };
+
+  it('should report chat as taken when another workspace holds the tenant this connection lost', async () => {
     enableChat();
     listTeamsConnectionsMock.mockResolvedValue([
       PERSONAL_CONNECTION,
       WORKSPACE_CONNECTION,
     ]);
-    kvGetMock.mockResolvedValue({
-      tenantId: 'tenant-id',
-      failedAt: '2026-11-16T00:00:00.000Z',
-    });
+    recordLostClaim('other-workspace-id');
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({
       status: 'ERROR',
@@ -145,10 +170,29 @@ describe('teamsHealthCheckHandler', () => {
       action: { label: 'Manage connection', location: '#general/connections' },
     });
 
-    expect(kvGetMock).toHaveBeenCalledExactlyOnceWith(
+    expect(kvGetMock).toHaveBeenCalledWith(
       buildTeamsTenantClaimConflictKvKey(WORKSPACE_CONNECTION.id),
     );
+    expect(kvGetMock).toHaveBeenCalledWith(buildTeamsTenantKvKey('tenant-id'), {
+      scope: 'SERVER',
+    });
   });
+
+  it.each([
+    ['this workspace holds the tenant again', 'this-workspace-id'],
+    ['nobody holds the tenant any more', null],
+  ])(
+    'should report nothing for a recorded conflict once %s',
+    async (_, claimingWorkspaceId) => {
+      enableChat();
+      listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
+      recordLostClaim(claimingWorkspaceId);
+
+      await expect(teamsHealthCheckHandler()).resolves.toEqual({
+        status: 'OK',
+      });
+    },
+  );
 
   it('should not look for lost claims while chat is off', async () => {
     listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);

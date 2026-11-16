@@ -75,10 +75,11 @@ export const registerTeamsConnection = async ({
     await releaseTeamsConnectionTenant({ connectedAccountId });
   }
 
+  await kv.set(connectedAccountTenantKvKey, tenantId);
+
   const { isClaimed } = await claimTeamsTenant(tenantId);
 
-  // The hook runs queued and its errors are swallowed, so a lost claim is
-  // recorded for the health check instead of thrown into a doomed retry.
+  // The hook's failures are swallowed, so a lost claim is recorded, not thrown.
   if (!isClaimed) {
     await kv.delete(connectedAccountTenantKvKey);
     await saveTeamsTenantClaimConflict({ connectedAccountId, tenantId });
@@ -86,7 +87,6 @@ export const registerTeamsConnection = async ({
     return { claimedTenantId: null, conflictingTenantId: tenantId };
   }
 
-  await kv.set(connectedAccountTenantKvKey, tenantId);
   await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
   await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });

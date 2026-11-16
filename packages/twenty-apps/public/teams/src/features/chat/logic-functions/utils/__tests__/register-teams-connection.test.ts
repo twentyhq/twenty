@@ -15,6 +15,7 @@ const {
   fetchGraphJsonMock,
   releaseMock,
   matchTeamsDirectoryByEmailMock,
+  fetchCurrentWorkspaceIdMock,
 } = vi.hoisted(() => ({
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
@@ -24,6 +25,7 @@ const {
   fetchGraphJsonMock: vi.fn(),
   releaseMock: vi.fn(),
   matchTeamsDirectoryByEmailMock: vi.fn(),
+  fetchCurrentWorkspaceIdMock: vi.fn(),
 }));
 
 vi.mock('src/constants/release-flags', () => ({
@@ -48,6 +50,11 @@ vi.mock(
 vi.mock(
   'src/features/chat/logic-functions/utils/match-teams-directory-by-email',
   () => ({ matchTeamsDirectoryByEmail: matchTeamsDirectoryByEmailMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/fetch-current-workspace-id',
+  () => ({ fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock }),
 );
 
 const CONNECTED_ACCOUNT_ID = 'connected-account-id';
@@ -81,6 +88,7 @@ describe('registerTeamsConnection', () => {
     fetchGraphJsonMock.mockResolvedValue({ value: [{ id: TENANT_ID }] });
     kvGetMock.mockResolvedValue(null);
     matchTeamsDirectoryByEmailMock.mockResolvedValue(undefined);
+    fetchCurrentWorkspaceIdMock.mockResolvedValue('this-workspace-id');
   });
 
   it('should claim the tenant of a workspace-shared connection and remember it for release', async () => {
@@ -95,14 +103,14 @@ describe('registerTeamsConnection', () => {
     });
     expect(kvSetMock).toHaveBeenNthCalledWith(
       1,
-      buildTeamsTenantKvKey(TENANT_ID),
-      null,
-      { scope: 'SERVER' },
+      CONNECTED_ACCOUNT_TENANT_KV_KEY,
+      TENANT_ID,
     );
     expect(kvSetMock).toHaveBeenNthCalledWith(
       2,
-      CONNECTED_ACCOUNT_TENANT_KV_KEY,
-      TENANT_ID,
+      buildTeamsTenantKvKey(TENANT_ID),
+      null,
+      { scope: 'SERVER' },
     );
     expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
   });
@@ -119,14 +127,14 @@ describe('registerTeamsConnection', () => {
         connectedAccountId: CONNECTED_ACCOUNT_ID,
       }),
     ).toEqual({ claimedTenantId: null, conflictingTenantId: TENANT_ID });
-    expect(kvSetMock).toHaveBeenCalledTimes(2);
+    expect(kvSetMock).toHaveBeenCalledTimes(3);
     expect(kvSetMock).toHaveBeenNthCalledWith(
-      1,
+      2,
       buildTeamsTenantKvKey(TENANT_ID),
       null,
       { scope: 'SERVER' },
     );
-    expect(kvSetMock).toHaveBeenNthCalledWith(2, CLAIM_CONFLICT_KV_KEY, {
+    expect(kvSetMock).toHaveBeenNthCalledWith(3, CLAIM_CONFLICT_KV_KEY, {
       tenantId: TENANT_ID,
       failedAt: expect.any(String),
     });
@@ -137,20 +145,29 @@ describe('registerTeamsConnection', () => {
     expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
-  it('should fail for a retry when the claim fails while nobody holds the tenant', async () => {
-    rejectServerClaim();
+  it.each([
+    ['nobody holds the tenant', null],
+    ['this workspace already holds the tenant', 'this-workspace-id'],
+  ])(
+    'should keep the connection tenant for a retry when the claim fails while %s',
+    async (_, claimingWorkspaceId) => {
+      rejectServerClaim();
+      kvGetMock.mockImplementation(
+        async (_key: string, options?: { scope: string }) =>
+          options?.scope === 'SERVER' ? claimingWorkspaceId : null,
+      );
 
-    await expect(
-      registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID }),
-    ).rejects.toThrow('already claimed');
-    expect(kvSetMock).toHaveBeenCalledExactlyOnceWith(
-      buildTeamsTenantKvKey(TENANT_ID),
-      null,
-      { scope: 'SERVER' },
-    );
-    expect(kvDeleteMock).not.toHaveBeenCalled();
-    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
-  });
+      await expect(
+        registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID }),
+      ).rejects.toThrow('already claimed');
+      expect(kvSetMock).toHaveBeenCalledWith(
+        CONNECTED_ACCOUNT_TENANT_KV_KEY,
+        TENANT_ID,
+      );
+      expect(kvDeleteMock).not.toHaveBeenCalled();
+      expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
+    },
+  );
 
   it('should release the previous tenant when a reconnect signs in to another tenant', async () => {
     kvGetMock.mockResolvedValue('previous-tenant-id');

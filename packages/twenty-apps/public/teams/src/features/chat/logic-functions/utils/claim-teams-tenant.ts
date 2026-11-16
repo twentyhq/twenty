@@ -2,9 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
+import { fetchCurrentWorkspaceId } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id';
 
-// The server refuses a claim another workspace holds; reading the key back
-// tells that refusal apart from a transient failure without parsing the message.
 export const claimTeamsTenant = async (
   tenantId: string,
 ): Promise<{ isClaimed: boolean }> => {
@@ -15,11 +14,15 @@ export const claimTeamsTenant = async (
 
     return { isClaimed: true };
   } catch (error) {
+    // Reading the claim back tells a refusal apart from a transient failure.
     const claimingWorkspaceId = await kv.get<string>(tenantKvKey, {
       scope: 'SERVER',
     });
 
-    if (isNonEmptyString(claimingWorkspaceId)) {
+    if (
+      isNonEmptyString(claimingWorkspaceId) &&
+      claimingWorkspaceId !== (await fetchCurrentWorkspaceId())
+    ) {
       return { isClaimed: false };
     }
 
