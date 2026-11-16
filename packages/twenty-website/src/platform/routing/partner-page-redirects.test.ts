@@ -1,5 +1,6 @@
 import { type NextConfig } from 'next';
 import { pathToRegexp } from 'next/dist/compiled/path-to-regexp';
+import { isDefined } from 'twenty-shared/utils';
 
 import nextConfig from '../../../next.config';
 
@@ -25,7 +26,8 @@ describe('Partner page redirects', () => {
     const redirects = await nextConfig.redirects!();
     const redirect = redirects.find(
       (candidate) =>
-        !candidate.has && pathToRegexp(candidate.source).test(source),
+        !isDefined(candidate.has) &&
+        pathToRegexp(candidate.source).test(source),
     );
 
     expect(redirect).toBeDefined();
