@@ -81,6 +81,17 @@ const SuggestionMenuInner = <TItem,>(
     () => ({
       getBoundingClientRect: () => {
         const start = editor.view.coordsAtPos(range.from);
+        // An editor inside a bordered box opens the menu past the box, not over its border
+        const anchorElement = editor.view.dom.closest(
+          '[data-suggestion-menu-anchor]',
+        );
+
+        if (isDefined(anchorElement)) {
+          const anchorRect = anchorElement.getBoundingClientRect();
+
+          return new DOMRect(start.left, anchorRect.top, 0, anchorRect.height);
+        }
+
         return new DOMRect(start.left, start.top, 0, start.bottom - start.top);
       },
     }),

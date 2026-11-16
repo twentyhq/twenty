@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  SettingsPath,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   getAppPath,
@@ -13,11 +17,13 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -27,6 +33,7 @@ import { useSkillIcon } from '@/skill-suggestion/hooks/useSkillIcon';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
 const PROPOSED_FIELD_METADATA_ICON = 'IconTag';
@@ -66,6 +73,9 @@ export const useChatReferenceTarget = (
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
   const { view } = useViewById(
     reference.kind === 'view' ? reference.viewId : null,
   );
@@ -89,6 +99,13 @@ export const useChatReferenceTarget = (
         const recordPath = getLinkToShowPage(reference.objectNameSingular, {
           id: reference.recordId,
         });
+        const workspaceMemberAvatarUrl =
+          reference.objectNameSingular ===
+          StandardObjectNameSingular.WorkspaceMember
+            ? currentWorkspaceMembers.find(
+                (workspaceMember) => workspaceMember.id === reference.recordId,
+              )?.avatarUrl
+            : undefined;
 
         return {
           path: isNonEmptyString(recordPath) ? recordPath : undefined,
@@ -96,8 +113,8 @@ export const useChatReferenceTarget = (
             <Avatar
               name={reference.displayName}
               colorSeed={reference.recordId}
-              shape="circle"
-              src=""
+              shape={getAvatarShape(objectMetadataItem)}
+              src={getAbsoluteImageUrl(workspaceMemberAvatarUrl)}
               size="sm"
               imageProps={{ alt: '' }}
             />

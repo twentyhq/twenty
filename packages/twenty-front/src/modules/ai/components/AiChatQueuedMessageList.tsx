@@ -17,6 +17,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const COLLAPSED_QUEUED_MESSAGE_COUNT = 3;
 
 const StyledQueue = styled.div`
+  align-self: stretch;
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom: none;

@@ -10,9 +10,9 @@ const StyledBreadcrumb = styled(UndecoratedLink)`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
   white-space: nowrap;
 `;
 
