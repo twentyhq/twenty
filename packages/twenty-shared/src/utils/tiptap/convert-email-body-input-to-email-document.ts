@@ -1,5 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
+import { convertTextToTipTapNodes } from './convert-text-to-tiptap-nodes';
 import { type EmailBodyInput } from './email-body-input-schema';
 import { type EmailDocument } from './email-document-schema';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
@@ -25,20 +24,10 @@ export const convertEmailBodyInputToEmailDocument = (
       return buildEmailDocument([
         {
           type: TIPTAP_NODE_TYPES.PARAGRAPH,
-          content: body.text
-            .replace(/\r\n?/g, '\n')
-            .split('\n')
-            .flatMap((line, lineIndex) => [
-              ...(lineIndex > 0
-                ? [{ type: TIPTAP_NODE_TYPES.HARD_BREAK }]
-                : []),
-              ...(isNonEmptyString(line)
-                ? [{ type: TIPTAP_NODE_TYPES.TEXT, text: line }]
-                : []),
-            ]),
+          content: convertTextToTipTapNodes(body.text, []),
         },
       ]);
-    default:
+    case TIPTAP_NODE_TYPES.DOCUMENT:
       return {
         ...body,
         attrs: {
