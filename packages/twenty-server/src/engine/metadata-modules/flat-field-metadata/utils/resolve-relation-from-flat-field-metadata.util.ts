@@ -26,6 +26,11 @@ export const resolveRelationFromFlatFieldMetadata = ({
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
+  // A filtered relation has no inverse field
+  if (!isDefined(sourceFlatFieldMetadata.relationTargetFieldMetadataId)) {
+    return null;
+  }
+
   const targetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,

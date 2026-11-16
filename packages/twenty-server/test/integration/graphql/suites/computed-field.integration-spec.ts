@@ -471,6 +471,29 @@ describe('Computed fields (e2e)', () => {
       ]);
     });
 
+    it('is listed by the metadata API without an inverse relation', async () => {
+      const { fields, errors } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: projectObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'name relation { type }',
+      });
+      const relationByFieldName = Object.fromEntries(
+        fields.map(
+          ({ node }: { node: { name: string; relation: unknown } }) => [
+            node.name,
+            node.relation,
+          ],
+        ),
+      );
+
+      expect(errors).toBeUndefined();
+      expect(relationByFieldName.upcomingTasks).toBeNull();
+      expect(relationByFieldName.tasks).toEqual({ type: 'ONE_TO_MANY' });
+    });
+
     it('leaves the relation it derives from untouched', async () => {
       const [alphaProject] = await findProjects({
         gqlFields: 'tasks { totalCount }',
