@@ -1995,6 +1995,24 @@ export class ConfigVariables {
   WEBHOOK_CALL_RATE_LIMITING_LIMIT = 60;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Number of times a webhook call that timed out, hit a network error or got a 5xx, 408 or 429 response is retried. Set to 0 to disable retries',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RETRY_LIMIT = 5;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Delay before the first webhook call retry, in milliseconds. Each following retry doubles it',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RETRY_INITIAL_DELAY_IN_MS = 60_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
       'Time-to-live for application job enqueue rate limiting in milliseconds',

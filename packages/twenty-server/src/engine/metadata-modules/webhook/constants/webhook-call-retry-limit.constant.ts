@@ -1,1 +1,0 @@
-export const WEBHOOK_CALL_RETRY_LIMIT = 5;

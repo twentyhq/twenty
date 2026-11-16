@@ -97,6 +97,12 @@ describe('Webhook response event write (integration)', () => {
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
+    // A retried call would sit in the queue as a delayed job and block the between-test queue drain.
+    await makeAdminPanelApiRequest({
+      query: CREATE_CONFIG_VARIABLE_MUTATION,
+      variables: { key: 'WEBHOOK_CALL_RETRY_LIMIT', value: 0 },
+    });
+
     receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
 
     const reachableWebhookResponse = await createWebhook({
@@ -138,6 +144,11 @@ describe('Webhook response event write (integration)', () => {
     await makeAdminPanelApiRequest({
       query: DELETE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
+    }).catch(() => {});
+
+    await makeAdminPanelApiRequest({
+      query: DELETE_CONFIG_VARIABLE_MUTATION,
+      variables: { key: 'WEBHOOK_CALL_RETRY_LIMIT' },
     }).catch(() => {});
 
     await clickHouseClient.command({

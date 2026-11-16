@@ -10,13 +10,13 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { WEBHOOK_CALL_RETRY_BACKOFF } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-backoff.constant';
-import { WEBHOOK_CALL_RETRY_LIMIT } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-limit.constant';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
+import { getWebhookCallRetryJobOptions } from 'src/engine/metadata-modules/webhook/utils/get-webhook-call-retry-job-options.util';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
@@ -34,6 +34,7 @@ export class CallWebhookJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -135,8 +136,7 @@ export class CallWebhookJobsJob {
         CallWebhookJob.name,
         webhookEventsChunk,
         {
-          retryLimit: WEBHOOK_CALL_RETRY_LIMIT,
-          backoff: WEBHOOK_CALL_RETRY_BACKOFF,
+          ...getWebhookCallRetryJobOptions(this.twentyConfigService),
           workspaceId: workspaceEventBatch.workspaceId,
           isWorkspaceJob: true,
         },
