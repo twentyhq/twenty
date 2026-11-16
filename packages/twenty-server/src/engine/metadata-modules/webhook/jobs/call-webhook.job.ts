@@ -1,8 +1,9 @@
 import { Logger } from '@nestjs/common';
 
+import { isAxiosError } from 'axios';
 import crypto from 'crypto';
 
-import { ensureAbsoluteUrl } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import {
   buildWorkspaceEventEnvelope,
@@ -13,17 +14,23 @@ import { type TrackEventProperties } from 'src/engine/core-modules/event-logs/em
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { type MessageQueueJobRetryContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
+import { WebhookDeliveryRetryException } from 'src/engine/metadata-modules/webhook/webhook-delivery-retry.exception';
 
 type WebhookResponse = {
   workspaceId: string;
   respondedAt: Date;
   properties: TrackEventProperties<typeof WEBHOOK_RESPONSE_EVENT>;
+  isRetryable: boolean;
 };
+
+const isRetryableHttpStatus = (status: number) =>
+  status >= 500 || status === 408 || status === 429;
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
@@ -47,7 +54,10 @@ export class CallWebhookJob {
   }
 
   @Process(CallWebhookJob.name)
-  async handle(webhookJobEvents: WebhookJobData[]): Promise<void> {
+  async handle(
+    webhookJobEvents: WebhookJobData[],
+    jobContext: MessageQueueJobRetryContext<WebhookJobData[]>,
+  ): Promise<void> {
     const webhookResponses = await Promise.all(
       webhookJobEvents.map((webhookJobEvent) =>
         this.callWebhook(webhookJobEvent),
@@ -56,6 +66,21 @@ export class CallWebhookJob {
 
     void this.recordWebhookResponses(webhookResponses).catch((error) =>
       this.logger.error('Failed to record webhook responses', error),
+    );
+
+    const webhookJobEventsToRetry = webhookJobEvents.filter(
+      (_, index) => webhookResponses[index].isRetryable,
+    );
+
+    if (webhookJobEventsToRetry.length === 0) {
+      return;
+    }
+
+    // The next attempt replays only the failed calls, not the ones already delivered.
+    await jobContext.updateData(webhookJobEventsToRetry);
+
+    throw new WebhookDeliveryRetryException(
+      `${webhookJobEventsToRetry.length} of ${webhookJobEvents.length} webhook calls failed with a retryable error`,
     );
   }
 
@@ -137,6 +162,7 @@ export class CallWebhookJob {
           success,
           ...commonPayload,
         },
+        isRetryable: !success && isRetryableHttpStatus(response.status),
       };
     } catch (err) {
       err.response?.data?.destroy();
@@ -158,6 +184,9 @@ export class CallWebhookJob {
             error: 'Webhook URL resolves to a private/internal IP address',
           }),
         },
+        isRetryable: isDefined(err.response)
+          ? isRetryableHttpStatus(err.response.status)
+          : !isSSRFBlocked && isAxiosError(err),
       };
     }
   }

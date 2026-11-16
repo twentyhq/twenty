@@ -11,6 +11,8 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { WEBHOOK_CALL_RETRY_BACKOFF } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-backoff.constant';
+import { WEBHOOK_CALL_RETRY_LIMIT } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-limit.constant';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
@@ -133,7 +135,8 @@ export class CallWebhookJobsJob {
         CallWebhookJob.name,
         webhookEventsChunk,
         {
-          retryLimit: 3,
+          retryLimit: WEBHOOK_CALL_RETRY_LIMIT,
+          backoff: WEBHOOK_CALL_RETRY_BACKOFF,
           workspaceId: workspaceEventBatch.workspaceId,
           isWorkspaceJob: true,
         },

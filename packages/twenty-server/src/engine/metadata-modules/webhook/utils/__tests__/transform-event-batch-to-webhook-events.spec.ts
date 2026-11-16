@@ -169,12 +169,19 @@ describe('transformEventBatchToWebhookEvents', () => {
     ];
 
     const resultWithoutEventDate = result.map((event) => {
-      const { eventDate: _, ...eventWithoutEventDate } = event;
+      const {
+        eventDate: _eventDate,
+        eventId: _eventId,
+        ...eventWithoutEventDate
+      } = event;
 
       return eventWithoutEventDate;
     });
 
     expect(resultWithoutEventDate).toEqual(expectedResultWithoutEventDate);
+    expect(new Set(result.map(({ eventId }) => eventId)).size).toBe(
+      result.length,
+    );
   });
 
   it('should sanitize records properly', () => {
@@ -229,7 +236,11 @@ describe('transformEventBatchToWebhookEvents', () => {
     ];
 
     const resultWithoutEventDate = result.map((event) => {
-      const { eventDate: _, ...eventWithoutEventDate } = event;
+      const {
+        eventDate: _eventDate,
+        eventId: _eventId,
+        ...eventWithoutEventDate
+      } = event;
 
       return eventWithoutEventDate;
     });

@@ -69,6 +69,12 @@ Each webhook sends an HTTP POST with a JSON body:
 Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
 </Note>
 
+### Retries
+
+Twenty retries a delivery when the call times out (5 seconds), hits a network error, or gets a `5xx`, `408` or `429` response. It retries up to 5 times with exponential backoff, at roughly 1, 2, 4, 8 and 16 minutes. Other `4xx` responses are not retried.
+
+Delivery is at-least-once, so your endpoint can receive the same event more than once. Each payload carries an `eventId` that stays the same across retries: use it to ignore duplicates.
+
 ## Webhook Validation
 
 Twenty signs each webhook request for security. Validate signatures to ensure requests are authentic.

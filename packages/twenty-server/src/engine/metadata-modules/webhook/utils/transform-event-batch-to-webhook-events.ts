@@ -1,4 +1,5 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import { v4 } from 'uuid';
 
 import { type WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
@@ -33,6 +34,7 @@ export const transformEventBatchToWebhookEvents = ({
       });
 
       result.push({
+        eventId: v4(),
         targetUrl,
         eventName,
         objectMetadata: objectMetadataForWebhook,

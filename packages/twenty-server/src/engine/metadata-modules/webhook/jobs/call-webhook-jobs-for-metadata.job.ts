@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -13,6 +14,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { WEBHOOK_CALL_RETRY_BACKOFF } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-backoff.constant';
+import { WEBHOOK_CALL_RETRY_LIMIT } from 'src/engine/metadata-modules/webhook/constants/webhook-call-retry-limit.constant';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallMetadataWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
@@ -100,7 +103,8 @@ export class CallWebhookJobsForMetadataJob {
         CallWebhookJob.name,
         webhookEventsChunk,
         {
-          retryLimit: 3,
+          retryLimit: WEBHOOK_CALL_RETRY_LIMIT,
+          backoff: WEBHOOK_CALL_RETRY_BACKOFF,
           workspaceId: metadataEventBatch.workspaceId,
           isWorkspaceJob: true,
         },
@@ -191,6 +195,7 @@ export class CallWebhookJobsForMetadataJob {
     for (const webhook of webhooks) {
       for (const event of metadataEventBatch.events) {
         result.push({
+          eventId: v4(),
           targetUrl: webhook.targetUrl,
           eventName: metadataEventBatch.name,
           workspaceId: metadataEventBatch.workspaceId,
