@@ -25,6 +25,48 @@ describe('getLookupRelatedRecords', () => {
     ).toEqual([company]);
   });
 
+  it('returns each related record once across rows and lookup columns of one relation', () => {
+    expect(
+      getLookupRelatedRecords({
+        records: [
+          { id: 'person-1', __typename: 'Person', company },
+          { id: 'person-2', __typename: 'Person', company },
+        ],
+        columnDescriptorByRecordFieldId: {
+          'city-column': { lookupTarget: companyLookupTarget },
+          'name-column': { lookupTarget: companyLookupTarget },
+        },
+      }),
+    ).toEqual([company]);
+  });
+
+  it('merges the fields of one record reached through two relations', () => {
+    expect(
+      getLookupRelatedRecords({
+        records: [
+          {
+            id: 'person-1',
+            __typename: 'Person',
+            company: { id: 'company-1', __typename: 'Company', city: 'Paris' },
+            previousCompany: {
+              id: 'company-1',
+              __typename: 'Company',
+              name: 'Acme',
+            },
+          },
+        ],
+        columnDescriptorByRecordFieldId: {
+          'city-column': { lookupTarget: companyLookupTarget },
+          'name-column': {
+            lookupTarget: { relationFieldName: 'previousCompany' },
+          },
+        },
+      }),
+    ).toEqual([
+      { id: 'company-1', __typename: 'Company', city: 'Paris', name: 'Acme' },
+    ]);
+  });
+
   it('returns nothing without lookup columns', () => {
     expect(
       getLookupRelatedRecords({

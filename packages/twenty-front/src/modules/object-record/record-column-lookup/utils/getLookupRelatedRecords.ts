@@ -16,18 +16,32 @@ export const getLookupRelatedRecords = ({
         | undefined;
     }
   >;
-}): ObjectRecord[] =>
-  Object.values(columnDescriptorByRecordFieldId).flatMap(({ lookupTarget }) => {
-    if (!isDefined(lookupTarget)) {
-      return [];
-    }
+}): ObjectRecord[] => {
+  const relationFieldNames = new Set(
+    Object.values(columnDescriptorByRecordFieldId).flatMap(
+      ({ lookupTarget }) =>
+        isDefined(lookupTarget) ? [lookupTarget.relationFieldName] : [],
+    ),
+  );
 
-    return records
-      .map(
-        (record): ObjectRecord | null | undefined =>
-          record[lookupTarget.relationFieldName],
-      )
-      .filter((relatedRecord): relatedRecord is ObjectRecord =>
-        isDefined(relatedRecord?.id),
-      );
-  });
+  const relatedRecordById = new Map<string, ObjectRecord>();
+
+  for (const relationFieldName of relationFieldNames) {
+    for (const record of records) {
+      const relatedRecord: ObjectRecord | null | undefined =
+        record[relationFieldName];
+
+      if (!isDefined(relatedRecord?.id)) {
+        continue;
+      }
+
+      // Two relations can reach one record with different selected fields
+      relatedRecordById.set(relatedRecord.id, {
+        ...relatedRecordById.get(relatedRecord.id),
+        ...relatedRecord,
+      });
+    }
+  }
+
+  return [...relatedRecordById.values()];
+};
