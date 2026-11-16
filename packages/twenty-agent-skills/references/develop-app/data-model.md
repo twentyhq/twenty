@@ -133,11 +133,12 @@ computation: {
 
 // A filtered relation: a one-to-many relation showing some records of another one.
 // It has no inverse field, so it takes no `relationTargetFieldMetadataUniversalIdentifier`.
+// The filter, order and limit decide its records; a query filters and sorts inside them.
 computation: {
   kind: 'FILTERED_RELATION',
   relationFieldName: 'tasks',
   filter: "status != 'DONE'", // optional
-  orderBy: [{ dueAt: 'AscNullsLast' }], // optional, one field of the related object per entry
+  orderBy: [{ expression: 'dueAt', direction: 'AscNullsLast' }], // optional, each an expression on the related record
   limit: 3, // optional, 1 to 60
 },
 ```
