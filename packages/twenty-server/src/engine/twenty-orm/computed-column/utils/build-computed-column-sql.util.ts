@@ -17,7 +17,7 @@ import {
   type CompiledComputedFieldExpression,
   compileComputedFieldExpressionToSql,
 } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
-import { getComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type.util';
+import { getComputedFieldValueTypeOrThrow } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type-or-throw.util';
 import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
 import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -124,7 +124,7 @@ const buildFieldPathSql = async ({
       ),
     });
 
-  const type = getComputedFieldValueType({
+  const type = getComputedFieldValueTypeOrThrow({
     columnType,
     readablePath: path.join('.'),
   });

@@ -19,7 +19,7 @@ const VALUE_TYPE_BY_COLUMN_TYPE: Partial<
   [FieldMetadataType.RATING]: FieldMetadataType.TEXT,
 };
 
-export const getComputedFieldValueType = ({
+export const getComputedFieldValueTypeOrThrow = ({
   columnType,
   readablePath,
 }: {
