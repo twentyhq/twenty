@@ -12,7 +12,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 
 export type GetRelationFlatFieldMetadatasUtilArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadata: { relationTargetFieldMetadataId: string };
 };
 
 export const findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow = ({

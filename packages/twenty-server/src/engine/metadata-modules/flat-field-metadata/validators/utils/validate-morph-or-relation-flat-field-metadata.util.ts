@@ -1,5 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import { isComputedField, isDefined } from 'twenty-shared/utils';
+import {
+  hasInverseRelationField,
+  isComputedField,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -105,28 +109,25 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     return [];
   }
 
+  if (
+    !isDefined(
+      universalFlatFieldMetadataToValidate.relationTargetObjectMetadataUniversalIdentifier,
+    ) ||
+    !hasInverseRelationField(universalFlatFieldMetadataToValidate)
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Relation is missing its target object or its inverse field',
+        userFriendlyMessage: msg`Relation is missing its target object or its inverse field`,
+      },
+    ];
+  }
+
   const {
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
   } = universalFlatFieldMetadataToValidate;
-
-  const universalIdentifiersValidation = [
-    relationTargetObjectMetadataUniversalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier,
-  ].flatMap<FlatFieldMetadataValidationError>((universalIdentifier) =>
-    isDefined(universalIdentifier)
-      ? []
-      : {
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: `Invalid universal identifier ${universalIdentifier}`,
-          userFriendlyMessage: msg`Invalid universal identifier ${universalIdentifier}`,
-          value: universalIdentifier,
-        },
-  );
-
-  if (universalIdentifiersValidation.length > 0) {
-    return universalIdentifiersValidation;
-  }
 
   const errors: FlatFieldMetadataValidationError[] = [];
 
