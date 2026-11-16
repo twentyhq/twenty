@@ -23,6 +23,15 @@ jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
   }),
 }));
 
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast: jest.fn() }),
+}));
+
+jest.mock('@/activities/emails/hooks/useUploadEmailAttachment', () => ({
+  useUploadEmailAttachment: () => ({ uploadEmailAttachment: jest.fn() }),
+}));
+
 jest.mock('@/activities/emails/hooks/useReplyConnectedAccount', () => ({
   useReplyConnectedAccount: () => ({
     messageChannel: {

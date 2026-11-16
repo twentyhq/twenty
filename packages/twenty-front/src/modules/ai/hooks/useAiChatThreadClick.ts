@@ -1,8 +1,8 @@
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { isInboxPath } from '~/utils/isInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 type UseAiChatThreadClickOptions = {
@@ -19,11 +19,11 @@ export const useAiChatThreadClick = (
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
-  const handleThreadClick = (thread: Pick<AgentChatThreadRecord, 'id'>) => {
+  const handleThreadClick = (thread: Pick<AiChatThreadRecord, 'id'>) => {
     selectAiChatThread(thread.id);
 
     const isOnChatPage =
-      isCurrentPathAiChatPage() || isAiChatInboxPath(window.location.pathname);
+      isCurrentPathAiChatPage() || isInboxPath(window.location.pathname);
 
     if (isOnChatPage) {
       return;

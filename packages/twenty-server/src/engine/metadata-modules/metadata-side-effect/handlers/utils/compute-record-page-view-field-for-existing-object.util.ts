@@ -147,6 +147,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
     aggregateOperation: null,
     isActive: true,
     isSystemSideEffect: true,
+    isCanonical: true,
     universalOverrides: null,
     createdAt,
     updatedAt: createdAt,

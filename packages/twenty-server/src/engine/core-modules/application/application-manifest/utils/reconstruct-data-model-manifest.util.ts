@@ -86,8 +86,12 @@ export const reconstructDataModelManifest = ({
   indexes: IndexManifest[];
   coverage: ApplicationExportCoverageEntry[];
 } => {
-  const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-    applicationAllFlatEntityMaps;
+  const {
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
+    flatIndexMaps,
+  } = applicationAllFlatEntityMaps;
   const coverage: ApplicationExportCoverageEntry[] = [];
 
   const flatObjectMetadatas = sortFlatEntitiesByUniversalIdentifier(
@@ -180,7 +184,10 @@ export const reconstructDataModelManifest = ({
 
     fieldManifestByUniversalIdentifier.set(
       flatFieldMetadata.universalIdentifier,
-      fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata }),
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps,
+      }),
     );
     coverage.push(
       buildExportedCoverageEntry({

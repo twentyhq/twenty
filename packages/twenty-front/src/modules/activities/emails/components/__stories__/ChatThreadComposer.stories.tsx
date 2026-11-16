@@ -4,6 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const onSendMessage = fn(() => Promise.resolve());
 const onMessageSent = fn(() => new Promise(() => undefined));
@@ -11,7 +12,11 @@ const onMessageSent = fn(() => new Promise(() => undefined));
 const meta: Meta<typeof ChatThreadComposer> = {
   title: 'Modules/Activities/Emails/ChatThreadComposer',
   component: ChatThreadComposer,
-  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
+  decorators: [
+    ComponentDecorator,
+    ObjectMetadataItemsDecorator,
+    ToastDecorator,
+  ],
   parameters: { container: { width: 400 } },
   args: {
     channelName: 'WhatsApp',

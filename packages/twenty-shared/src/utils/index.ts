@@ -85,6 +85,7 @@ export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldM
 export { isFieldMetadataEligibleForRecordForm } from './fieldMetadata/isFieldMetadataEligibleForRecordForm';
 export { isFieldMetadataEnumKind } from './fieldMetadata/isFieldMetadataEnumKind';
 export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
+export { isFieldMetadataOptionActive } from './fieldMetadata/isFieldMetadataOptionActive';
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataSupportedInGroupBy } from './fieldMetadata/isFieldMetadataSupportedInGroupBy';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
@@ -136,9 +137,12 @@ export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedD
 export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
 export type { FilterQuoteCharacter } from './filter/get-open-quote-after-character';
 export { getOpenQuoteAfterCharacter } from './filter/get-open-quote-after-character';
+export { getFieldOrSubFieldType } from './filter/getFieldOrSubFieldType';
+export { getRlsPredicateCompatibleWorkspaceMemberFieldTypes } from './filter/getRlsPredicateCompatibleWorkspaceMemberFieldTypes';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
 export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
+export { isWorkspaceMemberFieldCompatibleWithRlsPredicate } from './filter/isWorkspaceMemberFieldCompatibleWithRlsPredicate';
 export { mapRLSOperandToRecordFilterOperand } from './filter/mapRLSOperandToRecordFilterOperand';
 export { splitFilterArrayItems } from './filter/split-filter-array-items';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';

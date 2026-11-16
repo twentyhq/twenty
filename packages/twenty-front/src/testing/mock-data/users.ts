@@ -103,6 +103,7 @@ export const mockCurrentWorkspace = {
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
+  isInternalImportEnabled: false,
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',

@@ -39,7 +39,7 @@ export type UserContext = {
 };
 
 export type AgentActorContext = {
-  actorContext: ActorMetadata;
+  actorMetadata: ActorMetadata;
   roleId: string;
   userId: string;
   userWorkspaceId: string;
@@ -140,7 +140,7 @@ export class AgentActorContextService {
         workspaceId,
       });
 
-    const actorContext = buildCreatedByFromFullNameMetadata({
+    const actorMetadata = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
       workspaceMemberId: workspaceMember.id,
       source: FieldActorSource.AGENT,
@@ -155,7 +155,7 @@ export class AgentActorContextService {
     };
 
     return {
-      actorContext,
+      actorMetadata,
       roleId,
       userId: userWorkspace.userId,
       userWorkspaceId,
@@ -203,7 +203,7 @@ export class AgentActorContextService {
     });
 
     return {
-      actorContext: buildCreatedByFromFullNameMetadata({
+      actorMetadata: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: workspaceMember.name,
         workspaceMemberId: workspaceMember.id,
         source: FieldActorSource.AGENT,

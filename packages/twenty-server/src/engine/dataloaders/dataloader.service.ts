@@ -29,10 +29,12 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -559,11 +561,19 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+          flatObjectMetadataMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: [
+                'flatFieldMetadataMaps',
+                'flatFieldMetadataOptionMaps',
+                'flatObjectMetadataMaps',
+              ],
             },
           );
 
@@ -609,7 +619,15 @@ export class DataloaderService {
                 (flatFieldMetadata) =>
                   !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
               )
-              .map(fromFlatFieldMetadataToFieldMetadataDto);
+              .map((flatFieldMetadata) =>
+                fromFlatFieldMetadataToFieldMetadataDto({
+                  ...flatFieldMetadata,
+                  options: resolveFlatFieldMetadataOptions({
+                    flatFieldMetadata,
+                    flatFieldMetadataOptionMaps,
+                  }),
+                }),
+              );
           },
         );
 
@@ -693,6 +711,26 @@ export class DataloaderService {
     });
   }
 
+  private findFlatViewAvailableToUser({
+    viewId,
+    flatViewMaps,
+    userWorkspaceId,
+  }: {
+    viewId: string;
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    userWorkspaceId: string | undefined;
+  }): FlatView | undefined {
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    return isDefined(flatView) &&
+      isViewAvailableToUser({ flatView, userWorkspaceId })
+      ? flatView
+      : undefined;
+  }
+
   private createViewFieldGroupsByViewIdLoader() {
     return new DataLoader<
       ViewFieldGroupsByViewIdLoaderPayload,
@@ -709,15 +747,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -807,15 +843,13 @@ export class DataloaderService {
           return [];
         }
 
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewFieldGroup.viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: flatViewFieldGroup.viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -840,15 +874,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -886,15 +918,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -924,15 +954,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -962,15 +990,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -1000,15 +1026,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+        const flatView = this.findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
-        if (
-          !isDefined(flatView) ||
-          !isViewAvailableToUser({ flatView, userWorkspaceId })
-        ) {
+        if (!isDefined(flatView)) {
           return [];
         }
 

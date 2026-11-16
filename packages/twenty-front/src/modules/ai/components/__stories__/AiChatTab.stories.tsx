@@ -9,17 +9,17 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
+import { AiChatPrepromptEffect } from '@/ai/components/AiChatPrepromptEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -40,7 +40,7 @@ const NewChatStory = () => (
   <StyledPageChat>
     <Suspense fallback={null}>
       <AiChatNewThreadPageContent showInformationBanner={false} />
-      <AgentChatPrepromptEffect />
+      <AiChatPrepromptEffect />
     </Suspense>
   </StyledPageChat>
 );
@@ -174,7 +174,7 @@ export const InboxNewChat: Story = {
     ).not.toBeInTheDocument();
     await expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(
+        aiChatNewThreadRecipientsFamilyState.atomFamily(
           jotaiStore.get(newAiChatThreadIdState.atom),
         ),
       ).isAssistantParticipant,
@@ -207,10 +207,9 @@ export const InboxNewChat: Story = {
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
-    const isSendingMessageAtom =
-      agentChatIsSendingMessageFamilyState.atomFamily({
-        threadId: jotaiStore.get(newAiChatThreadIdState.atom),
-      });
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
+    });
 
     jotaiStore.set(isSendingMessageAtom, true);
     await waitFor(() =>
@@ -258,7 +257,7 @@ export const NewChatSuggestedPrompt: Story = {
 
     await waitFor(() =>
       expect(
-        jotaiStore.get(agentChatDraftsByThreadIdState.atom)[
+        jotaiStore.get(aiChatDraftsByThreadIdState.atom)[
           jotaiStore.get(newAiChatThreadIdState.atom)
         ],
       ).toContain('A new partner'),
@@ -300,7 +299,7 @@ export const WorkspaceSetupCompletion: Story = {
 const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
   const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
 
-  jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+  jotaiStore.set(aiChatMessagesFamilyState.atomFamily({ threadId }), [
     {
       id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
       role: 'user',
@@ -308,7 +307,7 @@ const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
     },
   ]);
   jotaiStore.set(
-    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
     typingWorkspaceMemberIds,
   );
 };
@@ -368,7 +367,7 @@ const initializeInboxChatWithTeammate = (
     .find(({ name }) => name.firstName === 'Jane');
 
   jotaiStore.set(
-    agentChatMessagesFamilyState.atomFamily({ threadId }),
+    aiChatMessagesFamilyState.atomFamily({ threadId }),
     getMessages(teammate?.id),
   );
 };

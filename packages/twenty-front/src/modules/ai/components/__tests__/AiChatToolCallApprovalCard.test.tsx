@@ -27,9 +27,9 @@ jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
   useRefreshFrontComponents: () => ({ refreshFrontComponents }),
 }));
 
-const answerAgentChatToolCall = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
-  useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
+const answerAiChatToolCall = jest.fn();
+jest.mock('@/ai/hooks/useAnswerAiChatToolCall', () => ({
+  useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
 // record fields need workspace metadata, so a stub stands in for them
@@ -94,7 +94,7 @@ const renderCard = ({
 
 describe('AiChatToolCallApprovalCard', () => {
   beforeEach(() => {
-    answerAgentChatToolCall.mockReset();
+    answerAiChatToolCall.mockReset();
     refreshFrontComponents.mockReset();
     mockUsePreview
       .mockReset()
@@ -111,7 +111,7 @@ describe('AiChatToolCallApprovalCard', () => {
 
   it('approves the call with the arguments as the person edited them', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
 
@@ -120,7 +120,7 @@ describe('AiChatToolCallApprovalCard', () => {
     });
     await user.click(screen.getByRole('button', { name: 'Approve' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    expect(answerAiChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: {
         decision: 'approve',
@@ -159,7 +159,7 @@ describe('AiChatToolCallApprovalCard', () => {
 
   it('keeps every edit to one composite field when approving a record', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
     // like the composite form inputs, each part is changed from the values it is given
     mockRecordFields.mockImplementation(({ values, onChange }) => {
       const name = values.name as Record<string, string>;
@@ -195,7 +195,7 @@ describe('AiChatToolCallApprovalCard', () => {
     await user.click(screen.getByRole('button', { name: 'Set last name' }));
     await user.click(screen.getByRole('button', { name: 'Approve' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'approve',
@@ -207,7 +207,7 @@ describe('AiChatToolCallApprovalCard', () => {
 
   it('approves the call with the feedback the person wrote', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
 
@@ -218,7 +218,7 @@ describe('AiChatToolCallApprovalCard', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Approve' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'approve',
@@ -231,7 +231,7 @@ describe('AiChatToolCallApprovalCard', () => {
 
   it('rejects the call with the feedback the person wrote', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(true);
+    answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
@@ -242,7 +242,7 @@ describe('AiChatToolCallApprovalCard', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Reject' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    expect(answerAiChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: { decision: 'reject', feedback: 'Wait for the signed quote' },
       optimisticToolOutput: {
@@ -260,7 +260,7 @@ describe('AiChatToolCallApprovalCard', () => {
     async (template) => {
       const user = userEvent.setup();
       let completeApproval: (answered: boolean) => void = () => {};
-      answerAgentChatToolCall.mockReturnValue(
+      answerAiChatToolCall.mockReturnValue(
         new Promise<boolean>((resolve) => {
           completeApproval = resolve;
         }),
@@ -290,7 +290,7 @@ describe('AiChatToolCallApprovalCard', () => {
         screen.queryByText(argumentsToApprove.checksum),
       ).not.toBeInTheDocument();
       await user.click(screen.getByRole('button', { name: 'Approve' }));
-      expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect(answerAiChatToolCall).toHaveBeenCalledWith(
         expect.objectContaining({
           response: { decision: 'approve', arguments: argumentsToApprove },
         }),
@@ -373,7 +373,7 @@ describe('AiChatToolCallApprovalCard', () => {
       expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
       expect(screen.getByRole('button', { name: 'Reject' })).toBeEnabled();
       await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
-      expect(answerAgentChatToolCall).not.toHaveBeenCalled();
+      expect(answerAiChatToolCall).not.toHaveBeenCalled();
     },
   );
 
@@ -426,7 +426,7 @@ describe('AiChatToolCallApprovalCard', () => {
     async ({ toolName, decision, isAnswered }) => {
       const user = userEvent.setup();
       let completeAnswer: (answered: boolean) => void = () => {};
-      answerAgentChatToolCall.mockReturnValue(
+      answerAiChatToolCall.mockReturnValue(
         new Promise<boolean>((resolve) => {
           completeAnswer = resolve;
         }),
@@ -440,7 +440,7 @@ describe('AiChatToolCallApprovalCard', () => {
       });
       await user.click(screen.getByRole('button', { name: decision }));
       await act(async () => completeAnswer(isAnswered));
-      expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+      expect(answerAiChatToolCall).toHaveBeenCalledTimes(1);
       expect(refreshFrontComponents).not.toHaveBeenCalled();
     },
   );

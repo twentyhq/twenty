@@ -9,7 +9,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
@@ -213,11 +213,19 @@ export class MetadataEventPublisher {
   private async prepareFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+      flatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: metadataEventBatch.workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+            'flatObjectMetadataMaps',
+          ],
         },
       );
 
@@ -234,9 +242,10 @@ export class MetadataEventPublisher {
         'after' in enrichedProperties &&
         isDefined(enrichedProperties.after)
       ) {
-        enrichedProperties.after = enrichFieldMetadataEventWithRelations({
+        enrichedProperties.after = enrichFieldMetadataEventRecord({
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,
         }) as typeof enrichedProperties.after;
       }

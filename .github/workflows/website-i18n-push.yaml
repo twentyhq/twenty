@@ -110,7 +110,7 @@ jobs:
     needs: extract_website_translations
     if: needs.extract_website_translations.outputs.pushed == 'true'
     permissions: {}
-    uses: ./.github/workflows/i18n-open-pull-request.yaml
+    uses: ./.github/workflows/open-pull-request.yaml
     with:
       branch: i18n-website
       title: 'i18n - website translations'

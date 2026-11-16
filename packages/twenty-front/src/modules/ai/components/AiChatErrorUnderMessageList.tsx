@@ -1,10 +1,10 @@
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
-import { agentChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
+import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
+import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -16,28 +16,26 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
-  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
+    threadId: aiChatDisplayedThread,
   });
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
+    { threadId: aiChatDisplayedThread },
   );
 
-  const agentChatMessageIds = useAtomStateValue(agentChatMessageIdsSelector);
+  const aiChatMessageIds = useAtomStateValue(aiChatMessageIdsSelector);
 
-  const lastMessageId = agentChatMessageIds.at(-1);
+  const lastMessageId = aiChatMessageIds.at(-1);
   const agentChatMessage = useAtomFamilySelectorValue(
-    agentChatMessageFamilySelector,
+    aiChatMessageFamilySelector,
     { messageId: lastMessageId },
   );
 
   const showError =
-    agentChatError &&
-    !agentChatIsStreaming &&
+    aiChatError &&
+    !aiChatIsStreaming &&
     agentChatMessage?.role === AGENT_MESSAGE_ROLE.USER;
 
   if (!showError) {
@@ -46,7 +44,7 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={agentChatError} />
+      <AiChatErrorRenderer error={aiChatError} />
     </StyledErrorWrapper>
   );
 };
