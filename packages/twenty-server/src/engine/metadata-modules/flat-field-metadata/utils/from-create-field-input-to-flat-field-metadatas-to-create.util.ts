@@ -87,20 +87,33 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     createFieldInput.type === FieldMetadataType.RELATION &&
     createFieldInput.computation?.kind === 'FILTERED_RELATION'
   ) {
-    return {
-      status: 'success',
-      result: {
-        flatFieldMetadatas: [
-          buildFilteredRelationFlatFieldMetadata({
-            commonFlatFieldMetadata,
-            relationFieldName: createFieldInput.computation.relationFieldName,
-            parentFlatObjectMetadata,
-            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-          }),
-        ],
-        indexMetadatas: [],
-      },
-    };
+    const { relationFieldName } = createFieldInput.computation;
+    const filteredRelationFlatFieldMetadata =
+      buildFilteredRelationFlatFieldMetadata({
+        commonFlatFieldMetadata,
+        relationFieldName,
+        parentFlatObjectMetadata,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
+
+    return isDefined(filteredRelationFlatFieldMetadata)
+      ? {
+          status: 'success',
+          result: {
+            flatFieldMetadatas: [filteredRelationFlatFieldMetadata],
+            indexMetadatas: [],
+          },
+        }
+      : {
+          status: 'fail',
+          errors: [
+            {
+              code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+              message: `"${relationFieldName}" must be a stored one-to-many relation of ${parentFlatObjectMetadata.nameSingular}`,
+              userFriendlyMessage: msg`A filtered relation must derive from a one-to-many relation of the same object`,
+            },
+          ],
+        };
   }
 
   switch (createFieldInput.type) {

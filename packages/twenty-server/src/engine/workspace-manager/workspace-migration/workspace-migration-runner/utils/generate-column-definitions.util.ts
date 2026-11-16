@@ -186,7 +186,10 @@ export const generateColumnDefinitions = ({
   workspaceId: string;
   searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
-  if (isMorphRelationHead(flatFieldMetadata) || isComputedField(flatFieldMetadata)) {
+  if (
+    isMorphRelationHead(flatFieldMetadata) ||
+    isComputedField(flatFieldMetadata)
+  ) {
     return [];
   }
 

@@ -11,7 +11,10 @@ describe('compileComputedFieldExpressionToSql', () => {
     ['amount + 1', '("record"."amount" + 1)'],
     ['-amount * 2', '((-"record"."amount") * 2)'],
     ['abs(amount - 5)', 'ABS(("record"."amount" - 5))'],
-    ['amount / quantity', '("record"."amount"::numeric / NULLIF("record"."quantity", 0))'],
+    [
+      'amount / quantity',
+      '("record"."amount"::numeric / NULLIF("record"."quantity", 0))',
+    ],
     ["status != 'DONE'", `("record"."status" <> 'DONE')`],
     ["name == 'it\\'s'", `("record"."name" = 'it''s')`],
     [
@@ -19,14 +22,35 @@ describe('compileComputedFieldExpressionToSql', () => {
       '(("record"."isActive" AND (NOT "record"."isArchived")) OR ("record"."amount" >= 10))',
     ],
     ["status in ['TODO', 'DOING']", `("record"."status" IN ('TODO', 'DOING'))`],
-    ['amount > 0 ? amount : 0', '(CASE WHEN ("record"."amount" > 0) THEN "record"."amount" ELSE 0 END)'],
-    ["if(isActive, 'on', 'off')", `(CASE WHEN "record"."isActive" THEN 'on' ELSE 'off' END)`],
-    ['round(amount / 3, 2)', 'ROUND(("record"."amount"::numeric / NULLIF(3, 0))::numeric, 2::int)'],
-    ["concat(name, ' ', company.name)", `CONCAT("record"."name", ' ', "record"."company_name")`],
-    ['coalesce(amount.amountMicros, 0)', 'COALESCE("record"."amount_amountMicros", 0)'],
+    [
+      'amount > 0 ? amount : 0',
+      '(CASE WHEN ("record"."amount" > 0) THEN "record"."amount" ELSE 0 END)',
+    ],
+    [
+      "if(isActive, 'on', 'off')",
+      `(CASE WHEN "record"."isActive" THEN 'on' ELSE 'off' END)`,
+    ],
+    [
+      'round(amount / 3, 2)',
+      'ROUND(("record"."amount"::numeric / NULLIF(3, 0))::numeric, 2::int)',
+    ],
+    [
+      "concat(name, ' ', company.name)",
+      `CONCAT("record"."name", ' ', "record"."company_name")`,
+    ],
+    [
+      'coalesce(amount.amountMicros, 0)',
+      'COALESCE("record"."amount_amountMicros", 0)',
+    ],
     ['dueAt >= today', '("record"."dueAt" >= CURRENT_DATE)'],
-    ['daysSince(createdAt) > 30', '((CURRENT_DATE - "record"."createdAt"::date) > 30)'],
-    ['isDefined(closedAt) == true', '(("record"."closedAt" IS NOT NULL) = TRUE)'],
+    [
+      'daysSince(createdAt) > 30',
+      '((CURRENT_DATE - "record"."createdAt"::date) > 30)',
+    ],
+    [
+      'isDefined(closedAt) == true',
+      '(("record"."closedAt" IS NOT NULL) = TRUE)',
+    ],
   ])('compiles %s', (expression, expectedSql) => {
     expect(compile(expression)).toBe(expectedSql);
   });

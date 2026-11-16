@@ -30,10 +30,30 @@ const buildTaskId = (index: number) =>
   `20202020-c0f2-4000-8000-${index.toString().padStart(12, '0')}`;
 
 const TASKS = [
-  { projectId: ALPHA_PROJECT_ID, status: 'TODO', points: 3, dueAt: '2030-03-01' },
-  { projectId: ALPHA_PROJECT_ID, status: 'TODO', points: 5, dueAt: '2030-01-15' },
-  { projectId: ALPHA_PROJECT_ID, status: 'DONE', points: 8, dueAt: '2029-06-01' },
-  { projectId: BETA_PROJECT_ID, status: 'DONE', points: 2, dueAt: '2030-02-01' },
+  {
+    projectId: ALPHA_PROJECT_ID,
+    status: 'TODO',
+    points: 3,
+    dueAt: '2030-03-01',
+  },
+  {
+    projectId: ALPHA_PROJECT_ID,
+    status: 'TODO',
+    points: 5,
+    dueAt: '2030-01-15',
+  },
+  {
+    projectId: ALPHA_PROJECT_ID,
+    status: 'DONE',
+    points: 8,
+    dueAt: '2029-06-01',
+  },
+  {
+    projectId: BETA_PROJECT_ID,
+    status: 'DONE',
+    points: 2,
+    dueAt: '2030-02-01',
+  },
 ].map((task, index) => ({ ...task, id: buildTaskId(index + 1) }));
 
 type ProjectNode = { id: string } & Record<string, unknown>;
@@ -41,6 +61,7 @@ type ProjectNode = { id: string } & Record<string, unknown>;
 describe('Computed fields (e2e)', () => {
   let projectObjectMetadataId = '';
   let taskObjectMetadataId = '';
+  let projectBudgetFieldMetadataId = '';
 
   const createField = ({
     objectMetadataId,
@@ -222,12 +243,14 @@ describe('Computed fields (e2e)', () => {
       },
     });
 
-    await createField({
+    const { data: projectBudgetField } = await createField({
       objectMetadataId: taskObjectMetadataId,
       name: 'projectBudget',
       type: FieldMetadataType.NUMBER,
       computation: { kind: 'FORMULA', expression: 'project.budget' },
     });
+
+    projectBudgetFieldMetadataId = projectBudgetField.createOneField.id;
 
     await makeGraphqlApiRequest(
       createManyOperationFactory({
@@ -250,7 +273,20 @@ describe('Computed fields (e2e)', () => {
   });
 
   afterAll(async () => {
-    for (const idToUpdate of [taskObjectMetadataId, projectObjectMetadataId]) {
+    // Each object has a computed field reading the other, and a field read by a computed field cannot be deleted
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: projectBudgetFieldMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+    await deleteOneFieldMetadata({
+      expectToFail: false,
+      input: { idToDelete: projectBudgetFieldMetadataId },
+    });
+
+    for (const idToUpdate of [projectObjectMetadataId, taskObjectMetadataId]) {
       await updateOneObjectMetadata({
         expectToFail: false,
         input: { idToUpdate, updatePayload: { isActive: false } },

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isComputedField, isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -193,9 +193,11 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         });
       }
 
+      // A filtered relation borrows the inverse field of the relation it derives from
       if (
+        !isComputedField(universalFlatFieldMetadataToValidate) &&
         targetFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier !==
-        universalFlatFieldMetadataToValidate.universalIdentifier
+          universalFlatFieldMetadataToValidate.universalIdentifier
       ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

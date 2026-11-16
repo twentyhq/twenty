@@ -13,7 +13,10 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 // A computed field reads other fields by name: deleting or renaming one of them is refused
 // while a computed field still reads it, instead of leaving a field that fails on every query
 export const validateComputedFieldsStillEvaluateCrossEntity = ({
-  optimisticUniversalFlatMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
+  optimisticUniversalFlatMaps: {
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+  },
   orchestratorActionsReport,
 }: {
   optimisticUniversalFlatMaps: Pick<

@@ -1903,7 +1903,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       unresolvedComputedColumns.length > 0;
       unresolvedComputedColumns = queryBuilder.getUnresolvedComputedColumns()
     ) {
-      for (const { alias, tableShape, columnName } of unresolvedComputedColumns) {
+      for (const {
+        alias,
+        tableShape,
+        columnName,
+      } of unresolvedComputedColumns) {
         const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId:
             tableShape.columnShapeByColumnName[columnName].fieldMetadataId,

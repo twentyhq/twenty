@@ -116,8 +116,11 @@ const assertComputationCanBeEvaluated = ({
     compileComputedFieldExpressionToSql({
       expression,
       resolveFieldPathSql: (path) =>
-        resolveComputedFieldPath({ path, object: evaluatedObject, schemaReader })
-          .columnName,
+        resolveComputedFieldPath({
+          path,
+          object: evaluatedObject,
+          schemaReader,
+        }).columnName,
     });
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {

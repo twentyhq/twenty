@@ -84,9 +84,7 @@ export const resolveComputedFieldPath = <
       schemaReader,
     });
 
-    if (
-      targetResolution.toOneRelationHops.length >= MAX_TO_ONE_RELATION_HOPS
-    ) {
+    if (targetResolution.toOneRelationHops.length >= MAX_TO_ONE_RELATION_HOPS) {
       throw new ComputedFieldExpressionException(
         `"${readablePath}" follows more than ${MAX_TO_ONE_RELATION_HOPS} relations`,
       );

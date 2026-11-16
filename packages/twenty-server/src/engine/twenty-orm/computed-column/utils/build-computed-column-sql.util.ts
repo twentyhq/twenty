@@ -164,7 +164,8 @@ const buildRollupSql = async ({
   const inverseFlatFieldMetadata =
     isDefined(relationFlatFieldMetadata) &&
     isMorphOrRelationFlatFieldMetadata(relationFlatFieldMetadata) &&
-    relationFlatFieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY
+    relationFlatFieldMetadata.settings?.relationType ===
+      RelationType.ONE_TO_MANY
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: relationFlatFieldMetadata.relationTargetFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,

@@ -413,13 +413,11 @@ export const substituteExistsFilterTokens = ({
 }): string =>
   existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
-      substituted
-        .split(existsFilterClause.token)
-        .join(
-          renderExistsFilter(existsFilterClause, includeDeleted, {
-            computedColumnSqlByAlias,
-          }),
-        ),
+      substituted.split(existsFilterClause.token).join(
+        renderExistsFilter(existsFilterClause, includeDeleted, {
+          computedColumnSqlByAlias,
+        }),
+      ),
     expression,
   );
 

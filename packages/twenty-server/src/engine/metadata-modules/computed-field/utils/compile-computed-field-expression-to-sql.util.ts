@@ -162,7 +162,9 @@ const compileInstructions = ({
     const operand = operands.pop();
 
     if (!isDefined(operand)) {
-      throw new ComputedFieldExpressionException('The expression is incomplete');
+      throw new ComputedFieldExpressionException(
+        'The expression is incomplete',
+      );
     }
 
     return operand;
