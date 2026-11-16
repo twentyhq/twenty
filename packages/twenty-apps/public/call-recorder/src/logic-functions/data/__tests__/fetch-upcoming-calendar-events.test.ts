@@ -15,10 +15,15 @@ const CLIENT: CoreApiClient = Object.assign(
 
 const NOW = new Date('2026-07-04T12:00:00.000Z');
 
-const buildPage = (
-  calendarEventNodes: Array<{ id: string; startsAt?: string | null }>,
-  { hasNextPage = false, endCursor = null as string | null } = {},
-) => ({
+const buildPage = ({
+  calendarEventNodes,
+  hasNextPage = false,
+  endCursor = null,
+}: {
+  calendarEventNodes: Array<{ id: string; startsAt?: string | null }>;
+  hasNextPage?: boolean;
+  endCursor?: string | null;
+}) => ({
   calendarEvents: {
     pageInfo: { hasNextPage, endCursor },
     edges: calendarEventNodes.map((calendarEventNode) => ({
@@ -33,7 +38,9 @@ describe('fetchUpcomingCalendarEvents', () => {
   });
 
   it('filters to non-canceled events starting within the scheduling horizon and not yet ended, closest first', async () => {
-    queryMock.mockResolvedValue(buildPage([{ id: 'calendar-event-1' }]));
+    queryMock.mockResolvedValue(
+      buildPage({ calendarEventNodes: [{ id: 'calendar-event-1' }] }),
+    );
 
     await fetchUpcomingCalendarEvents(CLIENT, NOW);
 
@@ -70,16 +77,19 @@ describe('fetchUpcomingCalendarEvents', () => {
   it('pages through every result and returns each event with its start time in query order', async () => {
     queryMock
       .mockResolvedValueOnce(
-        buildPage(
-          [
+        buildPage({
+          calendarEventNodes: [
             { id: 'calendar-event-2', startsAt: '2026-07-04T13:00:00.000Z' },
             { id: 'calendar-event-1', startsAt: '2026-07-04T14:00:00.000Z' },
           ],
-          { hasNextPage: true, endCursor: 'cursor-1' },
-        ),
+          hasNextPage: true,
+          endCursor: 'cursor-1',
+        }),
       )
       .mockResolvedValueOnce(
-        buildPage([{ id: 'calendar-event-3', startsAt: null }]),
+        buildPage({
+          calendarEventNodes: [{ id: 'calendar-event-3', startsAt: null }],
+        }),
       );
 
     const upcomingCalendarEvents = await fetchUpcomingCalendarEvents(
@@ -99,7 +109,7 @@ describe('fetchUpcomingCalendarEvents', () => {
   });
 
   it('returns an empty list when no upcoming events exist', async () => {
-    queryMock.mockResolvedValue(buildPage([]));
+    queryMock.mockResolvedValue(buildPage({ calendarEventNodes: [] }));
 
     await expect(fetchUpcomingCalendarEvents(CLIENT, NOW)).resolves.toEqual([]);
   });
