@@ -80,7 +80,7 @@ export const EmailThreadComposer = ({
     onSent: handleReplySent,
   });
 
-  const { handleSend, canSend, canAttachFiles } = composerState;
+  const { handleSend, canSend, canAttachFiles, discardDraft } = composerState;
 
   const {
     openAttachmentPicker,
@@ -113,6 +113,7 @@ export const EmailThreadComposer = ({
       isPinned: !isInSidePanel,
       onClick: () => {
         discardPendingUploads();
+        discardDraft();
         setIsComposerOpen(false);
       },
       replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
@@ -157,6 +158,7 @@ export const EmailThreadComposer = ({
     setIsComposerOpen,
     openAttachmentPicker,
     discardPendingUploads,
+    discardDraft,
     t,
   ]);
 

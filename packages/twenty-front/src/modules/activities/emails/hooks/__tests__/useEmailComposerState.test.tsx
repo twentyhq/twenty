@@ -498,6 +498,40 @@ describe('useEmailComposerState', () => {
     );
   });
 
+  it('forgets a discarded reply after a remount', () => {
+    const renderReplyComposerState = () =>
+      renderHook(
+        () =>
+          useEmailComposerState({
+            connectedAccountId: 'account-1',
+            defaultSubject: 'Hello',
+            draftKey: 'message-thread-2',
+          }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <MockedProvider mocks={[]}>{children}</MockedProvider>
+          ),
+        },
+      );
+
+    const firstComposer = renderReplyComposerState();
+
+    act(() => {
+      firstComposer.result.current.setBody('Never mind');
+    });
+
+    act(() => {
+      firstComposer.result.current.discardDraft();
+    });
+
+    firstComposer.unmount();
+
+    const remountedComposer = renderReplyComposerState();
+
+    expect(remountedComposer.result.current.subject).toBe('Hello');
+    expect(remountedComposer.result.current.body).toBe(EMPTY_BODY);
+  });
+
   it('drops a picked alias when the reply moves to another account', () => {
     const { result, rerender } = renderHook(
       ({ connectedAccountId }: { connectedAccountId: string }) =>

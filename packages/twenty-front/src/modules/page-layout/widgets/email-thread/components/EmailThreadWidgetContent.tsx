@@ -62,23 +62,19 @@ export const EmailThreadWidgetContent = ({
     ? `${currentWorkspaceMember.id}:${targetRecord.id}`
     : undefined;
 
-  const [emailComposerDraft, setEmailComposerDraft] = useComposerDraft({
+  const [emailComposerDraft] = useComposerDraft({
     draftFamilyState: emailComposerDraftFamilyState,
     draftKey: emailComposerDraftKey,
     defaultDraft: null,
   });
 
-  const handleComposerOpenChange = useCallback(
-    (open: boolean) => {
-      setComposerIntent(open ? 'opened' : 'closed');
+  const handleComposerOpenChange = useCallback((open: boolean) => {
+    setComposerIntent(open ? 'opened' : 'closed');
 
-      if (!open) {
-        setClickedDraftPrefill(null);
-        setEmailComposerDraft(null);
-      }
-    },
-    [setEmailComposerDraft],
-  );
+    if (!open) {
+      setClickedDraftPrefill(null);
+    }
+  }, []);
 
   const handleDraftClick = useCallback(
     (message: EmailThreadMessageWithSender) => {

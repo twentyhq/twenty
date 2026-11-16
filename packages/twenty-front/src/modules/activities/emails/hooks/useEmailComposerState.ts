@@ -273,6 +273,7 @@ export const useEmailComposerState = ({
     files,
     setFiles,
     canAttachFiles,
+    discardDraft: () => setStoredDraft(null),
     handleSend,
     loading,
     canSend,
