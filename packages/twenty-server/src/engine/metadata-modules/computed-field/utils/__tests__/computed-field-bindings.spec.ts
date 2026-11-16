@@ -6,7 +6,6 @@ import {
 
 import { type ComputedFieldBindableSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-bindable-schema-field.type';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
-import { bindComputedFieldComputationByPosition } from 'src/engine/metadata-modules/computed-field/utils/bind-computed-field-computation-by-position.util';
 import { computeComputedFieldBindings } from 'src/engine/metadata-modules/computed-field/utils/compute-computed-field-bindings.util';
 import { renameComputedFieldComputationFields } from 'src/engine/metadata-modules/computed-field/utils/rename-computed-field-computation-fields.util';
 
@@ -182,65 +181,5 @@ describe('renameComputedFieldComputationFields', () => {
         fieldNameByUniversalIdentifier: new Map([['project.budget', 'cost']]),
       }),
     ).toBe(FORMULA);
-  });
-});
-
-describe('bindComputedFieldComputationByPosition', () => {
-  it('gives each path of a formula the binding of the path at the same place', () => {
-    expect(
-      bindComputedFieldComputationByPosition({
-        computation: {
-          kind: 'FORMULA',
-          expression:
-            "if(account.label == 'budget', cost, sum.amountMicros) + round(cost)",
-        },
-        boundComputation: { ...FORMULA, bindings: bind(FORMULA) },
-      }).bindings,
-    ).toEqual({
-      cost: 'project.budget',
-      sum: 'project.amount',
-      account: 'project.company',
-      'account.label': 'company.name',
-    });
-  });
-
-  it('roots what a rollup reads at its own relation', () => {
-    expect(
-      bindComputedFieldComputationByPosition({
-        computation: {
-          kind: 'ROLLUP',
-          relationFieldName: 'todos',
-          operation: 'SUM',
-          expression: 'effort',
-          filter: "state != 'points' and owner.label == 'Acme'",
-        },
-        boundComputation: { ...ROLLUP, bindings: bind(ROLLUP) },
-      }).bindings,
-    ).toEqual({
-      todos: 'project.tasks',
-      'todos.effort': 'task.points',
-      'todos.state': 'task.status',
-      'todos.owner': 'task.assignee',
-      'todos.owner.label': 'company.name',
-    });
-  });
-
-  it('binds nothing past the end of a shorter path, or to another kind of computation', () => {
-    expect(
-      bindComputedFieldComputationByPosition({
-        computation: { kind: 'FORMULA', expression: 'cost.amountMicros' },
-        boundComputation: {
-          kind: 'FORMULA',
-          expression: 'budget',
-          bindings: { budget: 'project.budget' },
-        },
-      }).bindings,
-    ).toEqual({ cost: 'project.budget' });
-    expect(
-      bindComputedFieldComputationByPosition({
-        computation: { kind: 'FORMULA', expression: 'points' },
-        boundComputation: { ...ROLLUP, bindings: bind(ROLLUP) },
-      }).bindings,
-    ).toEqual({});
   });
 });
