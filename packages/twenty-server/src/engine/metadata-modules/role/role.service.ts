@@ -657,14 +657,14 @@ export class RoleService {
 
     const activeApiKeyIds = new Set(activeApiKeys.flat().map(({ id }) => id));
 
-    const flatRoleTargetsOfDeletedRoles = Object.values(
+    const flatRoleTargetsToDelete = Object.values(
       flatRoleTargetMaps.byUniversalIdentifier,
     ).filter(
       (flatRoleTarget): flatRoleTarget is FlatRoleTarget =>
         isDefined(flatRoleTarget) && roleIds.includes(flatRoleTarget.roleId),
     );
 
-    const rebinds = flatRoleTargetsOfDeletedRoles
+    const flatRoleTargetsToCreate = flatRoleTargetsToDelete
       .filter(({ isSystemSideEffect }) => !isSystemSideEffect)
       .flatMap((flatRoleTarget) =>
         ROLE_TARGET_FOREIGN_KEY_PROPERTIES.flatMap(
@@ -692,25 +692,12 @@ export class RoleService {
                 flatAgentMaps,
                 flatWebhookMaps,
                 flatApplication: workspaceCustomFlatApplication,
-              }),
+              }).flatRoleTargetToCreate,
             ];
           },
         ),
       );
-    const flatRoleTargetsToDelete = [
-      ...new Map(
-        [
-          ...flatRoleTargetsOfDeletedRoles,
-          ...rebinds.flatMap((rebind) => rebind.flatRoleTargetsToDelete),
-        ].map((flatRoleTarget) => [flatRoleTarget.id, flatRoleTarget]),
-      ).values(),
-    ];
 
-    return {
-      flatRoleTargetsToCreate: rebinds.map(
-        ({ flatRoleTargetToCreate }) => flatRoleTargetToCreate,
-      ),
-      flatRoleTargetsToDelete,
-    };
+    return { flatRoleTargetsToCreate, flatRoleTargetsToDelete };
   }
 }
