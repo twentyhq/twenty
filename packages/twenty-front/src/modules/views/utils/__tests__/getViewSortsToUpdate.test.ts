@@ -55,6 +55,42 @@ describe('getViewSortsToUpdate', () => {
     expect(result).toEqual([]);
   });
 
+  it('should update the saved sort when it came back with another direction under a new id', () => {
+    const sortBackInOtherDirection = {
+      ...baseSort,
+      id: 'sort-2',
+      direction: ViewSortDirection.DESC,
+    } satisfies ViewSort;
+
+    const result = getViewSortsToUpdate([baseSort], [sortBackInOtherDirection]);
+
+    expect(result).toEqual([{ ...sortBackInOtherDirection, id: baseSort.id }]);
+  });
+
+  it('should update the saved sort when it came back on another sub-field under a new id', () => {
+    const savedSort = {
+      ...baseSort,
+      subFieldName: 'firstName',
+    } satisfies ViewSort;
+    const sortOnOtherSubField = {
+      ...baseSort,
+      id: 'sort-2',
+      subFieldName: 'lastName',
+    } satisfies ViewSort;
+
+    const result = getViewSortsToUpdate([savedSort], [sortOnOtherSubField]);
+
+    expect(result).toEqual([{ ...sortOnOtherSubField, id: savedSort.id }]);
+  });
+
+  it('should not update the saved sort when it came back unchanged under a new id', () => {
+    const sortBackOnItsField = { ...baseSort, id: 'sort-2' } satisfies ViewSort;
+
+    const result = getViewSortsToUpdate([baseSort], [sortBackOnItsField]);
+
+    expect(result).toEqual([]);
+  });
+
   it('should handle empty arrays for both inputs', () => {
     const currentViewSorts: ViewSort[] = [];
     const newViewSorts: ViewSort[] = [];
