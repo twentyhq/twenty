@@ -4,7 +4,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
   it('seeds optional inputs with null and required ones with their default', () => {
     expect(
       getDefaultMcpToolInputFromJsonSchema({
-        type: 'object',
         required: ['query', 'kinds', 'mode'],
         properties: {
           query: { type: 'string' },
@@ -28,7 +27,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
   it('keeps nested objects editable while their optional leaves stay null', () => {
     expect(
       getDefaultMcpToolInputFromJsonSchema({
-        type: 'object',
         properties: {
           filter: {
             type: 'object',
@@ -44,8 +42,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
   });
 
   it('returns an empty input for a tool without properties', () => {
-    expect(getDefaultMcpToolInputFromJsonSchema({ type: 'object' })).toEqual(
-      {},
-    );
+    expect(getDefaultMcpToolInputFromJsonSchema({})).toEqual({});
   });
 });
