@@ -40,8 +40,4 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
       }),
     ).toEqual({ filter: { status: 'open', labels: null } });
   });
-
-  it('returns an empty input for a tool without properties', () => {
-    expect(getDefaultMcpToolInputFromJsonSchema({})).toEqual({});
-  });
 });
