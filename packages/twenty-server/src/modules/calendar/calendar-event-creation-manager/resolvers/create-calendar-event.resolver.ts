@@ -33,7 +33,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     authPrincipals: {
       userSession: {
         standard: true,
-        impersonated: true,
+        impersonated: false,
         playground: true,
         workspaceAgnostic: false,
       },

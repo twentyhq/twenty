@@ -27,22 +27,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
-  }),
-)
 export class ImapSmtpCaldavResolver {
   constructor(
     private readonly imapSmtpCaldavService: ImapSmtpCaldavService,
@@ -52,6 +36,22 @@ export class ImapSmtpCaldavResolver {
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+    }),
+  )
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -83,6 +83,22 @@ export class ImapSmtpCaldavResolver {
   }
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+    }),
+  )
   async saveImapSmtpCaldavAccount(
     @Args('handle') handle: string,
     @Args('connectionParameters')

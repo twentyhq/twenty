@@ -62,6 +62,8 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
+import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
 import { buildUserSessionRequiredError } from 'src/engine/guards/utils/is-user-session-principal.util';
 import {
   PermissionsException,
@@ -138,6 +140,25 @@ export class UserResolver {
       userWorkspaceId: currentUserWorkspace.id,
       workspaceId: workspace.id,
     });
+  }
+
+  // An impersonated session is scoped to one workspace and must not learn the person's other memberships
+  private getUserWorkspacesVisibleToSession({
+    user,
+    workspace,
+    impersonationContext,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity | undefined;
+    impersonationContext: RawAuthContext['impersonationContext'];
+  }): UserWorkspaceEntity[] {
+    if (!isImpersonating(impersonationContext)) {
+      return user.userWorkspaces;
+    }
+
+    return user.userWorkspaces.filter(
+      (userWorkspace) => userWorkspace.workspaceId === workspace?.id,
+    );
   }
 
   @Query(() => UserEntity)
@@ -415,7 +436,12 @@ export class UserResolver {
   @UseGuards(
     AccessPolicyGuard({
       authPrincipals: {
-        userSession: true,
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: true,
+        },
         apiKey: false,
         oauthClient: false,
         application: false,
@@ -439,6 +465,8 @@ export class UserResolver {
     workspace: WorkspaceEntity,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthIsUserSession() isUserSession: boolean,
+    @AuthImpersonationContext()
+    impersonationContext: RawAuthContext['impersonationContext'],
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -475,6 +503,13 @@ export class UserResolver {
     // Removing oneself may delete the account, so only the person can do it, not an application.
     if (workspaceMemberToDeleteIsAuthenticatedUser && !isUserSession) {
       throw buildUserSessionRequiredError();
+    }
+
+    if (
+      workspaceMemberToDeleteIsAuthenticatedUser &&
+      isImpersonating(impersonationContext)
+    ) {
+      throw new AuthPrincipalRefusedException();
     }
 
     const canDeleteUserFromWorkspace =
@@ -699,12 +734,20 @@ export class UserResolver {
   async workspaces(
     @Parent() user: UserEntity,
     @AuthIsUserSession() isUserSession: boolean,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+    @AuthImpersonationContext()
+    impersonationContext: RawAuthContext['impersonationContext'],
   ) {
     if (!isUserSession) {
       throw buildUserSessionRequiredError();
     }
 
-    return user.userWorkspaces;
+    return this.getUserWorkspacesVisibleToSession({
+      user,
+      workspace,
+      impersonationContext,
+    });
   }
 
   // Same rows as the workspaces field under the entity's own name, so guarding only one leaves the other answering.
@@ -715,12 +758,20 @@ export class UserResolver {
   async userWorkspacesField(
     @Parent() user: UserEntity,
     @AuthIsUserSession() isUserSession: boolean,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+    @AuthImpersonationContext()
+    impersonationContext: RawAuthContext['impersonationContext'],
   ) {
     if (!isUserSession) {
       throw buildUserSessionRequiredError();
     }
 
-    return user.userWorkspaces;
+    return this.getUserWorkspacesVisibleToSession({
+      user,
+      workspace,
+      impersonationContext,
+    });
   }
 
   @ResolveField(() => AvailableWorkspaces)
@@ -731,9 +782,19 @@ export class UserResolver {
     workspace: WorkspaceEntity | undefined,
     @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
     @AuthIsUserSession() isUserSession: boolean,
+    @AuthImpersonationContext()
+    impersonationContext: RawAuthContext['impersonationContext'],
   ): Promise<AvailableWorkspaces> {
     if (!isUserSession) {
       throw buildUserSessionRequiredError();
+    }
+
+    // Empty rather than refused: the front end requests this field with currentUser
+    if (isImpersonating(impersonationContext)) {
+      return {
+        availableWorkspacesForSignIn: [],
+        availableWorkspacesForSignUp: [],
+      };
     }
 
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
@@ -759,7 +820,7 @@ export class UserResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: true,
           workspaceAgnostic: false,
         },

@@ -112,13 +112,19 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
+    // Acting as the person is refused to an impersonated session, as on the matching mutations
+    const isImpersonatedSession =
+      isDefined(context.authContext) &&
+      isUserAuthContext(context.authContext) &&
+      context.authContext.userSessionVariant === 'impersonated';
+
     const hasEmailPermission =
       await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
         permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
       });
 
-    if (hasEmailPermission) {
+    if (hasEmailPermission && !isImpersonatedSession) {
       descriptors.push(
         this.buildDescriptor(
           'send_email',
@@ -128,6 +134,9 @@ export class ActionToolProvider implements ToolProvider {
           EMAIL_TOOL_APPROVALS.send_email,
         ),
       );
+    }
+
+    if (hasEmailPermission) {
       descriptors.push(
         this.buildDescriptor(
           'draft_email',
@@ -153,7 +162,7 @@ export class ActionToolProvider implements ToolProvider {
         permissionFlag: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
       });
 
-    if (hasCreateCalendarEventPermission) {
+    if (hasCreateCalendarEventPermission && !isImpersonatedSession) {
       descriptors.push(
         this.buildDescriptor(
           'create_calendar_event',

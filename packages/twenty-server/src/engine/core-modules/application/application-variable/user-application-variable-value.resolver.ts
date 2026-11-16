@@ -36,7 +36,7 @@ export class UserApplicationVariableValueResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: true,
           workspaceAgnostic: false,
         },
@@ -81,7 +81,7 @@ export class UserApplicationVariableValueResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: true,
           workspaceAgnostic: false,
         },

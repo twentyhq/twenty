@@ -129,7 +129,12 @@ import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: true,
+      workspaceAgnostic: true,
+    },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
@@ -139,7 +144,12 @@ const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
 
 const AUTH_WRITE_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: true,
+      workspaceAgnostic: true,
+    },
     apiKey: false,
     oauthClient: false,
     application: false,
@@ -1216,7 +1226,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },

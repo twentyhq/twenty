@@ -26,7 +26,12 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 @UseGuards(
   AccessPolicyGuard({
     authPrincipals: {
-      userSession: true,
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: true,
+      },
       apiKey: false,
       oauthClient: false,
       application: false,

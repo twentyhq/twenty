@@ -38,6 +38,21 @@ const CONNECTED_ACCOUNT_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 
+const CONNECTED_ACCOUNT_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
+
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -107,7 +122,7 @@ export class ConnectedAccountResolver {
 
   @Mutation(() => ConnectedAccountPublicDTO)
   @UseGuards(
-    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
+    AccessPolicyGuard(CONNECTED_ACCOUNT_WRITE_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async deleteConnectedAccount(
@@ -131,7 +146,7 @@ export class ConnectedAccountResolver {
 
   @Mutation(() => ConnectedAccountPublicDTO)
   @UseGuards(
-    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
+    AccessPolicyGuard(CONNECTED_ACCOUNT_WRITE_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async disconnectConnectedAccount(
