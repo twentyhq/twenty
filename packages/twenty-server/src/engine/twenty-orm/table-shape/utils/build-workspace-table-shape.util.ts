@@ -1,5 +1,5 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isComputedField, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -9,6 +9,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { hasComputedColumn } from 'src/engine/twenty-orm/computed-column/utils/has-computed-column.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyOrmException,
@@ -43,8 +44,7 @@ export const buildWorkspaceTableShape = ({
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       const relationType = flatFieldMetadata.settings?.relationType;
 
-      // A filtered relation is loaded through the relation it derives from, never joined
-      if (!isDefined(relationType) || isComputedField(flatFieldMetadata)) {
+      if (!isDefined(relationType)) {
         continue;
       }
 
@@ -113,7 +113,7 @@ export const buildWorkspaceTableShape = ({
       fieldMetadataId: flatFieldMetadata.id,
       fieldName: flatFieldMetadata.name,
       fieldMetadataType: flatFieldMetadata.type,
-      ...(isComputedField(flatFieldMetadata) ? { isComputed: true } : {}),
+      ...(hasComputedColumn(flatFieldMetadata) ? { isComputed: true } : {}),
     };
   }
 

@@ -1,9 +1,5 @@
 import { type FieldMetadataRollupComputation } from 'twenty-shared/types';
-import {
-  assertUnreachable,
-  isComputedField,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { ROLLUP_SQL_FUNCTION_BY_OPERATION } from 'src/engine/metadata-modules/computed-field/constants/rollup-sql-function-by-operation.constant';
 import { buildOrmComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-orm-computed-field-schema-reader.util';
@@ -16,6 +12,7 @@ import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-
 import { canReadField } from 'src/engine/twenty-orm/computed-column/utils/can-read-field.util';
 import { canReadObject } from 'src/engine/twenty-orm/computed-column/utils/can-read-object.util';
 import { embedSubquery } from 'src/engine/twenty-orm/computed-column/utils/embed-subquery.util';
+import { hasComputedColumn } from 'src/engine/twenty-orm/computed-column/utils/has-computed-column.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
@@ -116,7 +113,7 @@ export const buildComputedColumnSql = async ({
   const columnType = fieldMetadataTypeToColumnType(flatFieldMetadata.type);
   const nullSql = { sql: `NULL::${columnType}`, readComputedColumnNames: [] };
 
-  if (!isComputedField(flatFieldMetadata)) {
+  if (!hasComputedColumn(flatFieldMetadata)) {
     return nullSql;
   }
 
@@ -139,9 +136,6 @@ export const buildComputedColumnSql = async ({
           repository,
           context,
         });
-      // A relation has no column: it is loaded through the relation it derives from
-      case 'FILTERED_RELATION':
-        return Promise.resolve(undefined);
       default:
         return assertUnreachable(computation);
     }
