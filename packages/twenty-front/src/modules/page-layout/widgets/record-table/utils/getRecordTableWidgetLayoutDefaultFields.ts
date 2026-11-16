@@ -3,7 +3,9 @@ import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/rec
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 
 export const getRecordTableWidgetLayoutDefaultFields = (
-  objectMetadataItem: EnrichedObjectMetadataItem | undefined,
+  objectMetadataItem:
+    | Pick<EnrichedObjectMetadataItem, 'readableFields'>
+    | undefined,
 ) => {
   const readableFields = objectMetadataItem?.readableFields ?? [];
 
