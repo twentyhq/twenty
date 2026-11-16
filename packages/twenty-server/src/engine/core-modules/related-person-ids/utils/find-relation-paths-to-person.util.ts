@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { hasInverseRelationField, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -71,7 +71,10 @@ export const findRelationPathsToPerson = ({
         sourceObject,
         flatFieldMetadataMaps,
       )) {
-        if (!isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION)) {
+        if (
+          !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+          !hasInverseRelationField(field)
+        ) {
           continue;
         }
 

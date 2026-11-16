@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -465,6 +466,29 @@ describe('Computed fields (e2e)', () => {
       expect(insideTheLimit[ALPHA_PROJECT_ID]).toMatchObject({
         totalCount: 1,
         edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
+      });
+    });
+
+    it('leaves the timeline of a record with a filtered relation readable', async () => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query GetTimelineThreadsFromObjectRecord($recordId: UUID!) {
+            getTimelineThreadsFromObjectRecord(
+              objectNameSingular: "rollupProject"
+              recordId: $recordId
+              page: 1
+              pageSize: 10
+            ) {
+              totalNumberOfThreads
+            }
+          }
+        `,
+        variables: { recordId: ALPHA_PROJECT_ID },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.getTimelineThreadsFromObjectRecord).toEqual({
+        totalNumberOfThreads: 0,
       });
     });
 
