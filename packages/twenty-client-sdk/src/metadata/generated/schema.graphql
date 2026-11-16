@@ -1810,13 +1810,14 @@ input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
   targetObjectMetadataId: UUID
   targetRecordId: UUID
@@ -3856,13 +3857,14 @@ type NavigationMenuItem {
   applicationId: UUID
   color: String
   createdAt: DateTime!
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float!
   targetObjectMetadataId: UUID
   targetRecordId: UUID
@@ -5569,11 +5571,12 @@ input UpdateMessageFoldersInput {
 
 input UpdateNavigationMenuItemInput {
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   link: String
   name: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
 }
 

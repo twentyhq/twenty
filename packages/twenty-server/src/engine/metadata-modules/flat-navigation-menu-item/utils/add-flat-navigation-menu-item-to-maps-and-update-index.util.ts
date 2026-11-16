@@ -15,27 +15,27 @@ export const addFlatNavigationMenuItemToMapsAndUpdateIndex = ({
   });
 
   const userWorkspaceIdKey = flatNavigationMenuItem.userWorkspaceId ?? 'null';
-  const folderIdKey = flatNavigationMenuItem.folderId ?? 'null';
+  const parentIdKey = flatNavigationMenuItem.parentId ?? 'null';
 
   if (
-    !flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[userWorkspaceIdKey]
+    !flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[userWorkspaceIdKey]
   ) {
-    flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+    flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
       userWorkspaceIdKey
     ] = {};
   }
 
   if (
-    !flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+    !flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
       userWorkspaceIdKey
-    ][folderIdKey]
+    ][parentIdKey]
   ) {
-    flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[userWorkspaceIdKey][
-      folderIdKey
+    flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[userWorkspaceIdKey][
+      parentIdKey
     ] = [];
   }
 
-  flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[userWorkspaceIdKey][
-    folderIdKey
+  flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[userWorkspaceIdKey][
+    parentIdKey
   ].push(flatNavigationMenuItem);
 };

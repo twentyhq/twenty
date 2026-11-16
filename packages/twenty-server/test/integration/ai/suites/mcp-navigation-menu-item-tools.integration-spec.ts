@@ -15,21 +15,21 @@ type NavigationMenuItemSummary = {
   id: string;
   name: string | null;
   scope: 'user' | 'workspace';
-  folderId: string | null;
+  parentId: string | null;
 };
 
 const listItemsThroughMcp = async ({
   token,
-  folderId,
+  parentId,
 }: {
   token: string;
-  folderId?: string;
+  parentId?: string;
 }): Promise<NavigationMenuItemSummary[]> => {
   const output = await executeToolThroughMcp<{
     items: NavigationMenuItemSummary[];
   }>({
     toolName: 'list_navigation_menu_items',
-    toolArguments: { folderId },
+    toolArguments: { parentId },
     token,
   });
 
@@ -98,21 +98,21 @@ describe('MCP navigation menu item tools (integration)', () => {
       result: { name: `${ITEM_NAME_PREFIX} folder`, scope: 'workspace' },
     });
 
-    const folderId = folder.result?.id;
+    const parentId = folder.result?.id;
 
-    jestExpectToBeDefined(folderId);
+    jestExpectToBeDefined(parentId);
 
     const link = await createItemThroughMcp(APPLE_JANE_ADMIN_ACCESS_TOKEN, {
       type: 'LINK',
       scope: 'workspace',
       name: `${ITEM_NAME_PREFIX} link`,
       link: 'https://twenty.com',
-      folderId,
+      parentId,
     });
 
     expect(link).toMatchObject({
       success: true,
-      result: { name: `${ITEM_NAME_PREFIX} link`, folderId },
+      result: { name: `${ITEM_NAME_PREFIX} link`, parentId },
     });
 
     const linkId = link.result?.id;
@@ -122,7 +122,7 @@ describe('MCP navigation menu item tools (integration)', () => {
       (
         await listItemsThroughMcp({
           token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-          folderId,
+          parentId,
         })
       ).map(({ id }) => id),
     ).toEqual([linkId]);
@@ -132,7 +132,7 @@ describe('MCP navigation menu item tools (integration)', () => {
       toolArguments: {
         id: linkId,
         name: `${ITEM_NAME_PREFIX} moved link`,
-        folderId: null,
+        parentId: null,
       },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
@@ -143,7 +143,7 @@ describe('MCP navigation menu item tools (integration)', () => {
       result: { id: linkId, name: `${ITEM_NAME_PREFIX} moved link` },
     });
 
-    for (const id of [linkId, folderId]) {
+    for (const id of [linkId, parentId]) {
       expect(
         await deleteItemThroughMcp(APPLE_JANE_ADMIN_ACCESS_TOKEN, id),
       ).toMatchObject({
@@ -157,7 +157,7 @@ describe('MCP navigation menu item tools (integration)', () => {
     ).map(({ id }) => id);
 
     expect(remainingIds).not.toContain(linkId);
-    expect(remainingIds).not.toContain(folderId);
+    expect(remainingIds).not.toContain(parentId);
   });
 
   it('should refuse a personal favorite to a caller without a user', async () => {

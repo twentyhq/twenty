@@ -33,7 +33,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   includeInaccessibleObjectBackedItems = false,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.folderId))
+    .filter((item) => !isDefined(item.parentId))
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
