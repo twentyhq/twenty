@@ -66,7 +66,9 @@ export class RoleService {
       );
 
     return this.findManyWithRelationsFromCache(
-      Object.values(flatRoleMaps.byUniversalIdentifier).filter(isDefined),
+      Object.values(flatRoleMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter((flatRole) => !flatRole.isSystemSideEffect),
       workspaceId,
     );
   }
@@ -664,7 +666,7 @@ export class RoleService {
 
     // an additional target goes with its role: its holder keeps an assigned role and needs no replacement
     const flatRoleTargetsToCreate = flatRoleTargetsToDelete
-      .filter(({ isAdditional }) => !isAdditional)
+      .filter(({ isSystemSideEffect }) => !isSystemSideEffect)
       .flatMap((flatRoleTarget) =>
         ROLE_TARGET_FOREIGN_KEY_PROPERTIES.flatMap(
           (targetMetadataForeignKey) => {

@@ -73,7 +73,7 @@ export class RolePermissionsService {
     const allRoleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         userWorkspaceId: In(userWorkspaceIds),
-        isAdditional: false,
+        isSystemSideEffect: false,
       },
       relations: {
         role: {

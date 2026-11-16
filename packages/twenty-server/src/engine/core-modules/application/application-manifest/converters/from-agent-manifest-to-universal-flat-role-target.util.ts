@@ -21,7 +21,7 @@ export const fromAgentManifestToUniversalFlatRoleTarget = ({
     applicationUniversalIdentifier,
     roleUniversalIdentifier,
     agentUniversalIdentifier,
-    isAdditional: false,
+    isSystemSideEffect: false,
     userWorkspaceId: null,
     apiKeyId: null,
     webhookUniversalIdentifier: null,

@@ -1,3 +1,4 @@
+import { getSystemSideEffectRoleTargetUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -33,7 +34,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     targetId,
     targetMetadataForeignKey,
     universalIdentifier,
-    isAdditional = false,
+    isSystemSideEffect = false,
   } = createRoleTargetInput;
 
   const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
@@ -65,7 +66,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     roleId,
     roleUniversalIdentifier,
     userWorkspaceId: null,
-    isAdditional,
+    isSystemSideEffect,
     agentId: null,
     agentUniversalIdentifier,
     apiKeyId: null,
@@ -75,23 +76,33 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     targetApplicationUniversalIdentifier: null,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
-    universalIdentifier: universalIdentifier ?? v4(),
+    // the system finds its own target again through its identifier, whichever instance wrote it
+    universalIdentifier:
+      universalIdentifier ??
+      (isSystemSideEffect
+        ? getSystemSideEffectRoleTargetUniversalIdentifier({
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
+            roleUniversalIdentifier,
+            targetId,
+          })
+        : v4()),
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     [targetMetadataForeignKey]: targetId,
   };
 
-  // an additional role is added next to the assigned one, which only another assigned role replaces.
-  // Assigning a role the target already holds as an additional one takes the place of that target too
-  const flatRoleTargetsToDelete = isAdditional
+  // a system held role is added next to the assigned one, which only another assigned role replaces.
+  // Assigning a role the target already holds that way takes the place of that target too
+  const flatRoleTargetsToDelete = isSystemSideEffect
     ? []
     : Object.values(flatRoleTargetMaps.byUniversalIdentifier)
         .filter(isDefined)
         .filter(
           (flatRoleTarget) =>
             flatRoleTarget[targetMetadataForeignKey] === targetId &&
-            (!flatRoleTarget.isAdditional || flatRoleTarget.roleId === roleId),
+            (!flatRoleTarget.isSystemSideEffect ||
+              flatRoleTarget.roleId === roleId),
         );
 
   return { flatRoleTargetToCreate, flatRoleTargetsToDelete };

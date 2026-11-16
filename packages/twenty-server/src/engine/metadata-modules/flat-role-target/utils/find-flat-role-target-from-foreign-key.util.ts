@@ -20,6 +20,6 @@ export const findFlatRoleTargetFromForeignKey = ({
   return allRoleTargets.find(
     (roleTarget) =>
       roleTarget[targetMetadataForeignKey] === targetId &&
-      !roleTarget.isAdditional,
+      !roleTarget.isSystemSideEffect,
   );
 };

@@ -1181,7 +1181,7 @@ export class DataloaderService {
           flatEntityIds: flatRole.roleTargetIds,
           flatEntityMaps: flatRoleTargetMaps,
         })
-          .filter((flatRoleTarget) => !flatRoleTarget.isAdditional)
+          .filter((flatRoleTarget) => !flatRoleTarget.isSystemSideEffect)
           .map((flatRoleTarget) => flatRoleTarget.userWorkspaceId)
           .filter(isDefined);
       });

@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_IS_ADDITIONAL_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-is-additional-to-role-target-upgrade-command-name.constant';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-is-system-side-effect-to-role-and-role-target-upgrade-command-name.constant';
 import { ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-application-role-target-upgrade-command-name.constant';
 import { ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-webhook-id-to-role-target-upgrade-command-name.constant';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -27,7 +27,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index(
   'IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE',
   ['workspaceId', 'userWorkspaceId'],
-  { unique: true, where: '"isAdditional" = false' },
+  { unique: true, where: '"isSystemSideEffect" = false' },
 )
 @Index(
   'IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE',
@@ -67,12 +67,13 @@ export class RoleTargetEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string | null;
 
-  // an additional role adds its grants to the role assigned to the user workspace
+  // held by the system next to the role assigned to the user workspace, to which it adds its grants
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_IS_ADDITIONAL_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME,
+    upgradeCommandName:
+      ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: false, type: 'boolean', default: false })
-  isAdditional: boolean;
+  isSystemSideEffect: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   agentId: string | null;

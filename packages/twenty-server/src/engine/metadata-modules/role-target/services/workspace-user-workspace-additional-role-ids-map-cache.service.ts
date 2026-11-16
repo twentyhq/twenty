@@ -27,7 +27,7 @@ export class WorkspaceUserWorkspaceAdditionalRoleIdsMapCacheService extends Work
     )) {
       if (
         isDefined(flatRoleTarget?.userWorkspaceId) &&
-        flatRoleTarget.isAdditional
+        flatRoleTarget.isSystemSideEffect
       ) {
         userWorkspaceAdditionalRoleIdsMap[flatRoleTarget.userWorkspaceId] = [
           ...(userWorkspaceAdditionalRoleIdsMap[

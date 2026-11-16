@@ -55,7 +55,7 @@ const ROLE_TARGET: FlatRoleTarget = {
   universalIdentifier: 'role-target-universal-identifier',
   roleId: 'role-id',
   roleUniversalIdentifier: 'role-universal-identifier',
-  isAdditional: false,
+  isSystemSideEffect: false,
   userWorkspaceId: null,
   agentId: null,
   agentUniversalIdentifier: null,
@@ -290,7 +290,7 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     const result = inferDeletionOf(
       withRoleTarget({
         ...ROLE_TARGET,
-        isAdditional: false,
+        isSystemSideEffect: false,
         userWorkspaceId: 'a-member-user-workspace-id',
       }),
     );

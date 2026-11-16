@@ -4,16 +4,19 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.59.0', 1794651427142)
-export class AddIsAdditionalToRoleTargetFastInstanceCommand implements FastInstanceCommand {
+export class AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."roleTarget" ADD "isAdditional" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."role" ADD "isSystemSideEffect" boolean NOT NULL DEFAULT false',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."roleTarget" ADD "isSystemSideEffect" boolean NOT NULL DEFAULT false',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"',
     );
     await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId") WHERE "isAdditional" = false',
+      'CREATE UNIQUE INDEX "IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId") WHERE "isSystemSideEffect" = false',
     );
     await queryRunner.query(
       'CREATE UNIQUE INDEX "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId", "roleId")',
@@ -22,7 +25,7 @@ export class AddIsAdditionalToRoleTargetFastInstanceCommand implements FastInsta
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'DELETE FROM "core"."roleTarget" WHERE "isAdditional" = true',
+      'DELETE FROM "core"."roleTarget" WHERE "isSystemSideEffect" = true',
     );
     await queryRunner.query(
       'DROP INDEX "core"."IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE"',
@@ -34,7 +37,10 @@ export class AddIsAdditionalToRoleTargetFastInstanceCommand implements FastInsta
       'ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE" UNIQUE ("workspaceId", "userWorkspaceId")',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."roleTarget" DROP COLUMN "isAdditional"',
+      'ALTER TABLE "core"."roleTarget" DROP COLUMN "isSystemSideEffect"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."role" DROP COLUMN "isSystemSideEffect"',
     );
   }
 }
