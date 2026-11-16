@@ -3,11 +3,12 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const THREAD_ID = 'thread-1';
 
-const getCurrentThreadData = (thread: Record<string, unknown> | null) => {
+const getCurrentThreadData = (thread: Partial<AiChatThreadRecord> | null) => {
   const store = createStore();
 
   store.set(currentAiChatThreadState.atom, THREAD_ID);

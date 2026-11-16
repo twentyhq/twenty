@@ -1,11 +1,13 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
+import { prependInboxThreadListThreadId } from '@/inbox/utils/prependInboxThreadListThreadId';
 
 export const useAddInboxThread = () => {
   const store = useStore();
@@ -18,17 +20,14 @@ export const useAddInboxThread = () => {
       );
       const inboxThreadList = store.get(recentThreadListAtom);
 
-      if (
-        inboxThreadList === null ||
-        inboxThreadList.threadIds.includes(threadId)
-      ) {
+      if (!isDefined(inboxThreadList)) {
         return;
       }
 
-      store.set(recentThreadListAtom, {
-        ...inboxThreadList,
-        threadIds: [threadId, ...inboxThreadList.threadIds],
-      });
+      store.set(
+        recentThreadListAtom,
+        prependInboxThreadListThreadId({ inboxThreadList, threadId }),
+      );
     },
     [store],
   );

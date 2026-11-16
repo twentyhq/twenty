@@ -433,9 +433,11 @@ describe('useLoadInboxThreadList', () => {
     });
     const result = renderRefresh(store);
     const onThreadLoaded = jest.fn();
-    window.addEventListener(AI_CHAT_THREAD_LOADED_EVENT_NAME, (event) =>
-      onThreadLoaded((event as CustomEvent).detail),
-    );
+    window.addEventListener(AI_CHAT_THREAD_LOADED_EVENT_NAME, (event) => {
+      if (event instanceof CustomEvent) {
+        onThreadLoaded(event.detail);
+      }
+    });
 
     queryMock.mockResolvedValueOnce(
       buildPage([buildThread('old-thread', 'Old chat')]),
