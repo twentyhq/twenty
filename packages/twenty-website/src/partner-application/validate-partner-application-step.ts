@@ -4,7 +4,7 @@ import {
 } from './data/partner-application-step-ids';
 import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/twenty-experience-notes-min-length';
 import { emailFieldSchema } from './email-field-schema';
-import { httpUrlFieldSchema } from './http-url-field-schema';
+import { lenientHttpUrlFieldSchema } from './lenient-http-url-field-schema';
 import { nonNegativeAmountFieldSchema } from './non-negative-amount-field-schema';
 import { type PartnerApplicationState } from './partner-application-state';
 
@@ -40,7 +40,7 @@ type FieldFormatCheck = {
     | 'projectBudgetMin';
   schema:
     | typeof emailFieldSchema
-    | typeof httpUrlFieldSchema
+    | typeof lenientHttpUrlFieldSchema
     | typeof nonNegativeAmountFieldSchema;
   errorCode: 'invalid_email' | 'invalid_url' | 'invalid_amount';
 };
@@ -50,15 +50,23 @@ const STEP_FORMAT_CHECKS: Partial<
 > = {
   identity: [
     { field: 'email', schema: emailFieldSchema, errorCode: 'invalid_email' },
-    { field: 'website', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
+    {
+      field: 'website',
+      schema: lenientHttpUrlFieldSchema,
+      errorCode: 'invalid_url',
+    },
   ],
   profile: [
-    { field: 'linkedin', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
+    {
+      field: 'linkedin',
+      schema: lenientHttpUrlFieldSchema,
+      errorCode: 'invalid_url',
+    },
   ],
   experience: [
     {
       field: 'twentyExperienceProofLink',
-      schema: httpUrlFieldSchema,
+      schema: lenientHttpUrlFieldSchema,
       errorCode: 'invalid_url',
     },
   ],
@@ -75,7 +83,7 @@ const STEP_FORMAT_CHECKS: Partial<
     },
     {
       field: 'calendarLink',
-      schema: httpUrlFieldSchema,
+      schema: lenientHttpUrlFieldSchema,
       errorCode: 'invalid_url',
     },
   ],
@@ -106,6 +114,10 @@ export function validatePartnerApplicationStep(
       TWENTY_EXPERIENCE_NOTES_MIN_LENGTH
   ) {
     errors.twentyExperienceNotes = 'too_short';
+  }
+
+  if (stepId === 'commercials' && !state.acceptsTerms) {
+    errors.acceptsTerms = 'terms_required';
   }
 
   for (const check of STEP_FORMAT_CHECKS[stepId] ?? []) {

@@ -111,9 +111,14 @@ const PanelNavigationProbe = () => {
       </button>
       <button
         onClick={() =>
-          navigateSettings(SettingsPath.NewAccount, undefined, undefined, {
-            surface: 'main',
-          })
+          navigateSettings(
+            SettingsPath.AppPreferencesNewAccount,
+            undefined,
+            undefined,
+            {
+              surface: 'main',
+            },
+          )
         }
       >
         main settings
@@ -299,7 +304,7 @@ describe('SidePanelRouteNavigatorProvider', () => {
     expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
     expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
     expect(screen.getByTestId('parent-location')).toHaveTextContent(
-      '/settings/accounts/new',
+      '/settings/app-preferences/accounts/new',
     );
   });
 

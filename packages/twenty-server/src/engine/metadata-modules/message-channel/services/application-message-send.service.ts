@@ -12,9 +12,10 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import {
-  convertEmailBodyToEmailDocument,
   isDefined,
   isNonEmptyArray,
+  parseEmailDocument,
+  parseJson,
 } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -633,17 +634,17 @@ export class ApplicationMessageSendService {
       return { text: text ?? '', recipients: null, email: null };
     }
 
-    const bodyConversionResult = convertEmailBodyToEmailDocument(email.body);
+    const bodyParseResult = parseEmailDocument(parseJson<unknown>(email.body));
 
-    if (!bodyConversionResult.success) {
+    if (!bodyParseResult.success) {
       throw new MessageChannelException(
-        `Invalid email body: ${bodyConversionResult.error}`,
+        `Invalid email body: ${bodyParseResult.error}`,
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
 
     const { html, plainText } = await compileOutboundEmailContent(
-      bodyConversionResult.document,
+      bodyParseResult.document,
     );
 
     if (plainText.length > MAX_APP_MESSAGE_TEXT_LENGTH) {

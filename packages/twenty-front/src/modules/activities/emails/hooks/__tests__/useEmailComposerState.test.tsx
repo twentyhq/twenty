@@ -7,6 +7,7 @@ import { type ReactNode } from 'react';
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import {
   type SendAppChannelMessageMutation,
   type SendAppChannelMessageMutationVariables,
@@ -14,6 +15,8 @@ import {
 
 const mockEnqueueToast = jest.fn();
 let mockIsMessageAttachmentEnabled = false;
+
+const EMPTY_BODY = serializePlainTextAsAdvancedTextEditorDocument('');
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsMessageAttachmentEnabled,
@@ -45,7 +48,7 @@ const createSendEmailMock = (input: {
         cc: undefined,
         bcc: undefined,
         subject: 'Hello',
-        body: '',
+        body: EMPTY_BODY,
         inReplyTo: undefined,
         draftMessageId: undefined,
         files: undefined,
@@ -95,7 +98,7 @@ const APP_REPLY_EMAIL_INPUT = {
   cc: undefined,
   bcc: undefined,
   subject: 'Re: Hello',
-  body: '',
+  body: EMPTY_BODY,
   inReplyTo: '<inbound-1@app>',
 };
 
