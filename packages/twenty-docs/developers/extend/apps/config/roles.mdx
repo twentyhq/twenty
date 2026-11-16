@@ -212,8 +212,10 @@ export default defineRole({
 ```
 
 <Note>
-  Servers older than Twenty 2.59 do not read `recordsPermissions`: declare `engines.twenty` as
-  `>=2.59.0` in `package.json` when your app must not install on them.
+  Servers older than Twenty 2.59 do not read `recordsPermissions`: the app syncs there with no
+  record access. Declare `engines.twenty` as `>=2.59.0` in `package.json` so those servers refuse
+  the app. The build prints a warning while a role uses `recordsPermissions` and `engines.twenty`
+  still allows an older server.
 </Note>
 
 ### Deprecated properties

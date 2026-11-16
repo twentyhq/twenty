@@ -16,6 +16,7 @@ import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/va
 import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
+import { getRecordsPermissionsServerVersionWarnings } from '@/app/manifest/utils/get-records-permissions-server-version-warnings';
 import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
 import { type LogicFunctionConfig } from '@/app/manifest/types/logic-function-config.type';
 import { type CommandMenuItemConfig } from '@/app/manifest/types/command-menu-item-config.type';
@@ -712,6 +713,15 @@ export const buildManifest = async (
     );
   }
 
+  const requiredServerVersionRange = getEngineVersionRange(appPath);
+
+  warnings.push(
+    ...getRecordsPermissionsServerVersionWarnings({
+      roles,
+      requiredServerVersionRange,
+    }),
+  );
+
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
       ? (() => {
@@ -730,7 +740,7 @@ export const buildManifest = async (
             aboutDescription: readmeContent,
             yarnLockChecksum: null,
             packageJsonChecksum: '',
-            requiredServerVersionRange: getEngineVersionRange(appPath),
+            requiredServerVersionRange,
             ...(postInstallLogicFunctions.length >= 1
               ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
               : {}),

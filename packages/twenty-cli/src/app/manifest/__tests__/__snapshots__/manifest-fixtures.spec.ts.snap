@@ -120,6 +120,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
   "success": true,
   "warnings": [
     "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
+    "recordsPermissions (declared by "Default role") is ignored by servers older than Twenty 2.59.0: the app would sync there with no record access. Set "engines.twenty" to ">=2.59.0" in package.json so those servers refuse it (currently not set).",
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
     ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
   ],
@@ -287,6 +288,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
   "success": true,
   "warnings": [
     "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
+    "recordsPermissions (declared by "My role") is ignored by servers older than Twenty 2.59.0: the app would sync there with no record access. Set "engines.twenty" to ">=2.59.0" in package.json so those servers refuse it (currently not set).",
     "Front component "my-component" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
     ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
@@ -1410,6 +1412,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
   "success": true,
   "warnings": [
     "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
+    "recordsPermissions (declared by "Default function role", "Root role") is ignored by servers older than Twenty 2.59.0: the app would sync there with no record access. Set "engines.twenty" to ">=2.59.0" in package.json so those servers refuse it (currently not set).",
     "Front component "root-component" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
     "Front component "test-component" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
@@ -1531,6 +1534,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
   "success": true,
   "warnings": [
     "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
+    "recordsPermissions (declared by "Shared dependencies app role") is ignored by servers older than Twenty 2.59.0: the app would sync there with no record access. Set "engines.twenty" to ">=2.59.0" in package.json so those servers refuse it (currently not set).",
     "Front component "counter" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
     ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
