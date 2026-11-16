@@ -8,25 +8,15 @@ export class RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      DO $$
-      BEGIN
-        IF EXISTS (
-          SELECT 1 FROM information_schema.columns
-          WHERE table_schema = 'core'
-            AND table_name = 'navigationMenuItem'
-            AND column_name = 'folderId'
-        ) THEN
-          ALTER TABLE "core"."navigationMenuItem"
-            RENAME COLUMN "folderId" TO "parentId";
-          ALTER TABLE "core"."navigationMenuItem"
-            RENAME CONSTRAINT "FK_175fc64110c36793eaf9765d1c6" TO "FK_ff45ab0f2035e907848cd47b1f4";
-          ALTER INDEX "core"."IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID"
-            RENAME TO "IDX_NAVIGATION_MENU_ITEM_PARENT_ID_WORKSPACE_ID";
-        END IF;
-      END
-      $$
-    `);
+    await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" RENAME COLUMN "folderId" TO "parentId"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" RENAME CONSTRAINT "FK_175fc64110c36793eaf9765d1c6" TO "FK_ff45ab0f2035e907848cd47b1f4"',
+    );
+    await queryRunner.query(
+      'ALTER INDEX "core"."IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID" RENAME TO "IDX_NAVIGATION_MENU_ITEM_PARENT_ID_WORKSPACE_ID"',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
