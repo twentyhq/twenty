@@ -3,20 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { type AgentChatChannelAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-access-args.type';
-import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { isAgentChatChannelOpenToRoles } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-roles.util';
 import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 @Injectable()
 export class AgentChatChannelAccessService {
@@ -46,7 +43,12 @@ export class AgentChatChannelAccessService {
     return this.findChannelOpenToRolesOrThrow({
       workspaceId: memberArgs.workspaceId,
       channelId,
-      findRoles: () => this.findMemberRoles(memberArgs),
+      findRoles: () =>
+        this.findCallerRoles({
+          type: 'user',
+          workspace: { id: memberArgs.workspaceId },
+          workspaceMemberId: memberArgs.workspaceMemberId,
+        }),
     });
   }
 
@@ -65,7 +67,7 @@ export class AgentChatChannelAccessService {
   }
 
   async findCallerRoles(
-    authContext: AgentInboxCallerAuthContext,
+    authContext: PermissionsAuthContext,
   ): Promise<FlatRole[]> {
     const [principals, { flatRoleMaps }] = await Promise.all([
       this.principalPermissionsReadService.resolvePermissionsPrincipals({
@@ -76,12 +78,18 @@ export class AgentChatChannelAccessService {
       ]),
     ]);
 
-    return this.findFlatRoles({
-      roleIds: isDefined(principals)
+    return (
+      isDefined(principals)
         ? getPermissionsPrincipalsMainRoleIds(principals)
-        : [],
-      flatRoleMaps,
-    });
+        : []
+    )
+      .map((roleId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        }),
+      )
+      .filter(isDefined);
   }
 
   private async findChannelOpenToRolesOrThrow({
@@ -106,47 +114,5 @@ export class AgentChatChannelAccessService {
     }
 
     return channel;
-  }
-
-  private async findMemberRoles({
-    workspaceId,
-    workspaceMemberId,
-  }: MemberArgs): Promise<FlatRole[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, flatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-        'flatRoleMaps',
-      ]);
-    const flatWorkspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-    const userWorkspaceId = isDefined(flatWorkspaceMember)
-      ? flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
-          flatWorkspaceMember.userId
-        ]
-      : undefined;
-
-    return this.findFlatRoles({
-      roleIds: isDefined(userWorkspaceId)
-        ? (userWorkspaceRoleMap[userWorkspaceId] ?? [])
-        : [],
-      flatRoleMaps,
-    });
-  }
-
-  private findFlatRoles({
-    roleIds,
-    flatRoleMaps,
-  }: {
-    roleIds: string[];
-    flatRoleMaps: FlatRoleMaps;
-  }): FlatRole[] {
-    return roleIds
-      .map((roleId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: roleId,
-          flatEntityMaps: flatRoleMaps,
-        }),
-      )
-      .filter(isDefined);
   }
 }
