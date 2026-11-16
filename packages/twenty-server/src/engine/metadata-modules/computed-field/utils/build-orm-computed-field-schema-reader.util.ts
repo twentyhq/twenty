@@ -32,16 +32,6 @@ export const buildOrmComputedFieldSchemaReader = ({
           flatObjectMetadata,
         ).fieldIdByName[fieldName],
       ),
-    findToOneRelationFieldByJoinColumnName: (
-      flatObjectMetadata,
-      joinColumnName,
-    ) =>
-      findFieldById(
-        buildFieldMapsFromFlatObjectMetadata(
-          flatFieldMetadataMaps,
-          flatObjectMetadata,
-        ).fieldIdByJoinColumnName[joinColumnName],
-      ),
     getRelationType: (flatFieldMetadata) =>
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
         ? flatFieldMetadata.settings?.relationType

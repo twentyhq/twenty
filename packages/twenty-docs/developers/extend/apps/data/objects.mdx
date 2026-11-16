@@ -232,7 +232,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 - **Rollup:** `operation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no `expression`; the others aggregate `expression`, evaluated on each related record. `filter` keeps only the related records for which it is true.
 - **Expressions** reference fields by name:
   - a sub-field of a composite field as `amount.amountMicros`;
-  - a field of a to-one relation as `company.name`;
+  - a field of a to-one relation as `company.name`, and its id as `company.id` (the `companyId` column is not a field name);
   - other computed fields by their name.
 - **Operators:** `+ - * / %`, `== != < <= > >=`, `and or not`, `value in [a, b]`, `condition ? a : b`. Text goes in single quotes.
 - **Functions:** `if`, `coalesce`, `isDefined`, `isEmpty`, `min`, `max`, `round`, `abs`, `ceil`, `floor`, `trunc`, `concat`, `lower`, `upper`, `length`, `daysBetween`, `daysSince`. `now` and `today` give the current time and date.

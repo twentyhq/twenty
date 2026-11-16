@@ -8,10 +8,6 @@ export type ComputedFieldSchemaReader<
 > = {
   getObjectName: (object: TObject) => string;
   findFieldByName: (object: TObject, fieldName: string) => TField | undefined;
-  findToOneRelationFieldByJoinColumnName: (
-    object: TObject,
-    joinColumnName: string,
-  ) => TField | undefined;
   getRelationType: (relationField: TField) => RelationType | undefined;
   findRelationTargetObject: (relationField: TField) => TObject | undefined;
   findRelationInverseField: (relationField: TField) => TField | undefined;

@@ -20,6 +20,7 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isComputedFieldComputationOnlyRenamed } from 'src/engine/metadata-modules/computed-field/utils/is-computed-field-computation-only-renamed.util';
 import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
 import { validateFlatFieldMetadataComputation } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-computation.util';
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
@@ -281,13 +282,20 @@ export class FlatFieldMetadataValidatorService {
             flatObjectMetadataMaps,
             flatFieldMetadataMapsList: [finalFlatEntityMaps],
           }),
-          // Turning the flag off must not freeze the label or state of existing computed fields
+          // The flag gates new expressions: with it off a computed field can still be edited, and follow a rename
           isComputedFieldsEnabled:
-            !isDefined(flatEntityUpdate.computation) ||
             (additionalCacheDataMaps.featureFlagsMap[
               FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
             ] ??
-              false),
+              false) ||
+            !isComputedField(existingFlatFieldMetadataToUpdate) ||
+            !isComputedField(flatFieldMetadataToValidate) ||
+            isComputedFieldComputationOnlyRenamed({
+              existingComputation:
+                existingFlatFieldMetadataToUpdate.computation,
+              computation: flatFieldMetadataToValidate.computation,
+              flatFieldMetadataMaps: finalFlatEntityMaps,
+            }),
         }),
       );
     }
