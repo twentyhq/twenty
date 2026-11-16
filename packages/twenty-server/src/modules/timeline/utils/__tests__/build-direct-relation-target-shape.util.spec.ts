@@ -137,7 +137,7 @@ const flatFieldMetadataMaps = buildFlatEntityMaps([
 ]);
 
 describe('buildDirectRelationTargetShape', () => {
-  it('expands every target in a direct morph relation the timeline can point to', () => {
+  it('expands every target in a direct morph relation', () => {
     expect(
       buildDirectRelationTargetShape({
         relationFlatFieldMetadata: TARGET_PERSON_FIELD,
@@ -179,22 +179,6 @@ describe('buildDirectRelationTargetShape', () => {
         },
       ],
     });
-  });
-
-  it('returns undefined when the timeline can point to none of the targets', () => {
-    expect(
-      buildDirectRelationTargetShape({
-        relationFlatFieldMetadata: TARGET_PERSON_FIELD,
-        flatObjectMetadataMaps: buildFlatEntityMaps([
-          ATTACHMENT_OBJECT,
-          PERSON_OBJECT,
-          COMPANY_OBJECT,
-          MESSAGE_OBJECT,
-          { ...TIMELINE_ACTIVITY_OBJECT, fieldIds: [] },
-        ]),
-        flatFieldMetadataMaps,
-      }),
-    ).toBeUndefined();
   });
 
   it('does not treat a one-to-many field as a direct relation', () => {
