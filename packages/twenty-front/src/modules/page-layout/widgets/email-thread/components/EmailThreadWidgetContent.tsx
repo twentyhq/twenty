@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -18,9 +19,7 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -63,14 +62,11 @@ export const EmailThreadWidgetContent = ({
     ? `${currentWorkspaceMember.id}:${targetRecord.id}`
     : undefined;
 
-  const emailComposerDraft = useAtomFamilyStateValue(
-    emailComposerDraftFamilyState,
-    emailComposerDraftKey ?? '',
-  );
-  const setEmailComposerDraft = useSetAtomFamilyState(
-    emailComposerDraftFamilyState,
-    emailComposerDraftKey ?? '',
-  );
+  const [emailComposerDraft, setEmailComposerDraft] = useComposerDraft({
+    draftFamilyState: emailComposerDraftFamilyState,
+    draftKey: emailComposerDraftKey,
+    defaultDraft: null,
+  });
 
   const handleComposerOpenChange = useCallback(
     (open: boolean) => {
