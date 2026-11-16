@@ -11,7 +11,7 @@ import { PEOPLE_DATA_LABS_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/com
 import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
 import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
 import { type PeopleDataLabsPersonData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-person-data.type';
-import { isTransientPeopleDataLabsStatus } from 'src/engine/core-modules/company-enrichment/utils/is-transient-people-data-labs-status.util';
+import { isTransientHttpStatus } from 'src/utils/is-transient-http-status.util';
 import { parsePeopleDataLabsResponseItem } from 'src/engine/core-modules/company-enrichment/utils/parse-people-data-labs-response-item.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -147,7 +147,7 @@ export class PeopleDataLabsClientService {
     httpStatus: number;
     message: string;
   } {
-    return httpStatus === 0 || isTransientPeopleDataLabsStatus(httpStatus)
+    return httpStatus === 0 || isTransientHttpStatus(httpStatus)
       ? { outcome: 'transientError', httpStatus, message }
       : { outcome: 'permanentError', httpStatus, message };
   }

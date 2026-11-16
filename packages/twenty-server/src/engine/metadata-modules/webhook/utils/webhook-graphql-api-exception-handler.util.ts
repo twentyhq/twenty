@@ -2,6 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ConflictError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -20,6 +21,8 @@ export const webhookGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error);
       case WebhookExceptionCode.WEBHOOK_ALREADY_EXISTS:
         throw new ConflictError(error);
+      case WebhookExceptionCode.WEBHOOK_DELIVERY_FAILED:
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

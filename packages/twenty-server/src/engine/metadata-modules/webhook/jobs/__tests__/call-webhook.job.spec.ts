@@ -1,12 +1,14 @@
-import { AxiosError, type AxiosResponse } from 'axios';
+import { Test } from '@nestjs/testing';
 
-import { type EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { AxiosError, AxiosHeaders, type AxiosResponse } from 'axios';
+
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MessageQueueJobRetryContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
-import { WebhookDeliveryRetryException } from 'src/engine/metadata-modules/webhook/webhook-delivery-retry.exception';
+import { WebhookException } from 'src/engine/metadata-modules/webhook/webhook.exception';
 
 const buildWebhookJobData = (targetUrl: string): WebhookJobData => ({
   eventId: `event-for-${targetUrl}`,
@@ -19,8 +21,11 @@ const buildWebhookJobData = (targetUrl: string): WebhookJobData => ({
   record: { id: 'record-id' },
 });
 
-const buildStreamResponse = (status: number) => ({
+const buildStreamResponse = (status: number): AxiosResponse => ({
   status,
+  statusText: '',
+  headers: {},
+  config: { headers: new AxiosHeaders() },
   data: { destroy: jest.fn() },
   request: { destroy: jest.fn() },
 });
@@ -31,12 +36,7 @@ const buildHttpError = (status: number) =>
     AxiosError.ERR_BAD_RESPONSE,
     undefined,
     { destroy: jest.fn() },
-    {
-      ...buildStreamResponse(status),
-      statusText: '',
-      headers: {},
-      config: {},
-    } as unknown as AxiosResponse,
+    buildStreamResponse(status),
   );
 
 describe('CallWebhookJob', () => {
@@ -44,7 +44,7 @@ describe('CallWebhookJob', () => {
   let jobContext: MessageQueueJobRetryContext<WebhookJobData[]>;
   let callWebhookJob: CallWebhookJob;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     postMock = jest.fn();
     jobContext = {
       jobId: 'job-id',
@@ -52,17 +52,25 @@ describe('CallWebhookJob', () => {
       updateData: jest.fn(),
     };
 
-    callWebhookJob = new CallWebhookJob(
-      {
-        dispatch: jest.fn().mockResolvedValue(undefined),
-      } as unknown as EventLogEmitterService,
-      {
-        incrementCounterForEvent: jest.fn(),
-      } as unknown as MetricsService,
-      {
-        getHttpClient: () => ({ post: postMock }),
-      } as unknown as SecureHttpClientService,
-    );
+    const testingModule = await Test.createTestingModule({
+      providers: [
+        CallWebhookJob,
+        {
+          provide: EventLogEmitterService,
+          useValue: { dispatch: jest.fn().mockResolvedValue(undefined) },
+        },
+        {
+          provide: MetricsService,
+          useValue: { incrementCounterForEvent: jest.fn() },
+        },
+        {
+          provide: SecureHttpClientService,
+          useValue: { getHttpClient: () => ({ post: postMock }) },
+        },
+      ],
+    }).compile();
+
+    callWebhookJob = testingModule.get(CallWebhookJob);
   });
 
   it('should not retry when every call succeeds', async () => {
@@ -93,8 +101,9 @@ describe('CallWebhookJob', () => {
 
     await expect(
       callWebhookJob.handle([deliveredEvent, failedEvent], jobContext),
-    ).rejects.toThrow(WebhookDeliveryRetryException);
+    ).rejects.toThrow(WebhookException);
 
+    expect(jobContext.updateData).toHaveBeenCalledTimes(1);
     expect(jobContext.updateData).toHaveBeenCalledWith([failedEvent]);
   });
 
@@ -104,9 +113,10 @@ describe('CallWebhookJob', () => {
     postMock.mockRejectedValue(buildHttpError(status));
 
     await expect(callWebhookJob.handle([event], jobContext)).rejects.toThrow(
-      WebhookDeliveryRetryException,
+      WebhookException,
     );
 
+    expect(jobContext.updateData).toHaveBeenCalledTimes(1);
     expect(jobContext.updateData).toHaveBeenCalledWith([event]);
   });
 
@@ -118,9 +128,10 @@ describe('CallWebhookJob', () => {
     );
 
     await expect(callWebhookJob.handle([event], jobContext)).rejects.toThrow(
-      WebhookDeliveryRetryException,
+      WebhookException,
     );
 
+    expect(jobContext.updateData).toHaveBeenCalledTimes(1);
     expect(jobContext.updateData).toHaveBeenCalledWith([event]);
   });
 

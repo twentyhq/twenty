@@ -20,7 +20,11 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
-import { WebhookDeliveryRetryException } from 'src/engine/metadata-modules/webhook/webhook-delivery-retry.exception';
+import {
+  WebhookException,
+  WebhookExceptionCode,
+} from 'src/engine/metadata-modules/webhook/webhook.exception';
+import { isTransientHttpStatus } from 'src/utils/is-transient-http-status.util';
 
 type WebhookResponse = {
   workspaceId: string;
@@ -28,9 +32,6 @@ type WebhookResponse = {
   properties: TrackEventProperties<typeof WEBHOOK_RESPONSE_EVENT>;
   isRetryable: boolean;
 };
-
-const isRetryableHttpStatus = (status: number) =>
-  status >= 500 || status === 408 || status === 429;
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
@@ -76,11 +77,11 @@ export class CallWebhookJob {
       return;
     }
 
-    // The next attempt replays only the failed calls, not the ones already delivered.
     await jobContext.updateData(webhookJobEventsToRetry);
 
-    throw new WebhookDeliveryRetryException(
+    throw new WebhookException(
       `${webhookJobEventsToRetry.length} of ${webhookJobEvents.length} webhook calls failed with a retryable error`,
+      WebhookExceptionCode.WEBHOOK_DELIVERY_FAILED,
     );
   }
 
@@ -162,7 +163,7 @@ export class CallWebhookJob {
           success,
           ...commonPayload,
         },
-        isRetryable: !success && isRetryableHttpStatus(response.status),
+        isRetryable: !success && isTransientHttpStatus(response.status),
       };
     } catch (err) {
       err.response?.data?.destroy();
@@ -185,7 +186,7 @@ export class CallWebhookJob {
           }),
         },
         isRetryable: isDefined(err.response)
-          ? isRetryableHttpStatus(err.response.status)
+          ? isTransientHttpStatus(err.response.status)
           : !isSSRFBlocked && isAxiosError(err),
       };
     }
