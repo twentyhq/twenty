@@ -39,6 +39,9 @@ export class AddTabAndSectionNavigationMenuItemsFastInstanceCommand
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
     );
     await queryRunner.query(
+      'UPDATE "core"."navigationMenuItem" SET "parentId" = NULL WHERE "parentId" IN (SELECT "id" FROM "core"."navigationMenuItem" WHERE "type" IN (\'TAB\', \'SECTION\')) AND "type" NOT IN (\'TAB\', \'SECTION\')',
+    );
+    await queryRunner.query(
       'DELETE FROM "core"."navigationMenuItem" WHERE "type" IN (\'TAB\', \'SECTION\')',
     );
     await queryRunner.query(
