@@ -9,7 +9,10 @@ export const addAggregatesToRecordGqlFields = ({
   aggregateColumns,
 }: {
   recordGqlFields: RecordGqlFields;
-  aggregateColumns: AggregateColumn[];
+  aggregateColumns: Pick<
+    AggregateColumn,
+    'relationFieldName' | 'aggregateGqlFieldName'
+  >[];
 }) =>
   aggregateColumns.reduce<RecordGqlFields>(
     (gqlFields, { relationFieldName, aggregateGqlFieldName }) => {
