@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,7 +23,7 @@ export const NAVIGATION_INTERPOLATED_ICON =
   getMetadataLabelPlaceholder('objectIcon');
 
 const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
-  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
 ]);
 
 export const buildNavigationConditionalAvailabilityExpression = ({

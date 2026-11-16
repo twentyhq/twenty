@@ -3,7 +3,6 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
-  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 
