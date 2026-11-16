@@ -10,6 +10,7 @@ import { ReconcileSearchVectorGinIndexUniversalIdentifierCommand } from 'src/dat
 import { ReconcileSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458170-reconcile-search-field-metadata.command';
 import { RebuildInstalledAppSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458171-rebuild-installed-app-search-vectors.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/2-20/services/legacy-workflow-version-core-upsert.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -41,6 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
+    LegacyWorkflowVersionCoreUpsertService,
     AddMessageCampaignStatFieldsCommand,
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
