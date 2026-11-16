@@ -62,12 +62,10 @@ const rejectAppCatalog = (reason: string): never => {
 export const verifyAppCatalog = ({
   signedCatalog,
   publicKeys,
-  minimumSequence,
   now,
 }: {
   signedCatalog: unknown;
   publicKeys: string[];
-  minimumSequence: number;
   now: Date;
 }): AppCatalog => {
   const parsedSignedCatalog = signedAppCatalogSchema.safeParse(signedCatalog);
@@ -104,12 +102,6 @@ export const verifyAppCatalog = ({
 
   if (new Date(catalog.expiresAt) <= now) {
     return rejectAppCatalog(`expired at ${catalog.expiresAt}`);
-  }
-
-  if (catalog.sequence < minimumSequence) {
-    return rejectAppCatalog(
-      `sequence ${catalog.sequence} is older than ${minimumSequence}`,
-    );
   }
 
   return catalog;

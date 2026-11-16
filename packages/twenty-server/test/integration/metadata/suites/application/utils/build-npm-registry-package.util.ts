@@ -1,9 +1,11 @@
+import { createHash } from 'crypto';
+
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 
 type RegistryVersionMetadata = {
   name: string | null;
   version: string;
-  dist: { tarball: string };
+  dist: { tarball: string; integrity: string };
 };
 
 export type StubbedRegistryPackage = {
@@ -45,7 +47,10 @@ export const buildNpmRegistryPackage = async ({
     metadata: {
       name: metadataName,
       version,
-      dist: { tarball: tarballUrl },
+      dist: {
+        tarball: tarballUrl,
+        integrity: `sha512-${createHash('sha512').update(tarballBuffer).digest('base64')}`,
+      },
     },
   };
 };

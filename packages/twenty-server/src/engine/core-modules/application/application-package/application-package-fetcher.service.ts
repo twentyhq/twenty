@@ -216,15 +216,20 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
           version: registryArtifact.version,
         })) ?? registryArtifact.integrity;
 
+      if (!isDefined(integrity)) {
+        throw new ApplicationException(
+          `Registry gave no integrity for ${sourcePackage}@${registryArtifact.version}`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
+
       const tarballBuffer = await this.downloadTarball(
         tarballUrl,
         registryUrl,
         authToken,
       );
 
-      if (isDefined(integrity)) {
-        assertMatchingTarballIntegrity({ tarball: tarballBuffer, integrity });
-      }
+      assertMatchingTarballIntegrity({ tarball: tarballBuffer, integrity });
 
       const tarballPath = join(workDir, 'package.tgz');
 

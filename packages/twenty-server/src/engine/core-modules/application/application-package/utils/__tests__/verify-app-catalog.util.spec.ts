@@ -13,12 +13,11 @@ const buildKeyPair = () => {
 const TRUSTED_KEY_PAIR = buildKeyPair();
 
 const buildSignedCatalog = ({
-  sequence = 5,
   expiresAt = '2026-11-20T00:00:00.000Z',
   privateKey = TRUSTED_KEY_PAIR.privateKey,
 } = {}) => {
   const payload = JSON.stringify({
-    sequence,
+    sequence: 5,
     expiresAt,
     apps: [
       {
@@ -35,11 +34,10 @@ const buildSignedCatalog = ({
   };
 };
 
-const verify = (signedCatalog: unknown, minimumSequence = 0) =>
+const verify = (signedCatalog: unknown) =>
   verifyAppCatalog({
     signedCatalog,
     publicKeys: [buildKeyPair().publicKey, TRUSTED_KEY_PAIR.publicKey],
-    minimumSequence,
     now: NOW,
   });
 
@@ -73,18 +71,11 @@ describe('verifyAppCatalog', () => {
     ).toThrow('expired');
   });
 
-  it('rejects a catalog older than the last one applied', () => {
-    expect(() => verify(buildSignedCatalog({ sequence: 4 }), 5)).toThrow(
-      'sequence 4 is older than 5',
-    );
-  });
-
   it('rejects when no key is trusted', () => {
     expect(() =>
       verifyAppCatalog({
         signedCatalog: buildSignedCatalog(),
         publicKeys: [],
-        minimumSequence: 0,
         now: NOW,
       }),
     ).toThrow('signature does not match a trusted key');
