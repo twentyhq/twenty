@@ -19,6 +19,7 @@ export class UpdateNavigationMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   parentId?: string | null;
 
+  // TODO: remove the deprecated folderId alias once API clients use parentId
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, {

@@ -19,12 +19,12 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 type UseNavigationMenuItemFolderOpenStateParams = {
-  parentId: string;
+  folderId: string;
   folderChildrenNavigationMenuItems: NavigationMenuItem[];
 };
 
 export const useNavigationMenuItemFolderOpenState = ({
-  parentId,
+  folderId,
   folderChildrenNavigationMenuItems,
 }: UseNavigationMenuItemFolderOpenStateParams) => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export const useNavigationMenuItemFolderOpenState = ({
 
   const [isManuallyClosed, setIsManuallyClosed] = useState(false);
 
-  const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(parentId);
+  const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
   const activeChildIndex = folderChildrenNavigationMenuItems.findIndex((item) =>
     activeNavigationMenuItemIds.includes(item.id),
   );
@@ -59,15 +59,15 @@ export const useNavigationMenuItemFolderOpenState = ({
   const handleToggle = () => {
     if (isMobile) {
       setCurrentNavigationMenuItemFolderId((prev) =>
-        prev === parentId ? null : parentId,
+        prev === folderId ? null : folderId,
       );
     } else {
       setOpenNavigationMenuItemFolderIds((current) =>
         isOpen
-          ? current.filter((id) => id !== parentId)
-          : current.includes(parentId)
+          ? current.filter((id) => id !== folderId)
+          : current.includes(folderId)
             ? current
-            : [...current, parentId],
+            : [...current, folderId],
       );
       setIsManuallyClosed(isOpen);
     }

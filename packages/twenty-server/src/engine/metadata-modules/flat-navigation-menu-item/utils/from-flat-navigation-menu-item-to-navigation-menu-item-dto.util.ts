@@ -12,6 +12,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
     flatNavigationMenuItem.targetObjectMetadataId ?? undefined,
   viewId: flatNavigationMenuItem.viewId ?? undefined,
   parentId: flatNavigationMenuItem.parentId ?? undefined,
+  // TODO: remove with the deprecated folderId GraphQL alias
   folderId: flatNavigationMenuItem.parentId ?? undefined,
   name: flatNavigationMenuItem.name ?? undefined,
   link: flatNavigationMenuItem.link ?? undefined,

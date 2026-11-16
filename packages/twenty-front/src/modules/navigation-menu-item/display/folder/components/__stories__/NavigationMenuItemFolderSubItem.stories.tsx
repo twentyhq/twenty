@@ -54,7 +54,7 @@ export const AddMenuResetsOnClose: Story = {
     ...Link.args,
     rightOptions: (
       <NavigationMenuItemFolderNavigationDrawerItemDropdown
-        parentId="6194edbc-ae3b-4c7c-b6ea-41ea28edc242"
+        folderId="6194edbc-ae3b-4c7c-b6ea-41ea28edc242"
         itemCount={1}
         onEdit={fn()}
         onDelete={fn()}

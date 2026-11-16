@@ -226,7 +226,9 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 
-const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<
+  Omit<NavigationMenuItemManifest, 'folderUniversalIdentifier'>
+> = {
   universalIdentifier: '77777777-7777-4777-8777-777777777777',
   type: NavigationMenuItemType.VIEW,
   name: 'All pets',

@@ -13,14 +13,14 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 
 type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
-  parentId: string;
+  folderId: string;
   itemCount: number;
   onEdit: () => void;
   onDelete: () => void;
 };
 
 export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
-  parentId,
+  folderId,
   itemCount,
   onEdit,
   onDelete,
@@ -29,7 +29,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
   const [mode, setMode] = useState<NavigationMenuItemMenuMode>({
     type: 'actions',
   });
-  const dropdownId = `navigation-menu-item-folder-edit-${parentId}`;
+  const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
 
   return (
     <NavigationMenuItemMenu
@@ -56,7 +56,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
           <Dropdown.ActionItem
             startIcon={<IconPlus />}
             closeOnClick={false}
-            onClick={() => onAdd({ parentId, position: itemCount })}
+            onClick={() => onAdd({ parentId: folderId, position: itemCount })}
           >{t`Add menu item`}</Dropdown.ActionItem>
           <Dropdown.ActionItem
             startIcon={<IconTrash />}

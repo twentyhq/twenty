@@ -21,7 +21,7 @@ import {
 import { stripGraphqlTypename } from '@/app/pull/strip-graphql-typename';
 import { kebabCase } from '@/app/pull/kebab-case';
 import {
-  getNavigationMenuItemManifestParentUniversalIdentifier,
+  normalizeNavigationMenuItemManifest,
   type Manifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -361,10 +361,9 @@ export const buildPullEntities = ({
   }
 
   for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
-    const parentUniversalIdentifier =
-      getNavigationMenuItemManifestParentUniversalIdentifier(
-        navigationMenuItemManifest,
-      );
+    const parentUniversalIdentifier = normalizeNavigationMenuItemManifest(
+      navigationMenuItemManifest,
+    ).parentUniversalIdentifier;
 
     entities.push({
       kind: 'navigationMenuItem',

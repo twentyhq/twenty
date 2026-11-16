@@ -1,5 +1,5 @@
 import {
-  getNavigationMenuItemManifestParentUniversalIdentifier,
+  normalizeNavigationMenuItemManifest,
   type NavigationMenuItemManifest,
 } from 'twenty-shared/application';
 
@@ -28,9 +28,8 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       link: navigationMenuItemManifest.link ?? null,
       nativePageKey: navigationMenuItemManifest.nativePageKey ?? null,
       parentUniversalIdentifier:
-        getNavigationMenuItemManifestParentUniversalIdentifier(
-          navigationMenuItemManifest,
-        ) ?? null,
+        normalizeNavigationMenuItemManifest(navigationMenuItemManifest)
+          .parentUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:
         navigationMenuItemManifest.targetObjectUniversalIdentifier ?? null,
       pageLayoutUniversalIdentifier:

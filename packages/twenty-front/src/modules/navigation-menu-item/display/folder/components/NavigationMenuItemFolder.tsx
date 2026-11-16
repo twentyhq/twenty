@@ -45,19 +45,19 @@ export const NavigationMenuItemFolder = ({
   readOnly = false,
   orphanIndex,
 }: NavigationMenuItemFolderProps) => {
-  const parentId = item.id;
+  const folderId = item.id;
   const folderName = getFolderNavigationMenuItemLabel(item);
   const folderIconKey = item.icon;
   const folderColor = 'color' in item ? (item.color as string | null) : null;
   const folderChildrenNavigationMenuItems =
-    folderChildrenById.get(parentId) ?? [];
+    folderChildrenById.get(folderId) ?? [];
   const isGroup = folderCount > 1;
 
   if (readOnly) {
     return (
       <NavigationMenuItemFolderReadOnlyContent
         item={item}
-        parentId={parentId}
+        folderId={folderId}
         folderName={folderName}
         folderIconKey={folderIconKey}
         folderColor={folderColor}
@@ -72,7 +72,7 @@ export const NavigationMenuItemFolder = ({
       fallback={
         <NavigationMenuItemFolderReadOnlyContent
           item={item}
-          parentId={parentId}
+          folderId={folderId}
           folderName={folderName}
           folderIconKey={folderIconKey}
           folderColor={folderColor}
@@ -83,7 +83,7 @@ export const NavigationMenuItemFolder = ({
     >
       <LazyNavigationMenuItemFolderDnd
         item={item}
-        parentId={parentId}
+        folderId={folderId}
         folderName={folderName}
         folderIconKey={folderIconKey}
         folderColor={folderColor}
@@ -101,7 +101,7 @@ export const NavigationMenuItemFolder = ({
 
 type NavigationMenuItemFolderReadOnlyContentProps = {
   item: NavigationMenuItem;
-  parentId: string;
+  folderId: string;
   folderName: string;
   folderIconKey?: string | null;
   folderColor?: string | null;
@@ -111,7 +111,7 @@ type NavigationMenuItemFolderReadOnlyContentProps = {
 
 const NavigationMenuItemFolderReadOnlyContent = ({
   item,
-  parentId,
+  folderId,
   folderName,
   folderIconKey,
   folderColor,
@@ -124,7 +124,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
-      parentId,
+      folderId,
       folderChildrenNavigationMenuItems: navigationMenuItems,
     });
 

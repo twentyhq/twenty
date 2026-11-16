@@ -37,8 +37,8 @@ export const useReadableNavigationMenuItems = ({
     });
 
   const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();
-  for (const [parentId, children] of folderChildrenById) {
-    filteredFolderChildrenById.set(parentId, children.filter(isItemReadable));
+  for (const [folderId, children] of folderChildrenById) {
+    filteredFolderChildrenById.set(folderId, children.filter(isItemReadable));
   }
 
   const filteredTopLevelItems = topLevelItems.filter((item) =>

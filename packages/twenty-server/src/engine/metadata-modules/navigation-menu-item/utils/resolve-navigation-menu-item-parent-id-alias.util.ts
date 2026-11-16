@@ -5,6 +5,7 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 
+// TODO: remove with the deprecated folderId GraphQL alias, along with its resolver calls
 export const resolveNavigationMenuItemParentIdAlias = <
   TInput extends { parentId?: string | null; folderId?: string | null },
 >(

@@ -83,7 +83,7 @@ const StyledFolderDroppableContent = styled.div`
 
 type NavigationMenuItemFolderDndProps = {
   item: NavigationMenuItem;
-  parentId: string;
+  folderId: string;
   folderName: string;
   folderIconKey?: string | null;
   folderColor?: string | null;
@@ -98,7 +98,7 @@ type NavigationMenuItemFolderDndProps = {
 
 export const NavigationMenuItemFolderDnd = ({
   item,
-  parentId,
+  folderId,
   folderName,
   folderIconKey,
   folderColor,
@@ -126,7 +126,7 @@ export const NavigationMenuItemFolderDnd = ({
     : 'workspace';
   const insertionIndex =
     navigationMenuItemInsertionPreview?.section === section &&
-    navigationMenuItemInsertionPreview.parentId === parentId
+    navigationMenuItemInsertionPreview.parentId === folderId
       ? navigationMenuItemInsertionPreview.index
       : null;
   const hasInsertionPreview = isDefined(insertionIndex);
@@ -139,7 +139,7 @@ export const NavigationMenuItemFolderDnd = ({
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
-      parentId,
+      folderId,
       folderChildrenNavigationMenuItems: navigationMenuItems,
     });
 
@@ -156,7 +156,7 @@ export const NavigationMenuItemFolderDnd = ({
 
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
-    parentId,
+    folderId,
     navigationMenuItems,
   });
 
@@ -164,13 +164,13 @@ export const NavigationMenuItemFolderDnd = ({
     isLayoutCustomizationModeEnabledState,
   );
   const isFolderEditHighlighted = useIsNavigationMenuItemEditHighlighted({
-    id: parentId,
+    id: folderId,
     parentId: null,
   });
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
-  const folderHeaderDroppableId = `${config.folderHeaderPrefix}${parentId}`;
-  const folderContentDroppableId = `${config.folderPrefix}${parentId}`;
+  const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
+  const folderContentDroppableId = `${config.folderPrefix}${folderId}`;
   const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
 
   const isForbiddenDropTarget =
@@ -204,7 +204,7 @@ export const NavigationMenuItemFolderDnd = ({
 
   const headerRightOptions = isEditInPlace ? (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
-      parentId={parentId}
+      folderId={folderId}
       itemCount={navigationMenuItems.length}
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
@@ -248,7 +248,7 @@ export const NavigationMenuItemFolderDnd = ({
         <NavigationMenuItemInsertBeforeDroppableZone
           orphanDroppableId={config.orphanDroppableId}
           orphanIndex={orphanIndex}
-          itemId={parentId}
+          itemId={folderId}
           disabled={dropDisabled}
         />
       )}
@@ -343,7 +343,7 @@ export const NavigationMenuItemFolderDnd = ({
             {navigationMenuItems.map((navigationMenuItem, index) => (
               <Fragment key={navigationMenuItem.id}>
                 <NavigationItemDropTarget
-                  parentId={parentId}
+                  parentId={folderId}
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
@@ -399,7 +399,7 @@ export const NavigationMenuItemFolderDnd = ({
               collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
             >
               <NavigationItemDropTarget
-                parentId={parentId}
+                parentId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}
@@ -415,7 +415,7 @@ export const NavigationMenuItemFolderDnd = ({
                 <StyledAddMenuItem isHidden={isAddingFavoriteFolderItem}>
                   <NavigationMenuItemEntrance>
                     <NavigationMenuItemAddDropdown
-                      parentId={parentId}
+                      parentId={folderId}
                       section={section}
                       position={navigationMenuItems.length}
                     >

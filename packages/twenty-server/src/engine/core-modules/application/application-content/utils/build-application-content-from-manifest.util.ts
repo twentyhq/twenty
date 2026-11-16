@@ -1,5 +1,5 @@
 import {
-  getNavigationMenuItemManifestParentUniversalIdentifier,
+  normalizeNavigationMenuItemManifest,
   type Manifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -213,9 +213,9 @@ export const buildApplicationContentFromManifest = (
     })),
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => {
       const parentUniversalIdentifier =
-        getNavigationMenuItemManifestParentUniversalIdentifier(
+        normalizeNavigationMenuItemManifest(
           navigationMenuItem,
-        );
+        ).parentUniversalIdentifier;
 
       return {
         universalIdentifier: navigationMenuItem.universalIdentifier,

@@ -11,12 +11,12 @@ import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialog
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type UseFavoritesFolderEditParams = {
-  parentId: string;
+  folderId: string;
   navigationMenuItems: NavigationMenuItem[];
 };
 
 export const useFavoritesFolderEdit = ({
-  parentId,
+  folderId,
   navigationMenuItems,
 }: UseFavoritesFolderEditParams) => {
   const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
@@ -27,21 +27,21 @@ export const useFavoritesFolderEdit = ({
   );
 
   const startEditing = () => {
-    setSelectedNavigationMenuItemIdInEditMode(parentId);
-    setNavigationMenuItemIdToRename(parentId);
+    setSelectedNavigationMenuItemIdInEditMode(folderId);
+    setNavigationMenuItemIdToRename(folderId);
   };
 
   const { deleteNavigationMenuItemFolder } =
     useDeleteNavigationMenuItemFolder();
   const { openDialog } = useDialog();
 
-  const dropdownId = `navigation-menu-item-folder-edit-${parentId}`;
+  const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
-  const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${parentId}`;
+  const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folderId}`;
   const isDialogOpened = useAtomComponentStateValue(
     isDialogOpenedComponentState,
     modalId,
@@ -51,12 +51,12 @@ export const useFavoritesFolderEdit = ({
     if (navigationMenuItems.length > 0) {
       openDialog(modalId);
     } else {
-      await deleteNavigationMenuItemFolder(parentId);
+      await deleteNavigationMenuItemFolder(folderId);
     }
   };
 
   const handleConfirmDelete = async () => {
-    await deleteNavigationMenuItemFolder(parentId);
+    await deleteNavigationMenuItemFolder(folderId);
   };
 
   return {
