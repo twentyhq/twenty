@@ -28,11 +28,21 @@ export const cancelScheduledRecallBotsHandler = async (
     asRecord(payload)?.scheduledRecallBotCancellations;
 
   if (isArray(scheduledRecallBotCancellations)) {
+    const parsedScheduledRecallBotCancellations =
+      parseScheduledRecallBotCancellations(scheduledRecallBotCancellations);
+    const malformedCancellationCount =
+      scheduledRecallBotCancellations.length -
+      parsedScheduledRecallBotCancellations.length;
+
+    if (malformedCancellationCount > 0) {
+      console.warn(
+        `[call-recorder] scheduled Recall bot cancellation ignored ${malformedCancellationCount} of ${scheduledRecallBotCancellations.length} entries without a call recording id or bot id`,
+      );
+    }
+
     return cancelScheduledRecallBots({
       client,
-      scheduledRecallBotCancellations: parseScheduledRecallBotCancellations(
-        scheduledRecallBotCancellations,
-      ),
+      scheduledRecallBotCancellations: parsedScheduledRecallBotCancellations,
     });
   }
 
