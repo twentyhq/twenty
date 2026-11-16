@@ -1,6 +1,9 @@
-import { type Expression } from 'expr-eval-fork';
-
+import { memoizeLeastRecentlyUsed } from '@/utils/cache/memoizeLeastRecentlyUsed';
 import { computedFieldExpressionParser } from '@/utils/computed-field/computedFieldExpressionParser';
 
-export const parseComputedFieldExpression = (source: string): Expression =>
-  computedFieldExpressionParser.parse(source);
+const PARSED_EXPRESSION_CACHE_MAX_SIZE = 500;
+
+export const parseComputedFieldExpression = memoizeLeastRecentlyUsed(
+  (source) => computedFieldExpressionParser.parse(source),
+  PARSED_EXPRESSION_CACHE_MAX_SIZE,
+);

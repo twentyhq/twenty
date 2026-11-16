@@ -5,6 +5,7 @@ import { type RelationType } from 'src/engine/metadata-modules/field-metadata/in
 export type ComputedFieldSchemaField = {
   name: string;
   type: FieldMetadataType;
+  computation?: unknown;
 };
 
 // How an expression's field names are looked up: by id at query time, by universal identifier when metadata is validated
@@ -20,4 +21,5 @@ export type ComputedFieldSchemaReader<
   ) => TField | undefined;
   getRelationType: (relationField: TField) => RelationType | undefined;
   findRelationTargetObject: (relationField: TField) => TObject | undefined;
+  findRelationInverseField: (relationField: TField) => TField | undefined;
 };

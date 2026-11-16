@@ -6,6 +6,7 @@ import { In, LessThan } from 'typeorm';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TRASH_CLEANUP_BATCH_SIZE } from 'src/engine/trash-cleanup/constants/trash-cleanup-batch-size.constant';
 import { TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE } from 'src/engine/trash-cleanup/constants/trash-cleanup-max-records-per-workspace.constant';
+import { computeTrashCleanupCutoffDate } from 'src/engine/trash-cleanup/utils/compute-trash-cleanup-cutoff-date.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -49,7 +50,10 @@ export class TrashCleanupService {
       return 0;
     }
 
-    const cutoffDate = this.calculateCutoffDate(trashRetentionDays);
+    const cutoffDate = computeTrashCleanupCutoffDate({
+      now: new Date(),
+      trashRetentionDays,
+    });
     let deletedCount = 0;
 
     for (const objectName of objectNames) {
@@ -135,14 +139,5 @@ export class TrashCleanupService {
 
       return deleted;
     }, authContext);
-  }
-
-  private calculateCutoffDate(trashRetentionDays: number): Date {
-    const cutoffDate = new Date();
-
-    cutoffDate.setUTCHours(0, 0, 0, 0);
-    cutoffDate.setDate(cutoffDate.getDate() - trashRetentionDays + 1);
-
-    return cutoffDate;
   }
 }

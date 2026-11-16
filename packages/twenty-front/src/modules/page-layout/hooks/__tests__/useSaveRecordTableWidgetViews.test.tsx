@@ -143,7 +143,7 @@ describe('useSaveRecordTableWidgetViews', () => {
     ]);
   });
 
-  it('should send undefined relationTargetFieldMetadataId for direct filters', async () => {
+  it('should send null for cleared filter fields so the server clears them', async () => {
     const store = createStore();
 
     store.set(
@@ -181,8 +181,13 @@ describe('useSaveRecordTableWidgetViews', () => {
 
     const { input } = upsertViewWidgetResult.mock.calls[0][0];
 
-    expect(input.viewFilters?.[0].relationTargetFieldMetadataId).toBe(
-      undefined,
+    expect(input.viewFilters?.[0]).toEqual(
+      expect.objectContaining({
+        viewFilterGroupId: null,
+        positionInViewFilterGroup: null,
+        subFieldName: null,
+        relationTargetFieldMetadataId: null,
+      }),
     );
   });
 });

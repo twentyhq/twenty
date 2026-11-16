@@ -1,4 +1,4 @@
-import { type SqlWithParameters } from 'src/engine/twenty-orm/computed-column/types/sql-with-parameters.type';
+import { type SqlWithParameters } from 'src/engine/metadata-modules/computed-field/types/sql-with-parameters.type';
 
 // A subquery embedded in another statement shares its parameter names, so each gets its own prefix
 export const namespaceSqlParameters = ({

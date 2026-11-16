@@ -26,6 +26,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
+import { serializeEmailBody } from 'test/integration/utils/serialize-email-body.util';
 
 const APPLICATION_IDENTIFIER = v4();
 const SENDING_PROVIDER_IDENTIFIER = v4();
@@ -479,7 +480,7 @@ describe('sendAppChannelMessage (e2e)', () => {
         to: CONTACT_EMAIL,
         cc: 'grace@example.com',
         subject: 'Re: Next week',
-        body: 'Tuesday works',
+        body: serializeEmailBody({ type: 'text', text: 'Tuesday works' }),
         inReplyTo: `app:${applicationDbId}:${messageChannelId}:inbound-1`,
       },
     });
@@ -530,7 +531,11 @@ describe('sendAppChannelMessage (e2e)', () => {
     const response = await send({
       messageChannelId,
       messageThreadId,
-      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: '' },
+      email: {
+        to: CONTACT_EMAIL,
+        subject: 'Re: Next week',
+        body: serializeEmailBody({ type: 'text', text: '' }),
+      },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -554,7 +559,7 @@ describe('sendAppChannelMessage (e2e)', () => {
       email: {
         to: `${CONTACT_EMAIL}, not-an-email`,
         subject: 'Re: Next week',
-        body: 'Tuesday works',
+        body: serializeEmailBody({ type: 'text', text: 'Tuesday works' }),
       },
     });
 
@@ -572,7 +577,11 @@ describe('sendAppChannelMessage (e2e)', () => {
       messageChannelId,
       messageThreadId,
       text: 'Tuesday works',
-      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: 'Hi' },
+      email: {
+        to: CONTACT_EMAIL,
+        subject: 'Re: Next week',
+        body: serializeEmailBody({ type: 'text', text: 'Hi' }),
+      },
     });
 
     expect(response.body.errors?.[0]?.message).toContain(
@@ -607,7 +616,10 @@ describe('sendAppChannelMessage (e2e)', () => {
       email: {
         to: CONTACT_EMAIL,
         subject: 'Re: Next week',
-        body: 'a'.repeat(MAX_APP_MESSAGE_TEXT_LENGTH + 1),
+        body: serializeEmailBody({
+          type: 'text',
+          text: 'a'.repeat(MAX_APP_MESSAGE_TEXT_LENGTH + 1),
+        }),
       },
     });
 
@@ -642,7 +654,11 @@ describe('sendAppChannelMessage (e2e)', () => {
     const response = await send({
       messageChannelId,
       messageThreadId,
-      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: 'Hi' },
+      email: {
+        to: CONTACT_EMAIL,
+        subject: 'Re: Next week',
+        body: serializeEmailBody({ type: 'text', text: 'Hi' }),
+      },
     });
 
     expect(response.body.errors).toBeDefined();

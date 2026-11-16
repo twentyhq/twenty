@@ -3,6 +3,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -488,6 +489,25 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
+    it('returns computed fields in the response of a write', async () => {
+      const response = await makeGraphqlApiRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          gqlFields: 'id budget taskCount summary',
+          recordId: BETA_PROJECT_ID,
+          data: { budget: 30 },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateRollupProject).toEqual({
+        id: BETA_PROJECT_ID,
+        budget: 30,
+        taskCount: 1,
+        summary: 'BETA: idle',
+      });
+    });
+
     it('refuses to write a computed field', async () => {
       const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
@@ -608,7 +628,7 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
-    it('refuses to delete or rename a field that a computed field reads', async () => {
+    it('rewrites a computed field when a field it reads is renamed, and refuses to delete that field', async () => {
       const { data } = await createField({
         objectMetadataId: projectObjectMetadataId,
         name: 'bonus',
@@ -624,20 +644,41 @@ describe('Computed fields (e2e)', () => {
         objectMetadataId: projectObjectMetadataId,
         name: 'budgetWithBonus',
         type: FieldMetadataType.NUMBER,
-        computation: { kind: 'FORMULA', expression: 'budget + bonus' },
-      });
-
-      const { errors: renameErrors } = await updateOneFieldMetadata({
-        expectToFail: true,
-        input: {
-          idToUpdate: bonusFieldId,
-          updatePayload: { name: 'renamedBonus' },
+        computation: {
+          kind: 'FORMULA',
+          expression: 'budget + coalesce(bonus, 0)',
         },
       });
 
-      expect(JSON.stringify(renameErrors)).toContain(
-        'Computed field \\"budgetWithBonus\\" would stop working',
-      );
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: bonusFieldId,
+          updatePayload: { name: 'extraBudget' },
+        },
+      });
+
+      const { fields } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: projectObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'id computation',
+      });
+
+      expect(
+        fields.find(
+          ({ node }: { node: { id: string } }) =>
+            node.id === budgetWithBonusFieldId,
+        )?.node.computation,
+      ).toEqual({
+        kind: 'FORMULA',
+        expression: 'budget + coalesce(extraBudget, 0)',
+      });
+      expect(
+        (await findProjectValuesById('budgetWithBonus'))[ALPHA_PROJECT_ID],
+      ).toBe(100);
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -661,6 +702,42 @@ describe('Computed fields (e2e)', () => {
           input: { idToDelete },
         });
       }
+    });
+
+    it('rejects a computation whose value does not fit the type of its field', async () => {
+      expect(
+        await expectCreationToFail({
+          kind: 'FORMULA',
+          expression: "concat(name, 'x')",
+        }),
+      ).toContain('The computed value is text, expected number');
+
+      expect(
+        await expectCreationToFail({
+          kind: 'ROLLUP',
+          relationFieldName: 'tasks',
+          operation: 'SUM',
+          expression: 'status',
+        }),
+      ).toContain('The expression of SUM is text, expected number');
+
+      expect(
+        await expectCreationToFail({
+          kind: 'ROLLUP',
+          relationFieldName: 'tasks',
+          operation: 'COUNT',
+          filter: 'points',
+        }),
+      ).toContain('The filter is number, expected boolean');
+    });
+
+    it('rejects a computation that is not shaped like one', async () => {
+      expect(
+        await expectCreationToFail({
+          kind: 'FORMULA',
+          expression: 123,
+        } as unknown as FieldMetadataComputation),
+      ).toContain('it must be a formula with an expression');
     });
 
     it('lets the expression of a computed field change', async () => {

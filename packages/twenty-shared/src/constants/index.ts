@@ -50,6 +50,7 @@ export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
 export { EVENT_LOG_RETENTION } from './EventLogRetention';
 export { EVERYONE_PRINCIPAL_ID } from './EveryonePrincipalId';
 export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';
+export { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from './ExpressionParserDisabledMathOperators';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';

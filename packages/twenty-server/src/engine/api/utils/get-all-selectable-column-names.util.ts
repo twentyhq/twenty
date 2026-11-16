@@ -1,6 +1,4 @@
-import { isComputedField, isDefined } from 'twenty-shared/utils';
-
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -29,18 +27,7 @@ export const getAllSelectableColumnNames = ({
     .filter(isDefined)
     .flat();
 
-  // Computed columns exist only in read queries, so a write cannot return them
-  const allColumnNames = [...fieldMetadataIdToColumnNamesMap.entries()]
-    .filter(
-      ([fieldMetadataId]) =>
-        !isComputedField(
-          findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityId: fieldMetadataId,
-            flatEntityMaps: objectMetadata.flatFieldMetadataMaps,
-          }),
-        ),
-    )
-    .flatMap(([, columnNames]) => columnNames);
+  const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();
 
   const unreadableColumnNamesSet = new Set(unreadableColumnNames);
 

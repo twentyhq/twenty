@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
+import {
+  isComputedField,
+  isDefined,
+  isEmptyObject,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -36,6 +42,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { namespaceSqlParameters } from 'src/engine/twenty-orm/computed-column/utils/namespace-sql-parameters.util';
 import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -70,10 +77,76 @@ export class ProcessNestedRelationsHelper {
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
+    await this.loadMissingComputedFields(args);
     await this.processNestedRelationsWithLimiter(
       args,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
+  }
+
+  // A write returns stored columns only, so the computed fields its response selects are read afterwards
+  private async loadMissingComputedFields<
+    T extends ObjectRecord = ObjectRecord,
+  >({
+    flatFieldMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    selectedFields,
+    repository,
+    useReplica = false,
+  }: ProcessNestedRelationsArgs<T>): Promise<void> {
+    const selectedComputedFieldNames = getFlatFieldsFromFlatObjectMetadata(
+      parentObjectMetadataItem,
+      flatFieldMetadataMaps,
+    )
+      .filter(
+        (flatFieldMetadata) =>
+          isComputedField(flatFieldMetadata) &&
+          selectedFields[flatFieldMetadata.name] === true,
+      )
+      .map(({ name }) => name);
+
+    const recordsMissingComputedFields = parentObjectRecords.filter((record) =>
+      selectedComputedFieldNames.some(
+        (computedFieldName) => record[computedFieldName] === undefined,
+      ),
+    );
+
+    if (recordsMissingComputedFields.length === 0) {
+      return;
+    }
+
+    const { nameSingular } = parentObjectMetadataItem;
+    const parentObjectRepository =
+      repository ??
+      this.workspaceOrmManager.getRepository(nameSingular, { useReplica });
+
+    const computedRecords = await parentObjectRepository
+      .createQueryBuilder(nameSingular)
+      .setFindOptions({
+        select: Object.fromEntries(
+          ['id', ...selectedComputedFieldNames].map((columnName) => [
+            columnName,
+            true,
+          ]),
+        ),
+      })
+      .where(`"${nameSingular}"."id" IN (:...recordIds)`, {
+        recordIds: recordsMissingComputedFields.map(({ id }) => id),
+      })
+      .withDeleted()
+      .getMany<ObjectRecord>();
+
+    const computedRecordById = new Map(
+      computedRecords.map((computedRecord) => [
+        computedRecord.id,
+        computedRecord,
+      ]),
+    );
+
+    for (const record of recordsMissingComputedFields) {
+      Object.assign(record, computedRecordById.get(record.id));
+    }
   }
 
   private async processNestedRelationsWithLimiter<
@@ -643,10 +716,22 @@ export class ProcessNestedRelationsHelper {
     }
 
     if (isDefined(relationQueryArgs?.expressionFilter)) {
-      const { sql, parameters } = await buildComputedFieldExpressionSql({
+      const expressionFilterSql = await buildComputedFieldExpressionSql({
         expression: relationQueryArgs.expressionFilter,
         alias: targetObjectNameSingular,
         repository: targetObjectRepository,
+      });
+
+      // A filter reading something its reader cannot read shows no record, as a computed value would be null
+      if (!isDefined(expressionFilterSql)) {
+        queryBuilder.andWhere('FALSE');
+
+        return;
+      }
+
+      const { sql, parameters } = namespaceSqlParameters({
+        ...expressionFilterSql,
+        namespace: 'storedFilter',
       });
 
       queryBuilder.andWhere(`(${sql})`, parameters);

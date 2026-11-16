@@ -1,2 +1,0 @@
-export const ADD_FIELD_METADATA_COMPUTATION_UPGRADE_COMMAND_NAME =
-  '2.59.0_AddFieldMetadataComputationFastInstanceCommand_1794818117462';

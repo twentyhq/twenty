@@ -555,22 +555,25 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         );
       }
 
-      const tableExpression = `${escapeIdentifier(
-        joinClause.targetTableShape.schemaName,
-      )}.${escapeIdentifier(joinClause.targetTableShape.tableName)}`;
+      const tableSource = buildTableSource({
+        state,
+        tableShape: joinClause.targetTableShape,
+        alias: joinClause.alias,
+      });
 
       const joinSource = isDefined(toManyForeignKeyColumnName)
         ? buildToManyDedupedJoinSource({
-            tableExpression,
+            // Computed columns are written against the join's alias, so a derived table carries it inside too
+            tableExpression: isDefined(
+              state.computedColumnSqlByAlias[joinClause.alias],
+            )
+              ? `${tableSource} AS ${escapeIdentifier(joinClause.alias)}`
+              : tableSource,
             foreignKeyColumnName: toManyForeignKeyColumnName,
             includeSoftDeleteFilter: softDeletePredicateApplies,
             dedupOrder: joinClause.toManyDedupOrder,
           })
-        : buildTableSource({
-            state,
-            tableShape: joinClause.targetTableShape,
-            alias: joinClause.alias,
-          });
+        : tableSource;
 
       return `${joinClause.joinType} JOIN ${joinSource} AS ${escapeIdentifier(
         joinClause.alias,

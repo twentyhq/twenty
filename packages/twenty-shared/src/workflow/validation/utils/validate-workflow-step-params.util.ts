@@ -28,11 +28,6 @@ const formatZodIssue = (issue: z.ZodIssue): string => {
 const formatZodIssues = (zodError: z.ZodError): string[] =>
   zodError.issues.map(formatZodIssue);
 
-const isEmailBodyStoredAsDocument = (body: string | undefined): boolean =>
-  !isDefined(body) ||
-  !isNonEmptyString(body.trim()) ||
-  parseEmailDocument(parseJson<unknown>(body)).success;
-
 export const validateWorkflowStepParams = ({
   trigger,
   steps,
@@ -74,7 +69,10 @@ export const validateWorkflowStepParams = ({
     if (
       (parsedStep.type === WorkflowActionType.SEND_EMAIL ||
         parsedStep.type === WorkflowActionType.DRAFT_EMAIL) &&
-      !isEmailBodyStoredAsDocument(parsedStep.settings.input.body)
+      // blank bodies run as empty documents until the 2-59 backfill reaches them
+      isNonEmptyString(parsedStep.settings.input.body?.trim()) &&
+      !parseEmailDocument(parseJson<unknown>(parsedStep.settings.input.body))
+        .success
     ) {
       issues.push({
         severity: 'error',

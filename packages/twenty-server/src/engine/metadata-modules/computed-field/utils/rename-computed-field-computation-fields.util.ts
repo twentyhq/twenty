@@ -1,0 +1,149 @@
+import { type FieldMetadataComputation } from 'twenty-shared/types';
+import {
+  getComputedFieldExpressionFieldPaths,
+  isDefined,
+  renameValidationRuleExpressionFields,
+} from 'twenty-shared/utils';
+
+import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
+import {
+  type ComputedFieldSchemaField,
+  type ComputedFieldSchemaReader,
+} from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
+import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
+import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
+
+type RenamableField = ComputedFieldSchemaField & {
+  universalIdentifier: string;
+};
+
+const ignoreUnresolvable = <TResult>(
+  resolve: () => TResult,
+): TResult | undefined => {
+  try {
+    return resolve();
+  } catch (error) {
+    if (error instanceof ComputedFieldExpressionException) {
+      return undefined;
+    }
+
+    throw error;
+  }
+};
+
+// A computation reads fields by name: when fields are renamed, the names it uses follow.
+// `schemaReader` reads the fields as they were before the rename; what cannot be resolved is left as written.
+export const renameComputedFieldComputationFields = <
+  TObject,
+  TField extends RenamableField,
+>({
+  computation,
+  object,
+  schemaReader,
+  fieldNameByUniversalIdentifier,
+}: {
+  computation: FieldMetadataComputation;
+  object: TObject;
+  schemaReader: ComputedFieldSchemaReader<TObject, TField>;
+  fieldNameByUniversalIdentifier: Map<string, string>;
+}): FieldMetadataComputation => {
+  const renameExpression = (
+    expression: string | undefined,
+    evaluatedObject: TObject,
+  ): string | undefined => {
+    const paths = isDefined(expression)
+      ? ignoreUnresolvable(() =>
+          getComputedFieldExpressionFieldPaths(expression),
+        )
+      : undefined;
+
+    if (!isDefined(expression) || !isDefined(paths)) {
+      return expression;
+    }
+
+    const bindings = Object.fromEntries(
+      paths.flatMap((path) => {
+        const resolution = ignoreUnresolvable(() =>
+          resolveComputedFieldPath({
+            path,
+            object: evaluatedObject,
+            schemaReader,
+          }),
+        );
+
+        if (!isDefined(resolution)) {
+          return [];
+        }
+
+        return [
+          ...resolution.toOneRelationHops.map(
+            ({ relationField }) => relationField,
+          ),
+          resolution.field,
+        ]
+          .map((field, index) => ({ field, segment: path[index] }))
+          .filter(({ field, segment }) => field.name === segment)
+          .map(({ field }, index) => [
+            path.slice(0, index + 1).join('.'),
+            field.universalIdentifier,
+          ]);
+      }),
+    );
+
+    return renameValidationRuleExpressionFields({
+      expression,
+      bindings,
+      fieldNameByUniversalIdentifier,
+    });
+  };
+
+  if (computation.kind === 'FORMULA') {
+    return {
+      ...computation,
+      expression:
+        renameExpression(computation.expression, object) ??
+        computation.expression,
+    };
+  }
+
+  const sourceRelation = ignoreUnresolvable(() =>
+    resolveComputedFieldSourceRelation({
+      relationFieldName: computation.relationFieldName,
+      object,
+      schemaReader,
+    }),
+  );
+
+  if (!isDefined(sourceRelation)) {
+    return computation;
+  }
+
+  const filter = renameExpression(
+    computation.filter,
+    sourceRelation.relatedObject,
+  );
+  const relationFieldName =
+    fieldNameByUniversalIdentifier.get(
+      sourceRelation.relationField.universalIdentifier,
+    ) ?? computation.relationFieldName;
+
+  if (computation.kind === 'FILTERED_RELATION') {
+    return {
+      ...computation,
+      relationFieldName,
+      ...(isDefined(filter) ? { filter } : {}),
+    };
+  }
+
+  const expression = renameExpression(
+    computation.expression,
+    sourceRelation.relatedObject,
+  );
+
+  return {
+    ...computation,
+    relationFieldName,
+    ...(isDefined(expression) ? { expression } : {}),
+    ...(isDefined(filter) ? { filter } : {}),
+  };
+};

@@ -197,7 +197,7 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 
 ## Computed fields
 
-A field with a `computation` stores nothing: its value is calculated by the database each time it is read. It can be selected, filtered and sorted like any other field, and it cannot be written.
+A field with a `computation` stores nothing: its value is calculated by the database each time it is read. It can be selected, filtered and sorted like any other field, and it cannot be written. The workspace needs the `IS_COMPUTED_FIELDS_ENABLED` feature flag; without it, a field with a `computation` is rejected.
 
 | Kind | Value | Field type |
 | --- | --- | --- |

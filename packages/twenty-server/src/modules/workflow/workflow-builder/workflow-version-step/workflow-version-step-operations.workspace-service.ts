@@ -12,7 +12,12 @@ import {
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import {
+  EMPTY_EMAIL_DOCUMENT,
+  isDefined,
+  isPlainObject,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import {
   WORKFLOW_ACTION_FEATURE_FLAGS,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
@@ -285,7 +290,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                   bcc: '',
                 },
                 subject: '',
-                body: '',
+                body: JSON.stringify(EMPTY_EMAIL_DOCUMENT),
               },
             },
           },
@@ -349,7 +354,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                   bcc: '',
                 },
                 subject: '',
-                body: '',
+                body: JSON.stringify(EMPTY_EMAIL_DOCUMENT),
               },
             },
           },

@@ -86,6 +86,7 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
+import { getStoredColumnNames } from 'src/engine/twenty-orm/table-shape/utils/get-stored-column-names.util';
 import { buildComputedColumnSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -163,7 +164,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.options = options;
   }
 
-  private get recordReadRestrictions(): RecordReadRestrictions {
+  get recordReadRestrictions(): RecordReadRestrictions {
     const { permissionsPrincipals, shouldBypassPermissionChecks } =
       this.options;
 
@@ -1060,7 +1061,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       columnNames,
       rows,
-      returningColumns: columnsToReturn,
+      returningColumns: getStoredColumnNames(
+        this.options.tableShape,
+        columnsToReturn,
+      ),
       onConflictDoNothing,
     });
 

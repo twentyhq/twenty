@@ -115,6 +115,25 @@ universalSettings: { relationType: RelationType.ONE_TO_MANY },
 
 Export each field's identifier as a named constant and import it from the other file, so the two sides reference each other without a circular import.
 
+### Computed Fields
+
+A field with a `computation` stores nothing: the database calculates its value on read. It can be selected, filtered and sorted like a stored field, and it cannot be written. The workspace needs the `IS_COMPUTED_FIELDS_ENABLED` feature flag. The field's `type` is `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME`, and the build of the workspace rejects a computation whose value does not fit it.
+
+```ts
+// A formula over the record's own fields
+computation: { kind: 'FORMULA', expression: 'round(budget / openTaskCount, 2)' },
+
+// A rollup over the records of a one-to-many relation
+computation: {
+  kind: 'ROLLUP',
+  relationFieldName: 'tasks',
+  operation: 'COUNT', // or SUM, AVG, MIN, MAX with an `expression`
+  filter: "status != 'DONE'",
+},
+```
+
+Expressions reference fields by name: `amount.amountMicros` for a composite sub-field, `company.name` for a field of a to-one relation, and other computed fields by their name. A value is null when its reader cannot read a field or object it uses. A field read by a computed field cannot be deleted; renaming it updates the computed field.
+
 ## Roles And Permissions
 
 Roles should match operational responsibility, not implementation convenience.
