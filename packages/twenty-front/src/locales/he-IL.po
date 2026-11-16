@@ -672,7 +672,7 @@ msgstr "{channelName} מנותק."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} מחובר"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1964,6 +1964,7 @@ msgstr "פעולות משתמשים יכולים לבצע על אובייקט ז
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -3990,7 +3991,7 @@ msgstr "פעולת אפליקציה"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "מרחב העבודה של בעלי האפליקציה"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -6136,7 +6137,7 @@ msgid "Chat details"
 msgstr "פרטי צ'אט"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "שם הצ'אט"
 
@@ -7031,7 +7032,7 @@ msgstr "פסיקים ונקודה"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "הערה"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7091,7 +7092,7 @@ msgstr "פיצוי"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "פיצוי עבור התקלה באוקטובר"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7430,7 +7431,7 @@ msgstr "חיבור {appName} לחשבון שלך"
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "התחבר אל {connectionProviderDisplayName}"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7760,7 +7761,7 @@ msgid "Conversation title"
 msgstr "כותרת שיחה"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "שיחות"
 
@@ -9502,6 +9503,7 @@ msgid "Days between triggers"
 msgstr "ימים בין הפעלות"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10377,7 +10379,7 @@ msgid "Direct messages"
 msgstr "הודעות ישירות"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "הודעות ישירות אינן תומכות בקבצים מצורפים."
 
@@ -11683,7 +11685,7 @@ msgstr "מסתיים"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "מסתיים (אופציונלי)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11959,6 +11961,11 @@ msgstr "הזן אפשרות אחת בכל שורה"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
 msgstr "הזן אפשרות אחת בכל שורה. כל שורה תהפוך לאפשרות חדשה."
+
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+msgstr "הזן אפשרות אחת בכל שורה. כל שורה תהפוך לאפשרות חדשה. אפשרויות שמגיעות עם השדה מושבתות כאשר השורה שלהן מוסרת."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -14764,7 +14771,7 @@ msgstr "אפור"
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
-msgstr "תום גדול יותר או שווה\aF"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -15752,6 +15759,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -16131,7 +16139,7 @@ msgstr "ממשק"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "עמודת הגדרת ייבוא פנימי"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18237,7 +18245,7 @@ msgid "Markdown"
 msgstr "שפת Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "סומן כהושלם {eventTime}"
 
@@ -19459,8 +19467,8 @@ msgstr "ערוץ חדש"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "צ'אט חדש"
@@ -20140,7 +20148,7 @@ msgstr "לא נמצא אמוג׳י"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "ללא תאריך סיום"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22398,7 +22406,7 @@ msgstr "באיחור"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "הדביקו מפתח מהגדרות {connectionProviderDisplayName} שלכם. הוא נשמר מוצפן."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23647,7 +23655,7 @@ msgstr "קרא/י את הנחיות המערכת"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "קריאת הגדרת הייבוא הפנימי מעמודת סביבת העבודה החדשה שלה. הופעלה על ידי השדרוג לגרסה 2.59."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -23740,7 +23748,7 @@ msgid "Receive an email containing password update link"
 msgstr ""
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "אחרונים"
 
@@ -27582,7 +27590,7 @@ msgstr "דלג בכל זאת"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "דלג על אירועי לוח שנה ללא משתתף מחוץ לדומיין של סביבת העבודה, אלא אם ייבוא פנימי מופעל."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27592,7 +27600,7 @@ msgstr "דלג על יצירת שדה שם "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "דלג על פגישות פנימיות"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -27702,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "ההשהיה הסתיימה"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "ההשהיה הסתיימה {eventTime}"
 
@@ -27725,7 +27733,7 @@ msgid "Snoozed"
 msgstr "מושהה"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "מושהה עד {eventTime}"
 
@@ -31432,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "ההרשמה בוטלה"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "ביטלת את ההרשמה {eventTime}. הודעות חדשות לא ייכנסו לתיבת הדואר הנכנס שלך אלא אם תוזכר."
 

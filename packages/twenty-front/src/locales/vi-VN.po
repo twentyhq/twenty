@@ -672,7 +672,7 @@ msgstr "{channelName} đã bị ngắt kết nối."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} đã kết nối"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1964,6 +1964,7 @@ msgstr "Các hành động người dùng có thể thực hiện trên đối t
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -3990,7 +3991,7 @@ msgstr "Thao tác ứng dụng"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "Không gian làm việc của chủ sở hữu ứng dụng"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -6136,7 +6137,7 @@ msgid "Chat details"
 msgstr "Chi tiết trò chuyện"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Tên cuộc trò chuyện"
 
@@ -7031,7 +7032,7 @@ msgstr "Dấu phẩy và dấu chấm"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "Bình luận"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7091,7 +7092,7 @@ msgstr "Bồi thường"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "Bồi thường cho sự cố ngừng hoạt động vào tháng Mười"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7430,7 +7431,7 @@ msgstr "Kết nối {appName} với tài khoản của bạn"
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "Kết nối {connectionProviderDisplayName}"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7760,7 +7761,7 @@ msgid "Conversation title"
 msgstr "Tiêu đề cuộc trò chuyện"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Cuộc trò chuyện"
 
@@ -9502,6 +9503,7 @@ msgid "Days between triggers"
 msgstr "Số ngày giữa các kích hoạt"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10377,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Tin nhắn trực tiếp"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Tin nhắn trực tiếp không hỗ trợ tệp đính kèm."
 
@@ -11683,7 +11685,7 @@ msgstr "Kết thúc"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "Kết thúc (Tùy chọn)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11959,6 +11961,11 @@ msgstr "Nhập một tùy chọn trên mỗi dòng"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
 msgstr "Nhập một tùy chọn trên mỗi dòng. Mỗi dòng sẽ trở thành một tùy chọn mới."
+
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+msgstr "Nhập một tùy chọn trên mỗi dòng. Mỗi dòng sẽ trở thành một tùy chọn mới. Các tùy chọn đi kèm với trường sẽ bị vô hiệu hóa khi dòng tương ứng của chúng bị xóa."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -15752,6 +15759,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -16131,7 +16139,7 @@ msgstr "Giao diện"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "Cột cài đặt nhập nội bộ"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18237,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Đã đánh dấu hoàn tất {eventTime}"
 
@@ -19459,8 +19467,8 @@ msgstr "Kênh mới"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Trò chuyện mới"
@@ -20140,7 +20148,7 @@ msgstr "Không tìm thấy biểu tượng cảm xúc"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "Không có ngày kết thúc"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22398,7 +22406,7 @@ msgstr "Quá hạn"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "Dán một khóa từ phần cài đặt {connectionProviderDisplayName} của bạn. Khóa được lưu trữ dưới dạng mã hóa."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23647,7 +23655,7 @@ msgstr "Đọc các lời nhắc hệ thống"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "Đọc cài đặt nhập nội bộ từ cột không gian làm việc mới. Được bật bởi bản nâng cấp 2.59."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -23740,7 +23748,7 @@ msgid "Receive an email containing password update link"
 msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Gần đây"
 
@@ -27582,7 +27590,7 @@ msgstr "Vẫn bỏ qua"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "Bỏ qua các sự kiện lịch không có người tham gia bên ngoài miền không gian làm việc, trừ khi đã bật nhập nội bộ."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27592,7 +27600,7 @@ msgstr "Bỏ qua việc tạo trường Tên "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "Bỏ qua các cuộc họp nội bộ"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -27702,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Đã kết thúc tạm ẩn"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Đã kết thúc tạm ẩn {eventTime}"
 
@@ -27725,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Đã tạm ẩn"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Đã tạm ẩn đến {eventTime}"
 
@@ -31432,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "Đã hủy đăng ký"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Đã hủy đăng ký {eventTime}. Tin nhắn mới sẽ không vào hộp thư đến của bạn trừ khi bạn được nhắc đến."
 
