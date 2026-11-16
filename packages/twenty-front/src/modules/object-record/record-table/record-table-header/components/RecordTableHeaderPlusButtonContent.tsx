@@ -1,7 +1,7 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
 import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
-import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
+import { useCanAddRecordTableLookupColumns } from '@/object-record/record-table/hooks/useCanAddRecordTableLookupColumns';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -55,7 +55,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
     objectMetadataItem,
   });
 
-  const canConfigureColumns = useCanConfigureRecordTableColumns();
+  const canAddLookupColumns = useCanAddRecordTableLookupColumns();
   const { addRecordTableLookupColumn } =
     useAddRecordTableLookupColumn(recordTableId);
 
@@ -68,17 +68,16 @@ export const RecordTableHeaderPlusButtonContent = () => {
     );
 
   // A many-to-one relation stays listed once shown, to reach its lookup columns
-  const canAddLookupColumns = (fieldMetadataItem: FieldMetadataItem) =>
-    canConfigureColumns && isPlainManyToOneRelationField(fieldMetadataItem);
+  const isLookupRelation = (fieldMetadataItem: FieldMetadataItem) =>
+    canAddLookupColumns && isPlainManyToOneRelationField(fieldMetadataItem);
 
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItem) =>
-      !isFieldVisible(fieldMetadataItem) ||
-      canAddLookupColumns(fieldMetadataItem),
+      !isFieldVisible(fieldMetadataItem) || isLookupRelation(fieldMetadataItem),
   );
 
   const lookupRelationFieldMetadataItems =
-    availableFieldMetadataItemsToShow.filter(canAddLookupColumns);
+    availableFieldMetadataItemsToShow.filter(isLookupRelation);
 
   const filteredFieldMetadataItems = availableFieldMetadataItemsToShow.filter(
     (fieldMetadataItem) => {
@@ -115,7 +114,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
         <Dropdown.Section scrollable>
           {isNonEmptyArray(filteredFieldMetadataItems) ? (
             filteredFieldMetadataItems.map((fieldMetadataItem) =>
-              canAddLookupColumns(fieldMetadataItem) ? (
+              isLookupRelation(fieldMetadataItem) ? (
                 <Dropdown.ActionItem
                   key={fieldMetadataItem.id}
                   page={fieldMetadataItem.id}

@@ -5,7 +5,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
 
 // Widget views save their columns by field, so they cannot hold extra columns
-export const useCanConfigureRecordTableColumns = () => {
+export const useCanAddRecordTableLookupColumns = () => {
   const isLookupColumnsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED,
   );
