@@ -135,8 +135,6 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
   }
 };
 
-// Children the rest of the path does not match are skipped, as in JSONPath,
-// so one record missing a key does not discard every other match
 const resolveWildcardChildren = (
   children: unknown[],
   accessors: Accessor[],
