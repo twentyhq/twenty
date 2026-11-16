@@ -85,16 +85,19 @@ setting.
    `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
 3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
    Adding it claims the connection's Microsoft tenant for this workspace, so
-   activities from that tenant route here. Personal connections do not claim a
-   tenant, and a tenant can only be claimed by one workspace.
+   activities from that tenant route here, and links every directory user whose
+   email matches a workspace member. Personal connections do not claim a tenant,
+   and a tenant can only be claimed by one workspace.
 
 The route verifies the Bot Framework token on every activity and ignores
 activities from tenants no workspace has claimed. The bot answers direct
 messages, and channel or group messages that mention it. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
-member matches. Members who can manage roles can remove a link there; an
-account matched on email is linked again on its next message.
+member matches. Members who can manage roles can remove a link there, link a
+directory user by hand, or press **Auto-link by email** to match the whole
+directory again; an account matched on email is linked again on its next
+message or on the next auto-link run.
 
 ## Twenty registration and shared webhook
 

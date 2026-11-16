@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { formatTime as formatCronTime } from '~/utils/format/formatTime';
@@ -84,6 +85,12 @@ export const getHoursDescription = (
       }),
     );
 
+    if (
+      formattedTimes.some((formattedTime) => !isNonEmptyString(formattedTime))
+    ) {
+      return '';
+    }
+
     if (formattedTimes.length === 2) {
       const firstTime = formattedTimes[0];
       const secondTime = formattedTimes[1];
@@ -102,6 +109,11 @@ export const getHoursDescription = (
       use24HourFormat: use24Hour,
       appendUTC: true,
     });
+
+    if (!isNonEmptyString(formattedTime)) {
+      return '';
+    }
+
     return t`at ${formattedTime}`;
   }
 

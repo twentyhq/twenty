@@ -6,5 +6,4 @@ export type AiChatApprovalReviewEmailDraft = {
   bcc: EmailRecipient[];
   subject: string;
   body: string;
-  isCcBccExpanded: boolean;
 };
