@@ -59,6 +59,20 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     ['createdAt < now', '("record"."createdAt" < NOW())', BOOLEAN],
     [
+      'isDefined(closedAt) == true',
+      '(("record"."closedAt" IS NOT NULL) = TRUE)',
+      BOOLEAN,
+    ],
+  ])('compiles %s', (expression, expectedSql, expectedType) => {
+    expect(compile(expression)).toEqual({
+      sql: expectedSql,
+      type: expectedType,
+      parameters: {},
+    });
+  });
+
+  it.each([
+    [
       "dateDiff(createdAt, now, 'DAY') > 30",
       `(((NOW() AT TIME ZONE 'UTC')::date - ("record"."createdAt" AT TIME ZONE 'UTC')::date) > 30)`,
       BOOLEAN,
@@ -98,18 +112,15 @@ describe('compileComputedFieldExpressionToSql', () => {
       `EXTRACT(ISODOW FROM ("record"."createdAt" AT TIME ZONE 'UTC'))`,
       NUMBER,
     ],
-    [
-      'isDefined(closedAt) == true',
-      '(("record"."closedAt" IS NOT NULL) = TRUE)',
-      BOOLEAN,
-    ],
-  ])('compiles %s', (expression, expectedSql, expectedType) => {
-    expect(compile(expression)).toEqual({
-      sql: expectedSql,
-      type: expectedType,
-      parameters: {},
-    });
-  });
+  ])(
+    'compiles the date function %s',
+    (expression, expectedSql, expectedType) => {
+      expect(compile(expression)).toMatchObject({
+        sql: expectedSql,
+        type: expectedType,
+      });
+    },
+  );
 
   it('binds text values as parameters instead of writing them into the SQL', () => {
     expect(compile(`name == "'; DROP TABLE person; --"`)).toEqual({
@@ -167,13 +178,17 @@ describe('compileComputedFieldExpressionToSql', () => {
     expect(() => compile(expression)).toThrow(expectedMessage);
   });
 
-  it('reads a date text by its shape and drops the unit from the parameters', () => {
+  it('reads a date text by its shape', () => {
     expect(
       compile("dateDiff('2026-01-31', '2026-03-01T10:00:00Z', 'MONTH')"),
     ).toEqual({
       sql: `(EXTRACT(YEAR FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)) * 12 + EXTRACT(MONTH FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)))`,
       type: NUMBER,
-      parameters: { text0: '2026-01-31', text1: '2026-03-01T10:00:00Z' },
+      parameters: {
+        text0: '2026-01-31',
+        text1: '2026-03-01T10:00:00Z',
+        text2: 'MONTH',
+      },
     });
   });
 

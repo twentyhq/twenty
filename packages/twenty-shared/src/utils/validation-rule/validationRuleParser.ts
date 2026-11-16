@@ -5,7 +5,9 @@ import { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from '@/constants/Expressio
 
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
+import { computeExpressionDateDifference } from '@/utils/expression-date/computeExpressionDateDifference';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
+import { getValidationRuleNowInUtc } from '@/utils/validation-rule/internal/getValidationRuleNowInUtc';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 
 // An operator enabled here for apps also needs a helper in twenty-sdk's ruleExpression
@@ -96,3 +98,11 @@ validationRuleParser.functions = Object.fromEntries(
     evaluate,
   ]),
 );
+
+// Deprecated and left out of VALIDATION_RULE_FUNCTIONS, so editors and the SDK never offer it: rules saved before dateDiff keep evaluating
+validationRuleParser.functions.daysSince = (date: unknown) =>
+  computeExpressionDateDifference(
+    date,
+    getValidationRuleNowInUtc().toInstant().toString(),
+    'DAY',
+  );

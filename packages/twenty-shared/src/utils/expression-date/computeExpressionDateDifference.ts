@@ -8,7 +8,6 @@ import { truncateTowardZero } from '@/utils/expression-date/truncateTowardZero';
 
 const MILLISECONDS_BY_ELAPSED_UNIT = { MINUTE: 60_000, HOUR: 3_600_000 };
 
-// Minutes and hours are elapsed time; longer units count UTC calendar days and months
 export const computeExpressionDateDifference = (
   from: unknown,
   to: unknown,
@@ -44,10 +43,10 @@ export const computeExpressionDateDifference = (
     case 'MONTH':
     case 'QUARTER':
     case 'YEAR': {
-      const months = countExpressionCalendarMonths(
-        startDateTime.toPlainDate(),
-        endDateTime.toPlainDate(),
-      );
+      const months = countExpressionCalendarMonths({
+        from: startDateTime.toPlainDate(),
+        to: endDateTime.toPlainDate(),
+      });
 
       return truncateTowardZero(
         months / { MONTH: 1, QUARTER: 3, YEAR: 12 }[unit],

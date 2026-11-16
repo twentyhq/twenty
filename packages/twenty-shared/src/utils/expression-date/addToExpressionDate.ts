@@ -10,10 +10,13 @@ import { parseExpressionDate } from '@/utils/expression-date/parseExpressionDate
 import { toExpressionDateTimeInUtc } from '@/utils/expression-date/toExpressionDateTimeInUtc';
 import { truncateTowardZero } from '@/utils/expression-date/truncateTowardZero';
 
-const toDuration = (
-  amount: number,
-  unit: ExpressionDateUnit,
-): Temporal.DurationLike => {
+const toDuration = ({
+  amount,
+  unit,
+}: {
+  amount: number;
+  unit: ExpressionDateUnit;
+}): Temporal.DurationLike => {
   switch (unit) {
     case 'MINUTE':
       return { minutes: amount };
@@ -50,7 +53,7 @@ export const addToExpressionDate = (
     return null;
   }
 
-  const duration = toDuration(truncateTowardZero(amount), unit);
+  const duration = toDuration({ amount: truncateTowardZero(amount), unit });
 
   if (expressionDate.isDateOnly && unit !== 'MINUTE' && unit !== 'HOUR') {
     return formatExpressionDate({

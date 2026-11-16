@@ -4,7 +4,6 @@ import { Temporal } from 'temporal-polyfill';
 import { type ExpressionDate } from '@/types/ExpressionDate';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 
-// A value without time is a calendar day; a value with time is read in UTC
 export const parseExpressionDate = (value: unknown): ExpressionDate | null => {
   if (!isString(value)) {
     return null;

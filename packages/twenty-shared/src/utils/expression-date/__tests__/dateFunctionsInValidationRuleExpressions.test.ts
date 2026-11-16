@@ -64,4 +64,24 @@ describe('date functions in validation rule expressions', () => {
       errorMessage: expect.stringContaining('"DAYS" is not a date unit'),
     });
   });
+
+  it('should keep evaluating a rule saved with the deprecated daysSince', () => {
+    const evaluate = createValidationRuleEvaluator({
+      expression: 'daysSince(closeDate) == 0',
+      fields: FIELDS,
+    });
+
+    expect(
+      evaluate({
+        record: { closeDate: '2026-09-23' },
+        now: '2026-09-23T23:59:59.000Z',
+      }),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate({
+        record: { closeDate: '2026-09-22' },
+        now: '2026-09-23T23:59:59.000Z',
+      }),
+    ).toEqual({ status: 'failed' });
+  });
 });

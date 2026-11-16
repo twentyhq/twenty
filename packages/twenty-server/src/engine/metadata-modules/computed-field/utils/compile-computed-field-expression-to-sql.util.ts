@@ -16,6 +16,8 @@ import {
   getComputedFieldExpressionInstructions,
   getExpressionDateLiteralErrorMessage,
   isDefined,
+  isExpressionDatePart,
+  isExpressionDateUnit,
   parseExpressionDate,
 } from 'twenty-shared/utils';
 
@@ -220,11 +222,15 @@ type CompilationContext = {
 type DateOperand = { sql: string; type: typeof DATE | typeof DATE_TIME };
 
 // A text literal is read the way the shared evaluator reads it: a day, or a date and time with an offset
-const toDateOperand = (
-  operand: ValueOperand,
-  context: CompilationContext,
-  usage: string,
-): DateOperand => {
+const toDateOperand = ({
+  operand,
+  context,
+  usage,
+}: {
+  operand: ValueOperand;
+  context: CompilationContext;
+  usage: string;
+}): DateOperand => {
   if (isDefined(operand.textLiteralParameterName)) {
     const text = context.parameters[operand.textLiteralParameterName];
     const expressionDate = parseExpressionDate(text);
@@ -249,19 +255,21 @@ const toDateOperand = (
 };
 
 // The unit changes the SQL, so it must be written in the expression, not read from a field
-const readLiteralOrThrow = <TLiteral extends string>(
-  operand: ValueOperand,
-  context: CompilationContext,
-  {
-    kind,
-    allowedValues,
-    usage,
-  }: {
-    kind: 'unit' | 'part';
-    allowedValues: readonly TLiteral[];
-    usage: string;
-  },
-): TLiteral => {
+const readLiteralOrThrow = <TLiteral extends string>({
+  operand,
+  context,
+  kind,
+  allowedValues,
+  isAllowedValue,
+  usage,
+}: {
+  operand: ValueOperand;
+  context: CompilationContext;
+  kind: 'unit' | 'part';
+  allowedValues: readonly TLiteral[];
+  isAllowedValue: (value: unknown) => value is TLiteral;
+  usage: string;
+}): TLiteral => {
   if (!isDefined(operand.textLiteralParameterName)) {
     throw new ComputedFieldExpressionException(
       `${usage} needs its ${kind} written as text, such as '${allowedValues[0]}'`,
@@ -270,7 +278,7 @@ const readLiteralOrThrow = <TLiteral extends string>(
 
   const literal = context.parameters[operand.textLiteralParameterName];
 
-  if (!(allowedValues as readonly unknown[]).includes(literal)) {
+  if (!isAllowedValue(literal)) {
     throw new ComputedFieldExpressionException(
       getExpressionDateLiteralErrorMessage({
         value: literal,
@@ -280,9 +288,7 @@ const readLiteralOrThrow = <TLiteral extends string>(
     );
   }
 
-  delete context.parameters[operand.textLiteralParameterName];
-
-  return literal as TLiteral;
+  return literal;
 };
 
 const toUtcDateSql = ({ sql, type }: DateOperand): string =>
@@ -316,14 +322,21 @@ const POSTGRES_DATE_PART: Record<ExpressionDatePart, string> = {
   MINUTE: 'MINUTE',
 };
 
-const readDateUnitOrThrow = (
-  operand: ValueOperand,
-  context: CompilationContext,
-  usage: string,
-): ExpressionDateUnit =>
-  readLiteralOrThrow(operand, context, {
+const readDateUnitOrThrow = ({
+  operand,
+  context,
+  usage,
+}: {
+  operand: ValueOperand;
+  context: CompilationContext;
+  usage: string;
+}): ExpressionDateUnit =>
+  readLiteralOrThrow({
+    operand,
+    context,
     kind: 'unit',
     allowedValues: EXPRESSION_DATE_UNITS,
+    isAllowedValue: isExpressionDateUnit,
     usage,
   });
 
@@ -333,9 +346,9 @@ const compileDateDiff = (
   usage: string,
   context: CompilationContext,
 ): ValueOperand => {
-  const from = toDateOperand(fromOperand, context, usage);
-  const to = toDateOperand(toOperand, context, usage);
-  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+  const from = toDateOperand({ operand: fromOperand, context, usage });
+  const to = toDateOperand({ operand: toOperand, context, usage });
+  const unit = readDateUnitOrThrow({ operand: unitOperand, context, usage });
 
   switch (unit) {
     case 'MINUTE':
@@ -374,8 +387,8 @@ const compileDateAdd = (
   usage: string,
   context: CompilationContext,
 ): ValueOperand => {
-  const date = toDateOperand(dateOperand, context, usage);
-  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+  const date = toDateOperand({ operand: dateOperand, context, usage });
+  const unit = readDateUnitOrThrow({ operand: unitOperand, context, usage });
 
   assertOperandType(amountOperand, [NUMBER], usage);
 
@@ -400,16 +413,21 @@ const compileDateTrunc = (
   usage: string,
   context: CompilationContext,
 ): ValueOperand => {
-  const date = toDateOperand(dateOperand, context, usage);
-  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+  const date = toDateOperand({ operand: dateOperand, context, usage });
+  const unit = readDateUnitOrThrow({ operand: unitOperand, context, usage });
+
+  if (
+    date.type === DATE &&
+    (unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY')
+  ) {
+    return value(date.sql, DATE);
+  }
 
   if (date.type === DATE) {
-    return unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY'
-      ? value(date.sql, DATE)
-      : value(
-          `DATE_TRUNC('${POSTGRES_DATE_UNIT[unit]}', ${date.sql}::timestamp)::date`,
-          DATE,
-        );
+    return value(
+      `DATE_TRUNC('${POSTGRES_DATE_UNIT[unit]}', ${date.sql}::timestamp)::date`,
+      DATE,
+    );
   }
 
   return value(
@@ -423,10 +441,13 @@ const compileDatePart = (
   usage: string,
   context: CompilationContext,
 ): ValueOperand => {
-  const date = toDateOperand(dateOperand, context, usage);
-  const part = readLiteralOrThrow(partOperand, context, {
+  const date = toDateOperand({ operand: dateOperand, context, usage });
+  const part = readLiteralOrThrow({
+    operand: partOperand,
+    context,
     kind: 'part',
     allowedValues: EXPRESSION_DATE_PARTS,
+    isAllowedValue: isExpressionDatePart,
     usage,
   });
 
@@ -752,9 +773,7 @@ const compileInstructions = (
           );
         }
 
-        operands.push(
-          compile(functionArguments, `"${functionName}"`, context),
-        );
+        operands.push(compile(functionArguments, `"${functionName}"`, context));
         break;
       }
       default:

@@ -7,10 +7,13 @@ import { assertExpressionDateUnitOrThrow } from '@/utils/expression-date/assertE
 import { formatExpressionDate } from '@/utils/expression-date/formatExpressionDate';
 import { parseExpressionDate } from '@/utils/expression-date/parseExpressionDate';
 
-const truncatePlainDate = (
-  date: Temporal.PlainDate,
-  unit: Exclude<ExpressionDateUnit, 'MINUTE' | 'HOUR' | 'DAY'>,
-): Temporal.PlainDate => {
+const truncatePlainDate = ({
+  date,
+  unit,
+}: {
+  date: Temporal.PlainDate;
+  unit: Exclude<ExpressionDateUnit, 'MINUTE' | 'HOUR' | 'DAY'>;
+}): Temporal.PlainDate => {
   switch (unit) {
     case 'WEEK':
       return date.subtract({ days: date.dayOfWeek - 1 });
@@ -26,7 +29,6 @@ const truncatePlainDate = (
   }
 };
 
-// Start of the unit in UTC; weeks start on Monday. The result keeps the value's kind
 export const truncateExpressionDate = (
   value: unknown,
   unit: unknown,
@@ -45,7 +47,7 @@ export const truncateExpressionDate = (
         ? expressionDate
         : {
             isDateOnly: true,
-            date: truncatePlainDate(expressionDate.date, unit),
+            date: truncatePlainDate({ date: expressionDate.date, unit }),
           },
     );
   }
@@ -70,10 +72,10 @@ export const truncateExpressionDate = (
     default:
       return formatExpressionDate({
         isDateOnly: false,
-        dateTime: truncatePlainDate(
-          dateTime.toPlainDate(),
+        dateTime: truncatePlainDate({
+          date: dateTime.toPlainDate(),
           unit,
-        ).toZonedDateTime('UTC'),
+        }).toZonedDateTime('UTC'),
       });
   }
 };

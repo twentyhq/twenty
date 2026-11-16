@@ -5,9 +5,18 @@ import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules
 
 type DateFunctionName = 'dateDiff' | 'dateAdd' | 'dateTrunc' | 'datePart';
 
+const EVALUATOR_BY_FUNCTION_NAME: Record<
+  DateFunctionName,
+  (...functionArguments: (string | number)[]) => unknown
+> = {
+  dateDiff: VALIDATION_RULE_FUNCTIONS.dateDiff.evaluate,
+  dateAdd: VALIDATION_RULE_FUNCTIONS.dateAdd.evaluate,
+  dateTrunc: VALIDATION_RULE_FUNCTIONS.dateTrunc.evaluate,
+  datePart: VALIDATION_RULE_FUNCTIONS.datePart.evaluate,
+};
+
 type ParityCase = [DateFunctionName, (string | number)[], string | number];
 
-// Each case runs through the shared evaluator and through Postgres, and both must give the expected value
 const PARITY_CASES: ParityCase[] = [
   [
     'dateDiff',
@@ -126,7 +135,13 @@ const toExpressionLiteral = (argument: string | number) =>
   typeof argument === 'number' ? String(argument) : `'${argument}'`;
 
 // Formats in SQL so the comparison does not depend on how the driver parses dates
-const toComparableSelect = (sql: string, type: string | undefined) => {
+const toComparableSelect = ({
+  sql,
+  type,
+}: {
+  sql: string;
+  type: string | undefined;
+}) => {
   switch (type) {
     case FieldMetadataType.DATE:
       return `to_char(${sql}, 'YYYY-MM-DD')`;
@@ -147,7 +162,7 @@ const evaluateInPostgres = async (expression: string) => {
 
   const [query, values] =
     globalThis.testDataSource.driver.escapeQueryWithParameters(
-      `SELECT ${toComparableSelect(sql, type)} AS "value"`,
+      `SELECT ${toComparableSelect({ sql, type })} AS "value"`,
       parameters,
       {},
     );
@@ -161,11 +176,9 @@ describe('date functions: shared evaluator and Postgres agree', () => {
   it.each(PARITY_CASES)(
     '%s(%j) is %j',
     async (functionName, functionArguments, expected) => {
-      const evaluate = VALIDATION_RULE_FUNCTIONS[functionName].evaluate as (
-        ...evaluateArguments: unknown[]
-      ) => unknown;
-
-      expect(evaluate(...functionArguments)).toBe(expected);
+      expect(
+        EVALUATOR_BY_FUNCTION_NAME[functionName](...functionArguments),
+      ).toBe(expected);
 
       expect(
         await evaluateInPostgres(
