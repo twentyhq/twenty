@@ -24,7 +24,6 @@ const getDefaultPropertyValue = ({
   return isNonEmptyArray(property.enum) ? property.enum[0] : null;
 };
 
-// Optional inputs stay null until the author fills them, so the tool never receives a seeded [] or first enum value.
 export const getDefaultMcpToolInputFromJsonSchema = (
   jsonSchema: InputJsonSchema,
 ): FunctionInput =>
