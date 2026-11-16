@@ -23,15 +23,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
-    metadata: {
-      label: 'Direct messages',
-      description:
-        'Reuse the same conversation when the same two workspace members start a direct message',
-      icon: 'IconMessage',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
       label: 'New REST Metadata API Format',
