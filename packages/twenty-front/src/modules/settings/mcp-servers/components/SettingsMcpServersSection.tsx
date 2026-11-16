@@ -1,15 +1,22 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { SettingsMcpServersTable } from '@/settings/mcp-servers/components/SettingsMcpServersTable';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsMcpServersSection = () => {
   const { t } = useLingui();
@@ -31,14 +38,14 @@ export const SettingsMcpServersSection = () => {
         description={t`Connect remote MCP servers so agents can use their tools.`}
       />
       <SettingsMcpServersTable />
-      <TableFooter>
+      <StyledButtonContainer>
         <NavigationButton
           startIcon={<IconPlus />}
           size="sm"
           to={getSettingsPath(SettingsPath.AiNewMcpServer)}
           variant="outline"
         >{t`Add MCP server`}</NavigationButton>
-      </TableFooter>
+      </StyledButtonContainer>
     </Section.Root>
   );
 };
