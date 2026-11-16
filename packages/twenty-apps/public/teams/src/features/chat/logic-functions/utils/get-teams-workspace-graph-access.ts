@@ -25,8 +25,7 @@ export const getTeamsWorkspaceGraphAccess =
       const connections = await listTeamsConnections();
       const workspaceConnections = connections.filter(
         (candidate) =>
-          candidate.scope === 'WORKSPACE' &&
-          !isDefined(candidate.authFailedAt),
+          candidate.scope === 'WORKSPACE' && !isDefined(candidate.authFailedAt),
       );
 
       if (!isNonEmptyArray(workspaceConnections)) {
