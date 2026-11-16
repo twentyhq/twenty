@@ -42,6 +42,8 @@ import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-executi
 import { buildWorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/direct-execution/utils/build-workspace-schema-builder-context.util';
 import { computeGraphQLDirectExecutionQueryCost } from 'src/engine/api/graphql/direct-execution/utils/compute-graphql-direct-execution-query-cost.util';
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
+import { applyGraphqlVariableDefaults } from 'src/engine/api/graphql/direct-execution/utils/apply-graphql-variable-defaults.util';
+import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
@@ -246,7 +248,10 @@ export class DirectExecutionService {
       this.checkRootResolverLimitsOrThrow(topLevelFields);
 
       const fragmentMap = graphQLBuildFragmentMap(document);
-      const variables = req.body.variables ?? {};
+      const variables = applyGraphqlVariableDefaults(
+        findOperationDefinition(document, req.body.operationName),
+        req.body.variables ?? {},
+      );
       const data: Record<string, unknown> = {};
 
       const {
