@@ -20,7 +20,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
 import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
-import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
+import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
@@ -65,15 +65,15 @@ const StyledDetails = styled.dl`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatThreadDetailsDropdownProps = {
+type InboxThreadDetailsDropdownProps = {
   threadId: string;
   labels?: ComponentProps<typeof AiChatThreadLabelsField>;
 };
 
-export const AiChatThreadDetailsDropdown = ({
+export const InboxThreadDetailsDropdown = ({
   threadId,
   labels,
-}: AiChatThreadDetailsDropdownProps) => {
+}: InboxThreadDetailsDropdownProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
@@ -166,7 +166,7 @@ export const AiChatThreadDetailsDropdown = ({
           aria-label={t`Chat details`}
         >
           <StyledDetails>
-            <AiChatThreadDetailsStatus
+            <InboxThreadDetailsStatus
               threadId={threadId}
               dropdownId={dropdownId}
             />
