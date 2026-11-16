@@ -6,8 +6,11 @@ describe('addLookupTargetsToRecordGqlFields', () => {
     expect(
       addLookupTargetsToRecordGqlFields({
         recordGqlFields: { company: { id: true, name: true }, companyId: true },
-        lookupColumns: [
-          { relationFieldName: 'company', lookupTargetFieldName: 'employees' },
+        lookupTargets: [
+          {
+            relationFieldName: 'company',
+            lookupTargetFieldMetadataItem: { name: 'employees' },
+          },
         ],
       }),
     ).toEqual({
@@ -22,8 +25,11 @@ describe('addLookupTargetsToRecordGqlFields', () => {
     expect(
       addLookupTargetsToRecordGqlFields({
         recordGqlFields,
-        lookupColumns: [
-          { relationFieldName: 'company', lookupTargetFieldName: 'employees' },
+        lookupTargets: [
+          {
+            relationFieldName: 'company',
+            lookupTargetFieldMetadataItem: { name: 'employees' },
+          },
         ],
       }),
     ).toEqual(recordGqlFields);

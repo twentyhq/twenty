@@ -1,16 +1,19 @@
-import { type LookupColumn } from '@/object-record/record-column-lookup/utils/getLookupColumns';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
 export const addLookupTargetsToRecordGqlFields = ({
   recordGqlFields,
-  lookupColumns,
+  lookupTargets,
 }: {
   recordGqlFields: RecordGqlFields;
-  lookupColumns: LookupColumn[];
+  lookupTargets: {
+    relationFieldName: string;
+    lookupTargetFieldMetadataItem: Pick<FieldMetadataItem, 'name'>;
+  }[];
 }) =>
-  lookupColumns.reduce<RecordGqlFields>(
-    (gqlFields, { relationFieldName, lookupTargetFieldName }) => {
+  lookupTargets.reduce<RecordGqlFields>(
+    (gqlFields, { relationFieldName, lookupTargetFieldMetadataItem }) => {
       const relationGqlFields = gqlFields[relationFieldName];
 
       if (!isPlainObject(relationGqlFields)) {
@@ -21,7 +24,7 @@ export const addLookupTargetsToRecordGqlFields = ({
         ...gqlFields,
         [relationFieldName]: {
           ...relationGqlFields,
-          [lookupTargetFieldName]: true,
+          [lookupTargetFieldMetadataItem.name]: true,
         },
       };
     },

@@ -106,8 +106,9 @@ export const RecordTableAggregateFooterCell = ({
   );
 
   // A total over a lookup counts a related record once per row that links to it
-  const isLookupColumn =
-    columnDescriptorByRecordFieldId[viewFieldId]?.isLookupColumn === true;
+  const isLookupColumn = isDefined(
+    columnDescriptorByRecordFieldId[viewFieldId]?.lookupTarget,
+  );
 
   const isFooterReadOnly =
     (useIsRecordTableWidgetAggregateNonInteractive() ??

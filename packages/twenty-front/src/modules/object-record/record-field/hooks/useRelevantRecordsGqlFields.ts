@@ -1,4 +1,3 @@
-import { useRecordIndexLookupColumns } from '@/object-record/record-column-lookup/hooks/useRecordIndexLookupColumns';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -35,11 +34,12 @@ export const useRelevantRecordsGqlFields = ({
     currentRecordFiltersComponentState,
   );
 
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
+  } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const lookupColumns = useRecordIndexLookupColumns();
 
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
@@ -81,7 +81,9 @@ export const useRelevantRecordsGqlFields = ({
       fields: fieldMetadataItemsToUse,
       depth: 1,
     }),
-    lookupColumns,
+    lookupTargets: visibleRecordFields
+      .map(({ id }) => columnDescriptorByRecordFieldId[id]?.lookupTarget)
+      .filter(isDefined),
   });
 
   const coreRecordReferenceFieldsRecordGqlFields =

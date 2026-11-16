@@ -32,7 +32,6 @@ describe('getRecordFieldColumnDescriptor', () => {
       }),
     ).toEqual({
       lookupTarget: undefined,
-      isLookupColumn: false,
       label: companyField.label,
       icon: companyField.icon,
       description: companyField.description,
@@ -50,7 +49,6 @@ describe('getRecordFieldColumnDescriptor', () => {
         isSortable: true,
       }),
     ).toMatchObject({
-      isLookupColumn: true,
       label: `${companyField.label} › ${employeesField.label}`,
       icon: employeesField.icon,
       description: employeesField.description,

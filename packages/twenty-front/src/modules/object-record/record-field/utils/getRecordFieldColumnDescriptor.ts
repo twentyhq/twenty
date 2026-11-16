@@ -21,7 +21,6 @@ export const getRecordFieldColumnDescriptor = ({
 
   return {
     lookupTarget,
-    isLookupColumn,
     label: formatLookupColumnLabel({
       fieldMetadataItem,
       lookupTargetFieldMetadataItem,

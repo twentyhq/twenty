@@ -3,7 +3,6 @@ import { type RecordFieldLookupTarget } from '@/object-record/record-column-look
 
 export type RecordFieldColumnDescriptor = {
   lookupTarget: RecordFieldLookupTarget | undefined;
-  isLookupColumn: boolean;
   label: string;
   icon: FieldMetadataItem['icon'];
   description: FieldMetadataItem['description'];
