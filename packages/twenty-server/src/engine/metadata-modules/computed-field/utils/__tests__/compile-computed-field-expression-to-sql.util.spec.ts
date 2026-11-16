@@ -84,17 +84,17 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     [
       "dateDiff(dueAt, today, 'QUARTER')",
-      `TRUNC((EXTRACT(YEAR FROM AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp)) * 12 + EXTRACT(MONTH FROM AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp))) / 3.0)`,
+      `(SELECT TRUNC((EXTRACT(YEAR FROM "dateFunctionOperands"."age") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."age")) / 3.0) FROM (SELECT AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp) AS "age" OFFSET 0) AS "dateFunctionOperands")`,
       NUMBER,
     ],
     [
       "dateAdd(dueAt, quantity, 'MONTH')",
-      `("record"."dueAt" + (CASE WHEN EXTRACT(EPOCH FROM "record"."dueAt") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(YEAR FROM "record"."dueAt") * 12 + EXTRACT(MONTH FROM "record"."dueAt") - 1 + TRUNC("record"."quantity"::numeric) * 1) BETWEEN 12 AND 119999 THEN TRUNC("record"."quantity"::numeric) END * INTERVAL '1 month'))::date`,
+      `(SELECT ("dateFunctionOperands"."date" + (CASE WHEN EXTRACT(EPOCH FROM "dateFunctionOperands"."date") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(YEAR FROM "dateFunctionOperands"."date") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."date") - 1 + "dateFunctionOperands"."amount" * 1) BETWEEN 12 AND 119999 THEN "dateFunctionOperands"."amount" END * INTERVAL '1 month'))::date FROM (SELECT "record"."dueAt" AS "date", TRUNC("record"."quantity"::numeric) AS "amount" OFFSET 0) AS "dateFunctionOperands")`,
       DATE,
     ],
     [
       "dateAdd(createdAt, 4, 'HOUR')",
-      `((("record"."createdAt" AT TIME ZONE 'UTC') + (CASE WHEN EXTRACT(EPOCH FROM "record"."createdAt") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(EPOCH FROM "record"."createdAt") + TRUNC(4::numeric) * 3600) BETWEEN -62135596800 AND 253402300799.999999 THEN TRUNC(4::numeric) END * INTERVAL '1 hour')) AT TIME ZONE 'UTC')`,
+      `(SELECT ((("dateFunctionOperands"."date" AT TIME ZONE 'UTC') + (CASE WHEN EXTRACT(EPOCH FROM "dateFunctionOperands"."date") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(EPOCH FROM "dateFunctionOperands"."date") + "dateFunctionOperands"."amount" * 3600) BETWEEN -62135596800 AND 253402300799.999999 THEN "dateFunctionOperands"."amount" END * INTERVAL '1 hour')) AT TIME ZONE 'UTC') FROM (SELECT "record"."createdAt" AS "date", TRUNC(4::numeric) AS "amount" OFFSET 0) AS "dateFunctionOperands")`,
       DATE_TIME,
     ],
     [
@@ -161,6 +161,17 @@ describe('compileComputedFieldExpressionToSql', () => {
     );
   });
 
+  it('writes each operand of a nested date function once', () => {
+    const nestedExpression = Array.from({ length: 10 }).reduce<string>(
+      (expression) => `dateAdd(${expression}, 1, 'MONTH')`,
+      'dueAt',
+    );
+
+    expect(
+      compile(nestedExpression).sql.split('"record"."dueAt"'),
+    ).toHaveLength(2);
+  });
+
   it('compares a date and a date and time as UTC days', () => {
     expect(compile("createdAt > '2026-01-01'").sql).toBe(
       `(("record"."createdAt" AT TIME ZONE 'UTC')::date > :text0::date)`,
@@ -224,7 +235,7 @@ describe('compileComputedFieldExpressionToSql', () => {
     expect(
       compile("dateDiff('2026-01-31', '2026-03-01T10:00:00Z', 'MONTH')"),
     ).toEqual({
-      sql: `(EXTRACT(YEAR FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp)) * 12 + EXTRACT(MONTH FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp)))`,
+      sql: `(SELECT (EXTRACT(YEAR FROM "dateFunctionOperands"."age") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."age")) FROM (SELECT AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp) AS "age" OFFSET 0) AS "dateFunctionOperands")`,
       type: NUMBER,
       parameters: {
         text0: '2026-01-31',

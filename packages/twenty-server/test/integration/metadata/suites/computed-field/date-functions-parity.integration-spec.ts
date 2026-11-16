@@ -307,6 +307,29 @@ const COMPARISON_CASES: [string, boolean][] = [
   ['startDate < createdAt', true],
 ];
 
+describe('nested date functions', () => {
+  it('evaluates ten nested dateAdd calls in Postgres as the shared evaluator does', async () => {
+    const expression = Array.from({ length: 10 }).reduce<string>(
+      (nestedExpression) => `dateAdd(${nestedExpression}, 1, 'MONTH')`,
+      "'2026-01-31'",
+    );
+    const { sql, type, parameters } = compileComputedFieldExpressionToSql({
+      expression,
+      resolveField: () => {
+        throw new Error('Only literals are used');
+      },
+    });
+
+    expect(
+      await queryInSessionTimeZone({
+        query: `SELECT ${toComparableSelect({ sql, type })} AS "value"`,
+        parameters,
+        sessionTimeZone: 'UTC',
+      }),
+    ).toBe('2026-11-28');
+  });
+});
+
 describe('comparing a date with a date and time: rules and Postgres agree', () => {
   it.each(COMPARISON_CASES)('%s is %s', async (expression, expected) => {
     expect(

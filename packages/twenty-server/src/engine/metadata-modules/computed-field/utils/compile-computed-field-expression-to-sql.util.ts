@@ -415,6 +415,25 @@ const readDateUnitOrThrow = ({
   });
 
 // Same rules as the shared evaluator: minutes and hours are elapsed time, longer units count UTC calendar days and months
+// Binds each operand once so nested date functions stay linear in size; OFFSET 0 stops Postgres inlining them back
+const withBoundOperands = ({
+  operands,
+  render,
+}: {
+  operands: Record<string, string>;
+  render: (columns: Record<string, string>) => string;
+}): string => {
+  const alias = '"dateFunctionOperands"';
+  const columns = Object.fromEntries(
+    Object.keys(operands).map((name) => [name, `${alias}."${name}"`]),
+  );
+  const selectedOperands = Object.entries(operands)
+    .map(([name, sql]) => `${sql} AS "${name}"`)
+    .join(', ');
+
+  return `(SELECT ${render(columns)} FROM (SELECT ${selectedOperands} OFFSET 0) AS ${alias})`;
+};
+
 const compileDateDiff = (
   [fromOperand, toOperand, unitOperand]: ValueOperand[],
   usage: string,
@@ -441,14 +460,20 @@ const compileDateDiff = (
     case 'MONTH':
     case 'QUARTER':
     case 'YEAR': {
-      // Without the cast AGE resolves to timestamptz, where a midnight DST change in the session time zone loses a month
-      const age = `AGE(${toUtcDateSql(to)}::timestamp, ${toUtcDateSql(from)}::timestamp)`;
-      const months = `(EXTRACT(YEAR FROM ${age}) * 12 + EXTRACT(MONTH FROM ${age}))`;
-
       return value(
-        unit === 'MONTH'
-          ? months
-          : `TRUNC(${months} / ${unit === 'QUARTER' ? 3 : 12}.0)`,
+        withBoundOperands({
+          // Without the cast AGE resolves to timestamptz, where a midnight DST change in the session time zone loses a month
+          operands: {
+            age: `AGE(${toUtcDateSql(to)}::timestamp, ${toUtcDateSql(from)}::timestamp)`,
+          },
+          render: ({ age }) => {
+            const months = `(EXTRACT(YEAR FROM ${age}) * 12 + EXTRACT(MONTH FROM ${age}))`;
+
+            return unit === 'MONTH'
+              ? months
+              : `TRUNC(${months} / ${unit === 'QUARTER' ? 3 : 12}.0)`;
+          },
+        }),
         NUMBER,
       );
     }
@@ -467,25 +492,35 @@ const compileDateAdd = (
 
   assertOperandType(amountOperand, [NUMBER], usage);
 
-  const amount = `TRUNC(${amountOperand.sql}::numeric)`;
-  const epochSeconds = `EXTRACT(EPOCH FROM ${date.sql})`;
-  const isResultSupported =
-    unit === 'MONTH' || unit === 'QUARTER' || unit === 'YEAR'
-      ? `(EXTRACT(YEAR FROM ${toUtcDateSql(date)}) * 12 + EXTRACT(MONTH FROM ${toUtcDateSql(date)}) - 1 + ${amount} * ${MONTHS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_MONTH_INDEX_RANGE}`
-      : `(${epochSeconds} + ${amount} * ${SECONDS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE}`;
+  const type =
+    date.type === DATE && unit !== 'MINUTE' && unit !== 'HOUR'
+      ? DATE
+      : DATE_TIME;
 
-  // An out-of-range date fails the whole read, so the amount is nulled first, as the shared evaluator returns null
-  const supportedAmount = `CASE WHEN ${epochSeconds} BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE} AND ${isResultSupported} THEN ${amount} END`;
-  const interval = `(${supportedAmount} * INTERVAL '${POSTGRES_INTERVAL_BY_DATE_UNIT[unit]}')`;
+  const sql = withBoundOperands({
+    operands: {
+      date: date.sql,
+      amount: `TRUNC(${amountOperand.sql}::numeric)`,
+    },
+    render: (columns) => {
+      const boundDate: DateOperand = { sql: columns.date, type: date.type };
+      const epochSeconds = `EXTRACT(EPOCH FROM ${boundDate.sql})`;
+      const isResultSupported =
+        unit === 'MONTH' || unit === 'QUARTER' || unit === 'YEAR'
+          ? `(EXTRACT(YEAR FROM ${toUtcDateSql(boundDate)}) * 12 + EXTRACT(MONTH FROM ${toUtcDateSql(boundDate)}) - 1 + ${columns.amount} * ${MONTHS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_MONTH_INDEX_RANGE}`
+          : `(${epochSeconds} + ${columns.amount} * ${SECONDS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE}`;
 
-  if (date.type === DATE && unit !== 'MINUTE' && unit !== 'HOUR') {
-    return value(`(${date.sql} + ${interval})::date`, DATE);
-  }
+      // An out-of-range date fails the whole read, so the amount is nulled first, as the shared evaluator returns null
+      const supportedAmount = `CASE WHEN ${epochSeconds} BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE} AND ${isResultSupported} THEN ${columns.amount} END`;
+      const interval = `(${supportedAmount} * INTERVAL '${POSTGRES_INTERVAL_BY_DATE_UNIT[unit]}')`;
 
-  return value(
-    `((${toUtcWallClockSql(date)} + ${interval}) AT TIME ZONE 'UTC')`,
-    DATE_TIME,
-  );
+      return type === DATE
+        ? `(${boundDate.sql} + ${interval})::date`
+        : `((${toUtcWallClockSql(boundDate)} + ${interval}) AT TIME ZONE 'UTC')`;
+    },
+  });
+
+  return value(sql, type);
 };
 
 const compileDateTrunc = (
