@@ -34,8 +34,10 @@ const restrict = async (
   queryBuilder = buildFilteredRelationQueryBuilder(),
 ) =>
   (
-    await queryBuilder.whereInFilteredRelation({
-      computation,
+    await queryBuilder.whereInRecordsPerParent({
+      filter: computation.filter,
+      orderBy: computation.orderBy,
+      limit: computation.limit,
       joinColumnName: 'companyId',
       parentRecordIds: PARENT_RECORD_IDS,
     })
@@ -48,7 +50,7 @@ describe('WorkspaceSelectQueryBuilder filtered relation', () => {
     expect(await restrict(COMPUTATION, queryBuilder)).toBe(
       `SELECT "person"."id" AS "id" FROM ${PERSON_TABLE} AS "person" ` +
         'WHERE (("person"."id" IN (SELECT "member"."id" ' +
-        'FROM unnest(:filteredRelationParentRecordIds::uuid[]) AS "parent"("id") ' +
+        'FROM unnest(:perParentRecordIds::uuid[]) AS "parent"("id") ' +
         `CROSS JOIN LATERAL (SELECT "person_member"."id" AS "id" FROM ${PERSON_TABLE} AS "person_member" ` +
         'WHERE (("person_member"."companyId" = "parent"."id") AND ("person_member"."nameFirstName")) ' +
         'AND "person_member"."deletedAt" IS NULL ' +
@@ -56,7 +58,7 @@ describe('WorkspaceSelectQueryBuilder filtered relation', () => {
         'AND "person"."deletedAt" IS NULL',
     );
     expect(queryBuilder.getParameters()).toEqual({
-      filteredRelationParentRecordIds: PARENT_RECORD_IDS,
+      perParentRecordIds: PARENT_RECORD_IDS,
     });
   });
 
@@ -89,8 +91,8 @@ describe('WorkspaceSelectQueryBuilder filtered relation', () => {
 
     expect(
       (
-        await buildFilteredRelationQueryBuilder().orderByFilteredRelation(
-          computation,
+        await buildFilteredRelationQueryBuilder().orderByExpressions(
+          computation.orderBy,
         )
       ).getQuery(),
     ).toContain(
@@ -100,7 +102,7 @@ describe('WorkspaceSelectQueryBuilder filtered relation', () => {
       (
         await buildFilteredRelationQueryBuilder({
           unreadableExpressions: ['nameLastName'],
-        }).orderByFilteredRelation(computation)
+        }).orderByExpressions(computation.orderBy)
       ).getQuery(),
     ).toContain(
       'ORDER BY ("person"."nameFirstName") ASC NULLS FIRST, "person"."id" ASC',

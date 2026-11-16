@@ -1,8 +1,5 @@
 import { type QueryConfig, types } from 'pg';
-import {
-  type FeatureFlagKey,
-  type FieldMetadataFilteredRelationComputation,
-} from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
@@ -28,6 +25,7 @@ import {
 import { type ComputedColumnSqlContext } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql-context.type';
 import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
 import { type ReadableSql } from 'src/engine/twenty-orm/computed-column/types/readable-sql.type';
+import { type ExpressionOrderBy } from 'src/engine/twenty-orm/query-builder/types/expression-order-by.type';
 import { ORDER_BY_SQL_BY_DIRECTION } from 'src/engine/twenty-orm/query-builder/constants/order-by-sql-by-direction.constant';
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
@@ -355,19 +353,21 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
   }
 
-  // The stored filter, order and limit decide the records of a filtered relation, per parent record.
+  // Keeps, per parent record, the records the filter, order and limit select.
   // Whatever else the statement asks for applies inside them.
-  async whereInFilteredRelation({
-    computation,
+  async whereInRecordsPerParent({
+    filter,
+    orderBy,
+    limit,
     joinColumnName,
     parentRecordIds,
   }: {
-    computation: FieldMetadataFilteredRelationComputation;
+    filter?: string;
+    orderBy?: ExpressionOrderBy[];
+    limit?: number;
     joinColumnName: string;
     parentRecordIds: string[];
   }): Promise<this> {
-    const { filter, limit } = computation;
-
     if (!isDefined(limit)) {
       return isDefined(filter) ? this.andWhereExpression(filter) : this;
     }
@@ -386,25 +386,23 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       await memberQueryBuilder.andWhereExpression(filter);
     }
 
-    await memberQueryBuilder.orderByFilteredRelation(computation);
+    await memberQueryBuilder.orderByExpressions(orderBy);
     await memberQueryBuilder.applyRowLevelPermissions();
 
     // The limit is inlined: a statement has one limit parameter, and it belongs to the outer select
     return this.andWhere(
       `${this.quoteColumn(this.alias, 'id')} IN (` +
-        `SELECT "member"."id" FROM unnest(:filteredRelationParentRecordIds::uuid[]) AS "parent"("id") ` +
+        `SELECT "member"."id" FROM unnest(:perParentRecordIds::uuid[]) AS "parent"("id") ` +
         `CROSS JOIN LATERAL (${memberQueryBuilder.getQuery()} LIMIT ${Number(limit)}) AS "member")`,
       {
         ...memberQueryBuilder.getParameters(),
-        filteredRelationParentRecordIds: parentRecordIds,
+        perParentRecordIds: parentRecordIds,
       },
     );
   }
 
   // A sort its reader cannot read is skipped; the id makes the order, and so a limit, deterministic
-  async orderByFilteredRelation({
-    orderBy = [],
-  }: FieldMetadataFilteredRelationComputation): Promise<this> {
+  async orderByExpressions(orderBy: ExpressionOrderBy[] = []): Promise<this> {
     this.orderByClauses = [];
 
     for (const { expression, direction } of orderBy) {

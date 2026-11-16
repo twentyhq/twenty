@@ -673,8 +673,12 @@ export class ProcessNestedRelationsHelper {
     }
 
     if (isDefined(filteredRelationComputation)) {
-      await queryBuilder.whereInFilteredRelation({
-        computation: filteredRelationComputation,
+      const { filter, orderBy, limit } = filteredRelationComputation;
+
+      await queryBuilder.whereInRecordsPerParent({
+        filter,
+        orderBy,
+        limit,
         joinColumnName: column.replace(/["']/g, ''),
         parentRecordIds: ids,
       });
@@ -706,7 +710,9 @@ export class ProcessNestedRelationsHelper {
     }
 
     if (isDefined(filteredRelationComputation)) {
-      await queryBuilder.orderByFilteredRelation(filteredRelationComputation);
+      await queryBuilder.orderByExpressions(
+        filteredRelationComputation.orderBy,
+      );
     }
   }
 
