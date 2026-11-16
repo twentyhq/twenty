@@ -32,6 +32,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
   },
+  [FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED]: {
+    label: msg`Computed fields`,
+    description: msg`Create formula and rollup fields, whose value is calculated when read, through the API and app manifests.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,

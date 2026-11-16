@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isComputedField, isDefined } from 'twenty-shared/utils';
 
+import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { getComputedFieldEvaluationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-computation.util';
 import {
@@ -36,6 +37,11 @@ export const validateComputedFieldsStillEvaluateCrossEntity = ({
     return validationErrors;
   }
 
+  const computedFieldSchema = buildUniversalComputedFieldSchemaReader({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMapsList: [flatFieldMetadataMaps],
+  });
+
   for (const flatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   )) {
@@ -45,8 +51,7 @@ export const validateComputedFieldsStillEvaluateCrossEntity = ({
 
     const evaluationError = getComputedFieldEvaluationError({
       flatFieldMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMapsList: [flatFieldMetadataMaps],
+      ...computedFieldSchema,
     });
 
     if (!isDefined(evaluationError)) {

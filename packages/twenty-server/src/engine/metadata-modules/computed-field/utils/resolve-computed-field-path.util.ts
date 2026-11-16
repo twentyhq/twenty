@@ -94,6 +94,7 @@ export const resolveComputedFieldPath = <
       ...targetResolution,
       toOneRelationHops: [
         {
+          relationField: field,
           joinColumnName: computeMorphOrRelationFieldJoinColumnName({
             name: fieldName,
           }),

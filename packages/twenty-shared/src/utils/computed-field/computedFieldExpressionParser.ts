@@ -1,5 +1,7 @@
 import { Parser } from 'expr-eval-fork';
 
+import { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from '@/constants/ExpressionParserDisabledMathOperators';
+
 import { COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES } from '@/constants/ComputedFieldExpressionFunctionNames';
 
 // Only parses: a computed field expression is compiled to SQL and evaluated by the database
@@ -23,36 +25,7 @@ export const computedFieldExpressionParser = new Parser({
     round: false,
     trunc: false,
     length: false,
-    power: false,
-    factorial: false,
-    assignment: false,
-    fndef: false,
-    random: false,
-    min: false,
-    max: false,
-    sin: false,
-    cos: false,
-    tan: false,
-    asin: false,
-    acos: false,
-    atan: false,
-    sinh: false,
-    cosh: false,
-    tanh: false,
-    asinh: false,
-    acosh: false,
-    atanh: false,
-    sqrt: false,
-    cbrt: false,
-    log: false,
-    log2: false,
-    ln: false,
-    lg: false,
-    log10: false,
-    expm1: false,
-    log1p: false,
-    exp: false,
-    sign: false,
+    ...EXPRESSION_PARSER_DISABLED_MATH_OPERATORS,
   },
 });
 

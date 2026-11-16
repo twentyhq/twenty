@@ -16,10 +16,15 @@ export const buildUniversalComputedFieldSchemaReader = ({
 }: {
   flatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
   flatFieldMetadataMapsList: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>[];
-}): ComputedFieldSchemaReader<
-  UniversalFlatObjectMetadata,
-  UniversalFlatFieldMetadata
-> => {
+}): {
+  schemaReader: ComputedFieldSchemaReader<
+    UniversalFlatObjectMetadata,
+    UniversalFlatFieldMetadata
+  >;
+  findObject: (
+    objectUniversalIdentifier: string,
+  ) => UniversalFlatObjectMetadata | undefined;
+} => {
   const fieldsByObjectUniversalIdentifier = new Map<
     string,
     UniversalFlatFieldMetadata[]
@@ -53,7 +58,10 @@ export const buildUniversalComputedFieldSchemaReader = ({
   const findObjectFields = (object: UniversalFlatObjectMetadata) =>
     fieldsByObjectUniversalIdentifier.get(object.universalIdentifier) ?? [];
 
-  return {
+  const schemaReader: ComputedFieldSchemaReader<
+    UniversalFlatObjectMetadata,
+    UniversalFlatFieldMetadata
+  > = {
     getObjectName: (object) => object.nameSingular,
     findFieldByName: (object, fieldName) =>
       findObjectFields(object).find((field) => field.name === fieldName),
@@ -73,5 +81,28 @@ export const buildUniversalComputedFieldSchemaReader = ({
             flatEntityMaps: flatObjectMetadataMaps,
           })
         : undefined,
+    findRelationInverseField: ({
+      relationTargetFieldMetadataUniversalIdentifier,
+    }) =>
+      isDefined(relationTargetFieldMetadataUniversalIdentifier)
+        ? flatFieldMetadataMapsList
+            .map((flatFieldMetadataMaps) =>
+              findFlatEntityByUniversalIdentifier({
+                universalIdentifier:
+                  relationTargetFieldMetadataUniversalIdentifier,
+                flatEntityMaps: flatFieldMetadataMaps,
+              }),
+            )
+            .find(isDefined)
+        : undefined,
+  };
+
+  return {
+    schemaReader,
+    findObject: (objectUniversalIdentifier) =>
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: objectUniversalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      }),
   };
 };

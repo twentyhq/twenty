@@ -53,5 +53,7 @@ export const buildOrmComputedFieldSchemaReader = ({
             flatEntityMaps: flatObjectMetadataMaps,
           })
         : undefined,
+    findRelationInverseField: (flatFieldMetadata) =>
+      findFieldById(flatFieldMetadata.relationTargetFieldMetadataId ?? undefined),
   };
 };

@@ -1,88 +1,109 @@
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
 import {
   FIELD_METADATA_ROLLUP_OPERATIONS,
   type FieldMetadataComputation,
   FieldMetadataType,
-  RelationType,
 } from 'twenty-shared/types';
 import {
   getComputedFieldExpressionFieldPaths,
-  isComputedField,
   isDefined,
+  isPlainObject,
 } from 'twenty-shared/utils';
 
 import { COMPUTED_FIELD_SCALAR_TYPES } from 'src/engine/metadata-modules/computed-field/constants/computed-field-scalar-types.constant';
 import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
-import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
+import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
 import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
-import { getComputedFieldExpressionScopes } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-expression-scopes.util';
+import { getComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type.util';
 import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
+import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-type UniversalSchemaReader = ComputedFieldSchemaReader<
+export type UniversalComputedFieldSchemaReader = ComputedFieldSchemaReader<
   UniversalFlatObjectMetadata,
   UniversalFlatFieldMetadata
 >;
 
-const COMPUTATION_KINDS: FieldMetadataComputation['kind'][] = [
-  'FORMULA',
-  'ROLLUP',
-];
+const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 
-const findRelatedObject = ({
-  computation,
-  object,
-  schemaReader,
-}: {
-  computation: Exclude<FieldMetadataComputation, { kind: 'FORMULA' }>;
-  object: UniversalFlatObjectMetadata;
-  schemaReader: UniversalSchemaReader;
-}): UniversalFlatObjectMetadata => {
-  const relationField = schemaReader.findFieldByName(
-    object,
-    computation.relationFieldName,
-  );
+const isOptionalString = (value: unknown): value is string | undefined =>
+  isUndefined(value) || isString(value);
 
-  const relatedObject =
-    isDefined(relationField) &&
-    relationField.type === FieldMetadataType.RELATION &&
-    schemaReader.getRelationType(relationField) === RelationType.ONE_TO_MANY &&
-    !isComputedField(relationField)
-      ? schemaReader.findRelationTargetObject(relationField)
-      : undefined;
-
-  if (!isDefined(relatedObject)) {
-    throw new ComputedFieldExpressionException(
-      `"${computation.relationFieldName}" must be a stored one-to-many relation of ${object.nameSingular}`,
-    );
+// The computation comes from an API input or a manifest: nothing about its shape is known yet
+const isFieldMetadataComputation = (
+  computation: unknown,
+): computation is FieldMetadataComputation => {
+  if (!isPlainObject(computation)) {
+    return false;
   }
 
-  return relatedObject;
+  switch (computation.kind) {
+    case 'FORMULA':
+      return isString(computation.expression);
+    case 'ROLLUP':
+      return (
+        isNonEmptyString(computation.relationFieldName) &&
+        (FIELD_METADATA_ROLLUP_OPERATIONS as readonly unknown[]).includes(
+          computation.operation,
+        ) &&
+        isOptionalString(computation.expression) &&
+        isOptionalString(computation.filter)
+      );
+    default:
+      return false;
+  }
 };
 
-// Compiles every expression, then follows the computed fields it reads to refuse a field that reads itself
+const assertValueFitsType = ({
+  valueType,
+  expectedTypes,
+  subject,
+}: {
+  valueType: ComputedFieldValueType | undefined;
+  expectedTypes: ComputedFieldValueType[];
+  subject: string;
+}): void => {
+  if (isDefined(valueType) && !expectedTypes.includes(valueType)) {
+    throw new ComputedFieldExpressionException(
+      `${subject} is ${valueType.toLowerCase()}, expected ${expectedTypes.join(' or ').toLowerCase()}`,
+    );
+  }
+};
+
+// Any value reads as text, and a date and a date and time convert into each other
+const ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE: Record<
+  ComputedFieldValueType,
+  ComputedFieldValueType[]
+> = {
+  [NUMBER]: [NUMBER],
+  [BOOLEAN]: [BOOLEAN],
+  [DATE]: [DATE, DATE_TIME],
+  [DATE_TIME]: [DATE, DATE_TIME],
+  [TEXT]: [...COMPUTED_FIELD_SCALAR_TYPES],
+};
+
+// Compiles every expression of the field, checks what it returns, then follows the computed fields
+// it reads to refuse a field that ends up reading itself
 const assertComputationCanBeEvaluated = ({
   field,
   schemaReader,
-  flatObjectMetadataMaps,
+  findObject,
   readingFieldUniversalIdentifiers,
 }: {
   field: UniversalFlatFieldMetadata;
-  schemaReader: UniversalSchemaReader;
-  flatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
+  schemaReader: UniversalComputedFieldSchemaReader;
+  findObject: (
+    objectUniversalIdentifier: string,
+  ) => UniversalFlatObjectMetadata | undefined;
   readingFieldUniversalIdentifiers: string[];
 }): void => {
   const { computation } = field;
-  const object = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: field.objectMetadataUniversalIdentifier,
-    flatEntityMaps: flatObjectMetadataMaps,
-  });
+  const object = findObject(field.objectMetadataUniversalIdentifier);
 
   if (!isDefined(computation) || !isDefined(object)) {
     return;
@@ -94,29 +115,27 @@ const assertComputationCanBeEvaluated = ({
     );
   }
 
-  const relatedObject =
-    computation.kind === 'FORMULA'
-      ? undefined
-      : findRelatedObject({ computation, object, schemaReader });
-
-  for (const {
-    expression,
-    isEvaluatedOnRelatedRecord,
-  } of getComputedFieldExpressionScopes(computation)) {
-    const evaluatedObject = isEvaluatedOnRelatedRecord ? relatedObject : object;
-
-    if (!isDefined(evaluatedObject)) {
-      continue;
-    }
-
-    compileComputedFieldExpressionToSql({
+  const compileOn = (
+    evaluatedObject: UniversalFlatObjectMetadata,
+    expression: string,
+  ): ComputedFieldValueType | undefined => {
+    const { type } = compileComputedFieldExpressionToSql({
       expression,
-      resolveFieldPathSql: (path) =>
-        resolveComputedFieldPath({
+      resolveField: (path) => {
+        const { columnName, columnType } = resolveComputedFieldPath({
           path,
           object: evaluatedObject,
           schemaReader,
-        }).columnName,
+        });
+
+        return {
+          sql: columnName,
+          type: getComputedFieldValueType({
+            columnType,
+            readablePath: path.join('.'),
+          }),
+        };
+      },
     });
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {
@@ -127,33 +146,99 @@ const assertComputationCanBeEvaluated = ({
           schemaReader,
         }).field,
         schemaReader,
-        flatObjectMetadataMaps,
+        findObject,
         readingFieldUniversalIdentifiers: [
           ...readingFieldUniversalIdentifiers,
           field.universalIdentifier,
         ],
       });
     }
+
+    return type;
+  };
+
+  const getValueType = (): ComputedFieldValueType | undefined => {
+    if (computation.kind === 'FORMULA') {
+      return compileOn(object, computation.expression);
+    }
+
+    const { relatedObject } = resolveComputedFieldSourceRelation({
+      relationFieldName: computation.relationFieldName,
+      object,
+      schemaReader,
+    });
+
+    if (isDefined(computation.filter)) {
+      assertValueFitsType({
+        valueType: compileOn(relatedObject, computation.filter),
+        expectedTypes: [BOOLEAN],
+        subject: 'The filter',
+      });
+    }
+
+    if (computation.operation === 'COUNT') {
+      if (isDefined(computation.expression)) {
+        throw new ComputedFieldExpressionException(
+          'COUNT counts the related records and takes no expression; use the filter to count some of them',
+        );
+      }
+
+      return NUMBER;
+    }
+
+    if (!isDefined(computation.expression)) {
+      throw new ComputedFieldExpressionException(
+        `${computation.operation} needs the expression to aggregate`,
+      );
+    }
+
+    const aggregatedType = compileOn(relatedObject, computation.expression);
+
+    assertValueFitsType({
+      valueType: aggregatedType,
+      expectedTypes:
+        computation.operation === 'SUM' || computation.operation === 'AVG'
+          ? [NUMBER]
+          : [NUMBER, TEXT, DATE, DATE_TIME],
+      subject: `The expression of ${computation.operation}`,
+    });
+
+    return aggregatedType;
+  };
+
+  const fieldType = COMPUTED_FIELD_SCALAR_TYPES.find(
+    (scalarType) => scalarType === field.type,
+  );
+
+  if (!isDefined(fieldType)) {
+    throw new ComputedFieldExpressionException(
+      `A computed field must be of type ${COMPUTED_FIELD_SCALAR_TYPES.join(', ')}`,
+    );
   }
+
+  assertValueFitsType({
+    valueType: getValueType(),
+    expectedTypes: ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE[fieldType],
+    subject: 'The computed value',
+  });
 };
 
 export const getComputedFieldEvaluationError = ({
   flatFieldMetadata,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMapsList,
+  schemaReader,
+  findObject,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
-  flatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
-  flatFieldMetadataMapsList: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>[];
+  schemaReader: UniversalComputedFieldSchemaReader;
+  findObject: (
+    objectUniversalIdentifier: string,
+  ) => UniversalFlatObjectMetadata | undefined;
 }): string | undefined => {
   try {
     assertComputationCanBeEvaluated({
       field: flatFieldMetadata,
-      schemaReader: buildUniversalComputedFieldSchemaReader({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMapsList,
-      }),
-      flatObjectMetadataMaps,
+      schemaReader,
+      findObject,
       readingFieldUniversalIdentifiers: [],
     });
   } catch (error) {
@@ -167,57 +252,20 @@ export const getComputedFieldEvaluationError = ({
   return undefined;
 };
 
-const getComputationShapeError = (
-  field: UniversalFlatFieldMetadata,
-  computation: FieldMetadataComputation,
-): string | undefined => {
-  if (!COMPUTATION_KINDS.includes(computation.kind)) {
-    return `Unknown computation kind "${String(computation.kind)}"`;
-  }
-
-  if (
-    field.isUnique === true ||
-    field.isSearchable === true ||
-    isDefined(field.defaultValue)
-  ) {
-    return 'A computed field stores nothing: it cannot be unique, searchable or have a default value';
-  }
-
-  if (
-    !(COMPUTED_FIELD_SCALAR_TYPES as FieldMetadataType[]).includes(field.type)
-  ) {
-    return `A ${computation.kind.toLowerCase()} field must be of type ${COMPUTED_FIELD_SCALAR_TYPES.join(', ')}`;
-  }
-
-  if (computation.kind !== 'ROLLUP') {
-    return undefined;
-  }
-
-  if (!FIELD_METADATA_ROLLUP_OPERATIONS.includes(computation.operation)) {
-    return `Unknown rollup operation "${String(computation.operation)}"`;
-  }
-
-  if (computation.operation === 'COUNT') {
-    return isDefined(computation.expression)
-      ? 'COUNT counts the related records and takes no expression; use the filter to count some of them'
-      : undefined;
-  }
-
-  return isDefined(computation.expression)
-    ? undefined
-    : `${computation.operation} needs the expression to aggregate`;
-};
-
 export const validateFlatFieldMetadataComputation = ({
   flatFieldMetadataToValidate,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMapsList,
+  schemaReader,
+  findObject,
+  isComputedFieldsEnabled,
 }: {
   flatFieldMetadataToValidate: UniversalFlatFieldMetadata;
-  flatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
-  flatFieldMetadataMapsList: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>[];
+  schemaReader: UniversalComputedFieldSchemaReader;
+  findObject: (
+    objectUniversalIdentifier: string,
+  ) => UniversalFlatObjectMetadata | undefined;
+  isComputedFieldsEnabled: boolean;
 }): FlatFieldMetadataValidationError[] => {
-  const { computation } = flatFieldMetadataToValidate;
+  const { computation, name } = flatFieldMetadataToValidate;
 
   if (!isDefined(computation)) {
     return [];
@@ -226,25 +274,36 @@ export const validateFlatFieldMetadataComputation = ({
   const buildError = (message: string): FlatFieldMetadataValidationError[] => [
     {
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: `Invalid computation for field "${flatFieldMetadataToValidate.name}": ${message}`,
+      message: `Invalid computation for field "${name}": ${message}`,
       userFriendlyMessage: msg`The computation of this field is invalid`,
       value: computation,
     },
   ];
 
-  const shapeError = getComputationShapeError(
-    flatFieldMetadataToValidate,
-    computation,
-  );
+  if (!isComputedFieldsEnabled) {
+    return buildError('computed fields are not enabled for this workspace');
+  }
 
-  if (isDefined(shapeError)) {
-    return buildError(shapeError);
+  if (!isFieldMetadataComputation(computation)) {
+    return buildError(
+      'it must be a formula with an expression, or a rollup with a relation, an operation and optional expression and filter',
+    );
+  }
+
+  if (
+    flatFieldMetadataToValidate.isUnique === true ||
+    flatFieldMetadataToValidate.isSearchable === true ||
+    isDefined(flatFieldMetadataToValidate.defaultValue)
+  ) {
+    return buildError(
+      'a computed field stores nothing: it cannot be unique, searchable or have a default value',
+    );
   }
 
   const evaluationError = getComputedFieldEvaluationError({
     flatFieldMetadata: flatFieldMetadataToValidate,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMapsList,
+    schemaReader,
+    findObject,
   });
 
   return isDefined(evaluationError) ? buildError(evaluationError) : [];

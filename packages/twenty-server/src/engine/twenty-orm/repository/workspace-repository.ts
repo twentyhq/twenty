@@ -163,7 +163,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.options = options;
   }
 
-  private get recordReadRestrictions(): RecordReadRestrictions {
+  get recordReadRestrictions(): RecordReadRestrictions {
     const { permissionsPrincipals, shouldBypassPermissionChecks } =
       this.options;
 
