@@ -476,8 +476,9 @@ segue i client predefiniti: agisce come la persona che ha innescato l'esecuzione
 la tua applicazione quando nessuno lo ha fatto. Non supera mai il ruolo della tua applicazione, e
 un'applicazione senza un ruolo predefinito non può chiamarla.
 
-Senza `scope`, la chiamata legge e non scrive alcun record. Per permettergli di utilizzare il database
-, passare un `scope`, scritto come permessi di un ruolo:
+Senza `scope`, la chiamata legge e non scrive alcun record. Per consentirgli di utilizzare il
+database, passa un `scope`. Utilizza le proprie proprietà (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`), non il blocco `recordsPermissions` di un ruolo:
 
 ```ts
 const { object } = await ai.generate({

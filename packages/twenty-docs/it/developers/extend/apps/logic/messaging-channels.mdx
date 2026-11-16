@@ -253,7 +253,7 @@ await createMessageChannel({
 
 Il provider di messaggistica deve appartenere alla tua app e utilizzare il provider di connessione dell'account del canale; il relativo provider di connessione non può cambiare dopo la prima sincronizzazione. La modifica della funzione di invio in una versione successiva si applica a ogni canale associato al provider.
 
-Le risposte vengono inviate con la mutation `sendAppChannelMessage`, che accetta il canale, il thread, `text` oppure, per i provider il cui `conversationStyle` è `'email'`, un blocco `email` (`to`, `cc`, `bcc`, `subject`, `body` in rich text, `inReplyTo`), e un `idempotencyKey` (un UUID che il client genera per ogni risposta e riutilizza quando la ritenta), ed esegue la funzione del provider:
+Le risposte vengono inviate con la mutation `sendAppChannelMessage`, che accetta il canale, il thread, il `text` oppure, per i provider il cui `conversationStyle` è `'email'`, un blocco `email` (`to`, `cc`, `bcc`, `subject`, `body` come documento email serializzato, `JSON.stringify` di `{ type: 'doc', attrs: { schemaVersion: 1 }, content: [...] }`, e `inReplyTo`), e un `idempotencyKey` (un UUID che il client genera per ogni risposta e riutilizza quando la ritenta), ed esegue la funzione del provider:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
