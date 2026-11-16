@@ -55,8 +55,7 @@ const PREFERRED_VIEW_OBJECT_NAMES: string[] = [
   StandardObjectNameSingular.Opportunity,
 ];
 
-const getGraphTypeSelectItemId = (graphType: GraphType) =>
-  `chart-${graphType}`;
+const getGraphTypeSelectItemId = (graphType: GraphType) => `chart-${graphType}`;
 
 const getViewLayoutSelectItemId = (
   layoutViewType: RecordTableWidgetLayoutViewType,
@@ -109,7 +108,8 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const candidateObjectMetadataItems = [
     ...PREFERRED_VIEW_OBJECT_NAMES.map((nameSingular) =>
       readableObjectMetadataItems.find(
-        (objectMetadataItem) => objectMetadataItem.nameSingular === nameSingular,
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === nameSingular,
       ),
     ).filter(isDefined),
     ...readableObjectMetadataItems.toSorted((first, second) =>
