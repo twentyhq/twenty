@@ -251,8 +251,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ? OPERATION_TYPE_BY_MUTATION_KIND[mutationKind]
         : 'read',
     );
-    await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    // A mutation's filter is not a read: as with a filter on stored columns, only what it returns is checked
+    if (!isDefined(mutationKind)) {
+      await this.validateQueryIsPermitted(queryBuilder);
+      await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    }
+
     await this.resolveComputedColumns(queryBuilder);
   }
 
