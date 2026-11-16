@@ -1,4 +1,3 @@
-import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
@@ -13,6 +12,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import { setTimeout } from 'timers/promises';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -60,9 +60,9 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
+  type BrowserDependenciesBuildParams,
   type BrowserTranspileParams,
   type BrowserTranspileResult,
-  type BrowserDependenciesBuildParams,
   type TranspileParams,
   type TranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
@@ -630,7 +630,6 @@ export class LambdaToolFunctionsService {
         String(YARN_INSTALL_LAMBDA_MEMORY_MB),
         String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
         String(LAMBDA_EPHEMERAL_STORAGE_MB),
-        // Tenant isolation cannot be turned on for an existing function.
         TenantIsolationMode.PER_TENANT,
       ],
     });
