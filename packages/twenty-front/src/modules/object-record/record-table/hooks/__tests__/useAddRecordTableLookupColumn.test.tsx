@@ -91,6 +91,32 @@ describe('useAddRecordTableLookupColumn', () => {
     });
   });
 
+  it('keeps the lookup column when a view field sync drops it during the save', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [companyColumn]);
+    performViewFieldApiCreateMock.mockImplementation(async () => {
+      store.set(currentRecordFieldsAtom, [companyColumn]);
+
+      return { status: 'successful' };
+    });
+
+    const { result } = renderAddHook(store);
+
+    await act(async () => {
+      await result.current.addRecordTableLookupColumn({
+        relationFieldMetadataItemId: 'company-field',
+        relationTargetFieldMetadataId: 'industry-field',
+      });
+    });
+
+    expect(store.get(currentRecordFieldsAtom)).toEqual([
+      companyColumn,
+      expect.objectContaining({
+        relationTargetFieldMetadataId: 'industry-field',
+      }),
+    ]);
+  });
+
   it('removes the lookup column when the save fails', async () => {
     const store = createStore();
     store.set(currentRecordFieldsAtom, [companyColumn]);

@@ -59,6 +59,15 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
         ],
       });
 
+      // A view field sync during the request can drop the column, from not yet updated metadata
+      if (result.status === 'successful') {
+        store.set(currentRecordFieldsAtom, (recordFields) =>
+          recordFields.some(({ id }) => id === lookupColumn.id)
+            ? recordFields
+            : [...recordFields, lookupColumn],
+        );
+      }
+
       if (result.status === 'failed') {
         store.set(currentRecordFieldsAtom, (recordFields) =>
           recordFields.filter(({ id }) => id !== lookupColumn.id),
