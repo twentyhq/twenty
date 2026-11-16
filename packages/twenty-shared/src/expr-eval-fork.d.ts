@@ -71,6 +71,7 @@ declare module 'expr-eval-fork' {
     constructor(options?: ParserOptions);
     unaryOps: any;
     binaryOps: any;
+    ternaryOps: any;
     functions: any;
     consts: any;
     parse(expression: string): Expression;

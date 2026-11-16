@@ -32,7 +32,7 @@ const personTableShape: WorkspaceTableShape = {
     companyId: buildColumn('companyId'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'name', 'companyId', 'deletedAt'],
+  storedColumnNames: ['id', 'name', 'companyId', 'deletedAt'],
   computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
@@ -162,7 +162,7 @@ const messageShape: WorkspaceTableShape = {
     receivedAt: buildColumn('receivedAt'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'threadId', 'receivedAt', 'deletedAt'],
+  storedColumnNames: ['id', 'threadId', 'receivedAt', 'deletedAt'],
   computedColumnNames: [],
   relationShapeByFieldName: {
     thread: {
@@ -187,7 +187,7 @@ const threadShape: WorkspaceTableShape = {
     subject: buildColumn('subject'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'subject', 'deletedAt'],
+  storedColumnNames: ['id', 'subject', 'deletedAt'],
   computedColumnNames: [],
   relationShapeByFieldName: {
     messages: {

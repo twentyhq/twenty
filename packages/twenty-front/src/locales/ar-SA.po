@@ -5905,6 +5905,11 @@ msgstr "بطاقة"
 msgid "Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin."
 msgstr "الدفع بالبطاقة غير متاح حاليًا. يُرجى التحقق من تهيئة Stripe أو الاتصال بمسؤول مساحة العمل لديك."
 
+#. js-lingui-id: VbL9yf
+#: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
+msgid "Cards grouped by a Select field"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Catalan"
@@ -7019,6 +7024,11 @@ msgstr "المجتمع"
 #: src/utils/title-utils.ts
 msgid "Community - Settings"
 msgstr "المجتمع - الإعدادات"
+
+#. js-lingui-id: SScVmJ
+#: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
+msgid "Compact list"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -9829,6 +9839,8 @@ msgstr "حذف القناة"
 
 #. js-lingui-id: GAohqx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/views/components/ViewFieldsVisibleDropdownSection.tsx
 msgid "Delete column"
 msgstr "حذف العمود"
 
@@ -13448,7 +13460,6 @@ msgid "field"
 msgstr "الحقل"
 
 #. js-lingui-id: AXjA78
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentFilterLabels.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
@@ -13590,7 +13601,6 @@ msgid "Fields Count"
 msgstr "عدد الحقول"
 
 #. js-lingui-id: EI7W0X
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Fields group"
 msgstr "مجموعة الحقول"
@@ -14767,7 +14777,7 @@ msgid "Group by"
 msgstr "تجميع حسب"
 
 #. js-lingui-id: tyyaxS
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Group multiple fields from this record"
 msgstr "تجميع عدة حقول من هذا السجل"
 
@@ -15634,6 +15644,11 @@ msgstr "استيراد رسائل البريد الإلكتروني الجديد
 msgid "Import new events from this account"
 msgstr "استيراد الأحداث الجديدة من هذا الحساب"
 
+#. js-lingui-id: 4Ljmum
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
+msgstr ""
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -15643,6 +15658,11 @@ msgstr "استيراد المجلدات/التسميات المحددة فقط"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "استورد أو أضف تهيئة MCP من إعدادات JetBrains."
+
+#. js-lingui-id: 8zGGat
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Import recurring meetings 90 days ahead"
+msgstr ""
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -18950,11 +18970,6 @@ msgstr "مزيد من الخيارات"
 msgid "More reactions"
 msgstr "المزيد من التفاعلات"
 
-#. js-lingui-id: 2MjaQ8
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
-msgid "More widgets"
-msgstr "المزيد من الأدوات"
-
 #. js-lingui-id: 7D4pqg
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
@@ -21014,7 +21029,6 @@ msgstr "ليس بعد"
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
@@ -24020,6 +24034,11 @@ msgstr "السجلات"
 msgid "Records"
 msgstr "السجلات"
 
+#. js-lingui-id: wgYk8q
+#: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
+msgid "Records by date"
+msgstr ""
+
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
@@ -24173,8 +24192,14 @@ msgstr "مسارات السجلات المرتبطة"
 
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Related records"
 msgstr "السجلات المرتبطة"
+
+#. js-lingui-id: ZwRDRN
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Related Records Widget"
+msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -25190,6 +25215,11 @@ msgstr "أمن على مستوى الصف"
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "rows"
 msgstr "صفوف"
+
+#. js-lingui-id: cXIbmh
+#: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
+msgid "Rows and columns"
+msgstr ""
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -27425,7 +27455,7 @@ msgid "Single edit"
 msgstr "تحرير فردي"
 
 #. js-lingui-id: RGk8YF
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Single field with smart formats"
 msgstr "حقل واحد بتنسيقات ذكية"
 
@@ -27976,7 +28006,6 @@ msgstr "قياسي"
 
 #. js-lingui-id: 9oJdah
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Standard widgets"
 msgstr "عناصر واجهة المستخدم القياسية"
 
@@ -28064,7 +28093,6 @@ msgid "State"
 msgstr "الولاية"
 
 #. js-lingui-id: EPFwS4
-#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Static text shared across all record pages"
 msgstr "نص ثابت مشترك بين جميع صفحات السجلات"
@@ -29878,6 +29906,11 @@ msgstr "لا يمتلك هذا المزود SDK أصليًا بعد — سيتم
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "This provider is built in. Set its API key from its page."
 msgstr "هذا الموفّر مدمج. عيّن مفتاح API الخاص به من صفحته."
+
+#. js-lingui-id: qfpz3J
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+msgid "This record"
+msgstr ""
 
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx

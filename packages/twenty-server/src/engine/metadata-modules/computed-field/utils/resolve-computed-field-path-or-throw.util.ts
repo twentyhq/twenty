@@ -3,9 +3,8 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { ComputedFieldExpressionError, isDefined } from 'twenty-shared/utils';
 
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type ComputedFieldPathResolution } from 'src/engine/metadata-modules/computed-field/types/computed-field-path-resolution.type';
 import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
@@ -34,7 +33,7 @@ export const resolveComputedFieldPathOrThrow = <
   const field = schemaReader.findFieldByName(object, fieldName);
 
   if (!isDefined(field)) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${fieldName}" is not a field of ${schemaReader.getObjectName(object)}`,
     );
   }
@@ -47,13 +46,13 @@ export const resolveComputedFieldPathOrThrow = <
       schemaReader.getRelationType(field) !== RelationType.MANY_TO_ONE ||
       !isDefined(targetObject)
     ) {
-      throw new ComputedFieldExpressionException(
+      throw new ComputedFieldExpressionError(
         `"${fieldName}" links to several records or objects; only a relation to one record can be read`,
       );
     }
 
     if (remainingPath.length === 0) {
-      throw new ComputedFieldExpressionException(
+      throw new ComputedFieldExpressionError(
         `"${readablePath}" is a relation; read one of its fields, such as "${readablePath}.id"`,
       );
     }
@@ -65,7 +64,7 @@ export const resolveComputedFieldPathOrThrow = <
     });
 
     if (targetResolution.toOneRelationHops.length >= MAX_TO_ONE_RELATION_HOPS) {
-      throw new ComputedFieldExpressionException(
+      throw new ComputedFieldExpressionError(
         `"${readablePath}" follows more than ${MAX_TO_ONE_RELATION_HOPS} relations`,
       );
     }
@@ -92,7 +91,7 @@ export const resolveComputedFieldPathOrThrow = <
       ?.properties.find((property) => property.name === subFieldName);
 
     if (!isDefined(compositeProperty) || pathAfterSubField.length > 0) {
-      throw new ComputedFieldExpressionException(
+      throw new ComputedFieldExpressionError(
         `"${readablePath}" must name one sub-field of "${fieldName}"`,
       );
     }
@@ -106,7 +105,7 @@ export const resolveComputedFieldPathOrThrow = <
   }
 
   if (remainingPath.length > 0) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${readablePath}" reads past the field "${fieldName}"`,
     );
   }

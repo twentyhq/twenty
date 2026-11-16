@@ -60,6 +60,13 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
       kind: 'restore',
     });
 
+    await this.loadComputedFieldsHelper.loadMissingComputedFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      records: restoredRecords,
+      selectedFields: args.selectedFieldsResult.select,
+    });
+
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,

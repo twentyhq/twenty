@@ -18,6 +18,7 @@ import {
   type FieldMetadataComputation,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -755,7 +756,7 @@ describe('Computed fields (e2e)', () => {
           kind: 'FORMULA',
           expression: 'invalidComputedField + 1',
         }),
-      ).toContain('is not a field of rollupProject');
+      ).toContain('ends up reading itself');
     });
 
     it('rejects turning a stored field into a computed one', async () => {
@@ -1048,7 +1049,13 @@ describe('Computed fields (e2e)', () => {
       const findFieldId = (
         fields: { node: { id: string; name: string } }[],
         name: string,
-      ) => fields.find(({ node }) => node.name === name)?.node.id ?? '';
+      ) => {
+        const field = fields.find(({ node }) => node.name === name);
+
+        assertIsDefinedOrThrow(field);
+
+        return field.node.id;
+      };
 
       const nextDueAt = {
         objectMetadataId: projectObjectMetadataId,
@@ -1088,7 +1095,7 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
-    it('follows a rename while the feature flag is off, but refuses a new expression', async () => {
+    it('follows a rename and takes a new expression while the feature flag is off, but refuses a new computed field', async () => {
       const {
         data: {
           createOneField: { id: discountFieldId },
@@ -1139,14 +1146,26 @@ describe('Computed fields (e2e)', () => {
           'rebate',
         ]);
 
-        const { errors } = await updateOneFieldMetadata({
-          expectToFail: true,
+        await updateOneFieldMetadata({
+          expectToFail: false,
           input: {
             idToUpdate: discountedBudgetFieldId,
             updatePayload: {
               computation: { kind: 'FORMULA', expression: 'budget - 1' },
             },
           },
+        });
+
+        expect((await findComputation(discountedBudget)).expression).toBe(
+          'budget - 1',
+        );
+
+        const { errors } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name: 'halfBudget',
+          type: FieldMetadataType.NUMBER,
+          computation: { kind: 'FORMULA', expression: 'budget / 2' },
+          expectToFail: true,
         });
 
         expect(JSON.stringify(errors)).toContain(

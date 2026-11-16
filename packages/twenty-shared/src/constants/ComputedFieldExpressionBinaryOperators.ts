@@ -1,0 +1,17 @@
+export const COMPUTED_FIELD_EXPRESSION_BINARY_OPERATORS = [
+  '+',
+  '-',
+  '*',
+  '/',
+  '%',
+  '==',
+  '!=',
+  '<',
+  '<=',
+  '>',
+  '>=',
+  'and',
+  'or',
+  '||',
+  'in',
+] as const;

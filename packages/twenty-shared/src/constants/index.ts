@@ -17,9 +17,14 @@ export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapEleme
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
+export { COMPUTED_FIELD_EXPRESSION_BINARY_OPERATORS } from './ComputedFieldExpressionBinaryOperators';
 export { COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES } from './ComputedFieldExpressionFunctionNames';
+export { COMPUTED_FIELD_EXPRESSION_FUNCTIONS } from './ComputedFieldExpressionFunctions';
 export { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from './ComputedFieldExpressionMaxLength';
+export { COMPUTED_FIELD_EXPRESSION_ORDERED_VALUE_TYPES } from './ComputedFieldExpressionOrderedValueTypes';
+export { COMPUTED_FIELD_EXPRESSION_UNARY_OPERATORS } from './ComputedFieldExpressionUnaryOperators';
 export { COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES } from './ComputedFieldExpressionVariableNames';
+export { COMPUTED_FIELD_VALUE_TYPES } from './ComputedFieldValueTypes';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';
 export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';
 export { CSV_INJECTION_PREVENTION_ZWJ } from './CsvInjectionPreventionZwj';
