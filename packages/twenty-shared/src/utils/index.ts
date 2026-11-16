@@ -85,6 +85,7 @@ export { countExpressionCalendarMonths } from './expression-date/countExpression
 export { formatExpressionDate } from './expression-date/formatExpressionDate';
 export { getExpressionDateLiteralErrorMessage } from './expression-date/getExpressionDateLiteralErrorMessage';
 export { getExpressionDatePart } from './expression-date/getExpressionDatePart';
+export { isExpressionDateInSupportedRange } from './expression-date/isExpressionDateInSupportedRange';
 export { isExpressionDatePart } from './expression-date/isExpressionDatePart';
 export { isExpressionDateUnit } from './expression-date/isExpressionDateUnit';
 export { parseExpressionDate } from './expression-date/parseExpressionDate';

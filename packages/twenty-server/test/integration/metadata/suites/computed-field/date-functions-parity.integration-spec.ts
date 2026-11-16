@@ -1,5 +1,6 @@
 import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { evaluateValidationRuleExpression } from 'twenty-shared/utils';
 
 import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
 
@@ -15,7 +16,11 @@ const EVALUATOR_BY_FUNCTION_NAME: Record<
   datePart: VALIDATION_RULE_FUNCTIONS.datePart.evaluate,
 };
 
-type ParityCase = [DateFunctionName, (string | number)[], string | number];
+type ParityCase = [
+  DateFunctionName,
+  (string | number)[],
+  string | number | null,
+];
 
 const PARITY_CASES: ParityCase[] = [
   [
@@ -117,6 +122,14 @@ const PARITY_CASES: ParityCase[] = [
     ['2026-01-01T00:00:00.000Z', 3000000000, 'MINUTE'],
     '7729-12-22T08:00:00.000Z',
   ],
+  ['dateAdd', ['2026-01-01', 1000000000000, 'DAY'], null],
+  ['dateAdd', ['2026-01-01T00:00:00.000Z', 1000000000000, 'DAY'], null],
+  ['dateAdd', ['2026-01-01', 300000, 'YEAR'], null],
+  ['dateAdd', ['9999-12-31', 1, 'DAY'], null],
+  ['dateAdd', ['9999-12-31', 0, 'DAY'], '9999-12-31'],
+  ['dateAdd', ['9998-12-31', 1, 'YEAR'], '9999-12-31'],
+  ['dateAdd', ['9999-12-01', 1, 'MONTH'], null],
+  ['dateAdd', ['0001-01-01T00:00:00.000Z', -1, 'MINUTE'], null],
   ['dateTrunc', ['2026-09-27', 'WEEK'], '2026-09-21'],
   ['dateTrunc', ['2026-09-23', 'QUARTER'], '2026-07-01'],
   [
@@ -159,6 +172,38 @@ const toComparableSelect = ({
   }
 };
 
+const queryInSessionTimeZone = async ({
+  query,
+  parameters,
+  sessionTimeZone,
+}: {
+  query: string;
+  parameters: Record<string, unknown>;
+  sessionTimeZone: string;
+}) => {
+  const [escapedQuery, values] =
+    globalThis.testDataSource.driver.escapeQueryWithParameters(
+      query,
+      parameters,
+      {},
+    );
+  const queryRunner = globalThis.testDataSource.createQueryRunner();
+
+  await queryRunner.connect();
+
+  try {
+    await queryRunner.startTransaction();
+    await queryRunner.query(`SET LOCAL TIME ZONE '${sessionTimeZone}'`);
+
+    const [row] = await queryRunner.query(escapedQuery, values);
+
+    return row.value;
+  } finally {
+    await queryRunner.rollbackTransaction();
+    await queryRunner.release();
+  }
+};
+
 const evaluateInPostgres = async ({
   expression,
   sessionTimeZone,
@@ -173,28 +218,11 @@ const evaluateInPostgres = async ({
     },
   });
 
-  const [query, values] =
-    globalThis.testDataSource.driver.escapeQueryWithParameters(
-      `SELECT ${toComparableSelect({ sql, type })} AS "value"`,
-      parameters,
-      {},
-    );
-
-  const queryRunner = globalThis.testDataSource.createQueryRunner();
-
-  await queryRunner.connect();
-
-  try {
-    await queryRunner.startTransaction();
-    await queryRunner.query(`SET LOCAL TIME ZONE '${sessionTimeZone}'`);
-
-    const [row] = await queryRunner.query(query, values);
-
-    return row.value;
-  } finally {
-    await queryRunner.rollbackTransaction();
-    await queryRunner.release();
-  }
+  return queryInSessionTimeZone({
+    query: `SELECT ${toComparableSelect({ sql, type })} AS "value"`,
+    parameters,
+    sessionTimeZone,
+  });
 };
 
 // America/Santiago starts daylight saving at midnight (on 2026-09-06), so local midnights are skipped
@@ -218,4 +246,97 @@ describe('date functions: shared evaluator and Postgres agree', () => {
       }
     },
   );
+});
+
+describe('dateAdd with an amount read from a column', () => {
+  it('gives null for the out-of-range row instead of failing the whole read', async () => {
+    const { sql, type } = compileComputedFieldExpressionToSql({
+      expression: "dateAdd(startDate, durationDays, 'DAY')",
+      resolveField: ([fieldName]) => ({
+        sql: `"record"."${fieldName}"`,
+        type:
+          fieldName === 'startDate'
+            ? FieldMetadataType.DATE
+            : FieldMetadataType.NUMBER,
+      }),
+    });
+
+    const rows = await globalThis.testDataSource.query(
+      `SELECT ${toComparableSelect({ sql, type })} AS "value" FROM (VALUES ('2026-01-01'::date, 1e12::float8), ('2026-01-01'::date, 30::float8)) AS "record"("startDate", "durationDays")`,
+    );
+
+    expect(rows.map((row: { value: string | null }) => row.value)).toEqual([
+      null,
+      '2026-01-31',
+    ]);
+  });
+});
+
+const COMPARISON_RECORD = {
+  closeDate: '2026-10-01',
+  startDate: '2026-09-01',
+  createdAt: '2026-09-23T10:00:00.000Z',
+};
+
+const COMPARISON_FIELDS = [
+  {
+    name: 'closeDate',
+    type: FieldMetadataType.DATE,
+    universalIdentifier: 'close-date',
+  },
+  {
+    name: 'startDate',
+    type: FieldMetadataType.DATE,
+    universalIdentifier: 'start-date',
+  },
+  {
+    name: 'createdAt',
+    type: FieldMetadataType.DATE_TIME,
+    universalIdentifier: 'created-at',
+  },
+];
+
+const COMPARISON_CASES: [string, boolean][] = [
+  ["closeDate >= dateAdd(createdAt, 8, 'DAY')", true],
+  ["closeDate > dateAdd(createdAt, 8, 'DAY')", false],
+  ["startDate == dateTrunc(createdAt, 'MONTH')", true],
+  ["startDate != dateTrunc(createdAt, 'MONTH')", false],
+  ["createdAt > '2026-09-23'", false],
+  ["createdAt >= '2026-09-23'", true],
+  ["createdAt == '2026-09-23'", true],
+  ['startDate < createdAt', true],
+];
+
+describe('comparing a date with a date and time: rules and Postgres agree', () => {
+  it.each(COMPARISON_CASES)('%s is %s', async (expression, expected) => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression,
+        record: COMPARISON_RECORD,
+        fields: COMPARISON_FIELDS,
+        now: '2026-09-23T12:00:00.000Z',
+      }),
+    ).toEqual({ status: expected ? 'passed' : 'failed' });
+
+    const { sql, parameters } = compileComputedFieldExpressionToSql({
+      expression,
+      resolveField: ([fieldName]) => ({
+        sql: `"record"."${fieldName}"`,
+        type:
+          fieldName === 'createdAt'
+            ? FieldMetadataType.DATE_TIME
+            : FieldMetadataType.DATE,
+      }),
+    });
+
+    for (const sessionTimeZone of ['UTC', 'America/New_York']) {
+      expect(
+        await queryInSessionTimeZone({
+          query: `SELECT ${sql} AS "value" FROM (VALUES ('${COMPARISON_RECORD.closeDate}'::date, '${COMPARISON_RECORD.startDate}'::date, '${COMPARISON_RECORD.createdAt}'::timestamptz)) AS "record"("closeDate", "startDate", "createdAt")`,
+          parameters,
+          sessionTimeZone,
+        }),
+      ).toBe(expected);
+    }
+  });
 });

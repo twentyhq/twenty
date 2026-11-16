@@ -1,4 +1,3 @@
-import { isValid, parseISO } from 'date-fns';
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import {
   COMPUTED_FIELD_EXPRESSION_MAX_LENGTH,
@@ -16,6 +15,7 @@ import {
   assertUnreachable,
   getComputedFieldExpressionInstructions,
   formatExpressionDate,
+  isExpressionDateInSupportedRange,
   getExpressionDateLiteralErrorMessage,
   isDefined,
   isExpressionDatePart,
@@ -34,10 +34,7 @@ type ValueOperand = {
   sql: string;
   type: ComputedFieldValueType | undefined;
   textLiteralParameterName?: string;
-  textLiteral?: string;
 };
-
-const ISO_DATE_LITERAL = /^\d{4}-\d{2}-\d{2}([T ].+)?$/;
 
 type Operand =
   | ValueOperand
@@ -47,8 +44,6 @@ type Operand =
 const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 
 const DATE_TYPES: ComputedFieldValueType[] = [DATE, DATE_TIME];
-
-const DATE_SQL_TYPE = { [DATE]: 'date', [DATE_TIME]: 'timestamptz' };
 
 const VARIABLE_BY_NAME: Record<string, ValueOperand> = {
   now: { kind: 'value', sql: 'NOW()', type: DATE_TIME },
@@ -77,50 +72,57 @@ const assertOperandType = (
   }
 };
 
-// Brings operands to one type: a text literal next to a date is read as a date, and a date compares with a date and time
-const unifyOperands = (
-  operands: ValueOperand[],
-  usage: string,
-): { sqls: string[]; type: ComputedFieldValueType | undefined } => {
-  const type =
+// A text literal next to a date is read as a date; a comparison reads a date and a date and time as UTC days, as rules do
+const unifyOperands = ({
+  operands,
+  usage,
+  context,
+  isComparison = false,
+}: {
+  operands: ValueOperand[];
+  usage: string;
+  context: Pick<CompilationContext, 'parameters'>;
+  isComparison?: boolean;
+}): { sqls: string[]; type: ComputedFieldValueType | undefined } => {
+  const fieldType =
     operands.find(
       (operand) =>
         isDefined(operand.type) && !isDefined(operand.textLiteralParameterName),
     )?.type ?? operands.find((operand) => isDefined(operand.type))?.type;
 
-  const sqls = operands.map((operand) => {
-    if (
-      isDefined(operand.textLiteralParameterName) &&
-      (type === DATE || type === DATE_TIME)
-    ) {
-      // Postgres would fail the cast on every read, so a text that is not a date is refused when saved
+  if (fieldType !== DATE && fieldType !== DATE_TIME) {
+    const sqls = operands.map((operand) => {
       if (
-        !ISO_DATE_LITERAL.test(operand.textLiteral ?? '') ||
-        !isValid(parseISO(operand.textLiteral ?? ''))
+        isDefined(fieldType) &&
+        isDefined(operand.type) &&
+        operand.type !== fieldType
       ) {
         throw new ComputedFieldExpressionException(
-          `${usage} compares a date with '${operand.textLiteral}', which is not a date such as '2030-01-31'`,
+          `${usage} cannot combine ${fieldType.toLowerCase()} and ${operand.type.toLowerCase()}`,
         );
       }
 
-      return `:${operand.textLiteralParameterName}::${DATE_SQL_TYPE[type]}`;
-    }
+      return operand.sql;
+    });
 
-    if (
-      isDefined(type) &&
-      isDefined(operand.type) &&
-      operand.type !== type &&
-      !(DATE_TYPES.includes(type) && DATE_TYPES.includes(operand.type))
-    ) {
-      throw new ComputedFieldExpressionException(
-        `${usage} cannot combine ${type.toLowerCase()} and ${operand.type.toLowerCase()}`,
-      );
-    }
+    return { sqls, type: fieldType };
+  }
 
-    return operand.sql;
-  });
+  const dateOperands = operands.map((operand) =>
+    toDateOperand({ operand, context, usage }),
+  );
 
-  return { sqls, type };
+  const type =
+    isComparison && dateOperands.some((operand) => operand.type === DATE)
+      ? DATE
+      : fieldType;
+
+  return {
+    sqls: dateOperands.map((operand) =>
+      type === DATE ? toUtcDateSql(operand) : toInstantSql(operand),
+    ),
+    type,
+  };
 };
 
 const compileArithmetic =
@@ -134,8 +136,18 @@ const compileArithmetic =
 
 const compileComparison =
   (sqlOperator: string, comparableTypes?: ComputedFieldValueType[]) =>
-  (left: ValueOperand, right: ValueOperand, operator: string) => {
-    const { sqls, type } = unifyOperands([left, right], `"${operator}"`);
+  (
+    left: ValueOperand,
+    right: ValueOperand,
+    operator: string,
+    context: CompilationContext,
+  ) => {
+    const { sqls, type } = unifyOperands({
+      operands: [left, right],
+      usage: `"${operator}"`,
+      context,
+      isComparison: true,
+    });
 
     if (isDefined(comparableTypes) && isDefined(type)) {
       assertOperandType(value('', type), comparableTypes, `"${operator}"`);
@@ -157,7 +169,12 @@ const ORDERED_TYPES: ComputedFieldValueType[] = [NUMBER, TEXT, DATE, DATE_TIME];
 
 const BINARY_OPERATORS: Record<
   string,
-  (left: ValueOperand, right: ValueOperand, operator: string) => ValueOperand
+  (
+    left: ValueOperand,
+    right: ValueOperand,
+    operator: string,
+    context: CompilationContext,
+  ) => ValueOperand
 > = {
   '+': compileArithmetic((left, right) => `(${left} + ${right})`),
   '-': compileArithmetic((left, right) => `(${left} - ${right})`),
@@ -185,10 +202,15 @@ const BINARY_OPERATORS: Record<
 const compileCondition = (
   [condition, whenTrue, whenFalse]: ValueOperand[],
   usage: string,
+  context: CompilationContext,
 ): ValueOperand => {
   assertOperandType(condition, [BOOLEAN], `The condition of ${usage}`);
 
-  const { sqls, type } = unifyOperands([whenTrue, whenFalse], usage);
+  const { sqls, type } = unifyOperands({
+    operands: [whenTrue, whenFalse],
+    usage,
+    context,
+  });
 
   return value(
     `(CASE WHEN ${condition.sql} THEN ${sqls[0]} ELSE ${sqls[1]} END)`,
@@ -198,8 +220,16 @@ const compileCondition = (
 
 const compileSameTypeFunction =
   (sqlFunction: string, allowedTypes?: ComputedFieldValueType[]) =>
-  (functionArguments: ValueOperand[], usage: string) => {
-    const { sqls, type } = unifyOperands(functionArguments, usage);
+  (
+    functionArguments: ValueOperand[],
+    usage: string,
+    context: CompilationContext,
+  ) => {
+    const { sqls, type } = unifyOperands({
+      operands: functionArguments,
+      usage,
+      context,
+    });
 
     if (isDefined(allowedTypes) && isDefined(type)) {
       assertOperandType(value('', type), allowedTypes, usage);
@@ -250,9 +280,12 @@ const toDateOperand = ({
     const text = context.parameters[operand.textLiteralParameterName];
     const expressionDate = parseExpressionDate(text);
 
-    if (!isDefined(expressionDate)) {
+    if (
+      !isDefined(expressionDate) ||
+      !isExpressionDateInSupportedRange(expressionDate)
+    ) {
       throw new ComputedFieldExpressionException(
-        `${usage} cannot read "${String(text)}" as a date`,
+        `${usage} cannot read "${String(text)}" as a date such as '2030-01-31'`,
       );
     }
 
@@ -319,6 +352,18 @@ const toInstantSql = ({ sql, type }: DateOperand): string =>
 // Wall-clock time in UTC, so interval arithmetic and truncation ignore the session time zone
 const toUtcWallClockSql = ({ sql, type }: DateOperand): string =>
   type === DATE ? `${sql}::timestamp` : `(${sql} AT TIME ZONE 'UTC')`;
+
+// Years 1 to 9999, as isExpressionDateInSupportedRange: from 0001-01-01T00:00:00Z to the last microsecond of 9999
+const SUPPORTED_EPOCH_SECONDS_RANGE = '-62135596800 AND 253402300799.999999';
+const SUPPORTED_MONTH_INDEX_RANGE = '12 AND 119999';
+
+const SECONDS_BY_DATE_UNIT = {
+  MINUTE: 60,
+  HOUR: 3600,
+  DAY: 86400,
+  WEEK: 604800,
+};
+const MONTHS_BY_DATE_UNIT = { MONTH: 1, QUARTER: 3, YEAR: 12 };
 
 const POSTGRES_DATE_UNIT: Record<ExpressionDateUnit, string> = {
   MINUTE: 'minute',
@@ -422,8 +467,16 @@ const compileDateAdd = (
 
   assertOperandType(amountOperand, [NUMBER], usage);
 
-  // Multiplying an interval, rather than make_interval, takes amounts beyond the 32-bit integer range
-  const interval = `(TRUNC(${amountOperand.sql}) * INTERVAL '${POSTGRES_INTERVAL_BY_DATE_UNIT[unit]}')`;
+  const amount = `TRUNC(${amountOperand.sql}::numeric)`;
+  const epochSeconds = `EXTRACT(EPOCH FROM ${date.sql})`;
+  const isResultSupported =
+    unit === 'MONTH' || unit === 'QUARTER' || unit === 'YEAR'
+      ? `(EXTRACT(YEAR FROM ${toUtcDateSql(date)}) * 12 + EXTRACT(MONTH FROM ${toUtcDateSql(date)}) - 1 + ${amount} * ${MONTHS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_MONTH_INDEX_RANGE}`
+      : `(${epochSeconds} + ${amount} * ${SECONDS_BY_DATE_UNIT[unit]}) BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE}`;
+
+  // An out-of-range date fails the whole read, so the amount is nulled first, as the shared evaluator returns null
+  const supportedAmount = `CASE WHEN ${epochSeconds} BETWEEN ${SUPPORTED_EPOCH_SECONDS_RANGE} AND ${isResultSupported} THEN ${amount} END`;
+  const interval = `(${supportedAmount} * INTERVAL '${POSTGRES_INTERVAL_BY_DATE_UNIT[unit]}')`;
 
   if (date.type === DATE && unit !== 'MINUTE' && unit !== 'HOUR') {
     return value(`(${date.sql} + ${interval})::date`, DATE);
@@ -619,7 +672,6 @@ const compileLiteral = (
     return {
       ...value(`:${textLiteralParameterName}::text`, TEXT),
       textLiteralParameterName,
-      textLiteral: literal,
     };
   }
 
@@ -748,7 +800,12 @@ const compileInstructions = (
             );
           }
 
-          const { sqls } = unifyOperands([left, ...right.items], '"in"');
+          const { sqls } = unifyOperands({
+            operands: [left, ...right.items],
+            usage: '"in"',
+            context,
+            isComparison: true,
+          });
 
           operands.push(
             value(`(${sqls[0]} IN (${sqls.slice(1).join(', ')}))`, BOOLEAN),
@@ -764,7 +821,9 @@ const compileInstructions = (
           );
         }
 
-        operands.push(compileBinaryOperator(left, toValue(right), name));
+        operands.push(
+          compileBinaryOperator(left, toValue(right), name, context),
+        );
         break;
       }
       case 'IOP3': {
@@ -774,7 +833,7 @@ const compileInstructions = (
           );
         }
 
-        operands.push(compileCondition(popValues(3), '"? :"'));
+        operands.push(compileCondition(popValues(3), '"? :"', context));
         break;
       }
       case 'IFUNCALL': {

@@ -77,6 +77,16 @@ const compareDefinedValues =
       getComparableValue({ value: right, otherValue: left }),
     );
 
+// A date compared with a date and time compares UTC days, as computed fields do
+const areEqual = (left: unknown, right: unknown) =>
+  isString(left) && isString(right)
+    ? getComparableValue({ value: left, otherValue: right }) ===
+      getComparableValue({ value: right, otherValue: left })
+    : left === right;
+
+validationRuleParser.binaryOps['=='] = areEqual;
+validationRuleParser.binaryOps['!='] = (left: unknown, right: unknown) =>
+  !areEqual(left, right);
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
   (left, right) => left < right,
 );

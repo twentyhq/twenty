@@ -89,12 +89,12 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     [
       "dateAdd(dueAt, quantity, 'MONTH')",
-      `("record"."dueAt" + (TRUNC("record"."quantity") * INTERVAL '1 month'))::date`,
+      `("record"."dueAt" + (CASE WHEN EXTRACT(EPOCH FROM "record"."dueAt") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(YEAR FROM "record"."dueAt") * 12 + EXTRACT(MONTH FROM "record"."dueAt") - 1 + TRUNC("record"."quantity"::numeric) * 1) BETWEEN 12 AND 119999 THEN TRUNC("record"."quantity"::numeric) END * INTERVAL '1 month'))::date`,
       DATE,
     ],
     [
       "dateAdd(createdAt, 4, 'HOUR')",
-      `((("record"."createdAt" AT TIME ZONE 'UTC') + (TRUNC(4) * INTERVAL '1 hour')) AT TIME ZONE 'UTC')`,
+      `((("record"."createdAt" AT TIME ZONE 'UTC') + (CASE WHEN EXTRACT(EPOCH FROM "record"."createdAt") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(EPOCH FROM "record"."createdAt") + TRUNC(4::numeric) * 3600) BETWEEN -62135596800 AND 253402300799.999999 THEN TRUNC(4::numeric) END * INTERVAL '1 hour')) AT TIME ZONE 'UTC')`,
       DATE_TIME,
     ],
     [
@@ -161,6 +161,24 @@ describe('compileComputedFieldExpressionToSql', () => {
     );
   });
 
+  it('compares a date and a date and time as UTC days', () => {
+    expect(compile("createdAt > '2026-01-01'").sql).toBe(
+      `(("record"."createdAt" AT TIME ZONE 'UTC')::date > :text0::date)`,
+    );
+    expect(compile('dueAt == createdAt').sql).toBe(
+      `("record"."dueAt" = ("record"."createdAt" AT TIME ZONE 'UTC')::date)`,
+    );
+  });
+
+  it('binds a date literal in a comparison as the shared parser reads it', () => {
+    expect(
+      compile("createdAt == '2026-09-23T10:41:00+02:00[Europe/Paris]'"),
+    ).toMatchObject({
+      sql: '("record"."createdAt" = :text0::timestamptz)',
+      parameters: { text0: '2026-09-23T08:41:00.000Z' },
+    });
+  });
+
   it('reads a text value compared with a date as a date', () => {
     expect(compile("dueAt >= '2030-01-01'").sql).toBe(
       '("record"."dueAt" >= :text0::date)',
@@ -193,9 +211,11 @@ describe('compileComputedFieldExpressionToSql', () => {
     ['upper(amount)', '"upper" expects text, not number'],
     ['round(name)', '"round" expects number, not text'],
     ['amount and isActive', '"and" expects boolean, not number'],
-    ["dueAt > 'tomorrow-ish'", "which is not a date such as '2030-01-31'"],
-    ["coalesce(dueAt, 'n/a')", "which is not a date such as '2030-01-31'"],
-    ["dueAt > '2030-02-31'", "which is not a date such as '2030-01-31'"],
+    ["dueAt > 'tomorrow-ish'", 'cannot read "tomorrow-ish" as a date'],
+    ["coalesce(dueAt, 'n/a')", 'cannot read "n/a" as a date'],
+    ["dueAt > '2030-02-31'", 'cannot read "2030-02-31" as a date'],
+    ["createdAt > '2026-01-01T10:00:00'", 'cannot read "2026-01-01T10:00:00"'],
+    ["dueAt > '+010000-01-01'", 'cannot read "+010000-01-01" as a date'],
   ])('rejects the types of %s', (expression, expectedMessage) => {
     expect(() => compile(expression)).toThrow(expectedMessage);
   });

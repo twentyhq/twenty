@@ -21,6 +21,20 @@ describe('addToExpressionDate', () => {
     expect(addToExpressionDate('2026-09-23', null, 'DAY')).toBeNull();
   });
 
+  it.each([
+    ['2026-01-01', 1e12, 'DAY'],
+    ['2026-01-01T00:00:00.000Z', 1e12, 'DAY'],
+    ['2026-01-01', 300000, 'YEAR'],
+    ['2026-01-01T00:00:00.000Z', -1e20, 'MINUTE'],
+    ['9999-12-31', 1, 'DAY'],
+    ['0001-01-01T00:00:00.000Z', -1, 'MINUTE'],
+  ])(
+    'should return null when dateAdd(%s, %s, %s) leaves years 1 to 9999',
+    (value, amount, unit) => {
+      expect(addToExpressionDate(value, amount, unit)).toBeNull();
+    },
+  );
+
   it('should throw for an unknown unit', () => {
     expect(() => addToExpressionDate('2026-09-23', 1, 'day')).toThrow(
       '"day" is not a date unit',
