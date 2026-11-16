@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { FATHOM_MEDIA_RECONCILIATION_SELECTION } from 'src/constants/fathom-media-reconciliation-selection.constant';
@@ -18,6 +18,15 @@ export const findStaleFathomMediaImports = async ({
   run: FathomMediaReconciliationRun;
   activeConnectedAccountIds: string[];
 }): Promise<FathomMediaReconciliationPage> => {
+  const importFromDisconnectedAccountFilter = {
+    fathomRecordingImports: {
+      connectedAccountId: { is: 'NOT_NULL' },
+      ...(isNonEmptyArray(activeConnectedAccountIds)
+        ? { not: { connectedAccountId: { in: activeConnectedAccountIds } } }
+        : {}),
+    },
+  };
+
   const queryResult = await coreApiClient.query({
     callRecordings: {
       __args: {
@@ -32,13 +41,7 @@ export const findStaleFathomMediaImports = async ({
             {
               or: [
                 { startedAt: { gte: run.startedAfter } },
-                {
-                  fathomRecordingImports: {
-                    connectedAccountId: {
-                      notIn: activeConnectedAccountIds,
-                    },
-                  },
-                },
+                importFromDisconnectedAccountFilter,
               ],
             },
             ...(isNonEmptyString(run.afterId)
@@ -68,11 +71,7 @@ export const findStaleFathomMediaImports = async ({
                 },
                 {
                   status: { eq: 'PROCESSING' },
-                  fathomRecordingImports: {
-                    connectedAccountId: {
-                      notIn: activeConnectedAccountIds,
-                    },
-                  },
+                  ...importFromDisconnectedAccountFilter,
                 },
               ],
             },
