@@ -34,6 +34,7 @@ import { BillingArrangementModule } from 'src/engine/core-modules/billing/billin
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
@@ -70,6 +71,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ]),
     BillingModule,
     BillingArrangementModule,
+    CacheLockModule,
     UsageLimitInstanceOverrideModule,
     FileModule,
     WorkspaceDomainsModule,

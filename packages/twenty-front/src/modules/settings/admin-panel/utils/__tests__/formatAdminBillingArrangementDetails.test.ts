@@ -33,6 +33,7 @@ const arrangement = (
   startsAt: '2026-11-01T00:00:00.000Z',
   endDate: null,
   status: BillingArrangementStatus.ACTIVE,
+  isManageable: true,
   grantedBy: null,
   revokedBy: null,
   createdAt: '2026-11-01T00:00:00.000Z',
