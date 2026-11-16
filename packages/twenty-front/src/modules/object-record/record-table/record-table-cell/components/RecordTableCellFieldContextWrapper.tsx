@@ -48,10 +48,7 @@ export const RecordTableCellFieldContextWrapper = ({
         key={instanceId}
         recordFieldId={recordField.id}
         fieldMetadataItem={fieldMetadataItem}
-        relationObjectMetadataItem={lookupTarget.relationObjectMetadataItem}
-        lookupTargetFieldMetadataItem={
-          lookupTarget.lookupTargetFieldMetadataItem
-        }
+        lookupTarget={lookupTarget}
       >
         {children}
       </RecordTableCellLookupFieldContext>

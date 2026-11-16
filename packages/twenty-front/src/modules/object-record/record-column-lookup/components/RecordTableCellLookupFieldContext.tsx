@@ -1,7 +1,6 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import {
@@ -29,16 +28,18 @@ import {
 type RecordTableCellLookupFieldContextProps = {
   recordFieldId: string;
   fieldMetadataItem: FieldMetadataItem;
-  relationObjectMetadataItem: EnrichedObjectMetadataItem;
-  lookupTargetFieldMetadataItem: FieldMetadataItem;
+  lookupTarget: RecordFieldLookupTarget;
   children: ReactNode;
 };
 
 export const RecordTableCellLookupFieldContext = ({
   recordFieldId,
   fieldMetadataItem,
-  relationObjectMetadataItem,
-  lookupTargetFieldMetadataItem,
+  lookupTarget: {
+    relationObjectMetadataItem,
+    lookupTargetFieldMetadataItem,
+    lookupTargetFieldDefinition: fieldDefinition,
+  },
   children,
 }: RecordTableCellLookupFieldContextProps) => {
   const { recordId, isRecordReadOnly: isRowReadOnly } =
@@ -75,11 +76,6 @@ export const RecordTableCellLookupFieldContext = ({
       relationObjectMetadataItem.id,
     ),
     operationType: 'read',
-  });
-
-  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
-    field: lookupTargetFieldMetadataItem,
-    objectMetadataItem: relationObjectMetadataItem,
   });
 
   const isLookupTargetRestricted =
