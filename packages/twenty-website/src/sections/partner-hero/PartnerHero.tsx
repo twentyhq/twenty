@@ -1,9 +1,18 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
+import {
+  fontFamily,
+  GRADIENT,
+  HERO_COMPOSITION,
+  mediaUp,
+  radius,
+  semanticColor,
+  spacing,
+} from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnerVisual } from './PartnerVisual';
@@ -28,6 +37,25 @@ const IntroStack = styled.div`
   & > * + * {
     margin-top: ${spacing(8)};
   }
+`;
+
+const TitleBlock = styled.div`
+  & > * + * {
+    margin-top: ${spacing(5)};
+  }
+`;
+
+const Badge = styled.span`
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  color: ${semanticColor.inkMuted};
+  display: inline-block;
+  font-family: ${fontFamily('mono')};
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 16px;
+  padding: 2px 7px;
+  text-transform: uppercase;
 `;
 
 const HeadingMeasure = styled.div`
@@ -68,6 +96,7 @@ const VisualStage = styled.div`
 type PartnerHeroProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
+  badge?: MessageDescriptor;
   actions: ReactNode;
   visualImageUrl?: string;
 };
@@ -75,6 +104,7 @@ type PartnerHeroProps = {
 export function PartnerHero({
   heading,
   body,
+  badge,
   actions,
   visualImageUrl,
 }: PartnerHeroProps) {
@@ -87,18 +117,25 @@ export function PartnerHero({
       scheme="light"
     >
       <IntroStack>
-        <HeadingPair>
-          <HeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
-              {i18n._(heading)}
-            </Heading>
-          </HeadingMeasure>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(body)}
-            </Body>
-          </BodyMeasure>
-        </HeadingPair>
+        <TitleBlock>
+          {isDefined(badge) && (
+            <div>
+              <Badge>{i18n._(badge)}</Badge>
+            </div>
+          )}
+          <HeadingPair>
+            <HeadingMeasure>
+              <Heading as="h1" size="lg" weight="light">
+                {i18n._(heading)}
+              </Heading>
+            </HeadingMeasure>
+            <BodyMeasure>
+              <Body muted size="sm">
+                {i18n._(body)}
+              </Body>
+            </BodyMeasure>
+          </HeadingPair>
+        </TitleBlock>
         <CtaRow>{actions}</CtaRow>
       </IntroStack>
       <VisualStage>
