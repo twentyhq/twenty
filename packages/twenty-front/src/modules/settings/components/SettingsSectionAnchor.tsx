@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
-import { type AnimationEvent, type ReactNode, useRef, useState } from 'react';
+import { type AnimationEvent, type ReactNode, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useSettingsSectionAnchorScroll } from '@/settings/hooks/useSettingsSectionAnchorScroll';
+import { SettingsSectionAnchorScrollEffect } from '@/settings/components/SettingsSectionAnchorScrollEffect';
+import { SETTINGS_SECTION_ANCHOR_DATA_ATTRIBUTE } from '@/settings/constants/SettingsSectionAnchorDataAttribute';
 import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 
 const StyledAnchor = styled.div`
@@ -46,15 +47,12 @@ export const SettingsSectionAnchor = ({
   children,
 }: SettingsSectionAnchorProps) => {
   const { hash, key: locationKey } = useLocation();
-  const anchorRef = useRef<HTMLDivElement>(null);
   const [highlightEndedLocationKey, setHighlightEndedLocationKey] = useState<
     string | null
   >(null);
 
   const isTargeted = parseTabRouteHash(hash).sectionId === sectionId;
   const isHighlighted = isTargeted && highlightEndedLocationKey !== locationKey;
-
-  useSettingsSectionAnchorScroll({ anchorRef, isTargeted, locationKey });
 
   const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
@@ -64,10 +62,11 @@ export const SettingsSectionAnchor = ({
 
   return (
     <StyledAnchor
-      ref={anchorRef}
+      {...{ [SETTINGS_SECTION_ANCHOR_DATA_ATTRIBUTE]: sectionId }}
       data-highlighted={isHighlighted}
       onAnimationEnd={handleAnimationEnd}
     >
+      <SettingsSectionAnchorScrollEffect sectionId={sectionId} />
       {children}
     </StyledAnchor>
   );
