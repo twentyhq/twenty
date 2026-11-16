@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { TEAMS_DIRECTORY_MATCH_RUN_OUTCOME_KV_KEY } from 'src/features/chat/logic-functions/constants/teams-directory-match-run-outcome-kv-key';
@@ -12,7 +12,7 @@ export const readTeamsDirectoryMatchRunOutcome = async (): Promise<
       TEAMS_DIRECTORY_MATCH_RUN_OUTCOME_KV_KEY,
     );
 
-    if (typeof record?.isSuccessful !== 'boolean') {
+    if (!isBoolean(record?.isSuccessful)) {
       return undefined;
     }
 

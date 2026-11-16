@@ -179,10 +179,10 @@ export const TeamsUserLinksSettings = () => {
               type="button"
               size="sm"
               variant="outline"
-              disabled={isMatching}
+              loading={isMatching}
               onClick={handleMatchByEmail}
             >
-              {isMatching ? t('Auto-linking…') : t('Auto-link by email')}
+              {t('Auto-link by email')}
             </Button>
           </StyledMatchAction>
         </Section.Root>

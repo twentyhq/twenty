@@ -47,6 +47,6 @@ export const listLinkedTeamsUserAadObjectIdsOrThrow = async ({
   }
 
   throw new Error(
-    `More than ${MAX_PAGES * LINKS_PER_PAGE} Teams user links exist for this tenant, so the unlinked users cannot be listed. Use the search to find a specific person.`,
+    `More than ${MAX_PAGES * LINKS_PER_PAGE} Teams user links exist for this tenant, so they cannot all be read at once. Use the search to link a specific person.`,
   );
 };

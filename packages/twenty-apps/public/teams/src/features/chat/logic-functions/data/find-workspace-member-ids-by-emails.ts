@@ -78,10 +78,7 @@ export const findWorkspaceMemberIdsByEmails = async ({
 
       const pageInfo = queryResult.workspaceMembers?.pageInfo;
 
-      if (
-        pageInfo?.hasNextPage !== true ||
-        !isNonEmptyString(pageInfo.endCursor)
-      ) {
+      if (!pageInfo?.hasNextPage || !isNonEmptyString(pageInfo.endCursor)) {
         break;
       }
 
