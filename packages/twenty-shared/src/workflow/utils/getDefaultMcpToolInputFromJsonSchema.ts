@@ -25,7 +25,7 @@ const getDefaultPropertyValue = ({
 };
 
 export const getDefaultMcpToolInputFromJsonSchema = (
-  jsonSchema: InputJsonSchema,
+  jsonSchema: Pick<InputJsonSchema, 'properties' | 'required'>,
 ): FunctionInput =>
   Object.fromEntries(
     Object.entries(jsonSchema.properties ?? {}).map(([key, property]) => [
