@@ -51,6 +51,26 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
+  it('should keep a nullable field cleared to null', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        city: null,
+      },
+      cache,
+      objectPermissionsByObjectMetadataId: {},
+    });
+
+    expect(result).toEqual({
+      city: null,
+    });
+  });
+
   it('should generate correct optimistic record with actor field', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');

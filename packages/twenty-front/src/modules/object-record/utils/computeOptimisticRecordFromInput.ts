@@ -96,7 +96,7 @@ export const computeOptimisticRecordFromInput = ({
     const isRelationField = isFieldRelation(fieldMetadataItem);
     const isMorphRelationField = isFieldMorphRelation(fieldMetadataItem);
     if (!isRelationField && !isMorphRelationField) {
-      if (!isDefined(recordInputFieldValue)) {
+      if (isUndefined(recordInputFieldValue)) {
         continue;
       }
 
