@@ -145,7 +145,10 @@ const BINARY_OPERATORS: Record<
   '/': compileArithmetic(
     (left, right) => `(${left}::numeric / NULLIF(${right}, 0))`,
   ),
-  '%': compileArithmetic((left, right) => `MOD(${left}, NULLIF(${right}, 0))`),
+  // MOD has no float variant, the column type of a NUMBER field
+  '%': compileArithmetic(
+    (left, right) => `MOD(${left}::numeric, NULLIF(${right}, 0)::numeric)`,
+  ),
   '==': compileComparison('='),
   // "<>" is null, so false, for a record whose value is missing
   '!=': compileComparison('IS DISTINCT FROM'),

@@ -14,12 +14,17 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import {
   type FieldMetadataComputation,
   FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -420,5 +425,66 @@ describe('Computed field permissions (e2e)', () => {
       totalPoints: null,
       bigTaskCount: null,
     });
+  });
+
+  it('reads a field that a row-level rule hides on a record as empty on that record', async () => {
+    const [{ id: nameFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'name'`,
+      [projectObjectMetadataId],
+    );
+    const ruleId = v4();
+
+    await revokeObjectRecordsPermissions({
+      roleId: customRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: customRoleId,
+        objectMetadataId: projectObjectMetadataId,
+        canReadRecords: true,
+        predicateGroups: [
+          {
+            id: ruleId,
+            objectMetadataId: projectObjectMetadataId,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          },
+        ],
+        predicates: [
+          {
+            id: v4(),
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Alpha',
+            rowLevelPermissionPredicateGroupId: ruleId,
+          },
+        ],
+      },
+    });
+
+    const { errors } = await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: projectObjectMetadataId,
+          fieldMetadataId: budgetFieldMetadataId,
+          rowLevelPermissionPredicateGroupId: ruleId,
+          canReadFieldValue: false,
+        },
+      ],
+    });
+
+    expect(errors).toBeUndefined();
+
+    expect(await findProjectAsMember()).toEqual({
+      id: PROJECT_ID,
+      doubleBudget: null,
+      taskCount: 2,
+      totalPoints: 8,
+      bigTaskCount: 1,
+    });
+    expect((await findTaskAsMember()).projectBudget).toBeNull();
   });
 });

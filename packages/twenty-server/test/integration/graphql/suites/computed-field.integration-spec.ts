@@ -1,6 +1,7 @@
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
@@ -210,6 +211,19 @@ describe('Computed fields (e2e)', () => {
         },
       },
       {
+        name: 'budgetRemainder',
+        type: FieldMetadataType.NUMBER,
+        computation: { kind: 'FORMULA', expression: 'budget % 7' },
+      },
+      {
+        name: 'isAlpha',
+        type: FieldMetadataType.BOOLEAN,
+        computation: {
+          kind: 'FORMULA',
+          expression: `id == '${ALPHA_PROJECT_ID}'`,
+        },
+      },
+      {
         name: 'summary',
         type: FieldMetadataType.TEXT,
         computation: {
@@ -364,6 +378,19 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
+    it('takes a remainder and compares an id to a text', async () => {
+      expect(await findProjectValuesById('budgetRemainder')).toEqual({
+        [ALPHA_PROJECT_ID]: 2,
+        [BETA_PROJECT_ID]: 2,
+        [EMPTY_PROJECT_ID]: 0,
+      });
+      expect(await findProjectValuesById('isAlpha')).toEqual({
+        [ALPHA_PROJECT_ID]: true,
+        [BETA_PROJECT_ID]: false,
+        [EMPTY_PROJECT_ID]: false,
+      });
+    });
+
     it('reads a field of a to-one relation', async () => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
@@ -448,6 +475,23 @@ describe('Computed fields (e2e)', () => {
         taskCount: 1,
         summary: 'BETA: idle',
       });
+    });
+
+    it('updates the records matching a filter on a computed field', async () => {
+      const response = await makeGraphqlApiRequest(
+        updateManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'name',
+          filter: { taskCount: { eq: 0 } },
+          data: { budget: 0 },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateRollupProjects).toEqual([
+        { name: 'Empty' },
+      ]);
     });
 
     it('refuses to write a computed field', async () => {
@@ -644,6 +688,85 @@ describe('Computed fields (e2e)', () => {
           input: { idToDelete },
         });
       }
+    });
+
+    it('rewrites the id of a relation when the relation is renamed', async () => {
+      const { fields: taskFields } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: taskObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'id name',
+      });
+      const projectRelationFieldId = taskFields.find(
+        ({ node }: { node: { name: string } }) => node.name === 'project',
+      )?.node.id;
+
+      const {
+        data: {
+          createOneField: { id: isOnAlphaFieldId },
+        },
+      } = await createField({
+        objectMetadataId: taskObjectMetadataId,
+        name: 'isOnAlpha',
+        type: FieldMetadataType.BOOLEAN,
+        computation: {
+          kind: 'FORMULA',
+          expression: `projectId == '${ALPHA_PROJECT_ID}'`,
+        },
+      });
+
+      const findIsOnAlphaExpression = async () => {
+        const { fields } = await findManyFieldsMetadata({
+          expectToFail: false,
+          input: {
+            filter: { objectMetadataId: { eq: taskObjectMetadataId } },
+            paging: { first: 100 },
+          },
+          gqlFields: 'id computation',
+        });
+
+        return fields.find(
+          ({ node }: { node: { id: string } }) => node.id === isOnAlphaFieldId,
+        )?.node.computation.expression;
+      };
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: projectRelationFieldId,
+          updatePayload: { name: 'parentProject' },
+        },
+      });
+
+      expect(await findIsOnAlphaExpression()).toBe(
+        `parentProjectId == '${ALPHA_PROJECT_ID}'`,
+      );
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: projectRelationFieldId,
+          updatePayload: { name: 'project' },
+        },
+      });
+
+      expect(await findIsOnAlphaExpression()).toBe(
+        `projectId == '${ALPHA_PROJECT_ID}'`,
+      );
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: isOnAlphaFieldId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: isOnAlphaFieldId },
+      });
     });
 
     it('rejects a computation whose value does not fit the type of its field', async () => {

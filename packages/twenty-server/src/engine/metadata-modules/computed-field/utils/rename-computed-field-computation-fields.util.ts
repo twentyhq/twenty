@@ -10,12 +10,17 @@ import {
   type ComputedFieldSchemaField,
   type ComputedFieldSchemaReader,
 } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
 import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
 
 type RenamableField = ComputedFieldSchemaField & {
   universalIdentifier: string;
 };
+
+// `projectId` reads the relation `project`: it follows the relation when it is renamed
+const getJoinColumnBinding = (relationFieldUniversalIdentifier: string) =>
+  `${relationFieldUniversalIdentifier}:joinColumn`;
 
 const ignoreUnresolvable = <TResult>(
   resolve: () => TResult,
@@ -47,6 +52,18 @@ export const renameComputedFieldComputationFields = <
   schemaReader: ComputedFieldSchemaReader<TObject, TField>;
   fieldNameByUniversalIdentifier: Map<string, string>;
 }): FieldMetadataComputation => {
+  const nameByBinding = new Map(
+    [...fieldNameByUniversalIdentifier].flatMap(
+      ([universalIdentifier, name]) => [
+        [universalIdentifier, name],
+        [
+          getJoinColumnBinding(universalIdentifier),
+          computeMorphOrRelationFieldJoinColumnName({ name }),
+        ],
+      ],
+    ),
+  );
+
   const renameExpression = (
     expression: string | undefined,
     evaluatedObject: TObject,
@@ -80,20 +97,19 @@ export const renameComputedFieldComputationFields = <
             ({ relationField }) => relationField,
           ),
           resolution.field,
-        ]
-          .map((field, index) => ({ field, segment: path[index] }))
-          .filter(({ field, segment }) => field.name === segment)
-          .map(({ field }, index) => [
-            path.slice(0, index + 1).join('.'),
-            field.universalIdentifier,
-          ]);
+        ].map((field, index) => [
+          path.slice(0, index + 1).join('.'),
+          field.name === path[index]
+            ? field.universalIdentifier
+            : getJoinColumnBinding(field.universalIdentifier),
+        ]);
       }),
     );
 
     return renameValidationRuleExpressionFields({
       expression,
       bindings,
-      fieldNameByUniversalIdentifier,
+      fieldNameByUniversalIdentifier: nameByBinding,
     });
   };
 
