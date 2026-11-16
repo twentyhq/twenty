@@ -6,15 +6,15 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
     "description": "List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.",
     "inputSchema": {
       "properties": {
-        "folderId": {
-          "description": "Only return items inside this folder.",
-          "format": "uuid",
-          "type": "string",
-        },
         "limit": {
           "default": 100,
           "description": "Max number of items to return.",
           "type": "integer",
+        },
+        "parentId": {
+          "description": "Only return items inside this folder.",
+          "format": "uuid",
+          "type": "string",
         },
         "scope": {
           "default": "all",
@@ -65,11 +65,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -77,6 +72,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Label shown in the sidebar.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -109,11 +109,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -126,6 +121,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Label shown in the sidebar.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -159,11 +159,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -171,6 +166,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -208,11 +208,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -220,6 +215,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -257,11 +257,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -269,6 +264,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "name": {
               "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
               "minLength": 1,
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -312,11 +312,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -328,6 +323,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             },
             "pageLayoutId": {
               "description": "Id of the page layout to pin",
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -361,11 +361,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "description": "Optional hex colour",
               "type": "string",
             },
-            "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
-              "format": "uuid",
-              "type": "string",
-            },
             "icon": {
               "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
               "type": "string",
@@ -381,6 +376,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
                 "workflows",
                 "agents",
               ],
+              "type": "string",
+            },
+            "parentId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
               "type": "string",
             },
             "position": {
@@ -419,13 +419,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           "description": "New hex colour",
           "type": "string",
         },
-        "folderId": {
-          "description": "Move into a different folder. Pass null to move to the top level.",
-          "type": [
-            "string",
-            "null",
-          ],
-        },
         "icon": {
           "description": "New icon identifier",
           "type": "string",
@@ -448,6 +441,13 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         "pageLayoutId": {
           "description": "New page layout id (only meaningful for PAGE_LAYOUT items)",
           "type": "string",
+        },
+        "parentId": {
+          "description": "Move into a different folder. Pass null to move to the top level.",
+          "type": [
+            "string",
+            "null",
+          ],
         },
         "position": {
           "description": "New position among siblings",

@@ -9,7 +9,7 @@ const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   targetRecordId
   targetObjectMetadataId
   viewId
-  folderId
+  parentId
   position
   name
   link

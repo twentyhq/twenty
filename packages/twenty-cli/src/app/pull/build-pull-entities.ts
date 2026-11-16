@@ -20,7 +20,10 @@ import {
 } from '@/app/pull/pull-file-base-name';
 import { stripGraphqlTypename } from '@/app/pull/strip-graphql-typename';
 import { kebabCase } from '@/app/pull/kebab-case';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  normalizeNavigationMenuItemManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { fromApplicationManifestToApplicationConfig } from '@/app/pull/from-application-manifest-to-application-config';
 import { fromRoleManifestToRoleConfig } from '@/app/pull/from-role-manifest-to-role-config';
@@ -358,7 +361,9 @@ export const buildPullEntities = ({
   }
 
   for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
-    const { folderUniversalIdentifier } = navigationMenuItemManifest;
+    const parentUniversalIdentifier = normalizeNavigationMenuItemManifest(
+      navigationMenuItemManifest,
+    ).parentUniversalIdentifier;
 
     entities.push({
       kind: 'navigationMenuItem',
@@ -372,9 +377,9 @@ export const buildPullEntities = ({
         navigationMenuItemManifest,
         manifest,
       }),
-      parentName: isDefined(folderUniversalIdentifier)
+      parentName: isDefined(parentUniversalIdentifier)
         ? getNavigationFolderNameForPullFile({
-            folderUniversalIdentifier,
+            parentUniversalIdentifier,
             manifest,
           })
         : null,

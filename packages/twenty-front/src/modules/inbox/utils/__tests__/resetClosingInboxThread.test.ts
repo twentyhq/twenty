@@ -1,6 +1,6 @@
 import { createStore } from 'jotai';
 
-import { closingInboxThreadIdState } from '@/inbox/states/closingInboxThreadIdState';
+import { closingAiChatThreadIdState } from '@/ai/states/closingAiChatThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { resetClosingInboxThread } from '@/inbox/utils/resetClosingInboxThread';
@@ -13,13 +13,13 @@ describe('resetClosingInboxThread', () => {
     const store = createStore();
 
     store.set(currentAiChatThreadState.atom, CLOSED_THREAD_ID);
-    store.set(closingInboxThreadIdState.atom, CLOSED_THREAD_ID);
+    store.set(closingAiChatThreadIdState.atom, CLOSED_THREAD_ID);
     store.set(shouldContinueAiChatInSidePanelState.atom, true);
 
     resetClosingInboxThread(store);
 
     expect(store.get(currentAiChatThreadState.atom)).toBeNull();
-    expect(store.get(closingInboxThreadIdState.atom)).toBeNull();
+    expect(store.get(closingAiChatThreadIdState.atom)).toBeNull();
     expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
   });
 
@@ -27,19 +27,19 @@ describe('resetClosingInboxThread', () => {
     const store = createStore();
 
     store.set(currentAiChatThreadState.atom, NEXT_THREAD_ID);
-    store.set(closingInboxThreadIdState.atom, CLOSED_THREAD_ID);
+    store.set(closingAiChatThreadIdState.atom, CLOSED_THREAD_ID);
 
     resetClosingInboxThread(store);
 
     expect(store.get(currentAiChatThreadState.atom)).toBe(NEXT_THREAD_ID);
-    expect(store.get(closingInboxThreadIdState.atom)).toBeNull();
+    expect(store.get(closingAiChatThreadIdState.atom)).toBeNull();
   });
 
   it('preserves the active conversation after Ask AI consumes the pending reset', () => {
     const store = createStore();
 
     store.set(currentAiChatThreadState.atom, CLOSED_THREAD_ID);
-    store.set(closingInboxThreadIdState.atom, CLOSED_THREAD_ID);
+    store.set(closingAiChatThreadIdState.atom, CLOSED_THREAD_ID);
 
     resetClosingInboxThread(store);
     store.set(currentAiChatThreadState.atom, NEXT_THREAD_ID);

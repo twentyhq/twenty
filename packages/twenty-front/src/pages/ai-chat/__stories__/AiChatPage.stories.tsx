@@ -16,7 +16,7 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadP
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
+import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

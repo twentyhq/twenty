@@ -82,11 +82,11 @@ export const NavigationMenuItemMenu = ({
   const isEditing = mode.type === 'edit';
   const menuAriaLabel = isEditing ? t`Edit link` : t`Menu item actions`;
   const openAddMenu = (target: NavigationMenuItemAddTarget) => {
-    const { folderId } = target;
+    const { parentId } = target;
 
-    if (isDefined(folderId)) {
+    if (isDefined(parentId)) {
       setOpenNavigationMenuItemFolderIds((folderIds) =>
-        folderIds.includes(folderId) ? folderIds : [...folderIds, folderId],
+        folderIds.includes(parentId) ? folderIds : [...folderIds, parentId],
       );
     }
 
@@ -160,7 +160,7 @@ export const NavigationMenuItemMenu = ({
       >
         {mode.type === 'add' ? (
           <NavigationMenuItemAddDropdownContent
-            folderId={mode.folderId}
+            parentId={mode.parentId}
             position={mode.position}
             section={section}
             dropdownId={dropdownId}
