@@ -24,6 +24,14 @@ export class BillingArrangementService {
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
   ) {}
 
+  async findArrangements(
+    workspaceId: string,
+  ): Promise<BillingArrangementEntity[]> {
+    return await this.billingArrangementRepository.find(workspaceId, {
+      order: { startsAt: 'DESC', createdAt: 'DESC' },
+    });
+  }
+
   async findArrangementsByTypes({
     workspaceId,
     types,

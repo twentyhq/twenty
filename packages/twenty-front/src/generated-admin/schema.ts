@@ -189,6 +189,27 @@ export type AdminPanelWorkspaceBilling = {
   usage?: Maybe<AdminPanelWorkspaceUsage>;
 };
 
+export type AdminPanelWorkspaceBillingArrangement = {
+  __typename?: 'AdminPanelWorkspaceBillingArrangement';
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  creditAllowance?: Maybe<Scalars['Float']['output']>;
+  creditGrantId?: Maybe<Scalars['UUID']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  grantedBy?: Maybe<UserInfo>;
+  id: Scalars['UUID']['output'];
+  label: BillingArrangementLabel;
+  revokedBy?: Maybe<UserInfo>;
+  seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
+  seats?: Maybe<Scalars['Int']['output']>;
+  startsAt: Scalars['DateTime']['output'];
+  status: BillingArrangementStatus;
+  stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
+  stripeDiscountId?: Maybe<Scalars['String']['output']>;
+  type: BillingArrangementType;
+  usageLimitId?: Maybe<Scalars['UUID']['output']>;
+};
+
 export type AdminPanelWorkspaceCreditGrant = {
   __typename?: 'AdminPanelWorkspaceCreditGrant';
   amount: Scalars['Float']['output'];
@@ -429,6 +450,32 @@ export enum BillingArrangementLabel {
   APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
   COMPENSATION = 'COMPENSATION',
   OTHER = 'OTHER'
+}
+
+/** Whether members above committed seats are billed or blocked */
+export enum BillingArrangementSeatCapMode {
+  HARD = 'HARD',
+  SOFT = 'SOFT'
+}
+
+/** Whether a billing arrangement applies now, later, no longer, or only once */
+export enum BillingArrangementStatus {
+  ACTIVE = 'ACTIVE',
+  ENDED = 'ENDED',
+  ONE_TIME = 'ONE_TIME',
+  SCHEDULED = 'SCHEDULED'
+}
+
+/** The kind of commercial exception a billing arrangement grants */
+export enum BillingArrangementType {
+  COMMITTED_SEATS = 'COMMITTED_SEATS',
+  CREDIT_GRANT = 'CREDIT_GRANT',
+  DISCOUNT = 'DISCOUNT',
+  FREE_SEATS = 'FREE_SEATS',
+  LIMIT_OVERRIDE = 'LIMIT_OVERRIDE',
+  REFUND = 'REFUND',
+  TRIAL_EXTENSION = 'TRIAL_EXTENSION',
+  WORKSPACE_CREDIT_ALLOWANCE = 'WORKSPACE_CREDIT_ALLOWANCE'
 }
 
 /** The origin of a batch of credits granted to a workspace */
@@ -891,6 +938,7 @@ export type Query = {
   userLookupAdminPanel: UserLookup;
   versionInfo: VersionInfo;
   workspaceBillingAdminPanel?: Maybe<AdminPanelWorkspaceBilling>;
+  workspaceBillingArrangements: Array<AdminPanelWorkspaceBillingArrangement>;
   workspaceDataExports: Array<WorkspaceDataExport>;
   workspaceLookupAdminPanel: UserLookup;
   workspaceUsageLimits: AdminPanelWorkspaceUsageLimits;
@@ -1010,6 +1058,11 @@ export type QueryUserLookupAdminPanelArgs = {
 
 
 export type QueryWorkspaceBillingAdminPanelArgs = {
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceBillingArrangementsArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
