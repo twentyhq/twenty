@@ -171,6 +171,72 @@
       "rules": {
         "twenty/max-consts-per-file": ["error", { "max": 1 }]
       }
+    },
+    {
+      "files": ["src/modules/ai/**/*.ts", "src/modules/ai/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/inbox/**"],
+                "message": "The AI chat must not depend on the inbox. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+              },
+              {
+                "group": ["../*"],
+                "message": "Relative parent imports are not allowed. Use @/ alias instead."
+              },
+              {
+                "group": ["@tabler/icons-react"],
+                "message": "Please import icons from `twenty-ui`"
+              },
+              {
+                "group": ["react-hotkeys-web-hook"],
+                "importNames": ["useHotkeys"],
+                "message": "Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`"
+              },
+              {
+                "group": ["lodash"],
+                "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/modules/ai/**/__tests__/**",
+        "src/modules/ai/**/__stories__/**",
+        "src/modules/ai/testing/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../*"],
+                "message": "Relative parent imports are not allowed. Use @/ alias instead."
+              },
+              {
+                "group": ["@tabler/icons-react"],
+                "message": "Please import icons from `twenty-ui`"
+              },
+              {
+                "group": ["react-hotkeys-web-hook"],
+                "importNames": ["useHotkeys"],
+                "message": "Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`"
+              },
+              {
+                "group": ["lodash"],
+                "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -4,7 +4,12 @@ import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AI_CHAT_THREAD_LOADED_EVENT_NAME } from '@/ai/constants/AiChatThreadLoadedEventName';
+import { AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME } from '@/ai/constants/AiChatThreadNotFoundEventName';
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { type AiChatThreadLoadedEventDetail } from '@/ai/types/AiChatThreadLoadedEventDetail';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
@@ -48,8 +53,9 @@ export const InboxThreadRecordOperationsEffect = () => {
       objectNameType: 'singular',
     },
   );
-  const { applyAiChatThreadUpdate, addAiChatThread } =
-    useApplyAiChatThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { addInboxThread, prependInboxThreadToRecentList } =
+    useAddInboxThread();
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const refreshAiChatThreads = useCallback(
     () =>
@@ -76,6 +82,28 @@ export const InboxThreadRecordOperationsEffect = () => {
     refreshAiChatThreads,
   ]);
 
+  const refreshRecentThreadsAfterThreadNotFound = useCallback(
+    () => void refreshAiChatThreads(),
+    [refreshAiChatThreads],
+  );
+  const handleThreadLoaded = useCallback(
+    (detail?: AiChatThreadLoadedEventDetail) => {
+      if (isDefined(detail)) {
+        prependInboxThreadToRecentList(detail.threadId);
+      }
+    },
+    [prependInboxThreadToRecentList],
+  );
+
+  useListenToBrowserEvent({
+    eventName: AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME,
+    onBrowserEvent: refreshRecentThreadsAfterThreadNotFound,
+  });
+  useListenToBrowserEvent<AiChatThreadLoadedEventDetail>({
+    eventName: AI_CHAT_THREAD_LOADED_EVENT_NAME,
+    onBrowserEvent: handleThreadLoaded,
+  });
+
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
     operationSignature: AI_CHAT_THREADS_OPERATION_SIGNATURE,
@@ -100,7 +128,7 @@ export const InboxThreadRecordOperationsEffect = () => {
         case 'create-one': {
           const createdThread = operation.createdRecord as AiChatThreadRecord;
 
-          addAiChatThread(createdThread);
+          addInboxThread(createdThread);
           return;
         }
         case 'update-one':
@@ -158,7 +186,7 @@ export const InboxThreadRecordOperationsEffect = () => {
       }
     },
     [
-      addAiChatThread,
+      addInboxThread,
       applyAiChatThreadUpdate,
       refreshInboxOpenThreadsSummary,
       refreshAiChatThreads,

@@ -5,8 +5,7 @@ import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReac
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessagesFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai/states/aiChatQueuedMessagesFamilyState';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
-import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
+import { AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME } from '@/ai/constants/AiChatThreadNotFoundEventName';
 import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
@@ -63,7 +62,6 @@ export const useAiChatSubscription = (threadId: string | null) => {
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
-  const { loadInboxThreadList } = useLoadInboxThreadList();
   const { refreshAiChatUsage } = useRefreshAiChatUsage();
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
@@ -378,10 +376,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           'NOT_FOUND',
         ),
       );
-      void loadInboxThreadList({
-        source: INBOX_RECENT_THREAD_LIST_SOURCE,
-        mode: 'refresh',
-      });
+      dispatchBrowserEvent(AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME);
     };
 
     const dispose = sseClient.subscribe<OnAgentChatEventSubscription>(
@@ -496,7 +491,6 @@ export const useAiChatSubscription = (threadId: string | null) => {
     sseClient,
     resubscribeNonce,
     store,
-    loadInboxThreadList,
     refreshAiChatThreadPermissions,
     refreshAiChatUsage,
     applyAiChatThreadUpdate,

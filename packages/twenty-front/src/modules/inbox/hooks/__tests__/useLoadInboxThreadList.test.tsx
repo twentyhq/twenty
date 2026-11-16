@@ -1,3 +1,4 @@
+import { AI_CHAT_THREAD_LOADED_EVENT_NAME } from '@/ai/constants/AiChatThreadLoadedEventName';
 import { act, renderHook } from '@testing-library/react';
 import { atom, createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -422,7 +423,7 @@ describe('useLoadInboxThreadList', () => {
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
   });
 
-  it('adds a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
+  it('announces a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
     const store = buildStore();
     store.set(RECENT_THREAD_LIST_ATOM, {
       threadIds: ['thread-1'],
@@ -431,6 +432,10 @@ describe('useLoadInboxThreadList', () => {
       lastLoadedActivityAt: null,
     });
     const result = renderRefresh(store);
+    const onThreadLoaded = jest.fn();
+    window.addEventListener(AI_CHAT_THREAD_LOADED_EVENT_NAME, (event) =>
+      onThreadLoaded((event as CustomEvent).detail),
+    );
 
     queryMock.mockResolvedValueOnce(
       buildPage([buildThread('old-thread', 'Old chat')]),
@@ -449,10 +454,7 @@ describe('useLoadInboxThreadList', () => {
         }),
       }),
     );
-    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual([
-      'old-thread',
-      'thread-1',
-    ]);
+    expect(onThreadLoaded).toHaveBeenCalledWith({ threadId: 'old-thread' });
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {
