@@ -1,5 +1,6 @@
 import { createStore } from 'jotai';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
@@ -13,7 +14,7 @@ const getCurrentThreadData = (thread: Partial<AiChatThreadRecord> | null) => {
 
   store.set(currentAiChatThreadState.atom, THREAD_ID);
 
-  if (thread !== null) {
+  if (isDefined(thread)) {
     store.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
       __typename: 'AgentChatThread',
       id: THREAD_ID,
