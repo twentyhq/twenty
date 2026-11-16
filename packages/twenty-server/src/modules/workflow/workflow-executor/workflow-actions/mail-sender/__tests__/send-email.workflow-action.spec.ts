@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+import { EMPTY_EMAIL_DOCUMENT } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -120,10 +120,7 @@ describe('SendEmailWorkflowAction', () => {
       },
     });
 
-  const executedBodyDocument = () =>
-    JSON.parse(
-      mockSendEmailTool.execute.mock.calls[0][0].body as string,
-    ) as Record<string, unknown>;
+  const executedBody = () => mockSendEmailTool.execute.mock.calls[0][0].body;
 
   describe('email body handling', () => {
     it('should prepare TipTap JSON for the shared email compiler', async () => {
@@ -139,10 +136,7 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithBody(tipTapBody);
 
-      expect(executedBodyDocument()).toEqual({
-        ...JSON.parse(tipTapBody),
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-      });
+      expect(executedBody()).toEqual(JSON.parse(tipTapBody));
     });
 
     it('should resolve variableTag nodes inside TipTap JSON before compilation', async () => {
@@ -163,9 +157,8 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithBody(tipTapBodyWithVariable);
 
-      expect(executedBodyDocument()).toEqual({
+      expect(executedBody()).toEqual({
         type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
         content: [
           {
             type: 'paragraph',
@@ -200,9 +193,8 @@ describe('SendEmailWorkflowAction', () => {
         }),
       );
 
-      expect(executedBodyDocument()).toEqual({
+      expect(executedBody()).toEqual({
         type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
         content: [
           {
             type: 'button',
@@ -242,9 +234,8 @@ describe('SendEmailWorkflowAction', () => {
         },
       });
 
-      expect(executedBodyDocument()).toEqual({
+      expect(executedBody()).toEqual({
         type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
         content: [
           {
             type: 'html',
@@ -283,9 +274,8 @@ describe('SendEmailWorkflowAction', () => {
         },
       });
 
-      expect(executedBodyDocument()).toEqual({
+      expect(executedBody()).toEqual({
         type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
         content: [
           {
             type: 'paragraph',
@@ -295,59 +285,18 @@ describe('SendEmailWorkflowAction', () => {
       });
     });
 
-    it('should reject an invalid structured email document', async () => {
-      await expect(
-        executeWithBody(
-          JSON.stringify({
-            type: 'doc',
-            content: [{ type: 'unknownBlock' }],
-          }),
-        ),
-      ).rejects.toThrow('Invalid workflow email document');
+    it('should not run the tool when the body is not an email document', async () => {
+      await expect(executeWithBody('<p>Hello</p>')).rejects.toThrow(
+        'Invalid email document',
+      );
 
       expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
     });
 
-    it('should resolve a plain text body as HTML with its line breaks', async () => {
-      await executeWithBody('{{trigger.name}}\n{{trigger.email}}');
-
-      expect(executedBodyDocument()).toEqual({
-        type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-        content: [
-          {
-            type: 'htmlDocument',
-            attrs: { html: 'John<br>john@example.com' },
-          },
-        ],
-      });
-    });
-
-    it('should treat non-TipTap JSON as plain text', async () => {
-      await executeWithBody('{"key":"value"}');
-
-      expect(executedBodyDocument()).toEqual({
-        type: 'doc',
-        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-        content: [
-          {
-            type: 'paragraph',
-            content: [{ type: 'text', text: '{"key":"value"}' }],
-          },
-        ],
-      });
-    });
-
-    it('should handle empty string body without crashing', async () => {
-      await executeWithBody('');
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalled();
-    });
-
-    it('should handle undefined body without crashing', async () => {
+    it('should send an empty document when the step has no body', async () => {
       await executeWithBody(undefined);
 
-      expect(mockSendEmailTool.execute).toHaveBeenCalled();
+      expect(executedBody()).toEqual(EMPTY_EMAIL_DOCUMENT);
     });
   });
 
@@ -360,7 +309,6 @@ describe('SendEmailWorkflowAction', () => {
             connectedAccountId,
             recipients: { to: 'test@example.com' },
             subject: 'Test',
-            body: 'hi',
           }),
         ],
         context: {},
@@ -478,7 +426,6 @@ describe('SendEmailWorkflowAction', () => {
           buildSendEmailStep({
             ...emailInput,
             fromHandle: 'sales@company.com',
-            body: 'hi',
           }),
         ],
         context: {},
@@ -498,7 +445,6 @@ describe('SendEmailWorkflowAction', () => {
           buildSendEmailStep({
             ...emailInput,
             fromHandle: '{{trigger.email}}',
-            body: 'hi',
           }),
         ],
         context: { trigger: { email: 'john@example.com' } },
@@ -532,7 +478,7 @@ describe('SendEmailWorkflowAction', () => {
           currentStepId: 'step-1',
           steps: [
             {
-              ...buildSendEmailStep({ ...emailInput, body: 'hi' }),
+              ...buildSendEmailStep(emailInput),
               type: WorkflowActionType.DRAFT_EMAIL,
             } as WorkflowAction,
           ],

@@ -20,6 +20,7 @@ import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parse
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
 type UseEmailComposerStateArgs = {
@@ -52,7 +53,8 @@ export const useEmailComposerState = ({
   const initialCc = draftPrefill?.cc ?? '';
   const initialBcc = draftPrefill?.bcc ?? '';
   const initialSubject = draftPrefill?.subject ?? defaultSubject;
-  const initialBody = draftPrefill?.body ?? '';
+  const initialBody =
+    draftPrefill?.body ?? serializePlainTextAsAdvancedTextEditorDocument('');
 
   const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,

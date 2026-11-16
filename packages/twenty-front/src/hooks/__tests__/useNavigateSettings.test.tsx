@@ -65,9 +65,12 @@ describe('useNavigateSettings', () => {
       wrapper: Wrapper,
     });
 
-    result.current(SettingsPath.Accounts);
+    result.current(SettingsPath.AppPreferences);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', undefined);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/app-preferences',
+      undefined,
+    );
   });
 
   it('should navigate to the correct settings path with params', () => {
@@ -92,10 +95,10 @@ describe('useNavigateSettings', () => {
     });
 
     const queryParams = { viewId: '123', filter: 'test' };
-    result.current(SettingsPath.Accounts, undefined, queryParams);
+    result.current(SettingsPath.AppPreferences, undefined, queryParams);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/settings/accounts?viewId=123&filter=test',
+      '/settings/app-preferences?viewId=123&filter=test',
       undefined,
     );
   });
@@ -106,9 +109,12 @@ describe('useNavigateSettings', () => {
     });
 
     const options = { replace: true, state: { test: true } };
-    result.current(SettingsPath.Accounts, undefined, undefined, options);
+    result.current(SettingsPath.AppPreferences, undefined, undefined, options);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', options);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/app-preferences',
+      options,
+    );
   });
 
   it('opens settings when a legacy side-panel page navigates to settings', () => {
@@ -116,11 +122,11 @@ describe('useNavigateSettings', () => {
       wrapper: SidePanelWrapper,
     });
 
-    result.current(SettingsPath.NewAccount);
+    result.current(SettingsPath.AppPreferencesNewAccount);
 
     expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/settings/accounts/new',
+      '/settings/app-preferences/accounts/new',
       undefined,
     );
   });
@@ -130,11 +136,11 @@ describe('useNavigateSettings', () => {
       wrapper: RoutedSidePanelWrapper,
     });
 
-    result.current(SettingsPath.NewAccount);
+    result.current(SettingsPath.AppPreferencesNewAccount);
 
     expect(openSettingsMenuMock).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/settings/accounts/new',
+      '/settings/app-preferences/accounts/new',
       undefined,
     );
   });
@@ -144,14 +150,22 @@ describe('useNavigateSettings', () => {
       wrapper: SidePanelWrapper,
     });
 
-    result.current(SettingsPath.NewAccount, undefined, undefined, {
-      surface: 'main',
-    });
+    result.current(
+      SettingsPath.AppPreferencesNewAccount,
+      undefined,
+      undefined,
+      {
+        surface: 'main',
+      },
+    );
 
     expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
-      surface: 'main',
-    });
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/app-preferences/accounts/new',
+      {
+        surface: 'main',
+      },
+    );
   });
 
   it('leaves the shell to the navigator when a routed page escapes to main', () => {
@@ -159,13 +173,21 @@ describe('useNavigateSettings', () => {
       wrapper: RoutedSidePanelWrapper,
     });
 
-    result.current(SettingsPath.NewAccount, undefined, undefined, {
-      surface: 'main',
-    });
+    result.current(
+      SettingsPath.AppPreferencesNewAccount,
+      undefined,
+      undefined,
+      {
+        surface: 'main',
+      },
+    );
 
     expect(openSettingsMenuMock).not.toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
-      surface: 'main',
-    });
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/app-preferences/accounts/new',
+      {
+        surface: 'main',
+      },
+    );
   });
 });

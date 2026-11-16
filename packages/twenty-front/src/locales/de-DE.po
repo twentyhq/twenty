@@ -4489,7 +4489,7 @@ msgid "Assigned to you"
 msgstr "Ihnen zugewiesen"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Zuständiger"
 
@@ -5978,8 +5978,8 @@ msgid "Change"
 msgstr "Ändern zu"
 
 #. js-lingui-id: Ki4LtI
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Change assignee"
 msgstr "Zugewiesene Person ändern"
 
@@ -6068,7 +6068,7 @@ msgstr "kanal"
 
 #. js-lingui-id: HdE1If
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
 msgstr "Kanal"
@@ -6108,8 +6108,8 @@ msgid "Chart type"
 msgstr "Diagrammtyp"
 
 #. js-lingui-id: rlwve5
-#: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
 msgid "Chat actions"
 msgstr "Chat-Aktionen"
 
@@ -6124,9 +6124,9 @@ msgid "Chat conversation"
 msgstr "Chat-Unterhaltung"
 
 #. js-lingui-id: vGzfNP
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Chat details"
 msgstr "Chat-Details"
 
@@ -10256,7 +10256,7 @@ msgid "Destroy Records on All Objects"
 msgstr "Datensätze auf allen Objekten zerstören"
 
 #. js-lingui-id: FOcBn3
-#: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Detach"
 msgstr "Trennen"
@@ -11101,7 +11101,7 @@ msgid "Edit link"
 msgstr "Link bearbeiten"
 
 #. js-lingui-id: WLw62E
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Edit linked records"
 msgstr "Verknüpfte Datensätze bearbeiten"
 
@@ -12952,6 +12952,11 @@ msgstr "Hinzufügen des Datensatzes fehlgeschlagen"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
 msgstr "Kampagne konnte nicht abgebrochen werden"
+
+#. js-lingui-id: Rw92kd
+#: src/modules/settings/applications/hooks/useRunApplicationHealthCheck.ts
+msgid "Failed to check the app's health."
+msgstr ""
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -17513,7 +17518,7 @@ msgid "Link Label"
 msgstr "Linkbezeichnung"
 
 #. js-lingui-id: 8uujEK
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Link to a record"
 msgstr "Mit einem Datensatz verknüpfen"
 
@@ -17530,7 +17535,7 @@ msgid "linked a {objectLabel}"
 msgstr "hat ein {objectLabel} verknüpft"
 
 #. js-lingui-id: tjNkJN
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 msgid "Linked to"
 msgstr "Verknüpft mit"
 
@@ -20871,12 +20876,12 @@ msgid "Node settings"
 msgstr "Knoteneinstellungen"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
-#: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -24593,7 +24598,7 @@ msgstr "Widget entfernen"
 
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
-#: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
+#: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
 #: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"

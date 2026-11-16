@@ -279,11 +279,12 @@ export type { TemplateVariableWithFallback } from './template-variable/template-
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
 export { convertBlockNoteToRichTextDocument } from './tiptap/convert-blocknote-to-rich-text-document';
-export { convertEmailBodyToEmailDocument } from './tiptap/convert-email-body-to-email-document';
-export { convertStringBodyToEmailDocument } from './tiptap/convert-string-body-to-email-document';
+export { convertEmailBodyInputToEmailDocument } from './tiptap/convert-email-body-input-to-email-document';
 export { convertTextToTipTapNodes } from './tiptap/convert-text-to-tiptap-nodes';
 export { convertTipTapBlocksToDocument } from './tiptap/convert-tiptap-blocks-to-document';
 export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
+export type { EmailBodyInput } from './tiptap/email-body-input-schema';
+export { emailBodyInputSchema } from './tiptap/email-body-input-schema';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
   EMAIL_DOCUMENT_MARK_CATALOG,
@@ -304,15 +305,14 @@ export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
 export { EMAIL_TYPOGRAPHY } from './tiptap/email-typography';
+export { EMPTY_EMAIL_DOCUMENT } from './tiptap/empty-email-document';
 export { getFullHtmlEmailIfWholeBody } from './tiptap/get-full-html-email-if-whole-body';
 export { getTipTapFileUrlAttributeName } from './tiptap/get-tiptap-file-url-attribute-name';
-export { HTML_ELEMENT_NAMES } from './tiptap/html-element-names';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export { isStorableRichTextUrl } from './tiptap/is-storable-rich-text-url';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
-export { looksLikeHtml } from './tiptap/looks-like-html';
 export {
   parseEmailDocument,
   parseCanonicalEmailDocument,

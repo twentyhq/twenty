@@ -1,6 +1,9 @@
-import { type EmailDocument } from '../email-document-schema';
-import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
-import { convertEmailBodyToEmailDocument } from '../convert-email-body-to-email-document';
+import {
+  EMAIL_DOCUMENT_SCHEMA_VERSION,
+  type EmailDocument,
+} from 'twenty-shared/utils';
+
+import { convertEmailBodyToEmailDocument } from 'src/database/commands/upgrade-version-command/2-47/utils/convert-email-body-to-email-document.util';
 
 const rawHtmlBlockDocument = (html: string): EmailDocument => ({
   type: 'doc',
