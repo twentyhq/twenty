@@ -202,7 +202,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
 
-        navigate(SettingsPath.AccountsConfiguration, {
+        navigate(SettingsPath.AppPreferencesAccountConfiguration, {
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {

@@ -16,7 +16,7 @@ export const listFathomMeetings = async ({
   fathomClient: FathomMeetingLister;
   createdAfter?: string;
   stopWhen?: (meetings: Meeting[]) => boolean;
-}): Promise<Meeting[]> => {
+}): Promise<{ meetings: Meeting[]; isTruncated: boolean }> => {
   const meetings: Meeting[] = [];
   let cursor: string | undefined = undefined;
 
@@ -30,13 +30,11 @@ export const listFathomMeetings = async ({
     meetings.push(...meetingPage.meetings);
 
     if (stopWhen?.(meetings) || !isNonEmptyString(meetingPage.nextCursor)) {
-      return meetings;
+      return { meetings, isTruncated: false };
     }
 
     cursor = meetingPage.nextCursor;
   }
 
-  throw new Error(
-    `Fathom meeting listing exceeded ${MAX_FATHOM_MEETING_PAGES} pages`,
-  );
+  return { meetings, isTruncated: true };
 };

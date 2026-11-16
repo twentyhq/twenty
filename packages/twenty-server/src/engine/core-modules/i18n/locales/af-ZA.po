@@ -220,6 +220,11 @@ msgstr "'n paneelbord"
 msgid "A database event trigger in this application is invalid."
 msgstr "’n Databasisgebeurtenissneller in hierdie toepassing is ongeldig."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr "’n Gedeaktiveerde veld kan nie in ’n kolom gewys word nie"
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -405,6 +410,16 @@ msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "’n Opname van ’n vergadering"
 
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr "’n Verwante rekordveld kan slegs op ’n baie-tot-een-verhoudingsveld gewys word"
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr "Die verhouding van ’n verwante rekord kan nie in ’n kolom gewys word nie"
+
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A required configuration is missing."
@@ -583,10 +598,20 @@ msgstr "'n Sigveldfout het voorgekom."
 msgid "A view field group error occurred."
 msgstr "'n Aansigveldgroepfout het voorgekom."
 
+#. js-lingui-id: syBxwN
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter cannot stay in a view filter group that is being removed"
+msgstr "’n Aansigfilter kan nie in ’n aansigfiltergroep bly wat verwyder word nie"
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
 msgstr "'n Sigfilterfout het voorgekom."
+
+#. js-lingui-id: yPKHXO
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter group cannot stay under a parent group that is being removed"
+msgstr "’n Aansigfiltergroep kan nie onder ’n ouergroep bly wat verwyder word nie"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -698,12 +723,6 @@ msgstr "Rekening eienaar vir maatskappye"
 msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Rekening Eienaar vir Maatskappye"
-
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "Rekeninge"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1573,6 +1592,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "Apps"
 
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "Toepvoorkeure"
+
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
@@ -2419,12 +2444,6 @@ msgstr "Kalenderaansig moet 'n kalenderveld hê"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "Kalenderaansig moet 'n kalenderuitleg hê"
-
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "Kalenders"
 
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -4026,7 +4045,6 @@ msgstr "Aangepaste objek kort 'n etiket-identifiseerveld."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/permissions/permissions.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Gepasmaakte rolle is deel van die Organization Plan."
 
@@ -4970,12 +4988,6 @@ msgstr "E-posverifikasie is nie nodig nie."
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email verification not required."
 msgstr "E-posverifikasie nie nodig nie."
-
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "E-posse"
 
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6325,12 +6337,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Gaan na {objectLabelPlural}"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "Gaan na Rekening-instellings"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6343,6 +6349,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "Gaan na KI-instellings"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "Gaan na toepvoorkeure"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6354,12 +6366,6 @@ msgstr "Gaan na Apps-instellings"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "Gaan na Faktureringsinstellings"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "Gaan na Kalender-instellings"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6384,12 +6390,6 @@ msgstr "Gaan na ontwikkelaarinstellings"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "Gaan na Domein-instellings"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "Gaan na E-pos-instellings"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10033,6 +10033,11 @@ msgstr "Een of meer omleidings-URI's is ongeldig."
 msgid "One or more requested scopes are invalid."
 msgstr "Een of meer versoekte scopes is ongeldig."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr "Slegs ’n kolom wat na een rekord skakel, kan ’n veld van daardie rekord wys"
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -10057,6 +10062,11 @@ msgstr "Slegs ’n bedieneradministrateur kan herstelkodes vir hierdie lid bestu
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Slegs ’n werkspasielid kan verander wie ’n workflow sien"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr "Slegs bygevoegde kolomme kan ’n veld van die verwante rekord wys"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10087,6 +10097,11 @@ msgstr "Enigste fout"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Slegs veldbeperkings word toegelaat."
+
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr "Slegs nie-kanonieke aansigvelde kan ’n verwante rekordveld wys"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14055,6 +14070,11 @@ msgstr "Die veld \"{field}\" kan nie opgedateer word nie. Kontak asseblief jou w
 msgid "The field configured for this widget could not be found."
 msgstr "Die veld wat vir hierdie widget gekonfigureer is, kon nie gevind word nie."
 
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr "Die veld moet aan die verwante objek behoort"
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -14323,6 +14343,26 @@ msgstr "Die verskaffer is tydelik nie beskikbaar nie. Probeer asseblief later we
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Die inhoud van die ontvangde e-pos is nie meer beskikbaar nie."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr "Die verwante rekordveld kan nie ’n verhouding wees nie"
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr "Die verwante rekordveld moet aktief wees"
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr "Die verwante rekordveld moet aan die teikenobjek van die verhouding behoort"
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr "Die verwante rekordveld van ’n kolom wat aan ’n toepassing behoort, kan nie verander word nie"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14784,6 +14824,11 @@ msgstr "Hierdie geselsie is nie in ’n kanaal nie."
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "Hierdie kode behoort aan ’n gepubliseerde werkvloeiweergawe. Wysig dit vanaf ’n konsep."
+
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr "Hierdie kolom kom van ’n toepassing af, dus kan die verwante rekordveld wat dit wys nie verander word nie"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

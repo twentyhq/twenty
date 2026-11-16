@@ -6,6 +6,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
+import { MAX_FATHOM_MEETING_PAGES } from 'src/constants/fathom.constant';
 import { FATHOM_SYNC_CALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
@@ -73,7 +74,7 @@ export const fathomSyncCallHandler = async (
     const fathomClient = createFathomClient(
       getConnectionAccessTokenOrThrow(connection),
     );
-    const meetings = await listFathomMeetings({
+    const { meetings, isTruncated } = await listFathomMeetings({
       fathomClient,
       stopWhen: (listedMeetings) =>
         listedMeetings.some((meeting) => meeting.recordingId === recordingId),
@@ -81,6 +82,12 @@ export const fathomSyncCallHandler = async (
     const meeting = meetings.find(
       (listedMeeting) => listedMeeting.recordingId === recordingId,
     );
+
+    if (!isDefined(meeting) && isTruncated) {
+      throw new Error(
+        `Fathom meeting listing exceeded ${MAX_FATHOM_MEETING_PAGES} pages`,
+      );
+    }
 
     if (!isDefined(meeting)) {
       continue;

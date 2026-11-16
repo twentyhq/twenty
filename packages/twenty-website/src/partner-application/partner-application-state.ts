@@ -35,6 +35,7 @@ export type PartnerApplicationState = {
   hourlyRate: string;
   projectBudgetMin: string;
   calendarLink: string;
+  acceptsTerms: boolean;
 
   // Meta
   fieldErrors: Partial<Record<string, string>>;
@@ -67,6 +68,7 @@ export type PartnerApplicationAction =
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
   | { type: 'TOGGLE_EXPERIENCE'; value: PartnerTwentyExperienceValue }
   | { type: 'SET_SKILLS'; value: string[] }
+  | { type: 'SET_ACCEPTS_TERMS'; value: boolean }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
   | { type: 'SET_SUBMITTING'; value: boolean }
@@ -93,6 +95,7 @@ export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
   hourlyRate: '',
   projectBudgetMin: '',
   calendarLink: '',
+  acceptsTerms: false,
   fieldErrors: {},
   submitError: null,
   isSubmitting: false,

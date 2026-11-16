@@ -18,7 +18,7 @@ describe('AiChatPageHeader', () => {
   it('titles the page of a chat that has no record yet', () => {
     render(
       <I18nProvider i18n={i18n}>
-        <AiChatPageHeader />
+        <AiChatPageHeader icon={null} />
       </I18nProvider>,
     );
 

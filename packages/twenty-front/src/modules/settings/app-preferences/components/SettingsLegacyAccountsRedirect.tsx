@@ -1,17 +1,8 @@
 import { getAppPreferencesPathnameFromLegacyAccountsPathname } from '@/settings/app-preferences/utils/getAppPreferencesPathnameFromLegacyAccountsPathname';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export const SettingsLegacyAccountsRedirect = () => {
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
   const { pathname, search, hash } = useLocation();
-
-  if (!isAppPreferencesEnabled) {
-    return <Outlet />;
-  }
 
   return (
     <Navigate
