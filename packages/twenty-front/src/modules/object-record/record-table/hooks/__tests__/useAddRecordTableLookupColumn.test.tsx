@@ -2,7 +2,9 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
+import { ViewType } from '@/views/types/ViewType';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -115,6 +117,31 @@ describe('useAddRecordTableLookupColumn', () => {
         relationTargetFieldMetadataId: 'industry-field',
       }),
     ]);
+  });
+
+  it('does not put the lookup column back when the view switched to a layout without extra columns', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [companyColumn]);
+    performViewFieldApiCreateMock.mockImplementation(async () => {
+      store.set(
+        recordIndexViewTypeState.atomFamily({ instanceId: RECORD_TABLE_ID }),
+        ViewType.CALENDAR,
+      );
+      store.set(currentRecordFieldsAtom, [companyColumn]);
+
+      return { status: 'successful' };
+    });
+
+    const { result } = renderAddHook(store);
+
+    await act(async () => {
+      await result.current.addRecordTableLookupColumn({
+        relationFieldMetadataItemId: 'company-field',
+        relationTargetFieldMetadataId: 'industry-field',
+      });
+    });
+
+    expect(store.get(currentRecordFieldsAtom)).toEqual([companyColumn]);
   });
 
   it('removes the lookup column when the save fails', async () => {

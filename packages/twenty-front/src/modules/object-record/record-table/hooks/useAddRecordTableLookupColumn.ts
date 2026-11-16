@@ -1,5 +1,7 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { buildRecordTableLookupColumn } from '@/object-record/record-table/utils/buildRecordTableLookupColumn';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
@@ -59,8 +61,19 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
         ],
       });
 
-      // A view field sync during the request can drop the column, from not yet updated metadata
-      if (result.status === 'successful') {
+      const viewType = store.get(
+        recordIndexViewTypeState.atomFamily({ instanceId: recordTableId }),
+      );
+
+      // Restore a column a view field sync dropped meanwhile, unless the layout switched to one without extra columns
+      if (
+        result.status === 'successful' &&
+        (!isDefined(viewType) ||
+          isRecordFieldSupportedByViewType({
+            recordField: lookupColumn,
+            viewType,
+          }))
+      ) {
         store.set(currentRecordFieldsAtom, (recordFields) =>
           recordFields.some(({ id }) => id === lookupColumn.id)
             ? recordFields
