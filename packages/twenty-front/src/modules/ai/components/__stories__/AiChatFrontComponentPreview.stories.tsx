@@ -11,7 +11,7 @@ import {
   getFrontComponentPreviewMock,
   seedFrontComponentPreviewWorkspace,
 } from '@/ai/components/__mocks__/aiChatFrontComponentPreviewMocks';
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';

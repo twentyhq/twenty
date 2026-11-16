@@ -11,10 +11,9 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { v4 } from 'uuid';
 
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
@@ -23,6 +22,7 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
+const COMPUTE_START_TIMEOUT_MS = 30_000;
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const ACCESS_GROUP_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."accessGroup"`;
@@ -236,6 +236,7 @@ describe('access group propagation progress (integration)', () => {
 
     roleId = data.createOneRole.id;
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    // Other specs empty the person table, and a compute over no record never reaches a batch
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
       [personId],
@@ -246,13 +247,6 @@ describe('access group propagation progress (integration)', () => {
       expectToFail: false,
     });
     await waitForAllJobsToFinish();
-    await global.app
-      .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
-      .mdel(
-        ['plan', 'computed-record-count'].map(
-          (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
-        ),
-      );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 
@@ -333,8 +327,30 @@ describe('access group propagation progress (integration)', () => {
       },
     });
 
+    const computeStartAbortController = new AbortController();
+    const describeStateWhenComputeDidNotStart = async (): Promise<never> => {
+      await sleep(COMPUTE_START_TIMEOUT_MS, undefined, {
+        signal: computeStartAbortController.signal,
+      });
+
+      const deferredOperations = await global.testDataSource.query(
+        `SELECT "name", "status", "attempts", "lastError", "payload" FROM core."deferredWorkspaceOperation" WHERE "workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+      const accessGroups = await global.testDataSource.query(
+        `SELECT "objectMetadataId", "roleId", "rowLevelPermissionPredicateGroupId" FROM ${ACCESS_GROUP_TABLE}`,
+      );
+
+      throw new Error(
+        `The person compute did not start: ${JSON.stringify({ personObjectMetadataId: objectMetadataId, roleId, personCount, deferredOperations, accessGroups })}`,
+      );
+    };
+
     try {
-      await firstBatchReached;
+      await Promise.race([
+        firstBatchReached,
+        describeStateWhenComputeDidNotStart(),
+      ]);
 
       const progress = await readProgress();
 
@@ -342,6 +358,7 @@ describe('access group propagation progress (integration)', () => {
       expect(progress.remainingRecordCount).toBe(progress.totalRecordCount);
       expect(progress.isInProgress).toBe(true);
     } finally {
+      computeStartAbortController.abort();
       resumeCompute();
     }
 

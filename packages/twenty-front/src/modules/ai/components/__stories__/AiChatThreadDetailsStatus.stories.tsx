@@ -9,16 +9,16 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
-import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -48,7 +48,7 @@ const ACTIVITY_AT = '2020-01-01T00:00:00.000Z';
 const PERSONAL_STATUS_LABEL = 'Change status in Your inbox';
 const CHANNEL_STATUS_LABEL = 'Change status in Sales';
 
-const CHANNEL: AgentChatChannel = {
+const CHANNEL: AiChatChannel = {
   id: CHANNEL_ID,
   name: 'Sales',
   icon: 'IconHash',
@@ -230,7 +230,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
         },
   );
   jotaiStore.set(
-    inboxChannelsState.atom,
+    aiChatChannelsState.atom,
     scenario.areChannelsLoading
       ? null
       : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],

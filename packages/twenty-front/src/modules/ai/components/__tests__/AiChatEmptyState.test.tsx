@@ -3,9 +3,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {

@@ -109,6 +109,7 @@ export class ViewWidgetUpsertService {
     const {
       flatPageLayoutWidgetMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatViewFieldMaps,
       flatViewFilterMaps,
       flatViewFilterGroupMaps,
@@ -122,6 +123,7 @@ export class ViewWidgetUpsertService {
           flatMapsKeys: [
             'flatPageLayoutWidgetMaps',
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
             'flatViewFieldMaps',
             'flatViewFilterMaps',
             'flatViewFilterGroupMaps',
@@ -319,6 +321,7 @@ export class ViewWidgetUpsertService {
           flatViewMaps,
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           callerApplicationUniversalIdentifier:
             upsertContext.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:

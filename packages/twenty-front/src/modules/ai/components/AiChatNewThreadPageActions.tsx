@@ -8,7 +8,7 @@ import { IconHome } from 'twenty-ui/icon';
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { isInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 export const AiChatNewThreadPageActions = () => {
   const { t } = useLingui();

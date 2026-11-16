@@ -9,7 +9,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';

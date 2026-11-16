@@ -6,11 +6,11 @@ import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
 
 const answerAiChatToolCall = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
+jest.mock('@/ai/hooks/useAnswerAiChatToolCall', () => ({
   useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 

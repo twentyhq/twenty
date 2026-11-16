@@ -3,8 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { aiChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
+import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 

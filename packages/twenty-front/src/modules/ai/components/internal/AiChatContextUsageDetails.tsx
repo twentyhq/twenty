@@ -12,7 +12,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';

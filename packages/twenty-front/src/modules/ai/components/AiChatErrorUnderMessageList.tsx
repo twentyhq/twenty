@@ -1,10 +1,10 @@
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { aiChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
-import { aiChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
+import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
+import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';

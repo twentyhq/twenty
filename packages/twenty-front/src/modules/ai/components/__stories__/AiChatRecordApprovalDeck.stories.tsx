@@ -8,8 +8,8 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';

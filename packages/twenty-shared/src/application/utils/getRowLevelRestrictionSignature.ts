@@ -1,6 +1,6 @@
 import {
-  type RoleManifest,
-  type RowLevelPermissionPredicateGroupManifest,
+  type LegacyCompliantRoleManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
 } from '@/application/roleManifestType';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -22,7 +22,7 @@ const getGroupOperatorPath = ({
 }: {
   groupsByUniversalIdentifier: Map<
     string,
-    RowLevelPermissionPredicateGroupManifest
+    LegacyRowLevelPermissionPredicateGroupManifest
   >;
   predicateGroupUniversalIdentifier: string | null | undefined;
 }): string[] => {
@@ -56,7 +56,7 @@ export const getRowLevelRestrictionSignature = ({
   role,
   objectUniversalIdentifier,
 }: {
-  role: RoleManifest;
+  role: LegacyCompliantRoleManifest;
   objectUniversalIdentifier: string;
 }): string[] => {
   const groupsByUniversalIdentifier = new Map(

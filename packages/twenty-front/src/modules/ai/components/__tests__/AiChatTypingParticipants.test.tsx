@@ -5,9 +5,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';

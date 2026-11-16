@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 
-import { useAiChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAiChatThreadMembers } from '@/ai/hooks/useAiChatThreadMembers';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';

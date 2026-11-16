@@ -7,7 +7,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { sleep } from '~/utils/sleep';
 
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
-import { aiChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
 import {
   jotaiStore,
   resetJotaiStore,

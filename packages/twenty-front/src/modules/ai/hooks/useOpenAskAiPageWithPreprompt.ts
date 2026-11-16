@@ -5,11 +5,11 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { type AiChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
+import { type AiChatPrepromptMode } from '@/ai/states/aiChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { aiChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 // Kept coarse because it is part of the front component SDK surface.

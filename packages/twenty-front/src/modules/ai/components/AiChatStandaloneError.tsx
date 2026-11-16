@@ -3,10 +3,10 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { aiChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
+import { aiChatIsLoadingSelector } from '@/ai/states/selectors/aiChatIsLoadingSelector';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';

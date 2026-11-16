@@ -6,9 +6,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { useAiChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { isAiChatPendingRecordApproval } from '@/ai/utils/isAgentChatPendingRecordApproval';
+import { useAiChatPendingToolCalls } from '@/ai/hooks/useAiChatPendingToolCalls';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { isAiChatPendingRecordApproval } from '@/ai/utils/isAiChatPendingRecordApproval';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`

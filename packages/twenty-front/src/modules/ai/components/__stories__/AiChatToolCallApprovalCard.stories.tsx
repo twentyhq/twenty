@@ -13,9 +13,9 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';

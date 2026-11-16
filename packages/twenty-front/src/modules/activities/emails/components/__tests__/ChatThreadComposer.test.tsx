@@ -13,7 +13,7 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
+jest.mock('@/ai/components/internal/AiChatFilePreview', () => ({
   AiChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
 }));
 

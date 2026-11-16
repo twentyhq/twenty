@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useTheme } from 'twenty-ui/theme';
 
-import { aiChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
+import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 
 export const useAiChatSentMessageHandOff = (messageId: string) => {

@@ -1,13 +1,13 @@
 import { useStore } from 'jotai';
 
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import {
   type AiChatPrepromptMode,
   aiChatPrepromptState,
-} from '@/ai/states/agentChatPrepromptState';
+} from '@/ai/states/aiChatPrepromptState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';

@@ -4,9 +4,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
-import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAiChatThreadSubtitleContent';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
 const StyledSubtitle = styled.div`
   align-items: center;

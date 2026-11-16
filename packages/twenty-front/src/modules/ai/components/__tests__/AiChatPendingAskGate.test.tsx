@@ -9,14 +9,14 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { type AiChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 const useAiChatPendingToolCalls = jest.fn();
 let displayedThreadId = 'thread-1';
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => displayedThreadId,
 }));
-jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
+jest.mock('@/ai/hooks/useAiChatPendingToolCalls', () => ({
   useAiChatPendingToolCalls: () => useAiChatPendingToolCalls(),
 }));
 jest.mock('@/ai/components/AiChatQuestionCard', () => ({

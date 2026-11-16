@@ -1,14 +1,13 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
-import { type ApplyAccessGroupPropagationPlanJobData } from 'src/engine/permissions/internal/access-group/types/apply-access-group-propagation-plan-job-data.type';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
@@ -22,54 +21,12 @@ import { type RelatedRecords } from 'src/engine/permissions/types/related-record
 
 @Injectable()
 export class RecordAccessGroupPropagationService {
-  private readonly logger = new Logger(
-    RecordAccessGroupPropagationService.name,
-  );
-
   constructor(
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
-
-  async computeNextPlannedObject(
-    applyJobData: ApplyAccessGroupPropagationPlanJobData,
-  ): Promise<void> {
-    const { workspaceId } = applyJobData;
-    const objectMetadataId =
-      await this.accessGroupPropagationPlanService.findNextObjectMetadataIdToCompute(
-        applyJobData,
-      );
-
-    if (!isDefined(objectMetadataId)) {
-      return;
-    }
-
-    const computeObject = () =>
-      this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-        { workspaceId, objectMetadataId },
-      );
-
-    try {
-      await computeObject().catch((error) => {
-        this.logger.warn(
-          `Retrying the access group compute of object ${objectMetadataId} in workspace ${workspaceId}: ${error}`,
-        );
-
-        return computeObject();
-      });
-    } catch (error) {
-      await this.accessGroupPropagationPlanService.stopPlan(workspaceId);
-
-      throw error;
-    }
-
-    await this.accessGroupPropagationPlanService.finishCompute({
-      applyJobData,
-      objectMetadataId,
-    });
-  }
 
   async planAndApplyRecomputeOfRelatedRecordPathTargets({
     workspaceId,

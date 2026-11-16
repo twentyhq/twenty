@@ -25,19 +25,19 @@ export const SettingsWorkspaceEmailSyncSection = () => {
       return;
     }
 
-    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
+    if (value === currentWorkspace.isInternalImportEnabled) {
       return;
     }
 
     setCurrentWorkspace({
       ...currentWorkspace,
-      isInternalMessagesImportEnabled: value,
+      isInternalImportEnabled: value,
     });
 
     updateWorkspace({
       variables: {
         input: {
-          isInternalMessagesImportEnabled: value,
+          isInternalImportEnabled: value,
         },
       },
     }).catch((error) => {
@@ -56,7 +56,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           Icon={IconMail}
           title={t`Sync Internal Emails`}
           description={t`Include emails where all participants share the same domain.`}
-          checked={currentWorkspace?.isInternalMessagesImportEnabled ?? false}
+          checked={currentWorkspace?.isInternalImportEnabled ?? false}
           onChange={handleSyncInternalEmailsChange}
         />
       </Card.Root>

@@ -1,4 +1,4 @@
-import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';

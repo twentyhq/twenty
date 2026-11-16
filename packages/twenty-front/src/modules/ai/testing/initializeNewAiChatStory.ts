@@ -1,13 +1,13 @@
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -29,7 +29,7 @@ export const initializeNewAiChatStory = ({
   isInboxEnabled: boolean;
 }) => {
   jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(inboxNewThreadChannelIdState.atom, null);
+  jotaiStore.set(aiChatNewThreadChannelIdState.atom, null);
   jotaiStore.set(
     aiChatIsSendingMessageFamilyState.atomFamily({
       threadId: NEW_CHAT_THREAD_ID,

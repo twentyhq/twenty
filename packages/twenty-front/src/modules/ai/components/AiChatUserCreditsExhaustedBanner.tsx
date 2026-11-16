@@ -7,7 +7,7 @@ import { IconSettings } from 'twenty-ui/icon';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { aiChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
+import { aiChatUserCreditsBannerDismissalState } from '@/ai/states/aiChatUserCreditsBannerDismissalState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

@@ -9,14 +9,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { scrollToAiChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAiChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -62,7 +62,7 @@ jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
 }));
 
-jest.mock('@/ai/utils/scrollToAgentChatMessage', () => ({
+jest.mock('@/ai/utils/scrollToAiChatMessage', () => ({
   scrollToAiChatMessage: jest.fn(),
 }));
 

@@ -47,6 +47,7 @@ export const buildAdminUsageLimitRows = (
             ? Number(override.burstValue)
             : null,
         usageLimitId: override?.id ?? null,
+        endsAt: override?.endsAt ?? null,
         isOverridden: isDefined(override),
       };
     })

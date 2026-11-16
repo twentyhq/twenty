@@ -9,8 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { AI_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
-import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { AI_CHAT_EMOJIBASE_URL } from '@/ai/constants/AiChatEmojibaseUrl';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
