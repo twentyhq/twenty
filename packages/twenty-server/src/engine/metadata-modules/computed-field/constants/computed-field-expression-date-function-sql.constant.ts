@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 import {
   assertUnreachable,
+  ComputedFieldExpressionError,
   isDefined,
   isExpressionDatePart,
   isExpressionDateUnit,
@@ -64,12 +65,17 @@ const POSTGRES_DATE_PART: Record<ExpressionDatePart, string> = {
 };
 
 // The type check has already read the unit or part, so the literal is syntax and never bound
-const readLiteralOrThrow = <TLiteral extends string>(
-  node: TypedComputedFieldExpressionNode | undefined,
-  isAllowedValue: (value: unknown) => value is TLiteral,
-): TLiteral => {
+const readLiteralOrThrow = <TLiteral extends string>({
+  node,
+  isAllowedValue,
+}: {
+  node: TypedComputedFieldExpressionNode | undefined;
+  isAllowedValue: (value: unknown) => value is TLiteral;
+}): TLiteral => {
   if (node?.kind !== 'textLiteral' || !isAllowedValue(node.value)) {
-    throw new Error('A date unit or part must be a checked text literal');
+    throw new ComputedFieldExpressionError(
+      'A date unit or part must be a checked text literal',
+    );
   }
 
   return node.value;
@@ -80,7 +86,9 @@ const toDateSqlOperand = (
   emitSql: (node: TypedComputedFieldExpressionNode) => string,
 ): ComputedFieldDateSqlOperand => {
   if (!isDefined(node)) {
-    throw new Error('A date function is missing a date argument');
+    throw new ComputedFieldExpressionError(
+      'A date function is missing a date argument',
+    );
   }
 
   return { sql: emitSql(node), type: node.type === DATE ? DATE : DATE_TIME };
@@ -92,7 +100,10 @@ const renderDateDiff: ComputedFieldExpressionFunctionSqlRenderer = ({
 }) => {
   const from = toDateSqlOperand(fromNode, emitSql);
   const to = toDateSqlOperand(toNode, emitSql);
-  const unit = readLiteralOrThrow(unitNode, isExpressionDateUnit);
+  const unit = readLiteralOrThrow({
+    node: unitNode,
+    isAllowedValue: isExpressionDateUnit,
+  });
 
   switch (unit) {
     case 'MINUTE':
@@ -128,10 +139,13 @@ const renderDateAdd: ComputedFieldExpressionFunctionSqlRenderer = ({
   emitSql,
 }) => {
   const date = toDateSqlOperand(dateNode, emitSql);
-  const unit = readLiteralOrThrow(unitNode, isExpressionDateUnit);
+  const unit = readLiteralOrThrow({
+    node: unitNode,
+    isAllowedValue: isExpressionDateUnit,
+  });
 
   if (!isDefined(amountNode)) {
-    throw new Error('dateAdd is missing its amount');
+    throw new ComputedFieldExpressionError('dateAdd is missing its amount');
   }
 
   return withComputedFieldBoundOperandsSql({
@@ -163,7 +177,10 @@ const renderDateTrunc: ComputedFieldExpressionFunctionSqlRenderer = ({
   emitSql,
 }) => {
   const date = toDateSqlOperand(dateNode, emitSql);
-  const unit = readLiteralOrThrow(unitNode, isExpressionDateUnit);
+  const unit = readLiteralOrThrow({
+    node: unitNode,
+    isAllowedValue: isExpressionDateUnit,
+  });
 
   if (date.type === DATE) {
     return unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY'
@@ -178,7 +195,7 @@ const renderDatePart: ComputedFieldExpressionFunctionSqlRenderer = ({
   functionArguments: [dateNode, partNode],
   emitSql,
 }) =>
-  `EXTRACT(${POSTGRES_DATE_PART[readLiteralOrThrow(partNode, isExpressionDatePart)]} FROM ${toComputedFieldUtcWallClockSql(toDateSqlOperand(dateNode, emitSql))})`;
+  `EXTRACT(${POSTGRES_DATE_PART[readLiteralOrThrow({ node: partNode, isAllowedValue: isExpressionDatePart })]} FROM ${toComputedFieldUtcWallClockSql(toDateSqlOperand(dateNode, emitSql))})`;
 
 export const COMPUTED_FIELD_EXPRESSION_DATE_FUNCTION_SQL = {
   dateDiff: renderDateDiff,

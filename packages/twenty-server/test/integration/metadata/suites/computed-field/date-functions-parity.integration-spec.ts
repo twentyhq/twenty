@@ -193,7 +193,9 @@ const queryInSessionTimeZone = async ({
 
   try {
     await queryRunner.startTransaction();
-    await queryRunner.query(`SET LOCAL TIME ZONE '${sessionTimeZone}'`);
+    await queryRunner.query("SELECT set_config('TimeZone', $1, true)", [
+      sessionTimeZone,
+    ]);
 
     const [row] = await queryRunner.query(escapedQuery, values);
 

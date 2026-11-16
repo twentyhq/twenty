@@ -4,7 +4,6 @@ import { assertComputedFieldExpressionTypeOrThrow } from '@/utils/computed-field
 import { readComputedFieldExpressionDateUnitOrThrow } from '@/utils/computed-field/internal/readComputedFieldExpressionDateUnitOrThrow';
 import { toComputedFieldExpressionDateOperandOrThrow } from '@/utils/computed-field/internal/toComputedFieldExpressionDateOperandOrThrow';
 
-// A date stays a date unless minutes or hours are added
 export const checkComputedFieldExpressionDateAddArgumentsOrThrow: ComputedFieldExpressionFunction['checkArgumentsOrThrow'] =
   ({ functionArguments, usage }) => {
     const unit = readComputedFieldExpressionDateUnitOrThrow({
@@ -24,13 +23,13 @@ export const checkComputedFieldExpressionDateAddArgumentsOrThrow: ComputedFieldE
         : operand,
     );
 
+    const isAddingTimeOfDay = unit === 'MINUTE' || unit === 'HOUR';
+    const isDate =
+      checkedArguments[0]?.type === FieldMetadataType.DATE &&
+      !isAddingTimeOfDay;
+
     return {
       functionArguments: checkedArguments,
-      type:
-        checkedArguments[0]?.type === FieldMetadataType.DATE &&
-        unit !== 'MINUTE' &&
-        unit !== 'HOUR'
-          ? FieldMetadataType.DATE
-          : FieldMetadataType.DATE_TIME,
+      type: isDate ? FieldMetadataType.DATE : FieldMetadataType.DATE_TIME,
     };
   };

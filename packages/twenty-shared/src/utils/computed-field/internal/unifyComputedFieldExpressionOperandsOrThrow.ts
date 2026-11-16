@@ -8,8 +8,21 @@ import { isDefined } from '@/utils/validation/isDefined';
 
 const { DATE, DATE_TIME } = FieldMetadataType;
 
-// A text literal next to a date is read as a date. A comparison reads a date and a date and time as UTC days, as rules do;
-// elsewhere a date is widened to UTC midnight so no time is dropped
+const getUnifiedDateType = ({
+  dateTypes,
+  isComparison,
+}: {
+  dateTypes: (ComputedFieldValueType | undefined)[];
+  isComparison: boolean;
+}): ComputedFieldValueType => {
+  if (isComparison) {
+    return dateTypes.includes(DATE) ? DATE : DATE_TIME;
+  }
+
+  return dateTypes.includes(DATE_TIME) ? DATE_TIME : DATE;
+};
+
+// A date next to a date and time: a comparison compares UTC days, as rules do; elsewhere the date widens to UTC midnight
 export const unifyComputedFieldExpressionOperandsOrThrow = ({
   operands,
   usage,
@@ -43,15 +56,10 @@ export const unifyComputedFieldExpressionOperandsOrThrow = ({
   const dateOperands = operands.map((operand) =>
     toComputedFieldExpressionDateOperandOrThrow({ operand, usage }),
   );
-  const dateTypes = dateOperands.map((operand) => operand.type);
-
-  const type = isComparison
-    ? dateTypes.includes(DATE)
-      ? DATE
-      : DATE_TIME
-    : dateTypes.includes(DATE_TIME)
-      ? DATE_TIME
-      : DATE;
+  const type = getUnifiedDateType({
+    dateTypes: dateOperands.map((operand) => operand.type),
+    isComparison,
+  });
 
   return {
     operands: dateOperands.map((operand): TypedComputedFieldExpressionNode =>
