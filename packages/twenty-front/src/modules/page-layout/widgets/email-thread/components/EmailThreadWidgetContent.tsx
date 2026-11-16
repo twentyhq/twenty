@@ -11,6 +11,7 @@ import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRe
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
@@ -18,6 +19,7 @@ import {
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -56,13 +58,18 @@ export const EmailThreadWidgetContent = ({
     setClickedDraftPrefill(null);
   }
 
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const emailComposerDraftKey = isDefined(currentWorkspaceMember)
+    ? `${currentWorkspaceMember.id}:${targetRecord.id}`
+    : undefined;
+
   const emailComposerDraft = useAtomFamilyStateValue(
     emailComposerDraftFamilyState,
-    targetRecord.id,
+    emailComposerDraftKey ?? '',
   );
   const setEmailComposerDraft = useSetAtomFamilyState(
     emailComposerDraftFamilyState,
-    targetRecord.id,
+    emailComposerDraftKey ?? '',
   );
 
   const handleComposerOpenChange = useCallback(
@@ -143,13 +150,13 @@ export const EmailThreadWidgetContent = ({
       </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
-          key={draftPrefill?.messageId ?? 'reply'}
+          key={draftPrefill?.messageId ?? targetRecord.id}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
           draftPrefill={draftPrefill}
-          draftKey={isDefined(draftPrefill) ? undefined : targetRecord.id}
+          draftKey={isDefined(draftPrefill) ? undefined : emailComposerDraftKey}
           appReplyTarget={appReplyTarget}
         />
       )}
