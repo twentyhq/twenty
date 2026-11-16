@@ -82,7 +82,11 @@ export const EmailThreadComposer = ({
 
   const { handleSend, canSend, canAttachFiles } = composerState;
 
-  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
+  const {
+    openAttachmentPicker,
+    discardPendingUploads,
+    isUploadingAttachments,
+  } = useAttachEmailFiles({
     onFilesAttached: composerState.setFiles,
   });
 
@@ -107,7 +111,10 @@ export const EmailThreadComposer = ({
       label: t`Cancel reply`,
       Icon: IconX,
       isPinned: !isInSidePanel,
-      onClick: () => setIsComposerOpen(false),
+      onClick: () => {
+        discardPendingUploads();
+        setIsComposerOpen(false);
+      },
       replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
     };
 
@@ -149,6 +156,7 @@ export const EmailThreadComposer = ({
     canSendReply,
     setIsComposerOpen,
     openAttachmentPicker,
+    discardPendingUploads,
     t,
   ]);
 
