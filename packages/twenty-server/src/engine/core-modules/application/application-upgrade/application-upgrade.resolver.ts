@@ -6,7 +6,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { TriggerUpgradeApplicationInput } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application.input';
 import { TriggerUpgradeApplicationResultDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application-result.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -43,7 +42,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 )
 export class ApplicationUpgradeResolver {
   constructor(
-    private readonly applicationUpgradeService: ApplicationUpgradeService,
     private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
   ) {}
 
