@@ -11,15 +11,20 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  type WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertWaitForEventStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
+type ActivatableWorkflowVersion = Pick<
+  WorkflowVersionEntity,
+  'id' | 'status' | 'steps'
+> & { trigger: WorkflowTrigger | null };
+
 export function assertVersionCanBeActivated(
-  workflowVersion: Pick<
-    WorkflowVersionEntity,
-    'id' | 'status' | 'trigger' | 'steps'
-  >,
+  workflowVersion: ActivatableWorkflowVersion,
   workflow: Pick<WorkflowEntity, 'lastPublishedVersionId'>,
 ) {
   assertVersionIsValid(workflowVersion);
@@ -44,12 +49,7 @@ export function assertVersionCanBeActivated(
   }
 }
 
-function assertVersionIsValid(
-  workflowVersion: Pick<
-    WorkflowVersionEntity,
-    'id' | 'status' | 'trigger' | 'steps'
-  >,
-) {
+function assertVersionIsValid(workflowVersion: ActivatableWorkflowVersion) {
   if (!workflowVersion.trigger) {
     throw new WorkflowTriggerException(
       'Workflow version does not contain trigger',

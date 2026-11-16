@@ -612,7 +612,9 @@ export class WorkflowRunWorkspaceService {
   }
 
   private getInitState(
-    workflowVersion: Pick<WorkflowVersionEntity, 'trigger' | 'steps'>,
+    workflowVersion: Pick<WorkflowVersionEntity, 'steps'> & {
+      trigger: WorkflowTrigger | null;
+    },
     triggerPayload: object,
     error?: string,
   ): WorkflowRunState | undefined {
