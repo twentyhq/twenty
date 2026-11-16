@@ -8,13 +8,14 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { resolveMainGroupByFieldMetadataId } from '@/views/utils/resolveMainGroupByFieldMetadataId';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, findById, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -35,6 +36,21 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const contextStoreInstanceId = useContextStoreInstanceId();
 
   const store = useStore();
+
+  // Extra columns depend on the view type, and nothing else reloads the fields on these switches.
+  // The view is read again since its columns may have changed during the update round trip.
+  const syncViewFieldsForViewType = useCallback(
+    (view: ViewWithRelations, viewType: ViewType) => {
+      const latestView =
+        store.get(viewsSelector.atom).find(findById(view.id)) ?? view;
+
+      syncRecordIndexViewFields(
+        { ...latestView, type: viewType },
+        objectMetadataItem,
+      );
+    },
+    [store, syncRecordIndexViewFields, objectMetadataItem],
+  );
 
   const setAndPersistViewType = useCallback(
     async (viewType: ViewType) => {
@@ -84,10 +100,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
           setRecordIndexViewType(viewType);
           await updateCurrentView(updateCurrentViewParams);
-          syncRecordIndexViewFields(
-            { ...currentView, type: viewType },
-            objectMetadataItem,
-          );
+          syncViewFieldsForViewType(currentView, viewType);
           return;
         }
         case ViewType.TABLE:
@@ -98,11 +111,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
-          // Extra columns depend on the view type, and nothing else reloads the fields on this switch
-          syncRecordIndexViewFields(
-            { ...currentView, type: viewType },
-            objectMetadataItem,
-          );
+          syncViewFieldsForViewType(currentView, viewType);
           return;
         }
         case ViewType.CALENDAR: {
@@ -154,7 +163,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       updateCurrentView,
       availableFieldsForCalendar,
       loadRecordIndexStates,
-      syncRecordIndexViewFields,
+      syncViewFieldsForViewType,
       objectMetadataItem,
       contextStoreInstanceId,
     ],
