@@ -147,7 +147,7 @@ export class FlatMcpServerValidatorService {
         : []),
     );
 
-    // Tokens minted for the current resource must not be sent to another host; a new provider brings its own.
+    // Tokens minted for the current resource must not be sent to another host.
     if (
       isDefined(url) &&
       url !== existingMcpServer.url &&
