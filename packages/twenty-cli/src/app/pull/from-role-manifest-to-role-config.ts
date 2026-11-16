@@ -32,6 +32,7 @@ export const fromRoleManifestToRoleConfig = ({
   const {
     universalIdentifier: roleUniversalIdentifier,
     objectPermissions,
+    recordsPermissions,
     fieldPermissions,
   } = roleManifest;
 
@@ -48,6 +49,22 @@ export const fromRoleManifestToRoleConfig = ({
                 objectUniversalIdentifier,
               }),
           }),
+        }
+      : {}),
+    ...(isDefined(recordsPermissions?.objects)
+      ? {
+          recordsPermissions: {
+            ...recordsPermissions,
+            objects: omitDerivedUniversalIdentifiers({
+              permissions: recordsPermissions.objects,
+              getDerivedUniversalIdentifier: ({ objectUniversalIdentifier }) =>
+                getObjectPermissionUniversalIdentifier({
+                  applicationUniversalIdentifier,
+                  roleUniversalIdentifier,
+                  objectUniversalIdentifier,
+                }),
+            }),
+          },
         }
       : {}),
     ...(isDefined(fieldPermissions)

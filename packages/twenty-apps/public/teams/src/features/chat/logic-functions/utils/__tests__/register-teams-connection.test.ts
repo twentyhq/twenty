@@ -14,6 +14,7 @@ const {
   getConnectionMock,
   fetchGraphJsonMock,
   releaseMock,
+  matchTeamsDirectoryByEmailMock,
 } = vi.hoisted(() => ({
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
@@ -22,6 +23,7 @@ const {
   getConnectionMock: vi.fn(),
   fetchGraphJsonMock: vi.fn(),
   releaseMock: vi.fn(),
+  matchTeamsDirectoryByEmailMock: vi.fn(),
 }));
 
 vi.mock('src/constants/release-flags', () => ({
@@ -43,8 +45,14 @@ vi.mock(
   () => ({ releaseTeamsConnectionTenant: releaseMock }),
 );
 
+vi.mock(
+  'src/features/chat/logic-functions/utils/match-teams-directory-by-email',
+  () => ({ matchTeamsDirectoryByEmail: matchTeamsDirectoryByEmailMock }),
+);
+
 const CONNECTED_ACCOUNT_ID = 'connected-account-id';
 const TENANT_ID = 'tenant-id';
+const DIRECTORY_SCOPE = 'https://graph.microsoft.com/User.ReadBasic.All';
 const CONNECTED_ACCOUNT_TENANT_KV_KEY =
   buildTeamsConnectedAccountTenantKvKey(CONNECTED_ACCOUNT_ID);
 const CLAIM_CONFLICT_KV_KEY =
@@ -67,10 +75,12 @@ describe('registerTeamsConnection', () => {
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     getConnectionMock.mockResolvedValue({
       scope: 'WORKSPACE',
+      scopes: [DIRECTORY_SCOPE],
       accessToken: 'graph-token',
     });
     fetchGraphJsonMock.mockResolvedValue({ value: [{ id: TENANT_ID }] });
     kvGetMock.mockResolvedValue(null);
+    matchTeamsDirectoryByEmailMock.mockResolvedValue(undefined);
   });
 
   it('should claim the tenant of a workspace-shared connection and remember it for release', async () => {
@@ -124,6 +134,7 @@ describe('registerTeamsConnection', () => {
       CONNECTED_ACCOUNT_TENANT_KV_KEY,
     );
     expect(releaseMock).not.toHaveBeenCalled();
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should fail for a retry when the claim fails while nobody holds the tenant', async () => {
@@ -138,6 +149,7 @@ describe('registerTeamsConnection', () => {
       { scope: 'SERVER' },
     );
     expect(kvDeleteMock).not.toHaveBeenCalled();
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should release the previous tenant when a reconnect signs in to another tenant', async () => {
@@ -159,6 +171,7 @@ describe('registerTeamsConnection', () => {
   it('should release the claim instead of claiming when the connection is personal', async () => {
     getConnectionMock.mockResolvedValue({
       scope: 'USER',
+      scopes: [DIRECTORY_SCOPE],
       accessToken: 'graph-token',
     });
 
@@ -173,6 +186,7 @@ describe('registerTeamsConnection', () => {
     expect(fetchGraphJsonMock).not.toHaveBeenCalled();
     expect(kvSetMock).not.toHaveBeenCalled();
     expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should release the claim instead of claiming while chat is disabled for the workspace', async () => {
@@ -188,5 +202,57 @@ describe('registerTeamsConnection', () => {
     });
     expect(getConnectionMock).not.toHaveBeenCalled();
     expect(kvSetMock).not.toHaveBeenCalled();
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
+  });
+
+  it('should link directory users by email once the tenant is claimed', async () => {
+    await registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID });
+
+    expect(matchTeamsDirectoryByEmailMock).toHaveBeenCalledWith({
+      accessToken: 'graph-token',
+      teamsTenantId: TENANT_ID,
+    });
+    expect(kvSetMock.mock.invocationCallOrder[1]).toBeLessThan(
+      matchTeamsDirectoryByEmailMock.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('should keep the claim when the directory match fails', async () => {
+    matchTeamsDirectoryByEmailMock.mockRejectedValue(new Error('graph down'));
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[teams] directory email match skipped: graph down',
+    );
+
+    consoleWarnSpy.mockRestore();
+  });
+
+  it('should skip the directory match when the connection lacks directory access', async () => {
+    getConnectionMock.mockResolvedValue({
+      scope: 'WORKSPACE',
+      scopes: ['https://graph.microsoft.com/User.Read'],
+      accessToken: 'graph-token',
+    });
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+
+    consoleWarnSpy.mockRestore();
   });
 });

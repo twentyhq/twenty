@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 const LINKS_PER_PAGE = 200;
-const MAX_PAGES = 25;
+const MAX_PAGES = 50;
 
 export const listLinkedTeamsUserAadObjectIdsOrThrow = async ({
   client,
@@ -46,6 +46,6 @@ export const listLinkedTeamsUserAadObjectIdsOrThrow = async ({
   }
 
   throw new Error(
-    `More than ${MAX_PAGES * LINKS_PER_PAGE} Teams user links exist for this tenant, so the unlinked users cannot be listed. Use the search to find a specific person.`,
+    `More than ${MAX_PAGES * LINKS_PER_PAGE} Teams user links exist for this tenant, so they cannot all be read at once. Use the search to link a specific person.`,
   );
 };

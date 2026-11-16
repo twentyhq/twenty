@@ -25,7 +25,7 @@ export const teamsHealthCheckHandler =
         title: 'Microsoft Teams is not connected',
         description:
           'No working Microsoft Teams connection was found in this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
-        action: { label: 'Add connection', location: '#general' },
+        action: { label: 'Open connections', location: '#general/connections' },
       };
     }
 
@@ -35,7 +35,10 @@ export const teamsHealthCheckHandler =
         title: 'Microsoft Teams connection needs to be reconnected',
         description:
           'Microsoft rejected the stored credentials, so meeting transcripts are no longer imported. Remove the Microsoft Teams connection and add it again.',
-        action: { label: 'Manage connection', location: '#general' },
+        action: {
+          label: 'Manage connection',
+          location: '#general/connections',
+        },
       };
     }
 
@@ -54,7 +57,7 @@ export const teamsHealthCheckHandler =
         title: 'Microsoft Teams chat needs a workspace connection',
         description:
           'Chat only answers messages from the Microsoft organization of a working workspace-shared connection, and personal connections do not count. Add a workspace connection, or reconnect the existing one, to use chat.',
-        action: { label: 'Add connection', location: '#general' },
+        action: { label: 'Open connections', location: '#general/connections' },
       };
     }
 
@@ -70,7 +73,10 @@ export const teamsHealthCheckHandler =
         title: 'Microsoft Teams chat is taken by another workspace',
         description:
           'Another Twenty workspace already connected this Microsoft organization, and Teams messages from an organization can only reach one workspace. Transcripts still import here. To use chat here, disconnect Microsoft Teams in that workspace, then remove and add the connection again in this one.',
-        action: { label: 'Manage connection', location: '#general' },
+        action: {
+          label: 'Manage connection',
+          location: '#general/connections',
+        },
       };
     }
 
