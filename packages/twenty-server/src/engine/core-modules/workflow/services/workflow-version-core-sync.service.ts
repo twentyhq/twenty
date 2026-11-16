@@ -345,23 +345,13 @@ export class WorkflowVersionCoreSyncService {
 
     if (isDefined(workspaceWorkflowVersionId)) {
       return (
-        await this.findCoreVersionByWorkspaceVersionId(
-          workspaceId,
-          workspaceWorkflowVersionId,
-        )
+        await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+          where: { workspaceWorkflowVersionId },
+        })
       )?.id;
     }
 
     return lastPublishedCoreWorkflowVersionId ?? undefined;
-  }
-
-  async findCoreVersionByWorkspaceVersionId(
-    workspaceId: string,
-    workspaceWorkflowVersionId: string,
-  ): Promise<WorkflowVersionEntity | null> {
-    return this.coreWorkflowVersionRepository.findOne(workspaceId, {
-      where: { workspaceWorkflowVersionId },
-    });
   }
 
   private async resolveCoreWorkflowIdByWorkflowId(
