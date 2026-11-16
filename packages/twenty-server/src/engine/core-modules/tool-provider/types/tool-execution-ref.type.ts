@@ -7,4 +7,5 @@ export type ToolExecutionRef =
       operation: DatabaseCrudOperation;
     }
   | { kind: 'static'; toolId: string }
-  | { kind: 'logic_function'; logicFunctionId: string };
+  | { kind: 'logic_function'; logicFunctionId: string }
+  | { kind: 'mcp_server_tool'; mcpServerId: string; toolName: string };

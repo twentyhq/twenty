@@ -88,7 +88,8 @@
                     "pages": [
                       "user-guide/data-model/capabilities/objects",
                       "user-guide/data-model/capabilities/fields",
-                      "user-guide/data-model/capabilities/relation-fields"
+                      "user-guide/data-model/capabilities/relation-fields",
+                      "user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -1201,7 +1202,8 @@
                     "pages": [
                       "ar/user-guide/data-model/capabilities/objects",
                       "ar/user-guide/data-model/capabilities/fields",
-                      "ar/user-guide/data-model/capabilities/relation-fields"
+                      "ar/user-guide/data-model/capabilities/relation-fields",
+                      "ar/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -2766,7 +2768,8 @@
                     "pages": [
                       "es/user-guide/data-model/capabilities/objects",
                       "es/user-guide/data-model/capabilities/fields",
-                      "es/user-guide/data-model/capabilities/relation-fields"
+                      "es/user-guide/data-model/capabilities/relation-fields",
+                      "es/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -3427,7 +3430,8 @@
                     "pages": [
                       "it/user-guide/data-model/capabilities/objects",
                       "it/user-guide/data-model/capabilities/fields",
-                      "it/user-guide/data-model/capabilities/relation-fields"
+                      "it/user-guide/data-model/capabilities/relation-fields",
+                      "it/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -5444,7 +5448,8 @@
                     "pages": [
                       "ro/user-guide/data-model/capabilities/objects",
                       "ro/user-guide/data-model/capabilities/fields",
-                      "ro/user-guide/data-model/capabilities/relation-fields"
+                      "ro/user-guide/data-model/capabilities/relation-fields",
+                      "ro/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {

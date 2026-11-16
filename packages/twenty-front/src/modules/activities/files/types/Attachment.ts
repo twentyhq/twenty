@@ -25,7 +25,6 @@ export type Attachment = {
   targetNoteId?: string | null;
   targetOpportunityId?: string | null;
   targetDashboardId?: string | null;
-  targetWorkflowId?: string | null;
   createdBy?: {
     source: string;
     workspaceMemberId: string | null;

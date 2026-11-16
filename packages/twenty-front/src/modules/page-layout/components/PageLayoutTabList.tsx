@@ -182,7 +182,9 @@ export const PageLayoutTabList = ({
   );
 
   const isActiveTabHidden = useMemo(() => {
-    if (!hasHiddenTabs) return false;
+    if (!hasHiddenTabs) {
+      return false;
+    }
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
 

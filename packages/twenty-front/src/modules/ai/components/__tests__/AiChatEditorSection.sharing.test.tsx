@@ -1,4 +1,4 @@
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -39,18 +39,19 @@ describe('Shared conversation composer', () => {
   it.each([false, undefined])(
     'keeps the composer read-only without update permission (%s)',
     (canUpdate) => {
-      setAgentChatThreadPermissions(
-        jotaiStore,
-        'shared-thread',
-        canUpdate === undefined
-          ? undefined
-          : {
-              canRead: true,
-              canUpdate,
-              canDelete: false,
-              canSoftDelete: false,
-            },
-      );
+      setAiChatThreadPermissions({
+        store: jotaiStore,
+        threadId: 'shared-thread',
+        permissions:
+          canUpdate === undefined
+            ? undefined
+            : {
+                canRead: true,
+                canUpdate,
+                canDelete: false,
+                canSoftDelete: false,
+              },
+      });
       render(<AiChatEditorSection />, { wrapper: Wrapper });
       expect(screen.getByRole('status')).toHaveTextContent(
         canUpdate === undefined
@@ -62,11 +63,15 @@ describe('Shared conversation composer', () => {
     },
   );
   it('shows unavailable rather than loading after access is revoked in either chat surface', () => {
-    setAgentChatThreadPermissions(jotaiStore, 'shared-thread', {
-      canRead: false,
-      canUpdate: false,
-      canDelete: false,
-      canSoftDelete: false,
+    setAiChatThreadPermissions({
+      store: jotaiStore,
+      threadId: 'shared-thread',
+      permissions: {
+        canRead: false,
+        canUpdate: false,
+        canDelete: false,
+        canSoftDelete: false,
+      },
     });
     render(<AiChatEditorSection />, { wrapper: Wrapper });
     expect(screen.getByRole('status')).toHaveTextContent(

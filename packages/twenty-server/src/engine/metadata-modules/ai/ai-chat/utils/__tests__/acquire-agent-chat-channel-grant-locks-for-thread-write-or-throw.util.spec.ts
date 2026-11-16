@@ -1,6 +1,6 @@
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeWorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/error-handling/compute-workspace-query-executor-exception.util';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const FIRST_CHANNEL_ID = '20202020-0000-4000-8000-00000000000a';
@@ -10,7 +10,9 @@ const SHARED_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))';
 
 const buildWorkspaceQueryError = (code: string) =>
-  computeTwentyOrmException(Object.assign(new Error(code), { code }));
+  computeWorkspaceQueryExecutorException(
+    Object.assign(new Error(code), { code }),
+  );
 
 describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
   it('bounds the wait before taking the shared locks', async () => {

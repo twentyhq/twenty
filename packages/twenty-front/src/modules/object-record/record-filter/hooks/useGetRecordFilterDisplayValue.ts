@@ -10,14 +10,17 @@ import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dro
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
 import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
-import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
+import {
+  RecordFilterOperand,
+  FieldMetadataType,
+  type Nullable,
+} from 'twenty-shared/types';
 import {
   isDefined,
   isEmptinessOperand,

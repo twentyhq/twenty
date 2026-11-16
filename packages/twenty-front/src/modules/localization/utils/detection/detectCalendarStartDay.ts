@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 
 export const detectCalendarStartDay = (): FirstDayOfTheWeek => {
@@ -6,8 +7,7 @@ export const detectCalendarStartDay = (): FirstDayOfTheWeek => {
 
     if (
       'weekInfo' in locale &&
-      locale.weekInfo !== null &&
-      locale.weekInfo !== undefined &&
+      isDefined(locale.weekInfo) &&
       typeof locale.weekInfo === 'object' &&
       'firstDay' in locale.weekInfo
     ) {

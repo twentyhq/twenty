@@ -11,6 +11,7 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -262,11 +263,18 @@ describe('row-level permission predicates comparing two relation fields', () => 
 
     customRoleId = roleId;
 
+    await revokeObjectRecordsPermissions({
+      roleId: customRoleId,
+      objectMetadataId: companyObjectMetadataId,
+    });
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId: customRoleId,
         objectMetadataId: companyObjectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
         predicates: [
           {
             id: PREDICATE_ID,

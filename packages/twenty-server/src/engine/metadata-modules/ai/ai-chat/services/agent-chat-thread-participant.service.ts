@@ -80,6 +80,19 @@ const buildMentionResolutionQuery = ({
      AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
    RETURNING *`;
 
+// For archiving on a member's behalf: an UPDATE that skips a member who does
+// not follow the chat, where ARCHIVE would subscribe them
+const buildArchiveIfFollowingQuery: BuildParticipantWriteQuery = ({
+  participantTable,
+}) =>
+  `UPDATE ${participantTable} AS participant
+   SET "archivedAt" = clock_timestamp(),
+     "snoozedUntil" = NULL,
+     "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+     "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   WHERE "threadId" = $1 AND "workspaceMemberId" = $2 AND "isSubscribed"
+   RETURNING *`;
+
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
@@ -182,12 +195,16 @@ export class AgentChatThreadParticipantService {
     writeThread,
     workspaceId,
     workspaceMemberId,
+    isArchivedOnlyIfFollowing = false,
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
     threadIds: string[];
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
     writeThread?: AgentChatThreadWriteStep;
+    isArchivedOnlyIfFollowing?: boolean;
   }): Promise<AgentChatThreadParticipantDTO[]> {
+    const isArchiveIfFollowing =
+      isArchivedOnlyIfFollowing && action === AgentChatInboxAction.ARCHIVE;
     const isSnooze = action === AgentChatInboxAction.SNOOZE;
     const snoozeEnd = isSnooze ? snoozedUntil : null;
 
@@ -234,8 +251,14 @@ export class AgentChatThreadParticipantService {
     };
 
     return this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
-      INBOX_ACTION_QUERIES[action],
+      {
+        ...memberArgs,
+        threadIds: uniqueThreadIds,
+        isEveryRowRequired: !isArchiveIfFollowing,
+      },
+      isArchiveIfFollowing
+        ? buildArchiveIfFollowingQuery
+        : INBOX_ACTION_QUERIES[action],
       isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
         ? assertIsNotAssignee
@@ -513,16 +536,16 @@ export class AgentChatThreadParticipantService {
   >): Promise<AgentChatOpenThreadsSummaryDTO> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
-    const authContext = await this.sharingService.getAuthContext({
+    const authContext = await this.sharingService.getAuthContextOrThrow({
       workspaceId,
       workspaceMemberId,
     });
 
     const [summary] = await this.workspaceOrmManager
-      .executeInWorkspaceContext(() => {
+      .executeInWorkspaceContext(async () => {
         const repository =
           this.workspaceOrmManager.getRepository('agentChatThread');
-        const readableThreads = repository
+        const readableThreads = await repository
           .createQueryBuilder('thread')
           .select([])
           .addSelect('"thread"."id"', 'id')

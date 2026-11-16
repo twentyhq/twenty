@@ -86,7 +86,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'function',
               isValid: (stringifiedAdditionalEmails: string) => {
-                if (!isDefined(stringifiedAdditionalEmails)) return true;
+                if (!isDefined(stringifiedAdditionalEmails)) {
+                  return true;
+                }
                 try {
                   const additionalEmails = JSON.parse(
                     stringifiedAdditionalEmails,
@@ -112,7 +114,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'function',
               isValid: (primaryLinkUrl: string) => {
-                if (!isDefined(primaryLinkUrl)) return true;
+                if (!isDefined(primaryLinkUrl)) {
+                  return true;
+                }
                 return isValidLinkUrl(primaryLinkUrl);
               },
               errorMessage: `${fieldName} ${t`is not a valid URL`}`,
@@ -124,11 +128,15 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'function',
               isValid: (stringifiedSecondaryLinks: string) => {
-                if (!isDefined(stringifiedSecondaryLinks)) return true;
+                if (!isDefined(stringifiedSecondaryLinks)) {
+                  return true;
+                }
                 try {
                   const secondaryLinks = JSON.parse(stringifiedSecondaryLinks);
                   return secondaryLinks.every((link: { url: string }) => {
-                    if (!isDefined(link.url)) return true;
+                    if (!isDefined(link.url)) {
+                      return true;
+                    }
                     return isValidLinkUrl(link.url);
                   });
                 } catch {
@@ -201,7 +209,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'function',
               isValid: (stringifiedAdditionalPhones: string) => {
-                if (!isDefined(stringifiedAdditionalPhones)) return true;
+                if (!isDefined(stringifiedAdditionalPhones)) {
+                  return true;
+                }
                 try {
                   const additionalPhones = JSON.parse(
                     stringifiedAdditionalPhones,

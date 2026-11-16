@@ -61,10 +61,14 @@ export const useDestroyOneRecord = ({
             const record = (data as Record<string, any>)?.[
               mutationResponseField
             ];
-            if (!isDefined(record)) return;
+            if (!isDefined(record)) {
+              return;
+            }
 
             const cachedRecord = getRecordFromCache(record.id, cache);
-            if (!isDefined(cachedRecord)) return;
+            if (!isDefined(cachedRecord)) {
+              return;
+            }
             triggerDestroyRecordsOptimisticEffect({
               cache,
               objectMetadataItem,

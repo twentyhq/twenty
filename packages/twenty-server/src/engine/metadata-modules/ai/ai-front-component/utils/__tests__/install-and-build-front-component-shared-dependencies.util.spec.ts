@@ -41,6 +41,7 @@ const vendor: Awaited<
   ReturnType<typeof buildFrontComponentSharedDependencies>
 > = {
   source: 'vendor',
+  typeReferences: '',
   checksum: 'checksum',
   exportNamesBySpecifier: new Map(),
 };

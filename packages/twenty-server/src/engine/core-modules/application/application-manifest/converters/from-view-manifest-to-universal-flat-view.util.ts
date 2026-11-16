@@ -71,6 +71,7 @@ export const fromViewManifestToUniversalFlatView = ({
     mainGroupByFieldMetadataUniversalIdentifier:
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
+    shouldDisplayGroupsAsTabs: viewManifest.shouldDisplayGroupsAsTabs ?? false,
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
     groupLoadLimit: getViewManifestGroupLoadLimitOrThrow(viewManifest),
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,

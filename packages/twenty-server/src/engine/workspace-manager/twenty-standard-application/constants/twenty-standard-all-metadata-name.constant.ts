@@ -5,6 +5,7 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'searchFieldMetadata',
   'objectMetadata',
   'fieldMetadata',
+  'fieldMetadataOption',
   'viewField',
   'viewFieldGroup',
   'viewFilter',

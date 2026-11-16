@@ -1,7 +1,8 @@
 # Twenty CLI
 
-Work with [Twenty](https://twenty.com) from your terminal: connect to workspaces,
-inspect metadata and records, send API requests, and develop applications.
+Work with [Twenty](https://twenty.com) from your terminal: connect to
+workspaces, inspect metadata and records, send API requests, and develop
+applications.
 
 ## Install
 
@@ -47,21 +48,31 @@ twenty app apply --create
 twenty app dev
 ```
 
-`app init` writes files without installing dependencies. `app build` checks the
-project locally. `app apply --create` registers and installs a new development
-app, uploads its build and synchronizes its metadata. Once registered, inspect
-changes with `twenty app plan` before applying them. `app dev` watches inputs and
-syncs successful builds.
+| Command              | What it does                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| `app init`           | Write project files without installing dependencies                                   |
+| `app build`          | Check and build the project locally                                                   |
+| `app apply --create` | Register and install a new development app, upload its build and synchronize metadata |
+| `app plan`           | Inspect changes before applying an already registered app                             |
+| `app dev`            | Watch inputs and sync successful builds                                               |
 
-Missing definitions imply remote deletions by default. Pass `--no-prune` to
-preserve them. The workspace custom application only deletes them with `--prune`. Object and field deletions require confirmation because they
-also delete stored data. Pull can overwrite local edits; read its
-[reconciliation rules](docs/commands.md#pull-an-app) before using it.
+### Review changes before syncing
+
+- Missing definitions imply remote deletions by default. Use `--no-prune` to
+  preserve them.
+- The workspace custom application deletes missing definitions only with
+  `--prune`.
+- Object and field deletions require confirmation because they also delete data.
+- Pull can overwrite local edits. Read the
+  [reconciliation rules](docs/commands.md#local-changes-and-deletions) first.
+
+### Version and authentication requirements
 
 Apps created with `app init` declare the oldest Twenty version they support in
 `engines.twenty`. `app exec` runs functions as the signed-in user, so it needs a
-browser sign-in and Twenty 2.46 or later. With a browser sign-in, `app uninstall`
-also needs Twenty 2.46 or later; on earlier versions, use an API key for it.
+browser sign-in and Twenty 2.46 or later. With a browser sign-in,
+`app uninstall` also needs Twenty 2.46 or later; on earlier versions, use an API
+key for it.
 
 ## CLI and app dependencies
 
@@ -71,18 +82,20 @@ checks, and `twenty-client-sdk` when they use a generated API client. Neither
 apps nor SDK packages need `twenty` in their dependencies or devDependencies. In
 CI, install a pinned version with `npm install -g twenty@<version>`.
 
-The CLI owns builds and filesystem operations. It uses the app's installed
-SDK authoring exports and TypeScript compiler. Configuration and project-reference
-errors fail builds. See [build requirements](docs/commands.md#build-and-check-an-app)
-for supported SDK exports and compiler configuration.
+The CLI owns builds and filesystem operations. It uses the app's installed SDK
+authoring exports and TypeScript compiler. Configuration and project-reference
+errors fail builds. See
+[build requirements](docs/commands.md#build-and-check-an-app) for supported SDK
+exports and compiler configuration.
 
 ## Documentation
 
-- [Command reference](docs/commands.md), authentication, flags, output, permissions
-  and recovery for each workflow.
-- [Contributing](CONTRIBUTING.md), building from source, package structure, tests
-  and releases.
-- [Application tooling](src/app/README.md), module responsibilities and invariants.
+- [Command reference](docs/commands.md), authentication, flags, output,
+  permissions and recovery for each workflow.
+- [Contributing](CONTRIBUTING.md), building from source, package structure,
+  tests and releases.
+- [Application tooling](src/app/README.md), module responsibilities and
+  invariants.
 
 Run `twenty commands` for the command inventory or `twenty <command> --help` for
 its arguments and options.

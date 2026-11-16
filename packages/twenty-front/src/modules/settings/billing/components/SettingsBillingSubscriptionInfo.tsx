@@ -413,7 +413,9 @@ export const SettingsBillingSubscriptionInfo = ({
     isLoading: boolean;
     setIsLoading: (isLoading: boolean) => void;
   }) => {
-    if (isAnyActionLoading || isLoading) return;
+    if (isAnyActionLoading || isLoading) {
+      return;
+    }
 
     setIsLoading(true);
     try {

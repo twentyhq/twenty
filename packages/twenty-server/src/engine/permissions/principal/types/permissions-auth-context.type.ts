@@ -18,7 +18,7 @@ type PermissionsApplication = Pick<
 
 type PermissionsUserAuthContext = Pick<
   UserWorkspaceAuthContext,
-  'type' | 'workspaceMemberId' | 'agentId' | 'aiRunScope'
+  'type' | 'workspaceMemberId' | 'agentId' | 'runtimeLimitingRole'
 > & {
   workspace: PermissionsWorkspace;
   application?: PermissionsApplication;
@@ -26,7 +26,7 @@ type PermissionsUserAuthContext = Pick<
 
 type PermissionsApiKeyAuthContext = Pick<
   ApiKeyWorkspaceAuthContext,
-  'type' | 'agentId' | 'aiRunScope'
+  'type' | 'agentId' | 'runtimeLimitingRole'
 > & {
   workspace: PermissionsWorkspace;
   apiKey: Pick<ApiKeyWorkspaceAuthContext['apiKey'], 'id'>;
@@ -35,7 +35,7 @@ type PermissionsApiKeyAuthContext = Pick<
 
 type PermissionsApplicationAuthContext = Pick<
   ApplicationWorkspaceAuthContext,
-  'type' | 'agentId' | 'aiRunScope'
+  'type' | 'agentId' | 'runtimeLimitingRole'
 > & {
   workspace: PermissionsWorkspace;
   application: PermissionsApplication;

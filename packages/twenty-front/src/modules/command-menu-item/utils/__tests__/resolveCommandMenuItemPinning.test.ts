@@ -43,4 +43,27 @@ describe('resolveCommandMenuItemPinning', () => {
       resolveCommandMenuItemPinning(item, buildContextApi('SENT')).isPinned,
     ).toBe(false);
   });
+
+  it('pins on the targeted view only', () => {
+    const item = {
+      isPinned: true,
+      conditionalPinnedExpression:
+        "currentView.universalIdentifier == 'agencies-view'",
+    };
+    const buildViewContextApi = (
+      universalIdentifier: string,
+    ): CommandMenuContextApi => ({
+      ...EMPTY_COMMAND_MENU_CONTEXT_API,
+      currentView: { id: 'view-id', universalIdentifier },
+    });
+
+    expect(
+      resolveCommandMenuItemPinning(item, buildViewContextApi('agencies-view'))
+        .isPinned,
+    ).toBe(true);
+    expect(
+      resolveCommandMenuItemPinning(item, buildViewContextApi('all-companies'))
+        .isPinned,
+    ).toBe(false);
+  });
 });

@@ -14,9 +14,9 @@ import {
 } from 'src/database/typeorm/database-pool-metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
@@ -24,13 +24,10 @@ import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executo
 
 // Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
 const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
-  getTypeParser: ((oid: number, format?: unknown) =>
+  getTypeParser: (oid: number, format?: 'text' | 'binary') =>
     oid === types.builtins.DATE
       ? (value: string) => value
-      : types.getTypeParser(
-          oid,
-          format as never,
-        )) as typeof types.getTypeParser,
+      : types.getTypeParser(oid, format),
 };
 
 @Injectable()
@@ -82,10 +79,11 @@ export class WorkspaceQueryExecutorService
       : this.primaryPool;
 
     if (!isDefined(pool)) {
-      throw new TwentyOrmException(
-        'WorkspaceQueryExecutorService has not been initialized. Make sure the module has been initialized.',
-        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
-      );
+      throw new WorkspaceQueryExecutorException({
+        message:
+          'WorkspaceQueryExecutorService has not been initialized. Make sure the module has been initialized.',
+        code: WorkspaceQueryExecutorExceptionCode.UNSUPPORTED_OPERATION,
+      });
     }
 
     return pool;

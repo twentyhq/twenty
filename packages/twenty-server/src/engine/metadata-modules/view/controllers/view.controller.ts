@@ -35,20 +35,13 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import {
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-permission.guard';
-import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
@@ -103,23 +96,15 @@ export class ViewController {
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
-
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          ),
-        },
-      );
-    }
+    const view =
+      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+        id,
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
 
     const processedViews = await this.processViewsWithTemplates(
       [view],

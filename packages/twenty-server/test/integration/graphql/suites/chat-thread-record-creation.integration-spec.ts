@@ -147,7 +147,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
   it('preserves an existing owner when creator initialization is repeated by another member', async () => {
     const threadId = await context.createThread();
     const participantsBefore = await context.readParticipants(threadId);
-    const authContext = await context.sharingService.getAuthContext({
+    const authContext = await context.sharingService.getAuthContextOrThrow({
       workspaceId: context.workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });

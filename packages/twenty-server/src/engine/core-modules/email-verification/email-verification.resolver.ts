@@ -41,10 +41,12 @@ export class EmailVerificationResolver {
         origin,
       );
 
-    return await this.emailVerificationService.resendEmailVerificationToken(
-      resendEmailVerificationTokenInput.email,
+    return await this.emailVerificationService.resendEmailVerificationToken({
+      email: resendEmailVerificationTokenInput.email,
       workspace,
-      context.req.locale,
-    );
+      locale: context.req.locale,
+      affiliatePartnerName:
+        resendEmailVerificationTokenInput.affiliatePartnerName,
+    });
   }
 }

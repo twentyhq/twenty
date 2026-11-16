@@ -4,10 +4,10 @@ import type { CoreWorkflowListService } from 'src/engine/core-modules/workflow/s
 import type { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import type { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import type { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import type { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import type { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import type { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import type { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import type { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import type { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
@@ -19,9 +19,9 @@ export type WorkflowToolDependencies = {
   coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService;
   coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService;
   coreWorkflowLifecycleService: CoreWorkflowLifecycleWorkspaceService;
+  coreWorkflowVersionRunService: CoreWorkflowVersionRunService;
   workflowSchemaService: WorkflowSchemaWorkspaceService;
   workspaceOrmManager: WorkspaceOrmManager;
-  logicFunctionFromSourceService: LogicFunctionFromSourceService;
   flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
   agentService: AgentService;
   workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService;

@@ -1,3 +1,4 @@
+import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
 import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
@@ -5,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatApplicationToApplicationManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-application-to-application-manifest.util';
+import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
 import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
@@ -50,6 +52,8 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationPublicAssetExportService: ApplicationPublicAssetExportService,
+    private readonly applicationFrontComponentExportService: ApplicationFrontComponentExportService,
     private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
@@ -61,10 +65,14 @@ export class ApplicationManifestExportService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldIncludeDependencies = false,
+    shouldIncludeSourceFiles = false,
+    shouldIncludePublicAssets = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldIncludeDependencies?: boolean;
+    shouldIncludeSourceFiles?: boolean;
+    shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -131,12 +139,32 @@ export class ApplicationManifestExportService {
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
     });
+    const dependencyFiles = shouldIncludeDependencies
+      ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+          { workspaceId, applicationUniversalIdentifier },
+        )
+      : [];
+    const {
+      frontComponents,
+      files: sourceFiles,
+      coverage: frontComponentsCoverage,
+    } = await this.applicationFrontComponentExportService.exportFrontComponents(
+      {
+        workspaceId,
+        applicationUniversalIdentifier,
+        applicationAllFlatEntityMaps,
+        shouldIncludeSourceFiles,
+      },
+    );
     const {
       pageLayouts,
       pageLayoutTabs,
       pageLayoutWidgets,
       coverage: pageLayoutsCoverage,
     } = reconstructPageLayoutsManifest({
+      exportedFrontComponentUniversalIdentifiers: new Set(
+        frontComponents.map(({ universalIdentifier }) => universalIdentifier),
+      ),
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
@@ -205,6 +233,18 @@ export class ApplicationManifestExportService {
         )
       : undefined;
 
+    const {
+      publicAssets,
+      files: publicAssetFiles,
+      coverage: publicAssetCoverage,
+    } = shouldIncludePublicAssets
+      ? await this.applicationPublicAssetExportService.exportPublicAssets({
+          workspaceId,
+          applicationId: flatApplication.id,
+          applicationUniversalIdentifier,
+        })
+      : { publicAssets: [], files: [], coverage: [] };
+
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
         flatApplication,
@@ -218,12 +258,12 @@ export class ApplicationManifestExportService {
       fields,
       indexes,
       logicFunctions: [],
-      frontComponents: [],
+      frontComponents,
       permissionFlags,
       roles,
       skills,
       agents,
-      publicAssets: [],
+      publicAssets,
       views,
       viewFields,
       navigationMenuItems,
@@ -246,31 +286,32 @@ export class ApplicationManifestExportService {
         sourceType: flatApplication.sourceType,
       },
       manifest,
-      coverage: classifyApplicationFlatEntities({
-        flatApplication,
-        applicationAllFlatEntityMaps,
-        allFlatEntityMaps,
-        reconstructedCoverage: [
-          ...dataModelCoverage,
-          ...rolesCoverage,
-          ...viewsCoverage,
-          ...pageLayoutsCoverage,
-          ...navigationMenuItemsCoverage,
-          ...workflowsCoverage,
-          ...agentsCoverage,
-          ...skillsCoverage,
-          ...validationRulesCoverage,
-          ...relatedRecordPathsCoverage,
-        ],
-      }),
-      files: shouldIncludeDependencies
-        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
-            {
-              workspaceId,
-              applicationUniversalIdentifier,
-            },
-          )
-        : [],
+      coverage: [
+        ...classifyApplicationFlatEntities({
+          flatApplication,
+          applicationAllFlatEntityMaps,
+          allFlatEntityMaps,
+          reconstructedCoverage: [
+            ...dataModelCoverage,
+            ...frontComponentsCoverage,
+            ...rolesCoverage,
+            ...viewsCoverage,
+            ...pageLayoutsCoverage,
+            ...navigationMenuItemsCoverage,
+            ...workflowsCoverage,
+            ...agentsCoverage,
+            ...skillsCoverage,
+            ...validationRulesCoverage,
+            ...relatedRecordPathsCoverage,
+          ],
+        }),
+        ...publicAssetCoverage,
+      ],
+      files: [
+        ...(shouldIncludeDependencies ? dependencyFiles : []),
+        ...sourceFiles,
+        ...publicAssetFiles,
+      ],
     };
   }
 }

@@ -24,6 +24,18 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
+    label: msg`Skip internal meetings`,
+    description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
+  },
+  [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
+    label: msg`Internal import setting column`,
+    description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
+  },
+  [FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED]: {
+    label: msg`Import recurring meetings 90 days ahead`,
+    description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,
@@ -36,13 +48,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Direct message pair identity`,
     description: msg`Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes.`,
   },
-  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
-    label: msg`App preferences`,
-    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
-  },
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
+  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
+    label: msg`Create records permission`,
+    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
   },
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
@@ -55,5 +67,29 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
+  },
+  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
+    label: msg`Message attachments`,
+    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
+    label: msg`Private records`,
+    description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
+  },
+  [FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED]: {
+    label: msg`Permission tables`,
+    description: msg`Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created.`,
+  },
+  [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
+    label: msg`Access groups`,
+    description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
+    label: msg`AI data policy and Privacy tab`,
+    description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED]: {
+    label: msg`Group tabs`,
+    description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
 };

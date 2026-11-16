@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isAgentChatAssistantReference } from 'twenty-shared/ai';
 import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
@@ -9,6 +10,7 @@ import { isTeammateMentionSearchResult } from '@/mention/utils/isTeammateMention
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
@@ -30,26 +32,37 @@ const renderItem = ({
   isSelected: boolean;
   onSelect: (item: MentionSearchResult) => void;
   id: string;
-}) => (
-  <SuggestionListItem
-    id={id}
-    startIcon={
-      <AvatarOrIcon
-        name={item.label}
-        colorSeed={item.recordId}
-        shape="circle"
-        src={getAbsoluteImageUrl(item.imageUrl)}
-      />
-    }
-    description={item.objectLabelSingular}
-    selected={isSelected}
-    onSelect={() => {
-      onSelect(item);
-    }}
-  >
-    {item.label}
-  </SuggestionListItem>
-);
+}) => {
+  const isAssistantReference = isAgentChatAssistantReference({
+    kind: 'record',
+    ...item,
+  });
+
+  return (
+    <SuggestionListItem
+      id={id}
+      startIcon={
+        isAssistantReference ? (
+          <AiChatAssistantAvatar size={14} />
+        ) : (
+          <AvatarOrIcon
+            name={item.label}
+            colorSeed={item.recordId}
+            shape="circle"
+            src={getAbsoluteImageUrl(item.imageUrl)}
+          />
+        )
+      }
+      description={item.objectLabelSingular}
+      selected={isSelected}
+      onSelect={() => {
+        onSelect(item);
+      }}
+    >
+      {item.label}
+    </SuggestionListItem>
+  );
+};
 
 export const MentionSuggestionMenu = forwardRef<
   unknown,

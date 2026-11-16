@@ -16,9 +16,13 @@ export const useCountries = () => {
     return countryCodes.reduce<Country[]>((result, countryCode) => {
       const countryName = regionNamesInEnglish.of(countryCode);
 
-      if (!countryName) return result;
+      if (!countryName) {
+        return result;
+      }
 
-      if (!hasFlag(countryCode)) return result;
+      if (!hasFlag(countryCode)) {
+        return result;
+      }
 
       const Flag = Flags[countryCode];
 

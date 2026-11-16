@@ -236,6 +236,23 @@ export const Highlighted: Story = {
   },
 };
 
+export const Filled: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+  args: { variant: 'filled' },
+  render: (args) => (
+    <TabsExample tabProps={args} rootProps={{ defaultValue: 'activity' }} />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const overview = canvas.getByRole('tab', { name: 'Overview' });
+
+    await userEvent.click(overview);
+    expect(overview).toHaveAttribute('aria-selected', 'true');
+    expect(overview).toHaveAttribute('data-variant', 'filled');
+  },
+};
+
 export const IconOnly: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },

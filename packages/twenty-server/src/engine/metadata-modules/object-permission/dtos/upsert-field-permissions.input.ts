@@ -37,6 +37,11 @@ export class FieldPermissionInput {
   @Field(() => UUIDScalarType)
   fieldMetadataId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  rowLevelPermissionPredicateGroupId?: string | null;
+
   @IsBoolean()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })

@@ -10,6 +10,7 @@ import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permissi
 import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 
 @ObjectType('ApiKeyForRole')
@@ -101,9 +102,15 @@ export class RoleDTO {
   @Field(() => [FieldPermissionDTO], { nullable: true })
   fieldPermissions?: FieldPermissionDTO[];
 
+  @Field(() => [FieldPermissionDTO], { nullable: true })
+  rowLevelPermissionFieldPermissions?: FieldPermissionDTO[];
+
   @Field(() => [RowLevelPermissionPredicateDTO], { nullable: true })
   rowLevelPermissionPredicates?: RowLevelPermissionPredicateDTO[];
 
   @Field(() => [RowLevelPermissionPredicateGroupDTO], { nullable: true })
   rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupDTO[];
+
+  @Field(() => [RowLevelPermissionRuleDTO], { nullable: true })
+  rowLevelPermissionRules?: RowLevelPermissionRuleDTO[];
 }

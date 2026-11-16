@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
-  RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -22,12 +20,9 @@ import { type AgentChatChannelGrantScope } from 'src/engine/metadata-modules/ai/
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-rule-grants.util';
-import { diffAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/diff-agent-chat-channel-rule-grants.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
-import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -41,7 +36,7 @@ export class AgentChatChannelGrantService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
@@ -101,24 +96,21 @@ export class AgentChatChannelGrantService {
     workspaceId: string;
     channelId: string;
   }): Promise<void> {
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            await acquireAgentChatChannelGrantLocks({
-              transactionScope,
-              workspaceId,
-              channelIds: [channelId],
-              mode: 'exclusive',
-            });
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        await acquireAgentChatChannelGrantLocks({
+          transactionScope,
+          workspaceId,
+          channelIds: [channelId],
+          mode: 'exclusive',
+        });
 
-            await this.replaceRuleGrantsInTransaction({
-              transactionScope,
-              workspaceId,
-              scope: { channelId },
-            });
-          },
-        ),
+        await this.replaceRuleGrantsInTransaction({
+          transactionScope,
+          workspaceId,
+          scope: { channelId },
+        });
+      },
       buildSystemAuthContext(workspaceId),
       { lite: true },
     );
@@ -170,11 +162,6 @@ export class AgentChatChannelGrantService {
         'agentChatThread',
         { shouldSkipEventEmission: true },
       );
-    const recordShareRepository =
-      transactionScope.getRepositoryWithoutPermissionChecks<RecordShare>(
-        'recordShare',
-        { shouldSkipEventEmission: true },
-      );
 
     const scopeThreads = await threadRepository.find({
       select: ['id', 'channelId'],
@@ -190,50 +177,22 @@ export class AgentChatChannelGrantService {
         .map(({ channelId }) => channelId)
         .filter(isDefined),
     });
-    const channelRuleGrants = buildAgentChatChannelRuleGrants({
-      threads: scopeThreads,
-      ruleRoleIdsByChannelId,
-    });
-    const existingChannelRuleGrants = await recordShareRepository.find({
-      select: ['id', 'recordId', 'principalId', 'sourceId'],
-      where: {
-        objectMetadataId: threadObjectMetadata.id,
-        rowCause: RecordShareRowCause.RULE,
-        ...('threadIds' in scope
-          ? { recordId: Any(scope.threadIds) }
-          : { sourceId: scope.channelId }),
-      },
-    });
-    const { obsoleteGrantIds, missingGrants } = diffAgentChatChannelRuleGrants({
-      channelRuleGrants,
-      existingChannelRuleGrants,
-    });
 
-    if (isNonEmptyArray(obsoleteGrantIds)) {
-      await this.recordShareStorageService.deleteMatching({
-        workspaceId,
-        criteria: { ids: obsoleteGrantIds },
-        transactionScope,
-      });
-    }
-
-    for (const missingGrantBatch of chunk(missingGrants, QUERY_MAX_RECORDS)) {
-      await this.recordShareStorageService.insertMany({
-        workspaceId,
-        recordShares: missingGrantBatch.map(
-          ({ recordId, principalId, sourceId }) => ({
-            objectMetadataId: threadObjectMetadata.id,
-            recordId,
-            principalId,
-            sourceId,
-            principalType: RecordSharePrincipalType.ROLE,
-            accessLevel: RecordShareAccessLevel.READ_WRITE,
-            rowCause: RecordShareRowCause.RULE,
-          }),
-        ),
-        transactionScope,
-      });
-    }
+    await this.recordShareSystemWriteService.syncRuleRecordShares({
+      workspaceId,
+      objectMetadataId: threadObjectMetadata.id,
+      scope:
+        'threadIds' in scope
+          ? { recordIds: scope.threadIds }
+          : { sourceId: scope.channelId },
+      ruleGrants: buildAgentChatChannelRuleGrants({
+        threads: scopeThreads,
+        ruleRoleIdsByChannelId,
+      }),
+      principalType: RecordSharePrincipalType.ROLE,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      transactionScope,
+    });
   }
 
   private async findRuleRoleIdsByChannelId({

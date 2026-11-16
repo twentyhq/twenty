@@ -3,20 +3,23 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { RecordSharePrincipalType } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
+import { canRecordShareAccessOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-access-operation.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
+import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type RecordSharePrincipal = Pick<
@@ -28,69 +31,22 @@ type RecordSharePrincipal = Pick<
 export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
-  // Undefined for everyone, and for a member who left or whose membership is gone
-  async resolveRoleIds({
-    workspaceId,
-    principals,
-  }: {
-    workspaceId: string;
-    principals: RecordSharePrincipal[];
-  }): Promise<(string | undefined)[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-      ]);
-
-    return principals.map((principal) => {
-      switch (principal.principalType) {
-        case RecordSharePrincipalType.ROLE:
-          return principal.principalId;
-        case RecordSharePrincipalType.WORKSPACE_MEMBER: {
-          const flatWorkspaceMember =
-            flatWorkspaceMemberMaps.byId[principal.principalId];
-
-          if (
-            !isDefined(flatWorkspaceMember) ||
-            isDefined(flatWorkspaceMember.deletedAt)
-          ) {
-            return undefined;
-          }
-
-          const userWorkspaceId =
-            flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
-              flatWorkspaceMember.userId
-            ];
-
-          return isDefined(userWorkspaceId)
-            ? userWorkspaceRoleMap[userWorkspaceId]
-            : undefined;
-        }
-        default:
-          return undefined;
-      }
-    });
-  }
-
-  // Without reach beyond roles, a grant the recipient's role cannot use would
-  // be stored without ever taking effect. Runs after the grants are written:
-  // they satisfy the share gate, so only the role and its row filter are tested
-  async assertPrincipalsReachRecordsOrThrow({
+  async assertShareRecipientsCanReadRecordsOrThrow({
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    canShareBeyondRole,
+    featureFlagsMap,
     principals,
     recordIds,
   }: {
     workspaceId: string;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
     flatObjectMetadata: FlatObjectMetadata;
-    canShareBeyondRole: boolean;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
@@ -102,42 +58,41 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      canShareBeyondRole
+      canRecordShareAccessOperation({
+        flatObjectMetadata,
+        featureFlagsMap,
+        operationType: 'read',
+      })
     ) {
       return;
     }
 
-    const roleIds = await this.resolveRoleIds({
-      workspaceId,
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'userWorkspaceRoleMap',
+        'rolesPermissions',
+      ]);
+    const roleIds = resolveRecordSharePrincipalRoleIds({
       principals: namedPrincipals,
+      flatWorkspaceMemberMaps,
+      userWorkspaceRoleMap,
     });
-    const metadataMaps = await this.permissionsMetadataMapsService.load({
-      workspaceId,
-    });
+    const roleIdsUnableToReadObject =
+      await this.recordPermissionsReadService.filterRoleIdsWithoutReadAccess({
+        workspaceId,
+        roleIds: roleIds.filter(isDefined),
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
 
-      if (
-        !isDefined(roleId) ||
-        !isDefined(metadataMaps.rolesPermissions[roleId])
-      ) {
+      if (!isDefined(roleId) || !isDefined(rolesPermissions[roleId])) {
         continue;
       }
 
-      const rolePrincipals = buildRolePermissionsPrincipals({
-        workspaceId,
-        roleId,
-      });
-
-      if (
-        !isRolePermittingOperation({
-          principals: rolePrincipals,
-          metadataMaps,
-          flatObjectMetadata,
-          operationType: 'select',
-        })
-      ) {
+      if (roleIdsUnableToReadObject.has(roleId)) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,
@@ -153,20 +108,25 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.permissionsService.canReadRecords({
-        principals: await this.permissionsService.buildPermissionsPrincipals({
-          authContext: {
-            type: 'user',
-            workspace: { id: workspaceId },
-            workspaceMemberId: principal.principalId,
-          },
-        }),
-        objectMetadataId: flatObjectMetadata.id,
-        recordIds,
-        transactionScope,
-      });
+      const canRecipientReadRecords =
+        await this.recordPermissionsReadService.canAccessRecords({
+          operationType: 'read',
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: principal.principalId,
+                },
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          recordIds,
+          transactionScope,
+        });
 
-      if (!hasGrant) {
+      if (!canRecipientReadRecords) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot see these records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,

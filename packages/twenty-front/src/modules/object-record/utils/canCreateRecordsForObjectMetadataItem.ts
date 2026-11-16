@@ -1,6 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type CanCreateRecordsForObjectMetadataItemParams = {
   objectPermissions?: ObjectRecordsPermissions;
@@ -10,13 +14,17 @@ type CanCreateRecordsForObjectMetadataItemParams = {
   >;
 };
 
-// No CREATE permission exists yet, so the update permission is the proxy (inline creation edits a blank record).
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
   objectMetadataItem,
 }: CanCreateRecordsForObjectMetadataItemParams): boolean => {
   return (
     objectMetadataItem.isUICreatable &&
-    !isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem })
+    !isObjectMetadataReadOnly({ objectMetadataItem }) &&
+    (!isDefined(objectPermissions) ||
+      canAccessThroughAllRecordsOrRlsPermission({
+        objectRecordsPermissions: objectPermissions,
+        operationType: 'create',
+      }))
   );
 };

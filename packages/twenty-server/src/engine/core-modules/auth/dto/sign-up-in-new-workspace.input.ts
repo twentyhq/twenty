@@ -20,7 +20,7 @@ export class SignUpInNewWorkspaceInput {
   @IsString()
   @IsOptional()
   @Matches(PARTNER_PATTERN)
-  partner?: string;
+  affiliatePartnerName?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()

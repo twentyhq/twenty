@@ -57,7 +57,10 @@ export const scanProjectSourceFiles = async ({
       continue;
     }
 
-    const targetFunctionName = extractDefineEntity(fileContent);
+    const targetFunctionName = extractDefineEntity({
+      fileContent: fileContent,
+      filePath: filePath,
+    });
 
     if (!isDefined(targetFunctionName)) {
       scannedFiles.push({

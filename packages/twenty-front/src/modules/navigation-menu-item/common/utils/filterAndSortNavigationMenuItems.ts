@@ -45,6 +45,12 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {
         return isDefined(item.pageLayoutId);
       }
+      if (item.type === NavigationMenuItemType.WORKFLOW) {
+        return isDefined(item.workflowId);
+      }
+      if (item.type === NavigationMenuItemType.AGENT) {
+        return isDefined(item.agentId);
+      }
       if (item.type === NavigationMenuItemType.OBJECT) {
         return (
           isDefined(item.targetObjectMetadataId) &&

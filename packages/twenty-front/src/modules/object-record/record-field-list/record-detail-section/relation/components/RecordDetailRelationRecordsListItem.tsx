@@ -27,7 +27,7 @@ import { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   CustomError,
 } from 'twenty-shared/utils';
@@ -165,7 +165,9 @@ export const RecordDetailRelationRecordsListItem = ({
       };
 
   const handleDetach = () => {
-    if (!relationFieldMetadataItem?.name) return;
+    if (!relationFieldMetadataItem?.name) {
+      return;
+    }
 
     if (isToOneObject) {
       onSubmit?.({ newValue: null });
@@ -243,9 +245,9 @@ export const RecordDetailRelationRecordsListItem = ({
                   onClick={handleDetach}
                 >{t`Detach`}</Dropdown.ActionItem>
                 {!isAccountOwnerRelation &&
-                  canReachSomeRecords({
+                  canAccessThroughAllRecordsOrRlsPermission({
                     objectRecordsPermissions: relationObjectPermissions,
-                    operationType: 'soft-delete',
+                    operationType: 'softDelete',
                   }) && (
                     <Dropdown.ActionItem
                       startIcon={<IconTrash />}

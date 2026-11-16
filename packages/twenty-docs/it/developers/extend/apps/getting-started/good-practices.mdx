@@ -67,7 +67,7 @@ Con un ritardo casuale su una finestra di un'ora, le stesse esecuzioni vengono d
                           N × calls spread over 60 minutes  →  OK
 ```
 
-* **Raggruppa in batch gli attivatori di eventi del database.** Una scrittura in blocco, come una sincronizzazione della casella di posta, genera un evento per record, migliaia in pochi secondi, e un'esecuzione per evento significa una richiesta per record. Imposta `batchMode: true`, dichiara `updatedFields` e riduci il batch a record distinti prima di chiamare l'API. Vedi [Raggruppamento in batch degli eventi del database](/it/developers/extend/apps/logic/logic-functions#batching-database-events).
+* **Raggruppa in batch gli attivatori di eventi del database.** Una scrittura in blocco, come una sincronizzazione della casella di posta, genera un evento per record, migliaia in pochi secondi, e un'esecuzione per evento significa una richiesta per record. Imposta `batchMode: true`, dichiara `watchedFieldUniversalIdentifiers` e riduci il batch a record distinti prima di chiamare l'API. Vedi [Raggruppamento in batch degli eventi del database](/it/developers/extend/apps/logic/logic-functions#batching-database-events).
 
 * **Effettua una richiesta per batch, non per record.** Il limite conteggia le richieste, non i record: un `createMany` con `upsert: true` contenente 200 record equivale a una richiesta; 200 aggiornamenti singoli equivalgono a 200 richieste. Leggi con filtri `in` e scrivi con `createMany` o `updateMany`.
 

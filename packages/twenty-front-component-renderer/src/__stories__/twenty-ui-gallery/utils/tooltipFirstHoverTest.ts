@@ -7,6 +7,7 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectPopupAttachedToAnchor } from '@/__stories__/twenty-ui-gallery/utils/expectPopupAttachedToAnchor';
+import { hoverUntilTooltipOpens } from '@/__stories__/twenty-ui-gallery/utils/hoverUntilTooltipOpens';
 
 const PROJECT_HELP = 'Project progress is calculated from completed tasks.';
 
@@ -44,8 +45,7 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
   await waitForSandboxRoundTrip();
 
   for (const hoverTarget of [trigger, icon, icon]) {
-    await user.hover(hoverTarget);
-    await expectTooltipOpen();
+    await hoverUntilTooltipOpens({ user, hoverTarget, expectTooltipOpen });
     await user.unhover(hoverTarget);
     await expectTooltipClosed();
   }

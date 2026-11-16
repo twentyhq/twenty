@@ -9,6 +9,8 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
+export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
+export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
 export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
@@ -27,12 +29,18 @@ export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
+export { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from './constants/attach-conversation-to-records-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
+export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
+export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
+export type { DataResidencyRegion } from './constants/data-residency-regions.const';
+export { DATA_RESIDENCY_REGIONS } from './constants/data-residency-regions.const';
 export type { DataResidency } from './constants/data-residency.const';
-export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
+export { DATA_RESIDENCIES } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
@@ -54,7 +62,10 @@ export { getAiChatAssistantProfileSchema } from './schemas/get-ai-chat-assistant
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
+export type { AgentChatThreadInboxStatus } from './types/AgentChatThreadInboxStatus';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
+export type { AgentMessageRow } from './types/AgentMessageRow';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -71,6 +82,7 @@ export type { AiChatAssistantAvatarColor } from './types/AiChatAssistantAvatarCo
 export type { AiChatAssistantAvatarFace } from './types/AiChatAssistantAvatarFace';
 export type { AiChatAssistantAvatarShape } from './types/AiChatAssistantAvatarShape';
 export type { AiChatAssistantProfile } from './types/AiChatAssistantProfile';
+export type { AiDataPolicy } from './types/AiDataPolicy';
 export type {
   AiRunScope,
   AiRunScopeObjectPermission,
@@ -123,21 +135,31 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
+export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
+export { isAgentChatThreadInPresetFilter } from './utils/is-agent-chat-thread-in-preset-filter.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
+export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';
+export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
+export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
+export { isDataResidencyRegion } from './utils/is-data-residency-region.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export type { McpServerToolAnnotationsHints } from './utils/is-destructive-mcp-server-tool.util';
+export { isDestructiveMcpServerTool } from './utils/is-destructive-mcp-server-tool.util';
 export { isFrontComponentProposedToolCall } from './utils/is-front-component-proposed-tool-call.util';
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
@@ -145,8 +167,9 @@ export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-mess
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
+export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
-export type { AgentMessageRow } from './utils/map-agent-messages-to-ui-messages.util';
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
+export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

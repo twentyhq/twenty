@@ -7,7 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 const updateViewSortInputSchema = z.object({

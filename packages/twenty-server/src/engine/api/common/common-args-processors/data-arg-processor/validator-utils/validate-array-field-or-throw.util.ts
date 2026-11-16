@@ -12,9 +12,13 @@ export const validateArrayFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | string[] | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {
+    return value;
+  }
 
   if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
     const inspectedValue = inspect(value);

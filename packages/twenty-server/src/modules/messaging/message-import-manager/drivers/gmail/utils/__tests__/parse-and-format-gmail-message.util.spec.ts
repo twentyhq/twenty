@@ -180,4 +180,49 @@ describe('parseAndFormatGmailMessage', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should expose attachment metadata without provider attachment ids', () => {
+    const headers = [
+      { name: 'From', value: 'sender@example.com' },
+      { name: 'To', value: 'me@example.com' },
+      { name: 'Message-ID', value: '<abc@example.com>' },
+    ];
+
+    const result = parseAndFormatGmailMessage(
+      buildMessage(headers, {
+        payload: {
+          partId: '',
+          headers,
+          mimeType: 'multipart/mixed',
+          filename: '',
+          parts: [
+            {
+              partId: '0',
+              mimeType: 'text/plain',
+              filename: '',
+              body: { data: Buffer.from('hello').toString('base64'), size: 5 },
+            },
+            {
+              partId: '1',
+              mimeType: 'application/pdf',
+              filename: 'proposal.pdf',
+              body: { attachmentId: 'attachment-proposal', size: 73400 },
+            },
+          ],
+        },
+      }),
+      connectedAccount,
+    );
+
+    expect(result?.attachments).toEqual([
+      {
+        externalId: '1',
+        attachmentId: 'attachment-proposal',
+        filename: 'proposal.pdf',
+        size: 73400,
+        contentType: 'application/pdf',
+        isInline: false,
+      },
+    ]);
+  });
 });

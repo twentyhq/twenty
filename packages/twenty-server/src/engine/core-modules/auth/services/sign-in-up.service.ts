@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -26,6 +26,12 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SEAT_LIMIT_REACHED_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
@@ -95,6 +101,7 @@ export class SignInUpService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly billingService: BillingService,
+    private readonly billingSeatService: BillingSeatService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -296,6 +303,14 @@ export class SignInUpService {
         newUserWithPicture: PartialUserWithPicture;
       };
 
+      if (
+        await this.billingSeatService.isWorkspaceAtSeatLimit(
+          params.workspace.id,
+        )
+      ) {
+        throw this.buildSeatLimitReachedException();
+      }
+
       const user = await this.saveNewUser(userData.newUserWithPicture, {
         canAccessFullAdminPanel: false,
         canImpersonate: false,
@@ -307,11 +322,11 @@ export class SignInUpService {
         shouldShowConnectAccountStep: true,
       });
 
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      await this.addUserToWorkspaceWithinSeatLimit({
         user,
-        params.workspace,
-        params.roleId,
-      );
+        workspace: params.workspace,
+        roleId: params.roleId,
+      });
 
       return user;
     }
@@ -323,13 +338,50 @@ export class SignInUpService {
 
     const user = userData.existingUser;
 
-    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+    await this.addUserToWorkspaceWithinSeatLimit({
       user,
-      params.workspace,
-      params.roleId,
-    );
+      workspace: params.workspace,
+      roleId: params.roleId,
+    });
 
     return user;
+  }
+
+  private async addUserToWorkspaceWithinSeatLimit({
+    user,
+    workspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    roleId?: string | null;
+  }) {
+    try {
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        workspace,
+        roleId,
+      );
+    } catch (error) {
+      if (
+        error instanceof BillingException &&
+        error.code === BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED
+      ) {
+        throw this.buildSeatLimitReachedException();
+      }
+
+      throw error;
+    }
+  }
+
+  private buildSeatLimitReachedException() {
+    return new AuthException(
+      'This workspace has used all its seats. Contact your workspace admin to add more.',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      {
+        userFriendlyMessage: BILLING_SEAT_LIMIT_REACHED_MESSAGE,
+      },
+    );
   }
 
   private async activateOnboardingForUser(
@@ -639,7 +691,11 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string; partner?: string },
+    options?: {
+      displayName?: string;
+      subdomain?: string;
+      affiliatePartnerName?: string;
+    },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -790,7 +846,7 @@ export class SignInUpService {
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
-          partner: options?.partner,
+          affiliatePartnerName: options?.affiliatePartnerName,
         });
       }
 

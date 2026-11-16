@@ -8,6 +8,7 @@ export const frontComponentDependenciesBuildResultSchema = z.discriminatedUnion(
     frontComponentSharedDependenciesManifestSchema.extend({
       success: z.literal(true),
       builtCode: z.string(),
+      typeReferences: z.string(),
     }),
     frontComponentBuildFailureSchema,
   ],

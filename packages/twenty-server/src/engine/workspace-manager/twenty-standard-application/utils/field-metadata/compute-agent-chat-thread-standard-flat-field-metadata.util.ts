@@ -1,6 +1,6 @@
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { msg } from '@lingui/core/macro';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,

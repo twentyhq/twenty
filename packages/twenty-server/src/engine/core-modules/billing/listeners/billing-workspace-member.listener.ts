@@ -11,6 +11,7 @@ import {
   type UpdateSubscriptionQuantityJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -44,6 +45,7 @@ export class BillingWorkspaceMemberListener {
       UpdateSubscriptionQuantityJob.name,
       { workspaceId: payload.workspaceId },
       {
+        ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
         workspaceId: payload.workspaceId,
         isWorkspaceJob: true,

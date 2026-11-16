@@ -60,12 +60,17 @@ export abstract class ToolBackedWorkflowAction<
     return resolveWorkflowInput(input, context) as TInput;
   }
 
+  protected async toToolInput(resolvedInput: TInput): Promise<ToolInput> {
+    return resolvedInput;
+  }
+
   protected abstract buildStepLog(
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
 
   protected buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
+    _stepId: string,
   ): Promise<ToolExecutionContext> {
     return Promise.resolve({ workspaceId: runInfo.workspaceId });
   }
@@ -89,8 +94,8 @@ export abstract class ToolBackedWorkflowAction<
 
     const startedAt = Date.now();
     const toolOutput = await this.getTool().execute(
-      resolvedInput,
-      await this.buildToolExecutionContext(runInfo),
+      await this.toToolInput(resolvedInput),
+      await this.buildToolExecutionContext(runInfo, currentStepId),
     );
     const durationMs = Date.now() - startedAt;
 

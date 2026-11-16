@@ -5,6 +5,7 @@ export type UninstallLogicFunctionConfig = Omit<
   LogicFunctionConfig,
   | 'cronTriggerSettings'
   | 'databaseEventTriggerSettings'
+  | 'eventTriggerSettings'
   | 'httpRouteTriggerSettings'
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'

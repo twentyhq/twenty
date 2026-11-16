@@ -64,7 +64,7 @@ const AiChatToolCallApprovalFrontComponentContent = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      label={proposal.toolLabel}
+      title={proposal.toolLabel}
       summary={proposal.summary}
       approval={approval}
       actions={

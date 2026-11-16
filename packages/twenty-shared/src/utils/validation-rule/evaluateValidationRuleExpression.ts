@@ -5,12 +5,18 @@ import { createValidationRuleEvaluator } from '@/utils/validation-rule/createVal
 export const evaluateValidationRuleExpression = ({
   expression,
   record,
+  previousRecord,
   fields,
   now,
 }: {
   expression: string;
   record: Record<string, unknown>;
+  previousRecord?: Record<string, unknown>;
   fields: ValidationRuleFieldDescriptor[];
   now: string;
 }): ValidationRuleEvaluationResult =>
-  createValidationRuleEvaluator({ expression, fields })({ record, now });
+  createValidationRuleEvaluator({ expression, fields })({
+    record,
+    previousRecord,
+    now,
+  });

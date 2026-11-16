@@ -3,7 +3,6 @@ import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreA
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapRLSOperandToRecordFilterOperand';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
@@ -19,6 +18,7 @@ import {
   getSettingsPath,
   isDefined,
   isRecordFilterValueValid,
+  mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';

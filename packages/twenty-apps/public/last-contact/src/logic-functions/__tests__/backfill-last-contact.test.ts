@@ -180,6 +180,23 @@ describe('backfill-last-contact', () => {
     expect(queryMock).not.toHaveBeenCalled();
   });
 
+  it.each(['1.9.1', '1.10.0'])(
+    'should backfill on an upgrade from %s to 1.11.0',
+    async (previousVersion) => {
+      await expect(
+        handler({ previousVersion, newVersion: '1.11.0' }),
+      ).resolves.toMatchObject({ outcome: 'completed' });
+    },
+  );
+
+  it('should skip the backfill on an upgrade from 1.11.0', async () => {
+    await expect(
+      handler({ previousVersion: '1.11.0', newVersion: '1.11.1' }),
+    ).resolves.toEqual({});
+
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
   it('should schedule upcoming meetings and apply the last hour of meetings on every upgrade', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-06-12T12:00:00.000Z'));

@@ -146,7 +146,9 @@ export const SettingsAdminWorkspaceContent = ({
     },
   ];
 
-  if (!activeWorkspace) return null;
+  if (!activeWorkspace) {
+    return null;
+  }
 
   return (
     <StyledContainer>

@@ -52,6 +52,17 @@ export const Small: Story = {
   },
 };
 
+export const ExtraSmall: Story = {
+  args: { value: 50, size: 'xs', withBorderRadius: true },
+  play: async ({ canvasElement }) => {
+    const progress = within(canvasElement).getByRole('progressbar', {
+      name: 'Import progress',
+    });
+
+    await expect(progress).toHaveStyle({ height: '4px' });
+  },
+};
+
 export const CustomRange: Story = {
   args: { value: 70, min: 20, max: 120, withBorderRadius: true },
 };

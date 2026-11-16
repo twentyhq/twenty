@@ -17,7 +17,9 @@ export const modifyRecordFromCache = <
   fieldModifiers: Modifiers<CachedObjectRecord>;
   recordId: string;
 }) => {
-  if (!isDefined(objectMetadataItem)) return;
+  if (!isDefined(objectMetadataItem)) {
+    return;
+  }
 
   const cachedRecordId = cache.identify({
     __typename: capitalize(objectMetadataItem.nameSingular),

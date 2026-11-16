@@ -3,10 +3,9 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-import { PageLayoutType, WidgetType } from 'twenty-shared/types';
+import { PageLayoutType } from 'twenty-shared/types';
 import {
   TAB_PROPS,
-  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -26,16 +25,6 @@ const WORKFLOW_VERSION_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
             .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
-      },
-      workflow: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.workflowVersionRecordPage
-            .tabs.home.widgets.workflow.universalIdentifier,
-        title: 'Workflow',
-        type: WidgetType.FIELD,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
-        fieldUniversalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.fields.workflow.universalIdentifier,
       },
     },
   },

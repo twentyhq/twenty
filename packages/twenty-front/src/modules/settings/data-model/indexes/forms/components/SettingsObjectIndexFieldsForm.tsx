@@ -67,7 +67,9 @@ export const SettingsObjectIndexFieldsForm = ({
         );
 
         const handleSelect = (rowIndex: number, newOptionValue: string) => {
-          if (newOptionValue === '') return;
+          if (newOptionValue === '') {
+            return;
+          }
 
           const next = [...value];
           const decoded = decodeIndexableOptionValue(newOptionValue);

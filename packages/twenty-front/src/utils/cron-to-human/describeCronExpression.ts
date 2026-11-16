@@ -1,11 +1,12 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Locale } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getDayOfMonthDescription } from './descriptors/getDayOfMonthDescription';
-import { getDayOfWeekDescription } from './descriptors/getDayOfWeekDescription';
+import { getDaysDescription } from './descriptors/getDaysDescription';
 import { getHoursDescription } from './descriptors/getHoursDescription';
 import { getMinutesDescription } from './descriptors/getMinutesDescription';
+import { getMinutesWithinHoursDescription } from './descriptors/getMinutesWithinHoursDescription';
 import { getMonthsDescription } from './descriptors/getMonthsDescription';
 import {
   type CronDescriptionOptions,
@@ -40,7 +41,15 @@ export const describeCronExpression = (
       mergedOptions,
     );
 
-    if (parts.minutes.includes('/') && parts.hours.includes('-')) {
+    const minutesWithinHoursDescription = getMinutesWithinHoursDescription({
+      minutes: parts.minutes,
+      hours: parts.hours,
+      options: mergedOptions,
+    });
+
+    if (isNonEmptyString(minutesWithinHoursDescription)) {
+      descriptions.push(minutesWithinHoursDescription);
+    } else if (parts.minutes.includes('/') && parts.hours.includes('-')) {
       // Special case: minute intervals with hour ranges (e.g., "*/15 9-17")
       if (isDefined(minutesDescription) && minutesDescription !== '') {
         descriptions.push(minutesDescription);
@@ -67,29 +76,17 @@ export const describeCronExpression = (
     } else if (isDefined(minutesDescription) && minutesDescription !== '') {
       descriptions.push(minutesDescription);
     }
-    const dayOfMonthDesc = getDayOfMonthDescription(
-      parts.dayOfMonth,
-      mergedOptions,
-    );
-    const dayOfWeekDesc = getDayOfWeekDescription(
-      parts.dayOfWeek,
-      mergedOptions,
+    const daysDescription = getDaysDescription({
+      dayOfMonth: parts.dayOfMonth,
+      dayOfWeek: parts.dayOfWeek,
+      options: mergedOptions,
       localeCatalog,
-    );
+    });
 
-    if (
-      isDefined(dayOfMonthDesc) &&
-      dayOfMonthDesc !== '' &&
-      parts.dayOfMonth !== '*'
-    ) {
-      descriptions.push(dayOfMonthDesc);
-    } else if (
-      isDefined(dayOfWeekDesc) &&
-      dayOfWeekDesc !== '' &&
-      parts.dayOfWeek !== '*'
-    ) {
-      descriptions.push(dayOfWeekDesc);
+    if (isNonEmptyString(daysDescription)) {
+      descriptions.push(daysDescription);
     }
+
     const monthsDesc = getMonthsDescription(
       parts.month,
       mergedOptions,

@@ -69,6 +69,7 @@ const buildService = (
       workspaceCacheService as never,
       {} as never,
     ),
+    { endWorkflowRun: jest.fn() } as never,
   );
 
   return { service, messageQueueService, workspaceCacheService };

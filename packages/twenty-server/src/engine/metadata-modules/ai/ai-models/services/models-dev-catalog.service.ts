@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { inferAiSdkPackage } from 'twenty-shared/ai';
 
-import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.constant';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
 export type ModelsDevModelSuggestion = {

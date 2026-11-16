@@ -5,7 +5,7 @@ import {
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
@@ -20,7 +20,7 @@ export function assertVersionCanBeActivated(
     WorkflowVersionWorkspaceEntity,
     'id' | 'status' | 'trigger' | 'steps'
   >,
-  workflow: Pick<WorkflowWorkspaceEntity, 'lastPublishedVersionId'>,
+  workflow: Pick<WorkflowEntity, 'lastPublishedVersionId'>,
 ) {
   assertVersionIsValid(workflowVersion);
 

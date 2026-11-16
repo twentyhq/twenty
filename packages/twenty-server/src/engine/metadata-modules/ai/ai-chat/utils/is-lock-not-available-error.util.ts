@@ -1,6 +1,6 @@
 import { isObject } from '@sniptt/guards';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 
 const hasLockNotAvailableCode = (error: unknown): boolean =>
   isObject(error) &&

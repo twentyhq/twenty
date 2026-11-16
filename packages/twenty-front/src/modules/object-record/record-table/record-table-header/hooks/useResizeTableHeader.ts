@@ -12,7 +12,7 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldIdComponentState } from '@/object-record/record-table/states/resizedRecordFieldIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
@@ -57,11 +57,12 @@ export const useResizeTableHeader = () => {
     number | null
   >(null);
 
-  const [resizedFieldMetadataId, setResizedFieldMetadataId] =
-    useAtomComponentState(resizedFieldMetadataIdComponentState);
+  const [resizedRecordFieldId, setResizedRecordFieldId] = useAtomComponentState(
+    resizedRecordFieldIdComponentState,
+  );
 
   const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', resizedFieldMetadataId),
+    findByProperty('id', resizedRecordFieldId),
   );
 
   const { resetRecordSelection } = useResetRecordSelection();
@@ -100,7 +101,9 @@ export const useResizeTableHeader = () => {
 
   const handleResizeHandlerMove = useCallback<PointerEventListener>(
     ({ x }) => {
-      if (!initialPointerPositionX) return;
+      if (!initialPointerPositionX) {
+        return;
+      }
 
       throwIfNotDefined(recordField, 'recordField');
 
@@ -179,7 +182,9 @@ export const useResizeTableHeader = () => {
   const handleResizeHandlerEnd = useCallback(async () => {
     throwIfNotDefined(recordField, 'recordField');
 
-    if (!resizedFieldMetadataId) return;
+    if (!resizedRecordFieldId) {
+      return;
+    }
 
     const currentResizeFieldOffset = store.get(resizeFieldOffset);
 
@@ -192,10 +197,10 @@ export const useResizeTableHeader = () => {
 
     store.set(resizeFieldOffset, 0);
     setInitialPointerPositionX(null);
-    setResizedFieldMetadataId(null);
+    setResizedRecordFieldId(null);
 
     if (nextWidth !== recordField.size) {
-      const updatedRecordField = updateRecordField(resizedFieldMetadataId, {
+      const updatedRecordField = updateRecordField(resizedRecordFieldId, {
         size: nextWidth,
       });
 
@@ -216,10 +221,10 @@ export const useResizeTableHeader = () => {
     setDragSelectionStartEnabled(true);
   }, [
     saveRecordFields,
-    resizedFieldMetadataId,
+    resizedRecordFieldId,
     resizeFieldOffset,
     store,
-    setResizedFieldMetadataId,
+    setResizedRecordFieldId,
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
@@ -227,7 +232,7 @@ export const useResizeTableHeader = () => {
   ]);
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldMetadataId !== null,
+    shouldTrackPointer: resizedRecordFieldId !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,

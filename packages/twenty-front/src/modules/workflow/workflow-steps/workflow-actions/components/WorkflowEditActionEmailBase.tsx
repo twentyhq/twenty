@@ -95,9 +95,9 @@ export const WorkflowEditActionEmailBase = ({
     const inputRecipients = action.settings.input.recipients;
 
     return {
-      cc: Boolean(inputRecipients?.cc),
-      bcc: Boolean(inputRecipients?.bcc),
-      inReplyTo: Boolean(action.settings.input.inReplyTo),
+      cc: isNonEmptyString(inputRecipients?.cc),
+      bcc: isNonEmptyString(inputRecipients?.bcc),
+      inReplyTo: isNonEmptyString(action.settings.input.inReplyTo),
     };
   });
 
@@ -246,7 +246,7 @@ export const WorkflowEditActionEmailBase = ({
                 ? {
                     onClick: () => {
                       closeSidePanelMenu();
-                      navigate(SettingsPath.NewAccount);
+                      navigate(SettingsPath.AppPreferencesNewAccount);
                     },
                     Icon: IconPlus,
                     text: t`Add account`,

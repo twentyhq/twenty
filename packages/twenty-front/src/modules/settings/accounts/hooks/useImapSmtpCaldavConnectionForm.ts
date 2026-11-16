@@ -189,7 +189,9 @@ export const useImapSmtpCaldavConnectionForm = ({
             },
           },
         });
-        if (!isDefined(data)) return;
+        if (!isDefined(data)) {
+          return;
+        }
 
         const successMessage = isEditing
           ? t`Connection successfully updated`
@@ -200,7 +202,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
 
-        navigate(SettingsPath.AccountsConfiguration, {
+        navigate(SettingsPath.AppPreferencesAccountConfiguration, {
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {

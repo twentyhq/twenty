@@ -1,9 +1,10 @@
 import { workflowFindRecordsActionSettingsSchema } from '../find-records-action-settings-schema';
 
-const buildSettings = (filter: unknown) => ({
+const buildSettings = (filter: unknown, orderBy?: unknown) => ({
   input: {
     objectName: 'company',
     filter,
+    orderBy,
   },
   outputSchema: {},
   errorHandlingOptions: {
@@ -93,5 +94,46 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     );
 
     expect(result.success).toBe(false);
+  });
+
+  it('should accept record sorts that reference fields by id', () => {
+    const recordSort = {
+      fieldMetadataId: 'field-id',
+      direction: 'DESC',
+      subFieldName: 'lastName',
+    };
+
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, { recordSorts: [recordSort] }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.data?.input.orderBy?.recordSorts).toEqual([recordSort]);
+  });
+
+  it('should reject a GraphQL order, which the run computes from record sorts', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, {
+        recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
+        gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
+      }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should drop the id a record sort was stored with before sorts lost it', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, {
+        recordSorts: [
+          { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
+        ],
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.data?.input.orderBy?.recordSorts).toEqual([
+      { fieldMetadataId: 'field-id', direction: 'ASC' },
+    ]);
   });
 });

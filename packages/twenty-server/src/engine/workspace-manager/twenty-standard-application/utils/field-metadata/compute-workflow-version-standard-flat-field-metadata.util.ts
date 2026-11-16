@@ -401,38 +401,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  workflow: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workflow',
-      label: i18nLabel(
-        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `WorkflowVersion workflow`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconSettingsAutomation',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workflow',
-      targetFieldName: 'versions',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   runs: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -28,11 +28,10 @@ export const getSettingsObjectFieldType = (
       : getIsMetadataItemCustom(fieldMetadataItem, workspaceCustomApplicationId)
         ? t`Custom`
         : t`Standard`;
-  } else {
-    return isDefined(identifierType)
-      ? identifierType === 'label'
-        ? t`Record text`
-        : t`Record image`
-      : null;
   }
+  return isDefined(identifierType)
+    ? identifierType === 'label'
+      ? t`Record text`
+      : t`Record image`
+    : null;
 };

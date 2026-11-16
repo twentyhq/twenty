@@ -1,12 +1,16 @@
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import {
   AiChatAssistantMode,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsAI } from '~/pages/settings/ai/SettingsAI';
 import { createSettingsAiIntegrationStoryFixture } from '~/pages/settings/ai/components/__stories__/createSettingsAiIntegrationStoryFixture';
+import { SETTINGS_AI_ASSISTANT_PRESETS } from '~/pages/settings/ai/constants/SettingsAiAssistantPresets';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -40,6 +44,9 @@ const meta = {
       isInboxEnabled: args.isInboxEnabled,
     });
   },
+  afterEach: () => {
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
+  },
   parameters: { mockingDate: null, msw: { handlers: fixture.handlers } },
   render: () => (
     <SettingsProtectedRouteWrapper
@@ -66,8 +73,8 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     expect(canvas.getByRole('heading', { name: 'MCP Server' })).toBeVisible();
     expect(canvas.getByRole('heading', { name: 'Behavior' })).toBeVisible();
     expect(
-      canvas.queryByRole('heading', { name: 'Avatar' }),
-    ).not.toBeInTheDocument();
+      await canvas.findByRole('heading', { name: 'Avatar' }),
+    ).toBeVisible();
 
     const instructions = await canvas.findByRole('textbox', {
       name: 'Workspace Instructions',
@@ -146,7 +153,7 @@ export const BehaviorPersistenceAndRetry: Story = {
     expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
 
-    fixture.pauseBehaviorSave();
+    fixture.pauseSave();
     await userEvent.click(directMessages);
     await userEvent.click(
       await bodyQueries.findByRole('option', { name: 'Never' }),
@@ -159,7 +166,7 @@ export const BehaviorPersistenceAndRetry: Story = {
     expect(inbox).toHaveAttribute('data-disabled');
     expect(directMessages).toHaveTextContent('Only when mentioned');
 
-    fixture.resumeBehaviorSave();
+    fixture.resumeSave();
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
     expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
     await userEvent.click(inbox);
@@ -180,6 +187,62 @@ export const BehaviorPersistenceAndRetry: Story = {
     expect(
       canvas.getByRole('combobox', { name: 'Global inbox' }),
     ).toHaveTextContent('Only when mentioned');
+  },
+};
+
+export const AssistantProfileSaveAndRetry: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const scout = await canvas.findByRole('radio', { name: 'Scout' });
+
+    fixture.failNextAssistantSave();
+    await userEvent.click(scout);
+    expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Failed to save assistant settings. Try again.',
+    );
+    expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
+
+    fixture.pauseSave();
+    await userEvent.click(scout);
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+    const customize = await canvas.findByRole('button', { name: 'Customize' });
+
+    expect(customize).toBeDisabled();
+    fixture.resumeSave();
+    await waitFor(() =>
+      expect(canvas.getByRole('radio', { name: 'Scout' })).toBeChecked(),
+    );
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    expect(fixture.saveAssistantProfile).toHaveBeenLastCalledWith({
+      aiChatAssistantProfile: SETTINGS_AI_ASSISTANT_PRESETS[1],
+    });
+
+    await waitFor(() => expect(customize).not.toBeDisabled());
+    await userEvent.click(customize);
+    await userEvent.clear(
+      await body.findByRole('textbox', { name: 'Assistant name' }),
+    );
+    await userEvent.keyboard('Nimbus{Enter}');
+    await waitFor(() =>
+      expect(customize).toHaveAttribute('aria-pressed', 'true'),
+    );
+    await waitFor(() => expect(customize).not.toBeDisabled());
+    expect(fixture.saveAssistantProfile).toHaveBeenLastCalledWith({
+      aiChatAssistantProfile: { displayName: 'Nimbus' },
+    });
+    expect(canvas.getByText(/^Choose when Nimbus participates/)).toBeVisible();
+    expect(canvas.getByText(/^Never keeps Nimbus out/)).toBeVisible();
+
+    await userEvent.click(body.getByRole('button', { name: 'Reset to Ada' }));
+    await waitFor(() =>
+      expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked(),
+    );
+    expect(fixture.saveAssistantProfile).toHaveBeenLastCalledWith({
+      aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+    });
   },
 };
 

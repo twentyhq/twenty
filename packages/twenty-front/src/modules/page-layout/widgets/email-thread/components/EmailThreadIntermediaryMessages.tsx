@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 
 const StyledButtonContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[10]};
 `;
 
 export const EmailThreadIntermediaryMessages = ({

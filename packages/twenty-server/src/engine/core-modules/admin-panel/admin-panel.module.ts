@@ -43,6 +43,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { UsageLimitInstanceOverrideModule } from 'src/engine/core-modules/usage-limit/instance-override/usage-limit-instance-override.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -52,7 +53,6 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceDataExportModule } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
@@ -66,6 +66,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       BillingPriceEntity,
     ]),
     BillingModule,
+    UsageLimitInstanceOverrideModule,
     FileModule,
     WorkspaceDomainsModule,
     TerminusModule,
@@ -86,7 +87,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EnterpriseModule,
     TwoFactorAuthenticationModule,
     WorkspaceDataExportModule,
-    UserRoleModule,
   ],
   providers: [
     AdminPanelResolver,

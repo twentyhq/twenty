@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -24,6 +25,7 @@ export class UserWorkspaceAuthContextService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async resolveWorkspaceMember({
@@ -135,6 +137,19 @@ export class UserWorkspaceAuthContextService {
       requestContext.userWorkspaceId === userWorkspaceId
         ? requestContext
         : undefined;
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
     let application =
       applicationId === undefined
         ? matchingUserContext?.application
@@ -148,8 +163,13 @@ export class UserWorkspaceAuthContextService {
       // OAuth-only applications have no role and act with the member's role
       if (
         !isDefined(application) ||
-        (!isDefined(application.defaultRoleId) &&
-          !isOAuthOnlyApplication(application))
+        (!isOAuthOnlyApplication(application) &&
+          !isDefined(
+            await this.applicationGrantRoleLookupService.findGrantRoleId({
+              workspaceId,
+              flatApplication: application,
+            }),
+          ))
       ) {
         throw new AuthException(
           'Application no longer has access',
@@ -157,18 +177,6 @@ export class UserWorkspaceAuthContextService {
         );
       }
     }
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceId,
-    );
-
-    assertIsDefinedOrThrow(
-      workspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
 
     return buildUserAuthContext({
       workspace,

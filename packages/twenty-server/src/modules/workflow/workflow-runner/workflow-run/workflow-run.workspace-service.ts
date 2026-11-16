@@ -44,8 +44,6 @@ export class WorkflowRunWorkspaceService {
   async createCoreWorkflowRun({
     coreWorkflowId,
     coreWorkflowVersionId,
-    workspaceWorkflowId,
-    workspaceWorkflowVersionId,
     workflowName,
     trigger,
     steps,
@@ -55,11 +53,10 @@ export class WorkflowRunWorkspaceService {
     triggerPayload,
     error,
     workspaceId,
+    shouldSkipEventEmission = false,
   }: {
     coreWorkflowId: string;
     coreWorkflowVersionId: string;
-    workspaceWorkflowId: string | null;
-    workspaceWorkflowVersionId: string | null;
     workflowName: string | null;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
@@ -72,6 +69,7 @@ export class WorkflowRunWorkspaceService {
     workflowRunId?: string;
     error?: string;
     workspaceId: string;
+    shouldSkipEventEmission?: boolean;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -79,6 +77,7 @@ export class WorkflowRunWorkspaceService {
       const workflowRunRepository =
         this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
           'workflowRun',
+          { shouldSkipEventEmission },
         );
       const position = await this.recordPositionService.buildRecordPosition({
         value: 'first',
@@ -98,8 +97,6 @@ export class WorkflowRunWorkspaceService {
       await workflowRunRepository.insert({
         id,
         name: `#${workflowRunCount + 1} - ${workflowName ?? 'Workflow'}`,
-        workflowVersionId: workspaceWorkflowVersionId,
-        workflowId: workspaceWorkflowId,
         coreWorkflowId,
         coreWorkflowVersionId,
         createdBy,

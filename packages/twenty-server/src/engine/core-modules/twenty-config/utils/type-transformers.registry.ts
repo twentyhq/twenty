@@ -36,7 +36,9 @@ export const typeTransformers: Record<
 > = {
   [ConfigVariableType.BOOLEAN]: {
     toApp: (value: unknown): boolean | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       const result = configTransformers.boolean(value);
 
@@ -74,7 +76,9 @@ export const typeTransformers: Record<
 
   [ConfigVariableType.NUMBER]: {
     toApp: (value: unknown): number | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       const result = configTransformers.number(value);
 
@@ -112,7 +116,9 @@ export const typeTransformers: Record<
 
   [ConfigVariableType.STRING]: {
     toApp: (value: unknown): string | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       const result = configTransformers.string(value);
 
@@ -147,7 +153,9 @@ export const typeTransformers: Record<
       value: unknown,
       options?: ConfigVariableOptions,
     ): unknown[] | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       let arrayValue: unknown[];
 
@@ -198,12 +206,18 @@ export const typeTransformers: Record<
 
     getTransformers: (): PropertyDecorator[] => [
       Transform(({ value }) => {
-        if (Array.isArray(value)) return value;
-        if (!isString(value)) return value;
+        if (Array.isArray(value)) {
+          return value;
+        }
+        if (!isString(value)) {
+          return value;
+        }
 
         const fromJson = tryParseJsonArray(value);
 
-        if (isDefined(fromJson)) return fromJson;
+        if (isDefined(fromJson)) {
+          return fromJson;
+        }
 
         return value
           .split(',')
@@ -218,7 +232,9 @@ export const typeTransformers: Record<
       value: unknown,
       options?: ConfigVariableOptions,
     ): string | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       if (!options || !Array.isArray(options) || options.length === 0) {
         return value as string;
@@ -262,7 +278,9 @@ export const typeTransformers: Record<
 
   [ConfigVariableType.JSON]: {
     toApp: (value: unknown): Record<string, unknown> | undefined => {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined) {
+        return undefined;
+      }
 
       if (typeof value === 'object' && !Array.isArray(value)) {
         return value as Record<string, unknown>;

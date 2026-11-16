@@ -25,6 +25,7 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   roleTarget: {},
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
+  rowLevelPermissionRule: {},
   logicFunction: {},
   webhook: {},
   mcpServer: {},

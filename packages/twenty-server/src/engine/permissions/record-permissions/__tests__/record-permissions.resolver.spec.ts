@@ -12,10 +12,11 @@ const readable = { ...denied, canRead: true };
 const buildResolver = () => {
   const objectMetadata = {
     id: 'object',
+    nameSingular: 'agentChatThread',
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   };
-  const recordPermissionsService = {
-    getPermissionsForRecords: jest
+  const permissionsService = {
+    findRecordsActions: jest
       .fn()
       .mockResolvedValue(new Map([['record', readable]])),
   };
@@ -37,7 +38,7 @@ const buildResolver = () => {
     }),
   };
   const resolver = new RecordPermissionsResolver(
-    recordPermissionsService as never,
+    permissionsService as never,
     cache as never,
   );
   const query = (
@@ -52,12 +53,12 @@ const buildResolver = () => {
       } as never,
       () => resolver.recordPermissions(targets),
     );
-  return { query, recordPermissionsService, cache, objectMetadata };
+  return { query, permissionsService, cache, objectMetadata };
 };
 
 describe('Generic record permissions query', () => {
   it('deduplicates and batches by object using the authenticated viewer and existing policy', async () => {
-    const { query, recordPermissionsService, objectMetadata } = buildResolver();
+    const { query, permissionsService, objectMetadata } = buildResolver();
     const target = { objectMetadataId: 'object', recordId: 'record' };
     const result = await query([
       target,
@@ -74,29 +75,23 @@ describe('Generic record permissions query', () => {
         permissions: readable,
       },
     ]);
-    expect(
-      recordPermissionsService.getPermissionsForRecords,
-    ).toHaveBeenCalledTimes(2);
-    expect(
-      recordPermissionsService.getPermissionsForRecords,
-    ).toHaveBeenCalledWith({
+    expect(permissionsService.findRecordsActions).toHaveBeenCalledTimes(2);
+    expect(permissionsService.findRecordsActions).toHaveBeenCalledWith({
       authContext: {
         type: 'user',
         workspace: { id: 'workspace' },
         userWorkspaceId: 'viewer',
       },
-      flatObjectMetadata: objectMetadata,
+      objectNameSingular: objectMetadata.nameSingular,
       recordIds: ['record', 'missing'],
     });
   });
 
   it('does not disclose missing or foreign workspace objects', async () => {
-    const { query, recordPermissionsService } = buildResolver();
+    const { query, permissionsService } = buildResolver();
     const target = { objectMetadataId: 'foreign', recordId: 'record' };
     expect(await query([target])).toEqual([{ ...target, permissions: denied }]);
-    expect(
-      recordPermissionsService.getPermissionsForRecords,
-    ).not.toHaveBeenCalled();
+    expect(permissionsService.findRecordsActions).not.toHaveBeenCalled();
   });
 
   it('rejects oversized batches before reading metadata', async () => {

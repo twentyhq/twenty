@@ -38,6 +38,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       profile: 'TEAM' as const,
       expected: [
         GettingStartedStepActionKey.CONNECT_MAILBOX,
+        GettingStartedStepActionKey.BOOK_CALL,
         GettingStartedStepActionKey.IMPORT_DATA,
         GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         GettingStartedStepActionKey.INVITE_TEAM,
@@ -55,6 +56,7 @@ describe('filterGettingStartedStepActionKeys', () => {
           permissionFlags: ALL_PERMISSION_FLAGS,
           hasSendingMailbox: true,
           hasFeaturedApp: true,
+          hasCalendarBookingPage: true,
         }),
       ).toEqual(expected);
     },
@@ -69,6 +71,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       },
       hasSendingMailbox: true,
       hasFeaturedApp: true,
+      hasCalendarBookingPage: true,
     });
 
     expect(stepActionKeys).not.toContain(
@@ -89,11 +92,34 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
+        hasCalendarBookingPage: true,
       }),
     ).toEqual([
       GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.BOOK_CALL,
       GettingStartedStepActionKey.INVITE_TEAM,
       GettingStartedStepActionKey.HANDOVER_DEALS,
+      GettingStartedStepActionKey.INSTALL_APP,
+    ]);
+  });
+
+  it('should leave out the steps that set up a workflow without the workflows permission', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: {
+          ...ALL_PERMISSION_FLAGS,
+          [PermissionFlagType.WORKFLOWS]: false,
+        },
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+        hasCalendarBookingPage: false,
+      }),
+    ).toEqual([
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.IMPORT_DATA,
+      GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
+      GettingStartedStepActionKey.INVITE_TEAM,
       GettingStartedStepActionKey.INSTALL_APP,
     ]);
   });
@@ -105,6 +131,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: false,
         hasFeaturedApp: true,
+        hasCalendarBookingPage: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.HANDOVER_DEALS);
   });
@@ -116,7 +143,35 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: true,
         hasFeaturedApp: false,
+        hasCalendarBookingPage: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.INSTALL_APP);
+  });
+
+  it('should leave out the book call step without a calendar booking page', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: ALL_PERMISSION_FLAGS,
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+        hasCalendarBookingPage: false,
+      }),
+    ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
+  });
+
+  it('should leave out the book call step without the workspace settings permission', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: {
+          ...ALL_PERMISSION_FLAGS,
+          [PermissionFlagType.WORKSPACE]: false,
+        },
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+        hasCalendarBookingPage: true,
+      }),
+    ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
   });
 });

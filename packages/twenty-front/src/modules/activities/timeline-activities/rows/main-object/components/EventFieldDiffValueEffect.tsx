@@ -34,7 +34,9 @@ export const EventFieldDiffValueEffect = ({
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   useEffect(() => {
-    if (!isDefined(diffRecord)) return;
+    if (!isDefined(diffRecord)) {
+      return;
+    }
 
     let fieldValue = diffRecord;
 

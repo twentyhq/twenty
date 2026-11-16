@@ -1,6 +1,3 @@
-import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
+import { type RuleRecordShareGrant } from 'src/engine/permissions/record-share/types/rule-record-share-grant.type';
 
-export type AgentChatChannelRuleGrant = Pick<
-  RecordShareInput,
-  'recordId' | 'principalId' | 'sourceId'
->;
+export type AgentChatChannelRuleGrant = RuleRecordShareGrant;

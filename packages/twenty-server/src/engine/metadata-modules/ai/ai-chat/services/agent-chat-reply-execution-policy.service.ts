@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -55,6 +56,8 @@ export class AgentChatReplyExecutionPolicyService {
     }
 
     if (
+      thread.conversationType !==
+        AgentChatThreadConversationType.DIRECT_MESSAGE &&
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspaceId,

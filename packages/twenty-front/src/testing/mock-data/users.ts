@@ -2,6 +2,7 @@ import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import {
   AiChatAssistantMode,
   AiModelTier,
@@ -93,11 +94,16 @@ export const mockCurrentWorkspace = {
   metadataVersion: 1,
   trashRetentionDays: 14,
   aiChatModelTier: AiModelTier.fast,
+  aiChatAssistantProfile: {
+    ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+    __typename: 'AiChatAssistantProfile',
+  },
   aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
   aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
+  isInternalImportEnabled: false,
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
@@ -217,10 +223,13 @@ export const mockedUserData: MockedUser = {
     objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
       (item) => ({
         objectMetadataId: item.id,
+        canCreateAllRecords: true,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: true,
         canDestroyAllRecords: true,
+        unreadableFields: [],
+        uneditableFields: [],
         restrictedFields: {},
       }),
     ),
@@ -247,10 +256,13 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
 
         return {
           objectMetadataId: item.id,
+          canCreateAllRecords: hasAccess,
           canReadAllRecords: hasAccess,
           canUpdateAllRecords: hasAccess,
           canSoftDeleteAllRecords: hasAccess,
           canDestroyAllRecords: hasAccess,
+          unreadableFields: [],
+          uneditableFields: [],
           restrictedFields: {},
         };
       },
@@ -280,10 +292,13 @@ export const mockedOnboardingUserData = (
       objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,
+          canCreateAllRecords: true,
           canReadAllRecords: true,
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,
           canDestroyAllRecords: true,
+          unreadableFields: [],
+          uneditableFields: [],
           restrictedFields: {},
         }),
       ),

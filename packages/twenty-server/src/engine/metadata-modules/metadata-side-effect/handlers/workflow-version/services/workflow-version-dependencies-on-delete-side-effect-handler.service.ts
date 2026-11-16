@@ -14,7 +14,7 @@ export class WorkflowVersionDependenciesOnDeleteSideEffectHandlerService extends
     metadataName: 'workflowVersion',
     name: 'workflowVersionDependenciesOnDelete',
     description:
-      'Delete the command menu items of a deleted workflow version and the CODE step logic functions only it uses, unless its workflow is deleted too.',
+      'Delete the command menu items of a deleted workflow version, unless its workflow is deleted too.',
   },
 ) {
   buildSideEffects(

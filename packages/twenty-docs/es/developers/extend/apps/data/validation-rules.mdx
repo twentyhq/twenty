@@ -9,6 +9,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Una regla de validación es una condición aplicada a un registro. Cuando se evalúa como falsa, Twenty rechaza el registro y muestra el mensaje de la regla.
 
+Para configurar reglas en Configuración, consulte la [guía del usuario de reglas de validación](/es/user-guide/data-model/capabilities/validation-rules).
+
 <Note>
   Las reglas de validación solo se aplican en espacios de trabajo donde la función está disponible.
 </Note>
@@ -54,11 +56,12 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 * `field('name')` lee un campo y `field('company.employees')` lee un campo a través de una relación de muchos a uno.
 * `now` es la fecha y hora actuales.
+* `previous('stage')` lee el valor almacenado antes de la actualización, para restringir las transiciones. Está vacío cuando se crea un registro y lee los propios campos del registro, no los campos a través de una relación.
 * `and`, `or` y `not` combinan condiciones.
 * `eq`, `notEq`, `gt`, `gte`, `lt` y `lte` comparan valores.
 * `add`, `subtract`, `multiply` y `divide` calculan valores.
 * `isIn(field('stage'), ['NEW', 'WON'])` compara un valor con una lista.
-* Funciones como `isNonEmptyString` y `isDefined`.
+* Funciones como `isNonEmptyString` e `isDefined`, y las funciones de fecha `daysSince(date)` (días completos desde la fecha, negativos para una fecha futura) e `isInRelativeDateRange(date, direction, amount, unit)`, con la dirección `'PAST'`, `'NEXT'` o `'THIS'` y la unidad `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`, como `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 El generador produce una cadena simple, que es lo que [`twenty app pull`](/es/developers/extend/apps/operations/cli) escribe de vuelta. Puedes escribir esa cadena directamente:
 
@@ -66,7 +69,12 @@ El generador produce una cadena simple, que es lo que [`twenty app pull`](/es/de
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Las cadenas usan `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, no `&&` ni `||`. El texto va entre comillas simples o dobles.
+Las cadenas usan `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, no `&&` ni `||`. El texto va entre comillas simples o dobles. Un valor anterior se escribe `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
 
 Una regla puede leer los campos que declaras y los [campos del sistema](/es/developers/extend/apps/data/system-fields) que proporciona Twenty, como `createdAt`. La CLI comprueba las expresiones con los objetos propios de tu aplicación. En un objeto fuera de tu aplicación, solo comprueba la sintaxis y el servidor comprueba los campos durante la sincronización.
 
@@ -83,4 +91,4 @@ Una regla puede leer los campos que declaras y los [campos del sistema](/es/deve
 
 Una sincronización mantiene el `isActive` de una regla existente, por lo que una regla que un administrador del espacio de trabajo desactivó permanece desactivada. Solo las reglas nuevas comienzan activadas.
 
-<PageBanner illustration="dev-contribute" />
+<PageBanner illustration="card-page-validation-rules" />

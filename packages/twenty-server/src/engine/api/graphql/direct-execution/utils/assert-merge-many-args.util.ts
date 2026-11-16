@@ -6,7 +6,7 @@ import {
   GraphqlDirectExecutionException,
   GraphqlDirectExecutionExceptionCode,
 } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { type MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 export function assertMergeManyArgs(

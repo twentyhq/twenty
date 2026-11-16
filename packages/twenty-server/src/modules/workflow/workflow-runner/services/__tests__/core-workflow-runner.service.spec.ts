@@ -3,14 +3,25 @@ import { FieldActorSource } from 'twenty-shared/types';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
+import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const WORKSPACE_ID = 'workspace-id';
 
+const LIMITER = { max: 100, durationMs: 60_000 };
+
 const WORKFLOWS = {
-  'workflow-a': { id: 'workflow-a', applicationId: 'application-a' },
-  'workflow-b': { id: 'workflow-b', applicationId: 'application-b' },
+  'workflow-a': {
+    id: 'workflow-a',
+    applicationId: 'application-a',
+    jobConfig: { limiter: LIMITER },
+  },
+  'workflow-b': {
+    id: 'workflow-b',
+    applicationId: 'application-b',
+    jobConfig: { limiter: LIMITER },
+  },
 };
 
 const buildService = (triggerType: WorkflowTriggerType) => {
@@ -37,6 +48,13 @@ const buildService = (triggerType: WorkflowTriggerType) => {
           },
         },
         idByUniversalIdentifier: {},
+      },
+      flatWorkflowMaps: {
+        byUniversalIdentifier: WORKFLOWS,
+        universalIdentifierById: {
+          'workflow-a': 'workflow-a',
+          'workflow-b': 'workflow-b',
+        },
       },
     }),
   };
@@ -78,6 +96,14 @@ const buildService = (triggerType: WorkflowTriggerType) => {
       workspaceCacheService as never,
       {} as never,
     ),
+    new WorkflowRunEnqueueWorkspaceService(
+      {} as never,
+      {} as never,
+      messageQueueService as never,
+      {} as never,
+      {} as never,
+      workflowRunWorkspaceService as never,
+    ),
     messageQueueService as never,
   );
 
@@ -101,7 +127,7 @@ const buildService = (triggerType: WorkflowTriggerType) => {
 };
 
 describe('CoreWorkflowRunnerService', () => {
-  it('scopes the run job of each workflow to the application owning it', async () => {
+  it('scopes the run job of each workflow to the application owning it, with the limiter of the workflow', async () => {
     const { runBothWorkflows, messageQueueService } = buildService(
       WorkflowTriggerType.MANUAL,
     );
@@ -117,6 +143,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-a-universal-id',
+          limiter: { key: 'workflow:workflow-a', ...LIMITER },
         },
       ],
       [
@@ -127,6 +154,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-b-universal-id',
+          limiter: { key: 'workflow:workflow-b', ...LIMITER },
         },
       ],
     ]);

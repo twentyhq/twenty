@@ -11,7 +11,6 @@ describe('getGettingStartedStepSelection', () => {
       expected: {
         selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
         nextStep: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
-        stepAfterSkip: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
       },
     },
     {
@@ -21,7 +20,6 @@ describe('getGettingStartedStepSelection', () => {
       expected: {
         selectedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         nextStep: GettingStartedStepActionKey.CONNECT_MAILBOX,
-        stepAfterSkip: GettingStartedStepActionKey.CONNECT_MAILBOX,
       },
     },
     {
@@ -31,17 +29,15 @@ describe('getGettingStartedStepSelection', () => {
       expected: {
         selectedStepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         nextStep: GettingStartedStepActionKey.CONNECT_MAILBOX,
-        stepAfterSkip: GettingStartedStepActionKey.CONNECT_MAILBOX,
       },
     },
     {
-      description: 'skips from a completed step back to the current step',
+      description: 'goes from a completed step to the next remaining step',
       completedStepActionKeys: [GettingStartedStepActionKey.INVITE_TEAM],
       selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
       expected: {
         selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
         nextStep: GettingStartedStepActionKey.HANDOVER_DEALS,
-        stepAfterSkip: GettingStartedStepActionKey.CONNECT_MAILBOX,
       },
     },
   ])(

@@ -227,14 +227,13 @@ describe('View Filter Group Resolver', () => {
   });
 
   describe('getViewFilterGroup', () => {
-    it('should return null when filter group does not exist', async () => {
+    it('should throw when filter group does not exist', async () => {
       const operation = findViewFilterGroupOperationFactory({
         viewFilterGroupId: TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
       });
       const response = await makeMetadataApiRequest(operation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getViewFilterGroup).toBeNull();
+      assertGraphQLErrorResponse(response, ErrorCode.NOT_FOUND);
     });
 
     it('should return filter group when it exists', async () => {
@@ -466,7 +465,7 @@ describe('View Filter Group Resolver', () => {
       });
       const getResponse = await makeMetadataApiRequest(getOperation);
 
-      expect(getResponse.body.data.getViewFilterGroup).toBeNull();
+      assertGraphQLErrorResponse(getResponse, ErrorCode.NOT_FOUND);
     });
 
     it('should throw an error when deleting non-existent filter group', async () => {

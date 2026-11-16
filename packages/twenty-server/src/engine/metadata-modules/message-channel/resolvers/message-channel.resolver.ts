@@ -194,15 +194,12 @@ export class MessageChannelResolver {
     @Args('input') input: UpdateMessageChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<MessageChannelDTO> {
     const messageChannel =
       await this.messageChannelMetadataService.verifyAdministrableByCaller({
         id: input.id,
         userWorkspaceId,
         workspaceId: workspace.id,
-        applicationId: application?.id,
-        agentId: undefined,
       });
 
     // app channel settings belong to the creating app and go through updateAppMessageChannel

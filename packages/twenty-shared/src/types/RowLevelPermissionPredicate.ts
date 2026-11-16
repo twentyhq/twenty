@@ -6,6 +6,7 @@ import { type RowLevelPermissionPredicateValue } from '@/types/RowLevelPermissio
 export type RowLevelPermissionPredicate = {
   id: string;
   fieldMetadataId: string;
+  relationFieldMetadataId?: string | null;
   objectMetadataId: string;
   operand: RowLevelPermissionPredicateOperand;
   value: RowLevelPermissionPredicateValue;

@@ -38,13 +38,14 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
+import { buildInvitationSendingThrottleKey } from 'src/engine/core-modules/workspace-invitation/utils/build-invitation-sending-throttle-key.util';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -55,7 +56,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -308,9 +309,10 @@ export class WorkspaceInvitationService {
     }
 
     if (isDefined(roleId)) {
-      await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        { roleId, workspaceId: workspace.id },
-      );
+      await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
+        roleId,
+        workspaceId: workspace.id,
+      });
     }
 
     const isOnboardingInviteReward =
@@ -503,7 +505,7 @@ export class WorkspaceInvitationService {
       await Promise.all(
         emails.map(async (email) => {
           await this.throttlerService.tokenBucketThrottleOrThrow(
-            `invitation-resending-workspace:throttler:${email}`,
+            buildInvitationSendingThrottleKey(email),
             1,
             this.twentyConfigService.get(
               'INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT',
@@ -516,7 +518,7 @@ export class WorkspaceInvitationService {
       );
 
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        `invitation-resending-workspace:throttler:${workspaceId}`,
+        buildInvitationSendingThrottleKey(workspaceId),
         emails.length,
         this.twentyConfigService.get(
           'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_LIMIT',

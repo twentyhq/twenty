@@ -29,7 +29,9 @@ export const useDuplicateMessageList = () => {
         update: (cache, { data }) => {
           const record = data?.duplicateMessageList;
 
-          if (!isDefined(record)) return;
+          if (!isDefined(record)) {
+            return;
+          }
 
           const { memberCount: _memberCount, ...duplicatedListRecord } = record;
 

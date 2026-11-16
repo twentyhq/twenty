@@ -47,6 +47,7 @@ const buildFlatView = ({
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
+  shouldDisplayGroupsAsTabs: false,
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,

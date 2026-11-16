@@ -35,11 +35,16 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
   fromFlatEntityMaps,
   toFlatEntityMaps,
   buildOptions,
+  fromFlatRoleMaps,
 }: {
   metadataName: T;
   fromFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
   toFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
   buildOptions: WorkspaceMigrationBuilderOptions;
+  fromFlatRoleMaps: Pick<
+    MetadataUniversalFlatEntityMaps<'role'>,
+    'byUniversalIdentifier'
+  >;
 }): FlatEntityOperationRecord<T> => {
   const fromByUniversalIdentifier = fromFlatEntityMaps.byUniversalIdentifier;
   const { byUniversalIdentifier: toByUniversalIdentifier } =
@@ -75,6 +80,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
           canManifestExpressFlatEntity({
             metadataName,
             flatEntity: fromFlatEntity,
+            parentFlatRole:
+              'roleUniversalIdentifier' in fromFlatEntity &&
+              isDefined(fromFlatEntity.roleUniversalIdentifier)
+                ? fromFlatRoleMaps.byUniversalIdentifier[
+                    fromFlatEntity.roleUniversalIdentifier
+                  ]
+                : undefined,
           }),
         )
     : [];
@@ -135,6 +147,7 @@ export const buildAllFlatEntityOperationRecordByMetadataNameFromFromTo = ({
           flatEntityMapsKey
         ] as unknown as MetadataUniversalFlatEntityMaps<typeof metadataName>,
         buildOptions,
+        fromFlatRoleMaps: fromAllFlatEntityMaps.flatRoleMaps,
       },
     );
 

@@ -97,7 +97,9 @@ export const SettingsRoleAssignment = ({
   );
 
   const handleConfirm = async () => {
-    if (!selectedRoleTarget || !isDialogOpened) return;
+    if (!selectedRoleTarget || !isDialogOpened) {
+      return;
+    }
 
     if (!isCreateMode) {
       switch (selectedRoleTarget.entityType) {

@@ -129,9 +129,9 @@ export const ValidationStep = ({
       [],
     ),
   );
-  const [selectedRows, setSelectedRows] = useState<
-    ReadonlySet<number | string>
-  >(new Set());
+  const [selectedRows, setSelectedRows] = useState<ReadonlySet<string>>(
+    new Set(),
+  );
   const [filterByErrors, setFilterByErrors] = useState(false);
 
   const updateData = useCallback(
@@ -156,9 +156,11 @@ export const ValidationStep = ({
       rows: typeof data,
       changedData?: RowsChangeData<(typeof data)[number]>,
     ) => {
-      const changes = changedData?.indexes.reduce(
+      const changes = changedData?.indexes.reduce<
+        Record<number, (typeof data)[number]>
+      >(
         // Todo: remove usage of react-data-grid
-        (acc: any, index: any) => {
+        (acc, index) => {
           // when data is filtered val !== actual index in data
           const realIndex = data.findIndex(
             (value) => value.__index === rows[index].__index,
@@ -166,7 +168,7 @@ export const ValidationStep = ({
           acc[realIndex] = rows[index];
           return acc;
         },
-        {} as Record<number, (typeof data)[number]>,
+        {},
       );
       const newData = Object.assign([], data, changes);
       updateData(newData);
@@ -193,7 +195,9 @@ export const ValidationStep = ({
                 column.key === 'select-row',
             ).length > 0;
 
-          if (!hasBeenImported) return null;
+          if (!hasBeenImported) {
+            return null;
+          }
           return column;
         })
         .filter(isDefined),
@@ -329,7 +333,7 @@ export const ValidationStep = ({
                 onRowsChange={updateRow}
                 columns={columns}
                 selectedRows={selectedRows}
-                onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+                onSelectedRowsChange={setSelectedRows}
                 renderers={{
                   noRowsFallback: (
                     <StyledNoRowsContainer>

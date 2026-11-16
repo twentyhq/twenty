@@ -35,13 +35,21 @@ export const computeUniqueFieldMetadataIdsFromIndexes = (
   const set = new Set<string>();
 
   for (const index of indexes) {
-    if (!index.isUnique) continue;
-    if (!index.isSystemSideEffect) continue;
+    if (!index.isUnique) {
+      continue;
+    }
+    if (!index.isSystemSideEffect) {
+      continue;
+    }
 
     const fields = index.flatIndexFieldMetadatas ?? index.indexFieldMetadatas;
 
-    if (fields?.length !== 1) continue;
-    if (fields[0].subFieldName !== null) continue;
+    if (fields?.length !== 1) {
+      continue;
+    }
+    if (fields[0].subFieldName !== null) {
+      continue;
+    }
 
     set.add(fields[0].fieldMetadataId);
   }

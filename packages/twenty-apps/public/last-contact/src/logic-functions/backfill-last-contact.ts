@@ -40,6 +40,10 @@ const shouldRunPostInstall = ({
     return true;
   }
 
+  if (compare(previousVersion, '1.11.0') < 0 && compare(newVersion, '1.11.0') >= 0) { // Clear last contacts set by draft emails
+    return true;
+  }
+
   return false
 }
 

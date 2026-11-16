@@ -144,7 +144,9 @@ export const useBuildSpreadsheetImportFields = () => {
 
     SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType].subFields.forEach(
       ({ subFieldName, isImportable, subFieldLabel }) => {
-        if (!isImportable) return;
+        if (!isImportable) {
+          return;
+        }
         const label = getCompositeSubFieldLabelWithFieldLabel(
           fieldMetadataItem,
           t(subFieldLabel),
@@ -199,7 +201,9 @@ export const useBuildSpreadsheetImportFields = () => {
         isImportable,
         isIncludedInUniqueConstraint,
       }) => {
-        if (!isImportable || !isIncludedInUniqueConstraint) return;
+        if (!isImportable || !isIncludedInUniqueConstraint) {
+          return;
+        }
 
         const label = getRelationConnectSubFieldLabel(
           fieldMetadataItem,

@@ -141,6 +141,7 @@ export class InboundEmailImportService {
             messageChannel,
             connectedAccount,
             workspaceId,
+            folderLinkUpdate: 'add',
           },
         );
       },

@@ -11,6 +11,7 @@ const INGEST_APP_MESSAGES_MUTATION = `
         externalId
         messageId
         messageThreadId
+        hasAttachments
       }
     }
   }

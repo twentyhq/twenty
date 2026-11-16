@@ -9,7 +9,9 @@ export const getRecordGroupByValueLabelFromFieldValue = ({
   groupByFieldMetadataItem: FieldMetadataItem;
   fieldValue: unknown;
 }): string => {
-  if (!isDefined(fieldValue) || fieldValue === '') return t`No Value`;
+  if (!isDefined(fieldValue) || fieldValue === '') {
+    return t`No Value`;
+  }
 
   const selectedOption = groupByFieldMetadataItem.options?.find(
     (option) => option.value === fieldValue,

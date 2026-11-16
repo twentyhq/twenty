@@ -45,7 +45,9 @@ export const NameField = ({
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     useDebouncedCallback(async (name: string) => {
-      if (isEmpty(name)) return;
+      if (isEmpty(name)) {
+        return;
+      }
       setCurrentWorkspace((currentValue) => {
         if (currentValue === null) {
           return null;

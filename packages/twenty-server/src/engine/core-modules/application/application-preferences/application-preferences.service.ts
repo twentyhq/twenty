@@ -55,45 +55,34 @@ export class ApplicationPreferencesService {
       }),
     ]);
 
-    return installedFlatApplications
-      .map(
-        ({
-          id: applicationId,
-          healthCheckLogicFunctionId,
-          isUserHealthCheckEnabled,
-        }): ApplicationPreferencesDTO => ({
+    return installedFlatApplications.flatMap((application) => {
+      const { id: applicationId } = application;
+      const applicationPreferences: ApplicationPreferencesDTO = {
+        applicationId,
+        settingsMenuItems: findFlatEntitiesByApplicationId({
+          flatEntityMaps: flatSettingsMenuItemMaps,
           applicationId,
-          settingsMenuItems: findFlatEntitiesByApplicationId({
-            flatEntityMaps: flatSettingsMenuItemMaps,
-            applicationId,
-          })
-            .filter(({ scope }) => scope === 'USER')
-            .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
-          variables:
-            myUserApplicationVariableValuesByApplicationId[applicationId],
-          connectionProviders: connectionProviders.filter(
-            (connectionProvider) =>
-              connectionProvider.applicationId === applicationId,
-          ),
-          hasUserHealthCheck: isDefined(
-            getHealthCheckLogicFunctionIdForUser({
-              healthCheckLogicFunctionId,
-              isUserHealthCheckEnabled,
-            }),
-          ),
-        }),
-      )
-      .filter(
-        ({
-          settingsMenuItems,
-          variables,
-          connectionProviders,
-          hasUserHealthCheck,
-        }) =>
-          isNonEmptyArray(settingsMenuItems) ||
-          isNonEmptyArray(variables) ||
-          isNonEmptyArray(connectionProviders) ||
-          hasUserHealthCheck,
-      );
+        })
+          .filter(({ scope }) => scope === 'USER')
+          .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
+        variables:
+          myUserApplicationVariableValuesByApplicationId[applicationId],
+        connectionProviders: connectionProviders.filter(
+          (connectionProvider) =>
+            connectionProvider.applicationId === applicationId,
+        ),
+      };
+
+      if (
+        !isNonEmptyArray(applicationPreferences.settingsMenuItems) &&
+        !isNonEmptyArray(applicationPreferences.variables) &&
+        !isNonEmptyArray(applicationPreferences.connectionProviders) &&
+        !isDefined(getHealthCheckLogicFunctionIdForUser(application))
+      ) {
+        return [];
+      }
+
+      return [applicationPreferences];
+    });
   }
 }

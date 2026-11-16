@@ -1,11 +1,13 @@
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useMessageThreadChannel } from '@/activities/emails/hooks/useMessageThreadChannel';
+import { useSubscribeToMessageThreadMessages } from '@/activities/emails/hooks/useSubscribeToMessageThreadMessages';
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { ChatThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent';
 import { EmailThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/EmailThreadWidgetContent';
+import { MessageThreadMarkAsReadEffect } from '@/page-layout/widgets/email-thread/components/MessageThreadMarkAsReadEffect';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import {
@@ -32,8 +34,15 @@ export const MessageThreadWidget = ({
     fetchMoreMessages,
     refetchMessages,
     threadLoading,
+    isFetchingMoreMessages,
     lastMessageChannelId,
   } = useEmailThread(targetRecord.id);
+
+  useSubscribeToMessageThreadMessages({
+    messageThreadId: targetRecord.id,
+    loadedMessageIds: messages.map(({ id }) => id),
+    refetchMessages,
+  });
 
   const { messageThreadChannel, messageThreadChannelLoading } =
     useMessageThreadChannel(targetRecord.id);
@@ -73,25 +82,40 @@ export const MessageThreadWidget = ({
     );
   }
 
+  const markAsReadEffect = (
+    <MessageThreadMarkAsReadEffect
+      messageChannelId={lastMessageChannelId}
+      messageThreadId={thread.id}
+      latestMessageId={lastMessage.id}
+    />
+  );
+
   if (isChatTimelineThreadChannel(messageThreadChannel)) {
     return (
-      <ChatThreadWidgetContent
-        messageThreadId={thread.id}
-        messages={messages}
-        loading={threadLoading}
-        onFetchMoreMessages={fetchMoreMessages}
-        messageChannelId={lastMessageChannelId}
-        onMessageSent={refetchMessages}
-      />
+      <>
+        {markAsReadEffect}
+        <ChatThreadWidgetContent
+          messageThreadId={thread.id}
+          messages={messages}
+          loading={isFetchingMoreMessages}
+          onFetchMoreMessages={fetchMoreMessages}
+          messageChannelId={lastMessageChannelId}
+          onMessageSent={refetchMessages}
+        />
+      </>
     );
   }
 
   return (
-    <EmailThreadWidgetContent
-      messages={messages}
-      lastMessage={lastMessage}
-      loading={threadLoading}
-      onFetchMoreMessages={fetchMoreMessages}
-    />
+    <>
+      {markAsReadEffect}
+      <EmailThreadWidgetContent
+        messages={messages}
+        lastMessage={lastMessage}
+        loading={threadLoading}
+        onFetchMoreMessages={fetchMoreMessages}
+        messageChannelId={lastMessageChannelId}
+      />
+    </>
   );
 };

@@ -1,3 +1,4 @@
+import { AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -79,6 +80,7 @@ export class AgentChatResolver {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly memberMessageSenderService: AgentChatMemberMessageSenderService,
+    private readonly directMessageIdentityService: AgentChatDirectMessageIdentityService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -92,6 +94,20 @@ export class AgentChatResolver {
       threadId: id,
       workspaceMemberId,
       workspaceId,
+    });
+  }
+
+  @Mutation(() => UUIDScalarType)
+  async openDirectMessage(
+    @Args('workspaceMemberId', { type: () => UUIDScalarType })
+    peerWorkspaceMemberId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.directMessageIdentityService.open({
+      workspaceId,
+      firstWorkspaceMemberId: workspaceMemberId,
+      secondWorkspaceMemberId: peerWorkspaceMemberId,
     });
   }
 
@@ -128,9 +144,9 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
-    // The channel a new chat is created in; ignored for an existing chat
+    // First message only: null files the chat in no channel, omitted keeps its channel
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
-    channelId: string | null,
+    channelId: string | null | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -148,7 +164,7 @@ export class AgentChatResolver {
   ): Promise<SendChatMessageResultDTO> {
     const result = await this.memberMessageSenderService.sendMemberMessage({
       actor: { workspaceId: workspace.id, workspaceMemberId, userWorkspaceId },
-      target: { threadId, channelId: channelId ?? undefined },
+      target: { threadId, channelId },
       message: {
         id: messageId,
         text,
@@ -165,6 +181,15 @@ export class AgentChatResolver {
       },
       execution: { modelId, browsingContext: browsingContext ?? null },
     });
+
+    if (isDefined(result.streamId) && isDefined(result.turnId)) {
+      tagAiChatStreamScope({
+        streamId: result.streamId,
+        turnId: result.turnId,
+        threadId,
+        workspaceId: workspace.id,
+      });
+    }
 
     return {
       messageId: result.messageId,
@@ -279,11 +304,12 @@ export class AgentChatResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.systemPromptBuilderService.buildPreview(
-      workspace.id,
+    return this.systemPromptBuilderService.buildPreview({
+      workspaceId: workspace.id,
       userWorkspaceId,
-      workspace.aiAdditionalInstructions ?? undefined,
-    );
+      workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
+      assistantProfile: workspace.aiChatAssistantProfile,
+    });
   }
 
   @ResolveField(() => Date)

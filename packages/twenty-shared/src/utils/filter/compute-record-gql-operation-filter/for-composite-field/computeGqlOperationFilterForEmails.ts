@@ -2,7 +2,7 @@ import {
   type CompositeFieldSubFieldName,
   type EmailsFilter,
   type PartialFieldMetadataItem,
-  ViewFilterOperand as RecordFilterOperand,
+  RecordFilterOperand,
   type RecordGqlOperationFilter,
 } from '@/types';
 import { CustomError } from '@/utils/errors';

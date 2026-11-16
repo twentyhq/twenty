@@ -371,7 +371,9 @@ export const SettingsAdminAiProviderDetail = () => {
                   )
                   .map((model) => model.modelId);
 
-                if (modelIds.length === 0) return;
+                if (modelIds.length === 0) {
+                  return;
+                }
 
                 try {
                   await setModelsEnabled({

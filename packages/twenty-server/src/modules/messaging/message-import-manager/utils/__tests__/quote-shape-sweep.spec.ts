@@ -107,11 +107,18 @@ const ORIGINAL_BANNER: Record<Dimensions['language'], string> = {
 };
 
 const headerLines = ({ header, language }: Dimensions): string[] => {
-  if (header === 'none') return [];
-  if (header === 'wrote') return [WROTE[language]];
-  if (header === 'fieldBlock') return FIELD_BLOCK[language];
-  if (header === 'originalBanner')
+  if (header === 'none') {
+    return [];
+  }
+  if (header === 'wrote') {
+    return [WROTE[language]];
+  }
+  if (header === 'fieldBlock') {
+    return FIELD_BLOCK[language];
+  }
+  if (header === 'originalBanner') {
     return [ORIGINAL_BANNER[language], ...FIELD_BLOCK[language]];
+  }
 
   return ['---------- Forwarded message ----------', ...FIELD_BLOCK[language]];
 };
@@ -159,14 +166,18 @@ const wrapHtml = (
 ): string => {
   const body = quotedLines.map((line) => `<div>${line}</div>`).join('');
 
-  if (marker === 'blockquote')
+  if (marker === 'blockquote') {
     return `<blockquote type="cite">${body}</blockquote>`;
-  if (marker === 'gmailQuoteDiv')
+  }
+  if (marker === 'gmailQuoteDiv') {
     return `<div class="gmail_quote">${body}</div>`;
-  if (marker === 'divRplyFwdMsg')
+  }
+  if (marker === 'divRplyFwdMsg') {
     return `<div id="divRplyFwdMsg"><hr>${body}</div>`;
-  if (marker === 'olkSection')
+  }
+  if (marker === 'olkSection') {
     return `<div id="OLK_SRC_BODY_SECTION">${body}</div>`;
+  }
 
   return `<div style='border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm'>x</div><div style='border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm'>${body}</div>`;
 };
@@ -213,16 +224,36 @@ const render = (dimensions: Dimensions): { text?: string; html?: string } => {
 const isMeaningful = (dimensions: Dimensions): boolean => {
   const { layout, marker, header, language, spacing, quirk } = dimensions;
 
-  if (header === 'none' && marker === 'noMarker') return false;
-  if (header === 'none' && language !== 'en') return false;
-  if (marker === 'noMarker' && layout === 'inline') return false;
-  if (quirk === 'depth2' && marker !== 'caret') return false;
-  if (quirk === 'spaceStuffed' && isHtmlMarker(marker)) return false;
-  if (quirk === 'flowed' && isHtmlMarker(marker)) return false;
-  if (layout === 'forwardOnly' && header === 'none') return false;
-  if (isHtmlMarker(marker) && header === 'forwardedBanner') return false;
-  if (isHtmlMarker(marker) && layout === 'inline') return false;
-  if (isHtmlMarker(marker) && spacing === 'blank') return false;
+  if (header === 'none' && marker === 'noMarker') {
+    return false;
+  }
+  if (header === 'none' && language !== 'en') {
+    return false;
+  }
+  if (marker === 'noMarker' && layout === 'inline') {
+    return false;
+  }
+  if (quirk === 'depth2' && marker !== 'caret') {
+    return false;
+  }
+  if (quirk === 'spaceStuffed' && isHtmlMarker(marker)) {
+    return false;
+  }
+  if (quirk === 'flowed' && isHtmlMarker(marker)) {
+    return false;
+  }
+  if (layout === 'forwardOnly' && header === 'none') {
+    return false;
+  }
+  if (isHtmlMarker(marker) && header === 'forwardedBanner') {
+    return false;
+  }
+  if (isHtmlMarker(marker) && layout === 'inline') {
+    return false;
+  }
+  if (isHtmlMarker(marker) && spacing === 'blank') {
+    return false;
+  }
 
   return true;
 };

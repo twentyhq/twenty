@@ -396,6 +396,47 @@ const reasonOf = (
 ) => statusOf(coverage, universalIdentifier)?.reason;
 
 describe('reconstructPageLayoutsManifest', () => {
+  it('exports a widget referencing an exported app-owned front component', () => {
+    const applicationAllFlatEntityMaps = buildMaps({
+      frontComponents: [frontComponent],
+      pageLayoutWidgets: [
+        buildFlatPageLayoutWidget({
+          pageLayoutWidgetManifest: {
+            ...buildNotesWidgetManifest('component-widget'),
+            type: WidgetType.FRONT_COMPONENT,
+            configuration: {
+              configurationType: 'FRONT_COMPONENT',
+              frontComponentUniversalIdentifier: FRONT_COMPONENT_UID,
+            },
+          },
+          pageLayoutTabUniversalIdentifier: COMPANY_HOME_TAB_UID,
+        }),
+      ],
+    });
+    const result = reconstructPageLayoutsManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
+      exportedFrontComponentUniversalIdentifiers: new Set([
+        FRONT_COMPONENT_UID,
+      ]),
+    });
+    expect(result.pageLayoutWidgets).toEqual([
+      expect.objectContaining({
+        universalIdentifier: 'component-widget',
+        configuration: expect.objectContaining({
+          frontComponentUniversalIdentifier: FRONT_COMPONENT_UID,
+        }),
+      }),
+    ]);
+    expect(result.coverage).toContainEqual(
+      expect.objectContaining({
+        metadataName: 'pageLayoutWidget',
+        universalIdentifier: 'component-widget',
+        status: 'EXPORTED',
+      }),
+    );
+  });
   it('should nest tabs and widgets under an exported page layout, order tabs by universal identifier and let the order of vertical-list widgets carry their position', () => {
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets, coverage } =
       reconstruct({
@@ -875,6 +916,14 @@ describe('reconstructPageLayoutsManifest', () => {
             position: null,
           }),
           buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'unconfigured-widget',
+            ),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+            universalConfiguration:
+              null as unknown as FlatPageLayoutWidget['universalConfiguration'],
+          }),
+          buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('grid-widget'),
               position: {
@@ -996,6 +1045,9 @@ describe('reconstructPageLayoutsManifest', () => {
     );
     expect(reasonOf(coverage, 'unpositioned-widget')).toBe(
       'page layout widget without a position',
+    );
+    expect(reasonOf(coverage, 'unconfigured-widget')).toBe(
+      'page layout widget without a configuration',
     );
     expect(reasonOf(coverage, 'grid-widget')).toBe(
       'page layout widget positioned for another layout mode than its tab',

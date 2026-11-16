@@ -2,7 +2,7 @@ import {
   type CommandMenuContextApi,
   type ObjectRecordsPermissions,
 } from 'twenty-shared/types';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 // Stored conditional availability expressions read the legacy permission names
 export const getCommandMenuContextApiObjectPermissions = ({
@@ -13,25 +13,32 @@ export const getCommandMenuContextApiObjectPermissions = ({
   objectRecordsPermissions: ObjectRecordsPermissions;
 }): CommandMenuContextApi['objectPermissions'] => ({
   objectMetadataId,
-  canReadObjectRecords: canReachSomeRecords({
+  canCreateObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
-    operationType: 'select',
+    operationType: 'create',
   }),
-  canUpdateObjectRecords: canReachSomeRecords({
+  canReadObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions,
+    operationType: 'read',
+  }),
+  canUpdateObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'update',
   }),
-  canSoftDeleteObjectRecords: canReachSomeRecords({
+  canSoftDeleteObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
-    operationType: 'soft-delete',
+    operationType: 'softDelete',
   }),
-  canDestroyObjectRecords: canReachSomeRecords({
+  canDestroyObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
-    operationType: 'delete',
+    operationType: 'destroy',
   }),
-  restrictedFields: objectRecordsPermissions.restrictedFields,
-  rowLevelPermissionPredicates:
-    objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
-  rowLevelPermissionPredicateGroups:
-    objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
+  unreadableFields: objectRecordsPermissions.unreadableFields,
+  uneditableFields: objectRecordsPermissions.uneditableFields,
+  rowLevelPermissionPredicates: (
+    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
+  ).flatMap(({ predicates }) => predicates),
+  rowLevelPermissionPredicateGroups: (
+    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
+  ).flatMap(({ predicateGroups }) => predicateGroups),
 });

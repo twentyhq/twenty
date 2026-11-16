@@ -14,6 +14,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -59,6 +60,19 @@ export class AppMessageParticipantInput {
   @IsOptional()
   @IsUUID()
   workspaceMemberId?: string;
+}
+
+@InputType('AppMessageAttachmentInput')
+export class AppMessageAttachmentInput {
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  fileId: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  label: string;
 }
 
 @InputType('AppMessageInput')
@@ -110,6 +124,14 @@ export class AppMessageInput {
   @IsNotEmpty({ each: true })
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
+
+  @Field(() => [AppMessageAttachmentInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE)
+  @ValidateNested({ each: true })
+  @Type(() => AppMessageAttachmentInput)
+  attachments?: AppMessageAttachmentInput[];
 }
 
 @InputType('IngestAppMessagesInput')

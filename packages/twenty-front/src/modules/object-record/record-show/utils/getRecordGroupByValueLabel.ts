@@ -21,15 +21,23 @@ export const getRecordGroupByValueLabel = ({
   isLoadingRelationRecord: boolean;
   identifierChipGenerator?: (record: ObjectRecord) => RecordChipData;
 }): string | undefined => {
-  if (!isDefined(groupByFieldMetadataItem)) return undefined;
+  if (!isDefined(groupByFieldMetadataItem)) {
+    return undefined;
+  }
 
   if (
     isManyToOneRelationField(groupByFieldMetadataItem) &&
     isDefined(relationRecordId)
   ) {
-    if (isLoadingRelationRecord) return undefined;
-    if (!isDefined(relationRecord)) return t`Deleted`;
-    if (!isDefined(identifierChipGenerator)) return undefined;
+    if (isLoadingRelationRecord) {
+      return undefined;
+    }
+    if (!isDefined(relationRecord)) {
+      return t`Deleted`;
+    }
+    if (!isDefined(identifierChipGenerator)) {
+      return undefined;
+    }
 
     return identifierChipGenerator(relationRecord).name;
   }

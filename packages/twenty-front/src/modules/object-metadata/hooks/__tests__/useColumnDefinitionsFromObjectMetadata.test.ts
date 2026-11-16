@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
@@ -73,12 +74,13 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       trashRetentionDays: 14,
       eventLogRetentionDays: 365 * 3,
       aiChatModelTier: AiModelTier.fast,
+      aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
       aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
       aiAgentModelTier: AiModelTier.fast,
       isAutoModelSelectionEnabled: true,
       aiModelIdByTier: {},
-      isInternalMessagesImportEnabled: false,
+      isInternalImportEnabled: false,
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(

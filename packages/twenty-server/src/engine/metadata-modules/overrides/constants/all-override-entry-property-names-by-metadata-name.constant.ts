@@ -23,7 +23,7 @@ export const ALL_OVERRIDE_ENTRY_PROPERTY_NAMES_BY_METADATA_NAME: Record<
           metadataName
         ] as Record<string, OverridablePropertyConfiguration>,
       ).flatMap(([property, { isOverridable, universalProperty }]) =>
-        isOverridable === true
+        isOverridable
           ? [property, ...(universalProperty ? [universalProperty] : [])]
           : [],
       ),

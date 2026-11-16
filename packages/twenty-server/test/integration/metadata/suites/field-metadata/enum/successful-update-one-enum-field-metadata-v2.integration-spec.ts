@@ -191,10 +191,11 @@ describe.each(fieldMetadataEnumTypes)(
           | null = data.updateOneField.options;
 
         expect(updatedOptions).toBeDefined();
-        if (!isDefined(updatedOptions))
+        if (!isDefined(updatedOptions)) {
           throw new Error(
             'Should never occur, type invariant post test assertion',
           );
+        }
 
         expect(errors).toBeUndefined();
         updatedOptions.forEach((option) => expect(option.id).toBeDefined());

@@ -90,7 +90,9 @@ describe('View Filter REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewFilterId) return;
+    if (!testViewFilterId) {
+      return;
+    }
 
     await destroyOneViewFilter({
       input: {

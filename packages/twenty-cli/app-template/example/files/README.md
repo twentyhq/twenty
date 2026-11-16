@@ -16,12 +16,28 @@ Setup instructions live in [SETUP.md](SETUP.md).
 
 ## Publishing
 
-The `Publish` workflow (`.github/workflows/publish.yml`) publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). To publish:
+The `Publish` workflow (`.github/workflows/publish.yml`) publishes to npm with
+provenance using
+[npm trusted publishing](https://docs.npmjs.com/trusted-publishers).
 
-1. On npmjs.com register this repository as a trusted publisher of your package, pointing at the `publish.yml` workflow.
-2. Bump the version in `package.json`, then push a version tag (e.g. `git tag v1.0.0 && git push --tags`) or run the workflow manually from the Actions tab.
+### One-time setup
 
-Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
+On npmjs.com, register this repository as a trusted publisher for the package.
+Select `publish.yml` as the workflow.
+
+### Release a version
+
+1. Bump the version in `package.json`.
+2. Push the matching version tag, or run `Publish` manually from the Actions
+   tab:
+
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+Publishing with provenance is also how you prove ownership when claiming your
+app in a Twenty marketplace.
 
 ## Changelog
 

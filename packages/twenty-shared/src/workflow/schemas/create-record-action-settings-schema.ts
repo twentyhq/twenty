@@ -4,7 +4,7 @@ import { objectRecordSchema } from './object-record-schema';
 
 export const workflowCreateRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
+    input: z.strictObject({
       objectName: z
         .string()
         .describe(

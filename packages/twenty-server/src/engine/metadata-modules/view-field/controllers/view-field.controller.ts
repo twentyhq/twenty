@@ -18,24 +18,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import {
-  generateViewFieldExceptionMessage,
-  generateViewFieldUserFriendlyExceptionMessage,
-  ViewFieldException,
-  ViewFieldExceptionCode,
-  ViewFieldExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { CreateViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/create-view-child-entity-permission.guard';
-import { ViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/view-child-entity-permission.guard';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-child-entity-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { VIEW_FIELD_ACCESS_POLICY } from 'src/engine/metadata-modules/view-field/constants/view-field-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -56,11 +50,20 @@ export class ViewFieldController {
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewFieldService.findByViewId(workspace.id, viewId)
-      : await this.viewFieldService.findByWorkspaceId(workspace.id);
+      ? await this.viewFieldService.findByViewId({
+          workspaceId: workspace.id,
+          viewId,
+          userWorkspaceId,
+        })
+      : await this.viewFieldService.findByWorkspaceId({
+          workspaceId: workspace.id,
+          userWorkspaceId,
+        });
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -69,25 +72,14 @@ export class ViewFieldController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
-    const viewField = await this.viewFieldService.findById(id, workspace.id);
-
-    if (!isDefined(viewField)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          id,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewField;
+    return this.viewFieldService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Patch(':id')

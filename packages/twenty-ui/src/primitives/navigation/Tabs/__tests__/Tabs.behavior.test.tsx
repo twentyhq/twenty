@@ -160,6 +160,28 @@ describe('Tabs behavior', () => {
     );
   });
 
+  it('marks filled tabs so the selected one keeps a background', () => {
+    render(
+      <Tabs.Root defaultValue="overview">
+        <Tabs.List aria-label="Details">
+          <Tabs.Tab value="overview" variant="filled">
+            Overview
+          </Tabs.Tab>
+          <Tabs.Tab value="activity">Activity</Tabs.Tab>
+        </Tabs.List>
+      </Tabs.Root>,
+    );
+
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'data-variant',
+      'filled',
+    );
+    expect(screen.getByRole('tab', { name: 'Activity' })).toHaveAttribute(
+      'data-variant',
+      'plain',
+    );
+  });
+
   it('renders only an explicitly composed indicator', () => {
     const { rerender } = render(<TabsExample indicator={false} />);
     expect(

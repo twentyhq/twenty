@@ -64,8 +64,6 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   timelineActivity: [
     { name: 'linkedRecordCachedName', type: FieldMetadataType.TEXT },
   ],
-  workflow: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  workflowAutomatedTrigger: [{ name: 'id', type: FieldMetadataType.UUID }],
   workflowRun: [{ name: 'name', type: FieldMetadataType.TEXT }],
   workflowVersion: [{ name: 'name', type: FieldMetadataType.TEXT }],
   workspaceMember: [

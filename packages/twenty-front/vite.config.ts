@@ -216,6 +216,7 @@ export default defineConfig(({ mode }) => {
         '@react-spring/web',
         'd3-shape',
         '@tiptap/pm/tables',
+        '@calcom/embed-react',
       ],
     },
 

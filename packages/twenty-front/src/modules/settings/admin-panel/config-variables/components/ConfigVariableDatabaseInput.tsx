@@ -63,12 +63,16 @@ export const ConfigVariableDatabaseInput = ({
   ];
 
   const isValueSelected = (optionValue: string) => {
-    if (!Array.isArray(value)) return false;
+    if (!Array.isArray(value)) {
+      return false;
+    }
     return value.includes(optionValue);
   };
 
   const handleMultiSelectChange = (optionValue: string) => {
-    if (!Array.isArray(value)) return;
+    if (!Array.isArray(value)) {
+      return;
+    }
 
     let newValues = [...value];
     if (isValueSelected(optionValue)) {
@@ -99,7 +103,7 @@ export const ConfigVariableDatabaseInput = ({
       return (
         <TextInput
           label={label}
-          value={value !== null && value !== undefined ? String(value) : ''}
+          value={isDefined(value) ? String(value) : ''}
           onChange={(text) => {
             const num = Number(text);
             onChange(isNaN(num) ? text : num);
@@ -197,7 +201,7 @@ export const ConfigVariableDatabaseInput = ({
           value={
             typeof value === 'string'
               ? value
-              : value !== null && value !== undefined
+              : isDefined(value)
                 ? JSON.stringify(value)
                 : ''
           }
@@ -216,7 +220,7 @@ export const ConfigVariableDatabaseInput = ({
             value={
               typeof value === 'string'
                 ? value
-                : value !== null && value !== undefined
+                : isDefined(value)
                   ? JSON.stringify(value, null, 2)
                   : ''
             }

@@ -19,9 +19,14 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
+import {
+  type CurrentBillingSubscription,
+  type FlatBillingSubscription,
+} from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { computePlanWorkspaceCreditsMicro } from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
+import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { getCurrentPeriodMaxSeats } from 'src/engine/core-modules/billing/utils/get-current-period-max-seats.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -45,6 +50,7 @@ export class BillingUsageService {
     private readonly clickHouseService: ClickHouseService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
+    private readonly billingWorkspaceCreditAllowanceService: BillingWorkspaceCreditAllowanceService,
   ) {}
 
   async getSubscriptionInactiveReason(
@@ -123,7 +129,13 @@ export class BillingUsageService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
-    const [creditsUsed, workspaceCreditsExtraGranted] = await Promise.all([
+    const isTrialing = subscription.status === SubscriptionStatus.Trialing;
+
+    const [
+      creditsUsed,
+      workspaceCreditsExtraGranted,
+      workspaceCreditAllowances,
+    ] = await Promise.all([
       // Fails open: an unreadable usage total must never block a paying workspace
       this.usageAnalyticsService
         .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
@@ -136,21 +148,40 @@ export class BillingUsageService {
           return { workspaceCreditsUsedMicro: 0, userCreditsUsedMicro: 0 };
         }),
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+      this.billingWorkspaceCreditAllowanceService.findUnexpiredWorkspaceCreditAllowances(
+        workspaceId,
+      ),
     ]);
+
+    const nowMs = Date.now();
+
+    const workspaceCreditAllowanceMicro =
+      findActiveWorkspaceCreditAllowanceMicro({
+        workspaceCreditAllowances,
+        nowMs,
+        interval: subscription.interval,
+        isTrialing: false,
+      });
 
     const workspaceCreditsSeats = getCurrentPeriodMaxSeats(subscription);
 
     const workspaceCreditsGrantedForSeats =
+      workspaceCreditAllowanceMicro ??
       computePlanWorkspaceCreditsMicro({
         billingSubscriptionItems: subscription.billingSubscriptionItems,
         interval: subscription.interval,
         seats: workspaceCreditsSeats,
-      })?.workspaceCreditsForSeatsMicro ?? 0;
+      })?.workspaceCreditsForSeatsMicro ??
+      0;
 
-    const workspaceCreditsGranted =
-      subscription.status === SubscriptionStatus.Trialing
-        ? item.freeTrialQuantity
-        : item.creditAmount + workspaceCreditsGrantedForSeats;
+    const workspaceCreditsGranted = isTrialing
+      ? (findActiveWorkspaceCreditAllowanceMicro({
+          workspaceCreditAllowances,
+          nowMs,
+          interval: subscription.interval,
+          isTrialing: true,
+        }) ?? item.freeTrialQuantity)
+      : item.creditAmount + workspaceCreditsGrantedForSeats;
 
     return {
       productKey: item.productKey,
@@ -174,11 +205,19 @@ export class BillingUsageService {
     );
   }
 
-  findResourceUsageCap(subscription: BillingSubscriptionEntity): number | null {
+  getPlanAllowance(
+    subscription: BillingSubscriptionEntity,
+  ): Pick<
+    FlatBillingSubscription,
+    'planAllowanceMicro' | 'workspaceCreditsForPackMicro'
+  > {
     const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
 
     if (isInFreeTrial) {
-      return this.getTrialResourceUsageCap(subscription);
+      return {
+        planAllowanceMicro: this.getTrialResourceUsageCap(subscription),
+        workspaceCreditsForPackMicro: 0,
+      };
     }
 
     const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
@@ -188,13 +227,16 @@ export class BillingUsageService {
     });
 
     if (!isDefined(planWorkspaceCredits)) {
-      return null;
+      return { planAllowanceMicro: null, workspaceCreditsForPackMicro: 0 };
     }
 
-    return (
-      planWorkspaceCredits.workspaceCreditsForPackMicro +
-      planWorkspaceCredits.workspaceCreditsForSeatsMicro
-    );
+    return {
+      planAllowanceMicro:
+        planWorkspaceCredits.workspaceCreditsForPackMicro +
+        planWorkspaceCredits.workspaceCreditsForSeatsMicro,
+      workspaceCreditsForPackMicro:
+        planWorkspaceCredits.workspaceCreditsForPackMicro,
+    };
   }
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period

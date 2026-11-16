@@ -6,6 +6,7 @@ import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
 } from 'twenty-shared/application';
 import {
+  getSharedDependenciesTypeReferencesPath,
   FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   getSharedDependenciesBuildManifestPath,
   type SharedDependenciesBuildManifest,
@@ -26,6 +27,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
+import { computeTypeReferencesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/compute-type-references-checksum.util';
 import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,8 +72,9 @@ export class WorkspaceFrontComponentDependenciesService {
           resourcePath: getSharedDependenciesBuildManifestPath(builtPath),
         });
 
-        if (
+        const canReuseBuild =
           isDefined(existingManifest) &&
+          isDefined(existingManifest.typeReferencesChecksum) &&
           FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES.every((specifier) =>
             isDefined(existingManifest.exports[specifier]),
           ) &&
@@ -82,9 +85,34 @@ export class WorkspaceFrontComponentDependenciesService {
           (await this.fileStorageService.checkFileExists({
             ...location,
             resourcePath: builtPath,
-          }))
+          })) &&
+          (await this.fileStorageService.checkFileExists({
+            ...location,
+            fileFolder: FileFolder.Dependencies,
+            resourcePath: getSharedDependenciesTypeReferencesPath(builtPath),
+          }));
+        const cachedTypeReferences = canReuseBuild
+          ? await streamToBuffer(
+              await this.fileStorageService.readFile({
+                ...location,
+                fileFolder: FileFolder.Dependencies,
+                resourcePath:
+                  getSharedDependenciesTypeReferencesPath(builtPath),
+              }),
+            )
+          : undefined;
+
+        if (
+          isDefined(existingManifest) &&
+          isDefined(cachedTypeReferences) &&
+          computeTypeReferencesChecksum(cachedTypeReferences) ===
+            existingManifest.typeReferencesChecksum
         ) {
           return {
+            applicationId: dependencies.applicationId,
+            applicationUniversalIdentifier:
+              dependencies.applicationUniversalIdentifier,
+            typeReferences: cachedTypeReferences.toString('base64'),
             ...existingManifest,
             dependencyRevision: dependencies.revision,
           };
@@ -138,7 +166,9 @@ export class WorkspaceFrontComponentDependenciesService {
             },
           );
         }
+        const typeReferences = Buffer.from(result.typeReferences, 'base64');
         const manifest: SharedDependenciesBuildManifest = {
+          typeReferencesChecksum: computeTypeReferencesChecksum(typeReferences),
           checksum: result.checksum,
           exports: result.exports,
           packageJsonChecksum: dependencies.packageJsonChecksum,
@@ -150,6 +180,14 @@ export class WorkspaceFrontComponentDependenciesService {
           applicationId: dependencies.applicationId,
           resourcePath: builtPath,
           sourceFile: result.builtCode,
+          settings: { isTemporaryFile: false, toDelete: false },
+        });
+        await this.fileStorageService.writeFile({
+          ...location,
+          applicationId: dependencies.applicationId,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: getSharedDependenciesTypeReferencesPath(builtPath),
+          sourceFile: typeReferences,
           settings: { isTemporaryFile: false, toDelete: false },
         });
         await this.fileStorageService.writeFile({
@@ -176,7 +214,14 @@ export class WorkspaceFrontComponentDependenciesService {
           );
         }
 
-        return { ...manifest, dependencyRevision: dependencies.revision };
+        return {
+          ...manifest,
+          applicationId: dependencies.applicationId,
+          applicationUniversalIdentifier:
+            dependencies.applicationUniversalIdentifier,
+          typeReferences: result.typeReferences,
+          dependencyRevision: dependencies.revision,
+        };
       },
       `front-component-dependencies:${workspaceId}`,
       {
@@ -194,6 +239,7 @@ export class WorkspaceFrontComponentDependenciesService {
       const stream = await this.fileStorageService.readFile(location);
       return frontComponentSharedDependenciesManifestSchema
         .extend({
+          typeReferencesChecksum: z.string().optional(),
           packageJsonChecksum: z.string(),
           yarnLockChecksum: z.string().nullable(),
         })

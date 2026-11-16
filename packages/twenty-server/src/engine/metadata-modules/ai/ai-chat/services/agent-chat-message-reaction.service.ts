@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH,
+  AgentChatThreadConversationType,
   type AgentMessageReactionSummary,
   isValidAgentMessageReactionEmoji,
 } from 'twenty-shared/ai';
@@ -17,6 +18,7 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
@@ -101,6 +103,8 @@ export class AgentChatMessageReactionService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly storageService: AgentHistoryWorkspaceStorageService,
     private readonly sharingService: AgentChatSharingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -186,6 +190,18 @@ export class AgentChatMessageReactionService {
 
     // Contexts given to the model are never shown, so cannot be reacted to
     if (!isDefined(message) || message.role === AgentMessageRole.SYSTEM) {
+      return throwAgentChatMessageNotFound();
+    }
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: message.threadId },
+      select: ['conversationType'],
+    });
+
+    if (
+      thread?.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return throwAgentChatMessageNotFound();
     }
 

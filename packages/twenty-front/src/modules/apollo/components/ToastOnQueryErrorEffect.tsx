@@ -2,9 +2,9 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { type ErrorLike } from '@apollo/client';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
+import { type ToastOptions, useToast } from 'twenty-ui/components/feedback';
 
-type ToastOnQueryErrorEffectProps = {
+type ToastOnQueryErrorEffectProps = Pick<ToastOptions, 'dedupeKey'> & {
   error: ErrorLike | undefined;
   message?: string;
 };
@@ -12,6 +12,7 @@ type ToastOnQueryErrorEffectProps = {
 export const ToastOnQueryErrorEffect = ({
   error,
   message,
+  dedupeKey,
 }: ToastOnQueryErrorEffectProps) => {
   const { enqueueToast } = useToast();
 
@@ -20,8 +21,10 @@ export const ToastOnQueryErrorEffect = ({
       return;
     }
 
-    enqueueToast(getToastOptionsFromError({ error, children: message }));
-  }, [error, enqueueToast, message]);
+    enqueueToast(
+      getToastOptionsFromError({ error, children: message, dedupeKey }),
+    );
+  }, [error, enqueueToast, message, dedupeKey]);
 
   return null;
 };

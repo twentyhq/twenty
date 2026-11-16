@@ -23,12 +23,14 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import {
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
   CODE_INTERPRETER_MAX_OUTPUT_LENGTH,
   CODE_INTERPRETER_UPDATE_INTERVAL_MS,
 } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -43,6 +45,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type SandboxPrincipal = {
   workspaceId: string;
@@ -56,7 +59,7 @@ export class CodeInterpreterTool implements Tool {
   private readonly logger = new Logger(CodeInterpreterTool.name);
 
   description =
-    'Execute Python code in a sandboxed environment for data analysis, CSV processing, calculations, and chart generation. Returns stdout, stderr, and generated files. Input files are available at /home/user/{filename}. Save output files (charts, reports) to /home/user/output/ using plt.savefig() for matplotlib charts. The sandbox is reused across calls within the same conversation: variables, imports, and any files you write outside /home/user/output persist between calls, so build on earlier results instead of recomputing or re-downloading them. /home/user/output is cleared at the start of every call, so write the files you want returned in the same call that produces them.';
+    'Execute Python code in a sandboxed environment for data analysis, CSV processing, calculations, and chart generation. Returns stdout, stderr, and generated files. Input files are available at /home/user/{filename}. Files attached to records can be passed by their signed url. Save output files (charts, reports) to /home/user/output/ using plt.savefig() for matplotlib charts. The sandbox is reused across calls within the same conversation: variables, imports, and any files you write outside /home/user/output persist between calls, so build on earlier results instead of recomputing or re-downloading them. /home/user/output is cleared at the start of every call, so write the files you want returned in the same call that produces them.';
 
   inputSchema = CodeInterpreterInputZodSchema;
 
@@ -132,7 +135,8 @@ export class CodeInterpreterTool implements Tool {
     );
 
     try {
-      const inputFiles = await this.downloadInputFiles(files, workspaceId);
+      const { inputFiles, undeliveredFilenames } =
+        await this.downloadInputFiles({ files, workspaceId });
 
       this.logger.log(
         `Executing code interpreter with ${inputFiles.length} input files`,
@@ -249,6 +253,10 @@ export class CodeInterpreterTool implements Tool {
         exitCode: result.exitCode,
         files: allOutputFileUrls,
         error: result.error,
+        warnings: undeliveredFilenames.map(
+          (filename) =>
+            `${filename} could not be loaded into the sandbox and is missing from /home/user/`,
+        ),
       };
 
       return output;
@@ -283,49 +291,93 @@ export class CodeInterpreterTool implements Tool {
     }
   }
 
-  private async downloadInputFiles(
-    files?: CodeInterpreterFileInput[],
-    workspaceId?: string,
-  ): Promise<InputFile[]> {
-    if (!files || files.length === 0) {
-      return [];
-    }
-
+  private async downloadInputFiles({
+    files = [],
+    workspaceId,
+  }: {
+    files?: CodeInterpreterFileInput[];
+    workspaceId: string;
+  }): Promise<{ inputFiles: InputFile[]; undeliveredFilenames: string[] }> {
     const inputFiles: InputFile[] = [];
+    const undeliveredFilenames: string[] = [];
 
     for (const file of files) {
-      try {
-        if (!workspaceId) {
-          this.logger.warn(
-            `Cannot resolve file ${file.filename}: workspaceId is required`,
-          );
-          continue;
-        }
+      const inputFile = await this.readInputFile({ file, workspaceId });
 
-        const fileContent = await this.fileService.getFileContentById({
-          fileId: file.fileId,
-          workspaceId,
-          fileFolder: FileFolder.AgentChat,
-        });
-
-        if (fileContent === null) {
-          this.logger.warn(
-            `File ${file.filename} no longer available (id=${file.fileId})`,
-          );
-          continue;
-        }
-
-        inputFiles.push({
-          filename: file.filename,
-          content: fileContent.buffer,
-          mimeType: fileContent.mimeType,
-        });
-      } catch (error) {
-        this.logger.warn(`Failed to resolve file ${file.filename}`, error);
+      if (isDefined(inputFile)) {
+        inputFiles.push(inputFile);
+      } else {
+        undeliveredFilenames.push(file.filename);
       }
     }
 
-    return inputFiles;
+    return { inputFiles, undeliveredFilenames };
+  }
+
+  private async readInputFile({
+    file,
+    workspaceId,
+  }: {
+    file: CodeInterpreterFileInput;
+    workspaceId: string;
+  }): Promise<InputFile | null> {
+    try {
+      const storedFile = await this.findStoredInputFile({ file, workspaceId });
+
+      if (!isDefined(storedFile)) {
+        return null;
+      }
+
+      const fileContent = await this.fileService.getFileStream({
+        file: storedFile,
+        workspaceId,
+      });
+
+      if (!isDefined(fileContent)) {
+        return null;
+      }
+
+      return {
+        filename: file.filename,
+        content: await streamToBuffer(
+          fileContent.stream,
+          CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+        ),
+        mimeType: fileContent.mimeType,
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to resolve file ${file.filename} in workspace ${workspaceId}`,
+        error,
+      );
+
+      return null;
+    }
+  }
+
+  private async findStoredInputFile({
+    file,
+    workspaceId,
+  }: {
+    file: CodeInterpreterFileInput;
+    workspaceId: string;
+  }): Promise<FileEntity | null> {
+    if (isDefined(file.url)) {
+      return this.fileService.getFileBySignedUrl({
+        fileUrl: file.url,
+        workspaceId,
+      });
+    }
+
+    if (!isDefined(file.fileId)) {
+      return null;
+    }
+
+    return this.fileService.getFileById({
+      fileId: file.fileId,
+      workspaceId,
+      allowedFileFolders: [FileFolder.AgentChat],
+    });
   }
 
   private async resolveSandboxPrincipal(

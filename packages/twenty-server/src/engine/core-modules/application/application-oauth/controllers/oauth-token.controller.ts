@@ -13,10 +13,12 @@ import {
 
 import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { OAuthIntrospectInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-introspect.input';
 import { OAuthRevokeInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-revoke.input';
 import { OAuthTokenInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-token.input';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
@@ -34,6 +36,7 @@ const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 export class OAuthTokenController {
   constructor(
     private readonly oauthService: OAuthService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly throttlerService: ThrottlerService,
   ) {}
 
@@ -46,7 +49,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit(req, res)) return;
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
+      return;
+    }
 
     let result: OAuthTokenResponse | OAuthErrorResponse;
 
@@ -58,6 +63,7 @@ export class OAuthTokenController {
           clientSecret: body.client_secret,
           codeVerifier: body.code_verifier,
           redirectUri: body.redirect_uri ?? '',
+          resource: body.resource,
         });
         break;
 
@@ -105,7 +111,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit(req, res)) return;
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
+      return;
+    }
     this.setSecurityHeaders(res);
 
     await this.oauthService.revokeToken({
@@ -127,7 +135,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit(req, res)) return;
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
+      return;
+    }
     this.setSecurityHeaders(res);
 
     if (!body.client_id) {
@@ -146,7 +156,15 @@ export class OAuthTokenController {
     });
   }
 
-  private async applyRateLimit(req: Request, res: Response): Promise<boolean> {
+  private async applyRateLimit({
+    clientId,
+    req,
+    res,
+  }: {
+    clientId: string | undefined;
+    req: Request;
+    res: Response;
+  }): Promise<boolean> {
     const rateLimitKey = `oauth:${req.ip}`;
 
     try {
@@ -156,6 +174,12 @@ export class OAuthTokenController {
         OAUTH_RATE_LIMIT_MAX,
         OAUTH_RATE_LIMIT_WINDOW_MS,
       );
+
+      if (isDefined(clientId)) {
+        await this.oAuthClientRegistrationResolverService.throttleClientIdMetadataDocumentFetchOrThrow(
+          { clientId, requestIp: req.ip },
+        );
+      }
 
       return false;
     } catch (error) {

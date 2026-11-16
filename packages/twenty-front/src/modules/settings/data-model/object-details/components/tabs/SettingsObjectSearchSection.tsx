@@ -13,6 +13,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -54,9 +55,9 @@ const StyledNameLabel = styled.div`
   white-space: nowrap;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledTableContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
 `;
 
 const SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
@@ -126,6 +127,8 @@ export const SettingsObjectSearchSection = ({
     !isReadOnly &&
     objectMetadataItem.isSearchable;
 
+  const hasSearchFields = searchFields.length > 0;
+
   const searchFieldIds = useMemo(
     () => new Set(searchFields.map((entry) => entry.id)),
     [searchFields],
@@ -189,95 +192,106 @@ export const SettingsObjectSearchSection = ({
           />
         </Card.Root>
       )}
-      {searchFields.length > 0 && (
-        <>
-          <SettingsTextInput
-            instanceId="search-fields-filter"
-            LeftIcon={IconSearch}
-            placeholder={t`Search fields...`}
-            value={searchTerm}
-            onChange={setSearchTerm}
-          />
-          <Table>
-            <TableRow gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}>
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Data type`}</TableHeader>
-              <TableHeader></TableHeader>
-            </TableRow>
-            {filteredSearchFields.map((entry) => {
-              const FieldIcon = getIcon(entry.icon);
-              return (
-                <TableRow
-                  key={entry.id}
-                  gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
-                >
-                  <TableCell
-                    color={theme.font.color.primary}
-                    gap={theme.spacing[2]}
-                  >
-                    <FieldIcon
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                    <StyledNameLabel>{entry.label}</StyledNameLabel>
-                  </TableCell>
-                  <TableCell>
-                    <SettingsObjectFieldDataType
-                      value={entry.fieldType as SettingsFieldType}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    {isEditable && !entry.isLabelIdentifier && (
-                      <LightIconButton
-                        emphasis="subtle"
-                        onClick={() =>
-                          handleSetFieldSearchable(entry.id, false)
-                        }
-                        aria-label={t`Remove searchable field`}
-                      >
-                        <IconTrash />
-                      </LightIconButton>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </Table>
-        </>
+      {hasSearchFields && (
+        <SettingsTextInput
+          instanceId="search-fields-filter"
+          LeftIcon={IconSearch}
+          placeholder={t`Search fields...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
       )}
-      {isEditable && (
-        <StyledButtonContainer>
-          <DropdownRoot dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID} type="menu">
-            <Dropdown.Trigger
-              disabled={addableFields.length === 0}
-              render={
-                <Button
-                  startIcon={<IconPlus />}
-                  size="sm"
-                  disabled={addableFields.length === 0}
-                  variant="outline"
-                >{t`Add field`}</Button>
-              }
-            />
-            <DropdownContent align="end" sideOffset={8}>
-              <Dropdown.Section scrollable>
-                {addableFields.map((field) => {
-                  const FieldIcon = getIcon(field.icon);
-
-                  return (
-                    <Dropdown.ActionItem
-                      key={field.id}
-                      startIcon={<SelectOptionIcon Icon={FieldIcon} />}
-                      onClick={() => handleSetFieldSearchable(field.id, true)}
+      {(hasSearchFields || isEditable) && (
+        <StyledTableContainer>
+          {hasSearchFields && (
+            <Table>
+              <TableRow
+                gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
+              >
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader>{t`Data type`}</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              {filteredSearchFields.map((entry) => {
+                const FieldIcon = getIcon(entry.icon);
+                return (
+                  <TableRow
+                    key={entry.id}
+                    gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
+                  >
+                    <TableCell
+                      color={theme.font.color.primary}
+                      gap={theme.spacing[2]}
                     >
-                      {field.label}
-                    </Dropdown.ActionItem>
-                  );
-                })}
-              </Dropdown.Section>
-            </DropdownContent>
-          </DropdownRoot>
-        </StyledButtonContainer>
+                      <FieldIcon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                      <StyledNameLabel>{entry.label}</StyledNameLabel>
+                    </TableCell>
+                    <TableCell>
+                      <SettingsObjectFieldDataType
+                        value={entry.fieldType as SettingsFieldType}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {isEditable && !entry.isLabelIdentifier && (
+                        <LightIconButton
+                          emphasis="subtle"
+                          onClick={() =>
+                            handleSetFieldSearchable(entry.id, false)
+                          }
+                          aria-label={t`Remove searchable field`}
+                        >
+                          <IconTrash />
+                        </LightIconButton>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </Table>
+          )}
+          {isEditable && (
+            <TableFooter>
+              <DropdownRoot
+                dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID}
+                type="menu"
+              >
+                <Dropdown.Trigger
+                  disabled={addableFields.length === 0}
+                  render={
+                    <Button
+                      startIcon={<IconPlus />}
+                      size="sm"
+                      disabled={addableFields.length === 0}
+                      variant="outline"
+                    >{t`Add field`}</Button>
+                  }
+                />
+                <DropdownContent align="end" sideOffset={8}>
+                  <Dropdown.Section scrollable>
+                    {addableFields.map((field) => {
+                      const FieldIcon = getIcon(field.icon);
+
+                      return (
+                        <Dropdown.ActionItem
+                          key={field.id}
+                          startIcon={<SelectOptionIcon Icon={FieldIcon} />}
+                          onClick={() =>
+                            handleSetFieldSearchable(field.id, true)
+                          }
+                        >
+                          {field.label}
+                        </Dropdown.ActionItem>
+                      );
+                    })}
+                  </Dropdown.Section>
+                </DropdownContent>
+              </DropdownRoot>
+            </TableFooter>
+          )}
+        </StyledTableContainer>
       )}
     </StyledSearchSectionContent>
   );

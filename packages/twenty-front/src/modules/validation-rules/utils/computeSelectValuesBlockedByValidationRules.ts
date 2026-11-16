@@ -3,7 +3,10 @@ import { isRecordFieldValueLoaded } from '@/object-record/record-form/utils/isRe
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { compileValidationRuleExpression } from 'twenty-shared/utils';
+import {
+  compileValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
+} from 'twenty-shared/utils';
 
 export const computeSelectValuesBlockedByValidationRules = ({
   validationRules,
@@ -44,7 +47,12 @@ export const computeSelectValuesBlockedByValidationRules = ({
         Object.keys(compilationResult.bindings).every(
           (bindingPath) =>
             bindingPath === fieldMetadataItem.name ||
-            isRecordFieldValueLoaded({ record, fieldPath: bindingPath }),
+            isRecordFieldValueLoaded({
+              record,
+              fieldPath:
+                getValidationRulePreviousValueFieldPath(bindingPath) ??
+                bindingPath,
+            }),
         )
       );
     },
@@ -58,6 +66,7 @@ export const computeSelectValuesBlockedByValidationRules = ({
     computeDraftValidationRuleViolations({
       validationRules: evaluableRulesForErrorField,
       draftRecord: { ...record, [fieldMetadataItem.name]: value },
+      previousRecord: record,
       fields,
       fieldMetadataItems,
       now,

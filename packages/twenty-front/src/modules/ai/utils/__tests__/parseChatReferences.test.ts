@@ -1,8 +1,92 @@
 import { parseChatReferences } from '@/ai/utils/parseChatReferences';
+import {
+  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  formatRecordReference,
+} from 'twenty-shared/ai';
 
 describe('parseChatReferences', () => {
   it('should leave plain text without matches', () => {
     expect(parseChatReferences('Which company should we contact?')).toEqual([]);
+  });
+
+  it('keeps the assistant identity when its source label changes', () => {
+    const references = ['Ada', 'Nova'].map((displayName) =>
+      parseChatReferences(
+        formatRecordReference({
+          objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+          recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+          displayName,
+        }),
+      ),
+    );
+
+    expect(references).toEqual(
+      ['Ada', 'Nova'].map((displayName) => [
+        expect.objectContaining({
+          kind: 'record',
+          objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+          recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+          displayName,
+        }),
+      ]),
+    );
+  });
+
+  it.each([
+    'Nova: [support] [team]',
+    '50% ready %3A %GG %E0%A4 \\ next',
+    'Nova `code` *bold* _italic_ (team)! ~name~',
+    'Équipe 🤖',
+  ])('round-trips the assistant label %j', (displayName) => {
+    const reference = formatRecordReference({
+      objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+      recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+      displayName,
+    });
+
+    expect(parseChatReferences(`Ask ${reference} next`)).toEqual([
+      {
+        kind: 'record',
+        objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        displayName,
+        fullMatch: reference,
+        index: 4,
+      },
+    ]);
+  });
+
+  it.each([
+    '[[record:agentChatAssistant:agentChatAssistant:Ad\ra]]',
+    '[[record:agentChatAssistant:agentChatAssistant:Ad\na]]',
+    '[[record:agentChatAssistant:agentChatAssistant:Ad[a]]',
+    '[[record:agentChatAssistant:agentChatAssistant]]',
+    '[[agentChatAssistant:agentChatAssistant:Ada]]',
+    '[[record:workspaceMember:agentChatAssistant:Ada]]',
+    '[[record:agentChatAssistant:other:Ada]]',
+    '[[view:agentChatAssistant:Ada]]',
+  ])('rejects the malformed assistant identity or label %s', (text) => {
+    expect(parseChatReferences(text)).toEqual([]);
+  });
+
+  it('leaves legacy assistant names and authored prose without identities', () => {
+    expect(
+      parseChatReferences('Ask @Ada or @Nova: [support] to review 50% today.'),
+    ).toEqual([]);
+  });
+
+  it('keeps percent sequences in ordinary record labels unchanged', () => {
+    expect(
+      parseChatReferences(
+        '[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:50%20ready]]',
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        kind: 'record',
+        recordId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        displayName: '50%20ready',
+      }),
+    ]);
   });
 
   it.each([

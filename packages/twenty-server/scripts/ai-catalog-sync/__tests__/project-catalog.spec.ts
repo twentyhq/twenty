@@ -1,8 +1,6 @@
 import { type CatalogSpec } from '../types/catalog-spec.type';
-import {
-  type CanonicalCatalog,
-  projectCatalog,
-} from '../utils/project-catalog.util';
+import { type CanonicalCatalog } from '../types/canonical-catalog.type';
+import { projectCatalog } from '../utils/project-catalog.util';
 
 const canonicalCatalog: CanonicalCatalog = {
   openai: {
@@ -259,6 +257,100 @@ describe('projectCatalog', () => {
         },
       }),
     ).toThrow('unsupported data residency');
+  });
+
+  it('requires every route to state its data policy when the spec asks for it', () => {
+    const spec: CatalogSpec = {
+      requireDataPolicyOnEveryRoute: true,
+      providers: [
+        {
+          name: 'azure-foundry',
+          npm: '@ai-sdk/azure',
+          dataResidency: 'eu',
+          models: ['gpt-5.6-luna'],
+        },
+      ],
+    };
+
+    expect(() => projectCatalog({ canonicalCatalog, spec })).toThrow(
+      'must state both dataResidency and zeroDataRetention',
+    );
+
+    const projected = projectCatalog({
+      canonicalCatalog,
+      spec: {
+        ...spec,
+        providers: [{ ...spec.providers[0], zeroDataRetention: true }],
+      },
+    });
+
+    expect(projected['azure-foundry'].models?.[0]).toMatchObject({
+      dataResidency: 'eu',
+      zeroDataRetention: true,
+    });
+  });
+
+  it('refuses an inference profile that routes outside its provider residency', () => {
+    const specWithProfile = (servedName: string): CatalogSpec => ({
+      providers: [
+        {
+          name: 'amazon-bedrock-eu',
+          npm: '@ai-sdk/amazon-bedrock',
+          dataResidency: 'eu',
+          models: [{ model: 'claude-opus-4-7', as: servedName }],
+        },
+      ],
+    });
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog,
+        spec: specWithProfile('global.anthropic.claude-opus-4-7'),
+      }),
+    ).toThrow('routes to "global" but its provider states "eu"');
+
+    expect(
+      projectCatalog({
+        canonicalCatalog,
+        spec: specWithProfile('eu.anthropic.claude-opus-4-7'),
+      })['amazon-bedrock-eu'].models?.[0],
+    ).toMatchObject({
+      name: 'eu.anthropic.claude-opus-4-7',
+      dataResidency: 'eu',
+    });
+  });
+
+  it('refuses a model whose own name routes outside its provider residency', () => {
+    const catalogWithProfile: CanonicalCatalog = {
+      amazon: {
+        npm: '@ai-sdk/amazon-bedrock',
+        label: 'Amazon',
+        models: [{ name: 'global.anthropic.claude-opus-4-7', label: 'Opus' }],
+      },
+    };
+    const provider = {
+      name: 'amazon-bedrock-eu',
+      npm: '@ai-sdk/amazon-bedrock',
+      dataResidency: 'eu',
+    };
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog: catalogWithProfile,
+        spec: {
+          providers: [
+            { ...provider, models: ['global.anthropic.claude-opus-4-7'] },
+          ],
+        },
+      }),
+    ).toThrow('routes to "global" but its provider states "eu"');
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog: catalogWithProfile,
+        spec: { providers: [{ ...provider, models: { vendor: 'amazon' } }] },
+      }),
+    ).toThrow('routes to "global" but its provider states "eu"');
   });
 
   it('refuses a negotiated price that is not a usable number', () => {

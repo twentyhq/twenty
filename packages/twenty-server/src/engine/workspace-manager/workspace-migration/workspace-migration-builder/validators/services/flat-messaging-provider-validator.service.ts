@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { MESSAGING_PROVIDER_CONVERSATION_STYLES } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,6 +42,8 @@ const validateMessagingProviderReferences = ({
     | 'applicationUniversalIdentifier'
     | 'connectionProviderUniversalIdentifier'
     | 'sendMessageLogicFunctionUniversalIdentifier'
+    | 'markThreadAsReadLogicFunctionUniversalIdentifier'
+    | 'conversationStyle'
   >;
   flatConnectionProviderMaps: MetadataUniversalFlatEntityMaps<'connectionProvider'>;
   flatLogicFunctionMaps: MetadataUniversalFlatEntityMaps<'logicFunction'>;
@@ -79,6 +82,38 @@ const validateMessagingProviderReferences = ({
       code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
       message: t`Send message logic function "${sendMessageLogicFunctionUniversalIdentifier}" was not found in this application`,
       userFriendlyMessage: msg`The logic function this messaging provider sends with was not found in its application.`,
+    });
+  }
+
+  const markThreadAsReadLogicFunctionUniversalIdentifier =
+    flatMessagingProvider.markThreadAsReadLogicFunctionUniversalIdentifier;
+
+  if (
+    isDefined(markThreadAsReadLogicFunctionUniversalIdentifier) &&
+    !isInApplication({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: markThreadAsReadLogicFunctionUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Mark thread as read logic function "${markThreadAsReadLogicFunctionUniversalIdentifier}" was not found in this application`,
+      userFriendlyMessage: msg`The logic function this messaging provider marks threads as read with was not found in its application.`,
+    });
+  }
+
+  const { conversationStyle } = flatMessagingProvider;
+
+  if (
+    isDefined(conversationStyle) &&
+    !MESSAGING_PROVIDER_CONVERSATION_STYLES.includes(conversationStyle)
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Messaging provider conversationStyle "${conversationStyle}" is not supported`,
+      userFriendlyMessage: msg`This messaging provider's conversation style is not supported.`,
     });
   }
 

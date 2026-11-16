@@ -9,7 +9,9 @@ type MicrosoftRecipient = {
 export const toMicrosoftRecipients = (
   addresses: EmailAddress | undefined,
 ): MicrosoftRecipient[] => {
-  if (!addresses) return [];
+  if (!addresses) {
+    return [];
+  }
 
   const addressArray = Array.isArray(addresses) ? addresses : [addresses];
 

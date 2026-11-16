@@ -1,5 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
@@ -33,8 +34,10 @@ const eventSinksProvider = {
 
     const configuredSinkNames = twentyConfigService.get('EVENT_SINKS');
 
+    const knownSinkNames: readonly string[] = KNOWN_SINK_NAMES;
+
     const unknownSinkNames = configuredSinkNames.filter(
-      (name) => !KNOWN_SINK_NAMES.includes(name.toLowerCase() as never),
+      (name) => !knownSinkNames.includes(name.toLowerCase()),
     );
 
     if (unknownSinkNames.length > 0) {
@@ -44,7 +47,9 @@ const eventSinksProvider = {
     }
 
     return getAvailableSinkNames(configuredSinkNames, {
-      hasClickhouseUrl: Boolean(twentyConfigService.get('CLICKHOUSE_URL')),
+      hasClickhouseUrl: isNonEmptyString(
+        twentyConfigService.get('CLICKHOUSE_URL'),
+      ),
     })
       .map((name) => sinkByName[name.toLowerCase()])
       .filter(isDefined);

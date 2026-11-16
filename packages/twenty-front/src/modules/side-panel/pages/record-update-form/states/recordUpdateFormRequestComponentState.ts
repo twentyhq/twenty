@@ -7,6 +7,7 @@ export type RecordUpdateFormRequest = {
   requestId: string;
   objectMetadataId: string;
   draftRecord: Partial<ObjectRecord>;
+  previousRecord: Partial<ObjectRecord>;
   fieldMetadataIds: string[];
   violations: ValidationRuleViolation[];
 };

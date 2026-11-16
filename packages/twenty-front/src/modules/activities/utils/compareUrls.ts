@@ -12,7 +12,9 @@ export const compareUrls = (
   try {
     const urlA = new URL(firstAttachmentUrl);
     const urlB = new URL(secondAttachmentUrl);
-    if (urlA.hostname !== urlB.hostname) return false;
+    if (urlA.hostname !== urlB.hostname) {
+      return false;
+    }
     return (
       getAttachmentPath(firstAttachmentUrl) ===
       getAttachmentPath(secondAttachmentUrl)

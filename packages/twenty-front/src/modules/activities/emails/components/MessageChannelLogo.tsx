@@ -1,10 +1,7 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useMessageChannelLabel } from '@/activities/emails/hooks/useMessageChannelLabel';
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
-import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMail } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -16,13 +13,15 @@ const StyledLogo = styled.span`
 `;
 
 type MessageChannelLogoProps = {
-  channel: TimelineThreadChannel | null | undefined;
+  channel:
+    | Pick<TimelineThreadChannel, 'type' | 'provider' | 'applicationId'>
+    | null
+    | undefined;
 };
 
 export const MessageChannelLogo = ({ channel }: MessageChannelLogoProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { getMessageChannelLabel } = useMessageChannelLabel();
 
   const applicationId = channel?.applicationId;
 
@@ -30,11 +29,7 @@ export const MessageChannelLogo = ({ channel }: MessageChannelLogoProps) => {
     ({ provider }) => provider === channel?.provider,
   );
 
-  const title = isDefined(applicationId)
-    ? getInstalledApplicationDisplayName({ applicationId, currentWorkspace })
-    : isDefined(builtInAccountApp)
-      ? t(builtInAccountApp.name)
-      : t`Email`;
+  const title = getMessageChannelLabel(channel);
 
   const BuiltInLogo = builtInAccountApp?.Icon ?? IconMail;
 

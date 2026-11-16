@@ -39,7 +39,9 @@ const StyledHeaderText = styled.div`
 
 export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
   const { t } = useLingui();
-  if (!show) return null;
+  if (!show) {
+    return null;
+  }
   return (
     <StyledContainer>
       <div />

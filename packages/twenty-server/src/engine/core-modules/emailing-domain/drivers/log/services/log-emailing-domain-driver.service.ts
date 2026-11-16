@@ -112,6 +112,10 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     this.logger.log(`[log-driver] registerDomain(${input.domain})`);
   }
 
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    this.logger.log(`[log-driver] retryVerification(${input.domain})`);
+  }
+
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {
     this.logger.log(`[log-driver] cleanupDomain(${input.domain})`);
   }

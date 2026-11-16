@@ -1,9 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type AudioContextWindow = {
-  AudioContext?: typeof AudioContext;
-  webkitAudioContext?: typeof AudioContext;
-};
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
 
 // close() rejects on a context that never finished opening.
 const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
@@ -16,9 +17,8 @@ const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
 
 // iOS suspends AudioContexts created outside a gesture, which blocks speech capture.
 export const unlockAudioContext = async (): Promise<void> => {
-  const audioContextWindow = window as unknown as AudioContextWindow;
-  const AudioContextConstructor =
-    audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext;
+  const AudioContextConstructor: typeof AudioContext | undefined =
+    window.AudioContext ?? window.webkitAudioContext;
 
   if (!isDefined(AudioContextConstructor)) {
     return;

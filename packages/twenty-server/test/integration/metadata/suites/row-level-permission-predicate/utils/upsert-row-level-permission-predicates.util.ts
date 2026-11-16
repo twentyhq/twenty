@@ -13,6 +13,7 @@ export const upsertRowLevelPermissionPredicates = async ({
   input,
   gqlFields,
   expectToFail = false,
+  token,
 }: Omit<
   PerformMetadataQueryParams<UpsertRowLevelPermissionPredicatesInput>,
   'gqlFields'
@@ -32,7 +33,7 @@ export const upsertRowLevelPermissionPredicates = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

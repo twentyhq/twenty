@@ -57,7 +57,7 @@ export const computeRecordFormWidgetForExistingObject = ({
 
   if (
     !isDefined(recordFormFlatPageLayoutTab) ||
-    recordFormFlatPageLayoutTab.isSystemSideEffect !== true ||
+    !recordFormFlatPageLayoutTab.isSystemSideEffect ||
     isDefined(recordFormFlatPageLayoutTab.deletedAt)
   ) {
     return undefined;

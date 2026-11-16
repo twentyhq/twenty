@@ -44,6 +44,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewFilter: {
     view: true,
     fieldMetadata: true,
+    fieldMetadataOption: true,
     viewFilterGroup: true,
   },
   viewGroup: {
@@ -77,6 +78,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     view: true,
     pageLayout: true,
     agentChatChannel: true,
+    workflow: true,
+    agent: true,
   },
   rolePermissionFlag: {
     permissionFlag: true,
@@ -93,6 +96,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
     objectMetadata: true,
     fieldMetadata: true,
+    rowLevelPermissionPredicateGroup: true,
+    rowLevelPermissionRule: true,
   },
   pageLayout: {
     objectMetadata: true,
@@ -113,8 +118,14 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     role: true,
     rowLevelPermissionPredicateGroup: true,
+    rowLevelPermissionRule: true,
   },
   rowLevelPermissionPredicateGroup: {
+    role: true,
+    objectMetadata: true,
+    rowLevelPermissionRule: true,
+  },
+  rowLevelPermissionRule: {
     role: true,
     objectMetadata: true,
   },

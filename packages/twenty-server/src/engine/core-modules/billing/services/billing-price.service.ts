@@ -109,7 +109,9 @@ export class BillingPriceService {
     from: SubscriptionInterval,
     to: SubscriptionInterval,
   ) {
-    if (from === to) return cap;
+    if (from === to) {
+      return cap;
+    }
 
     return from === SubscriptionInterval.Month &&
       to === SubscriptionInterval.Year

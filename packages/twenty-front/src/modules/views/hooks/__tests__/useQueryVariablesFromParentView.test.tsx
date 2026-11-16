@@ -9,36 +9,34 @@ import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const WORKFLOW_RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const COMPANY_RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 // The context store instance getJestMetadataAndApolloMocksWrapper binds, which the hook reads
 const CONTEXT_STORE_INSTANCE_ID = 'instanceId';
 
-const workflowVersionObjectMetadataItem =
-  getMockObjectMetadataItemOrThrow('workflowVersion');
-const workflowObjectMetadataItem = getMockObjectMetadataItemOrThrow('workflow');
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
-const workflowRelationFieldMetadataItem =
-  workflowVersionObjectMetadataItem.fields.find(
-    (field) => field.name === 'workflow',
-  );
+const companyRelationFieldMetadataItem = personObjectMetadataItem.fields.find(
+  (field) => field.name === 'company',
+);
 
-if (!isDefined(workflowRelationFieldMetadataItem)) {
-  throw new Error('Missing "workflow" field on the workflowVersion object');
+if (!isDefined(companyRelationFieldMetadataItem)) {
+  throw new Error('Missing "company" field on the person object');
 }
 
-const workflowRecordFilter: RecordFilter = {
+const companyRecordFilter: RecordFilter = {
   id: 'record-filter-1',
-  fieldMetadataId: workflowRelationFieldMetadataItem.id,
+  fieldMetadataId: companyRelationFieldMetadataItem.id,
   operand: ViewFilterOperand.IS,
   value: JSON.stringify({
     isCurrentWorkspaceMemberSelected: false,
     isCurrentRecordSelected: false,
-    selectedRecordIds: [WORKFLOW_RECORD_ID],
+    selectedRecordIds: [COMPANY_RECORD_ID],
   }),
-  displayValue: 'My workflow',
+  displayValue: 'Acme',
   type: 'RELATION',
-  label: 'Workflow',
+  label: 'Company',
 };
 
 const renderUseQueryVariablesFromParentView = (
@@ -53,11 +51,10 @@ const renderUseQueryVariablesFromParentView = (
             instanceId: CONTEXT_STORE_INSTANCE_ID,
           }),
           {
-            parentViewComponentId: 'record-index-workflow-versions',
-            parentViewObjectNameSingular:
-              workflowVersionObjectMetadataItem.nameSingular,
+            parentViewComponentId: 'record-index-people',
+            parentViewObjectNameSingular: personObjectMetadataItem.nameSingular,
             parentViewFilterGroups: [],
-            parentViewFilters: [workflowRecordFilter],
+            parentViewFilters: [companyRecordFilter],
             parentViewSorts: [],
           },
         );
@@ -68,17 +65,17 @@ const renderUseQueryVariablesFromParentView = (
 describe('useQueryVariablesFromParentView', () => {
   it('should compute the filter when the parent view targets the same object', () => {
     const { result } = renderUseQueryVariablesFromParentView(
-      workflowVersionObjectMetadataItem,
+      personObjectMetadataItem,
     );
 
     expect(result.current.filter).toEqual({
-      workflowId: { in: [WORKFLOW_RECORD_ID] },
+      companyId: { in: [COMPANY_RECORD_ID] },
     });
   });
 
   it('should ignore the parent view when it targets another object', () => {
     const { result } = renderUseQueryVariablesFromParentView(
-      workflowObjectMetadataItem,
+      companyObjectMetadataItem,
     );
 
     expect(result.current.filter).toEqual({});

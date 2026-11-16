@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -82,6 +82,17 @@ export class FlatConnectionProviderValidatorService {
           }
         }
       }
+    }
+
+    if (
+      flatConnectionProvider.type === 'oauth-discovery' &&
+      !isHttpUrl(flatConnectionProvider.oauthDiscoveryConfig?.resourceUrl ?? '')
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl`,
+        userFriendlyMessage: msg`OAuth discovery connection provider needs the URL of the resource it signs in to`,
+      });
     }
 
     if (flatConnectionProvider.type === 'custom') {

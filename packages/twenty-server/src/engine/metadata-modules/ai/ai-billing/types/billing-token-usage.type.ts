@@ -4,6 +4,7 @@ export type BillingTokenUsage = {
   outputTokens?: number;
   inputTokenDetails?: {
     cacheReadTokens?: number;
+    cacheWriteTokens?: number;
   };
   outputTokenDetails?: {
     reasoningTokens?: number;

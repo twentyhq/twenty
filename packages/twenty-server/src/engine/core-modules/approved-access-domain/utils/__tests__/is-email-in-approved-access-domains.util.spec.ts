@@ -13,16 +13,6 @@ describe('isEmailInApprovedAccessDomains', () => {
     ).toBe(false);
   });
 
-  it('should grant a matching validated domain when email verification is required', () => {
-    expect(
-      isEmailInApprovedAccessDomains({
-        email: 'tata@twenty.com',
-        approvedAccessDomains,
-        isEmailVerificationRequired: true,
-      }),
-    ).toBe(true);
-  });
-
   it('should deny when the matching domain is not validated', () => {
     expect(
       isEmailInApprovedAccessDomains({

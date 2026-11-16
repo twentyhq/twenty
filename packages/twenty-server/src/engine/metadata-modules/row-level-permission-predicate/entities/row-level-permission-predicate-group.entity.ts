@@ -18,10 +18,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-row-level-permission-rule-links-upgrade-command-name.constant';
+import { ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-can-create-permissions-upgrade-command-name.constant';
 import { ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-rls-grant-operations-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -34,6 +37,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index('IDX_RLPPG_PARENT_GROUP_ID', [
   'parentRowLevelPermissionPredicateGroupId',
 ])
+@Index('IDX_RLPPG_RULE_ID', ['rowLevelPermissionRuleId'])
 export class RowLevelPermissionPredicateGroupEntity
   extends SyncableEntity
   implements
@@ -45,6 +49,20 @@ export class RowLevelPermissionPredicateGroupEntity
 
   @Column({ nullable: true, type: 'uuid' })
   parentRowLevelPermissionPredicateGroupId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  rowLevelPermissionRuleId: string | null;
+
+  @ManyToOne(() => RowLevelPermissionRuleEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'rowLevelPermissionRuleId' })
+  rowLevelPermissionRule: Relation<RowLevelPermissionRuleEntity> | null;
 
   @Column({
     type: 'enum',
@@ -62,6 +80,12 @@ export class RowLevelPermissionPredicateGroupEntity
   })
   @Column({ nullable: false, type: 'boolean', default: false })
   canReadRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canCreateRecords: boolean;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME,

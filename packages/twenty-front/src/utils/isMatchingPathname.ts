@@ -8,7 +8,9 @@ const addTrailingSlash = (path: string) =>
   path.endsWith('/') ? path : path + '/';
 
 const getConstructedPath = (path: string, basePath?: AppBasePath) => {
-  if (!isNonEmptyString(basePath)) return path;
+  if (!isNonEmptyString(basePath)) {
+    return path;
+  }
 
   return addTrailingSlash(basePath) + path;
 };

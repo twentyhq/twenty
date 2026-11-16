@@ -15,6 +15,7 @@ import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/too
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
 const createAgentInputSchema = z.object({
   label: z.string().min(1).describe('Display name of the agent'),
@@ -63,6 +64,7 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {
     super();
   }
@@ -74,7 +76,15 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
     const modelId =
       parameters.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
 
-    this.aiModelRegistryService.validateModelAvailability(modelId);
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+        workspaceId,
+      );
+
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId,
+      aiDataPolicy,
+    });
 
     const agent = await this.agentService.createOneAgent(
       {

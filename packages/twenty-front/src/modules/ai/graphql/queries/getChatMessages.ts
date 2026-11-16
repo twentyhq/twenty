@@ -6,6 +6,9 @@ export const GET_CHAT_MESSAGES = gql`
       id
       threadId
       turnId
+      agentId
+      isBuiltInAssistant
+      senderApplicationId
       senderWorkspaceMemberId
       role
       status

@@ -2,6 +2,7 @@ import { UnipileMessaging } from '@unipile/sdk';
 
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 import { requestUnipile } from 'src/unipile/utils/request-unipile.util';
+import { readStreamWithinSizeLimitOrThrow } from 'src/utils/read-stream-within-size-limit.util';
 
 export const downloadUnipileMessageAttachment = async ({
   accountId,
@@ -40,23 +41,5 @@ export const downloadUnipileMessageAttachment = async ({
     throw new Error('Unipile returned no attachment content');
   }
 
-  const reader: ReadableStreamDefaultReader<Uint8Array> = data.getReader();
-  const chunks: Uint8Array[] = [];
-  let sizeBytes = 0;
-  let readResult = await reader.read();
-
-  while (!readResult.done) {
-    sizeBytes += readResult.value.byteLength;
-
-    if (sizeBytes > maxSizeBytes) {
-      await reader.cancel();
-
-      throw new Error(`Attachment is larger than ${maxSizeBytes} bytes`);
-    }
-
-    chunks.push(readResult.value);
-    readResult = await reader.read();
-  }
-
-  return Buffer.concat(chunks);
+  return readStreamWithinSizeLimitOrThrow({ stream: data, maxSizeBytes });
 };

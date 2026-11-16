@@ -1,3 +1,4 @@
+import { decodeHTMLStrict } from 'entities';
 import { type Token, type Tokens } from 'marked';
 import {
   convertTextToTipTapNodes,
@@ -8,6 +9,8 @@ import {
   type TipTapMark,
   type TipTapNode,
 } from 'twenty-shared/utils';
+
+import { HTML_LINE_BREAK_TAG_PATTERN } from 'src/engine/core-modules/record-transformer/constants/html-line-break-tag-pattern.constant';
 
 type InlineStyle =
   | typeof TIPTAP_MARK_TYPES.BOLD
@@ -98,7 +101,11 @@ const collectInlineRuns = ({
         if (isNonEmptyArray(token.tokens)) {
           collectInlineRuns({ tokens: token.tokens, styles, href, runs });
         } else {
-          runs.push({ text: token.text, styles, href });
+          runs.push({
+            text: token.escaped ? token.text : decodeHTMLStrict(token.text),
+            styles,
+            href,
+          });
         }
         break;
       case 'escape':
@@ -109,6 +116,13 @@ const collectInlineRuns = ({
         break;
       case 'br':
         runs.push({ text: '\n', styles, href });
+        break;
+      case 'html':
+        runs.push({
+          text: HTML_LINE_BREAK_TAG_PATTERN.test(token.raw) ? '\n' : token.raw,
+          styles,
+          href,
+        });
         break;
       case 'link':
         collectInlineRuns({

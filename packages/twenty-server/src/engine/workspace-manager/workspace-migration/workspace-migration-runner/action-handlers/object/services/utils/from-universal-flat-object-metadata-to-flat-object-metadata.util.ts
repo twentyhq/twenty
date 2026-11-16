@@ -121,6 +121,7 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
+    rowLevelPermissionRuleIds: [],
     pageLayoutIds: [],
     ...emptyUniversalForeignKeyAggregators,
   };

@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, type EntityManager } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 
@@ -18,10 +19,10 @@ export class AgentHistoryWorkspaceStorageService {
 
   getContext(workspaceId: string): AgentHistoryStorageContext {
     if (!isNonEmptyString(workspaceId)) {
-      throw new AgentHistoryStorageException(
-        'INVALID_WORKSPACE',
-        'Agent history requires a workspace ID',
-      );
+      throw new AgentHistoryStorageException({
+        code: 'INVALID_WORKSPACE',
+        message: doNotTranslate('Agent history requires a workspace ID'),
+      });
     }
 
     return {

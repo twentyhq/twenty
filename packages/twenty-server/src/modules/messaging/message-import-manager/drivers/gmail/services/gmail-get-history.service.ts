@@ -88,9 +88,15 @@ export class GmailGetHistoryService {
           (messageDeleted) => messageDeleted.message?.id || '',
         );
 
-        if (messagesAdded) acc.messagesAdded.push(...messagesAdded);
-        if (labelsAdded) acc.messagesAdded.push(...labelsAdded);
-        if (messagesDeleted) acc.messagesDeleted.push(...messagesDeleted);
+        if (messagesAdded) {
+          acc.messagesAdded.push(...messagesAdded);
+        }
+        if (labelsAdded) {
+          acc.messagesAdded.push(...labelsAdded);
+        }
+        if (messagesDeleted) {
+          acc.messagesDeleted.push(...messagesDeleted);
+        }
 
         return acc;
       },

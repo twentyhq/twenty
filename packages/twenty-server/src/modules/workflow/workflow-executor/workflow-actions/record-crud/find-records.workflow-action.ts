@@ -9,6 +9,7 @@ import {
   resolveInput,
 } from 'twenty-shared/utils';
 
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
@@ -24,6 +25,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
 import { findRecordFilterWithMissingField } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/find-record-filter-with-missing-field.util';
@@ -70,11 +72,14 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
+    const {
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      workflowActionInput.objectName,
+      workspaceId,
+    );
 
     if (recordFilters) {
       for (const filter of recordFilters) {
@@ -128,10 +133,26 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       );
     }
 
+    let gqlOperationOrderBy: ObjectRecordOrderBy | undefined;
+
+    try {
+      gqlOperationOrderBy = computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: workflowActionInput.orderBy?.recordSorts ?? [],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        `Sort could not be computed: ${error.message}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
-      orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
+      orderBy: gqlOperationOrderBy,
       limit: resolveLimitInput(workflowActionInput.limit),
       offset: resolveOffsetInput(workflowActionInput.offset),
       authContext: executionContext.authContext,

@@ -112,7 +112,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
       overrides: null,
     });
 
-    const universalConfiguration =
+    const universalConfiguration: UniversalFlatPageLayoutWidget['universalConfiguration'] =
       widgetConfigurationType === WidgetConfigurationType.FIELDS
         ? {
             configurationType: WidgetConfigurationType.FIELDS,
@@ -128,7 +128,6 @@ export const computeSystemRecordPageLayoutToCreate = ({
       title: widgetProps.title,
       type: widgetProps.type,
       position: widgetProps.position,
-      // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
       universalConfiguration,
       objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
       isActive: true,
@@ -137,6 +136,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
       updatedAt: now,
       deletedAt: null,
       conditionalDisplay: null,
+      conditionalAvailabilityExpression: null,
       universalOverrides: null,
     });
   }

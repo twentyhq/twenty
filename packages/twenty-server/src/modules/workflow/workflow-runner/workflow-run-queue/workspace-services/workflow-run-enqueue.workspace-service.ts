@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -19,7 +20,9 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { type RunWorkflowJobTarget } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-target.type';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
 export class WorkflowRunEnqueueWorkspaceService {
@@ -31,6 +34,7 @@ export class WorkflowRunEnqueueWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
   async enqueueRunsForWorkspace({
@@ -123,17 +127,11 @@ export class WorkflowRunEnqueueWorkspaceService {
           });
 
           for (const { id: workflowRunId, coreWorkflowId } of admittedRuns) {
-            await this.messageQueueService.add<RunWorkflowJobData>(
-              RunWorkflowJob.name,
-              {
-                workflowRunId,
-                workspaceId,
-              },
-              buildRunWorkflowJobOptions({
-                workflowRunId,
-                scope: resolveJobScope(coreWorkflowId),
-              }),
-            );
+            await this.enqueueRunOrFailIt({
+              workspaceId,
+              workflowRunId,
+              scope: resolveJobScope(coreWorkflowId),
+            });
           }
 
           totalEnqueuedCount += batchIds.length;
@@ -188,6 +186,35 @@ export class WorkflowRunEnqueueWorkspaceService {
           releaseError,
         );
       }
+    }
+  }
+
+  async enqueueRunOrFailIt({
+    workspaceId,
+    workflowRunId,
+    scope,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    scope: RunWorkflowJobTarget;
+  }): Promise<void> {
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        { workflowRunId, workspaceId },
+        buildRunWorkflowJobOptions({ workflowRunId, scope }),
+      );
+    } catch (error) {
+      if (!(error instanceof MessageQueueException)) {
+        throw error;
+      }
+
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
     }
   }
 }

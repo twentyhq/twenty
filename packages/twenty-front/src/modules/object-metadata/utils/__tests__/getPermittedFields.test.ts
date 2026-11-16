@@ -22,11 +22,8 @@ describe('getPermittedFields', () => {
       getPermittedFields({
         fields: [nameField, employeesField, domainNameField, addressField],
         objectPermissions: {
-          restrictedFields: {
-            [employeesField.id]: { canRead: false, canUpdate: false },
-            [domainNameField.id]: { canRead: true, canUpdate: false },
-            [addressField.id]: { canRead: false, canUpdate: true },
-          },
+          unreadableFields: [employeesField.id, addressField.id],
+          uneditableFields: [employeesField.id, domainNameField.id],
         },
       }),
     ).toEqual({
@@ -56,12 +53,8 @@ describe('getPermittedFields', () => {
       const { readableFields, updatableFields } = getPermittedFields({
         fields: [headField],
         objectPermissions: {
-          restrictedFields: {
-            [firstMorphRelation.sourceFieldMetadata.id]: {
-              canRead: false,
-              canUpdate: false,
-            },
-          },
+          unreadableFields: [firstMorphRelation.sourceFieldMetadata.id],
+          uneditableFields: [firstMorphRelation.sourceFieldMetadata.id],
         },
       });
 
@@ -76,9 +69,8 @@ describe('getPermittedFields', () => {
         getPermittedFields({
           fields: [headField],
           objectPermissions: {
-            restrictedFields: {
-              [headField.id]: { canRead: false, canUpdate: true },
-            },
+            unreadableFields: [headField.id],
+            uneditableFields: [],
           },
         }),
       ).toEqual({ readableFields: [], updatableFields: [headField] });
@@ -88,12 +80,10 @@ describe('getPermittedFields', () => {
       const { readableFields, updatableFields } = getPermittedFields({
         fields: [headField],
         objectPermissions: {
-          restrictedFields: Object.fromEntries(
-            morphRelations.map((morphRelation) => [
-              morphRelation.sourceFieldMetadata.id,
-              { canRead: false, canUpdate: true },
-            ]),
+          unreadableFields: morphRelations.map(
+            (morphRelation) => morphRelation.sourceFieldMetadata.id,
           ),
+          uneditableFields: [],
         },
       });
 

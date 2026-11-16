@@ -6,6 +6,10 @@
   border-radius: 0;
   overflow: hidden;
 
+  &[data-size='xs'] {
+    height: var(--t-spacing-1);
+  }
+
   &[data-size='sm'] {
     height: var(--t-spacing-1_5);
   }

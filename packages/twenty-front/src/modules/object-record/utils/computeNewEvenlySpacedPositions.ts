@@ -28,7 +28,7 @@ export const computeNewEvenlySpacedPositions = ({
 
   const positionStep = positionGapSize / (numberOfRecordsToInsertBetween + 1);
 
-  let newPositionsBetween: number[] = [];
+  const newPositionsBetween: number[] = [];
 
   for (let i = 1; i <= numberOfRecordsToInsertBetween; i++) {
     newPositionsBetween.push(startingPosition + positionStep * i);

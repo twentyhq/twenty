@@ -115,6 +115,26 @@ await enqueueJobs({
 
 L'esecuzione in coda eredita l'utente attivo della funzione che l'ha messa in coda, quindi agisce con le stesse autorizzazioni.
 
+## Memoria della coda
+
+I job in coda risiedono in memoria finché non terminano, pertanto ogni spazio di lavoro e ogni applicazione può detenere solo una quota della memoria della coda che gli altri lasciano libera. Un singolo job è inoltre limitato a 5 MB di payload serializzato. Questi limiti si applicano solo ai server che li abilitano (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+
+`enqueueJobs` riporta ciò che ogni chiamata ha utilizzato. Questi campi richiedono Twenty 2.57.0 o versioni successive, che è anche la versione minima del server dell'SDK:
+
+| Campo            | Cosa contiene                                                                                                                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lavori`         | Il `jobId` e il `sizeBytes` di ogni job accodato.                                                                                                                                                        |
+| `availableBytes` | Memoria che l'applicazione e lo spazio di lavoro possono ancora accodare al momento di questa chiamata. `null` quando il server non limita la memoria della coda. È un'istantanea, non una prenotazione. |
+
+Quando viene raggiunto un limite, l'intera chiamata viene rifiutata e non viene accodato nulla:
+
+| `subCode` dell'errore            | Quando                                                           | Dettagli                                               |
+| -------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------ |
+| `JOB_TOO_LARGE`                  | Un job supera il limite di dimensione.                           | `index`, `sizeBytes`, `maxBytes`                       |
+| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | Il batch non rientra nella quota disponibile. Riprova più tardi. | `requestedBytes`, `availableBytes`, `refusedGroupKeys` |
+
+Mantieni piccoli i payload: passa gli ID dei record e recupera i record durante l'esecuzione anziché incorporarli. Se `availableBytes` sta per esaurirsi, accoda meno job alla volta o concatenali con `delayMs`.
+
 ## Riprova un errore transitorio
 
 Twenty non ritenta ogni eccezione del codice applicativo. Un normale errore generato viene trattato come un errore permanente. In caso di errore transitorio, una funzione logica in coda può richiedere fino a tre tentativi generando `RetryableLogicFunctionError`.

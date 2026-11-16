@@ -17,6 +17,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -26,6 +27,7 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -53,11 +55,11 @@ import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-ph
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
+import { buildBillingSubscriptionUpdateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-update-lock-key.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 @Injectable()
 export class BillingSubscriptionUpdateService {
   protected readonly logger = new Logger(BillingSubscriptionUpdateService.name);
@@ -73,8 +75,9 @@ export class BillingSubscriptionUpdateService {
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly billingSeatService: BillingSeatService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async changeResourceCreditPrice(
@@ -221,15 +224,42 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async changeSeats(workspaceId: string, newSeats: number) {
+  async syncSeats({
+    workspaceId,
+    renewalDate,
+  }: {
+    workspaceId: string;
+    renewalDate?: Date;
+  }) {
     const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
 
-    await this.updateSubscription(workspaceId, billingSubscription.id, {
-      type: SubscriptionUpdateType.SEATS,
-      newSeats,
+    if (!isDefined(billingSubscription)) {
+      return;
+    }
+
+    await this.withSubscriptionUpdateLock({
+      workspaceId,
+      update: async () => {
+        const billedSeats =
+          await this.billingSeatService.computeCurrentBilledSeats(workspaceId);
+
+        if (!isDefined(billedSeats)) {
+          return;
+        }
+
+        await this.applySubscriptionUpdate({
+          workspaceId,
+          subscriptionId: billingSubscription.id,
+          subscriptionUpdate: {
+            type: SubscriptionUpdateType.SEATS,
+            newSeats: billedSeats,
+          },
+          renewalDate,
+        });
+      },
     });
   }
 
@@ -238,6 +268,42 @@ export class BillingSubscriptionUpdateService {
     subscriptionId: string,
     subscriptionUpdate: SubscriptionUpdate,
   ): Promise<void> {
+    await this.withSubscriptionUpdateLock({
+      workspaceId,
+      update: () =>
+        this.applySubscriptionUpdate({
+          workspaceId,
+          subscriptionId,
+          subscriptionUpdate,
+        }),
+    });
+  }
+
+  private async withSubscriptionUpdateLock({
+    workspaceId,
+    update,
+  }: {
+    workspaceId: string;
+    update: () => Promise<void>;
+  }): Promise<void> {
+    await this.cacheLockService.withLock(
+      update,
+      buildBillingSubscriptionUpdateLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
+
+  private async applySubscriptionUpdate({
+    workspaceId,
+    subscriptionId,
+    subscriptionUpdate,
+    renewalDate,
+  }: {
+    workspaceId: string;
+    subscriptionId: string;
+    subscriptionUpdate: SubscriptionUpdate;
+    renewalDate?: Date;
+  }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
       {
@@ -265,11 +331,13 @@ export class BillingSubscriptionUpdateService {
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
         ? subscriptionUpdate.newSeats
-        : await this.countWorkspaceMembers(workspaceId);
+        : ((await this.billingSeatService.computeCurrentBilledSeats(
+            workspaceId,
+          )) ?? currentPrices.seats);
 
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
-      { ...currentPrices, seats: seats > 0 ? seats : currentPrices.seats },
+      { ...currentPrices, seats },
     );
 
     const shouldUpdateAtPeriodEnd =
@@ -290,9 +358,8 @@ export class BillingSubscriptionUpdateService {
           toUpdateCurrentPrices: undefined,
           toUpdateNextPrices: toUpdateCurrentPrices,
           currentPhase: toPhaseUpdateParams(currentPhase),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
+          subscriptionCurrentPeriodEnd:
+            stripeSubscription.items.data[0].current_period_end,
         });
       } else {
         assertIsDefinedOrThrow(nextPhase);
@@ -313,9 +380,8 @@ export class BillingSubscriptionUpdateService {
           toUpdateCurrentPrices: undefined,
           currentPhase: toPhaseUpdateParams(currentPhase),
           nextPhase: toPhaseUpdateParams(nextPhase),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
+          subscriptionCurrentPeriodEnd:
+            stripeSubscription.items.data[0].current_period_end,
         });
       }
     } else {
@@ -359,30 +425,28 @@ export class BillingSubscriptionUpdateService {
           nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
-            Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
+            stripeSubscription.items.data[0].current_period_end,
         });
       }
     }
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      subscription.workspaceId,
-      subscription.stripeSubscriptionId,
-    );
-  }
+    const syncSubscriptionToDatabase = () =>
+      this.billingSubscriptionService.syncSubscriptionToDatabase({
+        workspaceId: subscription.workspaceId,
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
+        renewalDate,
+      });
 
-  private async countWorkspaceMembers(workspaceId: string): Promise<number> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    if (!isDefined(renewalDate)) {
+      await syncSubscriptionToDatabase();
 
-    return await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          );
+      return;
+    }
 
-        return await workspaceMemberRepository.count();
-      },
-      authContext,
+    await this.cacheLockService.withLock(
+      syncSubscriptionToDatabase,
+      buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
   }
 

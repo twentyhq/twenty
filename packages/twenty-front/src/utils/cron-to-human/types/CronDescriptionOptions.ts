@@ -3,6 +3,7 @@ export type CronDescriptionOptions = {
   use24HourTimeFormat?: boolean;
   dayOfWeekStartIndexZero?: boolean;
   monthStartIndexZero?: boolean;
+  isCombinedWithDayOfMonth?: boolean;
 };
 
 export const DEFAULT_CRON_DESCRIPTION_OPTIONS: CronDescriptionOptions = {

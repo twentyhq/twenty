@@ -18,7 +18,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -28,7 +28,7 @@ describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let userWorkspaceRepository: any;
   let jwtWrapperService: any;
-  let permissionsService: any;
+  let settingPermissionsService: any;
   let twentyConfigService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
@@ -65,8 +65,8 @@ describe('JwtAuthStrategy', () => {
       })),
     };
 
-    permissionsService = {
-      userHasWorkspaceSettingPermission: jest.fn(),
+    settingPermissionsService = {
+      userWorkspaceHasPermissionFlag: jest.fn(),
     };
 
     twentyConfigService = {
@@ -149,7 +149,10 @@ describe('JwtAuthStrategy', () => {
         },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
         { provide: CoreEntityCacheService, useValue: coreEntityCacheService },
-        { provide: PermissionsService, useValue: permissionsService },
+        {
+          provide: SettingPermissionsService,
+          useValue: settingPermissionsService,
+        },
         { provide: TwentyConfigService, useValue: twentyConfigService },
         {
           provide: getRepositoryToken(WorkspaceEntity),
@@ -872,7 +875,7 @@ describe('JwtAuthStrategy', () => {
         user: { id: validUserId, lastName: 'lastNameDefault' },
         workspace: { id: validWorkspaceId },
       });
-      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         true,
       );
 
@@ -1077,7 +1080,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         false,
       );
 
@@ -1152,7 +1155,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         false,
       );
 
@@ -1261,7 +1264,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         true,
       );
 

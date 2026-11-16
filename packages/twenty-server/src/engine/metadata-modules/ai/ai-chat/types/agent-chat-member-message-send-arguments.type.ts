@@ -5,7 +5,7 @@ import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/
 
 export type AgentChatMemberMessageSendArguments = {
   actor: AgentChatMemberMessageActor;
-  target: { threadId: string; channelId?: string };
+  target: { threadId: string; channelId?: string | null };
   message: AgentChatMemberMessage;
   addressing: AgentChatMessageAddressing;
   assistant: {

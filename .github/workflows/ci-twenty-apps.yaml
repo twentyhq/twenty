@@ -104,6 +104,10 @@ jobs:
           app-path: ${{ matrix.app.path }}
           mode: ${{ matrix.server-source == 'local' && 'installation-and-integration-test' || 'integration-test-only' }}
 
+      - name: Dump server and worker logs on failure
+        if: failure() && matrix.server-source == 'local'
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
+
   ci-twenty-apps-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5

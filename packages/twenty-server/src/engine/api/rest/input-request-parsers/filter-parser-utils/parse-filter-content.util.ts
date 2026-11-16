@@ -1,9 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type FilterQuoteCharacter,
   getOpenQuoteAfterCharacter,
-} from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/get-open-quote-after-character.util';
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const parseFilterContent = (filterQuery: string): string[] => {
   let isWithinBrackets = false;
@@ -39,7 +38,9 @@ export const parseFilterContent = (filterQuery: string): string[] => {
       shouldPersistCharacter = parenthesisCounter >= 1;
     }
 
-    if (['[', ']'].includes(c)) isWithinBrackets = !isWithinBrackets;
+    if (['[', ']'].includes(c)) {
+      isWithinBrackets = !isWithinBrackets;
+    }
 
     if (c === ',' && parenthesisCounter === 1 && !isWithinBrackets) {
       predicates.push(currentPredicates);
@@ -47,7 +48,9 @@ export const parseFilterContent = (filterQuery: string): string[] => {
       shouldPersistCharacter = false;
     }
 
-    if (shouldPersistCharacter) currentPredicates += c;
+    if (shouldPersistCharacter) {
+      currentPredicates += c;
+    }
   }
 
   predicates.push(currentPredicates);

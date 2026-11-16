@@ -4,6 +4,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { isDefined } from 'class-validator';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -13,8 +14,8 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
-import { CreateViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/create-view-child-entity-permission.guard';
-import { ViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/view-child-entity-permission.guard';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-child-entity-permission.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -28,22 +29,37 @@ export class ViewSortResolver {
   @Query(() => [ViewSortDTO])
   async getViewSorts(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewSortDTO[]> {
     if (viewId) {
-      return this.viewSortService.findByViewId(workspace.id, viewId);
+      return this.viewSortService.findByViewId({
+        workspaceId: workspace.id,
+        viewId,
+        userWorkspaceId,
+      });
     }
 
-    return this.viewSortService.findByWorkspaceId(workspace.id);
+    return this.viewSortService.findByWorkspaceId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
   async getViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById(id, workspaceId);
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewSortDTO> {
+    return this.viewSortService.findByIdOrThrow({
+      id,
+      workspaceId,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewSortDTO)

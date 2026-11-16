@@ -86,21 +86,22 @@ export default defineCommandMenuItem({
 
 Rappresentano lo stato corrente della pagina:
 
-| Variabile                      | Tipo             | Descrizione                                                                                    |
-| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------- |
-| `pageType`                     | `string`         | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`)                       |
-| `isInSidePanel`                | `boolean`        | Indica se il componente è renderizzato in un pannello laterale                                 |
-| `numberOfSelectedRecords`      | `number`         | Numero di record attualmente selezionati                                                       |
-| `isSelectAll`                  | `boolean`        | Indica se "seleziona tutto" è attivo                                                           |
-| `selectedRecords`              | `array`          | Gli oggetti dei record selezionati                                                             |
-| `favoriteRecordIds`            | `array`          | ID dei record aggiunti ai preferiti                                                            |
-| `objectPermissions`            | `object`         | Autorizzazioni per il tipo di oggetto corrente                                                 |
-| `targetObjectReadPermissions`  | `object`         | Autorizzazioni di lettura per l'oggetto di destinazione                                        |
-| `targetObjectWritePermissions` | `object`         | Autorizzazioni di scrittura per l'oggetto di destinazione                                      |
-| `featureFlags`                 | `object`         | Flag delle funzionalità attivi                                                                 |
-| `objectMetadataItem`           | `object`         | Metadati del tipo di oggetto corrente                                                          |
-| `coreObjectName`               | `string \| null` | Oggetto core della pagina corrente (`'workflow'` nelle pagine di Workflows), altrimenti `null` |
-| `hasAnySoftDeleteFilterOnView` | `boolean`        | Indica se la vista corrente ha un filtro di soft-delete                                        |
+| Variabile                      | Tipo             | Descrizione                                                                                      |
+| ------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------ |
+| `pageType`                     | `string`         | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`)                         |
+| `isInSidePanel`                | `boolean`        | Indica se il componente è renderizzato in un pannello laterale                                   |
+| `numberOfSelectedRecords`      | `number`         | Numero di record attualmente selezionati                                                         |
+| `isSelectAll`                  | `boolean`        | Indica se "seleziona tutto" è attivo                                                             |
+| `selectedRecords`              | `array`          | Gli oggetti dei record selezionati                                                               |
+| `favoriteRecordIds`            | `array`          | ID dei record aggiunti ai preferiti                                                              |
+| `objectPermissions`            | `object`         | Autorizzazioni per il tipo di oggetto corrente                                                   |
+| `targetObjectReadPermissions`  | `object`         | Autorizzazioni di lettura per l'oggetto di destinazione                                          |
+| `targetObjectWritePermissions` | `object`         | Autorizzazioni di scrittura per l'oggetto di destinazione                                        |
+| `featureFlags`                 | `object`         | Flag delle funzionalità attivi                                                                   |
+| `objectMetadataItem`           | `object`         | Metadati del tipo di oggetto corrente                                                            |
+| `coreObjectName`               | `string \| null` | Oggetto core della pagina corrente (`'workflow'` nelle pagine di Workflows), altrimenti `null`   |
+| `currentView`                  | `object \| null` | La vista mostrata in una pagina di indice, come `{ id, universalIdentifier }`, altrimenti `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | Indica se la vista corrente ha un filtro di soft-delete                                          |
 
 ### Operatori
 

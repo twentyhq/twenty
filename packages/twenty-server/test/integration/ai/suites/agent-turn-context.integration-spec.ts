@@ -12,6 +12,10 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { type AiChatAssistantProfile } from 'twenty-shared/ai';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -81,6 +85,37 @@ const recordSystemPrompt = (name: string, systemPrompt: string) => {
 };
 
 describe('what an agent turn offers the model (integration)', () => {
+  let originalAssistantProfile: AiChatAssistantProfile;
+  const assistantDisplayName = 'Scout';
+  const setAssistantProfile = async (
+    aiChatAssistantProfile: AiChatAssistantProfile,
+  ) => {
+    await getCoreRepository<WorkspaceEntity>(WorkspaceEntity).update(
+      SEED_APPLE_WORKSPACE_ID,
+      { aiChatAssistantProfile },
+    );
+    await getAppProviderByClassName<CoreEntityCacheService>(
+      'CoreEntityCacheService',
+    ).invalidate('workspaceEntity', SEED_APPLE_WORKSPACE_ID);
+  };
+
+  beforeAll(async () => {
+    const workspace = await getCoreRepository<WorkspaceEntity>(
+      WorkspaceEntity,
+    ).findOneByOrFail({
+      id: SEED_APPLE_WORKSPACE_ID,
+    });
+
+    originalAssistantProfile = workspace.aiChatAssistantProfile;
+    await setAssistantProfile({
+      ...originalAssistantProfile,
+      displayName: assistantDisplayName,
+    });
+  });
+
+  afterAll(async () => {
+    await setAssistantProfile(originalAssistantProfile);
+  });
   afterEach(() => jest.restoreAllMocks());
 
   it('offers a chat turn the assistant tools', async () => {
@@ -136,6 +171,9 @@ describe('what an agent turn offers the model (integration)', () => {
     ]) {
       expect(calls[0].systemPrompt).toContain(section);
     }
+    expect(calls[0].systemPrompt).toContain(
+      `Your display name in this workspace is ${JSON.stringify(assistantDisplayName)}.`,
+    );
     recordSystemPrompt('chat', calls[0].systemPrompt);
 
     await destroyAgentChatThread({ threadId });
@@ -203,6 +241,9 @@ describe('what an agent turn offers the model (integration)', () => {
     ]) {
       expect(calls[0].systemPrompt).toContain(section);
     }
+    expect(calls[0].systemPrompt).not.toContain(
+      'Your display name in this workspace',
+    );
     recordSystemPrompt('run-agent', calls[0].systemPrompt);
 
     await deleteOneAgent({ expectToFail: false, input: { id: agentId } });

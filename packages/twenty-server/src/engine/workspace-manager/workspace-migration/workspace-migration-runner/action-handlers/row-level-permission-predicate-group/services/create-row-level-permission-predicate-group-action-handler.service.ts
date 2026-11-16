@@ -32,6 +32,7 @@ export class CreateRowLevelPermissionPredicateGroupActionHandlerService extends 
       objectMetadataId,
       roleId,
       parentRowLevelPermissionPredicateGroupId,
+      rowLevelPermissionRuleId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -50,6 +51,7 @@ export class CreateRowLevelPermissionPredicateGroupActionHandlerService extends 
         objectMetadataId,
         roleId,
         parentRowLevelPermissionPredicateGroupId,
+        rowLevelPermissionRuleId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

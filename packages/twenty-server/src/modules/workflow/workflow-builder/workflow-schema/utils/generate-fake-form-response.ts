@@ -64,15 +64,14 @@ export const generateFakeFormResponse = ({
           }),
         },
       };
-    } else {
-      return {
-        [formFieldMetadata.name]: generateFakeFormField({
-          type: formFieldMetadata.type,
-          label: formFieldMetadata.label,
-          value: formFieldMetadata.placeholder,
-        }),
-      };
     }
+    return {
+      [formFieldMetadata.name]: generateFakeFormField({
+        type: formFieldMetadata.type,
+        label: formFieldMetadata.label,
+        value: formFieldMetadata.placeholder,
+      }),
+    };
   });
 
   return result.filter(isDefined).reduce(

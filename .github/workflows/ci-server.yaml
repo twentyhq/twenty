@@ -30,6 +30,9 @@ jobs:
         packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
+        .github/actions/spawn-twenty-server/**
+        .github/actions/test-twenty-app/**
+        .github/workflows/ci-server.yaml
 
   upgrade-changed-files-check:
     if: github.event_name != 'merge_group'
@@ -283,6 +286,11 @@ jobs:
       actions: read
       contents: read
     uses: ./.github/workflows/ci-server-integration-test.yaml
+    secrets:
+      OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
+      OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
+      OKTA_SSO_TEST_NON_MEMBER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NON_MEMBER_PASSWORD }}
+      OKTA_SSO_TEST_NEWCOMER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NEWCOMER_PASSWORD }}
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
@@ -324,6 +332,9 @@ jobs:
           api-key: ${{ steps.twenty.outputs.api-key }}
           app-path: ${{ matrix.app.path }}
           mode: installation-only
+      - name: Dump server and worker logs on failure
+        if: failure()
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
 
   ci-server-status-check:
     if: always() && !cancelled()

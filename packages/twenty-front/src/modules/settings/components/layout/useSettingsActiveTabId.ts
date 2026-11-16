@@ -1,4 +1,5 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +15,7 @@ export const useSettingsActiveTabId = (
   );
   const { hash } = useLocation();
 
-  const hashTabId = hash.replace('#', '');
+  const { tabId: hashTabId } = parseTabRouteHash(hash);
   if (tabIds.includes(hashTabId)) {
     return hashTabId;
   }

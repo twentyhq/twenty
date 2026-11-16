@@ -16,7 +16,7 @@ import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exceptio
 
 import { CustomError } from 'twenty-shared/utils';
 
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+import { PostgresException } from 'src/engine/workspace-query-executor/exceptions/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { hasRestResponse } from 'src/engine/core-modules/exception-handler/utils/has-rest-response.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';

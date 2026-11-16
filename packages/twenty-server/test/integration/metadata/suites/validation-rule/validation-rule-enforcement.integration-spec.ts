@@ -324,3 +324,160 @@ describe('Validation rules should be enforced on record writes', () => {
     }
   });
 });
+
+describe('Validation rules reading previous values should be enforced on updates', () => {
+  let validationRuleId: string;
+  const createdOpportunityIds: string[] = [];
+
+  const createOpportunity = async (name: string) => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        mutation CreateOpportunity($name: String!) {
+          createOpportunity(data: { name: $name, stage: NEW }) {
+            id
+          }
+        }
+      `,
+      variables: { name },
+    });
+
+    const opportunityId = response.body.data.createOpportunity.id;
+
+    createdOpportunityIds.push(opportunityId);
+
+    return opportunityId;
+  };
+
+  const updateStage = ({ id, stage }: { id: string; stage: string }) =>
+    makeGraphqlApiRequest({
+      query: gql(`
+        mutation UpdateOpportunity($id: UUID!) {
+          updateOpportunity(id: $id, data: { stage: ${stage} }) {
+            id
+          }
+        }
+      `),
+      variables: { id },
+    });
+
+  beforeAll(async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+        }
+      `,
+    });
+
+    const opportunityObjectMetadata = objects.find(
+      (object: { nameSingular: string }) =>
+        object.nameSingular === 'opportunity',
+    );
+
+    jestExpectToBeDefined(opportunityObjectMetadata);
+
+    const stageField = opportunityObjectMetadata.fieldsList?.find(
+      (field: { name: string }) => field.name === 'stage',
+    );
+
+    jestExpectToBeDefined(stageField);
+
+    const response = await createValidationRule({
+      objectMetadataId: opportunityObjectMetadata.id,
+      errorFieldMetadataId: stageField.id,
+      name: 'Proposal follows a meeting',
+      expression:
+        'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+      message: 'Hold a meeting before sending a proposal',
+    });
+
+    validationRuleId = response.body.data.createValidationRule.id;
+    jestExpectToBeDefined(validationRuleId);
+  });
+
+  afterAll(async () => {
+    await makeMetadataApiRequest({
+      query: gql`
+        mutation DeleteValidationRule($id: UUID!) {
+          deleteValidationRule(id: $id) {
+            id
+          }
+        }
+      `,
+      variables: { id: validationRuleId },
+    });
+
+    if (createdOpportunityIds.length > 0) {
+      await makeGraphqlApiRequest({
+        query: gql`
+          mutation DestroyOpportunities($ids: [UUID!]!) {
+            destroyOpportunities(filter: { id: { in: $ids } }) {
+              id
+            }
+          }
+        `,
+        variables: { ids: createdOpportunityIds },
+      });
+    }
+  });
+
+  it('should reject an update that skips the stage the rule requires before it', async () => {
+    const opportunityId = await createOpportunity('Previous value skipped');
+
+    const response = await updateStage({
+      id: opportunityId,
+      stage: 'PROPOSAL',
+    });
+
+    expect(response.body.errors[0].extensions.subCode).toBe(
+      'VALIDATION_RULE_VIOLATION',
+    );
+    expect(await findOpportunitiesByName('Previous value skipped')).toEqual([
+      { id: opportunityId, stage: 'NEW' },
+    ]);
+  });
+
+  it('should accept the same stage once the required one comes first', async () => {
+    const opportunityId = await createOpportunity('Previous value followed');
+
+    expect(
+      (await updateStage({ id: opportunityId, stage: 'MEETING' })).body.errors,
+    ).toBe(undefined);
+    expect(
+      (await updateStage({ id: opportunityId, stage: 'PROPOSAL' })).body.errors,
+    ).toBe(undefined);
+    expect(await findOpportunitiesByName('Previous value followed')).toEqual([
+      { id: opportunityId, stage: 'PROPOSAL' },
+    ]);
+  });
+
+  it('should reject a filtered bulk update that skips the required stage', async () => {
+    const opportunityId = await createOpportunity('Previous value bulk');
+
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        mutation UpdateOpportunities($id: UUID!) {
+          updateOpportunities(
+            filter: { id: { eq: $id } }
+            data: { stage: PROPOSAL }
+          ) {
+            id
+          }
+        }
+      `,
+      variables: { id: opportunityId },
+    });
+
+    expect(response.body.errors[0].extensions.subCode).toBe(
+      'VALIDATION_RULE_VIOLATION',
+    );
+    expect(await findOpportunitiesByName('Previous value bulk')).toEqual([
+      { id: opportunityId, stage: 'NEW' },
+    ]);
+  });
+});

@@ -331,6 +331,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/data-model/capabilities/objects',
   USER_GUIDE_DATA_MODEL_CAPABILITIES_RELATION_FIELDS:
     '/user-guide/data-model/capabilities/relation-fields',
+  USER_GUIDE_DATA_MODEL_CAPABILITIES_VALIDATION_RULES:
+    '/user-guide/data-model/capabilities/validation-rules',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_FIELDS:
     '/user-guide/data-model/how-tos/create-custom-fields',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_OBJECTS:

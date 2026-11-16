@@ -34,7 +34,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
@@ -77,7 +76,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
-    private readonly codeStepBuildService: CodeStepBuildService,
     private readonly commandMenuItemService: CommandMenuItemService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -183,16 +181,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
       steps: steps ?? [],
       objectIdByNameSingular,
       flatFieldMetadataMaps,
-    });
-
-    await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
-      workspaceId,
-      steps: steps ?? [],
-    });
-
-    await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
-      workspaceId,
-      steps: steps ?? [],
     });
 
     await this.withCoreWorkflowLifecycleLock({

@@ -1,3 +1,4 @@
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -169,6 +170,28 @@ const computeFunctionExamples = ({
         ? [doNotTranslate(`arrayLength(${field.path}) > 0`)]
         : [];
     }
+    case 'daysSince': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [
+            doNotTranslate(
+              `daysSince(${field.path}) >= 0 and daysSince(${field.path}) <= 30`,
+            ),
+          ]
+        : [];
+    }
+    case 'isInRelativeDateRange': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [
+            doNotTranslate(
+              `isInRelativeDateRange(${field.path}, "PAST", 7, "DAY")`,
+            ),
+          ]
+        : [];
+    }
     default:
       return [];
   }
@@ -220,6 +243,27 @@ const computeKeywordExamples = ({
       const field = findFieldOfTypes(rootFields, DATE_TYPES);
 
       return isDefined(field) ? [doNotTranslate(`${field.path} >= now`)] : [];
+    }
+    case VALIDATION_RULE_PREVIOUS_VARIABLE_NAME: {
+      const field = findField(
+        rootFields,
+        (candidate) =>
+          candidate.type === FieldMetadataType.SELECT &&
+          candidate.selectOptionValues.length > 0,
+      );
+      const [firstOption] = field?.selectOptionValues ?? [];
+
+      if (!isDefined(field) || !isDefined(firstOption)) {
+        return [];
+      }
+
+      const previousPath = `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${field.path}`;
+
+      return [
+        doNotTranslate(
+          `${field.path} == ${previousPath} or ${previousPath} != ${quote(firstOption)}`,
+        ),
+      ];
     }
     case 'true':
     case 'false': {

@@ -45,9 +45,8 @@ export const useSortedArray = <T>(
         return sortDirection === 'asc'
           ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
           : (b[sortFieldName] as number) - (a[sortFieldName] as number);
-      } else {
-        return 0;
       }
+      return 0;
     });
   }, [arrayToSort, tableMetadata, initialSort, sortedFieldByTable]);
 

@@ -19,9 +19,12 @@ describe('canStartConnectionProviderAuthorization', () => {
     ).toBe(false);
   });
 
-  it('always allows a custom provider', () => {
-    expect(
-      canStartConnectionProviderAuthorization({ type: 'custom', oauth: null }),
-    ).toBe(true);
-  });
+  it.each(['custom', 'oauth-discovery'])(
+    'always allows a %s provider',
+    (type) => {
+      expect(
+        canStartConnectionProviderAuthorization({ type, oauth: null }),
+      ).toBe(true);
+    },
+  );
 });

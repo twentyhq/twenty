@@ -8,8 +8,9 @@ export const parseViewIdRestRequest = (
   if (
     !isDefined(request.query.viewId) ||
     typeof request.query.viewId !== 'string'
-  )
+  ) {
     return undefined;
+  }
 
   return request.query.viewId;
 };

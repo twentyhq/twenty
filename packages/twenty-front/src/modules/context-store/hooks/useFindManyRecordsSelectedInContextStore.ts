@@ -9,7 +9,7 @@ import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/field
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { RecordFilterOperand } from 'twenty-shared/types';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

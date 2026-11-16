@@ -16,6 +16,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -29,10 +30,12 @@ import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolv
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -62,12 +65,14 @@ describe('Records shared beyond the role that can access their object', () => {
     recordId,
   });
 
-  const setRecordSharingEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value,
-      expectToFail: false,
-    });
+  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+    for (const featureFlag of [
+      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+    ]) {
+      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+    }
+  };
 
   const setShare = ({
     principal,
@@ -185,7 +190,7 @@ describe('Records shared beyond the role that can access their object', () => {
       expect(created.body.errors).toBeUndefined();
     }
 
-    await setRecordSharingEnabled(true);
+    await setRecordSharingAndPrivateRecordsEnabled(true);
   });
 
   beforeEach(async () => {
@@ -198,7 +203,7 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
     await setMemberObjectAccess(true);
     await shares.deleteByRecordIds({
       workspaceId,
@@ -238,8 +243,14 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should answer access questions for the member from their shares', async () => {
-    const permissionsService =
-      getAppProviderByClassName<PermissionsService>('PermissionsService');
+    const principalPermissionsReadService =
+      getAppProviderByClassName<PrincipalPermissionsReadService>(
+        'PrincipalPermissionsReadService',
+      );
+    const recordPermissionsReadService =
+      getAppProviderByClassName<RecordPermissionsReadService>(
+        'RecordPermissionsReadService',
+      );
     const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
@@ -254,7 +265,7 @@ describe('Records shared beyond the role that can access their object', () => {
     }
 
     const buildJonyPrincipals = async () =>
-      permissionsService.buildPermissionsPrincipals({
+      principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -262,7 +273,8 @@ describe('Records shared beyond the role that can access their object', () => {
       });
 
     expect(
-      await permissionsService.canReadSomeRecords({
+      await recordPermissionsReadService.canAccessSomeRecords({
+        operationType: 'read',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -273,39 +285,38 @@ describe('Records shared beyond the role that can access their object', () => {
     const principals = await buildJonyPrincipals();
 
     expect(
-      await permissionsService.canReadSomeRecords({
+      await recordPermissionsReadService.canAccessSomeRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await permissionsService.canReadAllRecords({
+      await recordPermissionsReadService.canAccessSomeRecords({
+        operationType: 'update',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await permissionsService.canUpdateSomeRecords({
+      await recordPermissionsReadService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
+        recordIds: [OTHER_RECORD_ID],
       }),
     ).toBe(false);
     expect(
-      await permissionsService.findReadableRecordIds({
-        principals,
-        objectMetadataId: flatObjectMetadata.id,
-        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
-      }),
-    ).toEqual([SHARED_RECORD_ID]);
-    expect(
-      await permissionsService.canReadRecords({
+      await recordPermissionsReadService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID],
       }),
     ).toBe(true);
     expect(
-      await permissionsService.canReadRecords({
+      await recordPermissionsReadService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
@@ -316,7 +327,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should let an edit grant edit, but never delete or manage access', async () => {
     await setShare({
       principal: JONY,
-      accessLevel: RecordShareAccessLevel.FULL,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
     });
 
     expect((await renameAsJony('Edited by Jony')).body.errors).toBeUndefined();
@@ -350,6 +361,46 @@ describe('Records shared beyond the role that can access their object', () => {
       permissions: { canRead: true, canUpdate: true, canDelete: false },
       shares: [],
     });
+  });
+
+  it('should let a full access grant delete the record', async () => {
+    await setShare({
+      principal: JONY,
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
+
+    const sharing = await makeMetadataApiRequest(
+      { query: READ_SHARING, variables: { target: target() } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(sharing.body.data.recordSharing.permissions).toEqual({
+      canRead: true,
+      canUpdate: true,
+      canDelete: true,
+    });
+
+    const deleted = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: OBJECT_NAME,
+        gqlFields: 'id',
+        recordId: SHARED_RECORD_ID,
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(deleted.body.errors).toBeUndefined();
+
+    const restored = await makeGraphqlApiRequest(
+      restoreOneOperationFactory({
+        objectMetadataSingularName: OBJECT_NAME,
+        gqlFields: 'id',
+        recordId: SHARED_RECORD_ID,
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(restored.body.errors).toBeUndefined();
   });
 
   it('should not let a record that follows its roles reach beyond the role', async () => {
@@ -401,12 +452,16 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should let a named grant reach a record the row filter of the role hides', async () => {
-    await setMemberObjectAccess(true);
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
         predicates: [
           {
             fieldMetadataId: nameFieldMetadataId,
@@ -445,13 +500,17 @@ describe('Records shared beyond the role that can access their object', () => {
     }
   });
 
-  it('should refuse a merge that would leave a shared record the role cannot delete', async () => {
-    await setMemberObjectAccess(true);
+  it('should refuse a merge that would delete a record shared for editing only', async () => {
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
         predicates: [
           {
             fieldMetadataId: nameFieldMetadataId,
@@ -466,7 +525,7 @@ describe('Records shared beyond the role that can access their object', () => {
     try {
       await setShare({
         principal: JONY,
-        accessLevel: RecordShareAccessLevel.FULL,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
       });
 
       const merged = await makeGraphqlApiRequest(
@@ -515,42 +574,45 @@ describe('Records shared beyond the role that can access their object', () => {
         throw new Error('Test object metadata is missing');
       }
 
-      return getAppProviderByClassName<PermissionsService>(
-        'PermissionsService',
-      ).findReadableEventRecordIds({
-        authContext: await resolveWorkspaceMemberAuthContext({
-          workspaceId,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        }),
-        eventBatch: {
-          name: `${OBJECT_NAME}.updated`,
-          workspaceId,
-          objectMetadata,
-          events: [SHARED_RECORD_ID, OTHER_RECORD_ID].map((recordId) => ({
-            recordId,
-            properties: { after: { id: recordId } },
-          })) as ObjectRecordEvent[],
-        },
-      });
+      const readableEvents =
+        await getAppProviderByClassName<RecordEventPermissionsReadService>(
+          'RecordEventPermissionsReadService',
+        ).filterReadableEvents({
+          authContext: await resolveWorkspaceMemberAuthContext({
+            workspaceId,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          }),
+          eventBatch: {
+            name: `${OBJECT_NAME}.updated`,
+            workspaceId,
+            objectMetadata,
+            events: [SHARED_RECORD_ID, OTHER_RECORD_ID].map((recordId) => ({
+              recordId,
+              properties: { after: { id: recordId } },
+            })) as ObjectRecordEvent[],
+          },
+        });
+
+      return readableEvents.map(({ recordId }) => recordId);
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveReadableRecordIds())]).toEqual([]);
+    expect(await resolveReadableRecordIds()).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveReadableRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect(await resolveReadableRecordIds()).toEqual([SHARED_RECORD_ID]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {
     await setShare({ principal: JONY });
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
 
     try {
       expect((await findIdsAsJony()).errors).toBeDefined();
     } finally {
-      await setRecordSharingEnabled(true);
+      await setRecordSharingAndPrivateRecordsEnabled(true);
     }
   });
 });

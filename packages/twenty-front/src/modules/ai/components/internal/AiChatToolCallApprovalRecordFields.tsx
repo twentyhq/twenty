@@ -1,17 +1,12 @@
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { AiChatToolCallApprovalCurrentValue } from '@/ai/components/internal/AiChatToolCallApprovalCurrentValue';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { useToolCallApprovalFieldDefinitions } from '@/ai/hooks/useToolCallApprovalFieldDefinitions';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 // approvers read amounts in currency units, as the record shows them, not as micros
 const CURRENCY_INPUT_SETTINGS = {
@@ -47,35 +42,8 @@ export const AiChatToolCallApprovalRecordFields = ({
   readonly,
   onChange,
 }: AiChatToolCallApprovalRecordFieldsProps) => {
-  const objectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    { objectName: objectNameSingular, objectNameType: 'singular' },
-  );
-
-  // a many-to-one relation is set through its foreign key
-  const fieldDefinitionsByArgumentName = useMemo(
-    () =>
-      new Map(
-        isDefined(objectMetadataItem)
-          ? objectMetadataItem.fields.map((field) => {
-              const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
-                field,
-                objectMetadataItem,
-                showLabel: true,
-                labelWidth: 90,
-              });
-
-              return [
-                isFieldRelationManyToOne(fieldDefinition)
-                  ? doNotTranslate(`${field.name}Id`)
-                  : field.name,
-                fieldDefinition,
-              ] as const;
-            })
-          : [],
-      ),
-    [objectMetadataItem],
-  );
+  const { fieldDefinitionsByArgumentName } =
+    useToolCallApprovalFieldDefinitions(objectNameSingular);
 
   return (
     <>

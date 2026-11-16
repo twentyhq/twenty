@@ -67,7 +67,7 @@ Con un retraso aleatorio en un intervalo de una hora, las mismas ejecuciones se 
                           N × calls spread over 60 minutes  →  OK
 ```
 
-* **Agrupe en lotes los desencadenadores de eventos de base de datos.** Una escritura masiva, como la sincronización de un buzón de correo, emite un evento por registro, miles en cuestión de segundos, y una ejecución por evento implica una solicitud por registro. Establezca `batchMode: true`, declare `updatedFields` y reduzca el lote a registros distintos antes de llamar a la API. Consulte [Agrupación en lotes de eventos de base de datos](/es/developers/extend/apps/logic/logic-functions#batching-database-events).
+* **Agrupe en lotes los desencadenadores de eventos de base de datos.** Una escritura masiva, como la sincronización de un buzón de correo, emite un evento por registro, miles en cuestión de segundos, y una ejecución por evento implica una solicitud por registro. Establece `batchMode: true`, declara `watchedFieldUniversalIdentifiers` y reduce el lote a registros distintos antes de llamar a la API. Consulte [Agrupación en lotes de eventos de base de datos](/es/developers/extend/apps/logic/logic-functions#batching-database-events).
 
 * **Realice una solicitud por lote, no por registro.** El límite cuenta solicitudes, no registros: un `createMany` con `upsert: true` que contiene 200 registros es una solicitud; 200 actualizaciones individuales son 200. Lea con filtros `in` y escriba con `createMany` o `updateMany`.
 

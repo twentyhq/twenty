@@ -1,7 +1,8 @@
 import { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from '@/ai/constants/ChatReferenceIdentityShapeByKind';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { parseAgentChatAssistantReferenceBody } from 'twenty-shared/ai';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type ParsedChatReferenceBody = ChatReferenceIdentity & { displayName: string };
 
@@ -72,6 +73,12 @@ const parseSegments = ({
 export const parseChatReferenceBody = (
   body: string,
 ): ParsedChatReferenceBody | undefined => {
+  const assistantReference = parseAgentChatAssistantReferenceBody(body);
+
+  if (isDefined(assistantReference)) {
+    return assistantReference;
+  }
+
   const segments = body.split(':');
   const [kindPrefix, ...identityAndLabel] = segments;
 

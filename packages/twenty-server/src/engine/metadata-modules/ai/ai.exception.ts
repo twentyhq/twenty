@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { AGENT_CHAT_ASSISTANT_NAME } from 'twenty-shared/ai';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -48,6 +49,8 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  CHAT_RECIPIENTS_CANNOT_REPLY = 'CHAT_RECIPIENTS_CANNOT_REPLY',
+  MODEL_NOT_ALLOWED_BY_DATA_POLICY = 'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -138,6 +141,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.CHAT_RECIPIENTS_CANNOT_REPLY:
+      return msg`None of the people you picked can reply in this chat. Add ${AGENT_CHAT_ASSISTANT_NAME} or someone who can reply.`;
+    case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
+      return msg`No AI model meets this workspace's privacy settings.`;
     default:
       assertUnreachable(code);
   }

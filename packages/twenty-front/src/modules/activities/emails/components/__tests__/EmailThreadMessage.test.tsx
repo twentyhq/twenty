@@ -81,4 +81,49 @@ describe('EmailThreadMessage', () => {
       screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
     ).not.toBeInTheDocument();
   });
+
+  it('renders the attachments of an expanded message', () => {
+    render(
+      <EmailThreadMessage
+        message={buildMessage({
+          attachments: [
+            {
+              id: 'attachment-id',
+              file: [
+                {
+                  fileId: 'file-id',
+                  label: 'mapping01.xls',
+                  extension: 'xls',
+                },
+              ],
+            },
+          ],
+        })}
+        isExpanded
+        onDraftClick={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText('Has attachments')).toBeInTheDocument();
+    expect(screen.getByText('mapping01.xls')).toBeInTheDocument();
+  });
+
+  it('only flags attachments on a collapsed message', () => {
+    render(
+      <EmailThreadMessage
+        message={buildMessage({
+          attachments: [
+            {
+              id: 'attachment-id',
+              file: [{ fileId: 'file-id', label: 'mapping01.xls' }],
+            },
+          ],
+        })}
+        onDraftClick={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText('Has attachments')).toBeInTheDocument();
+    expect(screen.queryByText('mapping01.xls')).not.toBeInTheDocument();
+  });
 });

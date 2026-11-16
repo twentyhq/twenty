@@ -13,16 +13,16 @@ type BuildMutationQueryBuilderArgs = {
   kind: MutationKind;
 };
 
-export const buildMutationQueryBuilder = ({
+export const buildMutationQueryBuilder = async ({
   repository,
   alias,
   filter,
   commonQueryParser,
   kind,
-}: BuildMutationQueryBuilderArgs): {
+}: BuildMutationQueryBuilderArgs): Promise<{
   selectQueryBuilder: WorkspaceSelectQueryBuilder;
   rowLevelPermissionsApplied: boolean;
-} => {
+}> => {
   const filteredQueryBuilder = repository.createQueryBuilder(alias);
 
   commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
@@ -40,7 +40,7 @@ export const buildMutationQueryBuilder = ({
     .select(`${alias}.id`)
     .withDeleted();
 
-  repository.applyWriteRowLevelPermissions(idSubQueryBuilder, kind);
+  await repository.applyWriteRowLevelPermissions(idSubQueryBuilder, kind);
 
   const selectQueryBuilder = repository
     .createQueryBuilder(alias)

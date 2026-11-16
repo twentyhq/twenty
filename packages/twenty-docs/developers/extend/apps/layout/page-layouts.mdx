@@ -67,7 +67,7 @@ export default definePageLayout({
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - An `IFRAME` widget can use the microphone or camera for websites approved through its owning app's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access). Members select **Enable** and approve a native browser confirmation showing the app, website origin, and requested microphone or camera access before access starts. Workspace security approvals and other apps' grants do not apply to app-defined widgets.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
-- `twenty app pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one showing your app's own front component or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
+- `twenty app pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one referencing a front component whose source cannot be pulled, or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Field widgets
 

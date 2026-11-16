@@ -7,21 +7,33 @@ const creatableObjectMetadataItem = {
   isRemote: false,
 };
 
-const objectPermissionsAllowingUpdate = getDefaultObjectPermissions();
+const objectPermissionsAllowingCreate = getDefaultObjectPermissions();
 
 describe('canCreateRecordsForObjectMetadataItem', () => {
-  it('should return true for a creatable, editable, non-remote object with update permission', () => {
+  it('should return true for a creatable, editable, non-remote object with create permission', () => {
     const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
+      objectPermissions: objectPermissionsAllowingCreate,
       objectMetadataItem: creatableObjectMetadataItem,
     });
 
     expect(result).toBe(true);
   });
 
+  it('should return false without create permission, even with update permission', () => {
+    const result = canCreateRecordsForObjectMetadataItem({
+      objectPermissions: {
+        ...objectPermissionsAllowingCreate,
+        canCreateAllRecords: false,
+      },
+      objectMetadataItem: creatableObjectMetadataItem,
+    });
+
+    expect(result).toBe(false);
+  });
+
   it('should return false when the object is not UI creatable', () => {
     const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
+      objectPermissions: objectPermissionsAllowingCreate,
       objectMetadataItem: {
         ...creatableObjectMetadataItem,
         isUICreatable: false,
@@ -33,7 +45,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
 
   it('should return false when the object is not UI editable', () => {
     const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
+      objectPermissions: objectPermissionsAllowingCreate,
       objectMetadataItem: {
         ...creatableObjectMetadataItem,
         isUIEditable: false,
@@ -45,7 +57,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
 
   it('should return false when the object is remote', () => {
     const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
+      objectPermissions: objectPermissionsAllowingCreate,
       objectMetadataItem: {
         ...creatableObjectMetadataItem,
         isRemote: true,
@@ -55,16 +67,16 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false when the user lacks the update permission proxy', () => {
+  it('should return true with create permission, even without update permission', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: {
-        ...objectPermissionsAllowingUpdate,
+        ...objectPermissionsAllowingCreate,
         canUpdateAllRecords: false,
       },
       objectMetadataItem: creatableObjectMetadataItem,
     });
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('should not require object permissions to be provided', () => {

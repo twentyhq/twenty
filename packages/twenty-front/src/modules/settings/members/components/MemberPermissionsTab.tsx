@@ -76,14 +76,18 @@ export const MemberPermissionsTab = ({
 
   const handleRoleChangeRequest = (newRoleId: string) => {
     const newRole = allRoles.find((role) => role.id === newRoleId);
-    if (!newRole || newRoleId === primaryRole?.id) return;
+    if (!newRole || newRoleId === primaryRole?.id) {
+      return;
+    }
 
     setPendingRole(newRole);
     openDialog(CONFIRM_ROLE_CHANGE_MODAL_ID);
   };
 
   const handleConfirmRoleChange = async () => {
-    if (!member?.id || !pendingRole) return;
+    if (!member?.id || !pendingRole) {
+      return;
+    }
 
     try {
       await updateWorkspaceMemberRoleMutation({

@@ -9,7 +9,10 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
   StandardObjectNameSingular.Person,
@@ -102,12 +105,12 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
   const objectMetadataItemsForNavigationItemsWithReadPermission =
     objectMetadataItemsForNavigationItems.filter((objectMetadataItem) =>
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       }),
     );
 

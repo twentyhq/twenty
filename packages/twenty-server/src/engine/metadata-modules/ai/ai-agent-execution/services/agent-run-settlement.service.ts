@@ -4,8 +4,8 @@ import type { Redis } from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { RUN_AGENT_SETTLED_RUN_RECONCILE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-reconcile-interval-ms.const';
-import { RUN_AGENT_SETTLED_RUN_TTL_SECONDS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-ttl-seconds.const';
+import { RUN_AGENT_SETTLED_RUN_RECONCILE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-reconcile-interval-ms.constant';
+import { RUN_AGENT_SETTLED_RUN_TTL_SECONDS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-ttl-seconds.constant';
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 

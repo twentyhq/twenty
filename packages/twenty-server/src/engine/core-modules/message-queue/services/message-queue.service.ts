@@ -6,11 +6,13 @@ import {
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
+  type BulkAddResult,
   type InFlightQueueJob,
   MessageQueueDriver,
   type QueueJobDetails,
   type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type JobMemoryReconciliation } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -45,7 +47,7 @@ export class MessageQueueService {
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]> {
+  ): Promise<BulkAddResult> {
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
   }
 
@@ -67,6 +69,22 @@ export class MessageQueueService {
     }
 
     return this.driver.getInFlightJobs(this.queueName);
+  }
+
+  removeJob(jobId: string): Promise<boolean> {
+    if (typeof this.driver.removeJob !== 'function') {
+      return Promise.resolve(false);
+    }
+
+    return this.driver.removeJob(this.queueName, jobId);
+  }
+
+  reconcileJobMemory(): Promise<JobMemoryReconciliation> {
+    if (typeof this.driver.reconcileJobMemory !== 'function') {
+      return Promise.resolve({ releasedCount: 0, releasedBytes: 0 });
+    }
+
+    return this.driver.reconcileJobMemory();
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

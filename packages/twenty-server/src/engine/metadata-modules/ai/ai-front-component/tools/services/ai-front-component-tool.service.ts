@@ -15,7 +15,7 @@ import { createListFrontComponentsTool } from 'src/engine/metadata-modules/ai/ai
 import { createPreviewFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/preview-front-component.tool';
 import { createPublishFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/publish-front-component.tool';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class AiFrontComponentToolService {
@@ -23,7 +23,7 @@ export class AiFrontComponentToolService {
     private readonly aiFrontComponentService: AiFrontComponentService,
     private readonly frontComponentService: FrontComponentService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
@@ -35,9 +35,9 @@ export class AiFrontComponentToolService {
         FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
         context.workspaceId,
       )) ||
-      !(await this.permissionsService.hasPermissionFlag({
+      !(await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.APPLICATIONS,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
       }))
     ) {
       return {};

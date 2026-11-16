@@ -1,4 +1,4 @@
-import { type ObjectPermissionAction } from '@/application/objectPermissionActionType';
+import { type DisableableObjectPermissionAction } from '@/application/objectPermissionActionType';
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
@@ -15,7 +15,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   isSearchable?: boolean;
   isUICreatable?: boolean;
   isUIEditable?: boolean;
-  disabledObjectPermissionActions?: ObjectPermissionAction[];
+  disabledObjectPermissionActions?: DisableableObjectPermissionAction[];
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

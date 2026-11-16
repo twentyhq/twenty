@@ -15,7 +15,6 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -41,6 +40,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
+import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProvidersDTO,
@@ -55,13 +56,13 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { resolveIsInternalImportEnabled } from 'src/engine/core-modules/workspace/utils/resolve-is-internal-import-enabled.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -104,6 +105,7 @@ export class WorkspaceResolver {
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingService: BillingService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly roleService: RoleService,
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
@@ -185,7 +187,6 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ) {
@@ -196,9 +197,7 @@ export class WorkspaceResolver {
           id: workspace.id,
         },
         userWorkspaceId,
-        apiKey,
         application,
-        agentId: undefined,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -280,6 +279,29 @@ export class WorkspaceResolver {
     );
   }
 
+  @ResolveField(() => Boolean)
+  async isInternalImportEnabled(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    const isInternalImportColumnEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED,
+        workspace.id,
+      );
+
+    return resolveIsInternalImportEnabled({
+      workspace,
+      isInternalImportColumnEnabled,
+    });
+  }
+
+  @ResolveField(() => AiDataPolicyDTO, { nullable: true })
+  async aiDataPolicy(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<AiDataPolicyDTO | null> {
+    return this.workspaceAiDataPolicyService.findStoredAiDataPolicy(workspace);
+  }
+
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
     AccessPolicyGuard({
@@ -299,6 +321,9 @@ export class WorkspaceResolver {
   )
   @AllowSuspendedWorkspace()
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
+    await this.workspaceService.assertWorkspaceDeletionKeepsServerAdminOrThrow(
+      id,
+    );
     await this.workspaceService.suspendWorkspace(id);
     return this.workspaceService.deleteWorkspace(id, true);
   }

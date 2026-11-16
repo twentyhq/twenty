@@ -240,8 +240,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
   private parseCompositeField(
     fieldMetadata: OrmFlatFieldMetadata,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    fieldValue: any,
+    fieldValue: Record<string, unknown>,
     // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any> {
     const compositeType = compositeTypeDefinitions.get(

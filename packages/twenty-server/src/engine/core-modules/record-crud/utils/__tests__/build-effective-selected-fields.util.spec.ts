@@ -1,4 +1,4 @@
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -418,25 +418,29 @@ describe('buildEffectiveSelectedFields', () => {
 
     const buildRecordsPermissions = ({
       canReadCompany = true,
-      sourceRestrictedFields = {},
+      sourceUnreadableFields = [],
     }: {
       canReadCompany?: boolean;
-      sourceRestrictedFields?: Record<string, { canRead: boolean }>;
+      sourceUnreadableFields?: string[];
     }): Pick<RoleRecordsPermissions, 'objects'> => ({
       objects: {
         'investor-lead-object-id': {
+          canCreateAllRecords: false,
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: sourceRestrictedFields,
+          unreadableFields: sourceUnreadableFields,
+          uneditableFields: sourceUnreadableFields,
         },
         'company-object-id': {
+          canCreateAllRecords: false,
           canReadAllRecords: canReadCompany,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
         },
       },
     });
@@ -447,11 +451,10 @@ describe('buildEffectiveSelectedFields', () => {
       new Set(
         [investorLeadObjectMetadata, companyObjectMetadata].flatMap(
           (objectMetadata) =>
-            objectMetadata.fieldIds.filter(
-              (fieldId) =>
-                recordsPermissions.objects[objectMetadata.id]?.restrictedFields[
-                  fieldId
-                ]?.canRead === false,
+            objectMetadata.fieldIds.filter((fieldId) =>
+              recordsPermissions.objects[
+                objectMetadata.id
+              ]?.unreadableFields.includes(fieldId),
             ),
         ),
       );
@@ -471,9 +474,9 @@ describe('buildEffectiveSelectedFields', () => {
         readableObjectMetadataIds: new Set(
           Object.entries(recordsPermissions.objects)
             .filter(([, objectRecordsPermissions]) =>
-              canReachSomeRecords({
+              canAccessThroughAllRecordsOrRlsPermission({
                 objectRecordsPermissions,
-                operationType: 'select',
+                operationType: 'read',
               }),
             )
             .map(([objectMetadataId]) => objectMetadataId),
@@ -592,7 +595,7 @@ describe('buildEffectiveSelectedFields', () => {
 
     it('should warn when the relation field itself is restricted for the role', () => {
       const recordsPermissions = buildRecordsPermissions({
-        sourceRestrictedFields: { 'fund-field': { canRead: false } },
+        sourceUnreadableFields: ['fund-field'],
       });
 
       const { effectiveSelectedFields, warnings } =

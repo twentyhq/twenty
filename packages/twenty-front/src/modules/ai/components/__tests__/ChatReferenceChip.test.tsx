@@ -464,4 +464,13 @@ describe('TextWithChatReferences', () => {
       'Sort by Stage first',
     );
   });
+
+  it('should keep the written assistant name when navigation is disabled', () => {
+    renderWithReferences(
+      <TextWithChatReferences text="Ask [[record:agentChatAssistant:agentChatAssistant:Scout]] today" />,
+      { isNavigationEnabled: false },
+    );
+
+    expect(screen.getByText(/Ask/)).toHaveTextContent('Ask @Scout today');
+  });
 });

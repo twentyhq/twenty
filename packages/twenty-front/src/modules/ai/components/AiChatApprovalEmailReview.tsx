@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Button, Input } from 'twenty-ui/primitives/input';
+import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
+import { EmailRecipientsFields } from '@/activities/emails/recipients/components/EmailRecipientsFields';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai/types/AiChatApprovalReviewEmailDraft';
 
 const StyledEmail = styled.div`
@@ -15,15 +15,20 @@ const StyledEmail = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledBody = styled.div`
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
 `;
 
 type AiChatApprovalEmailReviewProps = {
   draft: AiChatApprovalReviewEmailDraft;
-  onDraftChange: (draft: AiChatApprovalReviewEmailDraft) => void;
+  onDraftChange: (
+    update: (
+      draft: AiChatApprovalReviewEmailDraft,
+    ) => AiChatApprovalReviewEmailDraft,
+  ) => void;
   disabled?: boolean;
 };
 
@@ -33,66 +38,42 @@ export const AiChatApprovalEmailReview = ({
   disabled = false,
 }: AiChatApprovalEmailReviewProps) => {
   const { t } = useLingui();
-  const isCcBccShown =
-    draft.isCcBccExpanded ||
-    isNonEmptyArray(draft.cc) ||
-    isNonEmptyArray(draft.bcc);
-
   const updateDraft = (changes: Partial<AiChatApprovalReviewEmailDraft>) => {
     if (disabled) {
       return;
     }
 
-    onDraftChange({ ...draft, ...changes });
+    onDraftChange((currentDraft) => ({ ...currentDraft, ...changes }));
   };
 
   return (
     <StyledEmail>
-      <AiChatEmailRecipientsRow
-        label={t`To`}
-        isLabelVisible={false}
-        recipients={draft.to}
-        disabled={disabled}
-        onChange={(to) => updateDraft({ to })}
-        trailing={
-          !isCcBccShown && (
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={disabled}
-              onClick={() => updateDraft({ isCcBccExpanded: true })}
-            >
-              {t`Cc/Bcc`}
-            </Button>
-          )
-        }
-      />
-      {isCcBccShown && (
-        <>
-          <AiChatEmailRecipientsRow
-            label={t`Cc`}
-            recipients={draft.cc}
-            disabled={disabled}
-            onChange={(cc) => updateDraft({ cc })}
-          />
-          <AiChatEmailRecipientsRow
-            label={t`Bcc`}
-            recipients={draft.bcc}
-            disabled={disabled}
-            onChange={(bcc) => updateDraft({ bcc })}
-          />
-        </>
-      )}
-      <ComposerFieldRow label={t`Subject`} isLabelVisible={false}>
-        <Input
-          variant="plain"
-          aria-label={t`Subject`}
-          placeholder={t`Subject`}
-          value={draft.subject}
-          disabled={disabled}
-          onChange={(event) => updateDraft({ subject: event.target.value })}
+      <ComposerHeader>
+        <EmailRecipientsFields
+          recipientsByFieldId={{ to: draft.to, cc: draft.cc, bcc: draft.bcc }}
+          onChange={(update) =>
+            onDraftChange((currentDraft) => ({
+              ...currentDraft,
+              ...update({
+                to: currentDraft.to,
+                cc: currentDraft.cc,
+                bcc: currentDraft.bcc,
+              }),
+            }))
+          }
+          readonly={disabled}
         />
-      </ComposerFieldRow>
+        <ComposerFieldRow label={t`Subject`} hasDivider={false}>
+          <Input
+            variant="plain"
+            aria-label={t`Subject`}
+            placeholder={t`Subject`}
+            value={draft.subject}
+            disabled={disabled}
+            onChange={(event) => updateDraft({ subject: event.target.value })}
+          />
+        </ComposerFieldRow>
+      </ComposerHeader>
       <StyledBody role="group" aria-label={t`Body`}>
         <FormAdvancedTextFieldInput
           value={draft.body}

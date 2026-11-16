@@ -7,7 +7,9 @@ export const isInvalidSyncTokenResponse = (
 ): boolean => {
   const DAVResponse = responses[0];
 
-  if (!isDefined(DAVResponse) || DAVResponse.status !== 403) return false;
+  if (!isDefined(DAVResponse) || DAVResponse.status !== 403) {
+    return false;
+  }
 
   const body = isNonEmptyString(DAVResponse.raw)
     ? DAVResponse.raw

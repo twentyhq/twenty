@@ -1,4 +1,5 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
@@ -17,7 +18,7 @@ export const recordIndexAllRecordIdsComponentSelector =
           instanceId,
         });
 
-        if (recordGroupIds.length === 0) {
+        if (!get(hasRecordGroupsComponentSelector, { instanceId })) {
           return get(recordIndexRecordIdsByGroupComponentFamilyState, {
             instanceId,
             familyKey: NO_RECORD_GROUP_FAMILY_KEY,

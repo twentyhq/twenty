@@ -9,6 +9,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const StyledAnimatedItemBase = styled.div`
   max-width: 100%;
+
+  &[data-filling-remaining-space='true'] {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+    width: 100%;
+  }
 `;
 
 const StyledAnimatedItem = motion.create(StyledAnimatedItemBase);
@@ -16,13 +25,13 @@ const StyledAnimatedItem = motion.create(StyledAnimatedItemBase);
 type OnboardingStepAnimatedItemProps = {
   index: number;
   children: ReactNode;
-  className?: string;
+  isFillingRemainingSpace?: boolean;
 };
 
 export const OnboardingStepAnimatedItem = ({
   index,
   children,
-  className,
+  isFillingRemainingSpace = false,
 }: OnboardingStepAnimatedItemProps) => {
   const transition = useOnboardingMotionTransition();
   const shouldReduceMotion = useReducedMotion();
@@ -37,7 +46,7 @@ export const OnboardingStepAnimatedItem = ({
 
   return (
     <StyledAnimatedItem
-      className={className}
+      data-filling-remaining-space={isFillingRemainingSpace}
       initial={{
         opacity: 0,
         y: shouldReduceMotion ? 0 : directionalEnterSlideOffset,

@@ -208,6 +208,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     return {
       ...context,
+      workspaceMemberId,
       workspaceMember,
     };
   }

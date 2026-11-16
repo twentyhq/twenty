@@ -126,7 +126,7 @@ describe('generate mutation (integration)', () => {
       usage: SCRIPTED_MODEL_USAGE,
     };
 
-    mockScriptedAiModel((callIndex) =>
+    mockScriptedAiModel(({ callIndex }) =>
       callIndex === 0 ? callMissingTool : failWith('Invalid request'),
     );
 

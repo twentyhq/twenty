@@ -22,6 +22,26 @@ describe('mapUIMessagePartsToDBParts', () => {
     });
   });
 
+  it('stores malformed tool call arguments as an empty input', () => {
+    const [storedPart] = mapUIMessagePartsToDBParts(
+      [
+        {
+          type: 'tool-search',
+          toolCallId: 'call-1',
+          state: 'output-error',
+          input: '{"query": "unescaped " quote"}',
+          errorText: 'Invalid tool input',
+        },
+      ],
+      'message-id',
+    );
+
+    expect(storedPart).toMatchObject({
+      toolInput: {},
+      errorMessage: 'Invalid tool input',
+    });
+  });
+
   it('drops a tool call still streaming its input', () => {
     expect(
       mapUIMessagePartsToDBParts(

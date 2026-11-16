@@ -14,7 +14,7 @@ import {
 
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -125,10 +125,9 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextInstance,
         ...executeParams,
       );
-    } else {
-      // @ts-expect-error legacy noImplicitAny
-      return instance[methodName].call(instance, ...executeParams);
     }
+    // @ts-expect-error legacy noImplicitAny
+    return instance[methodName].call(instance, ...executeParams);
   }
 
   private transformPayload(payload: QueryResultFieldValue): ObjectRecord[] {
@@ -211,15 +210,14 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         executeParams[1],
         transformedPayload,
       );
-    } else {
-      // @ts-expect-error legacy noImplicitAny
-      return instance[methodName].call(
-        instance,
-        executeParams[0],
-        executeParams[1],
-        transformedPayload,
-      );
     }
+    // @ts-expect-error legacy noImplicitAny
+    return instance[methodName].call(
+      instance,
+      executeParams[0],
+      executeParams[1],
+      transformedPayload,
+    );
   }
 
   private registerWorkspaceQueryHook(

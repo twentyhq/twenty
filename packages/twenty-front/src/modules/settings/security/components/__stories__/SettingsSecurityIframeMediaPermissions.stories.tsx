@@ -80,18 +80,15 @@ export const ConfiguresMediaPermissions: StoryObj<typeof meta> = {
     const form = within(
       canvas.getByRole('group', { name: 'Add embedded website' }),
     );
-    const originInput = form.getByRole('textbox');
+    const originInput = form.getByRole('textbox', { name: 'Website origin' });
     const addButton = form.getByRole('button', { name: 'Add website' });
 
     await waitFor(() => expect(originInput).toBeEnabled());
-    await userEvent.type(originInput, 'http://workspace.aircall.io');
     await expect(addButton).toBeDisabled();
-    await userEvent.click(form.getByRole('switch', { name: 'Microphone' }));
+    await userEvent.type(originInput, 'http://workspace.aircall.io');
     await userEvent.click(addButton);
     await expect(
-      form.getByText(
-        'Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io.',
-      ),
+      form.getByText('Enter an HTTPS origin without a path or wildcard.'),
     ).toBeVisible();
     await expect(saveRequest).not.toHaveBeenCalled();
 
@@ -99,46 +96,41 @@ export const ConfiguresMediaPermissions: StoryObj<typeof meta> = {
     await userEvent.type(originInput, ORIGIN);
     await userEvent.click(addButton);
 
-    const originRow = within(
-      await canvas.findByRole('group', { name: ORIGIN }),
-    );
+    const accessSelect = within(
+      await canvas.findByRole('group', { name: `Media access for ${ORIGIN}` }),
+    ).getByRole('button', { name: 'Microphone and camera' });
     await expect(saveRequest).toHaveBeenLastCalledWith({
       origin: ORIGIN,
       microphone: true,
-      camera: false,
-    });
-    await expect(
-      originRow.getByRole('switch', { name: 'Microphone' }),
-    ).toBeChecked();
-    const cameraSwitch = originRow.getByRole('switch', { name: 'Camera' });
-    const microphoneSwitch = originRow.getByRole('switch', {
-      name: 'Microphone',
-    });
-    await expect(cameraSwitch).not.toBeChecked();
-    await waitFor(() => expect(cameraSwitch).toBeEnabled());
-    await expect(microphoneSwitch).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(cameraSwitch);
-    await waitFor(() => expect(cameraSwitch).toBeChecked());
-
-    await waitFor(() => expect(microphoneSwitch).toBeEnabled());
-    await userEvent.click(microphoneSwitch);
-    await waitFor(() => expect(microphoneSwitch).not.toBeChecked());
-    await expect(cameraSwitch).toBeChecked();
-    await expect(cameraSwitch).toHaveAttribute('aria-disabled', 'true');
-    await expect(saveRequest).toHaveBeenLastCalledWith({
-      origin: ORIGIN,
-      microphone: false,
       camera: true,
     });
 
-    const removeButton = originRow.getByRole('button', {
+    await waitFor(() => expect(accessSelect).toBeEnabled());
+    await userEvent.click(accessSelect);
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('option', {
+        name: 'Microphone only',
+      }),
+    );
+    await waitFor(() =>
+      expect(saveRequest).toHaveBeenLastCalledWith({
+        origin: ORIGIN,
+        microphone: true,
+        camera: false,
+      }),
+    );
+    await expect(
+      await canvas.findByRole('button', { name: 'Microphone only' }),
+    ).toBeVisible();
+
+    const removeButton = canvas.getByRole('button', {
       name: `Remove media access for ${ORIGIN}`,
     });
     await waitFor(() => expect(removeButton).toBeEnabled());
     await userEvent.click(removeButton);
     await waitFor(() =>
       expect(
-        canvas.queryByRole('group', { name: ORIGIN }),
+        canvas.queryByRole('button', { name: 'Microphone only' }),
       ).not.toBeInTheDocument(),
     );
     await expect(saveRequest).toHaveBeenLastCalledWith({
@@ -146,11 +138,5 @@ export const ConfiguresMediaPermissions: StoryObj<typeof meta> = {
       microphone: false,
       camera: false,
     });
-    await expect(canvas.getByRole('status')).toHaveTextContent(
-      'Reloading ends active calls and recordings.',
-    );
-    await expect(
-      canvas.getByRole('button', { name: 'Reload page' }),
-    ).toBeVisible();
   },
 };

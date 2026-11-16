@@ -38,7 +38,9 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     newBody: string,
     previousBody?: string | null,
   ) => {
-    if (!newBody) return;
+    if (!newBody) {
+      return;
+    }
 
     const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
       newBody,
@@ -84,7 +86,9 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     );
 
     for (const attachmentToUpdate of attachmentsToUpdate) {
-      if (!attachmentToUpdate.id || !attachmentToUpdate.name) continue;
+      if (!attachmentToUpdate.id || !attachmentToUpdate.name) {
+        continue;
+      }
       await updateOneRecord({
         objectNameSingular: StandardObjectNameSingular.Attachment,
         idToUpdate: attachmentToUpdate.id,

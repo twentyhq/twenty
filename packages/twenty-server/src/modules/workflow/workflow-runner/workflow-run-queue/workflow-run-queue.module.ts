@@ -41,6 +41,7 @@ import { WorkflowThrottlingModule } from 'src/modules/workflow/workflow-runner/w
   ],
   exports: [
     WorkflowThrottlingModule,
+    WorkflowRunEnqueueWorkspaceService,
     WorkflowRunEnqueueCronCommand,
     WorkflowHandleStaledRunsCronCommand,
     WorkflowCleanWorkflowRunsCronCommand,

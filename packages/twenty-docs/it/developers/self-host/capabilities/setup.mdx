@@ -273,6 +273,22 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Limiti di memoria della coda di job
+
+Redis della coda viene eseguito con `noeviction`: una volta pieno, ogni accodamento non riesce per ogni workspace. Per evitare che un workspace o un'applicazione la riempia, ciascuno può utilizzare una quota della memoria che gli altri lasciano libera e la dimensione di ciascun job è limitata.
+
+| Variabile                                                    | Predefinito | Cosa fa                                                                            |
+| ------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
+| `IS_REDIS_MEMORY_FAIRNESS_ENABLED`                           | `falso`     | Rifiuta i job che superano il limite di dimensione o la propria quota.             |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `5242880`   | Job serializzato più grande accettato.                                             |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.3`       | Quota della memoria libera che un workspace può detenere.                          |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4`       | Quota della memoria libera che un'applicazione può detenere, in tutti i workspace. |
+| `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`       | Quota di `maxmemory` che non viene mai assegnata ai job.                           |
+
+Il limite della quota richiede l'impostazione di `maxmemory` su Redis della coda. I rifiuti vengono registrati e conteggiati in `job_memory_limit_refused_total` in base a coda, nome del job e motivo, mentre `twenty_queue_memory_used_ratio` monitora l'uso della memoria. Se il provider riserva una parte di `maxmemory` (ad esempio `reserved-memory-percent` di ElastiCache), includila in `JOB_QUEUE_MEMORY_RESERVE`, a meno che `maxmemory` non la escluda già.
+
+Un job viene addebitato finché non viene completato o non fallisce definitivamente e gli addebiti non scadono. Un job rimosso da una coda al di fuori del worker (eliminazione dal pannello di amministrazione, pulizia della coda) mantiene il proprio addebito finché non esegui `yarn command:prod job-memory:reconcile`. Il comando rilascia l'addebito di ogni job che non c'è più o che è terminato, controllando due volte a distanza di alcuni secondi (`--grace-seconds`, predefinito 10) affinché un job in fase di accodamento non venga rilasciato per errore.
+
 ## Connessioni in uscita verso host interni
 
 Per impostazione predefinita, Twenty rifiuta le connessioni in uscita verso indirizzi IP privati/interni (protezione SSRF). Ciò copre le azioni dei flussi di lavoro HTTP, i webhook, i provider di identità SSO e le connessioni IMAP/SMTP/CalDAV. Se il provider di identità, il server di posta o il server di calendario viene eseguito su una rete privata, elencane il nome host o il letterale IP:

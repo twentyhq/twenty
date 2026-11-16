@@ -1,7 +1,10 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { type ApplicationContentLink } from '@/settings/applications/types/ApplicationContentLink';
 import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { Link } from 'react-router-dom';
 import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { emailSchema, isDefined, isSafeUrl } from 'twenty-shared/utils';
@@ -13,6 +16,7 @@ import {
   IconCurrencyDollar,
   IconDownload,
   IconLink,
+  IconListDetails,
   IconMail,
   IconShare2,
   IconTag,
@@ -45,6 +49,7 @@ type SettingsApplicationAboutSidebarProps = {
   pricingDescription?: string;
   billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
+  contentLink?: ApplicationContentLink;
 };
 
 type AboutRow = {
@@ -130,7 +135,7 @@ const StyledRow = styled.div`
   min-height: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledResourceLink = styled.a`
+const sidebarLinkClassName = css`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
@@ -164,6 +169,7 @@ export const SettingsApplicationAboutSidebar = ({
   pricingDescription,
   billsCredits = false,
   developerLinks,
+  contentLink,
 }: SettingsApplicationAboutSidebarProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -288,7 +294,7 @@ export const SettingsApplicationAboutSidebar = ({
         )}
       </StyledHeader>
 
-      {aboutRows.length > 0 && (
+      {(aboutRows.length > 0 || isDefined(contentLink)) && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
           {aboutRows.map(({ Icon, label, tooltip }) => (
@@ -303,6 +309,17 @@ export const SettingsApplicationAboutSidebar = ({
               />
             </StyledRow>
           ))}
+          {isDefined(contentLink) && (
+            <Link className={sidebarLinkClassName} to={contentLink.path}>
+              <StyledRowIcon>
+                <IconListDetails size={theme.icon.size.sm} />
+              </StyledRowIcon>
+              {plural(contentLink.itemCount, {
+                one: `${formatNumber(contentLink.itemCount)} resource`,
+                other: `${formatNumber(contentLink.itemCount)} resources`,
+              })}
+            </Link>
+          )}
         </StyledSection>
       )}
 
@@ -310,7 +327,8 @@ export const SettingsApplicationAboutSidebar = ({
         <StyledSection>
           <StyledSectionLabel>{t`Resources`}</StyledSectionLabel>
           {resourceLinks.map(({ Icon, label, href }) => (
-            <StyledResourceLink
+            <a
+              className={sidebarLinkClassName}
               key={label}
               href={href}
               target="_blank"
@@ -320,7 +338,7 @@ export const SettingsApplicationAboutSidebar = ({
                 <Icon size={theme.icon.size.sm} />
               </StyledRowIcon>
               <OverflowingTextWithTooltip text={label} />
-            </StyledResourceLink>
+            </a>
           ))}
         </StyledSection>
       )}

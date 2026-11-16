@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateDeterministicIndexForFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-deterministic-index-for-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
+import { findUniqueFieldBackingFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/find-unique-field-backing-flat-index-metadata.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -31,31 +30,12 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
     ) {
       return { status: 'noop' };
     }
-    const parentFlatObjectMetadata =
-      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.objectMetadataUniversalIdentifier
-      ];
+    const flatIndexMetadataToDelete = findUniqueFieldBackingFlatIndexMetadata({
+      fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+      flatIndexMaps: relatedFlatEntityMaps.flatIndexMaps,
+    });
 
-    if (!isDefined(parentFlatObjectMetadata)) {
-      return buildFieldSideEffectParentNotFoundFailure({
-        flatFieldMetadata,
-        operation: 'delete',
-      });
-    }
-
-    const flatIndexMetadataToDelete =
-      generateDeterministicIndexForFlatFieldMetadataOrThrow({
-        flatFieldMetadata,
-        flatObjectMetadata: parentFlatObjectMetadata,
-      });
-
-    const indexExistsInWorkspace = isDefined(
-      relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        flatIndexMetadataToDelete.universalIdentifier
-      ],
-    );
-
-    if (!indexExistsInWorkspace) {
+    if (!isDefined(flatIndexMetadataToDelete)) {
       return { status: 'noop' };
     }
 

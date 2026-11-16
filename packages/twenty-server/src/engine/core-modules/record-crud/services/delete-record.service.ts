@@ -69,26 +69,25 @@ export class DeleteRecordService {
           message: `Record soft deleted successfully from ${objectName}`,
           result: deletedRecord,
         };
-      } else {
-        const { results: destroyedRecord } =
-          await this.commonDestroyOneRunner.execute(
-            {
-              id: objectRecordId,
-              selectedFields,
-            },
-            queryRunnerContext,
-          );
-
-        this.logger.log(
-          `Record permanently deleted successfully from ${objectName}`,
+      }
+      const { results: destroyedRecord } =
+        await this.commonDestroyOneRunner.execute(
+          {
+            id: objectRecordId,
+            selectedFields,
+          },
+          queryRunnerContext,
         );
 
-        return {
-          success: true,
-          message: `Record permanently deleted successfully from ${objectName}`,
-          result: destroyedRecord,
-        };
-      }
+      this.logger.log(
+        `Record permanently deleted successfully from ${objectName}`,
+      );
+
+      return {
+        success: true,
+        message: `Record permanently deleted successfully from ${objectName}`,
+        result: destroyedRecord,
+      };
     } catch (error) {
       if (error instanceof RecordCrudException) {
         return {

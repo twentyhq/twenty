@@ -6,5 +6,5 @@ import { FILTERABLE_FIELD_TYPES } from 'twenty-shared/types';
 export const isCompositeFilterableFieldType = (
   type: FieldType,
 ): type is CompositeFilterableFieldType =>
-  FILTERABLE_FIELD_TYPES.includes(type as any) &&
-  COMPOSITE_FIELD_TYPES.includes(type as any);
+  FILTERABLE_FIELD_TYPES.some((filterableType) => filterableType === type) &&
+  COMPOSITE_FIELD_TYPES.some((compositeType) => compositeType === type);

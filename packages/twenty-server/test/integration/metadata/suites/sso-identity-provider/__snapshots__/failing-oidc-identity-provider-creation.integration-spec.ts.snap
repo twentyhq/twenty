@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OIDC identity provider creation should fail when the caller lacks the security permission 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`OIDC identity provider creation should fail when the issuer is not a URL 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "issuer must be a URL address",
+  "name": "UserInputError",
+}
+`;
+
+exports[`OIDC identity provider creation should fail when the issuer is on a private network 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ISSUER_URL",
+    "userFriendlyMessage": "Invalid issuer URL: Request to internal IP address 169.254.169.254 is not allowed.",
+  },
+  "message": "Invalid issuer: Request to internal IP address 169.254.169.254 is not allowed.",
+  "name": "UserInputError",
+}
+`;

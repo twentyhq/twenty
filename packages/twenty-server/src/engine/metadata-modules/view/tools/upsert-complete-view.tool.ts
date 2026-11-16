@@ -16,7 +16,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 
 const fieldReferenceShape = {

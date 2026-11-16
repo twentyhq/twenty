@@ -4,6 +4,8 @@ import { expect, fireEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { VideoPreview } from '@/activities/files/components/VideoPreview';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { PermissionFlagsDecorator } from '~/testing/decorators/PermissionFlagsDecorator';
 
 const VIDEO_URL = '/storybook/product-demo.mp4';
 
@@ -13,13 +15,14 @@ const getVideo = (canvasElement: HTMLElement) =>
 const meta: Meta<typeof VideoPreview> = {
   title: 'Modules/Activities/Files/VideoPreview',
   component: VideoPreview,
-  decorators: [ComponentDecorator],
+  decorators: [PermissionFlagsDecorator, ComponentDecorator],
   args: {
     videoName: 'Product demo.mp4',
     videoUrl: VIDEO_URL,
   },
   parameters: {
     container: { height: 400, width: 600 },
+    permissionFlags: [PermissionFlagType.DOWNLOAD_FILE],
     // The request never resolves, so the video only fails when a story makes it fail.
     msw: { handlers: [http.get(VIDEO_URL, () => delay('infinite'))] },
   },
@@ -47,5 +50,17 @@ export const LoadFailure: Story = {
     expect(await canvas.findByText('Preview Not Available')).toBeVisible();
     expect(getVideo(canvasElement)).toBeNull();
     expect(canvas.getByRole('button', { name: /Download File/ })).toBeVisible();
+  },
+};
+
+export const LoadFailureWithoutDownloadPermission: Story = {
+  parameters: { permissionFlags: [] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    fireEvent.error(getVideo(canvasElement) as HTMLVideoElement);
+
+    expect(await canvas.findByText('Preview Not Available')).toBeVisible();
+    expect(canvas.queryByRole('button', { name: /Download File/ })).toBeNull();
   },
 };

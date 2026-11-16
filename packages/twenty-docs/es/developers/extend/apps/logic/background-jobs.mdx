@@ -115,6 +115,26 @@ await enqueueJobs({
 
 La ejecución encolada hereda el usuario activo de la función que la puso en cola, por lo que actúa con los mismos permisos.
 
+## Memoria de la cola
+
+Los trabajos en cola residen en la memoria hasta que terminan, por lo que cada espacio de trabajo y cada aplicación solo pueden ocupar una parte de la memoria de la cola que otros dejan libre. Un solo trabajo también está limitado a 5 MB de carga útil serializada. Estos límites solo se aplican en servidores que los habilitan (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+
+`enqueueJobs` informa de lo que usó cada llamada. Estos campos requieren Twenty 2.57.0 o una versión posterior, que también es la versión mínima del servidor del SDK:
+
+| Campo            | Qué contiene                                                                                                                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `empleos`        | El `jobId` y el `sizeBytes` de cada tarea puesta en cola.                                                                                                                                             |
+| `availableBytes` | Memoria que tu aplicación y espacio de trabajo aún pueden poner en cola en el momento de esta llamada. `null` cuando el servidor no limita la memoria de la cola. Es una instantánea, no una reserva. |
+
+Cuando se alcanza un límite, se rechaza toda la llamada y no se pone nada en cola:
+
+| `subCode` del error              | Cuándo                                                      | Detalles                                               |
+| -------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------ |
+| `JOB_TOO_LARGE`                  | Una tarea supera el límite de tamaño.                       | `index`, `sizeBytes`, `maxBytes`                       |
+| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | El lote no cabe en tu cuota. Vuelve a intentarlo más tarde. | `requestedBytes`, `availableBytes`, `refusedGroupKeys` |
+
+Mantén las cargas útiles pequeñas: pasa los identificadores de los registros y recupera los registros dentro de la ejecución en lugar de incrustarlos. Si `availableBytes` se está agotando, pon menos tareas en cola a la vez o encadénalas con `delayMs`.
+
 ## Reintentar un fallo transitorio
 
 Twenty no vuelve a intentar todas las excepciones del código de la aplicación. Un error ordinario lanzado se trata como un fallo permanente. Para un fallo transitorio, una función lógica en cola puede solicitar hasta tres reintentos lanzando `RetryableLogicFunctionError`.

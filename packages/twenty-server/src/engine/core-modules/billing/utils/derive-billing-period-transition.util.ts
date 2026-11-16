@@ -13,6 +13,7 @@ import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-
 export type BillingPeriodTransition = {
   closingPeriodStart: Date;
   closingPeriodEnd: Date;
+  closingPeriodInterval: SubscriptionInterval;
   nextPeriodStart: Date;
   isFirstPeriodAfterTrial: boolean;
 };
@@ -123,9 +124,15 @@ export const deriveBillingPeriodTransition = ({
     ledgerPeriodStart,
   });
 
+  const closingPeriodInterval =
+    boundary > shiftUtcMonths({ date: closingPeriodStart, months: 2 })
+      ? SubscriptionInterval.Year
+      : SubscriptionInterval.Month;
+
   return {
     closingPeriodStart,
     closingPeriodEnd: boundary,
+    closingPeriodInterval,
     nextPeriodStart: boundary,
     isFirstPeriodAfterTrial,
   };

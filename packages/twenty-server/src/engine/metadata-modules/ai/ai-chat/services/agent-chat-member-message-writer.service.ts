@@ -1,6 +1,7 @@
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
@@ -76,9 +77,10 @@ export class AgentChatMemberMessageWriterService {
       },
     );
     const persistedMessage =
-      await this.conversationWriterService.runInTransaction(
-        actor.workspaceId,
-        async (transactionScope) => {
+      await this.conversationWriterService.runInTransaction({
+        workspaceId: actor.workspaceId,
+        threadId: thread.id,
+        work: async (transactionScope) => {
           await this.threadParticipantService.resolveMentionInTransaction({
             ...threadAccess,
             scope: transactionScope,
@@ -123,29 +125,37 @@ export class AgentChatMemberMessageWriterService {
             senderApplicationId: resolveMessageSenderApplicationId(actor),
           };
 
-          await transactionScope.insert('agentMessage', queuedMemberMessage);
-          await transactionScope.insert(
-            'agentMessagePart',
-            mapUIMessagePartsToDBParts(
+          await transactionScope.insert({
+            name: 'agentMessage',
+            values: queuedMemberMessage,
+          });
+          await transactionScope.insert({
+            name: 'agentMessagePart',
+            values: mapUIMessagePartsToDBParts(
               messagePartsWithReplyContext,
               queuedMemberMessage.id,
             ),
-          );
+          });
 
           return queuedMemberMessage;
         },
-      );
+      });
     let delivery: AgentChatInboxDeliveryResult = {
       deliveredMentionWorkspaceMemberIds: [],
       deliveredRecipientWorkspaceMemberIds: [],
     };
 
     if (isDefined(participation) && isDefined(addressing)) {
+      const shouldDeliverToInitialRecipients =
+        participation.isInitialMessage ||
+        thread.conversationType ===
+          AgentChatThreadConversationType.DIRECT_MESSAGE;
+
       delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
         ...threadAccess,
         messageId: persistedMessage.id,
         mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-        initialRecipientWorkspaceMemberIds: participation.isInitialMessage
+        initialRecipientWorkspaceMemberIds: shouldDeliverToInitialRecipients
           ? addressing.initialRecipientWorkspaceMemberIds
           : [],
       });

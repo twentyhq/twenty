@@ -58,8 +58,7 @@ export class TypedReflect {
   ) {
     if (propertyKeyOrUndefined === undefined) {
       return Reflect.getMetadata(metadataKey, target);
-    } else {
-      return Reflect.getMetadata(metadataKey, target, propertyKeyOrUndefined);
     }
+    return Reflect.getMetadata(metadataKey, target, propertyKeyOrUndefined);
   }
 }

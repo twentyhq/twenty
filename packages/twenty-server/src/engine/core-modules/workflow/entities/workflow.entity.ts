@@ -6,6 +6,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -13,14 +14,19 @@ import {
 
 import { WorkflowVisibility } from 'twenty-shared/types';
 
+import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
 import { CREATE_WORKFLOW_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/create-workflow-core-table-upgrade-command-name.constant';
 import { ADD_WORKSPACE_WORKFLOW_ID_TO_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-workspace-workflow-id-to-workflow-upgrade-command-name.constant';
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
 import { ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workflow-visibility-upgrade-command-name.constant';
+import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
+import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'workflow', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -82,6 +88,17 @@ export class WorkflowEntity extends SyncableEntity {
   isSystem: boolean;
 
   @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: DEFAULT_WORKFLOW_JOB_CONFIG,
+  })
+  jobConfig: JsonbProperty<MessageQueueJobConfig>;
+
+  @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'uuid', nullable: true })
@@ -96,6 +113,13 @@ export class WorkflowEntity extends SyncableEntity {
     foreignKeyConstraintName: 'FK_WORKFLOW_CREATED_BY_USER_WORKSPACE',
   })
   createdBy: Relation<UserWorkspaceEntity> | null;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem: NavigationMenuItemEntity) =>
+      navigationMenuItem.workflow,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

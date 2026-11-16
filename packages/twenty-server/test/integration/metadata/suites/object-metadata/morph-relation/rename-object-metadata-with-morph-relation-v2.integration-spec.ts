@@ -250,7 +250,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       expectToFail: false,
     });
 
-    let relationIndexByFieldId: Record<
+    const relationIndexByFieldId: Record<
       string,
       IndexMetadataDTO & {
         indexFieldMetadataList: IndexFieldMetadataDTO[];
@@ -388,7 +388,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       expectToFail: false,
     });
 
-    let relationIndexByFieldId: Record<
+    const relationIndexByFieldId: Record<
       string,
       IndexMetadataDTO & {
         indexFieldMetadataList: IndexFieldMetadataDTO[];

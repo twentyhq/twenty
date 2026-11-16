@@ -41,6 +41,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:
+      case AiExceptionCode.CHAT_RECIPIENTS_CANNOT_REPLY:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
@@ -58,6 +59,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
       case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
+      case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:

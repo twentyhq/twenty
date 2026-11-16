@@ -1,19 +1,26 @@
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
+import { isUndefined } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
+import { AgentChatMemberMessageReplayService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-replay.service';
 import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
@@ -22,11 +29,12 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
-import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
+import { isAgentChatDirectMessageAddressedWithinPair } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-direct-message-addressed-within-pair.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -50,9 +58,10 @@ export class AgentChatMemberMessageSenderService {
     private readonly runSuspensionService: AgentRunSuspensionService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly replyPolicyService: AgentChatReplyPolicyService,
+    private readonly agentChatService: AgentChatService,
+    private readonly memberMessageReplayService: AgentChatMemberMessageReplayService,
   ) {}
 
   async sendMemberMessage({
@@ -63,11 +72,6 @@ export class AgentChatMemberMessageSenderService {
     assistant,
     execution,
   }: AgentChatMemberMessageSendArguments): Promise<AgentChatMemberMessageResult> {
-    const preparedMessage =
-      await this.memberMessagePartsService.prepareMemberMessage({
-        workspaceId: actor.workspaceId,
-        message,
-      });
     const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
@@ -77,58 +81,156 @@ export class AgentChatMemberMessageSenderService {
       FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
       actor.workspaceId,
     );
-    const assistantParticipationInput = {
+    const preparedMessage =
+      await this.memberMessagePartsService.prepareMemberMessage({
+        workspaceId: actor.workspaceId,
+        message,
+      });
+
+    const shouldValidateRecipients =
+      !assistant.isInitiallyIncluded &&
+      !assistant.isMentioned &&
+      !isDefined(target.channelId) &&
+      (isNonEmptyArray(addressing.initialRecipientWorkspaceMemberIds) ||
+        isNonEmptyArray(addressing.mentionedWorkspaceMemberIds));
+    const createdThread = await this.chatThreadService.createThreadIfMissing({
+      ...threadAccess,
       isAssistantMentioned: assistant.isMentioned,
       isInitialAssistantParticipant: assistant.isInitiallyIncluded,
       mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
       recipientWorkspaceMemberIds:
         addressing.initialRecipientWorkspaceMemberIds,
-    };
-
-    await this.chatThreadService.createThreadIfMissing({
-      ...threadAccess,
-      channelId: target.channelId,
+      channelId: target.channelId ?? undefined,
       shouldApplyAssistantParticipation: false,
+      shouldValidateRecipients,
+      isReplyRequested: assistant.isReplyRequested,
     });
 
-    const thread = await this.chatThreadService.getWritableThread(threadAccess);
+    const storedMessage = isDefined(message.id)
+      ? await this.agentChatService.findMemberMessage({
+          ...threadAccess,
+          messageId: message.id,
+        })
+      : null;
+    const isInitialMessage = !(await this.agentChatService.hasMessages({
+      workspaceId: actor.workspaceId,
+      threadId: target.threadId,
+      excludedMessage: storedMessage ?? undefined,
+    }));
+    const writableThread =
+      await this.chatThreadService.getWritableThread(threadAccess);
+    const isDirectMessage =
+      writableThread.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE;
+    const messageAddressing = { ...addressing };
+
+    if (isDirectMessage) {
+      const isDirectMessageIdentityEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+          actor.workspaceId,
+        );
+
+      if (!isDirectMessageIdentityEnabled) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      if (
+        !isAgentChatDirectMessageAddressedWithinPair({
+          thread: writableThread,
+          senderWorkspaceMemberId: actor.workspaceMemberId,
+          addressedWorkspaceMemberIds: [
+            ...addressing.mentionedWorkspaceMemberIds,
+            ...addressing.initialRecipientWorkspaceMemberIds,
+          ],
+        })
+      ) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      if (isNonEmptyArray(message.attachments) || isDefined(target.channelId)) {
+        throw new AiException(
+          doNotTranslate('Direct messages do not support files or channels'),
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
+      messageAddressing.initialRecipientWorkspaceMemberIds = [
+        writableThread.directMessageFirstWorkspaceMemberId,
+        writableThread.directMessageSecondWorkspaceMemberId,
+      ]
+        .filter(isDefined)
+        .filter((memberId) => memberId !== actor.workspaceMemberId);
+    }
+
+    const thread =
+      isInitialMessage && !isUndefined(target.channelId)
+        ? await this.chatThreadService.moveOwnThreadToChannel({
+            ...threadAccess,
+            thread: writableThread,
+            channelId: target.channelId,
+          })
+        : writableThread;
+
     const participation =
-      await this.assistantParticipationService.resolveAssistantParticipation({
+      createdThread?.participation ??
+      (await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,
         workspaceMemberId: actor.workspaceMemberId,
         thread,
-        ...assistantParticipationInput,
+        isInitialMessage,
+        isAssistantMentioned: assistant.isMentioned,
+        isInitialAssistantParticipant: assistant.isInitiallyIncluded,
+        mentionedWorkspaceMemberIds:
+          messageAddressing.mentionedWorkspaceMemberIds,
+        recipientWorkspaceMemberIds:
+          messageAddressing.initialRecipientWorkspaceMemberIds,
         isReplyRequested: assistant.isReplyRequested,
+      }));
+    const assistantReplyPolicyArgs = {
+      actor,
+      thread,
+      participation,
+      isInboxEnabled,
+      isDirectMessage,
+      text: message.text,
+    };
+
+    if (isDefined(storedMessage)) {
+      return this.memberMessageReplayService.replayStoredMessage({
+        ...assistantReplyPolicyArgs,
+        storedMessage,
+        execution,
+        addressing: {
+          ...messageAddressing,
+          initialRecipientWorkspaceMemberIds:
+            (isInboxEnabled && isInitialMessage) || isDirectMessage
+              ? messageAddressing.initialRecipientWorkspaceMemberIds
+              : [],
+        },
       });
+    }
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      !isInboxEnabled ||
-      (await this.replyPolicyService.shouldReply({
-        decision: replyDecision,
-        threadId: thread.id,
-        pendingQuestionMessageId: thread.pendingQuestionMessageId,
-        workspaceId: actor.workspaceId,
-        userWorkspaceId: actor.userWorkspaceId,
-        text: message.text,
-      }));
-
-    if (shouldGenerateAssistantReply) {
-      const workspace = await this.coreEntityCacheService.get(
-        'workspaceEntity',
-        actor.workspaceId,
+      await this.replyPolicyService.shouldGenerateAssistantReply(
+        assistantReplyPolicyArgs,
       );
 
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-      await this.turnPreflightService.assertCanRunAgentTurn({
-        workspace,
+    if (shouldGenerateAssistantReply) {
+      await this.turnPreflightService.getWorkspaceReadyForAgentTurnOrThrow({
+        workspaceId: actor.workspaceId,
         userWorkspaceId: actor.userWorkspaceId,
         modelId: execution.modelId,
       });
     }
 
-    if (isDefined(thread.deletedAt)) {
+    if (isDefined(thread.deletedAt) && isDirectMessage) {
+      await this.chatThreadService.restoreDirectMessageThread({
+        workspaceId: actor.workspaceId,
+        thread,
+      });
+    } else if (isDefined(thread.deletedAt)) {
       await this.chatThreadService.restoreThread(threadAccess);
     }
 
@@ -146,7 +248,8 @@ export class AgentChatMemberMessageSenderService {
       actor,
       thread,
       message: preparedMessage,
-      addressing: isInboxEnabled ? addressing : undefined,
+      addressing:
+        isInboxEnabled || isDirectMessage ? messageAddressing : undefined,
       participation,
       assistantReplyContext: {
         isAssistantMentioned: assistant.isMentioned,
@@ -176,7 +279,7 @@ export class AgentChatMemberMessageSenderService {
       };
     }
 
-    if (!isInboxEnabled) {
+    if (!isInboxEnabled && !isDirectMessage) {
       result.delivery = await this.inboxDeliveryService.deliverMessageToInboxes(
         {
           ...threadAccess,
@@ -185,14 +288,6 @@ export class AgentChatMemberMessageSenderService {
           initialRecipientWorkspaceMemberIds: [],
         },
       );
-    }
-
-    if (isDefined(result.streamId) && isDefined(result.turnId)) {
-      tagAiChatStreamScope({
-        ...threadAccess,
-        streamId: result.streamId,
-        turnId: result.turnId,
-      });
     }
 
     return result;

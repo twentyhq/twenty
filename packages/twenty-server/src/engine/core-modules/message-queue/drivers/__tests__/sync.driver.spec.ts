@@ -23,9 +23,9 @@ describe('SyncDriver job snapshots', () => {
           progress,
         });
       });
-      const [id] = await driver.bulkAdd(QUEUE, 'job', [
-        { data: {}, ...SYSTEM_JOB },
-      ]);
+      const {
+        jobs: [{ jobId: id }],
+      } = await driver.bulkAdd(QUEUE, 'job', [{ data: {}, ...SYSTEM_JOB }]);
 
       expect((await driver.getJobs(QUEUE, [id]))[id]).toMatchObject({
         state: 'completed',
@@ -94,7 +94,9 @@ describe('SyncDriver job snapshots', () => {
         ...SYSTEM_JOB,
       }),
     );
-    const ids = await driver.bulkAdd(QUEUE, 'job', jobs);
+    const ids = (await driver.bulkAdd(QUEUE, 'job', jobs)).jobs.map(
+      ({ jobId }) => jobId,
+    );
     const snapshots = await driver.getJobs(QUEUE, ['active-job', ...ids]);
 
     expect(Object.keys(snapshots)).toHaveLength(
@@ -114,13 +116,13 @@ describe('SyncDriver job snapshots', () => {
   it('prunes old snapshots when another job finishes', async () => {
     const driver = new SyncDriver();
     driver.work(QUEUE, async () => {});
-    const [oldId] = await driver.bulkAdd(QUEUE, 'job', [
-      { data: {}, ...SYSTEM_JOB },
-    ]);
+    const {
+      jobs: [{ jobId: oldId }],
+    } = await driver.bulkAdd(QUEUE, 'job', [{ data: {}, ...SYSTEM_JOB }]);
     jest.setSystemTime(Date.now() + QUEUE_RETENTION.completedMaxAge * 1000 + 1);
-    const [newId] = await driver.bulkAdd(QUEUE, 'job', [
-      { data: {}, ...SYSTEM_JOB },
-    ]);
+    const {
+      jobs: [{ jobId: newId }],
+    } = await driver.bulkAdd(QUEUE, 'job', [{ data: {}, ...SYSTEM_JOB }]);
     const jobs = await driver.getJobs(QUEUE, [oldId, newId]);
 
     expect(jobs[oldId]).toBeUndefined();

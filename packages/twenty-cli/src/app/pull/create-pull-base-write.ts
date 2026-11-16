@@ -19,12 +19,16 @@ export const createPullBaseWrite = ({
   unreconciledUniversalIdentifiers = [],
   sourceFingerprints,
   dependencyFingerprints,
+  publicAssetFingerprints,
+  remoteSourceFingerprints,
 }: {
   manifest: ExportedManifest;
   target: PullTarget;
   unreconciledUniversalIdentifiers?: string[];
   sourceFingerprints?: Record<string, string>;
   dependencyFingerprints?: Record<string, string>;
+  publicAssetFingerprints?: Record<string, string>;
+  remoteSourceFingerprints?: Record<string, string>;
 }) => ({
   relativePath: PULL_BASE_FILE_PATH,
   content: `${JSON.stringify(
@@ -36,9 +40,19 @@ export const createPullBaseWrite = ({
       ...(unreconciledUniversalIdentifiers.length > 0
         ? { unreconciledUniversalIdentifiers }
         : {}),
+      ...(isDefined(publicAssetFingerprints)
+        ? { publicAssetFingerprints: sortFingerprints(publicAssetFingerprints) }
+        : {}),
       ...(isDefined(dependencyFingerprints)
         ? {
             dependencyFingerprints: sortFingerprints(dependencyFingerprints),
+          }
+        : {}),
+      ...(isDefined(remoteSourceFingerprints)
+        ? {
+            remoteSourceFingerprints: sortFingerprints(
+              remoteSourceFingerprints,
+            ),
           }
         : {}),
       ...(isDefined(sourceFingerprints)

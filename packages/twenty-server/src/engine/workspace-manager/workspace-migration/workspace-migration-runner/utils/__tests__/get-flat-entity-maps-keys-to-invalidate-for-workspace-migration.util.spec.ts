@@ -173,4 +173,22 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
 
     expect(result).toEqual(['flatViewFieldMaps']);
   });
+
+  it('invalidates the field map when deleting a role cascades its row-level permission predicates', () => {
+    expect(
+      getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+        buildAction({ type: 'delete', metadataName: 'role' }),
+      ]),
+    ).toContain('flatFieldMetadataMaps');
+    expect(
+      getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+        buildAction({
+          type: 'update',
+          metadataName: 'role',
+          universalIdentifier: 'role-1',
+          update: { label: 'Sales' },
+        }),
+      ]),
+    ).not.toContain('flatFieldMetadataMaps');
+  });
 });

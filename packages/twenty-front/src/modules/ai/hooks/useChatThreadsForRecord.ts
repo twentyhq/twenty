@@ -5,13 +5,13 @@ import {
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
-import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type AiChatThreadTargetRecord } from '@/ai/types/AiChatThreadTargetRecord';
 import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -40,6 +40,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   thread: {
     id: true,
     title: true,
+    conversationType: true,
+    directMessageFirstWorkspaceMemberId: true,
+    directMessageSecondWorkspaceMemberId: true,
     deletedAt: true,
     createdAt: true,
     updatedAt: true,
@@ -105,7 +108,7 @@ export const useChatThreadsForRecord = ({
     fetchMoreRecords,
     hasNextPage,
     queryIdentifier,
-  } = useFindManyRecords<AgentChatThreadTargetRecord>({
+  } = useFindManyRecords<AiChatThreadTargetRecord>({
     objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
@@ -126,9 +129,9 @@ export const useChatThreadsForRecord = ({
   const junctionObjectPermissions = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
-  const canReadSomeRecords = canReachSomeRecords({
+  const canReadSomeRecords = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: junctionObjectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { threads, refetchLimit } = getChatThreadsForRecordPage({

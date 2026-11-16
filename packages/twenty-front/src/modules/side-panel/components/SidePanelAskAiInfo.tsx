@@ -1,7 +1,8 @@
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,16 +22,20 @@ export const SidePanelAskAiInfo = () => {
   const { t } = useLingui();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
-  const currentAiChatThreadTitle = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+  const thread = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
     currentAiChatThread ?? '',
-  )?.title;
+  );
+  const displayLabel = useAiChatThreadDisplayLabel({
+    thread,
+    fallbackLabel: t`Ask AI`,
+  });
 
   return (
     <StyledContainer>
-      <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />
+      <HeaderIdentifier title={displayLabel} />
       {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
-        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+        <InboxThreadDetailsDropdown threadId={currentAiChatThread} />
       )}
     </StyledContainer>
   );

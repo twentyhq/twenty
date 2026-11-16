@@ -9,7 +9,9 @@ export const getActivityAttachmentIdsToDelete = (
   oldActivityAttachments: Attachment[] = [],
   oldActivityBody: string,
 ) => {
-  if (oldActivityAttachments.length === 0) return [];
+  if (oldActivityAttachments.length === 0) {
+    return [];
+  }
 
   const newActivityAttachmentPaths =
     getActivityAttachmentPathsAndName(newActivityBody);

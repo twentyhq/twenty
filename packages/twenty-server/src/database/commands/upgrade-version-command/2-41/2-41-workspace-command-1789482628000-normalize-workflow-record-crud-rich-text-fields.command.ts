@@ -17,7 +17,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-20/types/legacy-workflow-version-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.41.0', 1789482628000)
 @Command({
@@ -78,12 +78,12 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     }
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<LegacyWorkflowVersionWorkspaceEntity>(
         'workflowVersion');
 
     const allVersions = await workflowVersionRepository.find();
 
-    const versionsToSyncToCore: WorkflowVersionWorkspaceEntity[] = [];
+    const versionsToSyncToCore: LegacyWorkflowVersionWorkspaceEntity[] = [];
     let rewrittenCount = 0;
 
     for (const version of allVersions) {

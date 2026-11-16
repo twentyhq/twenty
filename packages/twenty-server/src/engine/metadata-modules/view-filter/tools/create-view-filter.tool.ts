@@ -6,7 +6,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { createViewFilterInputSchema } from 'src/engine/metadata-modules/view-filter/tools/schemas/create-view-filter-input.schema';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { VIEW_FILTER_ACCESS_POLICY } from 'src/engine/metadata-modules/view-filter/constants/view-filter-access-policy.constant';
 
 @DefineTool({

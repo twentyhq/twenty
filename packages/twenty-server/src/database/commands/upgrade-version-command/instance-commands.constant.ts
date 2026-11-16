@@ -288,6 +288,25 @@ import { AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand } from 
 import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793816136545-add-application-role-target';
 import { AddWorkspaceAssistantProfileSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-slow-1793810534548-add-workspace-assistant-profile';
 import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793814954654-add-field-metadata-option-table';
+import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793898855453-make-field-metadata-option-value-unique-deferred';
+import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
+import { AddCanCreatePermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793995650464-add-can-create-permissions';
+import { AddRlsRuleFieldPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794155686000-add-rls-rule-field-permissions';
+import { AddMessagingProviderConversationStyleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794225486244-add-messaging-provider-conversation-style';
+import { AddViewShouldDisplayGroupsAsTabsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794238559013-add-view-should-display-groups-as-tabs';
+import { AddJobConfigToWorkflowAndLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794319991745-add-job-config-to-workflow-and-logic-function';
+import { AddRemoteOriginToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794243399000-add-remote-origin-to-file';
+import { AddAvatarToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794298452467-add-avatar-to-agent';
+import { AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794298453467-add-workflow-and-agent-navigation-menu-items';
+import { AddRowLevelPermissionRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794327249159-add-row-level-permission-rule-table';
+import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794337540366-add-row-level-permission-rule-links';
+import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
+import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
+import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
+import { AddViewFieldIsCanonicalFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794578763738-add-view-field-is-canonical';
+import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794588217126-add-is-internal-import-enabled-to-workspace';
+import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794590652080-backfill-field-metadata-option-rows-from-stored-options';
+import { AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794606690417-add-view-field-relation-target-field-metadata-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -578,4 +597,23 @@ export const INSTANCE_COMMANDS = [
   AddApplicationRoleTargetFastInstanceCommand,
   AddWorkspaceAssistantProfileSlowInstanceCommand,
   AddFieldMetadataOptionTableFastInstanceCommand,
+  MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand,
+  AddAiDataPolicyToWorkspaceSlowInstanceCommand,
+  AddCanCreatePermissionsFastInstanceCommand,
+  AddRlsRuleFieldPermissionsFastInstanceCommand,
+  AddMessagingProviderConversationStyleFastInstanceCommand,
+  AddViewShouldDisplayGroupsAsTabsFastInstanceCommand,
+  AddRemoteOriginToFileFastInstanceCommand,
+  AddAvatarToAgentFastInstanceCommand,
+  AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand,
+  AddJobConfigToWorkflowAndLogicFunctionFastInstanceCommand,
+  AddRowLevelPermissionRuleTableFastInstanceCommand,
+  AddRowLevelPermissionRuleLinksFastInstanceCommand,
+  AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
+  RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand,
+  AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
+  AddViewFieldIsCanonicalFastInstanceCommand,
+  AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand,
+  BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
+  AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand,
 ];

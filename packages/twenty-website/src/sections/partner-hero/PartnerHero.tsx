@@ -1,17 +1,17 @@
-import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   fontFamily,
   GRADIENT,
   HERO_COMPOSITION,
   mediaUp,
+  radius,
   semanticColor,
   spacing,
-  typeRampDeclarations,
 } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
@@ -39,6 +39,25 @@ const IntroStack = styled.div`
   }
 `;
 
+const TitleBlock = styled.div`
+  & > * + * {
+    margin-top: ${spacing(5)};
+  }
+`;
+
+const Badge = styled.span`
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  color: ${semanticColor.inkMuted};
+  display: inline-block;
+  font-family: ${fontFamily('mono')};
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 16px;
+  padding: 2px 7px;
+  text-transform: uppercase;
+`;
+
 const HeadingMeasure = styled.div`
   max-width: 360px;
   width: 100%;
@@ -57,31 +76,15 @@ const BodyMeasure = styled.div`
   }
 `;
 
-// The hero's single CTA sits on the shared 32px Body->CTA step (IntroStack's
-// owl rhythm); the buyer hand-off hangs 12px under it so it reads as a
-// footnote to the CTA rather than as a second step in that rhythm.
-const CtaStack = styled.div`
+const CtaRow = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  gap: ${spacing(3)};
+  justify-content: center;
 
-  & > * + * {
-    margin-top: ${spacing(3)};
-  }
-`;
-
-// Deliberately duplicated from partner-lead/PartnerBecomeStrip's LearnMoreLink:
-// sections may not import each other, so the recipe is copied, not shared.
-const HireLink = styled(LocalizedLink)`
-  color: ${semanticColor.inkMuted};
-  display: inline-block;
-  font-family: ${fontFamily('sans')};
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  ${typeRampDeclarations('bodySm')}
-
-  &:hover {
-    color: ${semanticColor.ink};
+  ${mediaUp('sm')} {
+    flex-direction: row;
   }
 `;
 
@@ -90,7 +93,21 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
-export function PartnerHero() {
+type PartnerHeroProps = {
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
+  badge?: MessageDescriptor;
+  actions: ReactNode;
+  visualImageUrl?: string;
+};
+
+export function PartnerHero({
+  heading,
+  body,
+  badge,
+  actions,
+  visualImageUrl,
+}: PartnerHeroProps) {
   const i18n = getServerI18n();
 
   return (
@@ -100,29 +117,29 @@ export function PartnerHero() {
       scheme="light"
     >
       <IntroStack>
-        <HeadingPair>
-          <HeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become\n*our partner*`)}
-            </Heading>
-          </HeadingMeasure>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(
-                msg`Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners.`,
-              )}
-            </Body>
-          </BodyMeasure>
-        </HeadingPair>
-        <CtaStack>
-          <BecomePartnerButton label={msg`Become a partner`} />
-          <HireLink href="/partners">
-            {i18n._(msg`Looking to hire a partner?`)}
-          </HireLink>
-        </CtaStack>
+        <TitleBlock>
+          {isDefined(badge) && (
+            <div>
+              <Badge>{i18n._(badge)}</Badge>
+            </div>
+          )}
+          <HeadingPair>
+            <HeadingMeasure>
+              <Heading as="h1" size="lg" weight="light">
+                {i18n._(heading)}
+              </Heading>
+            </HeadingMeasure>
+            <BodyMeasure>
+              <Body muted size="sm">
+                {i18n._(body)}
+              </Body>
+            </BodyMeasure>
+          </HeadingPair>
+        </TitleBlock>
+        <CtaRow>{actions}</CtaRow>
       </IntroStack>
       <VisualStage>
-        <PartnerVisual />
+        <PartnerVisual imageUrl={visualImageUrl} />
       </VisualStage>
     </SectionShell>
   );

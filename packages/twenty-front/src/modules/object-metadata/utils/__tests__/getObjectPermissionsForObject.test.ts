@@ -6,23 +6,25 @@ const OBJECT_METADATA_ID = 'object-metadata-id';
 describe('getObjectPermissionsForObject', () => {
   it('should allow everything when the object has no permissions entry', () => {
     expect(getObjectPermissionsForObject({}, OBJECT_METADATA_ID)).toEqual({
+      canCreateAllRecords: true,
       canReadAllRecords: true,
       canUpdateAllRecords: true,
       canSoftDeleteAllRecords: true,
       canDestroyAllRecords: true,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
     });
   });
 
   it('should return the permissions of the requested object', () => {
     const restrictedObjectPermissions: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
       canReadAllRecords: true,
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      restrictedFields: {
-        'field-metadata-id': { canRead: false, canUpdate: false },
-      },
+      unreadableFields: ['field-metadata-id'],
+      uneditableFields: ['field-metadata-id'],
       rowLevelRecordsPermissions: null,
     };
 

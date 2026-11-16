@@ -18,7 +18,9 @@ export const MultiSelectFieldDisplay = () => {
       )
     : [];
 
-  if (!isDefined(selectedOptions)) return null;
+  if (!isDefined(selectedOptions)) {
+    return null;
+  }
 
   return (
     <OverflowingList

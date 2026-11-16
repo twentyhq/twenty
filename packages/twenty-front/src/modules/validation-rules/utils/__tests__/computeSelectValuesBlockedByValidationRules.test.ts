@@ -112,6 +112,35 @@ describe('computeSelectValuesBlockedByValidationRules', () => {
     ).toEqual({ blockedOptionValues: [], isEmptyValueBlocked: false });
   });
 
+  it('offers only the stages a transition rule allows after the stored one', () => {
+    const nextStageRule = buildRule({
+      id: 'next-stage',
+      expression:
+        'stage == previous.stage or (previous.stage == "MET" and stage in ["FOLLOW_UP", "LOST"]) or (previous.stage == "FOLLOW_UP" and stage in ["WON", "LOST"])',
+    });
+
+    expect(
+      compute({
+        validationRules: [nextStageRule],
+        record: { id: '1', pipeline: 'SMB', stage: 'MET' },
+      }),
+    ).toEqual({
+      blockedOptionValues: ['SOLUTIONING', 'WON'],
+      isEmptyValueBlocked: true,
+    });
+  });
+
+  it('leaves a transition rule to the server when the stored stage is not loaded', () => {
+    const nextStageRule = buildRule({
+      id: 'next-stage',
+      expression: 'stage == previous.stage or previous.stage != "WON"',
+    });
+
+    expect(
+      compute({ validationRules: [nextStageRule], record: { id: '1' } }),
+    ).toEqual({ blockedOptionValues: [], isEmptyValueBlocked: false });
+  });
+
   it('ignores inactive rules', () => {
     expect(
       compute({

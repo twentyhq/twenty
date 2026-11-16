@@ -179,10 +179,13 @@ describe('An application acting for a user is bound by both roles', () => {
     );
   });
 
-  it('should apply the application row-level predicate even though the user has none', async () => {
+  it('should ignore the application row-level predicate', async () => {
     const names = await findCompanyNames(applicationAccessToken);
 
-    expect(names).toEqual([VISIBLE_COMPANY_NAME]);
+    expect(names).toHaveLength(2);
+    expect(names).toEqual(
+      expect.arrayContaining([VISIBLE_COMPANY_NAME, HIDDEN_COMPANY_NAME]),
+    );
   });
 
   it('should refuse an update the application role forbids and the user role allows', async () => {

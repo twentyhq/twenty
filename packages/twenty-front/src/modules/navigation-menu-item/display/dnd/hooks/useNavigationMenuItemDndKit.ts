@@ -121,7 +121,7 @@ export const useNavigationMenuItemDndKit = (
         draggableId: id,
         source,
         destination,
-        ...(insertBeforeItemId != null && { insertBeforeItemId }),
+        ...(isDefined(insertBeforeItemId) && { insertBeforeItemId }),
       };
       handleNavigationMenuItemDragAndDrop(result);
     },
@@ -225,7 +225,7 @@ export const useNavigationMenuItemDndKit = (
         index: data?.sourceIndex ?? 0,
       },
       destination,
-      ...(insertBeforeItemId != null && { insertBeforeItemId }),
+      ...(isDefined(insertBeforeItemId) && { insertBeforeItemId }),
     };
 
     if (isWorkspaceSection) {

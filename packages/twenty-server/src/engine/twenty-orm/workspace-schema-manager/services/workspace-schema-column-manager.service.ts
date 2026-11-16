@@ -16,7 +16,9 @@ export class WorkspaceSchemaColumnManagerService {
     tableName: string;
     columnDefinitions: WorkspaceSchemaColumnDefinition[];
   }): Promise<void> {
-    if (columnDefinitions.length === 0) return;
+    if (columnDefinitions.length === 0) {
+      return;
+    }
 
     const addColumnClauses = columnDefinitions.map(
       (column) => `ADD COLUMN ${buildSqlColumnDefinition(column)}`,
@@ -39,7 +41,9 @@ export class WorkspaceSchemaColumnManagerService {
     columnNames: string[];
     cascade?: boolean;
   }): Promise<void> {
-    if (columnNames.length === 0) return;
+    if (columnNames.length === 0) {
+      return;
+    }
 
     const cascadeClause = cascade ? ' CASCADE' : '';
     const dropClauses = columnNames.map(

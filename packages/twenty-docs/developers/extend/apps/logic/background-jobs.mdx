@@ -115,6 +115,26 @@ await enqueueJobs({
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
 
+## Queue memory
+
+Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 5 MB of serialized payload. These limits only apply on servers that enable them (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+
+`enqueueJobs` reports what each call used. These fields need Twenty 2.57.0 or later, which is also the minimum server version of the SDK:
+
+| Field | What it holds |
+|-------|---------------|
+| `jobs` | Each enqueued job's `jobId` and `sizeBytes`. |
+| `availableBytes` | Memory your application and workspace can still enqueue, as of this call. `null` when the server does not limit queue memory. It is a snapshot, not a reservation. |
+
+When a limit is reached, the whole call is refused and nothing is enqueued:
+
+| Error `subCode` | When | Details |
+|-----------------|------|---------|
+| `JOB_TOO_LARGE` | A job is over the size cap. | `index`, `sizeBytes`, `maxBytes` |
+| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | The batch does not fit in your share. Retry later. | `requestedBytes`, `availableBytes`, `refusedGroupKeys` |
+
+Keep payloads small: pass record ids and fetch the records inside the run instead of embedding them. If `availableBytes` runs low, enqueue fewer jobs at once or chain them with `delayMs`.
+
 ## Retry a transient failure
 
 Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, a queued logic function can request up to three retries by throwing `RetryableLogicFunctionError`.

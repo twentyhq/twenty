@@ -1417,7 +1417,7 @@ describe('agent runs that wait (integration)', () => {
       .spyOn(aiModelRegistryService, 'getAvailableModels')
       .mockReturnValue([{ modelId: 'test-model' }] as never);
     jest
-      .spyOn(aiModelRegistryService, 'validateModelAvailability')
+      .spyOn(aiModelRegistryService, 'validateModelAvailabilityOrThrow')
       .mockReturnValue(undefined as never);
     const chatQueue = global.app.get<MessageQueueService>(
       getQueueToken(MessageQueue.aiStreamQueue),

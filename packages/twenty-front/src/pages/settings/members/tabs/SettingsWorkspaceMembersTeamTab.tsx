@@ -92,7 +92,9 @@ export const SettingsWorkspaceMembersTeamTab = () => {
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
   const searchServerFilter = useMemo(() => {
-    if (!debouncedSearchFilter?.trim()) return undefined;
+    if (!debouncedSearchFilter?.trim()) {
+      return undefined;
+    }
 
     const normalizedSearchTerm = normalizeSearchText(debouncedSearchFilter);
     const nameFilters = generateILikeFiltersForCompositeFields(

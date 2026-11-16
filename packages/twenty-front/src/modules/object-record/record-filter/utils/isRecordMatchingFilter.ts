@@ -340,7 +340,9 @@ export const isRecordMatchingFilter = ({
       );
     }
 
-    if (isEmptyObject(filterValue)) return true;
+    if (isEmptyObject(filterValue)) {
+      return true;
+    }
 
     const objectMetadataField =
       objectMetadataItem.fields.find((field) => field.name === filterKey) ??

@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ProposedToolCall } from 'twenty-shared/ai';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
@@ -11,11 +12,25 @@ jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
   useRefreshFrontComponents: () => ({ refreshFrontComponents: jest.fn() }),
 }));
 
-const answerAgentChatToolCall = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
-  useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
+const answerAiChatToolCall = jest.fn();
+jest.mock('@/ai/hooks/useAnswerAiChatToolCall', () => ({
+  useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
+jest.mock(
+  '@/activities/emails/recipients/hooks/useEmailRecipientsResolution',
+  () => ({
+    useEmailRecipientsResolution: () => ({
+      resolutionByRecipientKey: new Map(),
+    }),
+  }),
+);
+jest.mock(
+  '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions',
+  () => ({
+    useEmailRecipientSuggestions: () => ({ suggestions: [], error: undefined }),
+  }),
+);
 jest.mock(
   '@/ai/components/internal/AiChatToolCallApprovalArgumentsCard',
   () => ({ AiChatToolCallApprovalArgumentsCard: () => null }),
@@ -92,19 +107,26 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
-        <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
+        <ToastProvider>
+          <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
+        </ToastProvider>
       </Provider>
     </I18nProvider>,
   );
 
 describe('AiChatToolCallApprovalCard for an email', () => {
+  beforeAll(() => {
+    // jsdom has no PointerEvent, which the recipients' drag sensor checks on click
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   beforeEach(() => {
-    answerAgentChatToolCall.mockReset();
+    answerAiChatToolCall.mockReset();
   });
 
   it('sends the email as the person edited it', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
 
@@ -120,7 +142,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     });
     await user.click(screen.getByRole('button', { name: 'Send' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    expect(answerAiChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: {
         decision: 'approve',
@@ -147,13 +169,13 @@ describe('AiChatToolCallApprovalCard for an email', () => {
 
   it('saves the email as a draft through the alternative tool', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(true);
+    answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
     await user.click(screen.getByRole('button', { name: 'Save as draft' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'approve',
@@ -166,7 +188,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
 
   it('discards the email with the feedback the person wrote', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(true);
+    answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
@@ -177,7 +199,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Discard' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: { decision: 'reject', feedback: 'Too formal' },
       }),

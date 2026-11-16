@@ -38,6 +38,7 @@ const buildState = (
   findOptions: { select: { id: true } },
   extraSelectClauses: [],
   columnSelections: [],
+  columnNullifyConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -58,6 +59,46 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
+  it('should project a column as null when its nullify condition holds', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: {
+          person: {
+            id: ['"person"."ownerId" = :ownerId', '"person"."x" = :x'],
+          },
+        },
+      }),
+    );
+
+    expect(sql).toContain(
+      'CASE WHEN ("person"."ownerId" = :ownerId) OR ("person"."x" = :x) THEN NULL ELSE "person"."id" END AS',
+    );
+  });
+
+  it('should nullify a column selected under its own alias', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        extraSelectClauses: [{ expression: '"person"."id"', alias: 'imageId' }],
+      }),
+    );
+
+    expect(sql).toContain(
+      'CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END AS "imageId"',
+    );
+  });
+
+  it('should not nullify columns in a grouped query', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        groupByExpressions: ['"person"."id"'],
+      }),
+    );
+
+    expect(sql).not.toContain('CASE WHEN');
+  });
+
   it('should keep row access conditions outside a user OR chain', () => {
     const sql = buildSelectStatement(
       buildState({

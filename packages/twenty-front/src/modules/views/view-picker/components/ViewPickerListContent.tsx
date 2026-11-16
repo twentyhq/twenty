@@ -89,7 +89,9 @@ export const ViewPickerListContent = () => {
 
   const handleWorkspaceDragEnd = useCallback(
     async (result: DraggableListDropResult) => {
-      if (!result.destination) return;
+      if (!result.destination) {
+        return;
+      }
 
       const viewsReordered = moveArrayItem(workspaceViews, {
         fromIndex: result.source.index,
@@ -112,7 +114,9 @@ export const ViewPickerListContent = () => {
 
   const handleUnlistedDragEnd = useCallback(
     async (result: DraggableListDropResult) => {
-      if (!result.destination) return;
+      if (!result.destination) {
+        return;
+      }
 
       const viewsReordered = moveArrayItem(unlistedViews, {
         fromIndex: result.source.index,

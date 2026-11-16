@@ -2,7 +2,9 @@ import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationMode
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { useFindManyMcpServers } from '@/mcp-servers/hooks/useFindManyMcpServers';
 import { AgentMenuItem } from '@/side-panel/pages/workflow/action/components/AgentMenuItem';
+import { McpToolMenuItem } from '@/side-panel/pages/workflow/action/components/McpToolMenuItem';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { sortWorkflowActionLogicFunctions } from '@/side-panel/pages/workflow/action/utils/sortWorkflowActionLogicFunctions';
@@ -19,7 +21,8 @@ import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { Fragment } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   isAgentRunnableAsWorkflowStep,
   WORKFLOW_ACTION_FEATURE_FLAGS,
@@ -104,6 +107,24 @@ export const SidePanelWorkflowSelectAction = ({
     });
   };
 
+  const { mcpServers } = useFindManyMcpServers();
+  const mcpServersWithTools = mcpServers.filter(
+    (mcpServer) => mcpServer.isActive && isNonEmptyArray(mcpServer.tools),
+  );
+
+  const handleMcpToolClick = ({
+    mcpServerId,
+    toolName,
+  }: {
+    mcpServerId: string;
+    toolName: string;
+  }) => {
+    onActionSelected({
+      type: 'MCP_TOOL',
+      defaultSettings: { input: { mcpServerId, toolName } },
+    });
+  };
+
   const handleFunctionClick = (logicFunctionId: string) => {
     onActionSelected({
       type: 'LOGIC_FUNCTION',
@@ -169,6 +190,27 @@ export const SidePanelWorkflowSelectAction = ({
         actions={HUMAN_INPUT_ACTIONS.filter(isActionEnabled)}
         onClick={handleActionClick}
       />
+
+      {mcpServersWithTools.map((mcpServer) => (
+        <Fragment key={mcpServer.id}>
+          <SidePanelWorkflowSelectStepTitle>
+            {mcpServer.label}
+          </SidePanelWorkflowSelectStepTitle>
+          {mcpServer.tools.map((tool) => (
+            <McpToolMenuItem
+              key={tool.name}
+              label={tool.annotations?.title ?? tool.name}
+              description={tool.description}
+              onClick={() =>
+                handleMcpToolClick({
+                  mcpServerId: mcpServer.id,
+                  toolName: tool.name,
+                })
+              }
+            />
+          ))}
+        </Fragment>
+      ))}
 
       {toolFunctions.length > 0 && (
         <>

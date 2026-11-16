@@ -1,7 +1,8 @@
 import {
   AI_SDK_OPENAI_COMPATIBLE,
+  AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 
 describe('getAvailableEfforts', () => {
@@ -21,9 +22,18 @@ describe('getAvailableEfforts', () => {
   it('offers nothing for an SDK without an effort option', () => {
     expect(
       getAvailableEfforts({
-        sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
+        sdkPackage: AI_SDK_TYPESAFE_AI,
         efforts: ['low', 'high'],
       }),
     ).toEqual([]);
+  });
+
+  it('offers the declared efforts of an OpenAI-compatible model', () => {
+    expect(
+      getAvailableEfforts({
+        sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
+        efforts: ['minimal', 'low', 'medium', 'high', 'xhigh'],
+      }),
+    ).toEqual(['minimal', 'low', 'medium', 'high', 'xhigh']);
   });
 });

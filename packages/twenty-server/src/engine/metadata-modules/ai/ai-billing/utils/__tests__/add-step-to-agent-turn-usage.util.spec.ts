@@ -50,10 +50,7 @@ describe('addStepToAgentTurnUsage', () => {
         usage: {
           inputTokens: 1_000,
           outputTokens: 10,
-          inputTokenDetails: { cacheReadTokens: 400 },
-        },
-        providerMetadata: {
-          anthropic: { cacheCreationInputTokens: 200 },
+          inputTokenDetails: { cacheReadTokens: 400, cacheWriteTokens: 200 },
         },
       },
     ]);

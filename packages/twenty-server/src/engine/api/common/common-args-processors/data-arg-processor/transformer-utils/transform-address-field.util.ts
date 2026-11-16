@@ -24,7 +24,9 @@ export const transformAddressField = (
   addressLat?: number | null;
   addressLng?: number | null;
 } | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   return {
     addressStreet1: isUndefined(value.addressStreet1)

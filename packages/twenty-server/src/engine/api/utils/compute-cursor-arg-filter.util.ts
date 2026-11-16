@@ -6,7 +6,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -83,15 +83,15 @@ export const computeCursorArgFilter = ({
       return [];
     }
 
-    const andConditions = [
+    const andConditions: ObjectRecordFilter[] = [
       ...equalityConditions.slice(0, index),
       mainCondition,
-    ] as ObjectRecordFilter[];
+    ];
 
     if (andConditions.length === 1) {
       return [andConditions[0]];
     }
 
-    return [{ and: andConditions } as unknown as ObjectRecordFilter];
+    return [{ and: andConditions }];
   });
 };

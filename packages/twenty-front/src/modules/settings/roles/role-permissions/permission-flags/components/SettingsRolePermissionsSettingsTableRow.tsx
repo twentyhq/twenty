@@ -89,7 +89,9 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   };
 
   const handleRowClick = () => {
-    if (isDisabled) return;
+    if (isDisabled) {
+      return;
+    }
     handleChange(!isChecked);
   };
 

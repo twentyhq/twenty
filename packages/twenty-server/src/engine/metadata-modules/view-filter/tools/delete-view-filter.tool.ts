@@ -6,7 +6,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { VIEW_FILTER_ACCESS_POLICY } from 'src/engine/metadata-modules/view-filter/constants/view-filter-access-policy.constant';
 
 const deleteViewFilterInputSchema = z.object({

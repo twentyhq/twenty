@@ -28,7 +28,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -63,7 +63,7 @@ export class MessageCampaignService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
-    private readonly userRoleService: UserRoleService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
@@ -173,10 +173,11 @@ export class MessageCampaignService {
     requestedScheduledAt?: Date;
     expectedRecipientCount?: number;
   }): Promise<PreparedCampaignSend> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
+    const roleId =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+        workspaceId,
+        userWorkspaceId,
+      });
 
     const {
       fromAddress,

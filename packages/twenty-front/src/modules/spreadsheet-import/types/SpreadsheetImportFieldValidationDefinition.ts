@@ -30,7 +30,7 @@ export type SpreadsheetImportFunctionValidation = {
 
 export type SpreadsheetImportObjectValidation = {
   rule: 'object';
-  isValid: (objectValue: any) => boolean;
+  isValid: (objectValue: unknown) => boolean;
   errorMessage: string;
   level?: SpreadsheetImportErrorLevel;
 };

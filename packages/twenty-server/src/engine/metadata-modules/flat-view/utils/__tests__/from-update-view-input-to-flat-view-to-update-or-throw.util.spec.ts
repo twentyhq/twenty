@@ -120,6 +120,7 @@ const buildExistingFlatView = ({
     calendarEndFieldMetadataUniversalIdentifier: null,
     anyFieldFilterValue: null,
     shouldHideEmptyGroups: false,
+    shouldDisplayGroupsAsTabs: false,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isSystemSideEffect: false,
@@ -181,6 +182,7 @@ const updateView = ({
       createEmptyFlatEntityMaps(),
     ),
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     callerApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:

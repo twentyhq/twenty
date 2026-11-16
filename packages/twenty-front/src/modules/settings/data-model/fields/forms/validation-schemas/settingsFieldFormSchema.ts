@@ -29,17 +29,23 @@ export const settingsFieldFormSchema = (
         type?: FieldMetadataType;
         morphRelationObjectMetadataIds?: string[];
       };
-      if (formData.type !== FieldMetadataType.MORPH_RELATION) return true;
-      if (!isDefined(sourceObjectMetadataId)) return true;
+      if (formData.type !== FieldMetadataType.MORPH_RELATION) {
+        return true;
+      }
+      if (!isDefined(sourceObjectMetadataId)) {
+        return true;
+      }
       if (
         !isDefined(formData.morphRelationObjectMetadataIds) ||
         formData.morphRelationObjectMetadataIds.length <= 1
-      )
+      ) {
         return true;
+      }
       if (
         formData.morphRelationObjectMetadataIds.includes(sourceObjectMetadataId)
-      )
+      ) {
         return false;
+      }
       return true;
     });
 

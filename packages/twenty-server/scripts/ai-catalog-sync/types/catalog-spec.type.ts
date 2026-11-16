@@ -39,5 +39,6 @@ export type CatalogSpecProvider = {
 };
 
 export type CatalogSpec = {
+  requireDataPolicyOnEveryRoute?: boolean;
   providers: CatalogSpecProvider[];
 };

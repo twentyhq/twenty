@@ -55,13 +55,20 @@ export class ApplicationExportResolver {
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: true,
     })
-    { universalIdentifier, shouldIncludeDependencies }: ExportApplicationInput,
+    {
+      universalIdentifier,
+      shouldIncludeDependencies,
+      shouldIncludeSourceFiles,
+      shouldIncludePublicAssets,
+    }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationExportDTO> {
     return this.applicationDevelopmentService.exportApplication({
       universalIdentifier,
       workspaceId,
       shouldIncludeDependencies,
+      shouldIncludeSourceFiles,
+      shouldIncludePublicAssets,
     });
   }
 }

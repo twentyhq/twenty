@@ -53,7 +53,9 @@ export const LocalePicker = () => {
     }
   };
 
-  if (!isDefined(currentWorkspaceMember)) return;
+  if (!isDefined(currentWorkspaceMember)) {
+    return;
+  }
 
   const handleLocaleChange = async (value: keyof typeof APP_LOCALES) => {
     setCurrentWorkspaceMember({

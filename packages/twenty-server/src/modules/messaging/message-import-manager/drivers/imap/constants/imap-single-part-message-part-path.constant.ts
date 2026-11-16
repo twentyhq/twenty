@@ -1,0 +1,1 @@
+export const IMAP_SINGLE_PART_MESSAGE_PART_PATH = '1';

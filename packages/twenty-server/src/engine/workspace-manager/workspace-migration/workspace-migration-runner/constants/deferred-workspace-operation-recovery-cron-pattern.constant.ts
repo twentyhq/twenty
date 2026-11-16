@@ -1,0 +1,2 @@
+export const DEFERRED_WORKSPACE_OPERATION_RECOVERY_CRON_PATTERN =
+  '*/10 * * * *';

@@ -20,8 +20,12 @@ export const sortFieldsByRelevanceForRecordTableWidget = (
       fieldB.type === FieldMetadataType.RELATION &&
       fieldB.settings?.relationType === RelationType.ONE_TO_MANY;
 
-    if (isFieldAReverseSide && !isFieldBReverseSide) return 1;
-    if (!isFieldAReverseSide && isFieldBReverseSide) return -1;
+    if (isFieldAReverseSide && !isFieldBReverseSide) {
+      return 1;
+    }
+    if (!isFieldAReverseSide && isFieldBReverseSide) {
+      return -1;
+    }
 
     const isFieldARelation = fieldA.type === FieldMetadataType.RELATION;
     const isFieldBRelation = fieldB.type === FieldMetadataType.RELATION;

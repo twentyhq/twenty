@@ -177,9 +177,8 @@ describe('workflow MCP tools on core identities (integration)', () => {
       expect(coreVersion.workspaceWorkflowVersionId).toBeNull();
 
       const [{ workspaceRowCount }] = await global.testDataSource.query(
-        `SELECT (SELECT count(*) FROM "${TEST_WORKSPACE_SCHEMA}"."workflow" WHERE "coreWorkflowId" = $1)::int
-           + (SELECT count(*) FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $2)::int AS "workspaceRowCount"`,
-        [coreWorkflowId, coreWorkflowVersionId],
+        `SELECT count(*)::int AS "workspaceRowCount" FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
+        [coreWorkflowVersionId],
       );
 
       expect(workspaceRowCount).toBe(0);

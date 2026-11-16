@@ -18,7 +18,7 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-create-input.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
-import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
+import { extractGraphQLRelationFieldNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-graphql-relation-field-names.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -42,8 +42,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     >;
     typeOptions: CreateInputTypeOptions;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -86,8 +87,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     typeOptions: { settings?: FlatFieldMetadata['settings'] };
     context: SchemaGenerationContext;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -131,8 +133,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     isForGroupBy?: boolean;
     context: SchemaGenerationContext;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -169,8 +172,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     >,
     context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     return this.getTargetRelationInputField({
       fieldMetadata,

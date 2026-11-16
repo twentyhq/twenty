@@ -19,7 +19,7 @@ describe('Pick Record Workflow (e2e)', () => {
   let coreWorkflowId: string | null = null;
   let coreWorkflowVersionId: string | null = null;
   let pickRecordStepId: string | null = null;
-  let candidateRecordIds: string[] = [];
+  const candidateRecordIds: string[] = [];
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({

@@ -94,7 +94,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
-import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.constant';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiModelTier } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
@@ -413,7 +413,8 @@ export class AdminPanelResolver {
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
         modelId:
-          this.aiModelRegistryService.findDefaultModelForTier(tier)?.modelId,
+          this.aiModelRegistryService.findInstanceDefaultModelForTier(tier)
+            ?.modelId,
       })),
     };
   }

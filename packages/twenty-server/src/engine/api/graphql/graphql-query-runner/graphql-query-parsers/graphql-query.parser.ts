@@ -126,7 +126,7 @@ export class GraphqlQueryParser {
       orderBy: orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
-      recordsPermissions: queryBuilder.recordsPermissions,
+      recordReadRestrictions: queryBuilder.recordReadRestrictions,
     });
 
     for (const joinInfo of parseResult.relationJoins) {

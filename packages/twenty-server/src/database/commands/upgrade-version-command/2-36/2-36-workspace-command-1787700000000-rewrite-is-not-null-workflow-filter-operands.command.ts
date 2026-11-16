@@ -1,5 +1,8 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -12,7 +15,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
-import { type WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { type LegacyWorkflowAutomatedTriggerWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-36/types/legacy-workflow-automated-trigger-workspace-entity.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @RegisteredWorkspaceCommand('2.36.0', 1787700000000)
@@ -121,7 +124,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
       });
 
     if (!isDefined(automatedTriggerObject)) {
@@ -129,7 +132,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
 
     const automatedTriggerRepository =
-      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<LegacyWorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger');
 
     const allTriggers = await automatedTriggerRepository.find();

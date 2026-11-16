@@ -75,7 +75,9 @@ export class CalDavFetchEventsService {
     client: DAVClient,
     eventHrefs: string[],
   ): Promise<FetchedCalendarEvent[]> {
-    if (eventHrefs.length === 0) return [];
+    if (eventHrefs.length === 0) {
+      return [];
+    }
 
     const startDate = new Date(
       Date.now() -
@@ -110,7 +112,9 @@ export class CalDavFetchEventsService {
     return calendarObjects.flatMap((calendarObject) => {
       const iCalData = extractICalData(calendarObject.props?.calendarData);
 
-      if (!isNonEmptyString(calendarObject.href) || !iCalData) return [];
+      if (!isNonEmptyString(calendarObject.href) || !iCalData) {
+        return [];
+      }
 
       return parseICalEvents(iCalData, calendarObject.href).filter((event) =>
         isEventInTimeRange(event, startDate, endDate),
@@ -342,10 +346,15 @@ export class CalDavFetchEventsService {
     const etags: Record<string, Record<string, string>> = {};
 
     for (const result of results) {
-      if (result.newSyncToken)
+      if (result.newSyncToken) {
         syncTokens[result.calendarUrl] = result.newSyncToken;
-      if (result.newCtag) ctags[result.calendarUrl] = result.newCtag;
-      if (result.newEtags) etags[result.calendarUrl] = result.newEtags;
+      }
+      if (result.newCtag) {
+        ctags[result.calendarUrl] = result.newCtag;
+      }
+      if (result.newEtags) {
+        etags[result.calendarUrl] = result.newEtags;
+      }
     }
 
     return {

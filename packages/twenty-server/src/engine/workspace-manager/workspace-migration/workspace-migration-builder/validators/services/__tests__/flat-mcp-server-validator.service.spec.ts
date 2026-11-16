@@ -34,6 +34,7 @@ const buildProvider = (
   scope: 'WORKSPACE',
   oauthConfig: null,
   customConfig: null,
+  oauthDiscoveryConfig: null,
   identifyAccountLogicFunctionUniversalIdentifier: null,
   onConnectLogicFunctionUniversalIdentifier: null,
   onDisconnectLogicFunctionUniversalIdentifier: null,

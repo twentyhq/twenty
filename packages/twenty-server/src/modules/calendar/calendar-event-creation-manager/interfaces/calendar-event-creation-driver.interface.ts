@@ -7,7 +7,7 @@ export type CalendarEventCreationDriver = {
     input: CalendarEventToCreate,
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'id' | 'provider' | 'handle'
+      'id' | 'provider' | 'handle' | 'connectionParameters'
     >,
   ): Promise<FetchedCalendarEvent>;
 };

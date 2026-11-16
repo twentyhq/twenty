@@ -8,7 +8,7 @@ export const isFieldMetadataItemFilterable = (field: FieldMetadataItem) => {
 
   const isWorkflowRelationField =
     field.type === FieldMetadataType.RELATION &&
-    (field.name === 'workflow' || field.name === 'workflowVersion');
+    field.name === 'workflowVersion';
 
   const isRelationFieldHandled = !(
     field.type === FieldMetadataType.RELATION &&

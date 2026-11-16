@@ -14,7 +14,7 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -203,7 +203,7 @@ export class ProcessNestedRelationsHelper {
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
     // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
-    if (targetObjectRepository.isReadDisabled()) {
+    if (await targetObjectRepository.isReadDisabled()) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
         parentObjectRecordsAggregatedValues,
@@ -511,7 +511,7 @@ export class ProcessNestedRelationsHelper {
       .select(`"${targetObjectNameSingular}"."id"`, 'id')
       .where(`${column} = "lateralParents"."parentId"`);
 
-    perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
+    await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
 
     const perParentRecordIdsSql = `${perParentRecordIdsQueryBuilder.getQuery()} LIMIT ${Number(perParentLimit)}`;
 

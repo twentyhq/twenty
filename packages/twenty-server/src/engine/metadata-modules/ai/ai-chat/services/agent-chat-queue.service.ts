@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -6,13 +7,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 
 @Injectable()
 export class AgentChatQueueService {
   constructor(
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
@@ -67,12 +65,31 @@ export class AgentChatQueueService {
     messageId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const result = await this.messageRepository.delete(workspaceId, {
-      id: messageId,
-      status: AgentMessageStatus.QUEUED,
+    const queuedMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { id: messageId, status: AgentMessageStatus.QUEUED },
+      select: ['threadId'],
     });
 
-    return (result.affected ?? 0) > 0;
+    if (!isDefined(queuedMessage)) {
+      return false;
+    }
+
+    const deletedMessageCount =
+      await this.conversationWriterService.runInTransaction({
+        workspaceId,
+        threadId: queuedMessage.threadId,
+        work: (scope) =>
+          scope.delete({
+            name: 'agentMessage',
+            where: {
+              id: messageId,
+              threadId: queuedMessage.threadId,
+              status: AgentMessageStatus.QUEUED,
+            },
+          }),
+      });
+
+    return deletedMessageCount > 0;
   }
 
   async promoteQueuedMessage({
@@ -84,29 +101,36 @@ export class AgentChatQueueService {
     threadId: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const savedTurnId = await this.conversationWriterService.insertTurn({
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
       threadId,
-      agentId: null,
-      status: AgentTurnStatus.RUNNING,
-    });
+      work: async (scope) => {
+        const savedTurnId = await this.conversationWriterService.insertTurn({
+          workspaceId,
+          threadId,
+          agentId: null,
+          status: AgentTurnStatus.RUNNING,
+          scope,
+        });
 
-    const result = await this.messageRepository.update(
-      workspaceId,
-      { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
-      {
-        status: AgentMessageStatus.SENT,
-        processedAt: new Date().toISOString(),
-        turnId: savedTurnId,
+        const updatedMessageCount = await scope.update({
+          name: 'agentMessage',
+          where: { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
+          values: {
+            status: AgentMessageStatus.SENT,
+            processedAt: new Date().toISOString(),
+            turnId: savedTurnId,
+          },
+        });
+
+        if (updatedMessageCount === 0) {
+          await scope.delete({ name: 'agentTurn', where: { id: savedTurnId } });
+
+          return null;
+        }
+
+        return savedTurnId;
       },
-    );
-
-    if ((result.affected ?? 0) === 0) {
-      await this.turnRepository.delete(workspaceId, { id: savedTurnId });
-
-      return null;
-    }
-
-    return savedTurnId;
+    });
   }
 }

@@ -1,6 +1,6 @@
-export interface IPageInfo {
+export type IPageInfo = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   startCursor?: string;
   endCursor?: string;
-}
+};

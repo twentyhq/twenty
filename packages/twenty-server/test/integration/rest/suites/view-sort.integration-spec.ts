@@ -95,7 +95,9 @@ describe('View Sort REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewSortId) return;
+    if (!testViewSortId) {
+      return;
+    }
 
     await deleteTestViewSortWithRestApi(testViewSortId);
     testViewSortId = undefined;

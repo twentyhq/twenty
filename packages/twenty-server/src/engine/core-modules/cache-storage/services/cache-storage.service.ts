@@ -90,7 +90,9 @@ export class CacheStorageService {
       const values = await redisClient.mGet(prefixedKeys);
 
       return values.map((v) => {
-        if (v === null || v === undefined) return undefined;
+        if (v === null || v === undefined) {
+          return undefined;
+        }
         try {
           return JSON.parse(v) as T;
         } catch {

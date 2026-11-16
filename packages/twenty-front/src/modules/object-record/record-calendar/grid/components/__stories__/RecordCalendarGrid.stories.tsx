@@ -134,11 +134,13 @@ const meta: Meta<typeof RecordCalendarGrid> = {
                       visibleRecordFields: [],
                       objectMetadataItem: companyObjectMetadataItem,
                       objectPermissions: {
+                        canCreateAllRecords: true,
                         canReadAllRecords: true,
                         canUpdateAllRecords: true,
                         canSoftDeleteAllRecords: true,
                         canDestroyAllRecords: true,
-                        restrictedFields: {},
+                        unreadableFields: [],
+                        uneditableFields: [],
                         rowLevelRecordsPermissions: null,
                       },
                     }}

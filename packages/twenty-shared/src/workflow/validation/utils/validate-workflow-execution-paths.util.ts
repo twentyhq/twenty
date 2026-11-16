@@ -54,11 +54,14 @@ export const validateWorkflowExecutionPaths = ({
         ? (step.nextStepIds ?? [])
         : (graph.childrenByStepId.get(id) ?? []);
     if (isDefined(enclosingIterator) && destinations.length === 0) {
+      const iteratorName =
+        stepsById.get(enclosingIterator)?.name ?? enclosingIterator;
+
       issues.push({
         severity: 'error',
         code: 'ITERATOR_MISSING_RETURN',
         stepId: id,
-        message: `Loop body step ${id} must return to iterator ${enclosingIterator}`,
+        message: `Step "${step.name ?? id}" must return to iterator "${iteratorName}", otherwise the run hangs after the first item. Add "${enclosingIterator}" to its nextStepIds.`,
       });
     }
     destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));

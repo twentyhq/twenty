@@ -3,12 +3,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/connection-provider/application-connection-provider.resolver';
+import { ConnectionProviderApiKeyFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-api-key-flow.service';
+import { ConnectionProviderApiKeyResolver } from 'src/engine/core-modules/application/connection-provider/connection-provider-api-key.resolver';
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
+import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
+import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-client/connection-provider-oauth-client.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
+import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
+import { ConnectionProviderDiscoveredOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-discovered-oauth-client.service';
+import { DiscoveredOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/discovered-oauth-client.driver';
+import { ManifestOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/manifest-oauth-client.driver';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -34,6 +42,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ConnectionProviderEntity,
+      ConnectionProviderOAuthClientEntity,
       ApplicationEntity,
       ApplicationRegistrationVariableEntity,
       ConnectedAccountEntity,
@@ -50,21 +59,31 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   ],
   providers: [
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
+    provideWorkspaceScopedRepository(ConnectionProviderOAuthClientEntity),
+    ConnectionProviderDiscoveredOAuthClientService,
+    DiscoveredOAuthClientDriver,
+    ManifestOAuthClientDriver,
+    ConnectionProviderOAuthClientService,
     AppConnectionAccessService,
     ConnectionProviderService,
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderConnectedAccountService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
+    ConnectionProviderApiKeyFlowService,
+    ConnectionProviderFlowCookieService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
+    ConnectionProviderApiKeyResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ConnectionProviderService,
+    ConnectionProviderOAuthClientService,
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
+    ConnectionProviderFlowCookieService,
     ConnectionProviderLifecycleHookService,
   ],
 })

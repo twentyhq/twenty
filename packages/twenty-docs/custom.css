@@ -1250,12 +1250,12 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='dev-apps'], [data-page-banner='getting-started-apps']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/apps.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
 }
 
 #content-area:has([data-page-banner='dev-api']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-api.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/api.svg');
 }
 
 #content-area:has([data-page-banner='dev-self-host'], [data-page-banner='card-page-self-host-guide']) {
@@ -1269,7 +1269,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='data-model'], [data-page-banner='getting-started-data-model']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/schema.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
 }
 
@@ -1293,7 +1293,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
 }
 
-#content-area:has([data-page-banner='layout'], [data-page-banner='getting-started-layout'], [data-page-banner='section-apps-layout'], [data-page-banner='card-page-ui-library']) {
+#content-area:has([data-page-banner='layout'], [data-page-banner='getting-started-layout'], [data-page-banner='section-apps-layout']) {
   --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
 }
@@ -1478,6 +1478,11 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-objects.svg');
 }
 
+#content-area:has([data-page-banner='card-page-validation-rules']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-validation-rules.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+}
+
 #content-area:has([data-page-banner='card-page-extending-objects']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-extending-objects.svg');
 }
@@ -1491,7 +1496,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='card-page-views']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/views-pipelines.svg');
+  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-data.svg');
 }
 
 #content-area:has([data-page-banner='card-page-navigation']) {
@@ -1515,7 +1520,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='card-page-skills-agents'], [data-page-banner='card-page-tutorial-agent']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/agents.svg');
 }
 
 #content-area:has([data-page-banner='card-page-workflows']) {
@@ -1567,7 +1572,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='card-page-marketplace-review']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/marketplace-review.svg');
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-documents']) {
@@ -1583,7 +1588,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-data']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/schema.svg');
 }
 
 #content-area:has([data-page-banner='card-page-webhooks']) {
@@ -1671,4 +1676,109 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='page-cover-checkbox']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/checkbox.svg');
+}
+
+#content-area:has([data-page-banner='card-page-email-channels']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/email-channels.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner='card-page-workspace']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/workspace.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-settings.svg');
+}
+
+#content-area:has([data-page-banner='card-page-fields']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/fields.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+}
+
+#content-area:has([data-page-banner='card-page-field-mapping']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/field-mapping.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
+}
+
+#content-area:has([data-page-banner='card-page-widgets']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/widgets.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
+}
+
+#content-area:has([data-page-banner='card-page-mcp']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/mcp.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
+}
+
+#content-area:has([data-page-banner='card-page-iterator']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/iterator.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+}
+
+#content-area:has([data-page-banner='card-page-workflow-history']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/workflow-history.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+}
+
+#content-area:has([data-page-banner='card-page-record-pages']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/record-pages.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='card-page-sales-automation']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/sales-automation.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+}
+
+#content-area:has([data-page-banner='card-page-csv-files']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/csv-files.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
+}
+
+#content-area:has([data-page-banner='card-page-ui-library']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/ui-library.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
+}
+
+#content-area:has([data-page-banner='card-page-iconography']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/iconography.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
+}
+
+#content-area:has([data-page-banner='card-page-currency']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/currency.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+}
+
+#content-area:has([data-page-banner='card-page-directionality']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/directionality.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='card-page-pagination']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/pagination.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='card-page-overlays']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/overlays.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='card-page-skeleton']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/skeleton.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='card-page-labels']) {
+  --page-banner-illustration: url('/images/documentation/topic-icons-v1/labels.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='page-cover-assistant-avatar']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
+}
+
+#content-area:has([data-page-banner='page-cover-code-editor']) {
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-api.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }

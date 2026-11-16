@@ -12,7 +12,9 @@ export const useInitializeFormatPreferences = () => {
 
   const initializeFormatPreferences = useCallback(
     (workspaceMember: CurrentWorkspaceMember | null) => {
-      if (!workspaceMember) return;
+      if (!workspaceMember) {
+        return;
+      }
 
       const preferences =
         getFormatPreferencesFromWorkspaceMember(workspaceMember);

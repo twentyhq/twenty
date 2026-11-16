@@ -1,7 +1,9 @@
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import {
+  RecordFilterOperand,
+  RecordFilterGroupLogicalOperator,
+} from 'twenty-shared/types';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
 

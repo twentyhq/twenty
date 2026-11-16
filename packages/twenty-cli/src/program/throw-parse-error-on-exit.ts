@@ -8,5 +8,6 @@ export const throwParseErrorOnExit = (command: Command, commandName: string) =>
       commanderError,
       commandName,
       operands: command.args,
+      options: command.optsWithGlobals(),
     });
   });

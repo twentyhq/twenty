@@ -24,7 +24,10 @@ export const SettingsAiAssistantExample = ({
         onChange(nextValue);
 
         if (!shouldRejectChanges) {
-          setDraftValue(nextValue);
+          setDraftValue((previousValue) => ({
+            ...previousValue,
+            ...nextValue,
+          }));
         }
       }}
       disabled={disabled}

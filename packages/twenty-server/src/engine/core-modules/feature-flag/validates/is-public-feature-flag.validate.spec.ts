@@ -30,7 +30,9 @@ jest.mock(
     isPublicFeatureFlag: (
       key: FeatureFlagKey,
     ): key is PublicFeatureFlag['key'] => {
-      if (!key) return false;
+      if (!key) {
+        return false;
+      }
 
       return key === mockPublicFeatureFlag.key;
     },

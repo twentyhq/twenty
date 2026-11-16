@@ -19,7 +19,9 @@ export const getFieldMetadataFromGqlField = ({
     ) ??
     objectMetadataItem.fields.filter(isFieldMorphRelation).find((field) => {
       const morphRelations = field.morphRelations;
-      if (!morphRelations) return false;
+      if (!morphRelations) {
+        return false;
+      }
       const possibleMorphRelationsNames =
         computePossibleMorphGqlFieldForFieldName({
           fieldMetadata: {

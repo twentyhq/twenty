@@ -74,7 +74,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
     setIsLoading(true);
 
     try {
-      const { provisioningUri } =
+      const { provisioningUri, isTwoFactorAuthenticationReset } =
         await getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
           recoveryCode,
           loginToken,
@@ -87,6 +87,10 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
         return;
       }
 
+      if (!isTwoFactorAuthenticationReset) {
+        return;
+      }
+
       enqueueToast({
         status: 'info',
         children: t`Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile.`,
@@ -95,7 +99,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
       enqueueToast(
         getTwoFactorAuthenticationErrorToastOptions({
           error,
-          fallbackMessage: t`Invalid or expired recovery code.`,
+          fallbackMessage: t`Invalid or expired code.`,
         }),
       );
     } finally {
@@ -111,8 +115,9 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
     <StyledForm onSubmit={handleSubmit}>
       <StyledTwoFactorInstructions>
         <Trans>
-          Enter the recovery code a workspace admin gave you. Your current
-          authenticator for this workspace will be removed.
+          Enter one of your backup codes, or the recovery code a workspace admin
+          gave you. A recovery code removes your current authenticator for this
+          workspace.
         </Trans>
       </StyledTwoFactorInstructions>
       <StyledInputContainer>

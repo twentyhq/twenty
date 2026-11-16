@@ -114,7 +114,8 @@ export const mockedRoles: Role[] =
         "canUpdateObjectRecords": false,
         "canSoftDeleteObjectRecords": false,
         "canDestroyObjectRecords": false,
-        "restrictedFields": null,
+        "unreadableFields": null,
+        "uneditableFields": null,
         "rowLevelPermissionPredicates": null,
         "rowLevelPermissionPredicateGroups": null
       },
@@ -125,7 +126,8 @@ export const mockedRoles: Role[] =
         "canUpdateObjectRecords": false,
         "canSoftDeleteObjectRecords": false,
         "canDestroyObjectRecords": false,
-        "restrictedFields": null,
+        "unreadableFields": null,
+        "uneditableFields": null,
         "rowLevelPermissionPredicates": null,
         "rowLevelPermissionPredicateGroups": null
       }

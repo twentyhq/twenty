@@ -33,13 +33,13 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     expect(executedStatements[0].values).toEqual([1, 2, 'company-1']);
   });
 
-  it('should keep an orWhere added after the policy was applied inside the guarded expression', () => {
+  it('should keep an orWhere added after the policy was applied inside the guarded expression', async () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
 
-    queryBuilder
+    await queryBuilder
       .where('"person"."id" = :a', { a: 1 })
-      .applyRowLevelPermissions()
-      .orWhere('"person"."id" = :b', { b: 2 });
+      .applyRowLevelPermissions();
+    queryBuilder.orWhere('"person"."id" = :b', { b: 2 });
 
     expect(queryBuilder.getQuery()).toContain(GUARDED_OR_CHAIN);
   });
@@ -57,12 +57,12 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     );
   });
 
-  it('should guard a mutation built from the select builder', () => {
+  it('should guard a mutation built from the select builder', async () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
 
     const mutationQueryBuilder =
       WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
-        queryBuilder
+        await queryBuilder
           .where('"person"."id" = :a', { a: 1 })
           .orWhere('"person"."id" = :b', { b: 2 })
           .applyRowLevelPermissions(),
@@ -77,7 +77,7 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
   it('should carry the row access condition onto a clone without applying it twice', async () => {
     const { queryBuilder, executedStatements } = buildRowAccessQueryBuilder();
 
-    queryBuilder
+    await queryBuilder
       .where('"person"."id" = :a', { a: 1 })
       .applyRowLevelPermissions();
 
@@ -111,13 +111,14 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     ).toBe(1);
   });
 
-  it('should keep the row access condition on a mutation built after where() replaces the WHERE', () => {
+  it('should keep the row access condition on a mutation built after where() replaces the WHERE', async () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
+
+    await queryBuilder.applyRowLevelPermissions();
 
     const mutationQueryBuilder =
       WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
         queryBuilder
-          .applyRowLevelPermissions()
           .where('"person"."id" = :a', { a: 1 })
           .orWhere('"person"."id" = :b', { b: 2 }),
         'delete',
@@ -128,11 +129,11 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     );
   });
 
-  it('should carry the row access condition into a builder that copies the where clauses', () => {
+  it('should carry the row access condition into a builder that copies the where clauses', async () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
     const { queryBuilder: snapshotQueryBuilder } = buildQueryBuilder();
 
-    queryBuilder
+    await queryBuilder
       .where('"person"."id" = :a', { a: 1 })
       .orWhere('"person"."id" = :b', { b: 2 })
       .applyRowLevelPermissions();

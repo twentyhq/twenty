@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import {
   ASK_QUESTION_TOOL_NAME,
+  type AiDataPolicy,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposeToolCallToolInput,
   REQUEST_FORM_TOOL_NAME,
@@ -58,6 +59,7 @@ export type AgentRegistryAccess =
 export type AgentToolsetInput = {
   registryAccess: AgentRegistryAccess;
   registeredModel: RegisteredAiModel;
+  aiDataPolicy: AiDataPolicy;
   nativeToolOptions: NativeModelToolOptions;
   canAskHumans: boolean;
   isWorkspaceSetupThread?: boolean;
@@ -90,6 +92,7 @@ export class AgentToolsetService {
   async build({
     registryAccess,
     registeredModel,
+    aiDataPolicy,
     nativeToolOptions,
     canAskHumans,
     isWorkspaceSetupThread = false,
@@ -142,10 +145,11 @@ export class AgentToolsetService {
 
     const sentTools: ToolSet = {
       ...directTools,
-      ...this.aiModelConfigService.getNativeModelTools(
-        registeredModel,
-        nativeToolOptions,
-      ),
+      ...this.aiModelConfigService.getNativeModelTools({
+        model: registeredModel,
+        aiDataPolicy,
+        options: nativeToolOptions,
+      }),
       ...pausingTools,
       ...extraTools,
     };

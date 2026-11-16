@@ -4,7 +4,9 @@ import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-th
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 export const getSubdomainFromEmail = (email?: string) => {
-  if (!isDefined(email) || !isWorkEmail(email)) return;
+  if (!isDefined(email) || !isWorkEmail(email)) {
+    return;
+  }
 
   const domain = getDomainFromEmailOrThrow(email);
 

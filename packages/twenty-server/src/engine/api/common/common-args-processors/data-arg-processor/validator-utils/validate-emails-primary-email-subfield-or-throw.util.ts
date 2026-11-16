@@ -13,7 +13,9 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   if (typeof value !== 'string') {
     const inspectedValue = inspect(value);

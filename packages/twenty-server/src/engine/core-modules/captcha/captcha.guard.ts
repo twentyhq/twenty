@@ -45,20 +45,19 @@ export class CaptchaGuard implements CanActivate {
 
     if (result.success) {
       return true;
-    } else {
-      await this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.InvalidCaptcha,
-        eventId: token || '',
-        ...(result.error ? { attributes: { error: result.error } } : {}),
-      });
-
-      throw new CaptchaException(
-        'Invalid Captcha, please try another device',
-        CaptchaExceptionCode.INVALID_CAPTCHA,
-        {
-          userFriendlyMessage: msg`Invalid Captcha, please try another device`,
-        },
-      );
     }
+    await this.metricsService.incrementCounterForEvent({
+      key: MetricsKeys.InvalidCaptcha,
+      eventId: token || '',
+      ...(result.error ? { attributes: { error: result.error } } : {}),
+    });
+
+    throw new CaptchaException(
+      'Invalid Captcha, please try another device',
+      CaptchaExceptionCode.INVALID_CAPTCHA,
+      {
+        userFriendlyMessage: msg`Invalid Captcha, please try another device`,
+      },
+    );
   }
 }

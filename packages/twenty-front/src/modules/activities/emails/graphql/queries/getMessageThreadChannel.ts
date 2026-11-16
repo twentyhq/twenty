@@ -6,6 +6,7 @@ export const getMessageThreadChannel = gql`
       type
       provider
       applicationId
+      conversationStyle
     }
   }
 `;

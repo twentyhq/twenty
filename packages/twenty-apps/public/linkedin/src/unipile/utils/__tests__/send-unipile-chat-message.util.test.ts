@@ -24,6 +24,7 @@ const send = () =>
     accountId: 'acc_1',
     chatId: 'chat-1',
     text: 'Thanks, talk soon',
+    attachments: [],
   });
 
 describe('sendUnipileChatMessage', () => {
@@ -43,6 +44,31 @@ describe('sendUnipileChatMessage', () => {
       path: { account_id: 'acc_1', chat_id: 'chat-1' },
       body: { text: 'Thanks, talk soon' },
     });
+  });
+
+  it('sends the attachments along with the text', async () => {
+    mocks.sendMessage.mockResolvedValue({
+      data: { object: 'MessageSent', message_id: 'message-1' },
+    });
+
+    const attachment = {
+      content: 'cmVwb3J0',
+      content_type: 'application/pdf',
+      filename: 'deck.pdf',
+    };
+
+    await sendUnipileChatMessage({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: '',
+      attachments: [attachment],
+    });
+
+    expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        body: { text: '', attachments: [attachment] },
+      }),
+    );
   });
 
   it('returns the first id when Unipile reports several', async () => {

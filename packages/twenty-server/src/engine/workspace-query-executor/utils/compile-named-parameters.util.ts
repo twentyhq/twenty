@@ -1,9 +1,9 @@
 import { type QueryConfig } from 'pg';
 
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 
 export type NamedParameters = Record<string, unknown>;
 
@@ -84,20 +84,20 @@ export const compileNamedParameters = (
     const parameterName = sql.slice(nameStartIndex, nameEndIndex);
 
     if (!(parameterName in parameters)) {
-      throw new TwentyOrmException(
-        `Parameter ":${parameterName}" is referenced by the query but was never provided`,
-        TwentyOrmExceptionCode.MISSING_PARAMETER,
-      );
+      throw new WorkspaceQueryExecutorException({
+        message: `Parameter ":${parameterName}" is referenced by the query but was never provided`,
+        code: WorkspaceQueryExecutorExceptionCode.MISSING_PARAMETER,
+      });
     }
 
     const parameterValue = parameters[parameterName];
 
     if (isSpread) {
       if (!Array.isArray(parameterValue)) {
-        throw new TwentyOrmException(
-          `Parameter ":...${parameterName}" expects an array`,
-          TwentyOrmExceptionCode.INVALID_PARAMETER,
-        );
+        throw new WorkspaceQueryExecutorException({
+          message: `Parameter ":...${parameterName}" expects an array`,
+          code: WorkspaceQueryExecutorExceptionCode.INVALID_PARAMETER,
+        });
       }
 
       if (parameterValue.length === 0) {
@@ -140,8 +140,8 @@ const findClosingQuoteIndex = (
     return index;
   }
 
-  throw new TwentyOrmException(
-    `Unterminated ${quote === "'" ? 'string literal' : 'quoted identifier'} in SQL`,
-    TwentyOrmExceptionCode.MALFORMED_SQL,
-  );
+  throw new WorkspaceQueryExecutorException({
+    message: `Unterminated ${quote === "'" ? 'string literal' : 'quoted identifier'} in SQL`,
+    code: WorkspaceQueryExecutorExceptionCode.MALFORMED_SQL,
+  });
 };

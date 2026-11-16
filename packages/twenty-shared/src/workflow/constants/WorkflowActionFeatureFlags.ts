@@ -6,4 +6,5 @@ export const WORKFLOW_ACTION_FEATURE_FLAGS: Partial<
 > = {
   [WorkflowActionType.SEND_CHAT_MESSAGE]:
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  [WorkflowActionType.MCP_TOOL]: FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
 };

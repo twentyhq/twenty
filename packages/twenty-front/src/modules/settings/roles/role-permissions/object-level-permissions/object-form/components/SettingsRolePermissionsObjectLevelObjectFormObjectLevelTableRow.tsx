@@ -108,7 +108,9 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     });
 
     const handleCheckboxChange = () => {
-      if (!isEditable) return;
+      if (!isEditable) {
+        return;
+      }
 
       if (checkboxType === 'default') {
         upsertObjectPermission(objectMetadataItemId, permission.key, false);

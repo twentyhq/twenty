@@ -2,7 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import * as fs from 'fs/promises';
 
+import {
+  decodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
+} from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -17,14 +22,22 @@ import {
 } from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
+const SDK_TYPE_REFERENCES_CACHE_MAX_ENTRIES = 8;
+const SDK_TYPE_REFERENCES_CACHE_MAX_ENTRY_BYTES = 1024 * 1024;
 
 @Injectable()
 export class SdkClientArchiveService {
+  private readonly typeReferencesCache = new Map<
+    string,
+    { checksum: string; content: Buffer }
+  >();
+
   private readonly logger = new Logger(SdkClientArchiveService.name);
 
   constructor(
@@ -111,6 +124,80 @@ export class SdkClientArchiveService {
     }
 
     return entry.buffer();
+  }
+
+  async getClientTypeReferences(params: {
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Record<string, string>> {
+    const archiveIdentifier = {
+      workspaceId: params.workspaceId,
+      applicationUniversalIdentifier: params.applicationUniversalIdentifier,
+      fileFolder: FileFolder.GeneratedSdkClient,
+      resourcePath: SDK_CLIENT_ARCHIVE_NAME,
+    };
+    const metadata =
+      await this.fileStorageService.getFileMetadata(archiveIdentifier);
+    const checksum = metadata?.checksum;
+    const cacheKey = `${params.workspaceId}:${params.applicationUniversalIdentifier}`;
+    const cached = readLruEntry({
+      map: this.typeReferencesCache,
+      key: cacheKey,
+    });
+
+    if (isDefined(checksum) && cached?.checksum === checksum) {
+      return decodeFrontComponentTypeReferences(cached.content);
+    }
+
+    this.typeReferencesCache.delete(cacheKey);
+
+    const archiveBuffer = await this.downloadArchiveBufferOrGenerate(params);
+    const { default: unzipper } = await import('unzipper');
+    const directory = await unzipper.Open.buffer(archiveBuffer);
+    const archiveFiles = directory.files.map((file) => ({
+      file,
+      path: file.path.replace(/^\.\//, ''),
+    }));
+    const files = await Promise.all(
+      archiveFiles
+        .filter(
+          ({ path }) =>
+            /\.[cm]?ts$/.test(path) || path.endsWith('package.json'),
+        )
+        .map(
+          async ({ file, path }) =>
+            [
+              `/node_modules/twenty-client-sdk/${path}`,
+              (await file.buffer()).toString(),
+            ] as const,
+        ),
+    );
+    const references = Object.fromEntries(files);
+
+    if (!isDefined(checksum)) {
+      return references;
+    }
+
+    const currentMetadata =
+      await this.fileStorageService.getFileMetadata(archiveIdentifier);
+
+    if (currentMetadata?.checksum !== checksum) {
+      return references;
+    }
+
+    const content = encodeFrontComponentTypeReferencesOrThrow(references);
+
+    if (content.length <= SDK_TYPE_REFERENCES_CACHE_MAX_ENTRY_BYTES) {
+      writeLruEntry({
+        map: this.typeReferencesCache,
+        key: cacheKey,
+        value: { checksum, content },
+        maxEntries: SDK_TYPE_REFERENCES_CACHE_MAX_ENTRIES,
+      });
+    }
+
+    return references;
   }
 
   async markSdkLayerFresh({

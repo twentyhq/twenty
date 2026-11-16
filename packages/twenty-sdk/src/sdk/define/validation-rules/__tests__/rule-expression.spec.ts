@@ -26,6 +26,7 @@ const {
   notEq,
   now,
   or,
+  previous,
   subtract,
 } = ruleExpression;
 
@@ -86,6 +87,13 @@ describe('ruleExpression', () => {
     ['or', or(gt(field('amount'), 1), lt(field('amount'), 9))],
     ['not', not(gt(field('amount'), 1))],
     ['now', gt(field('closeDate'), now)],
+    [
+      'previous',
+      or(
+        eq(field('stage'), previous('stage')),
+        notEq(previous('stage'), 'WON'),
+      ),
+    ],
   ])('writes a %s the compiler accepts', (_, { source }) => {
     expect(
       compileValidationRuleExpression({
@@ -124,6 +132,9 @@ describe('ruleExpression', () => {
       'arrayLength(tags) > 1',
     );
     expect(gt(field('closeDate'), now).source).toBe('closeDate > now');
+    expect(notEq(previous('stage'), 'WON').source).toBe(
+      'previous.stage != "WON"',
+    );
   });
 
   it('leaves a single operand as it is', () => {

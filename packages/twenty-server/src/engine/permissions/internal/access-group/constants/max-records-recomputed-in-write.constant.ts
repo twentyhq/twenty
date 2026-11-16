@@ -1,0 +1,1 @@
+export const MAX_RECORDS_RECOMPUTED_IN_WRITE = 100;

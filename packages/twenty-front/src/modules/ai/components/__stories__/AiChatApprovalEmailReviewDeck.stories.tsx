@@ -8,7 +8,10 @@ import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai/components/__storie
 import { type AiChatApprovalReviewEmail } from '@/ai/types/AiChatApprovalReviewEmail';
 import { type AiChatApprovalReviewStatus } from '@/ai/types/AiChatApprovalReviewStatus';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const EMAIL_REVIEW_STATUSES: readonly AiChatApprovalReviewStatus[] = [
   'pending',
@@ -36,8 +39,18 @@ const getBodyEditor = (canvasElement: HTMLElement) =>
 const meta = {
   title: 'Modules/AI/AiChatApprovalEmailReviewDeck',
   component: AiChatApprovalEmailReviewExample,
-  decorators: [ComponentDecorator, MemoryRouterDecorator, RootDecorator],
-  parameters: { container: { width: 688 }, argos: { fitToContent: false } },
+  decorators: [
+    ComponentDecorator,
+    ObjectMetadataItemsDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
+    RootDecorator,
+  ],
+  parameters: {
+    container: { width: 688 },
+    argos: { fitToContent: false },
+    msw: graphqlMocks,
+  },
   args: { onApprove: fn(), onSkip: fn() },
 } satisfies Meta<typeof AiChatApprovalEmailReviewExample>;
 
@@ -51,20 +64,23 @@ export const RetainedDraftEdits: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
-    const subject = canvas.getByRole('textbox', { name: 'Subject' });
+    const subject = await canvas.findByRole('textbox', { name: 'Subject' });
 
     await userEvent.clear(subject);
     await userEvent.type(subject, 'Revised demo follow-up');
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Remove joe@example.com' }),
-    );
+    const recipientRemoval = canvas.getByRole('button', {
+      name: 'Remove joe@example.com',
+    });
+
+    recipientRemoval.focus();
+    await userEvent.click(recipientRemoval);
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to To' }),
+      canvas.getByRole('combobox', { name: 'To' }),
       'joe.revised@example.com{Enter}',
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Cc' }),
+      canvas.getByRole('combobox', { name: 'Cc' }),
       'team@example.com{Enter}',
     );
 
@@ -73,8 +89,8 @@ export const RetainedDraftEdits: Story = {
     await userEvent.clear(bodyEditor);
     await userEvent.type(bodyEditor, 'Updated walkthrough for Brian and Joe.');
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Bcc' }),
-      'archive@example.com',
+      canvas.getByRole('combobox', { name: 'Bcc' }),
+      'archive@example.com{Enter}',
     );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Next approval' }),
@@ -138,7 +154,6 @@ export const RetainedDraftEdits: Story = {
             body: expect.stringContaining(
               'Updated walkthrough for Brian and Joe.',
             ),
-            isCcBccExpanded: true,
           }),
         }),
         expect.objectContaining({
@@ -158,7 +173,7 @@ export const IndividualApproval: Story = {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Send' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Send' }));
 
     const confirmation = await screen.findByRole('alertdialog');
 
@@ -204,7 +219,7 @@ export const SkipIsolation: Story = {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Skip' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Skip' }));
     await expect(args.onSkip).toHaveBeenCalledWith('demo-follow-up');
     await expect(canvas.getByText('Skipped')).toBeVisible();
     await expect(args.onApprove).not.toHaveBeenCalled();
@@ -275,7 +290,7 @@ export const Outcomes: Story = {
           canvas.getByRole('button', { name: 'Skip' }),
         ).toBeDisabled();
         await expect(
-          canvas.queryByRole('textbox', { name: 'Add a recipient to To' }),
+          canvas.queryByRole('combobox', { name: 'To' }),
         ).not.toBeInTheDocument();
         await expect(
           canvas.queryByRole('button', { name: 'Remove brian@example.com' }),
@@ -308,13 +323,15 @@ export const MissingRecipient: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
+    await expect(
+      await canvas.findByRole('button', { name: 'Send' }),
+    ).toBeDisabled();
     await expect(
       canvas.getByRole('button', { name: 'Send all 3' }),
     ).toBeDisabled();
     await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Add a recipient to To' }),
+      canvas.getByRole('combobox', { name: 'To' }),
       'brian@example.com{Enter}',
     );
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
@@ -329,7 +346,7 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('No actions to review')).toBeVisible();
+    await expect(await canvas.findByText('No actions to review')).toBeVisible();
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
   },
 };
@@ -340,15 +357,15 @@ export const Single: Story = {
     const canvas = within(canvasElement);
 
     await expect(
+      await canvas.findByText('No more drafts after this one'),
+    ).toBeVisible();
+    await expect(
       canvas.queryByRole('button', { name: 'Next approval' }),
     ).not.toBeInTheDocument();
     await expect(
       canvas.queryByRole('button', { name: 'Previous approval' }),
     ).not.toBeInTheDocument();
     await expect(canvas.queryByText(/Send all/)).not.toBeInTheDocument();
-    await expect(
-      canvas.getByText('No more drafts after this one'),
-    ).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
   },
 };
@@ -357,14 +374,14 @@ export const Narrow: Story = {
   parameters: { container: { width: 320 } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const review = canvas.getByRole('region', { name: 'Approval review' });
+    const review = await canvas.findByRole('region', {
+      name: 'Approval review',
+    });
 
     await expect(await getBodyEditor(canvasElement)).toBeVisible();
     await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
     await userEvent.click(canvas.getByRole('button', { name: 'Cc/Bcc' }));
-    await expect(
-      canvas.getByRole('textbox', { name: 'Add a recipient to Bcc' }),
-    ).toBeVisible();
+    await expect(canvas.getByRole('combobox', { name: 'Bcc' })).toBeVisible();
     await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
   },
 };

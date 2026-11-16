@@ -14,6 +14,7 @@ import { workflowHttpRequestActionSchema } from './http-request-action-schema';
 import { workflowIfElseActionSchema } from './if-else-action-schema';
 import { workflowIteratorActionSchema } from './iterator-action-schema';
 import { workflowLogicFunctionActionSchema } from './logic-function-action-schema';
+import { workflowMcpToolActionSchema } from './mcp-tool-action-schema';
 import { workflowPickRecordActionSchema } from './pick-record-action-schema';
 import { workflowSendChatMessageActionSchema } from './send-chat-message-action-schema';
 import { workflowSendEmailActionSchema } from './send-email-action-schema';
@@ -25,6 +26,7 @@ import { workflowWaitForEventActionSchema } from './wait-for-event-action-schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
   workflowLogicFunctionActionSchema,
+  workflowMcpToolActionSchema,
   workflowSendEmailActionSchema,
   workflowDraftEmailActionSchema,
   workflowSendChatMessageActionSchema,

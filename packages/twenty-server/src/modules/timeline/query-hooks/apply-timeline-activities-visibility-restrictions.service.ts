@@ -21,7 +21,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
 
   public async applyVisibilityRestrictions({
     records,
-    recordsPermissions,
+    recordReadRestrictions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: Parameters<
@@ -35,7 +35,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
       timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
         properties: timelineActivity.properties,
         timelineActivity,
-        recordsPermissions,
+        recordReadRestrictions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });

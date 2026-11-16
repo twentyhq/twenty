@@ -39,6 +39,11 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Ověřte prosím tuto doménu, aby uživatelé s <1>@{domain}</1> e-mailovými adresami mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
+msgstr "K přihlášení do {workspaceDisplayName} byl použit záložní kód. Zbývající záložní kódy: {remainingBackupCodeCount}."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Upozornění před koncem zkušebního období"
@@ -62,6 +67,11 @@ msgstr "Přidat platební metodu"
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
 msgstr "Poté bude pracovní prostor a všechna jeho data trvale smazán — a nebudeme ho moci obnovit."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "Backup code used"
+msgstr "Použit záložní kód"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -138,6 +148,17 @@ msgid "Hi {userName},"
 msgstr "Dobrý den, {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Pokud jste to nebyli vy, změňte si heslo a v části Nastavení, Profil, Dvoufaktorové ověření vygenerujte nové záložní kódy."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "If this was not you, change your password and generate new backup codes."
+msgstr "Pokud jste to nebyli vy, změňte si heslo a vygenerujte nové záložní kódy."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
 msgstr "Pokud jste to nebyli vy, kontaktujte správce svého pracovního prostoru a změňte si heslo."
@@ -204,6 +225,16 @@ msgid "Manage subscription"
 msgstr "Spravovat předplatné"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes generated"
+msgstr "Vygenerovány nové záložní kódy"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
+msgstr "Pro váš účet v {workspaceDisplayName} byly vygenerovány nové záložní kódy. Vaše předchozí záložní kódy již nefungují."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Pokud chcete pokračovat, není potřeba nic dělat. Pokud nechcete obnovovat, můžete to kdykoli předtím zrušit."
@@ -254,6 +285,7 @@ msgid "Set"
 msgstr "Nastavit"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
 msgstr "Znovu nastavte dvoufaktorové ověření v Nastavení, Profil."
@@ -277,6 +309,11 @@ msgstr "Zkušební e-mail"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 msgstr "Děkujeme za registraci účtu na Twenty! Než začneme, musíme potvrdit, že jste to vy. Klikněte níže k ověření vaší e-mailové adresy."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
+msgstr "Ověřovací aplikace pro váš účet v {workspaceDisplayName} byla odstraněna z Nastavení. Vaše záložní kódy pro tento pracovní prostor již nefungují."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -317,6 +354,11 @@ msgstr "Twenty.com, veřejná prospěšná společnost"
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
 msgstr "Vydán obnovovací kód pro dvoufaktorové ověření"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "Two-factor authentication removed"
+msgstr "Dvoufaktorové ověření odstraněno"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -379,6 +421,11 @@ msgstr "Co je Twenty?"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
 msgstr "Logo pracovního prostoru"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Nové záložní kódy můžete vygenerovat v části Nastavení, Profil, Dvoufaktorové ověření."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

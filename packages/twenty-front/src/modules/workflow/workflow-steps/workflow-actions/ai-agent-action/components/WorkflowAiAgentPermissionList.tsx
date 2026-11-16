@@ -58,7 +58,7 @@ export const WorkflowAiAgentPermissionList = ({
       }
 
       CRUD_PERMISSIONS.forEach((crud) => {
-        if (objectPermission[crud.key] === true) {
+        if (objectPermission[crud.key]) {
           permissions.push({
             objectMetadataId: objectPermission.objectMetadataId,
             objectLabel,

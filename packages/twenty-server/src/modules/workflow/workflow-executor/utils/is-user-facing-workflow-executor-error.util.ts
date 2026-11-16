@@ -28,6 +28,7 @@ const USER_FACING_AI_EXCEPTION_CODES = [
   AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
   AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
   AiExceptionCode.INVALID_EVALUATION_REQUEST,
+  AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY,
 ];
 
 export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {

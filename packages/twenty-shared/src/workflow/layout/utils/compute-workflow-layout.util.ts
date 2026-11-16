@@ -56,7 +56,8 @@ export const computeWorkflowLayout = ({
     }
   });
 
-  Dagre.layout(graph);
+  // Dagre's crossing reduction can swap sibling subtrees as a branch grows, so branches keep their order instead
+  Dagre.layout(graph, { disableOptimalOrderHeuristic: true });
 
   return nodes.map((node) => {
     const layoutedNode = graph.node(node.id);

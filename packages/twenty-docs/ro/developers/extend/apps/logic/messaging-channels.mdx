@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### Ce face serverul pentru dvs.
 
-**Eliminarea duplicatelor.** `externalId` este cheia. Ingerarea aceleiași conversații de două ori nu creează și nu modifică nimic, astfel încât un webhook relivrat poate fi reluat în siguranță, iar o completare retroactivă se poate suprapune peste un flux în timp real. `messageId` returnat rămâne stabil între reluări. Apelurile către un singur canal sunt serializate, astfel încât o relivrare care sosește în timp ce originalul său este încă scris așteaptă în loc să intre în concurență cu acesta.
+**Eliminarea duplicatelor.** `externalId` este cheia. Ingerarea aceleiași entități de două ori nu creează și nu modifică nimic, cu excepția [atașamentelor](#attaching-files) unui mesaj care nu avea niciunul, astfel încât un webhook relivrat poate fi redat în siguranță, iar o completare retrospectivă se poate suprapune peste un flux live. `messageId` returnat rămâne stabil între reluări. Apelurile către un singur canal sunt serializate, astfel încât o relivrare care sosește în timp ce originalul său este încă scris așteaptă în loc să intre în concurență cu acesta.
 
 **Gruparea în fire.** Mesajele care partajează un `threadExternalId` ajung într-un singur fir de mesaje, care apare apoi în înregistrările Persoană, Companie și Oportunitate ale participanților săi.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 Un lot este totul sau nimic, iar repetarea unui `externalId` într-un singur lot este respinsă — eliminați duplicatele înainte de trimitere. Conținutul unui mesaj este limitat la 256 KB.
+
+### Atașarea fișierelor
+
+Imaginile, videoclipurile, notele vocale și alte fișiere se află în `attachments` ale unui mesaj. Încărcați mai întâi fiecare fișier cu `uploadMessageAttachment`, care necesită indicatorul de permisiune `UPLOAD_FILE` pentru rolul aplicației dvs., apoi transmiteți ceea ce returnează:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Fiecare fișier este stocat ca înregistrare de atașament în mesaj. Extensia numelui fișierului decide cum afișează conversația fișierul: imaginile sunt afișate inline, videoclipurile și fișierele audio primesc un player, orice altceva este un cip de fișier. Un mesaj conține cel mult 20 de atașamente.
+
+Atașamentele sunt stocate numai cât timp mesajul nu are niciunul, astfel încât o relivrare nu le înlocuiește niciodată. Fiecare mesaj preluat raportează `hasAttachments`: preluați mai întâi textul, apoi descărcați și încărcați fișiere numai pentru mesajele care revin fără niciunul și preluați din nou acele mesaje împreună cu `attachments`. Un fișier pe care îl încărcați, dar nu îl atașați niciodată, nu este eliminat, așadar nu încărcați pentru un mesaj care are deja atașamente.
+
+Atașamentele urmează `visibility` al canalului, la fel ca corpul mesajului: cu excepția cazului în care conversația este complet partajată, ceilalți membri primesc o listă goală.
 
 ### Asocierea participanților cu Persoane
 
@@ -205,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` stabilește modul în care Twenty afișează conversațiile furnizorului: `'chat'` afișează bule de mesaje grupate după expeditor, ca într-o aplicație de mesagerie, iar `'email'` afișează aspectul firului de e-mail. Fără aceasta, canalele aplicației păstrează aspectul de chat. Necesită `"engines": { "twenty": ">=2.58.0" }`.
 
 Asociați un canal cu acesta atunci când creați canalul sau ulterior cu `updateMessageChannel` (transmiterea valorii `null` anulează asocierea):
 
@@ -223,7 +253,7 @@ await createMessageChannel({
 
 Furnizorul de mesagerie trebuie să aparțină aplicației dvs. și să utilizeze furnizorul de conexiune al contului canalului; furnizorul său de conexiune nu se poate modifica după prima sincronizare. Modificarea funcției de trimitere într-o versiune ulterioară se aplică fiecărui canal asociat cu furnizorul.
 
-Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul de discuție, textul și o cheie `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează când reîncearcă trimiterea), apoi execută funcția furnizorului:
+Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul, fie `text`, fie, pentru furnizorii al căror `conversationStyle` este `'email'`, un bloc `email` (`to`, `cc`, `bcc`, `subject`, `body` ca document de e-mail serializat, `JSON.stringify` de `{ type: 'doc', attrs: { schemaVersion: 1 }, content: [...] }`, precum și `inReplyTo`), și o `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează când îl reîncearcă), și execută funcția furnizorului:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -247,11 +277,56 @@ export const linkedinSendMessageHandler = async ({
 
 Sarcina utilă conține `messagingProviderName`, `threadExternalId` al conversației, așa cum a fost ingerat, `text`, `idempotencyKey` și `recipients`: participanții la cel mai recent mesaj al firului de discuție, în afară de identificatorul propriu al canalului, astfel încât o persoană care a participat doar la un schimb anterior de mesaje nu primește un mesaj. Preferați conversația proprie a furnizorului în locul `recipients` atunci când API-ul său trimite către un ID de conversație. returnează ID-ul furnizorului pentru mesajul trimis ca `externalId`.
 
-Twenty înregistrează apoi răspunsul în firul de discuție ca mesaj trimis de la canal, cu aceiași destinatari, astfel încât acesta apare imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
+`conversationStyle` al încărcăturii utile corespunde celui al furnizorului (`'chat'` atunci când acesta nu declară niciunul). Cu `'email'` (de exemplu, o aplicație care sincronizează Outlook sau Gmail), membrii răspund în schimb cu editorul de e-mail, iar încărcătura utilă include și un bloc `email`: `subject`, corpul cu text îmbogățit compilat în `html`, destinatarii `cc` și `bcc` și `inReplyToExternalId`, `externalId` al mesajului la care se răspunde atunci când Twenty îl cunoaște. `recipients` sunt apoi adresele `To` selectate de membru, iar `text` este versiunea în text simplu a corpului. Necesită `"engines": { "twenty": ">=2.58.0" }`.
+
+Când spațiul de lucru are atașamentele de mesaje activate, un membru poate atașa fișiere la un răspuns, iar răspunsul poate avea apoi un câmp `text` gol. Mutația acceptă apoi și `attachments`, cel mult 20, fiecare cu `id` al unui fișier încărcat ca atașament de e-mail și cu `name` al acestuia. `attachments` din payload le enumeră și este un array gol pentru un răspuns care conține doar text. Fiecare are un `filename`, un `contentType`, un `size` în octeți și un `downloadUrl`: un link semnat pe care funcția ta îl accesează pentru a obține fișierul, astfel încât octeții să nu circule niciodată în payload. Verifică `size` în raport cu limita furnizorului tău înainte de descărcare și generează o eroare atunci când furnizorul nu poate livra un fișier, în loc să trimiți doar textul, astfel încât membrul să vadă că răspunsul eșuează:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+`attachments` necesită `"engines": { "twenty": ">=2.59.0" }`.
+
+Twenty înregistrează apoi răspunsul în fir ca mesaj trimis de la canal, cu aceiași destinatari și atașamentele sale, astfel încât să fie afișat imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
 
 Funcția rulează în cadrul cererii `sendAppChannelMessage`. Dacă generează o excepție sau nu returnează niciun `externalId`, mutația eșuează și nu se înregistrează nimic.
 
 După ce funcția dvs. returnează, Twenty păstrează livrarea timp de 24 de ore pentru membru, canal, firul de discuție și `idempotencyKey`. Dacă înregistrarea răspunsului eșuează apoi, mutația eșuează, iar reîncercarea cu aceeași cheie înregistrează răspunsul livrat fără a apela din nou funcția dvs.; o reîncercare a unui răspuns deja înregistrat îl returnează. O reîncercare în timp ce primul apel încă trimite așteaptă finalizarea acestuia. O cheie nouă reprezintă un răspuns nou. Funcția dvs. poate fi totuși apelată de două ori pentru un răspuns dacă clientul reîncearcă cu o cheie nouă sau după cele 24 de ore ori dacă funcția dvs. eșuează după ce furnizorul a acceptat mesajul, așadar transmiteți `idempotencyKey` către furnizor atunci când API-ul acestuia acceptă trimiteri idempotente. Un canal cu `isSyncEnabled: false` refuză răspunsurile fără a apela funcția dvs. Un canal fără furnizor de mesagerie sau al cărui furnizor nu are `sendMessageLogicFunction` ori nu mai există nu poate trimite mesaje; conversațiile sale rămân neschimbate. Necesită `"engines": { "twenty": ">=2.52.0" }`.
+
+## Marcarea firelor de discuție ca citite
+
+Twenty nu păstrează nicio stare de citire pentru mesajele aplicației, dar îi poate indica furnizorului dvs. când un membru citește o conversație în Twenty, astfel încât furnizorul să o marcheze ca citită în sursă. Declarați o funcție `markThreadAsReadLogicFunction` pe furnizorul de mesagerie:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-mark-thread-as-read-handler.ts
+import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinMarkThreadAsReadHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+}: MarkAppThreadAsReadPayload) => {
+  await markLinkedinConversationAsRead({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+  });
+};
+```
+
+Când proprietarul contului canalului deschide unul dintre firele sale de discuție, Twenty apelează mutația `markAppChannelThreadAsRead`, care rulează funcția dvs. cu `messagingProviderName`, `connectedAccountId`, `messageChannelId` și `threadExternalId` al conversației. Valoarea sa returnată este ignorată. Membrii cu care este partajat doar contul nu îl declanșează niciodată, iar apelurile pentru același membru și același fir sunt omise timp de 30 de secunde, astfel încât redeschiderea unei conversații nu vă apelează din nou furnizorul. Apelul este efectuat cu cele mai bune eforturi: firul se deschide indiferent de ce face funcția dvs. Un furnizor fără `markThreadAsReadLogicFunction` nu este apelat niciodată. Necesită `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Listarea și actualizarea canalelor
 

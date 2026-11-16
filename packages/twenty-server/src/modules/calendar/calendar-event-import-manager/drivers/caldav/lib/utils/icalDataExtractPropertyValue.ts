@@ -25,9 +25,12 @@ export const icalDataExtractPropertyValue = (
     if (Array.isArray(property)) {
       const values = property
         .map((item) => {
-          if (isNonEmptyString(item)) return item;
-          if (isDefined(item) && typeof item === 'object' && item?.val)
+          if (isNonEmptyString(item)) {
+            return item;
+          }
+          if (isDefined(item) && typeof item === 'object' && item?.val) {
             return String(item.val);
+          }
 
           return '';
         })

@@ -1,6 +1,6 @@
 import { v5 } from 'uuid';
 
-import { AGENT_RUN_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-thread-id-namespace.const';
+import { AGENT_RUN_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-thread-id-namespace.constant';
 
 export const buildAgentRunThreadId = ({
   applicationId,

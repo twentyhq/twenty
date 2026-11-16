@@ -6,7 +6,9 @@ import { type AddressAutocompleteGooglePlacesPrediction } from 'src/engine/core-
 export const sanitizeAddressAutocompleteGooglePlacesSuggestions = (
   autocompleteResults: AddressAutocompleteGooglePlacesPrediction[],
 ): GeoMapAutocompleteSanitizedResult[] => {
-  if (!isNonEmptyArray(autocompleteResults)) return [];
+  if (!isNonEmptyArray(autocompleteResults)) {
+    return [];
+  }
 
   return autocompleteResults.map((result) => ({
     text: result.description,

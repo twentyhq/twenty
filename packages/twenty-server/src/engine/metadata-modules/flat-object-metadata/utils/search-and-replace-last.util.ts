@@ -9,7 +9,9 @@ export const searchAndReplaceLast = ({
 }) => {
   const lastIndex = source.lastIndexOf(search);
 
-  if (lastIndex === -1) return source;
+  if (lastIndex === -1) {
+    return source;
+  }
 
   return (
     source.slice(0, lastIndex) +

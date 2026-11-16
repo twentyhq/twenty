@@ -5,6 +5,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { CalDavCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-create-event.service';
+import { CalDavInvitationService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation.service';
 import { GoogleCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/services/google-calendar-create-event.service';
 import { MicrosoftCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/microsoft-calendar/services/microsoft-calendar-create-event.service';
 import { CalendarEventComposerService } from 'src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service';
@@ -13,6 +14,7 @@ import { CrmLeadCalendarService } from 'src/modules/calendar/calendar-event-crea
 import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
+import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
     UserWorkspaceModule,
     CalendarEventImportManagerModule,
     CalDavDriverModule,
+    MessagingSmtpDriverModule,
   ],
   providers: [
     CalendarEventComposerService,
@@ -29,6 +32,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
     GoogleCalendarCreateEventService,
     MicrosoftCalendarCreateEventService,
     CalDavCreateEventService,
+    CalDavInvitationService,
   ],
   exports: [
     CalendarEventComposerService,

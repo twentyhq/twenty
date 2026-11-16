@@ -157,9 +157,10 @@ export class AgentChatReplyContinuationPolicyService {
     threadId: string;
     messageId: string;
   }): Promise<boolean> {
-    return this.conversationWriterService.runInTransaction(
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
-      async (scope) => {
+      threadId,
+      work: async (scope) => {
         const turnId = await this.conversationWriterService.insertTurn({
           workspaceId,
           threadId,
@@ -167,24 +168,24 @@ export class AgentChatReplyContinuationPolicyService {
           status: AgentTurnStatus.CANCELLED,
           scope,
         });
-        const updatedMessageCount = await scope.update(
-          'agentMessage',
-          { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
-          {
+        const updatedMessageCount = await scope.update({
+          name: 'agentMessage',
+          where: { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
+          values: {
             status: AgentMessageStatus.SENT,
             processedAt: new Date().toISOString(),
             turnId,
           },
-        );
+        });
 
         if (updatedMessageCount === 0) {
-          await scope.delete('agentTurn', { id: turnId });
+          await scope.delete({ name: 'agentTurn', where: { id: turnId } });
 
           return false;
         }
 
         return true;
       },
-    );
+    });
   }
 }

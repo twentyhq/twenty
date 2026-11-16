@@ -28,6 +28,18 @@ export const buildAccessGroupStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  objectMetadataIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'objectMetadataIdIndex',
+      relatedFieldNames: ['objectMetadataId'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   groupHashUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

@@ -3,9 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageLimitAmountInput } from '@/settings/billing/types/UsageLimitAmountInput';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { isCreditUsageUnit } from '@/settings/billing/utils/isCreditUsageUnit';
 import {
   type UsageOperationType,
-  UsageUnit,
+  type UsageUnit,
 } from '~/generated-metadata/graphql';
 
 export const getUsageLimitAmountInput = ({
@@ -21,6 +22,6 @@ export const getUsageLimitAmountInput = ({
 
   return {
     label: getUsageLimitUnitLabel({ unit, operationType }).name,
-    placeholder: unit === UsageUnit.CREDIT ? '100' : '1000',
+    placeholder: isCreditUsageUnit(unit) ? '100' : '1000',
   };
 };

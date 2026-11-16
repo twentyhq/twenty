@@ -95,11 +95,12 @@ export const triggerDestroyRecordsOptimisticEffect = ({
             return isDefined(nodeId) && !recordIdsToDestroy.includes(nodeId);
           }) || [];
 
-        if (nextCachedEdges.length === cachedEdges?.length)
+        if (nextCachedEdges.length === cachedEdges?.length) {
           return {
             ...rootQueryCachedObjectRecordConnection,
             totalCount: newTotalCount,
           };
+        }
 
         return {
           ...rootQueryCachedObjectRecordConnection,

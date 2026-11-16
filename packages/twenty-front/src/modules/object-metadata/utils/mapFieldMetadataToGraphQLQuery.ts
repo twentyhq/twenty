@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
@@ -90,9 +90,9 @@ export const mapFieldMetadataToGraphQLQuery = ({
         );
 
         if (
-          !canReachSomeRecords({
+          !canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions: objectPermission,
-            operationType: 'select',
+            operationType: 'read',
           })
         ) {
           continue;
@@ -176,9 +176,9 @@ ${mapObjectMetadataToGraphQLQuery({
       );
 
       if (
-        !canReachSomeRecords({
+        !canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';
@@ -235,9 +235,9 @@ ${mapObjectMetadataToGraphQLQuery({
       );
 
       if (
-        !canReachSomeRecords({
+        !canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';

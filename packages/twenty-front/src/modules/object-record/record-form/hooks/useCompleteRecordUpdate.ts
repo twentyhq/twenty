@@ -19,6 +19,7 @@ import { useCallback } from 'react';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import {
   compileValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
   isDefined,
 } from 'twenty-shared/utils';
 import { FindManyValidationRulesDocument } from '~/generated-metadata/graphql';
@@ -70,9 +71,11 @@ export const useCompleteRecordUpdate = ({
     async ({
       recordId,
       updateInput,
+      recordBeforeUpdate,
     }: {
       recordId: string;
       updateInput: Partial<ObjectRecord>;
+      recordBeforeUpdate?: Partial<ObjectRecord>;
     }): Promise<Partial<ObjectRecord> | null> => {
       if (!hasValidationRulesEntitlement) {
         return updateInput;
@@ -98,7 +101,9 @@ export const useCompleteRecordUpdate = ({
         });
 
         const storedRecord =
-          store.get(recordStoreFamilyState.atomFamily(recordId)) ?? {};
+          recordBeforeUpdate ??
+          store.get(recordStoreFamilyState.atomFamily(recordId)) ??
+          {};
 
         const fieldPathsReadByRules = activeValidationRules.flatMap(
           (validationRule) => {
@@ -114,12 +119,22 @@ export const useCompleteRecordUpdate = ({
         );
 
         const isEveryFieldValueLoadedIn = (record: Partial<ObjectRecord>) =>
-          fieldPathsReadByRules.every((fieldPath) =>
-            isRecordFieldValueLoaded({
+          fieldPathsReadByRules.every((fieldPath) => {
+            const previousValueFieldPath =
+              getValidationRulePreviousValueFieldPath(fieldPath);
+
+            if (isDefined(previousValueFieldPath)) {
+              return isRecordFieldValueLoaded({
+                record,
+                fieldPath: previousValueFieldPath,
+              });
+            }
+
+            return isRecordFieldValueLoaded({
               record: { ...record, ...updateInput },
               fieldPath,
-            }),
-          );
+            });
+          });
 
         const currentRecord = isEveryFieldValueLoadedIn(storedRecord)
           ? storedRecord
@@ -152,6 +167,7 @@ export const useCompleteRecordUpdate = ({
         const completedFields = await requestRecordUpdateFormCompletion({
           objectMetadataItem,
           draftRecord,
+          previousRecord: currentRecord,
           fieldMetadataIds,
           violations,
         });

@@ -26,7 +26,8 @@ const mockChannel = (
   messageThreadChannelLoading = false,
 ) =>
   mockUseMessageThreadChannel.mockReturnValue({
-    messageThreadChannel: type === null ? null : { type },
+    messageThreadChannel:
+      type === null ? null : { type, conversationStyle: null },
     messageThreadChannelLoading,
   });
 

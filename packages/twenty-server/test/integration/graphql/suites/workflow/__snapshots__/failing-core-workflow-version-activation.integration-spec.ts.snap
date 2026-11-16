@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Core workflow version activation should fail should refuse a loop whose last step does not return to the iterator 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "NON_ACTIVABLE_WORKFLOW_VERSION",
+    "userFriendlyMessage": "This workflow version is not ready to be activated. Step "Add an Action" must return to iterator "Iterator", otherwise the run hangs after the first item. Add "7d3c9a52-4f1e-4b8a-9c6d-2e5f8a1b3c47" to its nextStepIds.",
+  },
+  "message": "Workflow version cannot be activated: Step "Add an Action" must return to iterator "Iterator", otherwise the run hangs after the first item. Add "7d3c9a52-4f1e-4b8a-9c6d-2e5f8a1b3c47" to its nextStepIds.",
+  "name": "UserInputError",
+}
+`;

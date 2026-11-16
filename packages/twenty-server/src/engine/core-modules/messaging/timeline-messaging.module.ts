@@ -11,6 +11,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { TargetModule } from 'src/engine/core-modules/target/target.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TargetModule } from 'src/engine/core-modules/target/target.module';
     PermissionsModule,
     RelatedPersonIdsModule,
     TargetModule,
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([MessageChannelEntity, ConnectedAccountEntity]),
   ],
   exports: [],

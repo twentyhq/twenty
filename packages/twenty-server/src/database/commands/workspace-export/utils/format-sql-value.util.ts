@@ -6,33 +6,47 @@ export const formatSqlValue = (
   value: unknown,
   isJsonColumn = false,
 ): string => {
-  if (!isDefined(value)) return 'NULL';
+  if (!isDefined(value)) {
+    return 'NULL';
+  }
 
   if (isJsonColumn) {
     return escapeLiteral(JSON.stringify(value));
   }
 
-  if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
+  if (typeof value === 'boolean') {
+    return value ? 'TRUE' : 'FALSE';
+  }
 
   if (typeof value === 'number') {
-    if (!Number.isFinite(value)) return 'NULL';
+    if (!Number.isFinite(value)) {
+      return 'NULL';
+    }
 
     return String(value);
   }
 
-  if (typeof value === 'bigint') return String(value);
+  if (typeof value === 'bigint') {
+    return String(value);
+  }
 
-  if (value instanceof Date) return escapeLiteral(value.toISOString());
+  if (value instanceof Date) {
+    return escapeLiteral(value.toISOString());
+  }
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return "'{}'";
+    if (value.length === 0) {
+      return "'{}'";
+    }
 
     if (isDefined(value[0]) && typeof value[0] === 'object') {
       return escapeLiteral(JSON.stringify(value));
     }
 
     const formattedElements = value.map((element) => {
-      if (!isDefined(element)) return 'NULL';
+      if (!isDefined(element)) {
+        return 'NULL';
+      }
 
       const stringElement = String(element);
       const escapedElement = stringElement

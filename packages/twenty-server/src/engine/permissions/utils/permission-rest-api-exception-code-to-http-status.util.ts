@@ -14,6 +14,7 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE:
     case PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
+    case PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
@@ -58,7 +59,12 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED:
+    case PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND:
       return 500;
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID:
+    case PermissionsExceptionCode.RLS_VALIDATION_FAILED:
+      return 400;
     default:
       return assertUnreachable(code);
   }

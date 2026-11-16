@@ -150,6 +150,7 @@ export const createStandardViewFlatMetadata = <
     kanbanAggregateOperationFieldMetadataId,
     mainGroupByFieldMetadataId,
     shouldHideEmptyGroups: false,
+    shouldDisplayGroupsAsTabs: false,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     calendarLayout: null,

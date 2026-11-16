@@ -17,7 +17,9 @@ export const transformActorField = (
   name?: string | null;
   workspaceMemberId?: string | null;
 } | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   return {
     source: value.source,

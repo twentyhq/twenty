@@ -32,5 +32,7 @@ export const hydrateAgentHistoryFiles = async ({
         .find({ where: { id: In(fileIds), workspaceId } })
     : [];
   const filesById = new Map(files.map((file) => [file.id, file]));
-  for (const part of parts) part.file = filesById.get(part.fileId) ?? null;
+  for (const part of parts) {
+    part.file = filesById.get(part.fileId) ?? null;
+  }
 };

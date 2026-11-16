@@ -7,7 +7,12 @@ import {
 } from '@/settings/billing/components/internal/SettingsBillingCardField';
 import {
   StyledSettingsBillingCard,
+  StyledSettingsBillingCardFieldList,
+  StyledSettingsBillingCardFieldListWithDivider,
+  StyledSettingsBillingCardGridBody,
   StyledSettingsBillingCardHeader,
+  StyledSettingsBillingCardTitle,
+  StyledSettingsBillingCardTitleLabel,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
 import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
@@ -53,31 +58,6 @@ const STATUS_PILL_COLORS: Record<
   },
 };
 
-const StyledSettingsBillingCardGridBody = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[6]};
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const StyledPlanHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
-const StyledPlanLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  white-space: nowrap;
-`;
-
 const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   align-items: center;
   background-color: ${({ tone }) => STATUS_PILL_COLORS[tone].background};
@@ -107,25 +87,6 @@ const StyledHeaderActions = styled.div`
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-`;
-
-const StyledBillingFieldList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledBillingFieldListWithDivider = styled(StyledBillingFieldList)`
-  border-left: 1px solid ${themeCssVariables.background.transparent.light};
-  padding-left: ${themeCssVariables.spacing[6]};
-
-  @media (max-width: 640px) {
-    border-left: 0;
-    border-top: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: 0;
-    padding-top: ${themeCssVariables.spacing[4]};
-  }
 `;
 
 const StyledBillingIntervalValue = styled.div`
@@ -241,17 +202,19 @@ export const SettingsBillingSubscriptionInfoCard = ({
   return (
     <StyledSettingsBillingCard>
       <StyledSettingsBillingCardHeader>
-        <StyledPlanHeader>
-          <StyledPlanLabel>{planLabel}</StyledPlanLabel>
+        <StyledSettingsBillingCardTitle>
+          <StyledSettingsBillingCardTitleLabel>
+            {planLabel}
+          </StyledSettingsBillingCardTitleLabel>
           <StyledStatusPill tone={statusDescriptor.tone}>
             <StyledStatusDot tone={statusDescriptor.tone} />
             {statusDescriptor.label}
           </StyledStatusPill>
-        </StyledPlanHeader>
+        </StyledSettingsBillingCardTitle>
         <StyledHeaderActions>{headerActions}</StyledHeaderActions>
       </StyledSettingsBillingCardHeader>
       <StyledSettingsBillingCardGridBody>
-        <StyledBillingFieldList>
+        <StyledSettingsBillingCardFieldList>
           <BillingFieldRow label={t`Seats`} Icon={IconUserCircle}>
             <WorkspaceMemberAvatarStack
               workspaceMembers={workspaceMembers}
@@ -302,8 +265,8 @@ export const SettingsBillingSubscriptionInfoCard = ({
               {displayedSubscriptionDate}
             </BillingFieldRow>
           )}
-        </StyledBillingFieldList>
-        <StyledBillingFieldListWithDivider>
+        </StyledSettingsBillingCardFieldList>
+        <StyledSettingsBillingCardFieldListWithDivider>
           <BillingFieldRow label={t`Seats`} Icon={IconUsers}>
             {seatsSubtotalValue}
             {seatsSubtotalDetails && (
@@ -324,7 +287,7 @@ export const SettingsBillingSubscriptionInfoCard = ({
               <StyledSecondaryText>{totalIntervalSubtitle}</StyledSecondaryText>
             )}
           </BillingFieldRow>
-        </StyledBillingFieldListWithDivider>
+        </StyledSettingsBillingCardFieldListWithDivider>
       </StyledSettingsBillingCardGridBody>
       {hasIncludedPerSeatItems && (
         <>

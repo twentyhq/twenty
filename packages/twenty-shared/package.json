@@ -37,7 +37,6 @@
     "slash": "^5.1.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.19.3",
-    "typescript": "^5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4"
   },
@@ -55,109 +54,176 @@
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "lodash.escaperegexp": "^4.1.2",
+    "marked": "^17.0.1",
     "microdiff": "^1.3.2",
     "qs": "^6.15.2",
     "react-router-dom": "^7.18.4",
     "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
+    "typescript": "^5.9.3",
     "uuid": "^11.1.1",
     "zod": "^4.6.6"
   },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": {
+        "development": "./dist/dev/index.mjs",
+        "default": "./dist/index.mjs"
+      },
       "require": "./dist/index.cjs"
     },
     "./ai": {
       "types": "./dist/ai/index.d.ts",
-      "import": "./dist/ai.mjs",
-      "require": "./dist/ai.cjs"
+      "import": {
+        "development": "./dist/dev/ai/index.mjs",
+        "default": "./dist/ai/index.mjs"
+      },
+      "require": "./dist/ai/index.cjs"
     },
     "./application": {
       "types": "./dist/application/index.d.ts",
-      "import": "./dist/application.mjs",
-      "require": "./dist/application.cjs"
+      "import": {
+        "development": "./dist/dev/application/index.mjs",
+        "default": "./dist/application/index.mjs"
+      },
+      "require": "./dist/application/index.cjs"
     },
     "./application-runtime": {
       "types": "./dist/application-runtime/index.d.ts",
-      "import": "./dist/application-runtime.mjs",
-      "require": "./dist/application-runtime.cjs"
+      "import": {
+        "development": "./dist/dev/application-runtime/index.mjs",
+        "default": "./dist/application-runtime/index.mjs"
+      },
+      "require": "./dist/application-runtime/index.cjs"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants.mjs",
-      "require": "./dist/constants.cjs"
+      "import": {
+        "development": "./dist/dev/constants/index.mjs",
+        "default": "./dist/constants/index.mjs"
+      },
+      "require": "./dist/constants/index.cjs"
     },
     "./database-events": {
       "types": "./dist/database-events/index.d.ts",
-      "import": "./dist/database-events.mjs",
-      "require": "./dist/database-events.cjs"
+      "import": {
+        "development": "./dist/dev/database-events/index.mjs",
+        "default": "./dist/database-events/index.mjs"
+      },
+      "require": "./dist/database-events/index.cjs"
     },
     "./front-component-build": {
       "types": "./dist/front-component-build/index.d.ts",
-      "import": "./dist/front-component-build.mjs",
-      "require": "./dist/front-component-build.cjs"
+      "import": {
+        "development": "./dist/dev/front-component-build/index.mjs",
+        "default": "./dist/front-component-build/index.mjs"
+      },
+      "require": "./dist/front-component-build/index.cjs"
     },
     "./i18n": {
       "types": "./dist/i18n/index.d.ts",
-      "import": "./dist/i18n.mjs",
-      "require": "./dist/i18n.cjs"
+      "import": {
+        "development": "./dist/dev/i18n/index.mjs",
+        "default": "./dist/i18n/index.mjs"
+      },
+      "require": "./dist/i18n/index.cjs"
     },
     "./logic-function": {
       "types": "./dist/logic-function/index.d.ts",
-      "import": "./dist/logic-function.mjs",
-      "require": "./dist/logic-function.cjs"
+      "import": {
+        "development": "./dist/dev/logic-function/index.mjs",
+        "default": "./dist/logic-function/index.mjs"
+      },
+      "require": "./dist/logic-function/index.cjs"
+    },
+    "./markdown": {
+      "types": "./dist/markdown/index.d.ts",
+      "import": {
+        "development": "./dist/dev/markdown/index.mjs",
+        "default": "./dist/markdown/index.mjs"
+      },
+      "require": "./dist/markdown/index.cjs"
     },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
-      "import": "./dist/metadata.mjs",
-      "require": "./dist/metadata.cjs"
+      "import": {
+        "development": "./dist/dev/metadata/index.mjs",
+        "default": "./dist/metadata/index.mjs"
+      },
+      "require": "./dist/metadata/index.cjs"
     },
     "./pending-wake-up": {
       "types": "./dist/pending-wake-up/index.d.ts",
-      "import": "./dist/pending-wake-up.mjs",
-      "require": "./dist/pending-wake-up.cjs"
+      "import": {
+        "development": "./dist/dev/pending-wake-up/index.mjs",
+        "default": "./dist/pending-wake-up/index.mjs"
+      },
+      "require": "./dist/pending-wake-up/index.cjs"
     },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
-      "import": "./dist/testing.mjs",
-      "require": "./dist/testing.cjs"
+      "import": {
+        "development": "./dist/dev/testing/index.mjs",
+        "default": "./dist/testing/index.mjs"
+      },
+      "require": "./dist/testing/index.cjs"
     },
     "./timeline": {
       "types": "./dist/timeline/index.d.ts",
-      "import": "./dist/timeline.mjs",
-      "require": "./dist/timeline.cjs"
+      "import": {
+        "development": "./dist/dev/timeline/index.mjs",
+        "default": "./dist/timeline/index.mjs"
+      },
+      "require": "./dist/timeline/index.cjs"
     },
     "./translations": {
       "types": "./dist/translations/index.d.ts",
-      "import": "./dist/translations.mjs",
-      "require": "./dist/translations.cjs"
+      "import": {
+        "development": "./dist/dev/translations/index.mjs",
+        "default": "./dist/translations/index.mjs"
+      },
+      "require": "./dist/translations/index.cjs"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs"
+      "import": {
+        "development": "./dist/dev/types/index.mjs",
+        "default": "./dist/types/index.mjs"
+      },
+      "require": "./dist/types/index.cjs"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils.mjs",
-      "require": "./dist/utils.cjs"
+      "import": {
+        "development": "./dist/dev/utils/index.mjs",
+        "default": "./dist/utils/index.mjs"
+      },
+      "require": "./dist/utils/index.cjs"
     },
     "./vite": {
       "types": "./dist/vite/index.d.ts",
-      "import": "./dist/vite.mjs",
-      "require": "./dist/vite.cjs"
+      "import": {
+        "development": "./dist/dev/vite/index.mjs",
+        "default": "./dist/vite/index.mjs"
+      },
+      "require": "./dist/vite/index.cjs"
     },
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
-      "import": "./dist/workflow.mjs",
-      "require": "./dist/workflow.cjs"
+      "import": {
+        "development": "./dist/dev/workflow/index.mjs",
+        "default": "./dist/workflow/index.mjs"
+      },
+      "require": "./dist/workflow/index.cjs"
     },
     "./workspace": {
       "types": "./dist/workspace/index.d.ts",
-      "import": "./dist/workspace.mjs",
-      "require": "./dist/workspace.cjs"
+      "import": {
+        "development": "./dist/dev/workspace/index.mjs",
+        "default": "./dist/workspace/index.mjs"
+      },
+      "require": "./dist/workspace/index.cjs"
     }
   },
   "files": [
@@ -170,6 +236,7 @@
     "front-component-build",
     "i18n",
     "logic-function",
+    "markdown",
     "metadata",
     "pending-wake-up",
     "testing",
@@ -206,6 +273,9 @@
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"
+      ],
+      "markdown": [
+        "dist/markdown/index.d.ts"
       ],
       "metadata": [
         "dist/metadata/index.d.ts"

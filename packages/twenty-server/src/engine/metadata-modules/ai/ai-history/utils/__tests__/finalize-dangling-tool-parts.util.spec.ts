@@ -63,6 +63,23 @@ describe('finalizeDanglingToolParts', () => {
     ]);
   });
 
+  it('replaces malformed tool call arguments with an empty input', () => {
+    const part = buildToolPart('output-error', {
+      input: '{"foo": "unescaped " quote"}',
+      errorText: 'Invalid input for tool execute_tool: JSON parse failed',
+    });
+
+    expect(finalizeDanglingToolParts([part])).toEqual([
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'call_1',
+        input: {},
+        state: 'output-error',
+        errorText: 'Invalid input for tool execute_tool: JSON parse failed',
+      },
+    ]);
+  });
+
   it('preserves the existing error message when backfilling input', () => {
     const part = buildToolPart('output-error', {
       input: null,

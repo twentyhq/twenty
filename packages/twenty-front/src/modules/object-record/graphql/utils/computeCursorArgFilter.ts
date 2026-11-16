@@ -134,7 +134,9 @@ export const computeCursorArgFilter = ({
     },
   );
 
-  if (cumulativeConditions.length === 0) return {};
+  if (cumulativeConditions.length === 0) {
+    return {};
+  }
 
   return { or: cumulativeConditions };
 };

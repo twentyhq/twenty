@@ -194,7 +194,7 @@ describe('partnerApplicationReducer', () => {
     expect(ok.fieldErrors).toEqual({});
   });
 
-  it('GO_NEXT on Commercials gates on hourly rate and minimum budget', () => {
+  it('GO_NEXT on Commercials gates on hourly rate, minimum budget and the terms', () => {
     const onCommercials: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
       stepIndex: 4,
@@ -211,11 +211,36 @@ describe('partnerApplicationReducer', () => {
     );
     expect(badAmount.fieldErrors.hourlyRate).toBe('invalid_amount');
 
-    const ok = partnerApplicationReducer(
+    const withoutTerms = partnerApplicationReducer(
       { ...onCommercials, hourlyRate: '150', projectBudgetMin: '5000' },
       { type: 'GO_NEXT' },
     );
+    expect(withoutTerms.fieldErrors).toEqual({
+      acceptsTerms: 'terms_required',
+    });
+
+    const ok = partnerApplicationReducer(
+      {
+        ...onCommercials,
+        hourlyRate: '150',
+        projectBudgetMin: '5000',
+        acceptsTerms: true,
+      },
+      { type: 'GO_NEXT' },
+    );
     expect(ok.fieldErrors).toEqual({});
+  });
+
+  it('SET_ACCEPTS_TERMS ticks the box and clears its error', () => {
+    const next = partnerApplicationReducer(
+      {
+        ...INITIAL_PARTNER_APPLICATION_STATE,
+        fieldErrors: { acceptsTerms: 'terms_required' },
+      },
+      { type: 'SET_ACCEPTS_TERMS', value: true },
+    );
+    expect(next.acceptsTerms).toBe(true);
+    expect(next.fieldErrors).toEqual({});
   });
 
   it('SET_SUBMITTED flips isSubmitted and clears submitError + isSubmitting', () => {

@@ -45,8 +45,11 @@ describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () 
     ).resolves.toEqual({
       kind: 'run',
       channelId: buildAgentRunStreamChannelId({
-        applicationId: 'application-a',
-        callerWorkspaceMemberId: null,
+        owner: {
+          kind: 'application',
+          applicationId: 'application-a',
+          workspaceMemberId: null,
+        },
         runId: RUN_ID,
       }),
     });
@@ -56,8 +59,11 @@ describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () 
     const MEMBER_ID = 'member-a';
     const OTHER_MEMBER_ID = 'member-b';
     const otherMemberRunChannelId = buildAgentRunStreamChannelId({
-      applicationId: 'application-a',
-      callerWorkspaceMemberId: OTHER_MEMBER_ID,
+      owner: {
+        kind: 'application',
+        applicationId: 'application-a',
+        workspaceMemberId: OTHER_MEMBER_ID,
+      },
       runId: RUN_ID,
     });
     const resolveFor = (workspaceMemberId: string | undefined) =>
@@ -83,8 +89,11 @@ describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () 
       );
       expect((await resolveFor(undefined)).channelId).toBe(
         buildAgentRunStreamChannelId({
-          applicationId: 'application-a',
-          callerWorkspaceMemberId: null,
+          owner: {
+            kind: 'application',
+            applicationId: 'application-a',
+            workspaceMemberId: null,
+          },
           runId: RUN_ID,
         }),
       );
@@ -106,14 +115,70 @@ describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () 
     );
   });
 
-  it('refuses a run id without an application token', async () => {
+  describe('for a run started from a member session', () => {
+    const resolveFor = ({
+      callerApplication,
+      workspaceMemberId,
+    }: {
+      callerApplication?: ReturnType<typeof buildApplication>;
+      workspaceMemberId: string | undefined;
+    }) =>
+      buildService().service.resolveReadableChannelOrThrow({
+        workspace: WORKSPACE,
+        callerApplication,
+        workspaceMemberId,
+        source: { runId: RUN_ID },
+      });
+
+    it('names the channel by the member and the run id', async () => {
+      await expect(
+        resolveFor({ workspaceMemberId: 'member-a' }),
+      ).resolves.toEqual({
+        kind: 'run',
+        channelId: buildAgentRunStreamChannelId({
+          owner: { kind: 'workspaceMember', workspaceMemberId: 'member-a' },
+          runId: RUN_ID,
+        }),
+      });
+    });
+
+    it('keeps another member from following it by its run id', async () => {
+      expect(
+        (await resolveFor({ workspaceMemberId: 'member-b' })).channelId,
+      ).not.toBe(
+        (await resolveFor({ workspaceMemberId: 'member-a' })).channelId,
+      );
+    });
+
+    it("keeps an application acting as the member, even the workspace's own, from following it", async () => {
+      const memberSessionChannelId = (
+        await resolveFor({ workspaceMemberId: 'member-a' })
+      ).channelId;
+
+      for (const applicationId of [
+        WORKSPACE.workspaceCustomApplicationId,
+        'application-a',
+      ]) {
+        expect(
+          (
+            await resolveFor({
+              callerApplication: buildApplication(applicationId),
+              workspaceMemberId: 'member-a',
+            })
+          ).channelId,
+        ).not.toBe(memberSessionChannelId);
+      }
+    });
+  });
+
+  it('refuses a run id from a caller with neither a member nor an application, such as an API key', async () => {
     const { service } = buildService();
 
     await expect(
       service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication: undefined,
-        workspaceMemberId: 'workspace-member-id',
+        workspaceMemberId: undefined,
         source: { runId: RUN_ID },
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });

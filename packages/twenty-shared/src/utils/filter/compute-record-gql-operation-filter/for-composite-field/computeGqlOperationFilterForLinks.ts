@@ -1,5 +1,5 @@
 import {
-  ViewFilterOperand as RecordFilterOperand,
+  RecordFilterOperand,
   type CompositeFieldSubFieldName,
   type LinksFilter,
   type PartialFieldMetadataItem,

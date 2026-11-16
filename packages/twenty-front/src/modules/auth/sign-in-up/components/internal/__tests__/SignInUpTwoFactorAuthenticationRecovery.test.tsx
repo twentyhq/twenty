@@ -97,6 +97,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
   it('signs in with the recovery code and reminds the member to set up two-factor authentication again', async () => {
     mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue({
       provisioningUri: null,
+      isTwoFactorAuthenticationReset: true,
     });
 
     renderRecoveryStep();
@@ -120,6 +121,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
 
     mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue({
       provisioningUri,
+      isTwoFactorAuthenticationReset: true,
     });
 
     renderRecoveryStep();
@@ -131,6 +133,24 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     expect(jotaiStore.get(qrCodeState.atom)).toBe(provisioningUri);
     expect(jotaiStore.get(loginTokenState.atom)).toBe('login-token');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
+  });
+
+  it('signs in with a backup code without asking to set up two-factor authentication again', async () => {
+    mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue({
+      provisioningUri: null,
+      isTwoFactorAuthenticationReset: false,
+    });
+
+    renderRecoveryStep();
+    await submitRecoveryCode('ABCDE-FGHJK-MNPQR-STVWX');
+
+    expect(
+      mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode,
+    ).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
+    expect(jotaiStore.get(signInUpStepState.atom)).toBe(
+      SignInUpStep.TwoFactorAuthenticationRecovery,
+    );
   });
 
   it('shows the server message when the code is rejected', async () => {

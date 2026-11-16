@@ -21,7 +21,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -121,11 +121,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
 
       if (cursorArgFilter.length > 0) {
-        appliedFilters = (args.filter && Object.keys(args.filter).length > 0
-          ? {
-              and: [args.filter, { or: cursorArgFilter }],
-            }
-          : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+        appliedFilters =
+          args.filter && Object.keys(args.filter).length > 0
+            ? {
+                and: [args.filter, { or: cursorArgFilter }],
+              }
+            : { or: cursorArgFilter };
       }
     }
 

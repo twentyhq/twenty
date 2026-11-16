@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -135,7 +136,7 @@ export const EnterprisePlanModal = () => {
 
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
-      if (checkoutUrl !== null && checkoutUrl !== undefined) {
+      if (isDefined(checkoutUrl)) {
         openUrlInNewTab(checkoutUrl);
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {

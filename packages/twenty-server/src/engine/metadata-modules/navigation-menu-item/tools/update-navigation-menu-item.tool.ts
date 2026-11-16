@@ -59,28 +59,39 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, application, agentId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof updateNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
     try {
       const update: Partial<UpdateNavigationMenuItemInput> = {};
 
-      if (input.name !== undefined) update.name = input.name;
-      if (input.icon !== undefined) update.icon = input.icon;
-      if (input.color !== undefined) update.color = input.color;
-      if (input.position !== undefined) update.position = input.position;
-      if (input.folderId !== undefined) update.folderId = input.folderId;
-      if (input.link !== undefined) update.link = input.link;
-      if (input.pageLayoutId !== undefined)
+      if (input.name !== undefined) {
+        update.name = input.name;
+      }
+      if (input.icon !== undefined) {
+        update.icon = input.icon;
+      }
+      if (input.color !== undefined) {
+        update.color = input.color;
+      }
+      if (input.position !== undefined) {
+        update.position = input.position;
+      }
+      if (input.folderId !== undefined) {
+        update.folderId = input.folderId;
+      }
+      if (input.link !== undefined) {
+        update.link = input.link;
+      }
+      if (input.pageLayoutId !== undefined) {
         update.pageLayoutId = input.pageLayoutId;
+      }
 
       const updated = await this.navigationMenuItemService.update({
         input: { id: input.id, ...update },
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
-        authApplicationId: application?.id,
-        authAgentId: agentId,
       });
 
       return {

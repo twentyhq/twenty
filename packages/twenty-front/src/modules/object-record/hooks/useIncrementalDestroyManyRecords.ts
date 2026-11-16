@@ -115,7 +115,9 @@ export const useIncrementalDestroyManyRecords = <T>({
             }
             const records = data?.[mutationResponseField];
 
-            if (!isDefined(records) || records.length === 0) return;
+            if (!isDefined(records) || records.length === 0) {
+              return;
+            }
 
             triggerDestroyRecordsOptimisticEffect({
               cache,

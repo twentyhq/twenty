@@ -115,9 +115,9 @@ const insertKeyValuePair = ({
     [SEED_APPLE_WORKSPACE_ID, userId, key, JSON.stringify(value), type],
   );
 
-const deleteCompanyEnrichmentAttempt = () =>
+const deleteCompanyEnrichment = () =>
   globalThis.testDataSource.query(
-    `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" IS NULL AND "key" = 'COMPANY_ENRICHMENT_ATTEMPT'`,
+    `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" IS NULL AND "key" = 'COMPANY_ENRICHMENT'`,
     [SEED_APPLE_WORKSPACE_ID],
   );
 
@@ -235,68 +235,117 @@ describe('gettingStarted (e2e)', () => {
         );
       }
     });
+
+    it('leaves the mailbox step open when the only account comes from an SSO sign-in', async () => {
+      const activeAccounts: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        );
+      const activeAccountIds = activeAccounts.map(({ id }) => id);
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "archivedAt" = NOW() WHERE "id" = ANY($1)`,
+        [activeAccountIds],
+      );
+
+      const [ssoAccount]: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `INSERT INTO core."connectedAccount" ("workspaceId", "userWorkspaceId", "handle", "provider", "scopes", "lastSignedInAt") VALUES ($1, $2, 'jane.sso@apple.dev', 'google', $3, NOW()) RETURNING "id"`,
+          [
+            SEED_APPLE_WORKSPACE_ID,
+            USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            ['email', 'profile'],
+          ],
+        );
+
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" = $2 AND "key" = 'GETTING_STARTED_COMPLETED_CONNECT_MAILBOX'`,
+        [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
+      );
+
+      try {
+        expect(await findCompletedStepActionKeys()).not.toContain(
+          'CONNECT_MAILBOX',
+        );
+      } finally {
+        await globalThis.testDataSource.query(
+          `DELETE FROM core."connectedAccount" WHERE "id" = $1`,
+          [ssoAccount.id],
+        );
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "archivedAt" = NULL WHERE "id" = ANY($1)`,
+          [activeAccountIds],
+        );
+      }
+    });
   });
 
   describe('assigned step action keys', () => {
-    beforeEach(deleteCompanyEnrichmentAttempt);
+    beforeEach(async () => {
+      await deleteGettingStartedUserVars();
+      await deleteCompanyEnrichment();
+    });
 
     afterEach(async () => {
       await deleteGettingStartedUserVars();
-      await deleteCompanyEnrichmentAttempt();
+      await deleteCompanyEnrichment();
     });
 
-    it('saves the assigned list once the company enrichment is final', async () => {
-      await insertKeyValuePair({
-        userId: null,
-        key: 'COMPANY_ENRICHMENT_ATTEMPT',
-        value: {
-          domain: 'apple.dev',
-          outcome: 'notFound',
-          attemptedAt: '2026-10-30T00:00:00.000Z',
-        },
-        type: 'CONFIG_VARIABLE',
-      });
+    it('saves the assigned list on the first read and keeps it when the company enrichment lands later', async () => {
+      const teamStepActionKeys = [
+        'CONNECT_MAILBOX',
+        'BOOK_CALL',
+        'IMPORT_DATA',
+        'CUSTOMIZE_DATA_MODEL',
+        'INVITE_TEAM',
+        'HANDOVER_DEALS',
+        'FOLLOW_UP_DEALS',
+        'INSTALL_APP',
+      ];
 
-      const response = await makeMetadataApiRequest({
+      const firstResponse = await makeMetadataApiRequest({
         query: GETTING_STARTED_PROGRESS_QUERY,
       });
 
-      expect(response.body.errors).toBeUndefined();
+      expect(firstResponse.body.errors).toBeUndefined();
       expect(await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS')).toEqual(
-        [
-          'CONNECT_MAILBOX',
-          'IMPORT_DATA',
-          'CUSTOMIZE_DATA_MODEL',
-          'INVITE_TEAM',
-          'HANDOVER_DEALS',
-          'FOLLOW_UP_DEALS',
-          'INSTALL_APP',
-        ],
+        teamStepActionKeys,
       );
-    });
 
-    it('does not save the list after a transient enrichment error', async () => {
       await insertKeyValuePair({
         userId: null,
-        key: 'COMPANY_ENRICHMENT_ATTEMPT',
+        key: 'COMPANY_ENRICHMENT',
         value: {
           domain: 'apple.dev',
-          outcome: 'transientError',
-          httpStatus: 503,
-          message: 'Service unavailable',
-          attemptedAt: '2026-10-30T00:00:00.000Z',
+          enrichedAt: '2026-10-30T00:00:00.000Z',
+          name: 'Apple',
+          website: 'apple.dev',
+          industry: null,
+          employeeCount: 5,
+          size: '1-10',
+          founded: null,
+          headline: null,
+          summary: null,
+          tags: [],
+          locality: null,
+          region: null,
+          country: null,
         },
         type: 'CONFIG_VARIABLE',
       });
 
-      const response = await makeMetadataApiRequest({
+      const secondResponse = await makeMetadataApiRequest({
         query: GETTING_STARTED_PROGRESS_QUERY,
       });
 
-      expect(response.body.errors).toBeUndefined();
-      expect(
-        await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS'),
-      ).toBeUndefined();
+      expect(secondResponse.body.errors).toBeUndefined();
+      expect(await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS')).toEqual(
+        teamStepActionKeys,
+      );
+      expect(secondResponse.body.data.gettingStartedProgress.steps).toEqual(
+        firstResponse.body.data.gettingStartedProgress.steps,
+      );
     });
 
     it('keeps the saved list in its order and drops unknown keys', async () => {

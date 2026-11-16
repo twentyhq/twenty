@@ -1,0 +1,35 @@
+import {
+  Injectable,
+  type CanActivate,
+  type ExecutionContext,
+} from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ViewVisibility } from 'twenty-shared/types';
+
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
+import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
+
+@Injectable()
+export class ViewPermissionGuard implements CanActivate {
+  constructor(private readonly viewAccessService: ViewAccessService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const gqlContext = GqlExecutionContext.create(context);
+    const request = gqlContext.getContext().req;
+    const args = gqlContext.getArgs();
+
+    const viewId =
+      [args?.id, request.params?.id].find(isNonEmptyString) ?? null;
+
+    const nextVisibility: ViewVisibility | undefined =
+      args?.input?.visibility ?? request.body?.visibility;
+
+    return this.viewAccessService.canUserModifyView({
+      viewId,
+      accessContext: resolveViewAccessContext(request),
+      nextVisibility,
+    });
+  }
+}
