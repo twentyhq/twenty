@@ -10596,7 +10596,7 @@ msgstr "找不到父視圖篩選組"
 #. js-lingui-id: Nvm/cW
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
-msgstr ""
+msgstr "parentId 和 folderId 必須相符。folderId 已淘汰，請使用 parentId。"
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

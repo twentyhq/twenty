@@ -10596,7 +10596,7 @@ msgstr "Overordnet vis filtergruppe ikke fundet"
 #. js-lingui-id: Nvm/cW
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
-msgstr ""
+msgstr "parentId og folderId skal matche. folderId er forældet, brug parentId."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

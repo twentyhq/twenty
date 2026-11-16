@@ -10596,7 +10596,7 @@ msgstr "No s'ha trobat el grup de filtratge de la vista pare"
 #. js-lingui-id: Nvm/cW
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
-msgstr ""
+msgstr "parentId i folderId han de coincidir. folderId està obsolet; utilitzeu parentId."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
