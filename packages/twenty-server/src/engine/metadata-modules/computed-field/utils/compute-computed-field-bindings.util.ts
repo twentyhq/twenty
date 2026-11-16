@@ -11,15 +11,7 @@ import {
 import { type ComputedFieldBindableSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-bindable-schema-field.type';
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
-import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
-
-const getFieldPathsOrThrow = (expression: string): string[][] => {
-  try {
-    return getComputedFieldExpressionFieldPaths(expression);
-  } catch {
-    throw new ComputedFieldExpressionError('The expression cannot be read');
-  }
-};
+import { resolveComputedFieldSlotExpressionsOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-slot-expressions-or-throw.util';
 
 const computeBindingsOrThrow = <
   TObject,
@@ -33,17 +25,24 @@ const computeBindingsOrThrow = <
   object: TObject;
   schemaReader: ComputedFieldSchemaReader<TObject, TField>;
 }): FieldMetadataComputationBindings => {
-  const bindExpression = ({
-    expression,
-    evaluatedObject,
-    pathPrefix,
-  }: {
-    expression: string | undefined;
-    evaluatedObject: TObject;
-    pathPrefix: string[];
-  }): [string, string][] =>
-    (isDefined(expression) ? getFieldPathsOrThrow(expression) : []).flatMap(
-      (path) => {
+  const { sourceRelation, slotExpressions } =
+    resolveComputedFieldSlotExpressionsOrThrow({
+      computation,
+      object,
+      schemaReader,
+    });
+
+  return Object.fromEntries([
+    ...(isDefined(sourceRelation)
+      ? [
+          [
+            sourceRelation.fieldName,
+            sourceRelation.relationField.universalIdentifier,
+          ],
+        ]
+      : []),
+    ...slotExpressions.flatMap(({ expression, evaluatedObject, pathPrefix }) =>
+      getComputedFieldExpressionFieldPaths(expression).flatMap((path) => {
         const { toOneRelationHops, field } = resolveComputedFieldPathOrThrow({
           path,
           object: evaluatedObject,
@@ -54,44 +53,16 @@ const computeBindingsOrThrow = <
         return [
           ...toOneRelationHops.map(({ relationField }) => relationField),
           field,
-        ].map((boundField, index): [string, string] => [
+        ].map((boundField, index) => [
           [...pathPrefix, ...path.slice(0, index + 1)].join('.'),
           boundField.universalIdentifier,
         ]);
-      },
-    );
-
-  if (computation.kind === 'FORMULA') {
-    return Object.fromEntries(
-      bindExpression({
-        expression: computation.expression,
-        evaluatedObject: object,
-        pathPrefix: [],
-      }),
-    );
-  }
-
-  const { relationFieldName } = computation;
-  const { relationField, relatedObject } =
-    resolveComputedFieldSourceRelationOrThrow({
-      relationFieldName,
-      object,
-      schemaReader,
-    });
-
-  return Object.fromEntries([
-    [relationFieldName, relationField.universalIdentifier],
-    ...[computation.expression, computation.filter].flatMap((expression) =>
-      bindExpression({
-        expression,
-        evaluatedObject: relatedObject,
-        pathPrefix: [relationFieldName],
       }),
     ),
   ]);
 };
 
-// Every path is rooted at the computed field's own object, so a rollup prefixes what its related records read with its relation.
+// Every path is rooted at the computed field's own object, so what related records read is prefixed with the relation.
 // Undefined when a path does not resolve: validation reports why.
 export const computeComputedFieldBindings = <
   TObject,

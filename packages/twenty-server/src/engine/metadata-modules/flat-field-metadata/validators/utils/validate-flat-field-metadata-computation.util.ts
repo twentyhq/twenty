@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
+import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
 import { type UniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/universal-computed-field-schema-reader.type';
 import { computeComputedFieldBindings } from 'src/engine/metadata-modules/computed-field/utils/compute-computed-field-bindings.util';
 import { isFieldMetadataComputation } from 'src/engine/metadata-modules/computed-field/utils/is-field-metadata-computation.util';
@@ -45,7 +46,9 @@ export const validateFlatFieldMetadataComputation = ({
 
   if (!isFieldMetadataComputation(computation)) {
     return buildError(
-      'it must be a formula with an expression, or a rollup with a relation, an operation and optional expression and filter',
+      `it must be ${Object.values(COMPUTED_FIELD_KIND_DESCRIPTIONS)
+        .map(({ readableShape }) => readableShape)
+        .join(', or ')}`,
     );
   }
 
