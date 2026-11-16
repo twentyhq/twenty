@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
+  type FieldMetadataComputation,
   type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
   type FieldMetadataSettings,
@@ -143,6 +144,10 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   settings?: FieldMetadataSettings<T>;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  computation?: FieldMetadataComputation | null;
 
   @HideField()
   workspaceId: string;

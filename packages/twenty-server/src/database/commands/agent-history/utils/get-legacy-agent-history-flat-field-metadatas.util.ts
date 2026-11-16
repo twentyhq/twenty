@@ -85,6 +85,7 @@ export const getLegacyAgentHistoryFlatFieldMetadatas = ({
       isAuditLogged: false,
       isUIEditable: false,
       disabledFieldPermissionActions: null,
+      computation: null,
       isLabelSyncedWithName: false,
       overrides: null,
       defaultValue: field.defaultValue,

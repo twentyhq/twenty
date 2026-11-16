@@ -4,6 +4,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { buildComputedTableSource } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
   TwentyOrmException,
@@ -67,6 +68,8 @@ export type OrderByClause = {
 
 export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
+export type ComputedColumnSqlByAlias = Record<string, Record<string, string>>;
+
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -75,6 +78,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   columnNullifyConditions: ColumnNullifyConditions;
+  computedColumnSqlByAlias: ComputedColumnSqlByAlias;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -365,6 +369,7 @@ export const renderWhereExpressionWithRowAccess = ({
 const renderExistsFilter = (
   existsFilterClause: ExistsFilterClause,
   includeDeleted: boolean,
+  state: Pick<SelectStatementState, 'computedColumnSqlByAlias'>,
 ): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
@@ -384,11 +389,13 @@ const renderExistsFilter = (
     );
   }
 
-  const tableExpression = `${escapeIdentifier(
-    existsFilterClause.targetTableShape.schemaName,
-  )}.${escapeIdentifier(existsFilterClause.targetTableShape.tableName)}`;
+  const tableSource = buildTableSource({
+    state,
+    tableShape: existsFilterClause.targetTableShape,
+    alias: existsFilterClause.alias,
+  });
 
-  return `EXISTS (SELECT 1 FROM ${tableExpression} AS ${escapeIdentifier(
+  return `EXISTS (SELECT 1 FROM ${tableSource} AS ${escapeIdentifier(
     existsFilterClause.alias,
   )} WHERE ${conditions.join(' AND ')})`;
 };
@@ -397,16 +404,22 @@ export const substituteExistsFilterTokens = ({
   expression,
   existsFilterClauses,
   includeDeleted,
+  computedColumnSqlByAlias = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
+  computedColumnSqlByAlias?: ComputedColumnSqlByAlias;
 }): string =>
   existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
       substituted
         .split(existsFilterClause.token)
-        .join(renderExistsFilter(existsFilterClause, includeDeleted)),
+        .join(
+          renderExistsFilter(existsFilterClause, includeDeleted, {
+            computedColumnSqlByAlias,
+          }),
+        ),
     expression,
   );
 
@@ -430,6 +443,7 @@ export const buildWhereExpression = (
 
   const filterExpression = substituteExistsFilters
     ? substituteExistsFilterTokens({
+        computedColumnSqlByAlias: state.computedColumnSqlByAlias,
         expression: renderedWhereExpression,
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
@@ -454,10 +468,29 @@ export const buildWhereExpression = (
   return `(${filterExpression}) AND ${softDeletePredicate}`;
 };
 
+const buildTableSource = ({
+  state,
+  tableShape,
+  alias,
+}: {
+  state: Pick<SelectStatementState, 'computedColumnSqlByAlias'>;
+  tableShape: WorkspaceTableShape;
+  alias: string;
+}): string =>
+  buildComputedTableSource({
+    tableExpression: `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
+      tableShape.tableName,
+    )}`,
+    alias,
+    computedColumnSqlByColumnName: state.computedColumnSqlByAlias[alias] ?? {},
+  });
+
 export const buildFromClause = (state: SelectStatementState): string =>
-  `FROM ${escapeIdentifier(state.tableShape.schemaName)}.${escapeIdentifier(
-    state.tableShape.tableName,
-  )} AS ${escapeIdentifier(state.alias)}`;
+  `FROM ${buildTableSource({
+    state,
+    tableShape: state.tableShape,
+    alias: state.alias,
+  })} AS ${escapeIdentifier(state.alias)}`;
 
 const buildToManyDedupedJoinSource = ({
   tableExpression,
@@ -535,7 +568,11 @@ export const buildJoinClause = (state: SelectStatementState): string =>
             includeSoftDeleteFilter: softDeletePredicateApplies,
             dedupOrder: joinClause.toManyDedupOrder,
           })
-        : tableExpression;
+        : buildTableSource({
+            state,
+            tableShape: joinClause.targetTableShape,
+            alias: joinClause.alias,
+          });
 
       return `${joinClause.joinType} JOIN ${joinSource} AS ${escapeIdentifier(
         joinClause.alias,

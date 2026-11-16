@@ -4,6 +4,7 @@ import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/en
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
 import { validateViewFieldLabelIdentifierCrossEntity } from 'src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util';
+import { validateComputedFieldsStillEvaluateCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-fields-still-evaluate-cross-entity.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -88,6 +89,10 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.fieldMetadata.push(
     ...fieldMetadata,
     ...fieldMetadataDefaultValue,
+    ...validateComputedFieldsStillEvaluateCrossEntity({
+      optimisticUniversalFlatMaps,
+      orchestratorActionsReport,
+    }).fieldMetadata,
   );
 
   validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({

@@ -35,6 +35,9 @@ export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuC
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { computedFieldExpressionParser } from './computed-field/computedFieldExpressionParser';
+export { getComputedFieldExpressionFieldPaths } from './computed-field/getComputedFieldExpressionFieldPaths';
+export { parseComputedFieldExpression } from './computed-field/parseComputedFieldExpression';
 export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
 export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';
 export { formatRecordExportHeader } from './csv/formatRecordExportHeader';
@@ -79,6 +82,7 @@ export {
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
 export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
+export { isComputedField } from './fieldMetadata/isComputedField';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldMetadataEligibleForFieldsWidget';

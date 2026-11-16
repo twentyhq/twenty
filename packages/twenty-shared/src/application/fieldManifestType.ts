@@ -2,6 +2,7 @@ import { type FieldManifestOptions } from '@/application/fieldManifestOptionsTyp
 import { type FieldPermissionAction } from '@/application/fieldPermissionActionType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
+  type FieldMetadataComputation,
   type FieldMetadataDefaultValue,
   type FieldMetadataType,
   type FieldMetadataUniversalSettings,
@@ -23,6 +24,7 @@ type BaseRegularFieldManifest<
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
   disabledFieldPermissionActions?: FieldPermissionAction[];
+  computation?: FieldMetadataComputation;
   isUnique?: boolean;
   isLabelSyncedWithName?: boolean;
   isSearchable?: boolean;

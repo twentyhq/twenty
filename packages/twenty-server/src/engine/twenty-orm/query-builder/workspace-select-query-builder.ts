@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type ColumnNullifyConditions,
+  type ComputedColumnSqlByAlias,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -104,6 +105,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
+  private readonly computedColumnSqlByAlias: ComputedColumnSqlByAlias = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -164,6 +166,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
     for (const alias of this.aliasesWithRowLevelPermissionApplied) {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
+    }
+
+    for (const [alias, computedColumnSqlByColumnName] of Object.entries(
+      this.computedColumnSqlByAlias,
+    )) {
+      cloned.computedColumnSqlByAlias[alias] = {
+        ...computedColumnSqlByColumnName,
+      };
     }
 
     return cloned;
@@ -771,6 +781,65 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return true;
   }
 
+  // Scans the rendered statement so a computed column is found wherever it is used:
+  // projection, filter, order, grouping, or the expression of another computed column
+  getUnresolvedComputedColumns(): {
+    alias: string;
+    tableShape: WorkspaceTableShape;
+    columnName: string;
+  }[] {
+    const tableShapeByAlias: Record<string, WorkspaceTableShape> = {
+      [this.alias]: this.tableShape,
+      ...Object.fromEntries(
+        [...this.joinClauses, ...this.existsFilterClauses].map((clause) => [
+          clause.alias,
+          clause.targetTableShape,
+        ]),
+      ),
+    };
+
+    if (
+      Object.values(tableShapeByAlias).every(
+        (tableShape) => tableShape.computedColumnNames.length === 0,
+      )
+    ) {
+      return [];
+    }
+
+    const statement = buildSelectStatement(
+      this.toSelectStatementState({ allowPlainToManyJoins: true }),
+    );
+
+    return Object.entries(tableShapeByAlias).flatMap(([alias, tableShape]) =>
+      tableShape.computedColumnNames
+        .filter(
+          (columnName) =>
+            !isDefined(this.computedColumnSqlByAlias[alias]?.[columnName]) &&
+            statement.includes(this.quoteColumn(alias, columnName)),
+        )
+        .map((columnName) => ({ alias, tableShape, columnName })),
+    );
+  }
+
+  setComputedColumnSql({
+    alias,
+    columnName,
+    sql,
+    parameters,
+  }: {
+    alias: string;
+    columnName: string;
+    sql: string;
+    parameters: Record<string, unknown>;
+  }): this {
+    this.computedColumnSqlByAlias[alias] = {
+      ...this.computedColumnSqlByAlias[alias],
+      [columnName]: sql,
+    };
+
+    return this.setParameters(parameters);
+  }
+
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
     const state = this.toSelectStatementState();
     const aliases = collectStatementAliases(state);
@@ -1314,6 +1383,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       columnNullifyConditions: this.columnNullifyConditions,
+      computedColumnSqlByAlias: this.computedColumnSqlByAlias,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,
