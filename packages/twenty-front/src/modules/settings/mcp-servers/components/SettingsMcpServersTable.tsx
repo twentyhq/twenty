@@ -26,6 +26,8 @@ export const SettingsMcpServersTable = () => {
   const { data, loading, error } = useQuery(FindManyMcpServersDocument);
 
   const mcpServers = data?.mcpServers ?? [];
+  const hasMcpServers = isNonEmptyArray(mcpServers);
+  const isEmpty = !loading && !hasMcpServers;
 
   return (
     <Table>
@@ -41,7 +43,7 @@ export const SettingsMcpServersTable = () => {
         <TableHeader>{t`Status`}</TableHeader>
         <TableHeader></TableHeader>
       </TableRow>
-      {isNonEmptyArray(mcpServers) ? (
+      {hasMcpServers && (
         <StyledTableBodyContainer>
           <TableBody>
             {mcpServers.map((mcpServer) => (
@@ -55,12 +57,11 @@ export const SettingsMcpServersTable = () => {
             ))}
           </TableBody>
         </StyledTableBodyContainer>
-      ) : (
-        !loading && (
-          <TableCell color={themeCssVariables.font.color.tertiary}>
-            {t`No MCP servers yet`}
-          </TableCell>
-        )
+      )}
+      {isEmpty && (
+        <TableCell color={themeCssVariables.font.color.tertiary}>
+          {t`No MCP servers yet`}
+        </TableCell>
       )}
     </Table>
   );

@@ -150,7 +150,7 @@ export const SettingsSkillFormContent = ({
           />
         ) : undefined
       }
-      links={getSettingsAiBreadcrumbLinks(breadcrumbText)}
+      links={getSettingsAiBreadcrumbLinks({ currentPageLabel: breadcrumbText })}
     >
       <SettingsPageContainer>
         <Section.Root>

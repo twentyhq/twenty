@@ -20,10 +20,10 @@ export const SettingsMcpServerFormLayout = ({
 }: SettingsMcpServerFormLayoutProps) => (
   <SettingsPageLayout
     title={title}
-    links={getSettingsAiBreadcrumbLinks(
-      breadcrumbTitle,
-      SETTINGS_AI_TABS.TABS_IDS.TOOLS,
-    )}
+    links={getSettingsAiBreadcrumbLinks({
+      currentPageLabel: breadcrumbTitle,
+      tabId: SETTINGS_AI_TABS.TABS_IDS.TOOLS,
+    })}
     actionButton={actionButton}
   >
     <SettingsPageContainer>{children}</SettingsPageContainer>

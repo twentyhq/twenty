@@ -51,7 +51,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SettingsPageLayout
         title={t`Skill`}
         icon={<SkillIcon size={theme.icon.size.md} color={theme.color.blue9} />}
-        links={getSettingsAiBreadcrumbLinks(t`Skill`)}
+        links={getSettingsAiBreadcrumbLinks({ currentPageLabel: t`Skill` })}
       >
         <SettingsPageContainer>
           <Section.Root>
