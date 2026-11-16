@@ -3,67 +3,66 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { claimTeamsTenant } from 'src/features/chat/logic-functions/utils/claim-teams-tenant';
 
-const { kvGetMock, kvSetMock, fetchCurrentWorkspaceIdOrThrowMock } = vi.hoisted(
-  () => ({
-    kvGetMock: vi.fn(),
-    kvSetMock: vi.fn(),
-    fetchCurrentWorkspaceIdOrThrowMock: vi.fn(),
-  }),
-);
+const { kvGetMock, kvSetMock } = vi.hoisted(() => ({
+  kvGetMock: vi.fn(),
+  kvSetMock: vi.fn(),
+}));
 
 vi.mock('twenty-sdk/logic-function', () => ({
   kv: { get: kvGetMock, set: kvSetMock },
 }));
 
-vi.mock(
-  'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw',
-  () => ({
-    fetchCurrentWorkspaceIdOrThrow: fetchCurrentWorkspaceIdOrThrowMock,
-  }),
-);
-
 const TENANT_ID = 'tenant-id';
+const WORKSPACE_ID = 'this-workspace-id';
 
 describe('claimTeamsTenant', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    fetchCurrentWorkspaceIdOrThrowMock.mockResolvedValue('this-workspace-id');
   });
 
   it('should claim the tenant for this workspace', async () => {
-    expect(await claimTeamsTenant(TENANT_ID)).toEqual({ isClaimed: true });
+    expect(
+      await claimTeamsTenant({
+        tenantId: TENANT_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).toBe(true);
     expect(kvSetMock).toHaveBeenCalledExactlyOnceWith(
       buildTeamsTenantKvKey(TENANT_ID),
       null,
       { scope: 'SERVER' },
     );
     expect(kvGetMock).not.toHaveBeenCalled();
-    expect(fetchCurrentWorkspaceIdOrThrowMock).not.toHaveBeenCalled();
   });
 
   it('should report a lost claim when another workspace holds the tenant', async () => {
     kvSetMock.mockRejectedValue(new Error('kv.set() failed: already claimed'));
     kvGetMock.mockResolvedValue('other-workspace-id');
 
-    expect(await claimTeamsTenant(TENANT_ID)).toEqual({ isClaimed: false });
+    expect(
+      await claimTeamsTenant({
+        tenantId: TENANT_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).toBe(false);
     expect(kvGetMock).toHaveBeenCalledExactlyOnceWith(
       buildTeamsTenantKvKey(TENANT_ID),
       { scope: 'SERVER' },
     );
   });
 
-  it('should rethrow when the claim fails while this workspace already holds the tenant', async () => {
-    kvSetMock.mockRejectedValue(new Error('kv.set() failed: HTTP 502'));
-    kvGetMock.mockResolvedValue('this-workspace-id');
+  it.each([
+    ['this workspace already holds the tenant', WORKSPACE_ID],
+    ['nobody holds the tenant', null],
+  ])(
+    'should rethrow when the claim fails while %s',
+    async (_, claimingWorkspaceId) => {
+      kvSetMock.mockRejectedValue(new Error('kv.set() failed: HTTP 502'));
+      kvGetMock.mockResolvedValue(claimingWorkspaceId);
 
-    await expect(claimTeamsTenant(TENANT_ID)).rejects.toThrow('HTTP 502');
-  });
-
-  it('should rethrow when the claim fails and nobody holds the tenant', async () => {
-    kvSetMock.mockRejectedValue(new Error('kv.set() failed: HTTP 503'));
-    kvGetMock.mockResolvedValue(null);
-
-    await expect(claimTeamsTenant(TENANT_ID)).rejects.toThrow('HTTP 503');
-    expect(fetchCurrentWorkspaceIdOrThrowMock).not.toHaveBeenCalled();
-  });
+      await expect(
+        claimTeamsTenant({ tenantId: TENANT_ID, workspaceId: WORKSPACE_ID }),
+      ).rejects.toThrow('HTTP 502');
+    },
+  );
 });

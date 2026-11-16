@@ -1,19 +1,24 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 
 import { TEAMS_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
 import { registerTeamsConnection } from 'src/features/chat/logic-functions/utils/register-teams-connection';
 import { registerTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/register-teams-transcript-subscription';
 import { startTeamsTranscriptHistoryInitialImportOrThrow } from 'src/features/transcripts/logic-functions/utils/start-teams-transcript-history-initial-import-or-throw';
 
-export const teamsRegisterConnectionHandler = async (payload: {
-  connectedAccountId: string;
-}) => {
+export const teamsRegisterConnectionHandler = async (
+  payload: { connectedAccountId: string },
+  context: Pick<LogicFunctionExecutionContext, 'workspaceId'>,
+) => {
   const [
     chatRegistration,
     transcriptRegistration,
     transcriptHistoryInitialImport,
   ] = await Promise.allSettled([
-    registerTeamsConnection(payload),
+    registerTeamsConnection({
+      connectedAccountId: payload.connectedAccountId,
+      workspaceId: context.workspaceId,
+    }),
     registerTeamsTranscriptSubscription(payload),
     startTeamsTranscriptHistoryInitialImportOrThrow(payload),
   ]);

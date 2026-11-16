@@ -17,11 +17,6 @@ import { TEAMS_GRAPH_DIRECTORY_SCOPE } from 'src/features/transcripts/constants/
 import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
-export type RegisterTeamsConnectionResult = {
-  claimedTenantId: string | null;
-  conflictingTenantId?: string;
-};
-
 const matchTeamsDirectoryOnConnect = async ({
   connection,
   accessToken,
@@ -50,9 +45,14 @@ const matchTeamsDirectoryOnConnect = async ({
 
 export const registerTeamsConnection = async ({
   connectedAccountId,
+  workspaceId,
 }: {
   connectedAccountId: string;
-}): Promise<RegisterTeamsConnectionResult> => {
+  workspaceId: string;
+}): Promise<{
+  claimedTenantId: string | null;
+  conflictingTenantId?: string;
+}> => {
   const isChatEnabled = isTeamsChatEnabled();
   const connection = isChatEnabled
     ? await getConnection(connectedAccountId)
@@ -77,10 +77,10 @@ export const registerTeamsConnection = async ({
 
   await kv.set(connectedAccountTenantKvKey, tenantId);
 
-  const { isClaimed } = await claimTeamsTenant(tenantId);
+  const isTenantClaimed = await claimTeamsTenant({ tenantId, workspaceId });
 
   // The hook's failures are swallowed, so a lost claim is recorded, not thrown.
-  if (!isClaimed) {
+  if (!isTenantClaimed) {
     await kv.delete(connectedAccountTenantKvKey);
     await saveTeamsTenantClaimConflict({ connectedAccountId, tenantId });
 

@@ -1,29 +1,10 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type TeamsTenantClaimConflict } from 'src/features/chat/logic-functions/types/teams-tenant-claim-conflict.type';
 import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
-import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { fetchCurrentWorkspaceIdOrThrow } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw';
-
-const isHeldByAnotherWorkspace = async ({
-  tenantId,
-  currentWorkspaceId,
-}: {
-  tenantId: string;
-  currentWorkspaceId: string;
-}): Promise<boolean> => {
-  const claimingWorkspaceId = await kv.get<string>(
-    buildTeamsTenantKvKey(tenantId),
-    { scope: 'SERVER' },
-  );
-
-  return (
-    isNonEmptyString(claimingWorkspaceId) &&
-    claimingWorkspaceId !== currentWorkspaceId
-  );
-};
+import { isTeamsTenantHeldByAnotherWorkspace } from 'src/features/chat/logic-functions/utils/is-teams-tenant-held-by-another-workspace';
 
 // A record outlives its conflict once another connection reclaims the tenant.
 export const findTeamsTenantClaimConflicts = async ({
@@ -45,12 +26,12 @@ export const findTeamsTenantClaimConflicts = async ({
     return [];
   }
 
-  const currentWorkspaceId = await fetchCurrentWorkspaceIdOrThrow();
+  const workspaceId = await fetchCurrentWorkspaceIdOrThrow();
   const liveConflicts = await Promise.all(
     recordedConflicts.map(async (conflict) =>
-      (await isHeldByAnotherWorkspace({
+      (await isTeamsTenantHeldByAnotherWorkspace({
         tenantId: conflict.tenantId,
-        currentWorkspaceId,
+        workspaceId,
       }))
         ? conflict
         : undefined,
