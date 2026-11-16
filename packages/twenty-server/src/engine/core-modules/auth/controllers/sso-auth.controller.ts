@@ -200,11 +200,11 @@ export class SsoAuthController {
           ? ConnectedAccountProvider.SAML
           : ConnectedAccountProvider.OIDC;
 
-      const { loginToken } = await this.signInUpAndIssueLoginToken(
-        req.user,
+      const { loginToken } = await this.signInUpAndIssueLoginToken({
+        payload: req.user,
         currentWorkspace,
-        { oidcTokenClaims, connectedAccountProvider },
-      );
+        ssoContext: { oidcTokenClaims, connectedAccountProvider },
+      });
 
       return res.redirect(
         this.authService.computeRedirectURI({
@@ -226,20 +226,21 @@ export class SsoAuthController {
     }
   }
 
-  private async signInUpAndIssueLoginToken(
-    {
-      workspacePersonalInviteToken,
-      ...payload
-    }: Pick<
+  private async signInUpAndIssueLoginToken({
+    payload: { workspacePersonalInviteToken, ...payload },
+    currentWorkspace,
+    ssoContext,
+  }: {
+    payload: Pick<
       SamlRequest['user'],
       'email' | 'workspaceInviteHash' | 'workspacePersonalInviteToken'
-    >,
-    currentWorkspace: WorkspaceEntity,
+    >;
+    currentWorkspace: WorkspaceEntity;
     ssoContext?: {
       oidcTokenClaims?: Record<string, unknown>;
       connectedAccountProvider: ConnectedAccountProvider;
-    },
-  ) {
+    };
+  }) {
     const existingUser = await this.userService.findUserByEmail(payload.email);
 
     const { userData } = this.authService.formatUserDataPayload(
