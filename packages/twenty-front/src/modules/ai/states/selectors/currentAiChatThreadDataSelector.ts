@@ -16,6 +16,9 @@ export const currentAiChatThreadDataSelector = createAtomSelector<
       return undefined;
     }
 
-    return get(aiChatThreadRecordFamilySelector, currentThreadId) ?? undefined;
+    const thread = get(aiChatThreadRecordFamilySelector, currentThreadId);
+
+    // A live update or a favorite can store a thread before it is fetched
+    return isDefined(thread?.conversationType) ? thread : undefined;
   },
 });
