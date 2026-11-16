@@ -2,7 +2,7 @@ import { generateKeyPairSync } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
 
-import { getVerifiedCloudflareAccessAssertionPayload } from 'src/engine/core-modules/auth/cloudflare-access/utils/get-verified-cloudflare-access-assertion-payload.util';
+import { verifyCloudflareAccessAssertion } from 'src/engine/core-modules/auth/cloudflare-access/utils/verify-cloudflare-access-assertion.util';
 
 const ISSUER = 'https://team.cloudflareaccess.com';
 const AUDIENCE = 'server-admin-audience';
@@ -28,39 +28,52 @@ const signAssertion = ({
 } = {}) =>
   jwt.sign(payload, signingKey, { algorithm, issuer, audience, expiresIn });
 
-const getPayload = (assertion: string) =>
-  getVerifiedCloudflareAccessAssertionPayload({
+const verify = (assertion: string) =>
+  verifyCloudflareAccessAssertion({
     assertion,
     signingKey: publicKey,
     issuer: ISSUER,
     audience: AUDIENCE,
   });
 
-describe('getVerifiedCloudflareAccessAssertionPayload', () => {
+describe('verifyCloudflareAccessAssertion', () => {
   it('should return the email of a valid assertion', () => {
-    expect(getPayload(signAssertion())).toEqual({ email: 'jane@twenty.com' });
+    expect(verify(signAssertion())).toEqual({
+      isValid: true,
+      email: 'jane@twenty.com',
+    });
   });
 
   it('should return no email for a valid assertion without one', () => {
-    expect(getPayload(signAssertion({ payload: {} }))).toEqual({});
+    expect(verify(signAssertion({ payload: {} }))).toEqual({
+      isValid: true,
+      email: undefined,
+    });
   });
 
   it('should refuse an assertion for another audience', () => {
-    expect(
-      getPayload(signAssertion({ audience: 'another-audience' })),
-    ).toBeUndefined();
+    expect(verify(signAssertion({ audience: 'another-audience' }))).toEqual({
+      isValid: false,
+      error: `jwt audience invalid. expected: ${AUDIENCE}`,
+    });
   });
 
   it('should refuse an assertion from another issuer', () => {
     expect(
-      getPayload(
+      verify(
         signAssertion({ issuer: 'https://another-team.cloudflareaccess.com' }),
       ),
-    ).toBeUndefined();
+    ).toEqual({
+      isValid: false,
+      error: `jwt issuer invalid. expected: ${ISSUER}`,
+    });
   });
 
   it('should refuse an expired assertion', () => {
-    expect(getPayload(signAssertion({ expiresIn: -60 }))).toBeUndefined();
+    expect(verify(signAssertion({ expiresIn: -60 }))).toEqual({
+      isValid: false,
+      error: 'jwt expired',
+    });
   });
 
   it('should refuse an assertion signed by another key', () => {
@@ -68,28 +81,30 @@ describe('getVerifiedCloudflareAccessAssertionPayload', () => {
       modulusLength: 2048,
     });
 
-    expect(
-      getPayload(signAssertion({ signingKey: anotherPrivateKey })),
-    ).toBeUndefined();
+    expect(verify(signAssertion({ signingKey: anotherPrivateKey }))).toEqual({
+      isValid: false,
+      error: 'invalid signature',
+    });
   });
 
   it('should refuse an assertion signed with the public key as a shared secret', () => {
     const publicKeyPem = publicKey.export({ type: 'spki', format: 'pem' });
 
     expect(
-      getPayload(
-        signAssertion({ signingKey: publicKeyPem, algorithm: 'HS256' }),
-      ),
-    ).toBeUndefined();
+      verify(signAssertion({ signingKey: publicKeyPem, algorithm: 'HS256' })),
+    ).toEqual({ isValid: false, error: 'invalid algorithm' });
   });
 
   it('should refuse an assertion whose email is not a string', () => {
-    expect(
-      getPayload(signAssertion({ payload: { email: 42 } })),
-    ).toBeUndefined();
+    expect(verify(signAssertion({ payload: { email: 42 } })).isValid).toBe(
+      false,
+    );
   });
 
   it('should refuse a value that is not a JWT', () => {
-    expect(getPayload('not-a-jwt')).toBeUndefined();
+    expect(verify('not-a-jwt')).toEqual({
+      isValid: false,
+      error: 'jwt malformed',
+    });
   });
 });

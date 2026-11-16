@@ -12,12 +12,13 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { CLOUDFLARE_ACCESS_ASSERTION_HEADER } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-assertion-header.constant';
+import { CLOUDFLARE_ACCESS_SIGNING_KEYS_FETCH_TIMEOUT_MS } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-signing-keys-fetch-timeout-ms.constant';
 import { CLOUDFLARE_ACCESS_SIGNING_KEYS_MAX_AGE_MS } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-signing-keys-max-age-ms.constant';
 import { CLOUDFLARE_ACCESS_SIGNING_KEYS_MIN_REFETCH_INTERVAL_MS } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-signing-keys-min-refetch-interval-ms.constant';
 import { CLOUDFLARE_ACCESS_SIGNING_KEYS_PATH } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-signing-keys-path.constant';
 import { type CloudflareAccessAssertionRefusalReason } from 'src/engine/core-modules/auth/cloudflare-access/types/cloudflare-access-assertion-refusal-reason.type';
 import { getCloudflareAccessAssertionKeyId } from 'src/engine/core-modules/auth/cloudflare-access/utils/get-cloudflare-access-assertion-key-id.util';
-import { getVerifiedCloudflareAccessAssertionPayload } from 'src/engine/core-modules/auth/cloudflare-access/utils/get-verified-cloudflare-access-assertion-payload.util';
+import { verifyCloudflareAccessAssertion } from 'src/engine/core-modules/auth/cloudflare-access/utils/verify-cloudflare-access-assertion.util';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { isServerAdminWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-workspace.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -78,20 +79,27 @@ export class CloudflareAccessAssertionService {
       return;
     }
 
-    const refusalReason = await this.findRefusalReason({
+    const refusal = await this.findRefusal({
       assertion: request.headers[CLOUDFLARE_ACCESS_ASSERTION_HEADER],
       userEmail: authContext.user?.email,
       issuer: new URL(issuerUrl).origin,
       audience,
     });
 
-    if (!isDefined(refusalReason)) {
+    if (!isDefined(refusal)) {
       return;
     }
 
-    this.logger.warn(
-      `Cloudflare Access assertion refused: reason=${refusalReason} workspaceId=${workspaceId} userId=${authContext.user?.id}`,
-    );
+    const logAttributes = [
+      `reason=${refusal.reason}`,
+      isDefined(refusal.detail) ? `detail="${refusal.detail}"` : undefined,
+      `workspaceId=${workspaceId}`,
+      isDefined(authContext.user) ? `userId=${authContext.user.id}` : undefined,
+    ]
+      .filter(isDefined)
+      .join(' ');
+
+    this.logger.warn(`Cloudflare Access assertion refused: ${logAttributes}`);
 
     throw new AuthException(
       'The server admin workspace requires a valid Cloudflare Access assertion',
@@ -99,7 +107,7 @@ export class CloudflareAccessAssertionService {
     );
   }
 
-  private async findRefusalReason({
+  private async findRefusal({
     assertion,
     userEmail,
     issuer,
@@ -109,9 +117,12 @@ export class CloudflareAccessAssertionService {
     userEmail: string | undefined;
     issuer: string;
     audience: string;
-  }): Promise<CloudflareAccessAssertionRefusalReason | undefined> {
+  }): Promise<
+    | { reason: CloudflareAccessAssertionRefusalReason; detail?: string }
+    | undefined
+  > {
     if (!isNonEmptyString(assertion)) {
-      return 'ASSERTION_MISSING';
+      return { reason: 'ASSERTION_MISSING' };
     }
 
     const signingKey = await this.findSigningKey({
@@ -120,26 +131,26 @@ export class CloudflareAccessAssertionService {
     });
 
     if (!isDefined(signingKey)) {
-      return 'SIGNING_KEY_UNKNOWN';
+      return { reason: 'SIGNING_KEY_UNKNOWN' };
     }
 
-    const payload = getVerifiedCloudflareAccessAssertionPayload({
+    const verification = verifyCloudflareAccessAssertion({
       assertion,
       signingKey,
       issuer,
       audience,
     });
 
-    if (!isDefined(payload)) {
-      return 'ASSERTION_INVALID';
+    if (!verification.isValid) {
+      return { reason: 'ASSERTION_INVALID', detail: verification.error };
     }
 
     if (
-      !isDefined(payload.email) ||
+      !isDefined(verification.email) ||
       !isDefined(userEmail) ||
-      payload.email.toLowerCase() !== userEmail.toLowerCase()
+      verification.email.toLowerCase() !== userEmail.toLowerCase()
     ) {
-      return 'EMAIL_MISMATCH';
+      return { reason: 'EMAIL_MISMATCH' };
     }
 
     return undefined;
@@ -202,7 +213,9 @@ export class CloudflareAccessAssertionService {
 
     try {
       const response = await this.secureHttpClientService
-        .getHttpClient({ timeout: 5000 })
+        .getHttpClient({
+          timeout: CLOUDFLARE_ACCESS_SIGNING_KEYS_FETCH_TIMEOUT_MS,
+        })
         .get<unknown>(`${issuer}${CLOUDFLARE_ACCESS_SIGNING_KEYS_PATH}`);
 
       const { keys } = CLOUDFLARE_ACCESS_SIGNING_KEYS_SCHEMA.parse(
