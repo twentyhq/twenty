@@ -8,7 +8,7 @@ import { LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTI
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
-// TODO: remove once the oldest supported upgrade version is past 2.41
+// TODO(@thomtrp): remove once the oldest supported upgrade version is past 2.41
 export const buildLegacyWorkflowVersionCoreWorkflowVersionIdFlatFieldMetadata =
   ({
     workspaceId,
