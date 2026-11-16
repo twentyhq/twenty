@@ -2,6 +2,7 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
+import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { usePageLayoutHeaderInfo } from '@/side-panel/components/hooks/usePageLayoutHeaderInfo';
 import { renderHook } from '@testing-library/react';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -11,6 +12,7 @@ import {
   IconPerspective,
 } from 'twenty-ui/icon';
 import {
+  FieldDisplayMode,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
@@ -99,6 +101,40 @@ describe('usePageLayoutHeaderInfo', () => {
       isIconEditable: false,
     });
   });
+
+  it.each([
+    { fieldDisplayMode: FieldDisplayMode.CARD, headerType: 'Field Widget' },
+    {
+      fieldDisplayMode: FieldDisplayMode.TABLE,
+      headerType: 'Related Records Widget',
+    },
+  ])(
+    'labels a field widget in $fieldDisplayMode mode as $headerType',
+    ({ fieldDisplayMode, headerType }) => {
+      const widget = createDefaultFieldWidget({
+        id: 'widget-id',
+        pageLayoutTabId: 'tab-id',
+        title: 'Opportunities',
+        fieldMetadataId: 'field-id',
+        fieldDisplayMode,
+        viewId: 'view-id',
+        objectMetadataId: 'company',
+        positionIndex: 0,
+      });
+
+      const { result } = renderHook(() =>
+        usePageLayoutHeaderInfo({
+          sidePanelPage: SidePanelPages.RecordPageFieldSettings,
+          draftPageLayout: { tabs: [makeTab('tab-id', [widget])] },
+          pageLayoutEditingWidgetId: widget.id,
+          openTabId: null,
+          editedTitle: null,
+        }),
+      );
+
+      expect(result.current?.headerType).toBe(headerType);
+    },
+  );
 
   it('uses the canonical tab icon when the tab has no custom icon', () => {
     const tab = makeTab('tab-id', []);
