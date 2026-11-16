@@ -1,14 +1,17 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { buildRecordTableLookupColumn } from '@/object-record/record-table/utils/buildRecordTableLookupColumn';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useAddRecordTableLookupColumn = (recordTableId: string) => {
   const store = useStore();
-  const { currentView } = useGetCurrentViewOnly();
+  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
+    contextStoreCurrentViewIdComponentState,
+  );
   const { performViewFieldApiCreate } = usePerformViewFieldApiPersist();
 
   const addRecordTableLookupColumn = useCallback(
@@ -19,7 +22,9 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
       relationFieldMetadataItemId: string;
       relationTargetFieldMetadataId: string;
     }) => {
-      if (!isDefined(currentView)) {
+      const currentViewId = store.get(currentViewIdCallbackState);
+
+      if (!isDefined(currentViewId)) {
         return false;
       }
 
@@ -43,7 +48,7 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
         inputs: [
           {
             id: lookupColumn.id,
-            viewId: currentView.id,
+            viewId: currentViewId,
             fieldMetadataId: lookupColumn.fieldMetadataItemId,
             relationTargetFieldMetadataId,
             isCanonical: false,
@@ -62,7 +67,12 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
 
       return result.status === 'successful';
     },
-    [currentView, performViewFieldApiCreate, recordTableId, store],
+    [
+      currentViewIdCallbackState,
+      performViewFieldApiCreate,
+      recordTableId,
+      store,
+    ],
   );
 
   return { addRecordTableLookupColumn };

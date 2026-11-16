@@ -1,3 +1,5 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
@@ -13,11 +15,8 @@ jest.mock('@/views/hooks/internal/usePerformViewFieldApiPersist', () => ({
   }),
 }));
 
-jest.mock('@/views/hooks/useGetCurrentViewOnly', () => ({
-  useGetCurrentViewOnly: () => ({ currentView: { id: 'view-id' } }),
-}));
-
 const RECORD_TABLE_ID = 'record-table-id';
+const CONTEXT_STORE_INSTANCE_ID = 'context-store-instance-id';
 
 const companyColumn: RecordField = {
   id: 'company-column',
@@ -31,12 +30,26 @@ const currentRecordFieldsAtom = currentRecordFieldsComponentState.atomFamily({
   instanceId: RECORD_TABLE_ID,
 });
 
-const renderAddHook = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useAddRecordTableLookupColumn(RECORD_TABLE_ID), {
+const renderAddHook = (store: ReturnType<typeof createStore>) => {
+  store.set(
+    contextStoreCurrentViewIdComponentState.atomFamily({
+      instanceId: CONTEXT_STORE_INSTANCE_ID,
+    }),
+    'view-id',
+  );
+
+  return renderHook(() => useAddRecordTableLookupColumn(RECORD_TABLE_ID), {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <JotaiProvider store={store}>{children}</JotaiProvider>
+      <JotaiProvider store={store}>
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: CONTEXT_STORE_INSTANCE_ID }}
+        >
+          {children}
+        </ContextStoreComponentInstanceContext.Provider>
+      </JotaiProvider>
     ),
   });
+};
 
 describe('useAddRecordTableLookupColumn', () => {
   beforeEach(() => {
