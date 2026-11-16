@@ -57,8 +57,8 @@ export class ImpersonationAuthorizationService {
 
     if (level === 'server') {
       const hasServerLevelImpersonatePermission =
-        impersonatorUserWorkspace.user.canImpersonate === true &&
-        targetUserWorkspace.workspace.allowImpersonation === true &&
+        impersonatorUserWorkspace.user.canImpersonate &&
+        targetUserWorkspace.workspace.allowImpersonation &&
         isServerAdminAccessAllowedFromWorkspace({
           workspaceId: impersonatorUserWorkspace.workspace.id,
           serverAdminWorkspaceId: this.twentyConfigService.get(

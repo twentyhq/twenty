@@ -22,7 +22,6 @@ type AllowedOperationTestContext = {
   request: () => Promise<{ errors: BaseGraphQLError[] }>;
 };
 
-// Jane is a full server admin authenticated in Apple, which is the server admin workspace here.
 const allowedOperationTestCases: EachTestingContext<AllowedOperationTestContext>[] =
   [
     {

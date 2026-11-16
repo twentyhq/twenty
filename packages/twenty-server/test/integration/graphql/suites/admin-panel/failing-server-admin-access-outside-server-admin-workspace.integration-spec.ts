@@ -20,7 +20,6 @@ type RefusedOperationTestContext = {
   request: () => Promise<{ errors: BaseGraphQLError[] }>;
 };
 
-// Jane is a full server admin authenticated in Apple, while the server admin workspace is YCombinator.
 const refusedOperationTestCases: EachTestingContext<RefusedOperationTestContext>[] =
   [
     {
