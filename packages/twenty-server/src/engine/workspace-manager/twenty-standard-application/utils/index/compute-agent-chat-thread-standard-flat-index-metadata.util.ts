@@ -1,3 +1,5 @@
+import { IndexType } from 'twenty-shared/types';
+
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {
   type CreateStandardIndexArgs,
@@ -44,6 +46,15 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       relatedFieldNames: ['channelId', 'lastActivityAt'],
       isUnique: false,
       indexWhereClause: null,
+    },
+  }),
+  searchVectorGinIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'searchVectorGinIndex',
+      relatedFieldNames: ['searchVector'],
+      indexType: IndexType.GIN,
+      hasDeterministicUniversalIdentifier: true,
     },
   }),
 });

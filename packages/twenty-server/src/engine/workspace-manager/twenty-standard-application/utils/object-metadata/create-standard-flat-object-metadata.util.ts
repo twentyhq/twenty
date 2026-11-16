@@ -49,7 +49,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ),
         icon: 'IconMessage',
         isSystem: true,
-        isSearchable: false,
+        isSearchable: true,
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
@@ -72,13 +72,13 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         namePlural: 'agentChatThreadTargets',
         labelSingular: i18nLabel(
           msg({
-            message: 'Agent chat thread target',
+            message: 'Chat target',
             context: 'objectMetadata.labelSingular',
           }),
         ),
         labelPlural: i18nLabel(
           msg({
-            message: 'Agent chat thread targets',
+            message: 'Chat targets',
             context: 'objectMetadata.labelPlural',
           }),
         ),

@@ -95,7 +95,7 @@ describe('agent history workspace metadata', () => {
     ).toMatchObject({
       nameSingular: name,
       isSystem: true,
-      isSearchable: false,
+      isSearchable: name === 'agentChatThread',
       isAuditLogged: false,
       isUICreatable: false,
       // Chats can be renamed from their record page

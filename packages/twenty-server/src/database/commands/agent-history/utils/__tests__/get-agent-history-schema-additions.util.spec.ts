@@ -272,7 +272,7 @@ describe('getAgentHistorySchemaAdditions', () => {
   ])('rejects protection drift: %o', (changes) => {
     const standard = createStandardMetadata();
     const existing = createStandardMetadata();
-    const identifier = STANDARD_OBJECTS.agentChatThread.universalIdentifier;
+    const identifier = STANDARD_OBJECTS.agentMessage.universalIdentifier;
     Object.assign(
       existing.flatObjectMetadataMaps.byUniversalIdentifier[identifier]!,
       changes,

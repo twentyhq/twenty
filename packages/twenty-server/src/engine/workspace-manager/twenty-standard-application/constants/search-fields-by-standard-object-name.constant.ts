@@ -4,7 +4,7 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
-  agentChatThread: [],
+  agentChatThread: [{ name: 'title', type: FieldMetadataType.TEXT }],
   agentChatThreadTarget: [],
   agentChatThreadParticipant: [],
   agentTurn: [],

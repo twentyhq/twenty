@@ -60,7 +60,9 @@ export const getAgentHistorySchemaAdditions = ({
           legacyObjectAccess:
             legacyObjectAccessByUniversalIdentifier[identifier],
         }) ||
-        current.isSearchable ||
+        (current.isSearchable &&
+          identifier !==
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier) ||
         current.isAuditLogged)
     ) {
       throw new Error(

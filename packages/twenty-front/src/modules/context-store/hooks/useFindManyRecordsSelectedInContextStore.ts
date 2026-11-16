@@ -79,11 +79,6 @@ export const useFindManyRecordsSelectedInContextStore = ({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     filter: queryFilter,
     withSoftDeleted: isSoftDeleteFilterActive,
-    orderBy: [
-      {
-        position: 'AscNullsFirst',
-      },
-    ],
     skip:
       contextStoreTargetedRecordsRule.mode === 'selection' &&
       contextStoreTargetedRecordsRule.selectedRecordIds.length === 0,

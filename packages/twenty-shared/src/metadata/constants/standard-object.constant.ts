@@ -1448,6 +1448,9 @@ export const STANDARD_OBJECTS = {
       channelLastActivityIndex: {
         universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
       },
+      searchVectorGinIndex: {
+        universalIdentifier: '4070a4d9-0882-4570-8695-c8f48b0d44f1',
+      },
     },
   },
   agentChatThreadParticipant: {

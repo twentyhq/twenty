@@ -101,6 +101,9 @@ export const STANDARD_OBJECT_FIELDS = {
     writerWorkspaceMemberIds: {
       universalIdentifier: 'c8fe2406-ad9c-4274-aeb5-9beb74d4b353',
     },
+    searchVector: buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+    ).searchVector,
   },
   agentChatThreadParticipant: {
     ...buildStandardObjectBaseFields(

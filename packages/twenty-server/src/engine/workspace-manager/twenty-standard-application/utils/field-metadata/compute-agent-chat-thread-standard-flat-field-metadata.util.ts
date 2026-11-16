@@ -632,6 +632,25 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
+  searchVector: createStandardFieldFlatMetadata({
+    ...args,
+    context: {
+      fieldName: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+      label: i18nLabel(
+        msg({ message: 'Search vector', context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: 'Field used for full-text search',
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconSearch',
+      isSystem: true,
+      isNullable: true,
+    },
+  }),
   createdAt: {
     ...createStandardFieldFlatMetadata({
       ...args,
