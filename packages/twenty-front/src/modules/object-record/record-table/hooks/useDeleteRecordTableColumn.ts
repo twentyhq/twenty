@@ -1,5 +1,6 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,9 +8,14 @@ import { isDefined } from 'twenty-shared/utils';
 export const useDeleteRecordTableColumn = (recordTableId: string) => {
   const store = useStore();
   const { performViewFieldApiDestroy } = usePerformViewFieldApiPersist();
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const deleteRecordTableColumn = useCallback(
     async (recordFieldId: string) => {
+      if (!canPersistChanges) {
+        return false;
+      }
+
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
           instanceId: recordTableId,
@@ -54,7 +60,7 @@ export const useDeleteRecordTableColumn = (recordTableId: string) => {
 
       return result.status === 'successful';
     },
-    [performViewFieldApiDestroy, recordTableId, store],
+    [canPersistChanges, performViewFieldApiDestroy, recordTableId, store],
   );
 
   return { deleteRecordTableColumn };
