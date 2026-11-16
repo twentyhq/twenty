@@ -14,6 +14,7 @@ import {
 import {
   assertUnreachable,
   getComputedFieldExpressionInstructions,
+  formatExpressionDate,
   getExpressionDateLiteralErrorMessage,
   isDefined,
   isExpressionDatePart,
@@ -241,6 +242,10 @@ const toDateOperand = ({
       );
     }
 
+    // Postgres rejects some forms Temporal reads, such as a [Europe/Paris] annotation, so the parsed value is bound
+    context.parameters[operand.textLiteralParameterName] =
+      formatExpressionDate(expressionDate);
+
     return expressionDate.isDateOnly
       ? { sql: `:${operand.textLiteralParameterName}::date`, type: DATE }
       : {
@@ -309,6 +314,16 @@ const POSTGRES_DATE_UNIT: Record<ExpressionDateUnit, string> = {
   MONTH: 'month',
   QUARTER: 'quarter',
   YEAR: 'year',
+};
+
+const POSTGRES_INTERVAL_BY_DATE_UNIT: Record<ExpressionDateUnit, string> = {
+  MINUTE: '1 minute',
+  HOUR: '1 hour',
+  DAY: '1 day',
+  WEEK: '1 week',
+  MONTH: '1 month',
+  QUARTER: '3 months',
+  YEAR: '1 year',
 };
 
 const POSTGRES_DATE_PART: Record<ExpressionDatePart, string> = {
@@ -392,11 +407,8 @@ const compileDateAdd = (
 
   assertOperandType(amountOperand, [NUMBER], usage);
 
-  const amount = `TRUNC(${amountOperand.sql})::int`;
-  const interval =
-    unit === 'QUARTER'
-      ? `make_interval(months => ${amount} * 3)`
-      : `make_interval(${{ MINUTE: 'mins', HOUR: 'hours', DAY: 'days', WEEK: 'weeks', MONTH: 'months', YEAR: 'years' }[unit]} => ${amount})`;
+  // Multiplying an interval, rather than make_interval, takes amounts beyond the 32-bit integer range
+  const interval = `(TRUNC(${amountOperand.sql}) * INTERVAL '${POSTGRES_INTERVAL_BY_DATE_UNIT[unit]}')`;
 
   if (date.type === DATE && unit !== 'MINUTE' && unit !== 'HOUR') {
     return value(`(${date.sql} + ${interval})::date`, DATE);

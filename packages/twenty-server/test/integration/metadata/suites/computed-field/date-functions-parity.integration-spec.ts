@@ -111,6 +111,11 @@ const PARITY_CASES: ParityCase[] = [
     ['2026-09-23T00:30:00+02:00', 'DAY'],
     '2026-09-22T00:00:00.000Z',
   ],
+  [
+    'dateAdd',
+    ['2026-01-01T00:00:00.000Z', 3000000000, 'MINUTE'],
+    '7729-12-22T08:00:00.000Z',
+  ],
   ['dateTrunc', ['2026-09-27', 'WEEK'], '2026-09-21'],
   ['dateTrunc', ['2026-09-23', 'QUARTER'], '2026-07-01'],
   [
@@ -129,6 +134,7 @@ const PARITY_CASES: ParityCase[] = [
   ['datePart', ['2026-09-23', 'HOUR'], 0],
   ['datePart', ['2027-01-01', 'WEEK'], 53],
   ['datePart', ['2026-09-23T10:41:00+02:00', 'HOUR'], 8],
+  ['datePart', ['2026-09-23T10:41:00+02:00[Europe/Paris]', 'HOUR'], 8],
 ];
 
 const toExpressionLiteral = (argument: string | number) =>

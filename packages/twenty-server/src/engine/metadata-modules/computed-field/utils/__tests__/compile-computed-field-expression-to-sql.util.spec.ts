@@ -89,12 +89,12 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     [
       "dateAdd(dueAt, quantity, 'MONTH')",
-      `("record"."dueAt" + make_interval(months => TRUNC("record"."quantity")::int))::date`,
+      `("record"."dueAt" + (TRUNC("record"."quantity") * INTERVAL '1 month'))::date`,
       DATE,
     ],
     [
       "dateAdd(createdAt, 4, 'HOUR')",
-      `((("record"."createdAt" AT TIME ZONE 'UTC') + make_interval(hours => TRUNC(4)::int)) AT TIME ZONE 'UTC')`,
+      `((("record"."createdAt" AT TIME ZONE 'UTC') + (TRUNC(4) * INTERVAL '1 hour')) AT TIME ZONE 'UTC')`,
       DATE_TIME,
     ],
     [
@@ -186,7 +186,7 @@ describe('compileComputedFieldExpressionToSql', () => {
       type: NUMBER,
       parameters: {
         text0: '2026-01-31',
-        text1: '2026-03-01T10:00:00Z',
+        text1: '2026-03-01T10:00:00.000Z',
         text2: 'MONTH',
       },
     });
