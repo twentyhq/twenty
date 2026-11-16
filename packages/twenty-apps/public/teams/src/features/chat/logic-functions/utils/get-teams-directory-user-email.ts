@@ -2,8 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type LinkableGraphUser } from 'src/features/chat/logic-functions/types/graph-user.type';
 
-// Guests invited from another tenant carry this marker in their principal
-// name; userType is not readable with User.ReadBasic.All
+// Guest principal names carry this marker; userType is not readable with User.ReadBasic.All
 const GUEST_USER_PRINCIPAL_NAME_MARKER = '#EXT#';
 
 export const getTeamsDirectoryUserEmail = (

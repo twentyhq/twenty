@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type TeamsDirectoryMatchCandidate } from 'src/features/chat/logic-functions/types/teams-directory-match.type';
 import { matchTeamsDirectoryByEmail } from 'src/features/chat/logic-functions/utils/match-teams-directory-by-email';
 
 const {
@@ -80,7 +81,7 @@ describe('matchTeamsDirectoryByEmail', () => {
       ambiguousEmailCount: 1,
     });
     linkTeamsDirectoryCandidatesMock.mockImplementation(
-      async ({ candidates }: { candidates: unknown[] }) => ({
+      async ({ candidates }: { candidates: TeamsDirectoryMatchCandidate[] }) => ({
         linkedCount: candidates.length,
         failedCount: 0,
       }),
@@ -122,9 +123,17 @@ describe('matchTeamsDirectoryByEmail', () => {
       failedCount: 0,
       isDirectoryTruncated: false,
     });
-    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenCalledWith({
+    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenCalledTimes(2);
+    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenNthCalledWith(1, {
+      isSuccessful: false,
+      errorMessage: 'The directory match was interrupted before it finished.',
+    });
+    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenNthCalledWith(2, {
       isSuccessful: true,
     });
+    expect(
+      saveTeamsDirectoryMatchRunOutcomeMock.mock.invocationCallOrder[0],
+    ).toBeLessThan(collectGraphUsersMock.mock.invocationCallOrder[0]);
   });
 
   it('records a failed run when some candidates could not be linked', async () => {
@@ -136,7 +145,7 @@ describe('matchTeamsDirectoryByEmail', () => {
     const summary = await run();
 
     expect(summary.failedCount).toBe(1);
-    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenCalledWith({
+    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenLastCalledWith({
       isSuccessful: false,
     });
   });
@@ -151,7 +160,7 @@ describe('matchTeamsDirectoryByEmail', () => {
     collectGraphUsersMock.mockRejectedValue(new Error('graph down'));
 
     await expect(run()).rejects.toThrow('graph down');
-    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenCalledWith({
+    expect(saveTeamsDirectoryMatchRunOutcomeMock).toHaveBeenLastCalledWith({
       isSuccessful: false,
       errorMessage: 'graph down',
     });

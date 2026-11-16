@@ -2,7 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 const LINKS_PER_PAGE = 200;
-const MAX_PAGES = 25;
+// Must cover every link the directory sweep can create in one run (10 pages of 999)
+const MAX_PAGES = 50;
 
 export const listLinkedTeamsUserAadObjectIdsOrThrow = async ({
   client,

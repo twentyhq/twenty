@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { findWorkspaceMemberIdsByEmails } from 'src/features/chat/logic-functions/data/find-workspace-member-ids-by-emails';
 import { listLinkedTeamsUserAadObjectIdsOrThrow } from 'src/features/chat/logic-functions/data/list-linked-teams-user-aad-object-ids';
+import { type TeamsDirectoryMatchRunOutcome } from 'src/features/chat/logic-functions/types/teams-directory-match-run-outcome.type';
 import { type TeamsDirectoryMatchSummary } from 'src/features/chat/logic-functions/types/teams-directory-match.type';
 import { collectGraphUsers } from 'src/features/chat/logic-functions/utils/collect-graph-users';
 import { getTeamsDirectoryUserEmail } from 'src/features/chat/logic-functions/utils/get-teams-directory-user-email';
@@ -14,6 +15,12 @@ import { toErrorMessage } from 'src/utils/to-error-message';
 const DIRECTORY_GRAPH_URL =
   'users?$select=id,displayName,mail,userPrincipalName&$top=999';
 const DIRECTORY_MAX_PAGES = 10;
+
+// Written before the run so a function killed by its timeout still reads as unfinished
+const INTERRUPTED_RUN_OUTCOME: TeamsDirectoryMatchRunOutcome = {
+  isSuccessful: false,
+  errorMessage: 'The directory match was interrupted before it finished.',
+};
 
 const runTeamsDirectoryMatch = async ({
   accessToken,
@@ -71,6 +78,8 @@ export const matchTeamsDirectoryByEmail = async ({
   accessToken: string;
   teamsTenantId: string;
 }): Promise<TeamsDirectoryMatchSummary> => {
+  await saveTeamsDirectoryMatchRunOutcome(INTERRUPTED_RUN_OUTCOME);
+
   try {
     const summary = await runTeamsDirectoryMatch({
       accessToken,

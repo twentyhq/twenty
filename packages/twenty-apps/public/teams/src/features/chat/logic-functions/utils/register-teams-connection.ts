@@ -16,7 +16,7 @@ const matchTeamsDirectoryOnConnect = async ({
   accessToken,
   tenantId,
 }: {
-  connection: AppConnection;
+  connection: Pick<AppConnection, 'scopes'>;
   accessToken: string;
   tenantId: string;
 }): Promise<void> => {

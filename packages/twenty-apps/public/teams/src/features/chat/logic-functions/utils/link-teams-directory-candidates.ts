@@ -11,8 +11,7 @@ import { toErrorMessage } from 'src/utils/to-error-message';
 
 const LINKS_PER_BATCH = 200;
 
-// One-by-one retries are slow, so a run that keeps failing in bulk gives up
-// after this many instead of eating the whole function timeout
+// Caps slow one-by-one retries so a run failing in bulk cannot eat the function timeout
 const MAX_ONE_BY_ONE_RETRIES = LINKS_PER_BATCH;
 
 type TeamsDirectoryLinkOutcome = {

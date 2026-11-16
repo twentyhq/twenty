@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TeamsUserLinksSettings } from 'src/features/chat/front-components/TeamsUserLinksSettings';
+import { type TeamsDirectoryMatchResult } from 'src/features/chat/logic-functions/types/teams-directory-match.type';
 import { type TeamsUserSearchOption } from 'src/features/chat/logic-functions/types/teams-user-search-option.type';
 
 type WorkspaceMemberFixture = {
@@ -45,20 +46,27 @@ vi.mock(
   () => ({ currentUserHasRolesPermission: hasRolesPermissionMock }),
 );
 
+const SUCCESSFUL_MATCH_RESULT: TeamsDirectoryMatchResult = {
+  success: true,
+  message: 'Matched 1 Teams user by email.',
+  linkedCount: 1,
+  alreadyLinkedCount: 0,
+  unmatchedCount: 0,
+  ambiguousEmailCount: 0,
+  failedCount: 0,
+  isDirectoryTruncated: false,
+};
+
 const setRestResponses = ({
   unlinkedTeamsUsers = [],
   workspaceMembers = [],
   hasAutoMatchFailed = false,
-  matchResult = {
-    success: true,
-    message: 'Matched 1 Teams user by email.',
-    failedCount: 0,
-  },
+  matchResult = SUCCESSFUL_MATCH_RESULT,
 }: {
   unlinkedTeamsUsers?: TeamsUserSearchOption[];
   workspaceMembers?: WorkspaceMemberFixture[];
   hasAutoMatchFailed?: boolean;
-  matchResult?: Record<string, unknown>;
+  matchResult?: TeamsDirectoryMatchResult;
 } = {}) => {
   restGetMock.mockImplementation((path: string) => {
     if (path === '/rest/teamsUserLinks') {
