@@ -87,6 +87,14 @@ const ROLLUP: FieldMetadataComputation = {
   filter: "status != 'points' and assignee.name == 'Acme'",
 };
 
+const FILTERED_RELATION: FieldMetadataComputation = {
+  kind: 'FILTERED_RELATION',
+  relationFieldName: 'tasks',
+  filter: "status != 'DONE'",
+  orderBy: [{ points: 'DescNullsLast' }, { status: 'AscNullsLast' }],
+  limit: 3,
+};
+
 const bind = (computation: FieldMetadataComputation) =>
   computeComputedFieldBindings({
     computation,
@@ -112,6 +120,20 @@ describe('computeComputedFieldBindings', () => {
       'tasks.assignee': 'task.assignee',
       'tasks.assignee.name': 'company.name',
     });
+  });
+
+  it('binds the relation, filter and sort fields of a filtered relation', () => {
+    expect(bind(FILTERED_RELATION)).toEqual({
+      tasks: 'project.tasks',
+      'tasks.status': 'task.status',
+      'tasks.points': 'task.points',
+    });
+  });
+
+  it('returns nothing for a filtered relation sorted by an unknown field', () => {
+    expect(
+      bind({ ...FILTERED_RELATION, orderBy: [{ unknown: 'AscNullsLast' }] }),
+    ).toBeUndefined();
   });
 
   it.each(['budget + unknown', 'companyId', 'budget +'])(
@@ -170,6 +192,33 @@ describe('renameComputedFieldComputationFields', () => {
         'todos.status': 'task.status',
         'todos.assignee': 'task.assignee',
         'todos.assignee.label': 'company.name',
+      },
+    });
+  });
+
+  it('rewrites the relation, filter, sort fields and bindings of a filtered relation', () => {
+    expect(
+      renameComputedFieldComputationFields({
+        computation: {
+          ...FILTERED_RELATION,
+          bindings: bind(FILTERED_RELATION),
+        },
+        fieldNameByUniversalIdentifier: new Map([
+          ['project.tasks', 'todos'],
+          ['task.points', 'effort'],
+          ['task.status', 'stage'],
+        ]),
+      }),
+    ).toEqual({
+      kind: 'FILTERED_RELATION',
+      relationFieldName: 'todos',
+      filter: "stage != 'DONE'",
+      orderBy: [{ effort: 'DescNullsLast' }, { stage: 'AscNullsLast' }],
+      limit: 3,
+      bindings: {
+        todos: 'project.tasks',
+        'todos.effort': 'task.points',
+        'todos.stage': 'task.status',
       },
     });
   });

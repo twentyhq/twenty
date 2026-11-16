@@ -471,9 +471,18 @@ describe('Computed fields (e2e)', () => {
         ).fields.find(
           ({ node }: { node: { name: string } }) => node.name === name,
         )?.node;
+      const findUpcomingTasksComputation = async () =>
+        (await findField(projectObjectMetadataId, 'upcomingTasks')).computation;
       const findUpcomingTasksOrderBy = async () =>
-        (await findField(projectObjectMetadataId, 'upcomingTasks')).computation
-          .orderBy;
+        (await findUpcomingTasksComputation()).orderBy;
+      const findUpcomingTasksBoundPaths = async () =>
+        Object.keys((await findUpcomingTasksComputation()).bindings).sort();
+
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.status',
+      ]);
 
       const { id: dueAtFieldId } = await findField(
         taskObjectMetadataId,
@@ -488,6 +497,14 @@ describe('Computed fields (e2e)', () => {
       expect(await findUpcomingTasksOrderBy()).toEqual([
         { dueOn: 'AscNullsLast' },
       ]);
+      expect((await findUpcomingTasksComputation()).filter).toBe(
+        "status != 'DONE' and dueOn >= '2030-01-01'",
+      );
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueOn',
+        'tasks.status',
+      ]);
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -496,6 +513,11 @@ describe('Computed fields (e2e)', () => {
 
       expect(await findUpcomingTasksOrderBy()).toEqual([
         { dueAt: 'AscNullsLast' },
+      ]);
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.status',
       ]);
     });
 
