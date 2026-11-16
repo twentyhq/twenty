@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { workflowActionSchema } from '@/workflow/schemas/workflow-action-schema';
 import { workflowTriggerSchema } from '@/workflow/schemas/workflow-trigger-schema';
 import { isDefined } from '@/utils';
@@ -68,7 +69,8 @@ export const validateWorkflowStepParams = ({
     if (
       (parsedStep.type === WorkflowActionType.SEND_EMAIL ||
         parsedStep.type === WorkflowActionType.DRAFT_EMAIL) &&
-      isDefined(parsedStep.settings.input.body) &&
+      // blank bodies run as empty documents until the 2-59 backfill reaches them
+      isNonEmptyString(parsedStep.settings.input.body?.trim()) &&
       !parseEmailDocument(parseJson<unknown>(parsedStep.settings.input.body))
         .success
     ) {
