@@ -50,7 +50,10 @@ export class TrashCleanupService {
       return 0;
     }
 
-    const cutoffDate = computeTrashCleanupCutoffDate(trashRetentionDays);
+    const cutoffDate = computeTrashCleanupCutoffDate({
+      now: new Date(),
+      trashRetentionDays,
+    });
     let deletedCount = 0;
 
     for (const objectName of objectNames) {
