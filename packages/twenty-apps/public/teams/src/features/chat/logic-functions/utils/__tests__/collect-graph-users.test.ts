@@ -26,7 +26,8 @@ describe('collectGraphUsers', () => {
     fetchGraphJsonMock
       .mockResolvedValueOnce({
         value: [buildUser(1)],
-        '@odata.nextLink': 'https://graph.microsoft.com/v1.0/users?$skiptoken=1',
+        '@odata.nextLink':
+          'https://graph.microsoft.com/v1.0/users?$skiptoken=1',
       })
       .mockResolvedValueOnce({ value: [buildUser(2)] });
 
