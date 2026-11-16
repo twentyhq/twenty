@@ -4,10 +4,13 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
@@ -16,6 +19,7 @@ import {
   IconArrowsSort,
   IconEyeOff,
   IconFilter,
+  IconTrash,
 } from 'twenty-ui/icon';
 
 type RecordTableColumnHeadDropdownMenuProps = {
@@ -99,9 +103,17 @@ export const RecordTableColumnHeadDropdownMenu = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const showSeparator =
-    (isFilterable || isSortable) && isLabelIdentifier !== true;
-  const canHide = isLabelIdentifier !== true;
+  const { canPersistChanges } = useCanPersistViewChanges();
+  const isCanonical = isCanonicalRecordField(recordField);
+
+  const canDeleteColumn = canPersistChanges && !isCanonical;
+  const canHide = isLabelIdentifier !== true && isCanonical;
+
+  const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
+
+  const hasColumnActions =
+    canMoveLeft || canMoveRight || canHide || canDeleteColumn;
+  const showSeparator = (isFilterable || isSortable) && hasColumnActions;
 
   return (
     <Dropdown.Section>
@@ -137,6 +149,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
           startIcon={<IconEyeOff />}
           onClick={handleColumnVisibility}
         >{t`Hide`}</Dropdown.ActionItem>
+      )}
+      {canDeleteColumn && (
+        <Dropdown.ActionItem
+          startIcon={<IconTrash />}
+          onClick={() => deleteRecordTableColumn(recordField.id)}
+        >{t`Delete column`}</Dropdown.ActionItem>
       )}
     </Dropdown.Section>
   );

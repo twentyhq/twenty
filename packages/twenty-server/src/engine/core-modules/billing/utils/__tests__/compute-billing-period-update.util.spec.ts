@@ -2,7 +2,7 @@
 
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
+import { computeBillingPeriodUpdate } from 'src/engine/core-modules/billing/utils/compute-billing-period-update.util';
 
 const JANUARY = new Date('2026-01-01T00:00:00.000Z');
 const FEBRUARY = new Date('2026-02-01T00:00:00.000Z');
@@ -32,10 +32,10 @@ const buildStoredSubscription = ({
   ],
 });
 
-describe('resolveBillingPeriodBoundaryUpdate', () => {
+describe('computeBillingPeriodUpdate', () => {
   it('records the period the subscription just moved off with its max seats', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
@@ -53,7 +53,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
 
   it('keeps the seats held at the end of the period when no max seats were recorded', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
@@ -71,7 +71,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
 
   it('raises the max seats to the seats about to be replaced when the period has not moved', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
@@ -83,10 +83,59 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     ).toEqual({ currentPeriodMaxSeats: 8 });
   });
 
+  it('drops the seats about to be replaced from the max seats on the renewal seat sync of the period', () => {
+    expect(
+      computeBillingPeriodUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: FEBRUARY,
+          currentPeriodEnd: MARCH,
+          currentPeriodMaxSeats: null,
+          seats: 20,
+        }),
+        renewalDate: FEBRUARY,
+      }),
+    ).toEqual({ currentPeriodMaxSeats: null });
+  });
+
+  it('keeps the max seats when the renewal seat sync belongs to an older period', () => {
+    expect(
+      computeBillingPeriodUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: FEBRUARY,
+          currentPeriodEnd: MARCH,
+          currentPeriodMaxSeats: 8,
+          seats: 5,
+        }),
+        renewalDate: JANUARY,
+      }),
+    ).toEqual({ currentPeriodMaxSeats: 8 });
+  });
+
+  it('still records the period the subscription moved off on the renewal seat sync', () => {
+    expect(
+      computeBillingPeriodUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: JANUARY,
+          currentPeriodEnd: FEBRUARY,
+          currentPeriodMaxSeats: 20,
+          seats: 20,
+        }),
+        renewalDate: FEBRUARY,
+      }),
+    ).toEqual({
+      previousPeriodStart: JANUARY,
+      previousPeriodMaxSeats: 20,
+      currentPeriodMaxSeats: null,
+    });
+  });
+
   // Out-of-order events must not rewind the window the rollover settles against
   it('keeps the stored window when a late event carries an older one', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: JANUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
@@ -104,7 +153,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
 
   it('has nothing to record for a subscription seen for the first time', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: null,
       }),
@@ -113,7 +162,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
 
   it('has nothing to record when the event carries no period', () => {
     expect(
-      resolveBillingPeriodBoundaryUpdate({
+      computeBillingPeriodUpdate({
         incomingPeriodStart: undefined,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,

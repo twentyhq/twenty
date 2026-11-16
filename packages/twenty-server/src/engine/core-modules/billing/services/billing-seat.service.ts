@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   BillingException,
   BillingExceptionCode,
@@ -12,6 +14,7 @@ import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/e
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
+import { getHardSeatCap } from 'src/engine/core-modules/billing/utils/get-hard-seat-cap.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { isSeatLimitReached } from 'src/engine/core-modules/billing/utils/is-seat-limit-reached.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -97,6 +100,14 @@ export class BillingSeatService {
     addMember: () => Promise<TResult>;
   }): Promise<TResult> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return await addMember();
+    }
+
+    const hardSeatCap = getHardSeatCap(
+      await this.findActiveSeatArrangements(workspaceId),
+    );
+
+    if (!isDefined(hardSeatCap)) {
       return await addMember();
     }
 
