@@ -36,8 +36,8 @@ import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSou
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { inboxLayoutState } from '@/inbox/states/inboxLayoutState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingInboxThreadIdState } from '@/inbox/states/closingInboxThreadIdState';
-import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
+import { closingAiChatThreadIdState } from '@/ai/states/closingAiChatThreadIdState';
+import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -627,7 +627,7 @@ export const AskAiAfterClosingConversation: Story = {
       jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
     ).toBe(SidePanelPages.AskAI);
     await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
-    await expect(jotaiStore.get(closingInboxThreadIdState.atom)).toBeNull();
+    await expect(jotaiStore.get(closingAiChatThreadIdState.atom)).toBeNull();
 
     await user.click(
       canvas.getByRole('button', { name: 'Select first chat for Ask AI' }),
