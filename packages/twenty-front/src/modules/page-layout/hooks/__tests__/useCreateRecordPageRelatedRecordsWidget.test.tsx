@@ -134,6 +134,7 @@ describe('useCreateRecordPageRelatedRecordsWidget', () => {
     expect(JSON.parse(viewDraft.viewFilters[0].value)).toMatchObject({
       isCurrentRecordSelected: true,
     });
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledTimes(1);
     expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith(
       expect.objectContaining({
         sidePanelPage: SidePanelPages.RecordPageFieldSettings,

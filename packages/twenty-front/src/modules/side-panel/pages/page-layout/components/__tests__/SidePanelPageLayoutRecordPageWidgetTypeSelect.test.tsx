@@ -187,6 +187,7 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       .setup()
       .click(screen.getByRole('button', { name: 'Kanban' }));
 
+    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledTimes(1);
     expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledWith({
       tabId: 'tab-1',
       positionIndex: undefined,

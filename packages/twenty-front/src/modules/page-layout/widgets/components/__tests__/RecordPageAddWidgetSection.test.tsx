@@ -91,6 +91,7 @@ describe('RecordPageAddWidgetSection', () => {
   it('creates a table of related records in the current tab', async () => {
     render(<RecordPageAddWidgetSection />);
     await userEvent.setup().click(screen.getByText('Table'));
+    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledTimes(1);
     expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledWith({
       tabId: 'tab-1',
       layoutViewType: 'TABLE_WIDGET',
