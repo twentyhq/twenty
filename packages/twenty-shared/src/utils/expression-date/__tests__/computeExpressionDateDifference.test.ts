@@ -42,7 +42,9 @@ describe('computeExpressionDateDifference', () => {
   });
 
   it('should return null for a missing or unreadable date', () => {
-    expect(computeExpressionDateDifference(null, '2026-09-23', 'DAY')).toBeNull();
+    expect(
+      computeExpressionDateDifference(null, '2026-09-23', 'DAY'),
+    ).toBeNull();
     expect(
       computeExpressionDateDifference('2026-09-23', 'not a date', 'DAY'),
     ).toBeNull();

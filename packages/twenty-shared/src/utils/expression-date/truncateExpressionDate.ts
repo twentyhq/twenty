@@ -70,9 +70,10 @@ export const truncateExpressionDate = (
     default:
       return formatExpressionDate({
         isDateOnly: false,
-        dateTime: truncatePlainDate(dateTime.toPlainDate(), unit).toZonedDateTime(
-          'UTC',
-        ),
+        dateTime: truncatePlainDate(
+          dateTime.toPlainDate(),
+          unit,
+        ).toZonedDateTime('UTC'),
       });
   }
 };

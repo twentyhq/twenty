@@ -6,11 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- **Date functions in rule expressions: `dateDiff`, `dateAdd`, `dateTrunc` and `datePart`.** They take a unit (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) or, for `datePart`, a part (`'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`), read dates in UTC, and are available as `ruleExpression.dateDiff(...)` and so on. Minutes and hours are elapsed time; longer units count calendar days and months.
+
 ### Changed
 
 - **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
 
 ### Breaking Changes
+
+- **`daysSince` is removed from rule expressions; use `dateDiff(date, now, 'DAY')`.** It counted whole UTC days from a date to today, which `dateDiff` does with the same result, and also in minutes, hours, weeks, months, quarters or years. Replace `ruleExpression.daysSince(field)` with `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflow` or `workflowAutomatedTrigger`.** Workflows live in Twenty's core workflow store, and Twenty 2.58 drops these legacy workspace objects from every workspace, along with any relation fields that point at them. Remove references to both identifiers, including relation fields that target them. To ship a workflow with your app, declare it with `defineWorkflow()`.
 
