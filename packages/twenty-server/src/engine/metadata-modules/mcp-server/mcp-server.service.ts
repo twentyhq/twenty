@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -78,20 +79,13 @@ export class McpServerService {
       );
 
     const url = this.normalizeUrl(input.url);
-    const signInFlatConnectionProvider = isDefined(input.connectionProviderId)
-      ? null
-      : await this.mcpServerSignInService.buildSignInFlatConnectionProviderIfRequired(
-          {
-            mcpServer: {
-              name: input.name,
-              label: input.label,
-              url,
-              workspaceId,
-            },
-            flatApplication: workspaceCustomFlatApplication,
-            scope: input.signInScope ?? 'USER',
-          },
-        );
+    const signInFlatConnectionProvider =
+      await this.buildSignInFlatConnectionProviderForNewServer({
+        input,
+        url,
+        workspaceId,
+        flatApplication: workspaceCustomFlatApplication,
+      });
 
     const flatMcpServerToCreate =
       fromCreateMcpServerInputToFlatMcpServerToCreate({
@@ -335,6 +329,30 @@ export class McpServerService {
           flatConnectionProviderMaps,
         })?.scope ?? null,
     };
+  }
+
+  private async buildSignInFlatConnectionProviderForNewServer({
+    input,
+    url,
+    workspaceId,
+    flatApplication,
+  }: {
+    input: CreateMcpServerInput;
+    url: string;
+    workspaceId: string;
+    flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+  }): Promise<FlatConnectionProvider | null> {
+    if (isDefined(input.connectionProviderId)) {
+      return null;
+    }
+
+    return this.mcpServerSignInService.buildSignInFlatConnectionProviderIfRequired(
+      {
+        mcpServer: { name: input.name, label: input.label, url, workspaceId },
+        flatApplication,
+        scope: input.signInScope ?? 'USER',
+      },
+    );
   }
 
   private normalizeUrl(url: string): string {
