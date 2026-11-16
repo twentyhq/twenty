@@ -4,7 +4,12 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
 
 const USER_WORKSPACE_ID = 'user-workspace-1';
-const ROLE_IDS = ['assigned-role', 'extra-role', 'other-role'];
+const ROLES = [
+  { id: 'assigned-role', isSystemSideEffect: false },
+  { id: 'other-role', isSystemSideEffect: false },
+  { id: 'extra-role', isSystemSideEffect: true },
+  { id: 'other-extra-role', isSystemSideEffect: true },
+];
 
 const buildMaps = <TEntity extends { id: string; universalIdentifier: string }>(
   entities: TEntity[],
@@ -42,19 +47,12 @@ const extraRoleTarget = buildRoleTarget({
   isSystemSideEffect: true,
 });
 
-const createRoleTarget = ({
-  roleId,
-  isSystemSideEffect,
-}: {
-  roleId: string;
-  isSystemSideEffect?: boolean;
-}) =>
+const createRoleTarget = ({ roleId }: { roleId: string }) =>
   fromCreateRoleTargetInputToFlatRoleTargetToCreate({
     createRoleTargetInput: {
       roleId,
       targetId: USER_WORKSPACE_ID,
       targetMetadataForeignKey: 'userWorkspaceId',
-      isSystemSideEffect,
     },
     workspaceId: 'workspace-1',
     flatApplication: {
@@ -66,7 +64,7 @@ const createRoleTarget = ({
       extraRoleTarget,
     ]) as unknown as AllFlatEntityMaps['flatRoleTargetMaps'],
     flatRoleMaps: buildMaps(
-      ROLE_IDS.map((id) => ({ id, universalIdentifier: id })),
+      ROLES.map((role) => ({ ...role, universalIdentifier: role.id })),
     ) as unknown as AllFlatEntityMaps['flatRoleMaps'],
     flatAgentMaps: buildMaps(
       [],
@@ -85,30 +83,19 @@ describe('fromCreateRoleTargetInputToFlatRoleTargetToCreate', () => {
     expect(flatRoleTargetsToDelete).toEqual([assignedRoleTarget]);
   });
 
-  it('also replaces the system held target of the role being assigned', () => {
-    const { flatRoleTargetsToDelete } = createRoleTarget({
-      roleId: 'extra-role',
-    });
-
-    expect(flatRoleTargetsToDelete).toEqual([
-      assignedRoleTarget,
-      extraRoleTarget,
-    ]);
-  });
-
-  it('adds a system held role without replacing anything, under an identifier it can compute again', () => {
+  it('adds a system side effect role without replacing anything, under an identifier it can compute again', () => {
     const { flatRoleTargetToCreate, flatRoleTargetsToDelete } =
-      createRoleTarget({ roleId: 'other-role', isSystemSideEffect: true });
+      createRoleTarget({ roleId: 'other-extra-role' });
 
     expect(flatRoleTargetToCreate.isSystemSideEffect).toBe(true);
     expect(flatRoleTargetsToDelete).toEqual([]);
     expect(flatRoleTargetToCreate.universalIdentifier).toBe(
-      createRoleTarget({ roleId: 'other-role', isSystemSideEffect: true })
-        .flatRoleTargetToCreate.universalIdentifier,
+      createRoleTarget({ roleId: 'other-extra-role' }).flatRoleTargetToCreate
+        .universalIdentifier,
     );
     expect(flatRoleTargetToCreate.universalIdentifier).not.toBe(
-      createRoleTarget({ roleId: 'assigned-role', isSystemSideEffect: true })
-        .flatRoleTargetToCreate.universalIdentifier,
+      createRoleTarget({ roleId: 'extra-role' }).flatRoleTargetToCreate
+        .universalIdentifier,
     );
   });
 });

@@ -6,5 +6,4 @@ export type CreateRoleTargetInput = {
   universalIdentifier?: string;
   targetId: string;
   targetMetadataForeignKey: RoleTargetForeignKeyProperties;
-  isSystemSideEffect?: boolean;
 };

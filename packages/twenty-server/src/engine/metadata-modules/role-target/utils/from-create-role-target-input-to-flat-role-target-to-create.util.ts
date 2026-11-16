@@ -29,13 +29,14 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   flatRoleTargetsToDelete: FlatRoleTarget[];
 } => {
   const now = new Date();
-  const {
-    roleId,
-    targetId,
-    targetMetadataForeignKey,
-    universalIdentifier,
-    isSystemSideEffect = false,
-  } = createRoleTargetInput;
+  const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
+    createRoleTargetInput;
+
+  const isSystemSideEffect =
+    findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatRoleMaps,
+      flatEntityId: roleId,
+    }).isSystemSideEffect === true;
 
   const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
     {
@@ -92,8 +93,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     [targetMetadataForeignKey]: targetId,
   };
 
-  // a system held role is added next to the assigned one, which only another assigned role replaces.
-  // Assigning a role the target already holds that way takes the place of that target too
+  // a system held role is added next to the assigned one, which only another assigned role replaces
   const flatRoleTargetsToDelete = isSystemSideEffect
     ? []
     : Object.values(flatRoleTargetMaps.byUniversalIdentifier)
@@ -101,8 +101,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
         .filter(
           (flatRoleTarget) =>
             flatRoleTarget[targetMetadataForeignKey] === targetId &&
-            (!flatRoleTarget.isSystemSideEffect ||
-              flatRoleTarget.roleId === roleId),
+            !flatRoleTarget.isSystemSideEffect,
         );
 
   return { flatRoleTargetToCreate, flatRoleTargetsToDelete };
