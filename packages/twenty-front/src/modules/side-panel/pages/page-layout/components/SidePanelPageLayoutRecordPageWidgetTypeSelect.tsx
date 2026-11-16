@@ -17,7 +17,6 @@ import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPositi
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { RELATED_RECORDS_WIDGET_LAYOUT_DESCRIPTIONS } from '@/page-layout/widgets/field/constants/RelatedRecordsWidgetLayoutDescriptions';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -439,7 +438,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       {isNonEmptyArray(relatedRecordsLayoutOptions) && (
         <SidePanelGroup heading={t`Related records`}>
           {relatedRecordsLayoutOptions.map(
-            ({ viewType, Icon, label, isDisabled, unavailableReason }) => (
+            ({
+              viewType,
+              Icon,
+              label,
+              description,
+              isDisabled,
+              unavailableReason,
+            }) => (
               <SelectableListItem
                 key={viewType}
                 itemId={viewType}
@@ -451,7 +457,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
                   description={
                     isDefined(unavailableReason)
                       ? t(unavailableReason)
-                      : t(RELATED_RECORDS_WIDGET_LAYOUT_DESCRIPTIONS[viewType])
+                      : t(description)
                   }
                   id={viewType}
                   disabled={isDisabled}
