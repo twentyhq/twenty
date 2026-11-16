@@ -300,6 +300,11 @@ export class ViewWidgetUpsertService {
           flatViewMaps,
           flatViewFilterGroupMaps:
             viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
+          removedViewFilterGroupIds: new Set(
+            viewFilterGroupOperations.filterGroupsToRemove.map(
+              (filterGroup) => filterGroup.id,
+            ),
+          ),
         })
       : EMPTY_FILTER_OPS;
 
@@ -640,6 +645,12 @@ export class ViewWidgetUpsertService {
     const inputFilterGroupIds = new Set(
       inputFilterGroups.map((g) => g.id).filter(isDefined),
     );
+    const filterGroupsToRemove = existingViewFilterGroups.filter(
+      (g) => !inputFilterGroupIds.has(g.id),
+    );
+    const removedFilterGroupIds = new Set(
+      filterGroupsToRemove.map((g) => g.id),
+    );
 
     let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
 
@@ -708,6 +719,18 @@ export class ViewWidgetUpsertService {
             ],
             update: inputGroup,
           });
+
+        // Removing the parent would cascade-delete this group although the input keeps it
+        if (
+          isDefined(parentViewFilterGroupId) &&
+          removedFilterGroupIds.has(parentViewFilterGroupId)
+        ) {
+          throw new ViewException(
+            t`A view filter group cannot stay under a parent group that is being removed`,
+            ViewExceptionCode.INVALID_VIEW_DATA,
+          );
+        }
+
         const logicalOperator =
           inputGroup.logicalOperator ?? existingGroup.logicalOperator;
 
@@ -741,10 +764,6 @@ export class ViewWidgetUpsertService {
       }
     }
 
-    const filterGroupsToRemove = existingViewFilterGroups.filter(
-      (g) => !inputFilterGroupIds.has(g.id),
-    );
-
     return {
       filterGroupsToCreate,
       filterGroupsToUpdate,
@@ -764,6 +783,7 @@ export class ViewWidgetUpsertService {
     flatFieldMetadataMaps,
     flatViewMaps,
     flatViewFilterGroupMaps,
+    removedViewFilterGroupIds,
   }: {
     inputFilters: UpsertViewWidgetViewFilterInput[];
     existingViewFilters: FlatViewFilter[];
@@ -775,6 +795,7 @@ export class ViewWidgetUpsertService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
     flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
+    removedViewFilterGroupIds: Set<string>;
   }): {
     filtersToCreate: FlatViewFilter[];
     filtersToUpdate: FlatViewFilter[];
@@ -877,6 +898,18 @@ export class ViewWidgetUpsertService {
           ],
           update: inputFilter,
         });
+
+        // Removing the group would cascade-delete this filter although the input keeps it
+        if (
+          isDefined(viewFilterGroupId) &&
+          removedViewFilterGroupIds.has(viewFilterGroupId)
+        ) {
+          throw new ViewException(
+            t`A view filter cannot stay in a view filter group that is being removed`,
+            ViewExceptionCode.INVALID_VIEW_DATA,
+          );
+        }
+
         const operand = inputFilter.operand ?? existingFilter.operand;
 
         const hasChanged =
