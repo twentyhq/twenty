@@ -43,7 +43,7 @@ const CORE_STATUS_BY_LEGACY_STATUS: Record<
   ARCHIVED: CoreWorkflowVersionStatus.ARCHIVED,
 };
 
-// TODO: remove once the oldest supported upgrade version is past 2.41
+// TODO(@thomtrp): remove once the oldest supported upgrade version is past 2.41
 @Injectable()
 export class LegacyWorkflowVersionCoreUpsertService {
   private readonly logger = new Logger(

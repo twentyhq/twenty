@@ -2,7 +2,7 @@ import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-e
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-// TODO: remove once the oldest supported upgrade version is past 2.41
+// TODO(@thomtrp): remove once the oldest supported upgrade version is past 2.41
 export type LegacyWorkflowVersionStatus =
   | 'DRAFT'
   | 'ACTIVE'
