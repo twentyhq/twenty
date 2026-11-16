@@ -11,6 +11,8 @@ describe('buildWidgetVisibilityContext', () => {
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      targetObjectReadPermissions: {},
+      targetObjectWritePermissions: {},
     });
   });
 
@@ -24,6 +26,8 @@ describe('buildWidgetVisibilityContext', () => {
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      targetObjectReadPermissions: {},
+      targetObjectWritePermissions: {},
     });
   });
 
@@ -37,6 +41,8 @@ describe('buildWidgetVisibilityContext', () => {
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      targetObjectReadPermissions: {},
+      targetObjectWritePermissions: {},
     });
   });
 
@@ -50,6 +56,8 @@ describe('buildWidgetVisibilityContext', () => {
       device: 'DESKTOP',
       selectedRecords: [],
       featureFlags: {},
+      targetObjectReadPermissions: {},
+      targetObjectWritePermissions: {},
     });
   });
 
@@ -64,6 +72,8 @@ describe('buildWidgetVisibilityContext', () => {
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
       featureFlags: {},
+      targetObjectReadPermissions: {},
+      targetObjectWritePermissions: {},
     });
   });
 
@@ -75,6 +85,24 @@ describe('buildWidgetVisibilityContext', () => {
     });
 
     expect(result.featureFlags).toEqual({ IS_AI_CHAT_INBOX_ENABLED: true });
+  });
+
+  it('should expose target object read and write permissions', () => {
+    const result = buildWidgetVisibilityContext({
+      isMobile: false,
+      isInSidePanel: false,
+      targetObjectReadPermissions: { person: true, company: false },
+      targetObjectWritePermissions: { person: true, company: false },
+    });
+
+    expect(result.targetObjectReadPermissions).toEqual({
+      person: true,
+      company: false,
+    });
+    expect(result.targetObjectWritePermissions).toEqual({
+      person: true,
+      company: false,
+    });
   });
 
   it('should expose an empty selection when there is no target record', () => {
