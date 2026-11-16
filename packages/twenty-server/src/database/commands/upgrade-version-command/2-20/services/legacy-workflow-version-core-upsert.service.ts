@@ -318,7 +318,7 @@ export class LegacyWorkflowVersionCoreUpsertService {
           workspaceCustomFlatApplication.universalIdentifier,
         createdAt: existingFlatWorkflowVersion?.createdAt ?? timestamp,
         updatedAt: timestamp,
-      }
+      };
 
       if (isDefined(existingFlatWorkflowVersion)) {
         flatVersionsToUpdate.push(flatWorkflowVersion);
