@@ -63,7 +63,19 @@ describe('getViewSortsToCreate', () => {
     expect(result).toEqual([]);
   });
 
-  it('should create a sort that came back on another sub-field', () => {
+  it('should not recreate a saved sort that came back with another direction', () => {
+    const sortBackInOtherDirection = {
+      ...baseSort,
+      id: 'sort-2',
+      direction: ViewSortDirection.DESC,
+    } satisfies ViewSort;
+
+    const result = getViewSortsToCreate([baseSort], [sortBackInOtherDirection]);
+
+    expect(result).toEqual([]);
+  });
+
+  it('should not recreate a saved sort that came back on another sub-field', () => {
     const savedSort = {
       ...baseSort,
       subFieldName: 'firstName',
@@ -76,7 +88,7 @@ describe('getViewSortsToCreate', () => {
 
     const result = getViewSortsToCreate([savedSort], [sortOnOtherSubField]);
 
-    expect(result).toEqual([sortOnOtherSubField]);
+    expect(result).toEqual([]);
   });
 
   it('should handle empty arrays for both inputs', () => {
