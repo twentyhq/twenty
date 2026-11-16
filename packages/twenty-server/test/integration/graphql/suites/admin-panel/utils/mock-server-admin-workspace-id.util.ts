@@ -2,7 +2,9 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export const mockServerAdminWorkspaceId = (serverAdminWorkspaceId: string) => {
+export const mockServerAdminWorkspaceId = (
+  serverAdminWorkspaceId: string | undefined,
+) => {
   const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
     'TwentyConfigService',
   );
