@@ -174,7 +174,6 @@ const buildApplicationHandlers = ({
           defaultRoleId: null,
           settingsCustomTabFrontComponentId: null,
           healthCheckLogicFunctionId,
-          runHealthCheckOnUserPreferences,
           availablePackages: {},
           requestedIframeMediaPermissions: [],
           grantedIframeMediaPermissions: [],
@@ -214,19 +213,22 @@ const buildApplicationHandlers = ({
   graphql.mutation('RunApplicationHealthCheck', ({ variables }) => {
     runApplicationHealthCheck(variables);
 
+    if (
+      !isDefined(healthCheckLogicFunctionId) ||
+      runHealthCheckOnUserPreferences
+    ) {
+      return HttpResponse.json({ data: { runApplicationHealthCheck: null } });
+    }
+
     return HttpResponse.json({
       data: {
-        runApplicationHealthCheck:
-          !isDefined(healthCheckLogicFunctionId) ||
-          runHealthCheckOnUserPreferences
-            ? null
-            : {
-                __typename: 'ApplicationHealthCheckResult',
-                status: 'WARNING',
-                title: 'Your recorder plan is almost used up',
-                description: null,
-                action: null,
-              },
+        runApplicationHealthCheck: {
+          __typename: 'ApplicationHealthCheckResult',
+          status: 'WARNING',
+          title: 'Your recorder plan is almost used up',
+          description: null,
+          action: null,
+        },
       },
     });
   }),
