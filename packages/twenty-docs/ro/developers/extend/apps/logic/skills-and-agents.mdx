@@ -475,8 +475,9 @@ urmează clienții implici: acționează ca persoana care a declanșat rularea, 
 aplicația ta atunci când nimeni nu a făcut. Nu depășește niciodată rolul aplicației tale, iar
 o aplicație fără un rol implicit nu o poate apela.
 
-Fără `scope`, apelul citeşte şi nu scrie nici o înregistrare. Pentru a o lăsa să folosească baza de date
-pasează un `scope`, scris ca permisiunile unui rol:
+Fără `scope`, apelul citeşte şi nu scrie nici o înregistrare. Pentru a-i permite să utilizeze
+baza de date, transmite un `scope`. Folosește propriile sale proprietăți (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`), nu blocul `recordsPermissions` al unui rol:
 
 ```ts
 const { object } = await ai.generate({

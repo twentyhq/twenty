@@ -18,7 +18,9 @@ const StyledItem = styled.div`
 
 const StyledShortcuts = styled.span`
   align-items: center;
+  color: ${themeCssVariables.font.color.light};
   display: inline-flex;
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
 `;
 

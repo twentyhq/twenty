@@ -98,6 +98,10 @@ export class FileService {
     workspaceId: string;
     allowedFileFolders: FileFolder[];
   }): Promise<FileEntity | null> {
+    if (!isDefined(fileId)) {
+      return null;
+    }
+
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
@@ -216,6 +220,10 @@ export class FileService {
     fileFolder: FileFolder;
     rangeHeader?: string;
   }): Promise<FileResponse | null> {
+    if (!isDefined(params.fileId)) {
+      return null;
+    }
+
     const file = await this.fileRepository.findOne(params.workspaceId, {
       where: {
         id: params.fileId,
@@ -362,6 +370,10 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<{ buffer: Buffer; mimeType: string } | null> {
+    if (!isDefined(fileId)) {
+      return null;
+    }
+
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
