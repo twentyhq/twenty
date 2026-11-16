@@ -34,7 +34,10 @@ type UniversalSchemaReader = ComputedFieldSchemaReader<
 const COMPUTATION_KINDS: FieldMetadataComputation['kind'][] = [
   'FORMULA',
   'ROLLUP',
+  'FILTERED_RELATION',
 ];
+
+const MAX_FILTERED_RELATION_LIMIT = 60;
 
 const findRelatedObject = ({
   computation,
@@ -99,6 +102,16 @@ const assertComputationCanBeEvaluated = ({
     computation.kind === 'FORMULA'
       ? undefined
       : findRelatedObject({ computation, object, schemaReader });
+
+  if (
+    computation.kind === 'FILTERED_RELATION' &&
+    relatedObject?.universalIdentifier !==
+      field.relationTargetObjectMetadataUniversalIdentifier
+  ) {
+    throw new ComputedFieldExpressionException(
+      `"${field.name}" must target the same object as "${computation.relationFieldName}"`,
+    );
+  }
 
   for (const {
     expression,
@@ -182,6 +195,22 @@ const getComputationShapeError = (
     isDefined(field.defaultValue)
   ) {
     return 'A computed field stores nothing: it cannot be unique, searchable or have a default value';
+  }
+
+  if (computation.kind === 'FILTERED_RELATION') {
+    if (
+      !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+      field.universalSettings.relationType !== RelationType.ONE_TO_MANY
+    ) {
+      return 'A filtered relation must be a one-to-many relation field';
+    }
+
+    return isDefined(computation.limit) &&
+      (!Number.isInteger(computation.limit) ||
+        computation.limit < 1 ||
+        computation.limit > MAX_FILTERED_RELATION_LIMIT)
+      ? `The limit of a filtered relation must be between 1 and ${MAX_FILTERED_RELATION_LIMIT}`
+      : undefined;
   }
 
   if (

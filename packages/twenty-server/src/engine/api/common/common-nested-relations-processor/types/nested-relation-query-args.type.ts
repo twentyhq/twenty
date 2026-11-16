@@ -6,6 +6,8 @@ import {
 
 export type NestedRelationQueryArgs = {
   filter?: ObjectRecordFilter;
+  // The stored filter of a filtered relation, written in the computed field expression language
+  expressionFilter?: string;
   orderBy?: ObjectRecordOrderBy;
   first?: number;
   nestedRelationQueryArgsByFieldName: NestedRelationQueryArgsByFieldName;

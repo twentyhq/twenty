@@ -11,7 +11,10 @@ export const getComputedFieldExpressionScopes = (
     ];
   }
 
-  return [computation.expression, computation.filter]
+  return [
+    computation.kind === 'ROLLUP' ? computation.expression : undefined,
+    computation.filter,
+  ]
     .filter(isDefined)
     .map((expression) => ({ expression, isEvaluatedOnRelatedRecord: true }));
 };

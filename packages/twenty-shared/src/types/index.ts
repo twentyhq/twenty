@@ -98,6 +98,7 @@ export type {
   FieldMetadataRollupOperation,
   FieldMetadataFormulaComputation,
   FieldMetadataRollupComputation,
+  FieldMetadataFilteredRelationComputation,
   FieldMetadataComputation,
 } from './FieldMetadataComputation';
 export { FIELD_METADATA_ROLLUP_OPERATIONS } from './FieldMetadataComputation';

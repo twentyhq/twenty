@@ -36,6 +36,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -200,7 +201,11 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName,
+        // A filtered relation loads the records of the relation it derives from, under its own name
+        sourceFieldName:
+          sourceFieldMetadata.computation?.kind === 'FILTERED_RELATION'
+            ? sourceFieldMetadata.computation.relationFieldName
+            : sourceFieldName,
         fieldMaps,
       });
 
@@ -451,9 +456,10 @@ export class ProcessNestedRelationsHelper {
     ) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
-      this.applyNestedRelationFilterToBuilder({
+      await this.applyNestedRelationFilterToBuilder({
         queryBuilder: aggregateQueryBuilder,
         targetObjectNameSingular,
+        targetObjectRepository,
         relationQueryArgs,
         relationQueryParser,
       });
@@ -571,9 +577,10 @@ export class ProcessNestedRelationsHelper {
       .createQueryBuilder(targetObjectNameSingular)
       .select(`"${targetObjectNameSingular}"."id"`, 'id');
 
-    this.applyNestedRelationFilterToBuilder({
+    await this.applyNestedRelationFilterToBuilder({
       queryBuilder: perParentRecordIdsQueryBuilder,
       targetObjectNameSingular,
+      targetObjectRepository,
       relationQueryArgs,
       relationQueryParser,
     });
@@ -610,30 +617,40 @@ export class ProcessNestedRelationsHelper {
     return limitedRecords.map((limitedRecord) => limitedRecord.id);
   }
 
-  private applyNestedRelationFilterToBuilder({
+  private async applyNestedRelationFilterToBuilder({
     queryBuilder,
     targetObjectNameSingular,
+    targetObjectRepository,
     relationQueryArgs,
     relationQueryParser,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
+    targetObjectRepository: WorkspaceRepository;
     relationQueryArgs?: NestedRelationQueryArgs;
     relationQueryParser: GraphqlQueryParser;
-  }): void {
-    if (!isDefined(relationQueryArgs?.filter)) {
-      return;
+  }): Promise<void> {
+    if (isDefined(relationQueryArgs?.filter)) {
+      relationQueryParser.applyFilterToBuilder(
+        queryBuilder,
+        targetObjectNameSingular,
+        relationQueryArgs.filter,
+      );
+      relationQueryParser.applyDeletedAtToBuilder(
+        queryBuilder,
+        relationQueryArgs.filter,
+      );
     }
 
-    relationQueryParser.applyFilterToBuilder(
-      queryBuilder,
-      targetObjectNameSingular,
-      relationQueryArgs.filter,
-    );
-    relationQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      relationQueryArgs.filter,
-    );
+    if (isDefined(relationQueryArgs?.expressionFilter)) {
+      const { sql, parameters } = await buildComputedFieldExpressionSql({
+        expression: relationQueryArgs.expressionFilter,
+        alias: targetObjectNameSingular,
+        repository: targetObjectRepository,
+      });
+
+      queryBuilder.andWhere(`(${sql})`, parameters);
+    }
   }
 
   private assignRelationResults({

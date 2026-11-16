@@ -19,6 +19,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
+import { buildFilteredRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-filtered-relation-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -81,6 +82,39 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     objectMetadataUniversalIdentifier:
       parentFlatObjectMetadata.universalIdentifier,
   });
+
+  if (
+    createFieldInput.type === FieldMetadataType.RELATION &&
+    createFieldInput.computation?.kind === 'FILTERED_RELATION'
+  ) {
+    const { relationFieldName } = createFieldInput.computation;
+    const filteredRelationFlatFieldMetadata =
+      buildFilteredRelationFlatFieldMetadata({
+        commonFlatFieldMetadata,
+        relationFieldName,
+        parentFlatObjectMetadata,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
+
+    return isDefined(filteredRelationFlatFieldMetadata)
+      ? {
+          status: 'success',
+          result: {
+            flatFieldMetadatas: [filteredRelationFlatFieldMetadata],
+            indexMetadatas: [],
+          },
+        }
+      : {
+          status: 'fail',
+          errors: [
+            {
+              code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+              message: `"${relationFieldName}" must be a stored one-to-many relation of ${parentFlatObjectMetadata.nameSingular}`,
+              userFriendlyMessage: msg`A filtered relation must derive from a one-to-many relation of the same object`,
+            },
+          ],
+        };
+  }
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {

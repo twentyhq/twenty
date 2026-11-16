@@ -43,7 +43,8 @@ export const buildWorkspaceTableShape = ({
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       const relationType = flatFieldMetadata.settings?.relationType;
 
-      if (!isDefined(relationType)) {
+      // A filtered relation is loaded through the relation it derives from, never joined
+      if (!isDefined(relationType) || isComputedField(flatFieldMetadata)) {
         continue;
       }
 

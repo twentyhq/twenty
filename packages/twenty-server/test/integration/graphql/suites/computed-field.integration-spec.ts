@@ -230,6 +230,19 @@ describe('Computed fields (e2e)', () => {
       });
     }
 
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'upcomingTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        filter: "status != 'DONE' and dueAt >= '2030-01-01'",
+        orderBy: [{ dueAt: 'AscNullsLast' }],
+        limit: 1,
+      },
+    });
+
     const { data: projectBudgetField } = await createField({
       objectMetadataId: taskObjectMetadataId,
       name: 'projectBudget',
@@ -343,6 +356,51 @@ describe('Computed fields (e2e)', () => {
       ).toBe(1);
 
       await setStatus('TODO');
+    });
+  });
+
+  describe('filtered relations', () => {
+    const findUpcomingTasksByProjectId = async (selection: string) =>
+      Object.fromEntries(
+        (
+          await findProjects({
+            gqlFields: `${selection} { totalCount edges { node { id dueAt } } }`,
+          })
+        ).map((project) => [project.id, project.upcomingTasks]),
+      );
+
+    it('returns the filtered, sorted and limited related records of each record', async () => {
+      const upcomingTasksByProjectId =
+        await findUpcomingTasksByProjectId('upcomingTasks');
+
+      expect(upcomingTasksByProjectId[ALPHA_PROJECT_ID]).toEqual({
+        totalCount: 2,
+        edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
+      });
+      expect(upcomingTasksByProjectId[BETA_PROJECT_ID]).toEqual({
+        totalCount: 0,
+        edges: [],
+      });
+    });
+
+    it('lets a query narrow the relation further but not widen it', async () => {
+      const narrowed = await findUpcomingTasksByProjectId(
+        'upcomingTasks(filter: { points: { eq: 3 } }, first: 10)',
+      );
+
+      expect(narrowed[ALPHA_PROJECT_ID]).toMatchObject({
+        totalCount: 1,
+        edges: [{ node: { id: TASKS[0].id, dueAt: '2030-03-01' } }],
+      });
+    });
+
+    it('leaves the relation it derives from untouched', async () => {
+      const [alphaProject] = await findProjects({
+        gqlFields: 'tasks { totalCount }',
+        filter: { id: { eq: ALPHA_PROJECT_ID } },
+      });
+
+      expect(alphaProject.tasks).toEqual({ totalCount: 3 });
     });
   });
 

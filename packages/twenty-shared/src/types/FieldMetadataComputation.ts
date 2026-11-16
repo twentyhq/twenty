@@ -1,3 +1,5 @@
+import { type RecordGqlOperationOrderBy } from '@/types/RecordGqlOperationOrderBy';
+
 export const FIELD_METADATA_ROLLUP_OPERATIONS = [
   'COUNT',
   'SUM',
@@ -25,7 +27,17 @@ export type FieldMetadataRollupComputation = {
   filter?: string;
 };
 
+// The field is a one-to-many relation showing a subset of another one-to-many relation
+export type FieldMetadataFilteredRelationComputation = {
+  kind: 'FILTERED_RELATION';
+  relationFieldName: string;
+  filter?: string;
+  orderBy?: RecordGqlOperationOrderBy;
+  limit?: number;
+};
+
 // Fields are referenced by name, as in an API query, so a computation reads the same in every workspace
 export type FieldMetadataComputation =
   | FieldMetadataFormulaComputation
-  | FieldMetadataRollupComputation;
+  | FieldMetadataRollupComputation
+  | FieldMetadataFilteredRelationComputation;

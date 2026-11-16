@@ -248,6 +248,8 @@ export const buildComputedColumnSql = async ({
         });
       case 'ROLLUP':
         return buildRollupSql({ flatFieldMetadata, alias, repository });
+      case 'FILTERED_RELATION':
+        return Promise.resolve(NULL_SQL);
       default:
         return assertUnreachable(computation);
     }

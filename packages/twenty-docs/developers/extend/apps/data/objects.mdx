@@ -203,6 +203,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 | --- | --- | --- |
 | `FORMULA` | An expression over the record's own fields | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
 | `ROLLUP` | A count, sum, average, minimum or maximum over the records of a one-to-many relation | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
+| `FILTERED_RELATION` | Some of the records of a one-to-many relation | `RELATION` (one-to-many) |
 
 ```ts
 {
@@ -230,6 +231,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 ```
 
 - **Rollup:** `operation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no `expression`; the others aggregate `expression`, evaluated on each related record. `filter` keeps only the related records for which it is true.
+- **Filtered relation:** `filter`, `orderBy` and `limit` narrow the relation named by `relationFieldName`. A query can narrow it further with its own arguments, never widen it.
 - **Expressions** reference fields by name:
   - a sub-field of a composite field as `amount.amountMicros`;
   - a field of a to-one relation as `company.name`;

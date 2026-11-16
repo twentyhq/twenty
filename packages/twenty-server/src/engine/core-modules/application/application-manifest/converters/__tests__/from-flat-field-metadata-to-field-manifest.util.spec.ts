@@ -105,7 +105,7 @@ const RELATION_FIELD_MANIFEST: Required<
   isNullable: true,
   isUIEditable: true,
   disabledFieldPermissionActions: [],
-  computation: { kind: 'ROLLUP', relationFieldName: 'projects', operation: 'COUNT' },
+  computation: { kind: 'FILTERED_RELATION', relationFieldName: 'projects' },
   isUnique: false,
   isSearchable: false,
   isAuditLogged: true,
