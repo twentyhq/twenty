@@ -88,6 +88,7 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { getStoredColumnNames } from 'src/engine/twenty-orm/table-shape/utils/get-stored-column-names.util';
 import { buildComputedColumnSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
+import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-field-expression-sql.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   type QueryBuilderContext,
@@ -208,6 +209,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         onBeforeExecute: (queryBuilder) =>
           this.prepareForExecution({ queryBuilder }),
         formatResult: (records) => this.formatResult(records),
+        buildComputedFieldExpressionSql: (args) =>
+          this.buildComputedFieldExpressionSql(args),
         computedColumnSqlContext: options?.computedColumnSqlContext,
       },
     );
@@ -1494,6 +1497,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
+      buildComputedFieldExpressionSql: (args) =>
+        this.buildComputedFieldExpressionSql(args),
     });
   }
 
@@ -1907,6 +1912,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // Loops because a computed column can itself read other computed columns
+  private buildComputedFieldExpressionSql(
+    args: Parameters<QueryBuilderContext['buildComputedFieldExpressionSql']>[0],
+  ) {
+    return buildComputedFieldExpressionSql({
+      ...args,
+      repository: this.getRepositoryForObjectMetadataId(
+        this.options.flatObjectMetadata.id,
+      ),
+    });
+  }
+
   private async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {

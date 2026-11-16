@@ -90,6 +90,7 @@ const buildBuilders = ({
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
   return { selectQueryBuilder, executedStatements };
@@ -266,6 +267,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     expect(() =>
@@ -327,6 +329,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     expect(() =>

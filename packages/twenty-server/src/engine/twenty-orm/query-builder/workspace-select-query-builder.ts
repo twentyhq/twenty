@@ -1,5 +1,8 @@
 import { type QueryConfig, types } from 'pg';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  type FieldMetadataFilteredRelationComputation,
+} from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
@@ -24,6 +27,8 @@ import {
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { type ComputedColumnSqlContext } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql-context.type';
 import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
+import { type ReadableSql } from 'src/engine/twenty-orm/computed-column/types/readable-sql.type';
+import { ORDER_BY_SQL_BY_DIRECTION } from 'src/engine/twenty-orm/query-builder/constants/order-by-sql-by-direction.constant';
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
@@ -56,6 +61,7 @@ import {
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -80,6 +86,12 @@ export type QueryBuilderContext = {
     queryBuilder: WorkspaceSelectQueryBuilder,
   ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
+  // Compiles an expression of the computed field language, evaluated on the records of the builder's table
+  buildComputedFieldExpressionSql: (args: {
+    expression: string;
+    alias: string;
+    context: ComputedColumnSqlContext;
+  }) => Promise<ReadableSql<ComputedColumnSql>>;
   // Given to a subquery built to be embedded in another statement, so both bind parameters in one place
   computedColumnSqlContext?: ComputedColumnSqlContext;
 };
@@ -341,6 +353,93 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     nulls?: 'NULLS FIRST' | 'NULLS LAST',
   ): this {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
+  }
+
+  // The stored filter, order and limit decide the records of a filtered relation, per parent record.
+  // Whatever else the statement asks for applies inside them.
+  async whereInFilteredRelation({
+    computation,
+    joinColumnName,
+    parentRecordIds,
+  }: {
+    computation: FieldMetadataFilteredRelationComputation;
+    joinColumnName: string;
+    parentRecordIds: string[];
+  }): Promise<this> {
+    const { filter, limit } = computation;
+
+    if (!isDefined(limit)) {
+      return isDefined(filter) ? this.andWhereExpression(filter) : this;
+    }
+
+    const memberAlias = buildPostgresSafeAlias(`${this.alias}_member`);
+    const memberQueryBuilder = new WorkspaceSelectQueryBuilder(memberAlias, {
+      ...this.context,
+      computedColumnSqlContext: this.computedColumnSqlContext,
+    })
+      .select(this.quoteColumn(memberAlias, 'id'), 'id')
+      .where(
+        `${this.quoteColumn(memberAlias, joinColumnName)} = "parent"."id"`,
+      );
+
+    if (isDefined(filter)) {
+      await memberQueryBuilder.andWhereExpression(filter);
+    }
+
+    await memberQueryBuilder.orderByFilteredRelation(computation);
+    await memberQueryBuilder.applyRowLevelPermissions();
+
+    // The limit is inlined: a statement has one limit parameter, and it belongs to the outer select
+    return this.andWhere(
+      `${this.quoteColumn(this.alias, 'id')} IN (` +
+        `SELECT "member"."id" FROM unnest(:filteredRelationParentRecordIds::uuid[]) AS "parent"("id") ` +
+        `CROSS JOIN LATERAL (${memberQueryBuilder.getQuery()} LIMIT ${Number(limit)}) AS "member")`,
+      {
+        ...memberQueryBuilder.getParameters(),
+        filteredRelationParentRecordIds: parentRecordIds,
+      },
+    );
+  }
+
+  // A sort its reader cannot read is skipped; the id makes the order, and so a limit, deterministic
+  async orderByFilteredRelation({
+    orderBy = [],
+  }: FieldMetadataFilteredRelationComputation): Promise<this> {
+    this.orderByClauses = [];
+
+    for (const { expression, direction } of orderBy) {
+      const sql = await this.buildExpressionSql(expression);
+
+      if (isDefined(sql)) {
+        const { direction: sqlDirection, nulls } =
+          ORDER_BY_SQL_BY_DIRECTION[direction];
+
+        this.addOrderBy(`(${sql})`, sqlDirection, nulls);
+      }
+    }
+
+    return this.addOrderBy(this.quoteColumn(this.alias, 'id'), 'ASC');
+  }
+
+  // A filter its reader cannot read keeps no record, as a computed value would be null
+  private async andWhereExpression(expression: string): Promise<this> {
+    return this.andWhere(
+      (await this.buildExpressionSql(expression)) ?? 'FALSE',
+    );
+  }
+
+  private async buildExpressionSql(
+    expression: string,
+  ): Promise<string | undefined> {
+    const expressionSql = await this.context.buildComputedFieldExpressionSql({
+      expression,
+      alias: this.alias,
+      context: this.computedColumnSqlContext,
+    });
+
+    this.setParameters(this.computedColumnSqlContext.parameters);
+
+    return expressionSql?.sql;
   }
 
   distinctOn(columns: string[]): this {

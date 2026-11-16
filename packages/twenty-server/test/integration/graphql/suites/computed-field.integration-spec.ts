@@ -286,6 +286,17 @@ describe('Computed fields (e2e)', () => {
         limit: 1,
       },
     });
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'largestTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        orderBy: [{ expression: '0 - points', direction: 'AscNullsLast' }],
+        limit: 2,
+      },
+    });
 
     const { data: projectBudgetField } = await createField({
       objectMetadataId: taskObjectMetadataId,
@@ -412,13 +423,24 @@ describe('Computed fields (e2e)', () => {
           })
         ).map((project) => [project.id, project.upcomingTasks]),
       );
+    const findAlphaLargestTaskIds = async (selection: string) => {
+      const [alphaProject] = await findProjects({
+        gqlFields: `${selection} { edges { node { id } } }`,
+        filter: { id: { eq: ALPHA_PROJECT_ID } },
+      });
+      const { edges } = alphaProject.largestTasks as {
+        edges: { node: { id: string } }[];
+      };
+
+      return edges.map(({ node }) => node.id);
+    };
 
     it('returns the filtered, sorted and limited related records of each record', async () => {
       const upcomingTasksByProjectId =
         await findUpcomingTasksByProjectId('upcomingTasks');
 
       expect(upcomingTasksByProjectId[ALPHA_PROJECT_ID]).toEqual({
-        totalCount: 2,
+        totalCount: 1,
         edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
       });
       expect(upcomingTasksByProjectId[BETA_PROJECT_ID]).toEqual({
@@ -427,15 +449,94 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
-    it('lets a query narrow the relation further but not widen it', async () => {
-      const narrowed = await findUpcomingTasksByProjectId(
+    it('applies a query filter inside the stored limit, never to pick other records', async () => {
+      const outsideTheLimit = await findUpcomingTasksByProjectId(
         'upcomingTasks(filter: { points: { eq: 3 } }, first: 10)',
       );
+      const insideTheLimit = await findUpcomingTasksByProjectId(
+        'upcomingTasks(filter: { points: { eq: 5 } }, first: 10)',
+      );
 
-      expect(narrowed[ALPHA_PROJECT_ID]).toMatchObject({
-        totalCount: 1,
-        edges: [{ node: { id: TASKS[0].id, dueAt: '2030-03-01' } }],
+      expect(outsideTheLimit[ALPHA_PROJECT_ID]).toMatchObject({
+        totalCount: 0,
+        edges: [],
       });
+      expect(insideTheLimit[ALPHA_PROJECT_ID]).toMatchObject({
+        totalCount: 1,
+        edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
+      });
+    });
+
+    it('keeps the stored order with a limit, and lets a query order inside it', async () => {
+      const [smallestTask, middleTask, largestTask] = TASKS;
+
+      expect(await findAlphaLargestTaskIds('largestTasks')).toEqual([
+        largestTask.id,
+        middleTask.id,
+      ]);
+      expect(await findAlphaLargestTaskIds('largestTasks(first: 1)')).toEqual([
+        largestTask.id,
+      ]);
+      expect(
+        await findAlphaLargestTaskIds(
+          'largestTasks(orderBy: [{ points: AscNullsLast }])',
+        ),
+      ).toEqual([middleTask.id, largestTask.id]);
+      expect(
+        await findAlphaLargestTaskIds(
+          'largestTasks(orderBy: [{ points: AscNullsLast }], first: 1)',
+        ),
+      ).not.toContain(smallestTask.id);
+    });
+
+    it('refuses to delete a field read by a sort expression', async () => {
+      const { data: priorityField } = await createField({
+        objectMetadataId: taskObjectMetadataId,
+        name: 'priority',
+        type: FieldMetadataType.NUMBER,
+      });
+      const priorityFieldId = priorityField.createOneField.id;
+      const { data: prioritizedTasksField } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'prioritizedTasks',
+        type: FieldMetadataType.RELATION,
+        computation: {
+          kind: 'FILTERED_RELATION',
+          relationFieldName: 'tasks',
+          orderBy: [
+            { expression: 'coalesce(priority, 0)', direction: 'DescNullsLast' },
+          ],
+        },
+      });
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: priorityFieldId,
+          updatePayload: { isActive: false },
+        },
+      });
+
+      const { errors } = await deleteOneFieldMetadata({
+        expectToFail: true,
+        input: { idToDelete: priorityFieldId },
+      });
+
+      expect(JSON.stringify(errors)).toContain('would stop working');
+
+      for (const idToDelete of [
+        prioritizedTasksField.createOneField.id,
+        priorityFieldId,
+      ]) {
+        await updateOneFieldMetadata({
+          expectToFail: false,
+          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
+        });
+        await deleteOneFieldMetadata({
+          expectToFail: false,
+          input: { idToDelete },
+        });
+      }
     });
 
     it('rejects a sort by an unknown field or direction, and follows the renaming of its sort field', async () => {

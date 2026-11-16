@@ -46,6 +46,7 @@ const buildQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyFindOptionsToQueryBuilder', () => {
@@ -209,6 +210,7 @@ const buildThreadQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => messageShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyFindOptionsToQueryBuilder relation order', () => {
