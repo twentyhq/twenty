@@ -28,6 +28,7 @@ import {
   quoteColumn,
   renderNullifiedColumn,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
 // `undefined`: the value reads something its reader cannot read, so the computed column is null
@@ -166,7 +167,9 @@ const buildFieldPathSql = async ({
     return undefined;
   }
 
-  const targetAlias = `${alias}_${toOneRelationHop.joinColumnName}`;
+  const targetAlias = buildPostgresSafeAlias(
+    `${alias}_${toOneRelationHop.joinColumnName}`,
+  );
   const targetFieldSql = await buildFieldPathSql({
     path: path.slice(1),
     alias: targetAlias,
@@ -277,7 +280,9 @@ const buildRollupSql = async ({
   }
 
   // Both expressions get their own alias suffix so their text parameters cannot share a name
-  const relatedAlias = `${alias}_${flatFieldMetadata.name}`;
+  const relatedAlias = buildPostgresSafeAlias(
+    `${alias}_${flatFieldMetadata.name}`,
+  );
   const buildRelatedExpressionSql = async (
     expression: string | undefined,
     namespace: string,
