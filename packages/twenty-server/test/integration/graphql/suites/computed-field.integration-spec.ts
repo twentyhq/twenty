@@ -537,6 +537,153 @@ describe('Computed fields (e2e)', () => {
     });
   });
 
+  describe('long names', () => {
+    const DELIVERABLE_OBJECT_NAME =
+      'rollupDeliverableNamedLongEnoughToOverflowAnAlias';
+    const TASK_RELATION_NAME = 'taskNamedLongEnoughToOverflowAnAlias';
+    const DELIVERABLE_POINTS_FIELD_NAME =
+      'deliverablePointsNamedLongEnoughToOverflowAnAliasOfItsOwn';
+    const DELIVERABLE_ID = '20202020-c0f3-4000-8000-000000000001';
+
+    // Truncated to 63 bytes, the alias of a nested read would be the alias of the read around it
+    it('evaluates nested to-one reads and rollups whose aliases exceed the Postgres identifier limit', async () => {
+      expect(
+        `${DELIVERABLE_OBJECT_NAME}_${TASK_RELATION_NAME}Id`.length,
+      ).toBeGreaterThan(63);
+      expect(
+        `rollupTask_${DELIVERABLE_POINTS_FIELD_NAME}`.length,
+      ).toBeGreaterThan(63);
+
+      const { data: deliverableObject } = await createOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          nameSingular: DELIVERABLE_OBJECT_NAME,
+          namePlural: `${DELIVERABLE_OBJECT_NAME}s`,
+          labelSingular: 'Long named deliverable',
+          labelPlural: 'Long named deliverables',
+          icon: 'IconBox',
+        },
+      });
+      const deliverableObjectMetadataId = deliverableObject.createOneObject.id;
+      let deliverablePointsFieldMetadataId = '';
+
+      try {
+        await createRelationBetweenObjects({
+          objectMetadataId: deliverableObjectMetadataId,
+          targetObjectMetadataId: taskObjectMetadataId,
+          type: FieldMetadataType.RELATION,
+          relationType: RelationType.MANY_TO_ONE,
+          name: TASK_RELATION_NAME,
+          label: 'Task',
+          targetFieldLabel: 'Long named deliverables',
+        });
+        await createField({
+          objectMetadataId: deliverableObjectMetadataId,
+          name: 'projectBudget',
+          type: FieldMetadataType.NUMBER,
+          computation: {
+            kind: 'FORMULA',
+            expression: `${TASK_RELATION_NAME}.project.budget`,
+          },
+        });
+
+        const { data: deliverablePointsField } = await createField({
+          objectMetadataId: taskObjectMetadataId,
+          name: DELIVERABLE_POINTS_FIELD_NAME,
+          type: FieldMetadataType.NUMBER,
+          computation: {
+            kind: 'ROLLUP',
+            relationFieldName: 'longNamedDeliverables',
+            operation: 'SUM',
+            expression: `${TASK_RELATION_NAME}.points`,
+            filter: `${TASK_RELATION_NAME}.project.budget > 50`,
+          },
+        });
+
+        deliverablePointsFieldMetadataId =
+          deliverablePointsField.createOneField.id;
+
+        const createResponse = await makeGraphqlApiRequest(
+          createManyOperationFactory({
+            objectMetadataSingularName: DELIVERABLE_OBJECT_NAME,
+            objectMetadataPluralName: `${DELIVERABLE_OBJECT_NAME}s`,
+            gqlFields: 'id projectBudget',
+            data: [
+              {
+                id: DELIVERABLE_ID,
+                [`${TASK_RELATION_NAME}Id`]: TASKS[0].id,
+              },
+            ],
+            upsert: false,
+          }),
+        );
+
+        expect(createResponse.body.errors).toBeUndefined();
+
+        const deliverablesResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: DELIVERABLE_OBJECT_NAME,
+            objectMetadataPluralName: `${DELIVERABLE_OBJECT_NAME}s`,
+            gqlFields: 'id projectBudget',
+          }),
+        );
+
+        expect(deliverablesResponse.body.errors).toBeUndefined();
+        expect(
+          deliverablesResponse.body.data[`${DELIVERABLE_OBJECT_NAME}s`].edges,
+        ).toMatchObject([{ node: { id: DELIVERABLE_ID, projectBudget: 100 } }]);
+
+        const tasksResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: 'rollupTask',
+            objectMetadataPluralName: 'rollupTasks',
+            gqlFields: `id ${DELIVERABLE_POINTS_FIELD_NAME}`,
+            filter: { id: { in: [TASKS[0].id, TASKS[3].id] } },
+          }),
+        );
+
+        expect(tasksResponse.body.errors).toBeUndefined();
+        expect(
+          Object.fromEntries(
+            tasksResponse.body.data.rollupTasks.edges.map(
+              ({ node }: { node: Record<string, unknown> }) => [
+                node.id,
+                node[DELIVERABLE_POINTS_FIELD_NAME],
+              ],
+            ),
+          ),
+        ).toEqual({ [TASKS[0].id]: 3, [TASKS[3].id]: null });
+      } finally {
+        // The rollup reads the deliverables, and a field read by a computed field cannot be deleted
+        if (isNonEmptyString(deliverablePointsFieldMetadataId)) {
+          await updateOneFieldMetadata({
+            expectToFail: false,
+            input: {
+              idToUpdate: deliverablePointsFieldMetadataId,
+              updatePayload: { isActive: false },
+            },
+          });
+          await deleteOneFieldMetadata({
+            expectToFail: false,
+            input: { idToDelete: deliverablePointsFieldMetadataId },
+          });
+        }
+
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: deliverableObjectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: deliverableObjectMetadataId },
+        });
+      }
+    });
+  });
+
   describe('metadata validation', () => {
     const expectCreationToFail = async (
       computation: FieldMetadataComputation,
