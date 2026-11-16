@@ -10,7 +10,6 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
@@ -395,12 +394,6 @@ export const seedAccountGroupsStory = async () => {
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
         runHealthCheckOnUserPreferences: true,
-      },
-    ],
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-        value: true,
       },
     ],
   });

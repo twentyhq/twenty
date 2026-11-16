@@ -1,20 +1,17 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
-  FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const buildApplicationVariable = ({
@@ -126,8 +123,6 @@ const APPLICATIONS_FOR_STATUS = [
   },
 ];
 
-const findManyApplicationsForStatus = fn();
-
 const STATUS_LOAD_ERROR_MESSAGE =
   'App configuration could not be loaded. Check your connection and try again.';
 
@@ -149,21 +144,8 @@ const failNextStatusRequest = () => {
   );
 };
 
-const seedInstalledTabStory = ({
-  isAppPreferencesEnabled,
-}: {
-  isAppPreferencesEnabled: boolean;
-}) => {
+const seedInstalledTabStory = () => {
   jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-        value: isAppPreferencesEnabled,
-      },
-    ],
-  });
   jotaiStore.set(metadataStoreState.atomFamily('applications'), {
     current: APPLICATIONS.map(
       ({
@@ -193,7 +175,6 @@ const meta: Meta<typeof SettingsApplicationsInstalledAppsSection> = {
   component: SettingsApplicationsInstalledAppsSection,
   decorators: [ComponentWithRouterDecorator],
   beforeEach: async () => {
-    findManyApplicationsForStatus.mockClear();
     await mockedApolloClient.clearStore();
   },
   parameters: {
@@ -202,13 +183,11 @@ const meta: Meta<typeof SettingsApplicationsInstalledAppsSection> = {
         graphql.query('FindManyApplications', () =>
           HttpResponse.json({ data: { findManyApplications: APPLICATIONS } }),
         ),
-        graphql.query('FindManyApplicationsForStatus', () => {
-          findManyApplicationsForStatus();
-
-          return HttpResponse.json({
+        graphql.query('FindManyApplicationsForStatus', () =>
+          HttpResponse.json({
             data: { findManyApplications: APPLICATIONS_FOR_STATUS },
-          });
-        }),
+          }),
+        ),
       ],
     },
   },
@@ -218,30 +197,8 @@ export default meta;
 
 type Story = StoryObj<typeof SettingsApplicationsInstalledAppsSection>;
 
-export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
-  beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: false }),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const acmeRow = await canvas.findByRole('link', { name: /Acme Sync/ });
-
-    expect(await within(acmeRow).findByText('Update')).toBeVisible();
-    expect(acmeRow).toHaveTextContent('NPM');
-
-    const recorderRow = canvas.getByRole('link', { name: /Recorder/ });
-
-    expect(within(recorderRow).getByText('Update')).toBeVisible();
-    expect(recorderRow).toHaveTextContent('NPM');
-    expect(canvas.getByText('Type')).toBeVisible();
-    expect(canvas.queryByText('Status')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
-    expect(findManyApplicationsForStatus).not.toHaveBeenCalled();
-  },
-};
-
 export const ShowsStatusInPlaceOfTypeWithAppPreferences: Story = {
-  beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: true }),
+  beforeEach: () => seedInstalledTabStory(),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -275,7 +232,7 @@ export const ShowsStatusInPlaceOfTypeWithAppPreferences: Story = {
 
 export const KeepsUpdateAndShowsErrorWhenConfigurationFailsToLoad: Story = {
   beforeEach: () => {
-    seedInstalledTabStory({ isAppPreferencesEnabled: true });
+    seedInstalledTabStory();
     failNextStatusRequest();
   },
   play: async ({ canvasElement }) => {

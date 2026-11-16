@@ -45,7 +45,7 @@ test.describe('Return-to-path after login', () => {
     page,
     loginPage,
   }) => {
-    const deepLink = '/settings/accounts';
+    const deepLink = '/settings/app-preferences';
 
     await test.step('Navigate to deep link while logged out', async () => {
       await page.goto(deepLink);
@@ -82,7 +82,7 @@ test.describe('Return-to-path after login', () => {
     page,
     loginPage,
   }) => {
-    const targetPath = '/settings/accounts';
+    const targetPath = '/settings/app-preferences';
     const targetPathWithParams = `${targetPath}?tab=emails&filter=unread`;
 
     await test.step(
