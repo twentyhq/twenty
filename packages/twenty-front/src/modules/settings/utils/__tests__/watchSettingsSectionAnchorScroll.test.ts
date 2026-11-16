@@ -5,13 +5,13 @@ const originalScrollIntoView = Element.prototype.scrollIntoView;
 const originalMatchMedia = window.matchMedia;
 const originalResizeObserver = globalThis.ResizeObserver;
 
-let resizeCallbacks: ResizeObserverCallback[] = [];
+let resizeObservers: ResizeObserverStub[] = [];
 let observedElements: Element[] = [];
 const disconnectMock = jest.fn();
 
-class ResizeObserverStub {
-  constructor(callback: ResizeObserverCallback) {
-    resizeCallbacks.push(callback);
+class ResizeObserverStub implements ResizeObserver {
+  constructor(readonly callback: ResizeObserverCallback) {
+    resizeObservers.push(this);
   }
 
   observe(element: Element) {
@@ -32,9 +32,7 @@ const mockMatchMedia = (matches: boolean) =>
   });
 
 const triggerPageResize = () =>
-  resizeCallbacks.forEach((callback) =>
-    callback([], {} as unknown as ResizeObserver),
-  );
+  resizeObservers.forEach((observer) => observer.callback([], observer));
 
 const mountAnchor = () => {
   const pageElement = document.createElement('div');
@@ -49,14 +47,13 @@ const mountAnchor = () => {
 describe('watchSettingsSectionAnchorScroll', () => {
   beforeEach(() => {
     Element.prototype.scrollIntoView = scrollIntoViewMock;
-    globalThis.ResizeObserver =
-      ResizeObserverStub as unknown as typeof ResizeObserver;
+    globalThis.ResizeObserver = ResizeObserverStub;
     mockMatchMedia(false);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    resizeCallbacks = [];
+    resizeObservers = [];
     observedElements = [];
     document.body.innerHTML = '';
     Element.prototype.scrollIntoView = originalScrollIntoView;
