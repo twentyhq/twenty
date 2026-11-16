@@ -223,7 +223,11 @@ const FUNCTIONS: Record<
     compile: (functionArguments: ValueOperand[], usage: string) => ValueOperand;
   }
 > = {
-  if: { minimumArgumentCount: 3, maximumArgumentCount: 3, compile: compileCondition },
+  if: {
+    minimumArgumentCount: 3,
+    maximumArgumentCount: 3,
+    compile: compileCondition,
+  },
   coalesce: {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
@@ -368,7 +372,9 @@ const compileInstructions = (
     const operand = operands.pop();
 
     if (!isDefined(operand)) {
-      throw new ComputedFieldExpressionException('The expression is incomplete');
+      throw new ComputedFieldExpressionException(
+        'The expression is incomplete',
+      );
     }
 
     return operand;

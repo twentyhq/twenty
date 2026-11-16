@@ -123,7 +123,7 @@ describe('compileComputedFieldExpressionToSql', () => {
     ['not amount', '"not" expects boolean, not number'],
     ['amount == name', '"==" cannot combine number and text'],
     ['isActive > isArchived', '">" expects'],
-    ["if(amount, 1, 2)", 'The condition of "if" expects boolean, not number'],
+    ['if(amount, 1, 2)', 'The condition of "if" expects boolean, not number'],
     ["if(isActive, 1, 'one')", '"if" cannot combine number and text'],
     ['upper(amount)', '"upper" expects text, not number'],
     ['round(name)', '"round" expects number, not text'],

@@ -13,7 +13,9 @@ import {
 import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
 import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
 
-type RenamableField = ComputedFieldSchemaField & { universalIdentifier: string };
+type RenamableField = ComputedFieldSchemaField & {
+  universalIdentifier: string;
+};
 
 const ignoreUnresolvable = <TResult>(
   resolve: () => TResult,

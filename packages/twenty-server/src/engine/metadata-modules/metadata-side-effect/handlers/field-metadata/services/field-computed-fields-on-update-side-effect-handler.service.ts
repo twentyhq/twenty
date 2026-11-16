@@ -53,8 +53,10 @@ export class FieldComputedFieldsOnUpdateSideEffectHandlerService extends Metadat
       ],
     ]);
 
-    const flatFieldMetadataToUpdate: Record<string, UniversalFlatFieldMetadata> =
-      {};
+    const flatFieldMetadataToUpdate: Record<
+      string,
+      UniversalFlatFieldMetadata
+    > = {};
 
     for (const existingComputedField of Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
