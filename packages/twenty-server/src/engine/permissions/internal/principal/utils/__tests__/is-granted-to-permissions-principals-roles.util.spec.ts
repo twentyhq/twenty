@@ -1,17 +1,16 @@
 import { isGrantedToPermissionsPrincipalsRoles } from 'src/engine/permissions/internal/principal/utils/is-granted-to-permissions-principals-roles.util';
 
 const buildPrincipals = ({
-  roleIds,
+  extraRoleIds = [],
   limitingRoleId,
 }: {
-  roleIds?: string[];
+  extraRoleIds?: string[];
   limitingRoleId?: string;
 }) => ({
   mainPrincipal: {
     type: 'workspaceMember' as const,
-    roleId: 'assigned-role',
+    roleIds: ['assigned-role', ...extraRoleIds],
     workspaceMemberId: 'member-1',
-    roleIds,
   },
   limitingPrincipal: limitingRoleId
     ? { type: 'agent' as const, roleId: limitingRoleId, agentId: 'agent-1' }
@@ -38,7 +37,7 @@ describe('isGrantedToPermissionsPrincipalsRoles', () => {
     expect(
       isGrantedToPermissionsPrincipalsRoles({
         principals: buildPrincipals({
-          roleIds: ['extra-role'],
+          extraRoleIds: ['extra-role'],
         }),
         isGrantedToRole: isGrantedTo(['extra-role']),
       }),
@@ -49,7 +48,7 @@ describe('isGrantedToPermissionsPrincipalsRoles', () => {
     expect(
       isGrantedToPermissionsPrincipalsRoles({
         principals: buildPrincipals({
-          roleIds: ['extra-role'],
+          extraRoleIds: ['extra-role'],
           limitingRoleId: 'agent-role',
         }),
         isGrantedToRole: isGrantedTo(['extra-role']),
@@ -61,7 +60,7 @@ describe('isGrantedToPermissionsPrincipalsRoles', () => {
     expect(
       isGrantedToPermissionsPrincipalsRoles({
         principals: buildPrincipals({
-          roleIds: ['extra-role'],
+          extraRoleIds: ['extra-role'],
         }),
         isGrantedToRole: isGrantedTo([]),
       }),

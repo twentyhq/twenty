@@ -53,7 +53,7 @@ export class SettingPermissionsService {
       'flatFieldMetadataMaps',
     ]);
 
-    const flatRole = findUserWorkspaceFlatRoleOrThrow({
+    findUserWorkspaceFlatRoleOrThrow({
       userWorkspaceId,
       userWorkspaceRoleMap,
       flatRoleMaps,
@@ -79,7 +79,6 @@ export class SettingPermissionsService {
         recordsPermissions: computePrincipalsRecordsPermissions({
           principals: buildRolePermissionsPrincipals({
             workspaceId,
-            roleId: flatRole.id,
             roleIds,
           }),
           rolesPermissions,

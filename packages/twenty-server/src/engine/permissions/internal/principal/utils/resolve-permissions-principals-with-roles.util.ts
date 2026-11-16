@@ -126,19 +126,15 @@ const findWorkspaceMemberRoleId = ({
     : undefined;
 };
 
-const findMainPrincipalRoleIds = ({
-  mainPrincipal,
+const findWorkspaceMemberRoleIds = ({
+  workspaceMemberId,
   roleMaps,
 }: {
-  mainPrincipal: PermissionsMainPrincipal;
+  workspaceMemberId: string;
   roleMaps: PermissionsPrincipalsRoleMaps;
 }): string[] => {
-  if (mainPrincipal.type !== 'workspaceMember') {
-    return [];
-  }
-
   const userWorkspaceId = findWorkspaceMemberUserWorkspaceId({
-    workspaceMemberId: mainPrincipal.workspaceMemberId,
+    workspaceMemberId,
     roleMaps,
   });
 
@@ -147,7 +143,7 @@ const findMainPrincipalRoleIds = ({
     : [];
 };
 
-const findMainPrincipalRoleId = ({
+const findMainPrincipalRoleIds = ({
   mainPrincipal,
   workspaceId,
   roleMaps,
@@ -155,34 +151,39 @@ const findMainPrincipalRoleId = ({
   mainPrincipal: PermissionsMainPrincipal;
   workspaceId: string;
   roleMaps: PermissionsPrincipalsRoleMaps;
-}): string | undefined => {
+}): string[] => {
   switch (mainPrincipal.type) {
     case 'role':
-      return mainPrincipal.roleId;
+      return [];
     case 'workspaceMember':
-      return findWorkspaceMemberRoleId({
+      return findWorkspaceMemberRoleIds({
         workspaceMemberId: mainPrincipal.workspaceMemberId,
         roleMaps,
       });
     case 'apiKey':
-      return roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId];
+      return [roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId]].filter(isDefined);
     case 'agent':
-      return roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]
-        ?.roleId;
+      return [
+        roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]?.roleId,
+      ].filter(isDefined);
     case 'application':
-      return findApplicationRoleId({
-        applicationId: mainPrincipal.applicationId,
-        workspaceId,
-        roleMaps,
-      });
+      return [
+        findApplicationRoleId({
+          applicationId: mainPrincipal.applicationId,
+          workspaceId,
+          roleMaps,
+        }),
+      ].filter(isDefined);
     case 'webhook':
-      return isDefined(roleMaps.flatRoleTargetMaps)
-        ? findFlatRoleTargetFromForeignKey({
-            flatRoleTargetMaps: roleMaps.flatRoleTargetMaps,
-            targetMetadataForeignKey: 'webhookId',
-            targetId: mainPrincipal.webhookId,
-          })?.roleId
-        : undefined;
+      return [
+        isDefined(roleMaps.flatRoleTargetMaps)
+          ? findFlatRoleTargetFromForeignKey({
+              flatRoleTargetMaps: roleMaps.flatRoleTargetMaps,
+              targetMetadataForeignKey: 'webhookId',
+              targetId: mainPrincipal.webhookId,
+            })?.roleId
+          : undefined,
+      ].filter(isDefined);
   }
 };
 
@@ -219,7 +220,10 @@ const resolveApplicationPrincipal = ({
   const applicationRoleId = findApplicationRoleId({
     applicationId: applicationPrincipal.applicationId,
     userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
-      ? mainPrincipal.roleId
+      ? findWorkspaceMemberRoleId({
+          workspaceMemberId: mainPrincipal.workspaceMemberId,
+          roleMaps,
+        })
       : undefined,
     workspaceId,
     roleMaps,
@@ -315,24 +319,19 @@ export const resolvePermissionsPrincipalsWithRoles = ({
   }
 
   const workspaceId = authContext.workspace.id;
-  const mainRoleId = findMainPrincipalRoleId({
+  const roleIds = findMainPrincipalRoleIds({
     mainPrincipal: identities.mainPrincipal,
     workspaceId,
     roleMaps,
   });
 
-  if (!isDefined(mainRoleId)) {
+  if (!isNonEmptyArray(roleIds)) {
     return undefined;
   }
 
-  const roleIds = findMainPrincipalRoleIds({
-    mainPrincipal: identities.mainPrincipal,
-    roleMaps,
-  });
   const mainPrincipal: PermissionsMainPrincipalWithRole = {
     ...identities.mainPrincipal,
-    roleId: mainRoleId,
-    ...(isNonEmptyArray(roleIds) ? { roleIds } : {}),
+    roleIds,
   };
 
   const applicationPrincipal = resolveApplicationPrincipal({

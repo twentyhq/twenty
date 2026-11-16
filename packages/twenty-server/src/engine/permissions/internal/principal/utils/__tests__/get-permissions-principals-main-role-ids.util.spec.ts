@@ -6,7 +6,7 @@ describe('getPermissionsPrincipalsMainRoleIds', () => {
       getPermissionsPrincipalsMainRoleIds({
         mainPrincipal: {
           type: 'apiKey',
-          roleId: 'main-role',
+          roleIds: ['main-role'],
           apiKeyId: 'key-1',
         },
       }),
@@ -18,8 +18,8 @@ describe('getPermissionsPrincipalsMainRoleIds', () => {
       getPermissionsPrincipalsMainRoleIds({
         mainPrincipal: {
           type: 'workspaceMember',
-          roleId: 'main-role',
-          roleIds: ['personal-role', 'main-role'],
+
+          roleIds: ['main-role', 'personal-role', 'main-role'],
           workspaceMemberId: 'member-1',
         },
       }),

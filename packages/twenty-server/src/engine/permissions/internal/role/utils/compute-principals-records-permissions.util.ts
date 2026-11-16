@@ -57,10 +57,9 @@ export const computePrincipalsRecordsPermissions = ({
         : roleRecordsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      actingApplicationId:
-        roleId === actingApplication?.roleId
-          ? actingApplication.applicationId
-          : undefined,
+      actingApplicationId: actingApplication?.roleIds.includes(roleId)
+        ? actingApplication.applicationId
+        : undefined,
     });
   };
 

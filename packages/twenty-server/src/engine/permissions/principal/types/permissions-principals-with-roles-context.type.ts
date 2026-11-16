@@ -13,16 +13,14 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-type WithRoleIds<TPrincipal> = TPrincipal & {
-  roleIds?: string[];
-};
+type WithRoleIds<TPrincipal> = TPrincipal & { roleIds: string[] };
 
 export type PermissionsMainPrincipalWithRole = WithRoleIds<
-  | WithRoleId<PermissionsWorkspaceMemberPrincipal>
-  | WithRoleId<PermissionsApiKeyPrincipal>
-  | WithRoleId<PermissionsAgentPrincipal>
-  | WithRoleId<PermissionsWebhookPrincipal>
-  | WithRoleId<PermissionsApplicationIdPrincipal>
+  | PermissionsWorkspaceMemberPrincipal
+  | PermissionsApiKeyPrincipal
+  | PermissionsAgentPrincipal
+  | PermissionsWebhookPrincipal
+  | PermissionsApplicationIdPrincipal
   | PermissionsRolePrincipal
 >;
 

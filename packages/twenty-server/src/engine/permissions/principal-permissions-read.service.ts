@@ -54,7 +54,7 @@ export class PrincipalPermissionsReadService {
         'userWorkspaceRoleMap',
         'flatRoleMaps',
       ]);
-    const flatRole = findUserWorkspaceFlatRoleOrThrow({
+    findUserWorkspaceFlatRoleOrThrow({
       userWorkspaceId,
       userWorkspaceRoleMap,
       flatRoleMaps,
@@ -62,8 +62,7 @@ export class PrincipalPermissionsReadService {
 
     return buildRolePermissionsPrincipals({
       workspaceId,
-      roleId: flatRole.id,
-      roleIds: userWorkspaceRoleMap[userWorkspaceId],
+      roleIds: userWorkspaceRoleMap[userWorkspaceId] ?? [],
     });
   }
 

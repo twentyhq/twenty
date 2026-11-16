@@ -1,10 +1,10 @@
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 
 const mainPrincipal = {
-  type: 'workspaceMember',
-  roleId: 'user-role',
+  type: 'workspaceMember' as const,
+  roleIds: ['user-role', 'extra-role'],
   workspaceMemberId: 'member-1',
-} as const;
+};
 
 describe('getPermissionsPrincipalsLimitingRoleIds', () => {
   it('lists the agent and application roles', () => {
@@ -52,19 +52,16 @@ describe('getPermissionsPrincipalsLimitingRoleIds', () => {
     ).toEqual([]);
   });
 
-  it('keeps an application that only matches a system side effect role of the main principal', () => {
+  it('leaves out an application acting with any of the main roles', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal: {
-          ...mainPrincipal,
-          roleIds: ['extra-role'],
-        },
+        mainPrincipal,
         applicationPrincipal: {
           type: 'application',
           roleId: 'extra-role',
           applicationId: 'application-1',
         },
       }),
-    ).toEqual(['extra-role']);
+    ).toEqual([]);
   });
 });
