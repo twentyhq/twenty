@@ -182,23 +182,25 @@ export class DropWorkspaceWorkflowVersionObjectCommand extends ProvisionedWorksp
       return;
     }
 
-    if (hasCoreVersionLinks) {
-      await this.backfillCoreVersionAliases({
-        workspaceId,
-        dataSource,
-        schema,
-      });
-    }
+    const backfilledCoreVersionAliasCount = hasCoreVersionLinks
+      ? await this.backfillCoreVersionAliases({
+          workspaceId,
+          dataSource,
+          schema,
+        })
+      : 0;
 
-    if (hasRunLinks) {
-      await dataSource.query(
-        `UPDATE "${schema}"."workflowRun" "workflowRun"
-         SET "coreWorkflowVersionId" = "coreVersion".id,
-             "coreWorkflowId" = COALESCE("workflowRun"."coreWorkflowId", "coreVersion"."coreWorkflowId")
-         ${RUN_MISSING_CORE_VERSION_CONDITION}`,
-        [workspaceId],
-      );
-    }
+    const backfilledRunCount = hasRunLinks
+      ? await this.backfillRunCoreVersionIds({
+          workspaceId,
+          dataSource,
+          schema,
+        })
+      : 0;
+
+    this.logger.log(
+      `Backfilled ${backfilledCoreVersionAliasCount} core version alias(es) and ${backfilledRunCount} run core version id(s) for workspace ${workspaceId}`,
+    );
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -244,7 +246,7 @@ export class DropWorkspaceWorkflowVersionObjectCommand extends ProvisionedWorksp
     workspaceId: string;
     dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
     schema: string;
-  }): Promise<void> {
+  }): Promise<number> {
     const [, backfilledCount]: [unknown[], number] = await dataSource.query(
       `UPDATE core."workflowVersion" "coreVersion"
        SET "workspaceWorkflowVersionId" = "workspaceVersion".id
@@ -257,6 +259,28 @@ export class DropWorkspaceWorkflowVersionObjectCommand extends ProvisionedWorksp
         'workflowAutomatedTriggerMaps',
       ]);
     }
+
+    return backfilledCount;
+  }
+
+  private async backfillRunCoreVersionIds({
+    workspaceId,
+    dataSource,
+    schema,
+  }: {
+    workspaceId: string;
+    dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
+    schema: string;
+  }): Promise<number> {
+    const [, backfilledCount]: [unknown[], number] = await dataSource.query(
+      `UPDATE "${schema}"."workflowRun" "workflowRun"
+       SET "coreWorkflowVersionId" = "coreVersion".id,
+           "coreWorkflowId" = COALESCE("workflowRun"."coreWorkflowId", "coreVersion"."coreWorkflowId")
+       ${RUN_MISSING_CORE_VERSION_CONDITION}`,
+      [workspaceId],
+    );
+
+    return backfilledCount;
   }
 
   private async summarizeLegacyData({
@@ -309,10 +333,9 @@ export class DropWorkspaceWorkflowVersionObjectCommand extends ProvisionedWorksp
           query: `SELECT COUNT(*) AS count FROM "${schema}"."workflowRun" WHERE "workflowVersionId" IS NOT NULL`,
         })
       : 0;
-    const runCoreVersionBackfillCount = hasRunLinks
+    const runWithoutCoreVersionCount = hasRunLinks
       ? await countRows({
-          query: `SELECT COUNT(*) AS count FROM "${schema}"."workflowRun" "workflowRun" WHERE EXISTS (SELECT 1 ${RUN_MISSING_CORE_VERSION_CONDITION})`,
-          parameters: [workspaceId],
+          query: `SELECT COUNT(*) AS count FROM "${schema}"."workflowRun" WHERE "workflowVersionId" IS NOT NULL AND "coreWorkflowVersionId" IS NULL`,
         })
       : 0;
     const timelineActivityLinkCount = hasTimelineActivityLinks
@@ -321,7 +344,7 @@ export class DropWorkspaceWorkflowVersionObjectCommand extends ProvisionedWorksp
         })
       : 0;
 
-    return `${workflowVersionRecordCount} workflow version record(s), ${runLinkCount} run link(s), ${timelineActivityLinkCount} timeline activity link(s); ${coreVersionAliasBackfillCount} core version alias(es) and ${runCoreVersionBackfillCount} run core version id(s) backfilled first`;
+    return `${workflowVersionRecordCount} workflow version record(s), ${runLinkCount} run link(s) (${runWithoutCoreVersionCount} without a core version id), ${timelineActivityLinkCount} timeline activity link(s); ${coreVersionAliasBackfillCount} core version alias(es) to backfill first`;
   }
 
   private async runMigrationOrThrow(
