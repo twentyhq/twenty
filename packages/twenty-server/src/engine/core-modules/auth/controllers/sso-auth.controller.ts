@@ -226,7 +226,14 @@ export class SsoAuthController {
   }
 
   private async signInUpAndIssueLoginToken(
-    payload: { email: string; workspaceInviteHash?: string },
+    {
+      workspacePersonalInviteToken,
+      ...payload
+    }: {
+      email: string;
+      workspaceInviteHash?: string;
+      workspacePersonalInviteToken?: string;
+    },
     currentWorkspace: WorkspaceEntity,
     ssoContext?: {
       oidcTokenClaims?: Record<string, unknown>;
@@ -243,10 +250,26 @@ export class SsoAuthController {
     let invitation: AppTokenEntity | undefined;
 
     if (isDefined(existingUser)) {
-      await this.userService.hasUserAccessToWorkspaceOrThrow(
-        existingUser.id,
-        currentWorkspace.id,
-      );
+      // The identity provider is configured by the workspace, so it can assert any email.
+      // An existing account only joins through a personal invitation whose token was mailed to that address,
+      // and never when the account holds instance-level privileges the workspace's provider could then sign into.
+      const hasInstancePrivileges =
+        existingUser.canAccessFullAdminPanel || existingUser.canImpersonate;
+
+      invitation = hasInstancePrivileges
+        ? undefined
+        : await this.findPersonalInvitationForEmail({
+            currentWorkspace,
+            email: payload.email,
+            workspacePersonalInviteToken,
+          });
+
+      if (!isDefined(invitation)) {
+        await this.userService.hasUserAccessToWorkspaceOrThrow(
+          existingUser.id,
+          currentWorkspace.id,
+        );
+      }
     } else {
       invitation = await this.authService.findInvitationForSignInUp({
         currentWorkspace,
@@ -293,5 +316,35 @@ export class SsoAuthController {
         AuthProviderEnum.SSO,
       ),
     };
+  }
+
+  private async findPersonalInvitationForEmail({
+    currentWorkspace,
+    email,
+    workspacePersonalInviteToken,
+  }: {
+    currentWorkspace: WorkspaceEntity;
+    email: string;
+    workspacePersonalInviteToken?: string;
+  }): Promise<AppTokenEntity | undefined> {
+    if (!isNonEmptyString(workspacePersonalInviteToken)) {
+      return undefined;
+    }
+
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace,
+      workspacePersonalInviteToken,
+    });
+
+    const invitedEmail = invitation?.context?.email;
+
+    if (
+      !isNonEmptyString(invitedEmail) ||
+      invitedEmail.toLowerCase() !== email.toLowerCase()
+    ) {
+      return undefined;
+    }
+
+    return invitation;
   }
 }

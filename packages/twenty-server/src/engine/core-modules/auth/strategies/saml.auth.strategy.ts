@@ -23,8 +23,9 @@ import {
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
 
-const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
+const WORKSPACE_INVITE_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
+  workspacePersonalInviteToken: z.string().optional(),
 });
 
 const RELAY_STATE_BODY_SCHEMA = z.object({
@@ -42,7 +43,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
         return z.NEVER;
       }
     })
-    .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
+    .pipe(WORKSPACE_INVITE_PAYLOAD_SCHEMA),
 });
 
 const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
@@ -103,6 +104,7 @@ export type SamlRequest = Omit<
   user: {
     identityProviderId: string;
     workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     email: string;
   };
 };
@@ -157,33 +159,34 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
-    const queryParseResult = WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA.safeParse(
+    const queryParseResult = WORKSPACE_INVITE_PAYLOAD_SCHEMA.safeParse(
       req.query,
     );
-    const workspaceInviteHash = queryParseResult.success
-      ? queryParseResult.data.workspaceInviteHash
-      : undefined;
+    const { workspaceInviteHash, workspacePersonalInviteToken } =
+      queryParseResult.success ? queryParseResult.data : {};
 
     super.authenticate(req, {
       ...options,
-      ...(workspaceInviteHash !== undefined
+      ...(workspaceInviteHash !== undefined ||
+      workspacePersonalInviteToken !== undefined
         ? {
             additionalParams: {
-              RelayState: JSON.stringify({ workspaceInviteHash }),
+              RelayState: JSON.stringify({
+                workspaceInviteHash,
+                workspacePersonalInviteToken,
+              }),
             },
           }
         : {}),
     });
   }
 
-  private extractWorkspaceInviteHash(
+  private extractInvitePayload(
     req: Pick<Request, 'body'>,
-  ): string | undefined {
+  ): z.infer<typeof WORKSPACE_INVITE_PAYLOAD_SCHEMA> {
     const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
-    return result.success
-      ? result.data.RelayState.workspaceInviteHash
-      : undefined;
+    return result.success ? result.data.RelayState : {};
   }
 
   validate = async (
@@ -241,9 +244,13 @@ export class SamlAuthStrategy extends PassportStrategy(
         );
       }
 
+      const { workspaceInviteHash, workspacePersonalInviteToken } =
+        this.extractInvitePayload(request);
+
       done(null, {
         identityProviderId: request.params.identityProviderId,
-        workspaceInviteHash: this.extractWorkspaceInviteHash(request),
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
         email,
       });
     } catch (err) {

@@ -159,6 +159,26 @@ describe('SamlAuthStrategy.validate', () => {
     });
   });
 
+  it('extracts the personal invite token carried in RelayState', async () => {
+    const request = buildRequest({
+      paramsIdpId: IDP_A,
+      relayState: {
+        kind: 'json',
+        value: { workspacePersonalInviteToken: 'personal-invite-token' },
+      },
+    });
+    const done = jest.fn();
+
+    await strategy.validate(request, buildProfile(), done);
+
+    expect(done.mock.calls[0][0]).toBeNull();
+    expect(done.mock.calls[0][1]).toEqual({
+      identityProviderId: IDP_A,
+      workspacePersonalInviteToken: 'personal-invite-token',
+      email: VALID_EMAIL,
+    });
+  });
+
   it('ignores non-string workspaceInviteHash payloads in RelayState', async () => {
     const request = buildRequest({
       paramsIdpId: IDP_A,
