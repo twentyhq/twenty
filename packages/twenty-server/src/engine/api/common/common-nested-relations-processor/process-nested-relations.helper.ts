@@ -269,16 +269,17 @@ export class ProcessNestedRelationsHelper {
     }
 
     const relationType = sourceFieldMetadata.settings.relationType;
+    // A filtered relation loads the records of the relation it derives from, under its own name
+    const loadedRelationFieldName =
+      sourceFieldMetadata.computation?.kind === 'FILTERED_RELATION'
+        ? sourceFieldMetadata.computation.relationFieldName
+        : sourceFieldName;
     const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        // A filtered relation loads the records of the relation it derives from, under its own name
-        sourceFieldName:
-          sourceFieldMetadata.computation?.kind === 'FILTERED_RELATION'
-            ? sourceFieldMetadata.computation.relationFieldName
-            : sourceFieldName,
+        sourceFieldName: loadedRelationFieldName,
         fieldMaps,
       });
 
@@ -291,8 +292,16 @@ export class ProcessNestedRelationsHelper {
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
+    const isLoadedRelationUnreadable =
+      targetObjectRepository.recordReadRestrictions.unreadableFieldMetadataIds.has(
+        fieldMaps.fieldIdByName[loadedRelationFieldName],
+      );
+
     // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
-    if (await targetObjectRepository.isReadDisabled()) {
+    if (
+      isLoadedRelationUnreadable ||
+      (await targetObjectRepository.isReadDisabled())
+    ) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
         parentObjectRecordsAggregatedValues,

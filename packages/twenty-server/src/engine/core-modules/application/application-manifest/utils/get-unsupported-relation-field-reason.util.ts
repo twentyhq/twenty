@@ -5,7 +5,6 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type ExportableRelationFlatFieldMetadata = UniversalFlatFieldMetadata & {
-  relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;
   universalSettings: NonNullable<
     UniversalFlatFieldMetadata['universalSettings']
@@ -19,10 +18,14 @@ export const getUnsupportedRelationFieldReason = (
     return undefined;
   }
 
-  if (
+  // A filtered relation has no inverse field
+  const isMissingInverseField =
     !isDefined(
       flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-    ) ||
+    ) && flatFieldMetadata.computation?.kind !== 'FILTERED_RELATION';
+
+  if (
+    isMissingInverseField ||
     !isDefined(
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
     ) ||

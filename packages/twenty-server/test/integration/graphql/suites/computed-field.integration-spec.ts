@@ -409,6 +409,67 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
+    it('rejects a sort by an unknown field or direction, and follows the renaming of its sort field', async () => {
+      for (const orderBy of [
+        [{ missingField: 'AscNullsLast' }],
+        [{ dueAt: 'Upwards' }],
+      ]) {
+        const { errors } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name: 'sortedTasks',
+          type: FieldMetadataType.RELATION,
+          computation: {
+            kind: 'FILTERED_RELATION',
+            relationFieldName: 'tasks',
+            orderBy,
+          } as FieldMetadataComputation,
+          expectToFail: true,
+        });
+
+        expect(JSON.stringify(errors)).toContain('Invalid computation');
+      }
+
+      const findField = async (objectMetadataId: string, name: string) =>
+        (
+          await findManyFieldsMetadata({
+            expectToFail: false,
+            input: {
+              filter: { objectMetadataId: { eq: objectMetadataId } },
+              paging: { first: 100 },
+            },
+            gqlFields: 'id name computation',
+          })
+        ).fields.find(
+          ({ node }: { node: { name: string } }) => node.name === name,
+        )?.node;
+      const findUpcomingTasksOrderBy = async () =>
+        (await findField(projectObjectMetadataId, 'upcomingTasks')).computation
+          .orderBy;
+
+      const { id: dueAtFieldId } = await findField(
+        taskObjectMetadataId,
+        'dueAt',
+      );
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: dueAtFieldId, updatePayload: { name: 'dueOn' } },
+      });
+
+      expect(await findUpcomingTasksOrderBy()).toEqual([
+        { dueOn: 'AscNullsLast' },
+      ]);
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: dueAtFieldId, updatePayload: { name: 'dueAt' } },
+      });
+
+      expect(await findUpcomingTasksOrderBy()).toEqual([
+        { dueAt: 'AscNullsLast' },
+      ]);
+    });
+
     it('leaves the relation it derives from untouched', async () => {
       const [alphaProject] = await findProjects({
         gqlFields: 'tasks { totalCount }',

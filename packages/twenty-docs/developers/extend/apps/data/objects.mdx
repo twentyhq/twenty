@@ -231,7 +231,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 ```
 
 - **Rollup:** `operation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no `expression`; the others aggregate `expression`, evaluated on each related record. `filter` keeps only the related records for which it is true.
-- **Filtered relation:** `filter`, `orderBy` and `limit` narrow the relation named by `relationFieldName`. A query can narrow it further with its own arguments, never widen it.
+- **Filtered relation:** `filter`, `orderBy` and `limit` narrow the relation named by `relationFieldName`. A query can narrow it further with its own arguments, never widen it. `orderBy` lists sorts such as `{ dueAt: 'AscNullsLast' }`, each on one field of the related object, and `limit` goes from 1 to 60. The field has no inverse, so it takes no `relationTargetFieldMetadataUniversalIdentifier`, and it is empty for a reader who cannot read the relation it derives from.
 - **Expressions** reference fields by name:
   - a sub-field of a composite field as `amount.amountMicros`;
   - a field of a to-one relation as `company.name`;

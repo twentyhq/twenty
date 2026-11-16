@@ -274,6 +274,17 @@ describe('Computed field permissions (e2e)', () => {
       });
     }
 
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'bigTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        filter: 'points > 4',
+      },
+    });
+
     projectBudgetFieldMetadataId = await createField({
       objectMetadataId: taskObjectMetadataId,
       name: 'projectBudget',
@@ -425,6 +436,54 @@ describe('Computed field permissions (e2e)', () => {
       totalPoints: null,
       bigTaskCount: null,
     });
+  });
+
+  it('empties a filtered relation whose source relation or filter the member cannot read', async () => {
+    const findBigTasksAsMember = async () =>
+      (
+        await findOneAsMember({
+          objectMetadataSingularName: 'permProject',
+          recordId: PROJECT_ID,
+          gqlFields: 'bigTasks { edges { node { id } } }',
+        })
+      ).bigTasks;
+    const [{ id: tasksFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'tasks'`,
+      [projectObjectMetadataId],
+    );
+
+    expect(await findBigTasksAsMember()).toEqual({
+      edges: [{ node: { id: BIG_TASK_ID } }],
+    });
+
+    await setFieldReadable({
+      objectMetadataId: taskObjectMetadataId,
+      fieldMetadataId: pointsFieldMetadataId,
+      isReadable: false,
+    });
+
+    expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+
+    await setFieldReadable({
+      objectMetadataId: taskObjectMetadataId,
+      fieldMetadataId: pointsFieldMetadataId,
+      isReadable: true,
+    });
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: tasksFieldMetadataId,
+      isReadable: false,
+    });
+
+    try {
+      expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+    } finally {
+      await setFieldReadable({
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: tasksFieldMetadataId,
+        isReadable: true,
+      });
+    }
   });
 
   it('reads a field that a row-level rule hides on a record as empty on that record', async () => {

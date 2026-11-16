@@ -9,6 +9,7 @@ import {
   FIELD_METADATA_ROLLUP_OPERATIONS,
   type FieldMetadataComputation,
   FieldMetadataType,
+  OrderByDirection,
   RelationType,
 } from 'twenty-shared/types';
 import {
@@ -66,7 +67,16 @@ const isFieldMetadataComputation = (
         isNonEmptyString(computation.relationFieldName) &&
         isOptionalString(computation.filter) &&
         (isUndefined(computation.orderBy) ||
-          Array.isArray(computation.orderBy)) &&
+          (Array.isArray(computation.orderBy) &&
+            computation.orderBy.every(
+              (sort) =>
+                isPlainObject(sort) &&
+                Object.values(sort).every((direction) =>
+                  (Object.values(OrderByDirection) as unknown[]).includes(
+                    direction,
+                  ),
+                ),
+            ))) &&
         (isUndefined(computation.limit) || isNumber(computation.limit))
       );
     default:
@@ -132,6 +142,28 @@ const assertComputationCanBeEvaluated = ({
     );
   }
 
+  const assertReadFieldCanBeEvaluated = (
+    evaluatedObject: UniversalFlatObjectMetadata,
+    path: string[],
+  ): void => {
+    const { field: readField, columnType } = resolveComputedFieldPath({
+      path,
+      object: evaluatedObject,
+      schemaReader,
+    });
+
+    getComputedFieldValueType({ columnType, readablePath: path.join('.') });
+    assertComputationCanBeEvaluated({
+      field: readField,
+      schemaReader,
+      findObject,
+      readingFieldUniversalIdentifiers: [
+        ...readingFieldUniversalIdentifiers,
+        field.universalIdentifier,
+      ],
+    });
+  };
+
   const compileOn = (
     evaluatedObject: UniversalFlatObjectMetadata,
     expression: string,
@@ -156,19 +188,7 @@ const assertComputationCanBeEvaluated = ({
     });
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {
-      assertComputationCanBeEvaluated({
-        field: resolveComputedFieldPath({
-          path,
-          object: evaluatedObject,
-          schemaReader,
-        }).field,
-        schemaReader,
-        findObject,
-        readingFieldUniversalIdentifiers: [
-          ...readingFieldUniversalIdentifiers,
-          field.universalIdentifier,
-        ],
-      });
+      assertReadFieldCanBeEvaluated(evaluatedObject, path);
     }
 
     return type;
@@ -206,6 +226,12 @@ const assertComputationCanBeEvaluated = ({
       throw new ComputedFieldExpressionException(
         `A filtered relation must be a one-to-many relation to the same object as "${computation.relationFieldName}"`,
       );
+    }
+
+    for (const sortedFieldName of (computation.orderBy ?? []).flatMap(
+      Object.keys,
+    )) {
+      assertReadFieldCanBeEvaluated(relatedObject, [sortedFieldName]);
     }
 
     if (

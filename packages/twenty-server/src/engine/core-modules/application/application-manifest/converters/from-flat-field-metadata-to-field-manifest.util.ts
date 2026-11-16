@@ -86,8 +86,14 @@ const buildRelationProperties = (
   }
 
   return {
-    relationTargetFieldMetadataUniversalIdentifier:
+    ...(isDefined(
       flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+    )
+      ? {
+          relationTargetFieldMetadataUniversalIdentifier:
+            flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+        }
+      : {}),
     relationTargetObjectMetadataUniversalIdentifier:
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
     universalSettings: flatFieldMetadata.universalSettings,

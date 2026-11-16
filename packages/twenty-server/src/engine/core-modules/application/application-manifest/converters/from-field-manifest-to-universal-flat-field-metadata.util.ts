@@ -36,8 +36,13 @@ const getRelationTargetUniversalIdentifiers = (
     };
   }
 
+  // A filtered relation has no inverse field
+  const isMissingInverseField =
+    !fieldManifest.relationTargetFieldMetadataUniversalIdentifier &&
+    fieldManifest.computation?.kind !== 'FILTERED_RELATION';
+
   if (
-    !fieldManifest.relationTargetFieldMetadataUniversalIdentifier ||
+    isMissingInverseField ||
     !fieldManifest.relationTargetObjectMetadataUniversalIdentifier
   ) {
     throw new ApplicationException(
@@ -48,7 +53,7 @@ const getRelationTargetUniversalIdentifiers = (
 
   return {
     relationTargetFieldMetadataUniversalIdentifier:
-      fieldManifest.relationTargetFieldMetadataUniversalIdentifier,
+      fieldManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     relationTargetObjectMetadataUniversalIdentifier:
       fieldManifest.relationTargetObjectMetadataUniversalIdentifier,
   };

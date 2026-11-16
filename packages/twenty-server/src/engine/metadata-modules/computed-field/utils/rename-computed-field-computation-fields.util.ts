@@ -144,10 +144,21 @@ export const renameComputedFieldComputationFields = <
     ) ?? computation.relationFieldName;
 
   if (computation.kind === 'FILTERED_RELATION') {
+    const orderBy = computation.orderBy?.map((sort) =>
+      Object.fromEntries(
+        Object.entries(sort).map(([sortedPath, direction]) => [
+          renameExpression(sortedPath, sourceRelation.relatedObject) ??
+            sortedPath,
+          direction,
+        ]),
+      ),
+    );
+
     return {
       ...computation,
       relationFieldName,
       ...(isDefined(filter) ? { filter } : {}),
+      ...(isDefined(orderBy) ? { orderBy } : {}),
     };
   }
 

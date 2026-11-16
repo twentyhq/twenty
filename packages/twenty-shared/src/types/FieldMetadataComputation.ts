@@ -1,4 +1,4 @@
-import { type RecordGqlOperationOrderBy } from '@/types/RecordGqlOperationOrderBy';
+import { type OrderBy } from '@/types/OrderBy';
 
 export const FIELD_METADATA_ROLLUP_OPERATIONS = [
   'COUNT',
@@ -30,7 +30,8 @@ export type FieldMetadataFilteredRelationComputation = {
   kind: 'FILTERED_RELATION';
   relationFieldName: string;
   filter?: string;
-  orderBy?: RecordGqlOperationOrderBy;
+  // Each entry sorts by one field of the related records, named as in an expression
+  orderBy?: Record<string, OrderBy>[];
   limit?: number;
 };
 
