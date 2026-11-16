@@ -1,4 +1,7 @@
-import { type FieldMetadataRollupComputation } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataRollupComputation,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   getComputedFieldExpressionFieldPaths,
@@ -17,12 +20,14 @@ import {
 import { getComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type.util';
 import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
 import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { namespaceSqlParameters } from 'src/engine/twenty-orm/computed-column/utils/namespace-sql-parameters.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import {
+  quoteColumn,
+  renderNullifiedColumn,
+} from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
 // One permission rule for every computed value: it is null as soon as it reads a field or an object
@@ -43,6 +48,46 @@ const canReadObject = async (
   !repository.recordReadRestrictions.unreadableObjectMetadataIds.has(
     repository.flatObjectMetadata.id,
   ) && !(await repository.isReadDisabled());
+
+// A field that a row-level permission rule hides on a record reads as empty on that record
+const buildReadableColumnSql = async ({
+  repository,
+  alias,
+  flatFieldMetadata,
+  columnName,
+}: {
+  repository: WorkspaceRepository;
+  alias: string;
+  flatFieldMetadata: OrmFlatFieldMetadata;
+  columnName: string;
+}): Promise<SqlWithParameters> => {
+  const quotedColumn = quoteColumn(alias, columnName);
+  const hidingConditions = (
+    await repository.buildUnreadableFieldsSQLConditions({
+      objectMetadataId: repository.flatObjectMetadata.id,
+      tableAlias: alias,
+    })
+  )
+    .filter(({ fieldMetadataIds }) =>
+      fieldMetadataIds.includes(flatFieldMetadata.id),
+    )
+    .map(({ sqlCondition }) => sqlCondition);
+
+  if (hidingConditions.length === 0) {
+    return { sql: quotedColumn, parameters: {} };
+  }
+
+  return {
+    sql: renderNullifiedColumn(
+      quotedColumn,
+      hidingConditions.map(({ sql }) => sql),
+    ),
+    parameters: Object.assign(
+      {},
+      ...hidingConditions.map(({ parameters }) => parameters),
+    ),
+  };
+};
 
 // Row-level permissions of the subquery's object are applied before it is embedded:
 // a computed value only ever reflects records its reader could query directly
@@ -87,15 +132,21 @@ const buildFieldPathSql = async ({
       return undefined;
     }
 
-    const columnReference = quoteColumn(alias, columnName);
+    const column = await buildReadableColumnSql({
+      repository,
+      alias,
+      flatFieldMetadata: field,
+      columnName,
+    });
 
     return {
-      // An enum column only compares to values of its own type
-      sql: isEnumFieldMetadataType(columnType)
-        ? `${columnReference}::text`
-        : columnReference,
+      ...column,
+      // An enum or uuid column only compares to values of its own type
+      sql:
+        type === FieldMetadataType.TEXT && columnType !== FieldMetadataType.TEXT
+          ? `(${column.sql})::text`
+          : column.sql,
       type,
-      parameters: {},
     };
   }
 
@@ -121,15 +172,23 @@ const buildFieldPathSql = async ({
     return undefined;
   }
 
+  const joinColumn = await buildReadableColumnSql({
+    repository,
+    alias,
+    flatFieldMetadata: toOneRelationHop.relationField,
+    columnName: toOneRelationHop.joinColumnName,
+  });
+
   return {
     ...(await embedSubquery(
       targetRepository
         .createQueryBuilder(targetAlias)
         .select(targetFieldSql.sql, 'value')
-        .where(
-          `${quoteColumn(targetAlias, 'id')} = ${quoteColumn(alias, toOneRelationHop.joinColumnName)}`,
-        )
-        .setParameters(targetFieldSql.parameters),
+        .where(`${quoteColumn(targetAlias, 'id')} = ${joinColumn.sql}`)
+        .setParameters({
+          ...targetFieldSql.parameters,
+          ...joinColumn.parameters,
+        }),
     )),
     type,
   };

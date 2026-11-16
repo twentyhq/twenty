@@ -1898,7 +1898,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // Loops because the SQL of a computed column can itself read other computed columns
-  private async resolveComputedColumns(
+  async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     for (
@@ -1933,13 +1933,30 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
+  // The conditions under which row-level permission rules hide fields of a record
+  async buildUnreadableFieldsSQLConditions({
+    objectMetadataId,
+    tableAlias,
+  }: {
+    objectMetadataId: string;
+    tableAlias: string;
+  }): Promise<{ fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return [];
+    }
+
+    return this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
+      {
+        principals: this.resolvePermissionsPrincipalsOrThrow(),
+        objectMetadataId,
+        tableAlias,
+      },
+    );
+  }
+
   private async nullifyRlsRuleUnreadableFields(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
-    if (this.options.shouldBypassPermissionChecks) {
-      return;
-    }
-
     const aliases = [
       { alias: queryBuilder.alias, tableShape: this.options.tableShape },
       ...queryBuilder.getJoinAliases().map(({ name }) => ({
@@ -1957,13 +1974,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
 
       const unreadableFieldsSQLConditions =
-        await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
-          {
-            principals: this.resolvePermissionsPrincipalsOrThrow(),
-            objectMetadataId: tableShape.objectMetadataId,
-            tableAlias: alias,
-          },
-        );
+        await this.buildUnreadableFieldsSQLConditions({
+          objectMetadataId: tableShape.objectMetadataId,
+          tableAlias: alias,
+        });
 
       if (!isNonEmptyArray(unreadableFieldsSQLConditions)) {
         continue;

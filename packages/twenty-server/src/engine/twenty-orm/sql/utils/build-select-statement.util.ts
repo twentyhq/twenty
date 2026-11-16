@@ -96,6 +96,14 @@ export type SelectStatementState = {
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
+export const renderNullifiedColumn = (
+  quotedColumn: string,
+  nullifyConditions: string[],
+): string =>
+  `CASE WHEN ${nullifyConditions
+    .map((nullifyCondition) => `(${nullifyCondition})`)
+    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
+
 const PLAIN_COLUMN_EXPRESSION = /^"?(\w+)"?\."?(\w+)"?$/;
 
 const renderProjectedColumn = ({
@@ -118,9 +126,7 @@ const renderProjectedColumn = ({
     return quotedColumn;
   }
 
-  return `CASE WHEN ${nullifyConditions
-    .map((nullifyCondition) => `(${nullifyCondition})`)
-    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
+  return renderNullifiedColumn(quotedColumn, nullifyConditions);
 };
 
 export const normaliseColumnExpression = (
