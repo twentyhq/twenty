@@ -181,6 +181,17 @@ describe('compileComputedFieldExpressionToSql', () => {
     );
   });
 
+  it('widens a date to a date and time outside comparisons, whatever the order', () => {
+    expect(compile('coalesce(dueAt, createdAt)')).toMatchObject({
+      sql: `COALESCE(("record"."dueAt"::timestamp AT TIME ZONE 'UTC'), "record"."createdAt")`,
+      type: DATE_TIME,
+    });
+    expect(compile('coalesce(createdAt, dueAt)')).toMatchObject({
+      sql: `COALESCE("record"."createdAt", ("record"."dueAt"::timestamp AT TIME ZONE 'UTC'))`,
+      type: DATE_TIME,
+    });
+  });
+
   it('binds a date literal in a comparison as the shared parser reads it', () => {
     expect(
       compile("createdAt == '2026-09-23T10:41:00+02:00[Europe/Paris]'"),

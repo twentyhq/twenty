@@ -72,7 +72,8 @@ const assertOperandType = (
   }
 };
 
-// A text literal next to a date is read as a date; a comparison reads a date and a date and time as UTC days, as rules do
+// A text literal next to a date is read as a date. A comparison reads a date and a date and time as UTC days, as rules do;
+// elsewhere a date is widened to UTC midnight so no time is dropped
 const unifyOperands = ({
   operands,
   usage,
@@ -112,10 +113,17 @@ const unifyOperands = ({
     toDateOperand({ operand, context, usage }),
   );
 
-  const type =
-    isComparison && dateOperands.some((operand) => operand.type === DATE)
+  const dateTypes = dateOperands
+    .filter((_, index) => isDefined(operands[index].type))
+    .map((operand) => operand.type);
+
+  const type = isComparison
+    ? dateTypes.includes(DATE)
       ? DATE
-      : fieldType;
+      : DATE_TIME
+    : dateTypes.includes(DATE_TIME)
+      ? DATE_TIME
+      : DATE;
 
   return {
     sqls: dateOperands.map((operand) =>
