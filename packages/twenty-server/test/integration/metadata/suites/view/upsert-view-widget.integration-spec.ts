@@ -956,10 +956,13 @@ describe('upsertViewWidget', () => {
         },
       ];
 
-      const upsertFilter = (
-        value: string,
-        viewFilterGroupFields: { viewFilterGroupId?: string | null },
-      ) =>
+      const upsertFilter = ({
+        value,
+        viewFilterGroupFields,
+      }: {
+        value: string;
+        viewFilterGroupFields: { viewFilterGroupId?: string | null };
+      }) =>
         upsertViewWidget({
           expectToFail: false,
           input: {
@@ -985,14 +988,20 @@ describe('upsertViewWidget', () => {
           [filterId],
         );
 
-      await upsertFilter('before', { viewFilterGroupId: filterGroupId });
-      await upsertFilter('kept', {});
+      await upsertFilter({
+        value: 'before',
+        viewFilterGroupFields: { viewFilterGroupId: filterGroupId },
+      });
+      await upsertFilter({ value: 'kept', viewFilterGroupFields: {} });
 
       expect(await findFilter()).toEqual([
         { viewFilterGroupId: filterGroupId, value: 'kept' },
       ]);
 
-      await upsertFilter('detached', { viewFilterGroupId: null });
+      await upsertFilter({
+        value: 'detached',
+        viewFilterGroupFields: { viewFilterGroupId: null },
+      });
 
       expect(await findFilter()).toEqual([
         { viewFilterGroupId: null, value: 'detached' },
