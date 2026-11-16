@@ -1,3 +1,4 @@
+import { RecordTableLookupSSESubscribeEffect } from '@/object-record/record-column-lookup/components/RecordTableLookupSSESubscribeEffect';
 import { RecordTableDeactivateRecordTableRowEffect } from '@/object-record/record-table/components/RecordTableDeactivateRecordTableRowEffect';
 import { RecordTableEmptyHasNewRecordEffect } from '@/object-record/record-table/components/RecordTableEmptyHasNewRecordEffect';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
@@ -33,6 +34,7 @@ export const RecordTableBodyEffectsWrapper = ({
           <RecordTableVirtualizedFieldMetadataUpdateEffect />
         </>
       )}
+      <RecordTableLookupSSESubscribeEffect />
       <RecordSelectionEscapeHotkeyEffect />
       <RecordTableBodyFocusKeyboardEffect />
       <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
