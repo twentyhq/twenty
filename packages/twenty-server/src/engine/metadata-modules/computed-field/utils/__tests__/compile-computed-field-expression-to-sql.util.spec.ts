@@ -59,9 +59,44 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     ['createdAt < now', '("record"."createdAt" < NOW())', BOOLEAN],
     [
-      'daysSince(createdAt) > 30',
-      `(((NOW() AT TIME ZONE 'UTC')::date - "record"."createdAt"::date) > 30)`,
+      "dateDiff(createdAt, now, 'DAY') > 30",
+      `(((NOW() AT TIME ZONE 'UTC')::date - ("record"."createdAt" AT TIME ZONE 'UTC')::date) > 30)`,
       BOOLEAN,
+    ],
+    [
+      "dateDiff(createdAt, closedAt, 'MINUTE')",
+      `TRUNC(EXTRACT(EPOCH FROM ("record"."closedAt" - "record"."createdAt")) / 60)`,
+      NUMBER,
+    ],
+    [
+      "dateDiff(dueAt, today, 'QUARTER')",
+      `TRUNC((EXTRACT(YEAR FROM AGE((NOW() AT TIME ZONE 'UTC')::date, "record"."dueAt")) * 12 + EXTRACT(MONTH FROM AGE((NOW() AT TIME ZONE 'UTC')::date, "record"."dueAt"))) / 3.0)`,
+      NUMBER,
+    ],
+    [
+      "dateAdd(dueAt, quantity, 'MONTH')",
+      `("record"."dueAt" + make_interval(months => TRUNC("record"."quantity")::int))::date`,
+      DATE,
+    ],
+    [
+      "dateAdd(createdAt, 4, 'HOUR')",
+      `((("record"."createdAt" AT TIME ZONE 'UTC') + make_interval(hours => TRUNC(4)::int)) AT TIME ZONE 'UTC')`,
+      DATE_TIME,
+    ],
+    [
+      "dateTrunc(createdAt, 'WEEK')",
+      `(DATE_TRUNC('week', ("record"."createdAt" AT TIME ZONE 'UTC')) AT TIME ZONE 'UTC')`,
+      DATE_TIME,
+    ],
+    [
+      "dateTrunc(dueAt, 'MONTH')",
+      `DATE_TRUNC('month', "record"."dueAt"::timestamp)::date`,
+      DATE,
+    ],
+    [
+      "datePart(createdAt, 'DAY_OF_WEEK')",
+      `EXTRACT(ISODOW FROM ("record"."createdAt" AT TIME ZONE 'UTC'))`,
+      NUMBER,
     ],
     [
       'isDefined(closedAt) == true',
@@ -129,6 +164,33 @@ describe('compileComputedFieldExpressionToSql', () => {
     ['round(name)', '"round" expects number, not text'],
     ['amount and isActive', '"and" expects boolean, not number'],
   ])('rejects the types of %s', (expression, expectedMessage) => {
+    expect(() => compile(expression)).toThrow(expectedMessage);
+  });
+
+  it('reads a date text by its shape and drops the unit from the parameters', () => {
+    expect(
+      compile("dateDiff('2026-01-31', '2026-03-01T10:00:00Z', 'MONTH')"),
+    ).toEqual({
+      sql: `(EXTRACT(YEAR FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)) * 12 + EXTRACT(MONTH FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)))`,
+      type: NUMBER,
+      parameters: { text0: '2026-01-31', text1: '2026-03-01T10:00:00Z' },
+    });
+  });
+
+  it.each([
+    [
+      "dateDiff(createdAt, now, 'DAYS')",
+      `"DAYS" is not a date unit: use 'MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'QUARTER' or 'YEAR'`,
+    ],
+    [
+      'dateDiff(createdAt, now, name)',
+      `"dateDiff" needs its unit written as text, such as 'MINUTE'`,
+    ],
+    ["datePart(createdAt, 'WEEKDAY')", '"WEEKDAY" is not a date part'],
+    ["dateTrunc('soon', 'DAY')", '"dateTrunc" cannot read "soon" as a date'],
+    ["dateAdd(createdAt, name, 'DAY')", '"dateAdd" expects number, not text'],
+    ["dateDiff(amount, now, 'DAY')", '"dateDiff" expects date or date_time'],
+  ])('rejects %s', (expression, expectedMessage) => {
     expect(() => compile(expression)).toThrow(expectedMessage);
   });
 });

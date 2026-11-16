@@ -14,6 +14,8 @@ export const COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES = [
   'lower',
   'upper',
   'length',
-  'daysBetween',
-  'daysSince',
+  'dateDiff',
+  'dateAdd',
+  'dateTrunc',
+  'datePart',
 ] as const;

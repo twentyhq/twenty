@@ -1,0 +1,17 @@
+import { EXPRESSION_DATE_UNITS } from '@/constants/ExpressionDateUnits';
+import { type ExpressionDateUnit } from '@/types/ExpressionDateUnit';
+import { getExpressionDateLiteralErrorMessage } from '@/utils/expression-date/getExpressionDateLiteralErrorMessage';
+
+export const assertExpressionDateUnitOrThrow: (
+  unit: unknown,
+) => asserts unit is ExpressionDateUnit = (unit) => {
+  if (!(EXPRESSION_DATE_UNITS as readonly unknown[]).includes(unit)) {
+    throw new Error(
+      getExpressionDateLiteralErrorMessage({
+        value: unit,
+        kind: 'unit',
+        allowedValues: EXPRESSION_DATE_UNITS,
+      }),
+    );
+  }
+};

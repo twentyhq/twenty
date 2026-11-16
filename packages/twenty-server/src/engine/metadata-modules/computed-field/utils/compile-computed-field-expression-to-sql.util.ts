@@ -1,14 +1,22 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
-import { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from 'twenty-shared/constants';
+import {
+  COMPUTED_FIELD_EXPRESSION_MAX_LENGTH,
+  EXPRESSION_DATE_PARTS,
+  EXPRESSION_DATE_UNITS,
+} from 'twenty-shared/constants';
 import {
   type ComputedFieldExpressionFunctionName,
   type ComputedFieldExpressionInstruction,
+  type ExpressionDatePart,
+  type ExpressionDateUnit,
   FieldMetadataType,
 } from 'twenty-shared/types';
 import {
   assertUnreachable,
   getComputedFieldExpressionInstructions,
+  getExpressionDateLiteralErrorMessage,
   isDefined,
+  parseExpressionDate,
 } from 'twenty-shared/utils';
 
 import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
@@ -201,25 +209,243 @@ const compileTextFunction =
     return value(render(text.sql), type);
   };
 
-const compileDayCount =
-  (render: (dates: string[]) => string) =>
-  (functionArguments: ValueOperand[], usage: string) =>
-    value(
-      render(
-        functionArguments.map(
-          (functionArgument) =>
-            `${unifyOperands([value('', DATE), functionArgument], usage).sqls[1]}::date`,
-        ),
-      ),
-      NUMBER,
+type CompilationContext = {
+  resolveField: (path: string[]) => {
+    sql: string;
+    type: ComputedFieldValueType | undefined;
+  };
+  parameters: Record<string, unknown>;
+};
+
+type DateOperand = { sql: string; type: typeof DATE | typeof DATE_TIME };
+
+// A text literal is read the way the shared evaluator reads it: a day, or a date and time with an offset
+const toDateOperand = (
+  operand: ValueOperand,
+  context: CompilationContext,
+  usage: string,
+): DateOperand => {
+  if (isDefined(operand.textLiteralParameterName)) {
+    const text = context.parameters[operand.textLiteralParameterName];
+    const expressionDate = parseExpressionDate(text);
+
+    if (!isDefined(expressionDate)) {
+      throw new ComputedFieldExpressionException(
+        `${usage} cannot read "${String(text)}" as a date`,
+      );
+    }
+
+    return expressionDate.isDateOnly
+      ? { sql: `:${operand.textLiteralParameterName}::date`, type: DATE }
+      : {
+          sql: `:${operand.textLiteralParameterName}::timestamptz`,
+          type: DATE_TIME,
+        };
+  }
+
+  assertOperandType(operand, DATE_TYPES, usage);
+
+  return { sql: operand.sql, type: operand.type === DATE ? DATE : DATE_TIME };
+};
+
+// The unit changes the SQL, so it must be written in the expression, not read from a field
+const readLiteralOrThrow = <TLiteral extends string>(
+  operand: ValueOperand,
+  context: CompilationContext,
+  {
+    kind,
+    allowedValues,
+    usage,
+  }: {
+    kind: 'unit' | 'part';
+    allowedValues: readonly TLiteral[];
+    usage: string;
+  },
+): TLiteral => {
+  if (!isDefined(operand.textLiteralParameterName)) {
+    throw new ComputedFieldExpressionException(
+      `${usage} needs its ${kind} written as text, such as '${allowedValues[0]}'`,
     );
+  }
+
+  const literal = context.parameters[operand.textLiteralParameterName];
+
+  if (!(allowedValues as readonly unknown[]).includes(literal)) {
+    throw new ComputedFieldExpressionException(
+      getExpressionDateLiteralErrorMessage({
+        value: literal,
+        kind,
+        allowedValues,
+      }),
+    );
+  }
+
+  delete context.parameters[operand.textLiteralParameterName];
+
+  return literal as TLiteral;
+};
+
+const toUtcDateSql = ({ sql, type }: DateOperand): string =>
+  type === DATE ? sql : `(${sql} AT TIME ZONE 'UTC')::date`;
+
+const toInstantSql = ({ sql, type }: DateOperand): string =>
+  type === DATE ? `(${sql}::timestamp AT TIME ZONE 'UTC')` : sql;
+
+// Wall-clock time in UTC, so interval arithmetic and truncation ignore the session time zone
+const toUtcWallClockSql = ({ sql, type }: DateOperand): string =>
+  type === DATE ? `${sql}::timestamp` : `(${sql} AT TIME ZONE 'UTC')`;
+
+const POSTGRES_DATE_UNIT: Record<ExpressionDateUnit, string> = {
+  MINUTE: 'minute',
+  HOUR: 'hour',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  QUARTER: 'quarter',
+  YEAR: 'year',
+};
+
+const POSTGRES_DATE_PART: Record<ExpressionDatePart, string> = {
+  YEAR: 'YEAR',
+  QUARTER: 'QUARTER',
+  MONTH: 'MONTH',
+  WEEK: 'WEEK',
+  DAY: 'DAY',
+  DAY_OF_WEEK: 'ISODOW',
+  HOUR: 'HOUR',
+  MINUTE: 'MINUTE',
+};
+
+const readDateUnitOrThrow = (
+  operand: ValueOperand,
+  context: CompilationContext,
+  usage: string,
+): ExpressionDateUnit =>
+  readLiteralOrThrow(operand, context, {
+    kind: 'unit',
+    allowedValues: EXPRESSION_DATE_UNITS,
+    usage,
+  });
+
+// Same rules as the shared evaluator: minutes and hours are elapsed time, longer units count UTC calendar days and months
+const compileDateDiff = (
+  [fromOperand, toOperand, unitOperand]: ValueOperand[],
+  usage: string,
+  context: CompilationContext,
+): ValueOperand => {
+  const from = toDateOperand(fromOperand, context, usage);
+  const to = toDateOperand(toOperand, context, usage);
+  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+
+  switch (unit) {
+    case 'MINUTE':
+    case 'HOUR':
+      return value(
+        `TRUNC(EXTRACT(EPOCH FROM (${toInstantSql(to)} - ${toInstantSql(from)})) / ${unit === 'MINUTE' ? 60 : 3600})`,
+        NUMBER,
+      );
+    case 'DAY':
+      return value(`(${toUtcDateSql(to)} - ${toUtcDateSql(from)})`, NUMBER);
+    case 'WEEK':
+      return value(
+        `TRUNC((${toUtcDateSql(to)} - ${toUtcDateSql(from)}) / 7.0)`,
+        NUMBER,
+      );
+    case 'MONTH':
+    case 'QUARTER':
+    case 'YEAR': {
+      const age = `AGE(${toUtcDateSql(to)}, ${toUtcDateSql(from)})`;
+      const months = `(EXTRACT(YEAR FROM ${age}) * 12 + EXTRACT(MONTH FROM ${age}))`;
+
+      return value(
+        unit === 'MONTH'
+          ? months
+          : `TRUNC(${months} / ${unit === 'QUARTER' ? 3 : 12}.0)`,
+        NUMBER,
+      );
+    }
+    default:
+      return assertUnreachable(unit);
+  }
+};
+
+const compileDateAdd = (
+  [dateOperand, amountOperand, unitOperand]: ValueOperand[],
+  usage: string,
+  context: CompilationContext,
+): ValueOperand => {
+  const date = toDateOperand(dateOperand, context, usage);
+  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+
+  assertOperandType(amountOperand, [NUMBER], usage);
+
+  const amount = `TRUNC(${amountOperand.sql})::int`;
+  const interval =
+    unit === 'QUARTER'
+      ? `make_interval(months => ${amount} * 3)`
+      : `make_interval(${{ MINUTE: 'mins', HOUR: 'hours', DAY: 'days', WEEK: 'weeks', MONTH: 'months', YEAR: 'years' }[unit]} => ${amount})`;
+
+  if (date.type === DATE && unit !== 'MINUTE' && unit !== 'HOUR') {
+    return value(`(${date.sql} + ${interval})::date`, DATE);
+  }
+
+  return value(
+    `((${toUtcWallClockSql(date)} + ${interval}) AT TIME ZONE 'UTC')`,
+    DATE_TIME,
+  );
+};
+
+const compileDateTrunc = (
+  [dateOperand, unitOperand]: ValueOperand[],
+  usage: string,
+  context: CompilationContext,
+): ValueOperand => {
+  const date = toDateOperand(dateOperand, context, usage);
+  const unit = readDateUnitOrThrow(unitOperand, context, usage);
+
+  if (date.type === DATE) {
+    return unit === 'MINUTE' || unit === 'HOUR' || unit === 'DAY'
+      ? value(date.sql, DATE)
+      : value(
+          `DATE_TRUNC('${POSTGRES_DATE_UNIT[unit]}', ${date.sql}::timestamp)::date`,
+          DATE,
+        );
+  }
+
+  return value(
+    `(DATE_TRUNC('${POSTGRES_DATE_UNIT[unit]}', ${toUtcWallClockSql(date)}) AT TIME ZONE 'UTC')`,
+    DATE_TIME,
+  );
+};
+
+const compileDatePart = (
+  [dateOperand, partOperand]: ValueOperand[],
+  usage: string,
+  context: CompilationContext,
+): ValueOperand => {
+  const date = toDateOperand(dateOperand, context, usage);
+  const part = readLiteralOrThrow(partOperand, context, {
+    kind: 'part',
+    allowedValues: EXPRESSION_DATE_PARTS,
+    usage,
+  });
+
+  return value(
+    `EXTRACT(${POSTGRES_DATE_PART[part]} FROM ${toUtcWallClockSql(date)})`,
+    NUMBER,
+  );
+};
 
 const FUNCTIONS: Record<
   ComputedFieldExpressionFunctionName,
   {
     minimumArgumentCount: number;
     maximumArgumentCount: number;
-    compile: (functionArguments: ValueOperand[], usage: string) => ValueOperand;
+    compile: (
+      functionArguments: ValueOperand[],
+      usage: string,
+      context: CompilationContext,
+    ) => ValueOperand;
   }
 > = {
   if: {
@@ -306,17 +532,25 @@ const FUNCTIONS: Record<
     maximumArgumentCount: 1,
     compile: compileTextFunction((text) => `CHAR_LENGTH(${text})`, NUMBER),
   },
-  daysBetween: {
+  dateDiff: {
+    minimumArgumentCount: 3,
+    maximumArgumentCount: 3,
+    compile: compileDateDiff,
+  },
+  dateAdd: {
+    minimumArgumentCount: 3,
+    maximumArgumentCount: 3,
+    compile: compileDateAdd,
+  },
+  dateTrunc: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: compileDayCount(([from, to]) => `(${to} - ${from})`),
+    compile: compileDateTrunc,
   },
-  daysSince: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: 1,
-    compile: compileDayCount(
-      ([from]) => `(${VARIABLE_BY_NAME.today.sql} - ${from})`,
-    ),
+  datePart: {
+    minimumArgumentCount: 2,
+    maximumArgumentCount: 2,
+    compile: compileDatePart,
   },
 };
 
@@ -324,14 +558,6 @@ const isFunctionName = (
   name: string,
 ): name is ComputedFieldExpressionFunctionName =>
   Object.prototype.hasOwnProperty.call(FUNCTIONS, name);
-
-type CompilationContext = {
-  resolveField: (path: string[]) => {
-    sql: string;
-    type: ComputedFieldValueType | undefined;
-  };
-  parameters: Record<string, unknown>;
-};
 
 const compileLiteral = (
   literal: unknown,
@@ -526,7 +752,9 @@ const compileInstructions = (
           );
         }
 
-        operands.push(compile(functionArguments, `"${functionName}"`));
+        operands.push(
+          compile(functionArguments, `"${functionName}"`, context),
+        );
         break;
       }
       default:
