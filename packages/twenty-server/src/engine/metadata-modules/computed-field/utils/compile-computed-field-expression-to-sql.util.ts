@@ -1,3 +1,4 @@
+import { isValid, parseISO } from 'date-fns';
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from 'twenty-shared/constants';
 import {
@@ -84,7 +85,7 @@ const unifyOperands = (
       // Postgres would fail the cast on every read, so a text that is not a date is refused when saved
       if (
         !ISO_DATE_LITERAL.test(operand.textLiteral ?? '') ||
-        Number.isNaN(Date.parse(operand.textLiteral ?? ''))
+        !isValid(parseISO(operand.textLiteral ?? ''))
       ) {
         throw new ComputedFieldExpressionException(
           `${usage} compares a date with '${operand.textLiteral}', which is not a date such as '2030-01-31'`,
