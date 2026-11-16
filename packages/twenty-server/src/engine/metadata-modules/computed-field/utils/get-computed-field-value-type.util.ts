@@ -19,7 +19,6 @@ const VALUE_TYPE_BY_COLUMN_TYPE: Partial<
   [FieldMetadataType.RATING]: FieldMetadataType.TEXT,
 };
 
-// The type an expression sees for a column; lists, JSON and search vectors have no scalar value
 export const getComputedFieldValueType = ({
   columnType,
   readablePath,
