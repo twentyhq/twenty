@@ -4016,7 +4016,6 @@ export type Mutation = {
   updateWorkspaceIframeMediaPermissions: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
-  upgradeApplication: Scalars['Boolean']['output'];
   /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -5504,12 +5503,6 @@ export type MutationUpdateWorkspaceMemberRoleArgs = {
 
 export type MutationUpdateWorkspaceMemberSettingsArgs = {
   input: UpdateWorkspaceMemberSettingsInput;
-};
-
-
-export type MutationUpgradeApplicationArgs = {
-  appRegistrationId: Scalars['String']['input'];
-  targetVersion: Scalars['String']['input'];
 };
 
 
