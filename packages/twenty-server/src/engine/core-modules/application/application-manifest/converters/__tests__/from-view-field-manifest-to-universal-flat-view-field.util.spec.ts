@@ -27,6 +27,7 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
     expect(result.position).toBe(0);
     expect(result.aggregateOperation).toBeNull();
     expect(result.viewFieldGroupUniversalIdentifier).toBeNull();
+    expect(result.relationAggregateOperation).toBeNull();
   });
 
   it('should respect explicit values', () => {
@@ -39,6 +40,7 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
         size: 200,
         aggregateOperation: AggregateOperations.COUNT,
         viewFieldGroupUniversalIdentifier: 'vfg-uuid-1',
+        relationAggregateOperation: AggregateOperations.SUM,
       },
       viewUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -50,5 +52,6 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
     expect(result.position).toBe(5);
     expect(result.aggregateOperation).toBe(AggregateOperations.COUNT);
     expect(result.viewFieldGroupUniversalIdentifier).toBe('vfg-uuid-1');
+    expect(result.relationAggregateOperation).toBe(AggregateOperations.SUM);
   });
 });

@@ -1,20 +1,22 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
-import { FieldMetadataType } from 'twenty-shared/types';
 
-// A lookup shows one value of the related record, never another relation
-export const getLookupTargetFieldMetadataItems = (
+export const getRelationTargetFieldMetadataItems = ({
+  relationObjectMetadataItem,
+  isEligible,
+}: {
   relationObjectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'readableFields'
-  >,
-) =>
+  >;
+  isEligible: (fieldMetadataItem: FieldMetadataItem) => boolean;
+}) =>
   relationObjectMetadataItem.readableFields
     .filter(
       (fieldMetadataItem) =>
         isActiveFieldMetadataItem({ fieldMetadata: fieldMetadataItem }) &&
-        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-        fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION,
+        isEligible(fieldMetadataItem),
     )
     .toSorted(
       (fieldMetadataItemA, fieldMetadataItemB) =>

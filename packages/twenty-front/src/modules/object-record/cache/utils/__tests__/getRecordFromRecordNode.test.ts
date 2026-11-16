@@ -1,3 +1,4 @@
+import { RELATION_AGGREGATE_VALUES_RECORD_KEY } from '@/object-record/cache/constants/RelationAggregateValuesRecordKey';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 
 describe('getRecordFromRecordNode', () => {
@@ -136,5 +137,43 @@ describe('getRecordFromRecordNode', () => {
     const result = getRecordFromRecordNode({ recordNode });
 
     expect(result).toMatchSnapshot();
+  });
+
+  it('keeps the aggregates of a connection beside its records', () => {
+    const result = getRecordFromRecordNode({
+      recordNode: {
+        id: '123',
+        __typename: 'Company',
+        people: {
+          __typename: 'PersonConnection',
+          totalCount: 2,
+          edges: [{ node: { id: '456', __typename: 'Person' } }],
+        },
+        opportunities: {
+          __typename: 'OpportunityConnection',
+          sumAmountAmountMicros: null,
+          edges: [],
+        },
+        noteTargets: { __typename: 'NoteTargetConnection', edges: [] },
+      },
+    });
+
+    expect(result.people).toEqual([{ id: '456', __typename: 'Person' }]);
+    expect(result[RELATION_AGGREGATE_VALUES_RECORD_KEY]).toEqual({
+      people: { totalCount: 2 },
+      opportunities: { sumAmountAmountMicros: null },
+    });
+  });
+
+  it('adds no aggregates when no connection selects any', () => {
+    const result = getRecordFromRecordNode({
+      recordNode: {
+        id: '123',
+        __typename: 'Company',
+        people: { edges: [] },
+      },
+    });
+
+    expect(result).not.toHaveProperty(RELATION_AGGREGATE_VALUES_RECORD_KEY);
   });
 });

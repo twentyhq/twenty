@@ -30,4 +30,7 @@ export const fromFlatViewFieldToViewFieldManifest = ({
           flatViewField.relationTargetFieldMetadataUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatViewField.relationAggregateOperation)
+    ? { relationAggregateOperation: flatViewField.relationAggregateOperation }
+    : {}),
 });

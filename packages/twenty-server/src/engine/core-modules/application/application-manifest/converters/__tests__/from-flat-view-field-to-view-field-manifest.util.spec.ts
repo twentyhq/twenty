@@ -25,6 +25,7 @@ const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
   isCanonical: false,
   relationTargetFieldMetadataUniversalIdentifier:
     '66666666-6666-4666-8666-666666666666',
+  relationAggregateOperation: AggregateOperations.MAX,
 };
 
 const MINIMAL_VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -71,6 +72,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       position: 3,
       aggregateOperation: AggregateOperations.SUM,
       relationTargetFieldMetadataUniversalIdentifier: null,
+      relationAggregateOperation: AggregateOperations.COUNT,
       isActive: true,
       isSystemSideEffect: false,
       isCanonical: true,
@@ -97,6 +99,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
     expect(viewFieldManifest).not.toHaveProperty(
       'viewFieldGroupUniversalIdentifier',
     );
+    expect(viewFieldManifest).not.toHaveProperty('relationAggregateOperation');
   });
 });
 

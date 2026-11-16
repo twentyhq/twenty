@@ -1,27 +1,29 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { buildRecordTableLookupColumn } from '@/object-record/record-table/utils/buildRecordTableLookupColumn';
+import {
+  buildRecordTableRelationColumn,
+  type RecordTableRelationColumnTarget,
+} from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useAddRecordTableLookupColumn = (recordTableId: string) => {
+export const useAddRecordTableRelationColumn = (recordTableId: string) => {
   const store = useStore();
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewFieldApiCreate } = usePerformViewFieldApiPersist();
 
-  const addRecordTableLookupColumn = useCallback(
+  const addRecordTableRelationColumn = useCallback(
     async ({
       relationFieldMetadataItemId,
-      relationTargetFieldMetadataId,
+      ...relationColumnTarget
     }: {
       relationFieldMetadataItemId: string;
-      relationTargetFieldMetadataId: string;
-    }) => {
+    } & RecordTableRelationColumnTarget) => {
       const currentViewId = store.get(currentViewIdCallbackState);
 
       if (!isDefined(currentViewId)) {
@@ -33,35 +35,38 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
           instanceId: recordTableId,
         });
 
-      const lookupColumn = buildRecordTableLookupColumn({
+      const relationColumn = buildRecordTableRelationColumn({
         relationFieldMetadataItemId,
-        relationTargetFieldMetadataId,
+        ...relationColumnTarget,
         recordFields: store.get(currentRecordFieldsAtom),
       });
 
       store.set(currentRecordFieldsAtom, (recordFields) => [
         ...recordFields,
-        lookupColumn,
+        relationColumn,
       ]);
 
       const result = await performViewFieldApiCreate({
         inputs: [
           {
-            id: lookupColumn.id,
+            id: relationColumn.id,
             viewId: currentViewId,
-            fieldMetadataId: lookupColumn.fieldMetadataItemId,
-            relationTargetFieldMetadataId,
+            fieldMetadataId: relationColumn.fieldMetadataItemId,
+            relationTargetFieldMetadataId:
+              relationColumn.relationTargetFieldMetadataId,
+            relationAggregateOperation:
+              relationColumn.relationAggregateOperation,
             isCanonical: false,
-            isVisible: lookupColumn.isVisible,
-            position: lookupColumn.position,
-            size: lookupColumn.size,
+            isVisible: relationColumn.isVisible,
+            position: relationColumn.position,
+            size: relationColumn.size,
           },
         ],
       });
 
       if (result.status === 'failed') {
         store.set(currentRecordFieldsAtom, (recordFields) =>
-          recordFields.filter(({ id }) => id !== lookupColumn.id),
+          recordFields.filter(({ id }) => id !== relationColumn.id),
         );
       }
 
@@ -75,5 +80,5 @@ export const useAddRecordTableLookupColumn = (recordTableId: string) => {
     ],
   );
 
-  return { addRecordTableLookupColumn };
+  return { addRecordTableRelationColumn };
 };

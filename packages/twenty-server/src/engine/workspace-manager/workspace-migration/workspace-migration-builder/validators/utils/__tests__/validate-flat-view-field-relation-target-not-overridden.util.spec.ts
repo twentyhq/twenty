@@ -1,3 +1,5 @@
+import { AggregateOperations } from 'twenty-shared/types';
+
 import { validateFlatViewFieldRelationTargetNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util';
 
 const WORKSPACE_CUSTOM_APPLICATION = 'workspace-custom-application';
@@ -7,18 +9,24 @@ const validate = ({
   ownerApplication,
   callerApplication,
   relationTargetFieldMetadataUniversalIdentifier,
+  relationAggregateOperation = null,
 }: {
   ownerApplication: string;
   callerApplication: string;
   relationTargetFieldMetadataUniversalIdentifier: string | null;
+  relationAggregateOperation?: AggregateOperations | null;
 }) =>
   validateFlatViewFieldRelationTargetNotOverridden({
     existingFlatViewField: {
       applicationUniversalIdentifier: ownerApplication,
       isSystemSideEffect: false,
       relationTargetFieldMetadataUniversalIdentifier: 'name-field',
+      relationAggregateOperation: null,
     },
-    updatedFlatViewField: { relationTargetFieldMetadataUniversalIdentifier },
+    updatedFlatViewField: {
+      relationTargetFieldMetadataUniversalIdentifier,
+      relationAggregateOperation,
+    },
     buildOptions: {
       applicationUniversalIdentifier: callerApplication,
       workspaceCustomApplicationUniversalIdentifier:
@@ -43,6 +51,17 @@ describe('validateFlatViewFieldRelationTargetNotOverridden', () => {
         ownerApplication: OTHER_APPLICATION,
         callerApplication: WORKSPACE_CUSTOM_APPLICATION,
         relationTargetFieldMetadataUniversalIdentifier: null,
+      }),
+    ).toHaveLength(1);
+  });
+
+  it('rejects a workspace change to the aggregate operation of an application-owned column', () => {
+    expect(
+      validate({
+        ownerApplication: OTHER_APPLICATION,
+        callerApplication: WORKSPACE_CUSTOM_APPLICATION,
+        relationTargetFieldMetadataUniversalIdentifier: 'name-field',
+        relationAggregateOperation: AggregateOperations.MAX,
       }),
     ).toHaveLength(1);
   });

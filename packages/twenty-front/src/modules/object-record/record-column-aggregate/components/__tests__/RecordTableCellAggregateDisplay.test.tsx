@@ -1,0 +1,142 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
+
+import { RELATION_AGGREGATE_VALUES_RECORD_KEY } from '@/object-record/cache/constants/RelationAggregateValuesRecordKey';
+import { RecordTableCellAggregateDisplay } from '@/object-record/record-column-aggregate/components/RecordTableCellAggregateDisplay';
+import { getRecordFieldAggregateTarget } from '@/object-record/record-column-aggregate/utils/getRecordFieldAggregateTarget';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { isDefined } from 'twenty-shared/utils';
+
+const RECORD_ID = 'company-1';
+
+const company = getMockObjectMetadataItemOrThrow('company');
+const amountField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+  fieldName: 'amount',
+});
+
+const getAggregateTargetOrThrow = ({
+  fieldName,
+  recordField,
+}: {
+  fieldName: string;
+  recordField: Pick<
+    RecordField,
+    'relationAggregateOperation' | 'relationTargetFieldMetadataId'
+  >;
+}) => {
+  const aggregateTarget = getRecordFieldAggregateTarget({
+    recordField,
+    fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: company,
+      fieldName,
+    }),
+    objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+  });
+
+  if (!isDefined(aggregateTarget)) {
+    throw new Error('Aggregate target not found');
+  }
+
+  return aggregateTarget;
+};
+
+const renderAggregateDisplay = (
+  aggregateTarget: ReturnType<typeof getAggregateTargetOrThrow>,
+) => {
+  const store = createStore();
+
+  store.set(recordStoreFamilyState.atomFamily(RECORD_ID), {
+    id: RECORD_ID,
+    __typename: 'Company',
+    [RELATION_AGGREGATE_VALUES_RECORD_KEY]: {
+      people: { totalCount: 3 },
+      opportunities: { sumAmountAmountMicros: 1_500_000_000 },
+    },
+  });
+
+  return render(
+    <I18nProvider i18n={i18n}>
+      <JotaiProvider store={store}>
+        <RecordTableRowContextProvider
+          value={{
+            recordId: RECORD_ID,
+            objectNameSingular: 'company',
+            pathToShowPage: '',
+            isSelected: false,
+            restrictedFieldNames: [],
+          }}
+        >
+          <RecordTableCellAggregateDisplay aggregateTarget={aggregateTarget} />
+        </RecordTableRowContextProvider>
+      </JotaiProvider>
+    </I18nProvider>,
+  );
+};
+
+describe('RecordTableCellAggregateDisplay', () => {
+  it('shows the number of related records', () => {
+    renderAggregateDisplay(
+      getAggregateTargetOrThrow({
+        fieldName: 'people',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.COUNT,
+        },
+      }),
+    );
+
+    expect(screen.getByText('3')).toBeInTheDocument();
+  });
+
+  it('shows a currency total from its micros', () => {
+    renderAggregateDisplay(
+      getAggregateTargetOrThrow({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.SUM,
+          relationTargetFieldMetadataId: amountField.id,
+        },
+      }),
+    );
+
+    expect(screen.getByText('1.5k')).toBeInTheDocument();
+  });
+
+  it('stays empty when the aggregate has no value', () => {
+    const { container } = renderAggregateDisplay(
+      getAggregateTargetOrThrow({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.AVG,
+          relationTargetFieldMetadataId: amountField.id,
+        },
+      }),
+    );
+
+    expect(container).toHaveTextContent(/^$/);
+  });
+
+  it('hides the aggregate of a field the user cannot read', () => {
+    renderAggregateDisplay({
+      ...getAggregateTargetOrThrow({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.SUM,
+          relationTargetFieldMetadataId: amountField.id,
+        },
+      }),
+      isAggregatedFieldReadable: false,
+    });
+
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+    expect(screen.queryByText('1.5k')).not.toBeInTheDocument();
+  });
+});

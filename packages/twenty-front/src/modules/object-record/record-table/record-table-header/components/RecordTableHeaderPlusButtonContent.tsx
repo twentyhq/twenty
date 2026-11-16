@@ -1,8 +1,10 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
-import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
-import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
+import { RecordTableLookupColumnPage } from '@/object-record/record-column-lookup/components/RecordTableLookupColumnPage';
+import { RecordTableAggregateColumnPages } from '@/object-record/record-column-aggregate/components/RecordTableAggregateColumnPages';
+import { useAddRecordTableRelationColumn } from '@/object-record/record-table/hooks/useAddRecordTableRelationColumn';
 import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
@@ -56,8 +58,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
   });
 
   const canConfigureColumns = useCanConfigureRecordTableColumns();
-  const { addRecordTableLookupColumn } =
-    useAddRecordTableLookupColumn(recordTableId);
+  const { addRecordTableRelationColumn } =
+    useAddRecordTableRelationColumn(recordTableId);
 
   const isFieldVisible = (fieldMetadataItem: FieldMetadataItem) =>
     isDefined(
@@ -67,18 +69,20 @@ export const RecordTableHeaderPlusButtonContent = () => {
       }),
     );
 
-  // A many-to-one relation stays listed once shown, to reach its lookup columns
-  const canAddLookupColumns = (fieldMetadataItem: FieldMetadataItem) =>
-    canConfigureColumns && isPlainManyToOneRelationField(fieldMetadataItem);
+  // A relation stays listed once shown, to reach its lookup or aggregate columns
+  const canAddRelationColumns = (fieldMetadataItem: FieldMetadataItem) =>
+    canConfigureColumns &&
+    (isPlainManyToOneRelationField(fieldMetadataItem) ||
+      isPlainOneToManyRelationField(fieldMetadataItem));
 
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItem) =>
       !isFieldVisible(fieldMetadataItem) ||
-      canAddLookupColumns(fieldMetadataItem),
+      canAddRelationColumns(fieldMetadataItem),
   );
 
-  const lookupRelationFieldMetadataItems =
-    availableFieldMetadataItemsToShow.filter(canAddLookupColumns);
+  const relationColumnFieldMetadataItems =
+    availableFieldMetadataItemsToShow.filter(canAddRelationColumns);
 
   const filteredFieldMetadataItems = availableFieldMetadataItemsToShow.filter(
     (fieldMetadataItem) => {
@@ -115,7 +119,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
         <Dropdown.Section scrollable>
           {isNonEmptyArray(filteredFieldMetadataItems) ? (
             filteredFieldMetadataItems.map((fieldMetadataItem) =>
-              canAddLookupColumns(fieldMetadataItem) ? (
+              canAddRelationColumns(fieldMetadataItem) ? (
                 <Dropdown.ActionItem
                   key={fieldMetadataItem.id}
                   page={fieldMetadataItem.id}
@@ -164,44 +168,51 @@ export const RecordTableHeaderPlusButtonContent = () => {
           >{t`Customize fields`}</Dropdown.ActionItem>
         </Dropdown.Section>
       </Dropdown.Page>
-      {lookupRelationFieldMetadataItems.map((relationFieldMetadataItem) => (
-        <Dropdown.Page
-          key={relationFieldMetadataItem.id}
-          id={relationFieldMetadataItem.id}
-        >
-          <RecordTableLookupTargetFieldSelectMenu
+      {relationColumnFieldMetadataItems.map((relationFieldMetadataItem) => {
+        const relationItem = !isFieldVisible(relationFieldMetadataItem) && (
+          <>
+            <Dropdown.Section scrollable={false}>
+              <Dropdown.ActionItem
+                onClick={() =>
+                  handleFieldMetadataItemMenuItemClick(
+                    relationFieldMetadataItem,
+                  )
+                }
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={getIcon(relationFieldMetadataItem.icon)}
+                  />
+                }
+              >
+                {relationFieldMetadataItem.label}
+              </Dropdown.ActionItem>
+            </Dropdown.Section>
+            <Dropdown.Separator />
+          </>
+        );
+
+        const RelationColumnPages = isPlainOneToManyRelationField(
+          relationFieldMetadataItem,
+        )
+          ? RecordTableAggregateColumnPages
+          : RecordTableLookupColumnPage;
+
+        return (
+          <RelationColumnPages
+            key={relationFieldMetadataItem.id}
+            pageId={relationFieldMetadataItem.id}
             relationFieldMetadataItem={relationFieldMetadataItem}
-            onSelect={(lookupTargetFieldMetadataItem) =>
-              addRecordTableLookupColumn({
+            onSelect={(relationColumnTarget) =>
+              addRecordTableRelationColumn({
                 relationFieldMetadataItemId: relationFieldMetadataItem.id,
-                relationTargetFieldMetadataId: lookupTargetFieldMetadataItem.id,
+                ...relationColumnTarget,
               })
             }
           >
-            {!isFieldVisible(relationFieldMetadataItem) && (
-              <>
-                <Dropdown.Section scrollable={false}>
-                  <Dropdown.ActionItem
-                    onClick={() =>
-                      handleFieldMetadataItemMenuItemClick(
-                        relationFieldMetadataItem,
-                      )
-                    }
-                    startIcon={
-                      <SelectOptionIcon
-                        Icon={getIcon(relationFieldMetadataItem.icon)}
-                      />
-                    }
-                  >
-                    {relationFieldMetadataItem.label}
-                  </Dropdown.ActionItem>
-                </Dropdown.Section>
-                <Dropdown.Separator />
-              </>
-            )}
-          </RecordTableLookupTargetFieldSelectMenu>
-        </Dropdown.Page>
-      ))}
+            {relationItem}
+          </RelationColumnPages>
+        );
+      })}
     </>
   );
 };

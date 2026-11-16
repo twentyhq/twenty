@@ -1,3 +1,4 @@
+import { type RecordTableRelationColumnTarget } from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -12,8 +13,10 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
-import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
-import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
+import { useAddRecordTableRelationColumn } from '@/object-record/record-table/hooks/useAddRecordTableRelationColumn';
+import { RecordTableAggregateColumnPages } from '@/object-record/record-column-aggregate/components/RecordTableAggregateColumnPages';
+import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
+import { RecordTableLookupColumnPage } from '@/object-record/record-column-lookup/components/RecordTableLookupColumnPage';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
@@ -30,6 +33,7 @@ import {
 } from 'twenty-ui/icon';
 
 const LOOKUP_TARGET_PAGE_ID = 'lookup-target';
+const AGGREGATE_TARGET_PAGE_ID = 'aggregate-target';
 
 type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -126,15 +130,29 @@ export const RecordTableColumnHeadDropdownMenu = ({
     isCanonical &&
     isDefined(fieldMetadataItem) &&
     isPlainManyToOneRelationField(fieldMetadataItem);
+  const canAddAggregateColumn =
+    canConfigureColumns &&
+    isCanonical &&
+    isDefined(fieldMetadataItem) &&
+    isPlainOneToManyRelationField(fieldMetadataItem);
   const canDeleteColumn = canPersistChanges && !isCanonical;
   const canHide = isLabelIdentifier !== true && isCanonical;
 
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
-  const { addRecordTableLookupColumn } =
-    useAddRecordTableLookupColumn(recordTableId);
+  const { addRecordTableRelationColumn } =
+    useAddRecordTableRelationColumn(recordTableId);
+
+  const handleRelationColumnSelect = (
+    relationColumnTarget: RecordTableRelationColumnTarget,
+  ) =>
+    addRecordTableRelationColumn({
+      relationFieldMetadataItemId: recordField.fieldMetadataItemId,
+      ...relationColumnTarget,
+    });
 
   const hasColumnActions =
     canAddLookupColumn ||
+    canAddAggregateColumn ||
     canMoveLeft ||
     canMoveRight ||
     canHide ||
@@ -163,6 +181,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
               startIcon={<IconColumnInsertRight />}
               page={LOOKUP_TARGET_PAGE_ID}
             >{t`Add lookup column`}</Dropdown.ActionItem>
+          )}
+          {canAddAggregateColumn && (
+            <Dropdown.ActionItem
+              startIcon={<IconColumnInsertRight />}
+              page={AGGREGATE_TARGET_PAGE_ID}
+            >{t`Add aggregate column`}</Dropdown.ActionItem>
           )}
           {canMoveLeft && (
             <Dropdown.ActionItem
@@ -193,17 +217,18 @@ export const RecordTableColumnHeadDropdownMenu = ({
         </Dropdown.Section>
       </Dropdown.Page>
       {canAddLookupColumn && (
-        <Dropdown.Page id={LOOKUP_TARGET_PAGE_ID}>
-          <RecordTableLookupTargetFieldSelectMenu
-            relationFieldMetadataItem={fieldMetadataItem}
-            onSelect={(lookupTargetFieldMetadataItem) =>
-              addRecordTableLookupColumn({
-                relationFieldMetadataItemId: fieldMetadataItem.id,
-                relationTargetFieldMetadataId: lookupTargetFieldMetadataItem.id,
-              })
-            }
-          />
-        </Dropdown.Page>
+        <RecordTableLookupColumnPage
+          pageId={LOOKUP_TARGET_PAGE_ID}
+          relationFieldMetadataItem={fieldMetadataItem}
+          onSelect={handleRelationColumnSelect}
+        />
+      )}
+      {canAddAggregateColumn && (
+        <RecordTableAggregateColumnPages
+          pageId={AGGREGATE_TARGET_PAGE_ID}
+          relationFieldMetadataItem={fieldMetadataItem}
+          onSelect={handleRelationColumnSelect}
+        />
       )}
     </>
   );

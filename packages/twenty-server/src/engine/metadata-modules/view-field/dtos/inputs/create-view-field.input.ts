@@ -61,6 +61,11 @@ export class CreateViewFieldInput {
   @Field(() => UUIDScalarType, { nullable: true })
   relationTargetFieldMetadataId?: string;
 
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations;
+
   @HideField()
   universalIdentifier?: string;
 

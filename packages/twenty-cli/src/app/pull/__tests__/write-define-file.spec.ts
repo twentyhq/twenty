@@ -251,11 +251,15 @@ describe('writeDefineFile', () => {
         position: 0,
         isVisible: true,
         aggregateOperation: 'MIN',
+        relationAggregateOperation: 'SUM',
       },
       enumBindings: VIEW_FIELD_ENUM_BINDINGS,
     });
 
     expect(file).toContain('aggregateOperation: AggregateOperations.MIN,');
+    expect(file).toContain(
+      'relationAggregateOperation: AggregateOperations.SUM,',
+    );
     expect(file).toContain(
       "import { defineViewField, AggregateOperations } from 'twenty-sdk/define';",
     );

@@ -3,6 +3,7 @@ import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metad
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useGetRecordFieldAggregateTarget } from '@/object-record/record-column-aggregate/hooks/useGetRecordFieldAggregateTarget';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -54,6 +55,7 @@ export const useRecordIndexFieldMetadataDerivedStates = (
     : {};
 
   const getLookupTarget = useGetRecordFieldLookupTarget();
+  const getAggregateTarget = useGetRecordFieldAggregateTarget();
   const filterableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     { objectMetadataItemId: objectMetadataItem?.id ?? '' },
@@ -63,7 +65,7 @@ export const useRecordIndexFieldMetadataDerivedStates = (
     { objectMetadataItemId: objectMetadataItem?.id ?? '' },
   );
 
-  // Keyed by record field: lookup columns share their relation field
+  // Keyed by record field: lookup and aggregate columns share their relation field
   const columnDescriptorByRecordFieldId = useMemo(
     () =>
       Object.fromEntries(
@@ -85,6 +87,10 @@ export const useRecordIndexFieldMetadataDerivedStates = (
                   recordField,
                   fieldMetadataItem,
                 }),
+                aggregateTarget: getAggregateTarget({
+                  recordField,
+                  fieldMetadataItem,
+                }),
                 isFilterable: filterableFieldMetadataItems.some(
                   findById(fieldMetadataItem.id),
                 ),
@@ -100,6 +106,7 @@ export const useRecordIndexFieldMetadataDerivedStates = (
       currentRecordFields,
       objectMetadataItem,
       getLookupTarget,
+      getAggregateTarget,
       filterableFieldMetadataItems,
       sortableFieldMetadataItems,
     ],

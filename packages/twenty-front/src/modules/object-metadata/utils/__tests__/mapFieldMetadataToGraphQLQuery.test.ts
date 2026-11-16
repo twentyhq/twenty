@@ -1,10 +1,14 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { CONNECTION_AGGREGATES_GQL_FIELDS_KEY } from '@/object-record/graphql/record-gql-fields/constants/ConnectionAggregatesGqlFieldsKey';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { normalizeGQLField } from '~/testing/utils/normalizeGQLField';
 
 const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',
 );
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
 if (!personObjectMetadataItem) {
   throw new Error('Object metadata not found');
@@ -249,6 +253,38 @@ accountOwnerId
 employees
 id
 idealCustomerProfile
+}`),
+    );
+  });
+
+  it('should select the requested aggregates on a one-to-many connection', () => {
+    const res = mapFieldMetadataToGraphQLQuery({
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+      relationRecordGqlFields: {
+        id: true,
+        [CONNECTION_AGGREGATES_GQL_FIELDS_KEY]: {
+          totalCount: true,
+          maxCreatedAt: true,
+        },
+      },
+      gqlField: 'people',
+      fieldMetadata: companyObjectMetadataItem.fields.find(
+        (field) => field.name === 'people',
+      )!,
+      objectPermissionsByObjectMetadataId: {},
+    });
+
+    expect(normalizeGQLField(res)).toEqual(
+      normalizeGQLField(`people
+{
+  totalCount
+  maxCreatedAt
+  edges {
+    node {
+__typename
+id
+}
+  }
 }`),
     );
   });

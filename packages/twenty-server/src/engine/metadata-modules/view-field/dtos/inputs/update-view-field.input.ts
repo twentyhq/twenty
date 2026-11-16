@@ -45,6 +45,11 @@ class UpdateViewFieldInputUpdates {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   relationTargetFieldMetadataId?: string | null;
+
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations | null;
 }
 
 @InputType()
