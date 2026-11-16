@@ -6,8 +6,8 @@ import { type FlatEntityValidationError } from 'src/engine/workspace-manager/wor
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-// The relation target is not overridable: a change from another application would land on
-// the owner's column and be undone by the owner's next sync, so it is rejected instead.
+// The relation target and aggregate operation are not overridable: a change from another application
+// would land on the owner's column and be undone by the owner's next sync, so it is rejected instead.
 export const validateFlatViewFieldRelationTargetNotOverridden = ({
   existingFlatViewField,
   updatedFlatViewField,
@@ -18,10 +18,12 @@ export const validateFlatViewFieldRelationTargetNotOverridden = ({
     | 'applicationUniversalIdentifier'
     | 'isSystemSideEffect'
     | 'relationTargetFieldMetadataUniversalIdentifier'
+    | 'relationAggregateOperation'
   >;
   updatedFlatViewField: Pick<
     UniversalFlatViewField,
-    'relationTargetFieldMetadataUniversalIdentifier'
+    | 'relationTargetFieldMetadataUniversalIdentifier'
+    | 'relationAggregateOperation'
   >;
   buildOptions: Pick<
     WorkspaceMigrationValidationBuildOptions,
@@ -31,7 +33,9 @@ export const validateFlatViewFieldRelationTargetNotOverridden = ({
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (
     existingFlatViewField.relationTargetFieldMetadataUniversalIdentifier ===
-    updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier
+      updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier &&
+    existingFlatViewField.relationAggregateOperation ===
+      updatedFlatViewField.relationAggregateOperation
   ) {
     return [];
   }
@@ -53,8 +57,8 @@ export const validateFlatViewFieldRelationTargetNotOverridden = ({
   return [
     {
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`The related record field of a column owned by an application cannot be changed`,
-      userFriendlyMessage: msg`This column comes from an application, so the related record field it shows cannot be changed`,
+      message: t`The related record field or calculation of a column owned by an application cannot be changed`,
+      userFriendlyMessage: msg`This column comes from an application, so what it shows cannot be changed`,
     },
   ];
 };
