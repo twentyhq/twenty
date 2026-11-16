@@ -33,6 +33,7 @@ export const companyTableShape: WorkspaceTableShape = {
     deletedAt: buildColumn('deletedAt'),
   },
   columnNames: ['id', 'name', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     person: {
       fieldName: 'person',
@@ -65,6 +66,7 @@ export const personTableShape: WorkspaceTableShape = {
     'companyId',
     'deletedAt',
   ],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     company: {
       fieldName: 'company',

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  isComputedField,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -238,7 +242,10 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName: string;
     workspaceId: string;
   }): Promise<void> {
-    if (isMorphRelationHead(flatFieldMetadata)) {
+    if (
+      isMorphRelationHead(flatFieldMetadata) ||
+      isComputedField(flatFieldMetadata)
+    ) {
       return;
     }
 

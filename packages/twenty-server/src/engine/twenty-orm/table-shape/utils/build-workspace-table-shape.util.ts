@@ -1,5 +1,5 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isComputedField, isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -112,8 +112,13 @@ export const buildWorkspaceTableShape = ({
       fieldMetadataId: flatFieldMetadata.id,
       fieldName: flatFieldMetadata.name,
       fieldMetadataType: flatFieldMetadata.type,
+      ...(isComputedField(flatFieldMetadata) ? { isComputed: true } : {}),
     };
   }
+
+  const isComputedColumn = (columnName: string) =>
+    columnShapeByColumnName[columnName].isComputed === true;
+  const allColumnNames = Object.keys(columnShapeByColumnName);
 
   return {
     objectMetadataId: flatObjectMetadata.id,
@@ -121,7 +126,10 @@ export const buildWorkspaceTableShape = ({
     schemaName: getWorkspaceSchemaName(workspaceId),
     tableName: computeObjectTargetTable(flatObjectMetadata),
     columnShapeByColumnName,
-    columnNames: Object.keys(columnShapeByColumnName),
+    columnNames: allColumnNames.filter(
+      (columnName) => !isComputedColumn(columnName),
+    ),
+    computedColumnNames: allColumnNames.filter(isComputedColumn),
     relationShapeByFieldName,
     hasDeletedAtColumn: isDefined(columnShapeByColumnName['deletedAt']),
   };

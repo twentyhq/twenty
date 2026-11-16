@@ -105,6 +105,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         isUIEditable: true,
         isSystemSideEffect: false,
         disabledFieldPermissionActions: null,
+        computation: null,
         isSearchable: false,
         isAuditLogged: true,
         fieldPermissionUniversalIdentifiers: [],

@@ -165,6 +165,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    computation: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     isNullable: {
       toCompare: true,
       toStringify: false,

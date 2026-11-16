@@ -74,6 +74,7 @@ const tableShape: WorkspaceTableShape = {
     ]),
   ),
   columnNames: FIELDS.map((field) => field.name),
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };

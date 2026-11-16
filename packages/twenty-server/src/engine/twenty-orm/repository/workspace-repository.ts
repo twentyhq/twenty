@@ -86,6 +86,8 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
+import { buildComputedColumnSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -238,6 +240,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  get flatObjectMetadata(): FlatObjectMetadata {
+    return this.options.flatObjectMetadata;
   }
 
   getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
@@ -1884,6 +1890,43 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
     await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    await this.resolveComputedColumns(queryBuilder);
+  }
+
+  // Loops because the SQL of a computed column can itself read other computed columns
+  private async resolveComputedColumns(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): Promise<void> {
+    for (
+      let unresolvedComputedColumns =
+        queryBuilder.getUnresolvedComputedColumns();
+      unresolvedComputedColumns.length > 0;
+      unresolvedComputedColumns = queryBuilder.getUnresolvedComputedColumns()
+    ) {
+      for (const {
+        alias,
+        tableShape,
+        columnName,
+      } of unresolvedComputedColumns) {
+        const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId:
+            tableShape.columnShapeByColumnName[columnName].fieldMetadataId,
+          flatEntityMaps: this.options.internalContext.flatFieldMetadataMaps,
+        });
+
+        queryBuilder.setComputedColumnSql({
+          alias,
+          columnName,
+          ...(await buildComputedColumnSql({
+            flatFieldMetadata,
+            alias,
+            repository: this.getRepositoryForObjectMetadataId(
+              tableShape.objectMetadataId,
+            ),
+          })),
+        });
+      }
+    }
   }
 
   private async nullifyRlsRuleUnreadableFields(

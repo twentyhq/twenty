@@ -32,6 +32,7 @@ const companyTableShape: WorkspaceTableShape = {
     deletedAt: buildColumn('deletedAt'),
   },
   columnNames: ['id', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };
@@ -57,6 +58,7 @@ const personTableShape: WorkspaceTableShape = {
     'updatedAt',
     'deletedAt',
   ],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     company: {
       fieldName: 'company',

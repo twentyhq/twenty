@@ -133,6 +133,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isUIEditable: fieldManifest.isUIEditable ?? true,
     disabledFieldPermissionActions:
       fieldManifest.disabledFieldPermissionActions ?? null,
+    computation: fieldManifest.computation ?? null,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({

@@ -26,6 +26,7 @@ const personTableShape: WorkspaceTableShape = {
     deletedAt: buildColumn('deletedAt'),
   },
   columnNames: ['id', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };
@@ -39,6 +40,7 @@ const buildState = (
   extraSelectClauses: [],
   columnSelections: [],
   columnNullifyConditions: {},
+  computedColumnSqlByAlias: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
