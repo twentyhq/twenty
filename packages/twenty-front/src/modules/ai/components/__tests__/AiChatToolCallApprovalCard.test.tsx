@@ -133,7 +133,7 @@ describe('AiChatToolCallApprovalCard', () => {
 
   it("shows the tool's front component instead of the raw arguments and approves what it sets", async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
     mockFrontComponentIdByToolName.mockReturnValue(
       new Map([['app_tool_decide_cal_booking', 'front-component-1']]),
     );
@@ -155,8 +155,8 @@ describe('AiChatToolCallApprovalCard', () => {
     await user.click(screen.getByRole('button', { name: 'Decline instead' }));
     await user.click(screen.getByRole('button', { name: 'Approve' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledTimes(1);
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'approve',
