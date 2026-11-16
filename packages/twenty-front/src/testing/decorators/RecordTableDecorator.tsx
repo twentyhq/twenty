@@ -68,9 +68,6 @@ const InternalTableStateLoaderEffect = ({
 
   useEffect(() => {
     loadRecordIndexStates(view, objectMetadataItem);
-    setRecordTableData({
-      records: [...mockedCompanyRecords],
-    });
     const recordFields = view.viewFields
       .map(mapViewFieldToRecordField)
       .filter(isDefined);
@@ -85,11 +82,17 @@ const InternalTableStateLoaderEffect = ({
   }, [
     loadRecordIndexStates,
     objectMetadataItem,
-    setRecordTableData,
     view,
     setCurrentRecordFields,
     setContextStoreCurrentViewId,
   ]);
+
+  // The setter changes with the column descriptors, so reloading the view states with it would reset them
+  useEffect(() => {
+    setRecordTableData({
+      records: [...mockedCompanyRecords],
+    });
+  }, [setRecordTableData]);
 
   return null;
 };
