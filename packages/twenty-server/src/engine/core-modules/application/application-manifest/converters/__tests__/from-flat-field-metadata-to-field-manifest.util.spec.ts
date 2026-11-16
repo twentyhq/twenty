@@ -177,6 +177,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     const filteredRelationFieldManifest: RelationFieldManifest<FieldMetadataType.RELATION> =
       {
         ...relation,
+        isUIEditable: false,
         computation: {
           kind: 'FILTERED_RELATION',
           relationFieldName: 'projects',

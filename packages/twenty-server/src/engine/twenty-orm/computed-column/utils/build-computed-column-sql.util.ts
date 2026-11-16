@@ -18,8 +18,8 @@ import {
   compileComputedFieldExpressionToSql,
 } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
 import { getComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type.util';
-import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
-import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
+import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
+import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { namespaceSqlParameters } from 'src/engine/twenty-orm/computed-column/utils/namespace-sql-parameters.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -30,14 +30,16 @@ import {
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
-// One permission rule for every computed value: it is null as soon as it reads a field or an object
-// its reader cannot read. `undefined` carries that verdict up to the computed column.
+// `undefined`: the value reads something its reader cannot read, so the computed column is null
 type ReadableSql<TSql extends SqlWithParameters> = TSql | undefined;
 
-const canReadField = (
-  repository: WorkspaceRepository,
-  flatFieldMetadata: OrmFlatFieldMetadata,
-): boolean =>
+const canReadField = ({
+  repository,
+  flatFieldMetadata,
+}: {
+  repository: WorkspaceRepository;
+  flatFieldMetadata: OrmFlatFieldMetadata;
+}): boolean =>
   !repository.recordReadRestrictions.unreadableFieldMetadataIds.has(
     flatFieldMetadata.id,
   );
@@ -113,7 +115,7 @@ const buildFieldPathSql = async ({
   repository: WorkspaceRepository;
 }): Promise<ReadableSql<CompiledComputedFieldExpression>> => {
   const { toOneRelationHops, field, columnName, columnType } =
-    resolveComputedFieldPath({
+    resolveComputedFieldPathOrThrow({
       path,
       object: repository.flatObjectMetadata,
       schemaReader: buildOrmComputedFieldSchemaReader(
@@ -128,7 +130,7 @@ const buildFieldPathSql = async ({
   const [toOneRelationHop] = toOneRelationHops;
 
   if (!isDefined(toOneRelationHop)) {
-    if (!canReadField(repository, field)) {
+    if (!canReadField({ repository, flatFieldMetadata: field })) {
       return undefined;
     }
 
@@ -155,7 +157,10 @@ const buildFieldPathSql = async ({
   );
 
   if (
-    !canReadField(repository, toOneRelationHop.relationField) ||
+    !canReadField({
+      repository,
+      flatFieldMetadata: toOneRelationHop.relationField,
+    }) ||
     !(await canReadObject(targetRepository))
   ) {
     return undefined;
@@ -252,7 +257,7 @@ const buildRollupSql = async ({
   repository: WorkspaceRepository;
 }): Promise<ReadableSql<SqlWithParameters>> => {
   const { relationField, relatedObject, relatedRecordJoinColumnName } =
-    resolveComputedFieldSourceRelation({
+    resolveComputedFieldSourceRelationOrThrow({
       relationFieldName: computation.relationFieldName,
       object: repository.flatObjectMetadata,
       schemaReader: buildOrmComputedFieldSchemaReader(
@@ -265,7 +270,7 @@ const buildRollupSql = async ({
   );
 
   if (
-    !canReadField(repository, relationField) ||
+    !canReadField({ repository, flatFieldMetadata: relationField }) ||
     !(await canReadObject(relatedRepository))
   ) {
     return undefined;
@@ -328,7 +333,6 @@ const buildRollupSql = async ({
   return embedSubquery(queryBuilder);
 };
 
-// The SQL of a computed column of `alias`, cast to the column type its field declares
 export const buildComputedColumnSql = async ({
   flatFieldMetadata,
   alias,

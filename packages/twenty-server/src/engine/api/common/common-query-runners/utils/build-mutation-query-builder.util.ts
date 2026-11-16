@@ -27,8 +27,7 @@ export const buildMutationQueryBuilder = async ({
 
   commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
 
-  // A mutation targets the stored table: a filter that traverses a relation or
-  // reads a computed column is resolved to record ids first
+  // A mutation targets the stored table, so any other filter is resolved to record ids first
   const isFilterOnStoredColumnsOnly =
     filteredQueryBuilder.getJoinAliases().length === 0 &&
     filteredQueryBuilder.getUnresolvedComputedColumns().length === 0;

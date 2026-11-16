@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import request from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
@@ -340,7 +341,7 @@ describe('Computed field permissions (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (originalMemberRoleId !== '') {
+    if (isNonEmptyString(originalMemberRoleId)) {
       await updateWorkspaceMemberRole({
         client,
         roleId: originalMemberRoleId,
@@ -348,12 +349,12 @@ describe('Computed field permissions (e2e)', () => {
       });
     }
 
-    if (customRoleId !== '') {
+    if (isNonEmptyString(customRoleId)) {
       await deleteRole(client, customRoleId);
     }
 
     // Each object has a computed field reading the other, and a field read by a computed field cannot be deleted
-    if (projectBudgetFieldMetadataId !== '') {
+    if (isNonEmptyString(projectBudgetFieldMetadataId)) {
       await updateOneFieldMetadata({
         expectToFail: false,
         input: {
@@ -370,7 +371,7 @@ describe('Computed field permissions (e2e)', () => {
     for (const idToUpdate of [
       projectObjectMetadataId,
       taskObjectMetadataId,
-    ].filter((objectMetadataId) => objectMetadataId !== '')) {
+    ].filter(isNonEmptyString)) {
       await updateOneObjectMetadata({
         expectToFail: false,
         input: { idToUpdate, updatePayload: { isActive: false } },

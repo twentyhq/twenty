@@ -6,9 +6,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// A computed column is exposed as a column of a derived table that keeps the table's alias,
-// so SELECT, WHERE, ORDER BY and GROUP BY reference it like a stored column.
-// A computed column reading another one sits one level above it.
+// A derived table keeping the table's alias exposes computed columns like stored ones; one reading another sits a level above
 export const buildComputedTableSource = ({
   tableExpression,
   alias,

@@ -67,10 +67,11 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     // isUIReadOnly is the deprecated inverted alias; isUIEditable wins when both are set
     isUIEditable:
-      createFieldInput.isUIEditable ??
-      (isDefined(createFieldInput.isUIReadOnly)
-        ? !createFieldInput.isUIReadOnly
-        : true),
+      !isDefined(createFieldInput.computation) &&
+      (createFieldInput.isUIEditable ??
+        (isDefined(createFieldInput.isUIReadOnly)
+          ? !createFieldInput.isUIReadOnly
+          : true)),
     disabledFieldPermissionActions: null,
     computation: computation ?? null,
     morphId: null,

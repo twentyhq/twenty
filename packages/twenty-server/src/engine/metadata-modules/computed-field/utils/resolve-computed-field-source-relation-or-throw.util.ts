@@ -8,8 +8,7 @@ import {
 } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 
-// The one-to-many relation a rollup aggregates: its field, the related object, and the column of the related records pointing back
-export const resolveComputedFieldSourceRelation = <
+export const resolveComputedFieldSourceRelationOrThrow = <
   TObject,
   TField extends ComputedFieldSchemaField,
 >({

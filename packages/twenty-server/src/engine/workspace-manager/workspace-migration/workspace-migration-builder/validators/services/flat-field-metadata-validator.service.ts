@@ -43,6 +43,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataUpdate({
     universalIdentifier,
     flatEntityUpdate,
+    finalFlatEntityMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
@@ -275,14 +276,15 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataComputation({
           flatFieldMetadataToValidate,
+          // The final maps: a field renamed in the same migration may be validated after this one
           ...buildUniversalComputedFieldSchemaReader({
             flatObjectMetadataMaps,
-            flatFieldMetadataMapsList: [optimisticFlatFieldMetadataMaps],
+            flatFieldMetadataMapsList: [finalFlatEntityMaps],
           }),
           isComputedFieldsEnabled:
             additionalCacheDataMaps.featureFlagsMap[
               FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
-            ] === true,
+            ] ?? false,
         }),
       );
     }
@@ -540,7 +542,7 @@ export class FlatFieldMetadataValidatorService {
         isComputedFieldsEnabled:
           additionalCacheDataMaps.featureFlagsMap[
             FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
-          ] === true,
+          ] ?? false,
       }),
     );
 

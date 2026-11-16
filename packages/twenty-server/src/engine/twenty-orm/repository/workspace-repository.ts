@@ -1061,10 +1061,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       columnNames,
       rows,
-      returningColumns: getStoredColumnNames(
-        this.options.tableShape,
-        columnsToReturn,
-      ),
+      returningColumns: getStoredColumnNames({
+        tableShape: this.options.tableShape,
+        columnNames: columnsToReturn,
+      }),
       onConflictDoNothing,
     });
 
@@ -1933,7 +1933,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  // The conditions under which row-level permission rules hide fields of a record
   async buildUnreadableFieldsSQLConditions({
     objectMetadataId,
     tableAlias,

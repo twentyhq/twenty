@@ -781,8 +781,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return true;
   }
 
-  // Scans the rendered statement so a computed column is found wherever it is used:
-  // projection, filter, order, grouping, or the expression of another computed column
+  // Scans the rendered statement: a computed column can be used in any clause or by another computed column
   getUnresolvedComputedColumns(): {
     alias: string;
     tableShape: WorkspaceTableShape;

@@ -11,8 +11,8 @@ import {
   type ComputedFieldSchemaReader,
 } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
-import { resolveComputedFieldSourceRelation } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation.util';
+import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
+import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
 
 type RenamableField = ComputedFieldSchemaField & {
   universalIdentifier: string;
@@ -36,8 +36,7 @@ const ignoreUnresolvable = <TResult>(
   }
 };
 
-// A computation reads fields by name: when fields are renamed, the names it uses follow.
-// `schemaReader` reads the fields as they were before the rename; what cannot be resolved is left as written.
+// `schemaReader` reads the fields as they were before the rename; what cannot be resolved is left as written
 export const renameComputedFieldComputationFields = <
   TObject,
   TField extends RenamableField,
@@ -81,7 +80,7 @@ export const renameComputedFieldComputationFields = <
     const bindings = Object.fromEntries(
       paths.flatMap((path) => {
         const resolution = ignoreUnresolvable(() =>
-          resolveComputedFieldPath({
+          resolveComputedFieldPathOrThrow({
             path,
             object: evaluatedObject,
             schemaReader,
@@ -123,7 +122,7 @@ export const renameComputedFieldComputationFields = <
   }
 
   const sourceRelation = ignoreUnresolvable(() =>
-    resolveComputedFieldSourceRelation({
+    resolveComputedFieldSourceRelationOrThrow({
       relationFieldName: computation.relationFieldName,
       object,
       schemaReader,
