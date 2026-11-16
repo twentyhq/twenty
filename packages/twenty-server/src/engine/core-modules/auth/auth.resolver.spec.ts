@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -63,7 +64,10 @@ describe('AuthResolver', () => {
   let emailVerificationTokenService: {
     validateEmailVerificationTokenOrThrow: jest.Mock;
   };
-  let loginTokenService: { generateLoginToken: jest.Mock };
+  let loginTokenService: {
+    generateLoginToken: jest.Mock;
+    verifyLoginToken: jest.Mock;
+  };
   let resetPasswordService: ResetPasswordService;
   let signInUpService: { signUpOnNewWorkspace: jest.Mock };
   let throttlerService: ThrottlerService;
@@ -72,6 +76,7 @@ describe('AuthResolver', () => {
     findUserByIdOrThrow: jest.Mock;
     markEmailAsVerified: jest.Mock;
   };
+  let userWorkspaceRepository: { findOne: jest.Mock };
   let workspaceDomainsService: {
     buildWorkspaceURL: jest.Mock;
     getWorkspaceByOriginOrDefaultWorkspace: jest.Mock;
@@ -95,7 +100,9 @@ describe('AuthResolver', () => {
         },
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: {},
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: AuthService,
@@ -195,6 +202,7 @@ describe('AuthResolver', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: jest.fn(),
+            verifyLoginToken: jest.fn(),
           },
         },
         {
@@ -279,6 +287,9 @@ describe('AuthResolver', () => {
     signInUpService = module.get(SignInUpService);
     throttlerService = module.get<ThrottlerService>(ThrottlerService);
     userService = module.get(UserService);
+    userWorkspaceRepository = module.get(
+      getRepositoryToken(UserWorkspaceEntity),
+    );
     workspaceDomainsService = module.get(WorkspaceDomainsService);
   });
 
@@ -368,6 +379,38 @@ describe('AuthResolver', () => {
 
       expect(userService.findUserByIdOrThrow).not.toHaveBeenCalled();
       expect(signInUpService.signUpOnNewWorkspace).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getAuthTokensFromLoginToken', () => {
+    it('rejects an impersonation login token naming no impersonator before any lookup', async () => {
+      loginTokenService.verifyLoginToken.mockResolvedValue({
+        type: JwtTokenTypeEnum.LOGIN,
+        sub: 'test@example.com',
+        workspaceId: 'workspace-id',
+        authProvider: AuthProviderEnum.Impersonation,
+      });
+
+      let caughtError: unknown;
+
+      try {
+        await resolver.getAuthTokensFromLoginToken(
+          { loginToken: 'login-token' },
+          'https://workspace.example.com',
+          { req: {} } as never,
+        );
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toMatchObject({
+        code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      });
+
+      expect(
+        workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace,
+      ).not.toHaveBeenCalled();
+      expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
     });
   });
 

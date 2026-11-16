@@ -52,6 +52,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { assertImpersonationLoginTokenHasImpersonator } from 'src/engine/core-modules/auth/utils/assert-impersonation-login-token-has-impersonator.util';
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
@@ -872,6 +873,8 @@ export class AuthResolver {
     const tokenPayload = await this.validateAndDecodeLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
     );
+
+    assertImpersonationLoginTokenHasImpersonator(tokenPayload);
 
     const workspace = await this.validateWorkspaceAccess(
       origin,

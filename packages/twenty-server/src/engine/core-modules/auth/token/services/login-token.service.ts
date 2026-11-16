@@ -13,6 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
+import { assertImpersonationLoginTokenHasImpersonator } from 'src/engine/core-modules/auth/utils/assert-impersonation-login-token-has-impersonator.util';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -51,6 +52,8 @@ export class LoginTokenService {
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
       jti: crypto.randomUUID(),
     };
+
+    assertImpersonationLoginTokenHasImpersonator(jwtPayload);
 
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
 
