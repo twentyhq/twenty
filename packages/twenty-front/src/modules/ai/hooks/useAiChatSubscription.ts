@@ -5,7 +5,6 @@ import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReac
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessagesFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai/states/aiChatQueuedMessagesFamilyState';
-import { AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME } from '@/ai/constants/AiChatThreadNotFoundEventName';
 import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
@@ -376,7 +375,6 @@ export const useAiChatSubscription = (threadId: string | null) => {
           'NOT_FOUND',
         ),
       );
-      dispatchBrowserEvent(AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME);
     };
 
     const dispose = sseClient.subscribe<OnAgentChatEventSubscription>(

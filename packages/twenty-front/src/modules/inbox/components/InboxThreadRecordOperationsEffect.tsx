@@ -5,7 +5,6 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_THREAD_LOADED_EVENT_NAME } from '@/ai/constants/AiChatThreadLoadedEventName';
-import { AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME } from '@/ai/constants/AiChatThreadNotFoundEventName';
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
 import { type AiChatThreadLoadedEventDetail } from '@/ai/types/AiChatThreadLoadedEventDetail';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -82,10 +81,6 @@ export const InboxThreadRecordOperationsEffect = () => {
     refreshAiChatThreads,
   ]);
 
-  const refreshRecentThreadsAfterThreadNotFound = useCallback(
-    () => void refreshAiChatThreads(),
-    [refreshAiChatThreads],
-  );
   const handleThreadLoaded = useCallback(
     (detail?: AiChatThreadLoadedEventDetail) => {
       if (isDefined(detail)) {
@@ -95,10 +90,6 @@ export const InboxThreadRecordOperationsEffect = () => {
     [prependInboxThreadToRecentList],
   );
 
-  useListenToBrowserEvent({
-    eventName: AI_CHAT_THREAD_NOT_FOUND_EVENT_NAME,
-    onBrowserEvent: refreshRecentThreadsAfterThreadNotFound,
-  });
   useListenToBrowserEvent<AiChatThreadLoadedEventDetail>({
     eventName: AI_CHAT_THREAD_LOADED_EVENT_NAME,
     onBrowserEvent: handleThreadLoaded,
