@@ -16,7 +16,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Breaking Changes
 
-- **`daysSince` is removed from rule expressions; use `dateDiff(date, now, 'DAY')`.** It counted whole UTC days from a date to today, which `dateDiff` does with the same result, and also in minutes, hours, weeks, months, quarters or years. Replace `ruleExpression.daysSince(field)` with `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.
+- **`ruleExpression.daysSince` is removed; use `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.** `dateDiff` gives the same whole UTC days, and also minutes, hours, weeks, months, quarters or years. Rules already saved with `daysSince` keep evaluating, but it is deprecated and no longer offered.
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflow` or `workflowAutomatedTrigger`.** Workflows live in Twenty's core workflow store, and Twenty 2.58 drops these legacy workspace objects from every workspace, along with any relation fields that point at them. Remove references to both identifiers, including relation fields that target them. To ship a workflow with your app, declare it with `defineWorkflow()`.
 
