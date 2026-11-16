@@ -91,8 +91,22 @@ describe('SsoAuthController', () => {
               .mockResolvedValue({ token: 'login-token' }),
           },
         },
-        { provide: GuardRedirectService, useValue: {} },
-        { provide: WorkspaceDomainsService, useValue: {} },
+        {
+          provide: GuardRedirectService,
+          useValue: {
+            getRedirectErrorUrlAndCaptureExceptions: jest.fn(
+              ({ error }: { error: Error }) =>
+                `https://verify?errorMessage=${error.message}`,
+            ),
+          },
+        },
+        {
+          provide: WorkspaceDomainsService,
+          useValue: {
+            getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
+              jest.fn(),
+          },
+        },
         { provide: SsoService, useValue: {} },
         {
           provide: getRepositoryToken(WorkspaceSsoIdentityProviderEntity),
@@ -246,20 +260,65 @@ describe('SsoAuthController', () => {
       expect(authService.signInUp).not.toHaveBeenCalled();
     });
 
-    it('refuses an account with instance privileges even with a matching invitation', async () => {
+    it('refuses an account with instance privileges holding a matching invitation with an explicit message', async () => {
       userService.findUserByEmail.mockResolvedValue({
         ...existingUser,
         canAccessFullAdminPanel: true,
       } as UserEntity);
       authService.findInvitationForSignInUp.mockResolvedValue(invitation);
 
+      const response = buildResponse();
+
       await controller.samlAuthCallback(
         buildSamlRequestWithInviteToken('personal-invite-token'),
-        buildResponse(),
+        response,
       );
 
-      expect(authService.findInvitationForSignInUp).not.toHaveBeenCalled();
       expect(authService.signInUp).not.toHaveBeenCalled();
+      expect(response.redirect).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Accounts with admin panel or impersonation access cannot join a workspace through SSO',
+        ),
+      );
+    });
+
+    it('signs in an already-member account with instance privileges holding an invitation', async () => {
+      userService.findUserByEmail.mockResolvedValue({
+        ...existingUser,
+        canImpersonate: true,
+      } as UserEntity);
+      userService.hasUserAccessToWorkspaceOrThrow.mockResolvedValue(undefined);
+      authService.findInvitationForSignInUp.mockResolvedValue(invitation);
+
+      const response = buildResponse();
+
+      await controller.samlAuthCallback(
+        buildSamlRequestWithInviteToken('personal-invite-token'),
+        response,
+      );
+
+      expect(authService.signInUp).toHaveBeenCalledWith(
+        expect.objectContaining({ invitation: undefined }),
+      );
+      expect(response.redirect).toHaveBeenCalledWith('https://redirect');
+    });
+
+    it('keeps the generic refusal for an account with a token issued for another email', async () => {
+      authService.findInvitationForSignInUp.mockResolvedValue({
+        ...invitation,
+        context: { email: 'someone-else@example.com' },
+      } as AppTokenEntity);
+
+      const response = buildResponse();
+
+      await controller.samlAuthCallback(
+        buildSamlRequestWithInviteToken('personal-invite-token'),
+        response,
+      );
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        'https://verify?errorMessage=User does not have access to this workspace',
+      );
     });
   });
 

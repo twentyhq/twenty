@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Response } from 'express';
@@ -253,19 +254,33 @@ export class SsoAuthController {
       const hasInstancePrivileges =
         existingUser.canAccessFullAdminPanel || existingUser.canImpersonate;
 
-      invitation = hasInstancePrivileges
-        ? undefined
-        : await this.findPersonalInvitationForEmail({
-            currentWorkspace,
-            email: payload.email,
-            workspacePersonalInviteToken,
-          });
+      const personalInvitation = await this.findPersonalInvitationForEmail({
+        currentWorkspace,
+        email: payload.email,
+        workspacePersonalInviteToken,
+      });
 
-      if (!isDefined(invitation)) {
-        await this.userService.hasUserAccessToWorkspaceOrThrow(
-          existingUser.id,
-          currentWorkspace.id,
-        );
+      if (isDefined(personalInvitation) && !hasInstancePrivileges) {
+        invitation = personalInvitation;
+      } else {
+        try {
+          await this.userService.hasUserAccessToWorkspaceOrThrow(
+            existingUser.id,
+            currentWorkspace.id,
+          );
+        } catch (error) {
+          if (!isDefined(personalInvitation)) {
+            throw error;
+          }
+
+          throw new AuthException(
+            'Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.',
+            AuthExceptionCode.FORBIDDEN_EXCEPTION,
+            {
+              userFriendlyMessage: msg`Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.`,
+            },
+          );
+        }
       }
     } else {
       invitation = await this.authService.findInvitationForSignInUp({

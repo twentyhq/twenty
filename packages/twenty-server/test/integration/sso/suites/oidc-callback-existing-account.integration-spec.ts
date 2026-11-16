@@ -263,6 +263,9 @@ describe('OIDC callback sign-in', () => {
       });
 
       expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(redirectUrl.searchParams.get('errorMessage')).toContain(
+        'Accounts with admin panel or impersonation access cannot join a workspace through SSO',
+      );
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,
