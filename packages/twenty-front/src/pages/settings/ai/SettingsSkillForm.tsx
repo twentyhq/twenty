@@ -11,7 +11,7 @@ import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { FindOneSkillDocument } from '~/generated-metadata/graphql';
 import { SettingsSkillFormContent } from '~/pages/settings/ai/components/SettingsSkillFormContent';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
-import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { getSettingsAiBreadcrumbLinks } from '@/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { useLingui } from '@lingui/react/macro';
 
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {

@@ -19,12 +19,6 @@ const StyledTableBodyContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} 0;
-`;
-
 type SettingsMcpServerToolsTableProps = {
   tools: Pick<McpServerTool, 'name' | 'description'>[];
 };
@@ -34,10 +28,6 @@ export const SettingsMcpServerToolsTable = ({
 }: SettingsMcpServerToolsTableProps) => {
   const { t } = useLingui();
 
-  if (!isNonEmptyArray(tools)) {
-    return <StyledEmptyState>{t`No tools synced yet.`}</StyledEmptyState>;
-  }
-
   return (
     <Table>
       <TableRow
@@ -46,28 +36,34 @@ export const SettingsMcpServerToolsTable = ({
         <TableHeader>{t`Name`}</TableHeader>
         <TableHeader>{t`Description`}</TableHeader>
       </TableRow>
-      <StyledTableBodyContainer>
-        <TableBody>
-          {tools.map((tool, toolIndex) => (
-            <TableRow
-              key={`${tool.name}-${toolIndex}`}
-              gridTemplateColumns={
-                MCP_SERVER_TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS
-              }
-            >
-              <TableCell
-                color={themeCssVariables.font.color.primary}
-                overflow="hidden"
+      {isNonEmptyArray(tools) ? (
+        <StyledTableBodyContainer>
+          <TableBody>
+            {tools.map((tool) => (
+              <TableRow
+                key={tool.name}
+                gridTemplateColumns={
+                  MCP_SERVER_TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS
+                }
               >
-                <OverflowingTextWithTooltip text={tool.name} />
-              </TableCell>
-              <TableCell overflow="hidden">
-                <OverflowingTextWithTooltip text={tool.description ?? ''} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </StyledTableBodyContainer>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                >
+                  <OverflowingTextWithTooltip text={tool.name} />
+                </TableCell>
+                <TableCell overflow="hidden">
+                  <OverflowingTextWithTooltip text={tool.description ?? ''} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </StyledTableBodyContainer>
+      ) : (
+        <TableCell color={themeCssVariables.font.color.tertiary}>
+          {t`No tools synced yet`}
+        </TableCell>
+      )}
     </Table>
   );
 };

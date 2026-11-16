@@ -53,7 +53,7 @@ export const SettingsMcpServerFormFields = ({
       <Section.Root>
         <Section.Header
           title={t`Connection`}
-          description={t`Where the server lives and how calls to it are authenticated`}
+          description={t`Where the server lives`}
         />
         <StyledInputsContainer>
           <SettingsMcpServerTextField

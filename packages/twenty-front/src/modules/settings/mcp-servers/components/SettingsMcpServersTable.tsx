@@ -11,19 +11,19 @@ import { MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-serve
 import { SettingsMcpServerTableRow } from '@/settings/mcp-servers/components/SettingsMcpServerTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { FindManyMcpServersDocument } from '~/generated-metadata/graphql';
 
 const StyledTableBodyContainer = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   max-height: ${MCP_SERVER_TABLE_BODY_MAX_HEIGHT};
   overflow-y: auto;
 `;
 
 export const SettingsMcpServersTable = () => {
   const { t } = useLingui();
-  const { data, error } = useQuery(FindManyMcpServersDocument);
+  const { data, loading, error } = useQuery(FindManyMcpServersDocument);
 
   const mcpServers = data?.mcpServers ?? [];
 
@@ -41,7 +41,7 @@ export const SettingsMcpServersTable = () => {
         <TableHeader>{t`Status`}</TableHeader>
         <TableHeader></TableHeader>
       </TableRow>
-      {isNonEmptyArray(mcpServers) && (
+      {isNonEmptyArray(mcpServers) ? (
         <StyledTableBodyContainer>
           <TableBody>
             {mcpServers.map((mcpServer) => (
@@ -55,6 +55,12 @@ export const SettingsMcpServersTable = () => {
             ))}
           </TableBody>
         </StyledTableBodyContainer>
+      ) : (
+        !loading && (
+          <TableCell color={themeCssVariables.font.color.tertiary}>
+            {t`No MCP servers yet`}
+          </TableCell>
+        )
       )}
     </Table>
   );

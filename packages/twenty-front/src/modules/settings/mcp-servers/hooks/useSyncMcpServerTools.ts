@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -8,6 +9,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { SyncMcpServerToolsDocument } from '~/generated-metadata/graphql';
 
 export const useSyncMcpServerTools = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const [syncMcpServerToolsMutation, { loading: isSyncingMcpServerTools }] =
