@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
@@ -66,20 +67,15 @@ export const useEmailComposerState = ({
   }
 
   const { connectedAccountId, fromHandle } = sender;
-  const [to, setTo] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialTo),
-  );
-  const [cc, setCc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialCc),
-  );
-  const [bcc, setBcc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialBcc),
-  );
+  const [recipientsByFieldId, setRecipientsByFieldId] =
+    useState<EmailRecipientsByFieldId>(() => ({
+      to: parseEmailRecipients(initialTo),
+      cc: parseEmailRecipients(initialCc),
+      bcc: parseEmailRecipients(initialBcc),
+    }));
+  const { to, cc, bcc } = recipientsByFieldId;
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
-  const [showCcBcc, setShowCcBcc] = useState(
-    initialCc.length > 0 || initialBcc.length > 0,
-  );
   const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
   const isSendingThroughAppSender =
@@ -221,18 +217,12 @@ export const useEmailComposerState = ({
     connectedAccountId,
     fromHandle,
     setSender,
-    to,
-    setTo,
-    cc,
-    setCc,
-    bcc,
-    setBcc,
+    recipientsByFieldId,
+    setRecipientsByFieldId,
     subject,
     setSubject,
     body,
     setBody,
-    showCcBcc,
-    setShowCcBcc,
     files,
     setFiles,
     canAttachFiles,

@@ -561,7 +561,7 @@ type Application {
   packageJsonChecksum: String
   packageJsonFileId: UUID
   requestedIframeMediaPermissions: [IframeMediaPermission!]!
-  runOnUserPreferences: Boolean!
+  runHealthCheckOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
   universalIdentifier: String!
@@ -818,7 +818,6 @@ type ApplicationMonitoringVersion {
 type ApplicationPreferences {
   applicationId: UUID!
   connectionProviders: [ApplicationConnectionProvider!]!
-  hasUserHealthCheck: Boolean!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }
@@ -1966,6 +1965,7 @@ input CreateViewFieldInput {
   isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
+  relationTargetFieldMetadataId: UUID
   size: Float = 0
   viewFieldGroupId: UUID
   viewId: UUID!
@@ -5765,6 +5765,7 @@ input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
   position: Float
+  relationTargetFieldMetadataId: UUID
   size: Float
   viewFieldGroupId: UUID
 }
@@ -6413,6 +6414,7 @@ type ViewField {
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
   position: Float!
+  relationTargetFieldMetadataId: UUID
   size: Float!
   universalIdentifier: UUID!
   updatedAt: DateTime!
