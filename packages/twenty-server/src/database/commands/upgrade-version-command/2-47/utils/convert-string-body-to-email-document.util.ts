@@ -1,13 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { escapeText } from 'entities';
 
-import { isVariableReference } from '@/utils/variable-resolver';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import {
+  EMAIL_DOCUMENT_SCHEMA_VERSION,
+  type EmailDocument,
+  isVariableReference,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
-import { type EmailDocument } from './email-document-schema';
-import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
-import { looksLikeHtml } from './looks-like-html';
-import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
+import { looksLikeHtml } from 'src/database/commands/upgrade-version-command/2-47/utils/looks-like-html.util';
 
 const VARIABLE_TOKEN_PATTERN = /({{[^{}]+}})/;
 
