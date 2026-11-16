@@ -6728,7 +6728,7 @@ export interface GetAuthorizationUrlForSSOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
+export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null),workspacePersonalInviteToken?: (Scalars['String'] | null)}
 
 export interface GettingStartedProgressGenqlSelection{
     completedStepActionKeys?: boolean | number
