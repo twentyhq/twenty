@@ -39,7 +39,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   // Nothing else reloads the type-dependent fields here; the latest view keeps columns changed meanwhile
   const syncViewFieldsForViewType = useCallback(
-    (view: ViewWithRelations, viewType: ViewType) => {
+    ({ view, viewType }: { view: ViewWithRelations; viewType: ViewType }) => {
       const latestView =
         store.get(viewsSelector.atom).find(findById(view.id)) ?? view;
 
@@ -99,7 +99,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
           setRecordIndexViewType(viewType);
           await updateCurrentView(updateCurrentViewParams);
-          syncViewFieldsForViewType(currentView, viewType);
+          syncViewFieldsForViewType({ view: currentView, viewType });
           return;
         }
         case ViewType.TABLE:
@@ -110,7 +110,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
-          syncViewFieldsForViewType(currentView, viewType);
+          syncViewFieldsForViewType({ view: currentView, viewType });
           return;
         }
         case ViewType.CALENDAR: {
