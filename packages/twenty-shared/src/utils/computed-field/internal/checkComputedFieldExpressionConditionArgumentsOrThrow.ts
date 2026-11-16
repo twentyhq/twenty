@@ -14,13 +14,15 @@ export const checkComputedFieldExpressionConditionArgumentsOrThrow: ComputedFiel
       usage: `The condition of ${usage}`,
     });
 
-    const { operands, type } = unifyComputedFieldExpressionOperandsOrThrow({
+    const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
       operands: branches,
       usage,
     });
 
     return {
-      functionArguments: [...functionArguments.slice(0, 1), ...operands],
+      functionArguments: functionArguments.map((operand) =>
+        operand === condition ? operand : unify(operand),
+      ),
       type,
     };
   };

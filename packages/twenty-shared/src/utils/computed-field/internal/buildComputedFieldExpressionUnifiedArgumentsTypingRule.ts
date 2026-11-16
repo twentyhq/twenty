@@ -10,7 +10,7 @@ export const buildComputedFieldExpressionUnifiedArgumentsTypingRule =
     allowedTypes?: ComputedFieldValueType[],
   ): ComputedFieldExpressionFunction['checkArgumentsOrThrow'] =>
   ({ functionArguments, usage }) => {
-    const { operands, type } = unifyComputedFieldExpressionOperandsOrThrow({
+    const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
       operands: functionArguments,
       usage,
     });
@@ -19,5 +19,5 @@ export const buildComputedFieldExpressionUnifiedArgumentsTypingRule =
       assertComputedFieldExpressionTypeOrThrow({ type, allowedTypes, usage });
     }
 
-    return { functionArguments: operands, type };
+    return { functionArguments: functionArguments.map(unify), type };
   };

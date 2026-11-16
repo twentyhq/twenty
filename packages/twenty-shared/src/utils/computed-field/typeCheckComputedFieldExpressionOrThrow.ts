@@ -79,10 +79,7 @@ export const typeCheckComputedFieldExpressionOrThrow = ({
           usage: `The condition of ${usage}`,
         });
 
-        const {
-          operands: [unifiedWhenTrue = whenTrue, unifiedWhenFalse = whenFalse],
-          type,
-        } = unifyComputedFieldExpressionOperandsOrThrow({
+        const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
           operands: [whenTrue, whenFalse],
           usage,
         });
@@ -90,8 +87,8 @@ export const typeCheckComputedFieldExpressionOrThrow = ({
         return {
           ...node,
           condition,
-          whenTrue: unifiedWhenTrue,
-          whenFalse: unifiedWhenFalse,
+          whenTrue: unify(whenTrue),
+          whenFalse: unify(whenFalse),
           type,
         };
       }

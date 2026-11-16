@@ -36,10 +36,7 @@ const takingOnly =
 const comparing =
   (comparableTypes?: ComputedFieldValueType[]): CheckOperandsOrThrow =>
   ({ left, right, usage }) => {
-    const {
-      operands: [unifiedLeft = left, unifiedRight = right],
-      type,
-    } = unifyComputedFieldExpressionOperandsOrThrow({
+    const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
       operands: [left, right],
       usage,
       isComparison: true,
@@ -53,7 +50,7 @@ const comparing =
       });
     }
 
-    return { left: unifiedLeft, right: unifiedRight, type: BOOLEAN };
+    return { left: unify(left), right: unify(right), type: BOOLEAN };
   };
 
 const listing: CheckOperandsOrThrow = ({ left, right, usage }) => {
@@ -63,18 +60,15 @@ const listing: CheckOperandsOrThrow = ({ left, right, usage }) => {
     );
   }
 
-  const {
-    operands: [unifiedLeft = left, ...items],
-    type,
-  } = unifyComputedFieldExpressionOperandsOrThrow({
+  const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
     operands: [left, ...right.items],
     usage,
     isComparison: true,
   });
 
   return {
-    left: unifiedLeft,
-    right: { ...right, items, type },
+    left: unify(left),
+    right: { ...right, items: right.items.map(unify), type },
     type: BOOLEAN,
   };
 };

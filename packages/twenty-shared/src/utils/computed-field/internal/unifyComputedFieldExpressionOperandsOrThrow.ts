@@ -32,8 +32,10 @@ export const unifyComputedFieldExpressionOperandsOrThrow = ({
   usage: string;
   isComparison?: boolean;
 }): {
-  operands: TypedComputedFieldExpressionNode[];
   type: ComputedFieldValueType | undefined;
+  unify: (
+    operand: TypedComputedFieldExpressionNode,
+  ) => TypedComputedFieldExpressionNode;
 } => {
   const contextType = getComputedFieldExpressionUnifiedType(operands);
 
@@ -50,23 +52,28 @@ export const unifyComputedFieldExpressionOperandsOrThrow = ({
       }
     }
 
-    return { operands, type: contextType };
+    return { type: contextType, unify: (operand) => operand };
   }
 
-  const dateOperands = operands.map((operand) =>
-    toComputedFieldExpressionDateOperandOrThrow({ operand, usage }),
-  );
   const type = getUnifiedDateType({
-    dateTypes: dateOperands.map((operand) => operand.type),
+    dateTypes: operands.map(
+      (operand) =>
+        toComputedFieldExpressionDateOperandOrThrow({ operand, usage }).type,
+    ),
     isComparison,
   });
 
   return {
-    operands: dateOperands.map((operand): TypedComputedFieldExpressionNode =>
-      isDefined(operand.type) && operand.type !== type
-        ? { kind: 'dateConversion', operand, type }
-        : operand,
-    ),
     type,
+    unify: (operand) => {
+      const dateOperand = toComputedFieldExpressionDateOperandOrThrow({
+        operand,
+        usage,
+      });
+
+      return isDefined(dateOperand.type) && dateOperand.type !== type
+        ? { kind: 'dateConversion', operand: dateOperand, type }
+        : dateOperand;
+    },
   };
 };
