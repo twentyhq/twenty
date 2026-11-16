@@ -620,7 +620,11 @@ export class ConfigVariables {
     // Env-only: the admin panel must not be able to lift its own restriction.
     isEnvOnly: true,
   })
-  @IsOptional()
+  @ValidateIf(
+    (env) =>
+      isDefined(env.SERVER_ADMIN_WORKSPACE_ID) ||
+      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL),
+  )
   @IsUUID()
   SERVER_ADMIN_WORKSPACE_ID: string | undefined;
 
@@ -2155,6 +2159,37 @@ export class ConfigVariables {
   })
   @IsOptional()
   CLOUDFLARE_DCV_DELEGATION_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
+    description:
+      'Issuer of the Cloudflare Access assertions required on every request into the server admin workspace (https://<team>.cloudflareaccess.com). Requires CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE and SERVER_ADMIN_WORKSPACE_ID.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(
+    (env) =>
+      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL) ||
+      isDefined(env.CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE),
+  )
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  CLOUDFLARE_ACCESS_ISSUER_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
+    description:
+      'Audience tag of the Cloudflare Access application in front of the server admin workspace. Requires CLOUDFLARE_ACCESS_ISSUER_URL.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(
+    (env) =>
+      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL) ||
+      isDefined(env.CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE),
+  )
+  @IsString()
+  @IsNotEmpty()
+  CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
