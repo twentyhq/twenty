@@ -7,4 +7,5 @@ export const isServerAdminAccessAllowedFromWorkspace = ({
   workspaceId: string | undefined;
   serverAdminWorkspaceId: string | undefined;
 }): boolean =>
-  !isDefined(serverAdminWorkspaceId) || workspaceId === serverAdminWorkspaceId;
+  !isDefined(serverAdminWorkspaceId) ||
+  workspaceId === serverAdminWorkspaceId.toLowerCase();

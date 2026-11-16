@@ -28,6 +28,15 @@ describe('isServerAdminAccessAllowedFromWorkspace', () => {
     ).toBe(true);
   });
 
+  it('should allow the configured server admin workspace when its id is written in uppercase', () => {
+    expect(
+      isServerAdminAccessAllowedFromWorkspace({
+        workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        serverAdminWorkspaceId: '20202020-1C25-4D02-BF25-6AECCF7EA419',
+      }),
+    ).toBe(true);
+  });
+
   it('should refuse another workspace', () => {
     expect(
       isServerAdminAccessAllowedFromWorkspace({
