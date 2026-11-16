@@ -382,6 +382,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         `${this.quoteColumn(memberAlias, joinColumnName)} = "parent"."id"`,
       );
 
+    memberQueryBuilder.includeDeleted = this.includeDeleted;
+
     if (isDefined(filter)) {
       await memberQueryBuilder.andWhereExpression(filter);
     }

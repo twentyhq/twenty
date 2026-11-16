@@ -62,6 +62,15 @@ describe('WorkspaceSelectQueryBuilder filtered relation', () => {
     });
   });
 
+  it('looks among soft-deleted records too when the statement does', async () => {
+    expect(
+      await restrict(
+        COMPUTATION,
+        buildFilteredRelationQueryBuilder().withDeleted(),
+      ),
+    ).not.toContain('"deletedAt" IS NULL');
+  });
+
   it('only filters when no limit is stored', async () => {
     expect(await restrict({ ...COMPUTATION, limit: undefined })).toBe(
       `SELECT "person"."id" AS "id" FROM ${PERSON_TABLE} AS "person" ` +
