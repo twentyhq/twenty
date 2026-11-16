@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-05 14:16\n"
+"PO-Revision-Date: 2026-11-16 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -612,22 +612,22 @@ msgstr "20 × Sales Hub Enterprise (150 $)"
 #. js-lingui-id: MgOdrm
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "20% commission"
-msgstr ""
+msgstr "Комиссия 20%"
 
 #. js-lingui-id: bE7K26
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "20% of seat revenue for 12 months on every client you bring"
-msgstr ""
+msgstr "20% от дохода за места в течение 12 месяцев за каждого привлеченного вами клиента"
 
 #. js-lingui-id: vbPxj+
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "20% of the seat revenue of every client you bring, for 12 months, plus the partner Discord where our team and other partners answer your questions. Partner training is coming soon."
-msgstr ""
+msgstr "20% от дохода за места каждого привлеченного вами клиента в течение 12 месяцев, а также партнерский Discord, где наша команда и другие партнеры отвечают на ваши вопросы. Обучение для партнеров скоро появится."
 
 #. js-lingui-id: g1xpgV
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "20% on the clients you bring yourself"
-msgstr ""
+msgstr "20% за клиентов, которых вы привлекли сами"
 
 #. js-lingui-id: FKcV/y
 #: src/case-studies/case-study-catalog.ts
@@ -664,7 +664,7 @@ msgstr "30 дней после перехода по ссылке. Если по
 #. js-lingui-id: gICgcn
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "30 days of credit"
-msgstr ""
+msgstr "30 дней кредита"
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -850,7 +850,7 @@ msgstr "Платформа, готовая к росту"
 #. js-lingui-id: 8Gqdcv
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "A profile in the Twenty partner directory"
-msgstr ""
+msgstr "Профиль в каталоге партнёров Twenty"
 
 #. js-lingui-id: GGXFEW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1156,7 +1156,7 @@ msgstr "Агентства и фрилансеры подают заявки ч�
 #. js-lingui-id: BvtK0/
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Agencies and freelancers who implement Twenty can join as integrators."
-msgstr ""
+msgstr "Агентства и фрилансеры, внедряющие Twenty, могут присоединиться в качестве интеграторов."
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1355,7 +1355,7 @@ msgstr "Электронное письмо, отправленное из за�
 #. js-lingui-id: FSZoTr
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "An integrator we trust with our own leads, once we have seen their work with clients. Lead Integrators get client briefs and a profile in the partner directory, on top of everything integrators get."
-msgstr ""
+msgstr "Интегратор, которому мы доверяем собственные лиды, после того как увидим его работу с клиентами. Ведущие интеграторы получают брифы клиентов и профиль в каталоге партнёров в дополнение ко всему, что получают интеграторы."
 
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
@@ -1457,7 +1457,7 @@ msgstr "Заявка получена"
 #. js-lingui-id: DB8zMK
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Apply"
-msgstr ""
+msgstr "Подать заявку"
 
 #. js-lingui-id: YlcqKV
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -1465,19 +1465,21 @@ msgid ""
 "Apply as a\n"
 "*Twenty creator*"
 msgstr ""
+"Подать заявку как\n"
+"*автор Twenty*"
 
 #. js-lingui-id: IBo99W
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Apply as a creator"
-msgstr ""
+msgstr "Подать заявку как автор"
 
 #. js-lingui-id: wc3bHr
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Apply as an integrator"
-msgstr ""
+msgstr "Подать заявку как интегратор"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
@@ -1543,7 +1545,7 @@ msgstr "Попросите ИИ создавать или перенастраи
 #. js-lingui-id: jXOJoW
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Ask our team and other partners on the partner Discord."
-msgstr ""
+msgstr "Задайте вопрос нашей команде и другим партнёрам в партнёрском Discord."
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -1696,6 +1698,8 @@ msgid ""
 "Become a\n"
 "*Twenty creator*"
 msgstr ""
+"Стать\n"
+"*автором Twenty*"
 
 #. js-lingui-id: tpaBVA
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
@@ -1703,12 +1707,14 @@ msgid ""
 "Become a\n"
 "*Twenty integrator*"
 msgstr ""
+"Стать\n"
+"*интегратором Twenty*"
 
 #. js-lingui-id: XWAIlg
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Become a creator"
-msgstr ""
+msgstr "Стать автором"
 
 #. js-lingui-id: PKMHNe
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1718,28 +1724,28 @@ msgstr "станьте гением!"
 #. js-lingui-id: p9CxH1
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Integrator — Partner Program"
-msgstr ""
+msgstr "Стать интегратором Twenty — Партнёрская программа"
 
 #. js-lingui-id: gWiWoT
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty integrator: implement the #1 open source CRM for your clients, earn 20% on the clients you bring, and grow into a Lead Integrator to receive client briefs."
-msgstr ""
+msgstr "Станьте интегратором Twenty: внедряйте CRM с открытым исходным кодом №1 для своих клиентов, получайте 20% за привлечённых клиентов и развивайтесь до ведущего интегратора, чтобы получать брифы клиентов."
 
 #. js-lingui-id: wGnM6h
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Become an integrator"
-msgstr ""
+msgstr "Стать интегратором"
 
 #. js-lingui-id: Zw6ZMh
 #: src/sections/faq/AffiliateProgramFaq.tsx
 msgid "Becoming *a Twenty creator*"
-msgstr ""
+msgstr "Как стать *автором Twenty*"
 
 #. js-lingui-id: eapyFD
 #: src/sections/faq/BecomePartnerFaq.tsx
 msgid "Becoming *a Twenty integrator*"
-msgstr ""
+msgstr "Как стать *интегратором Twenty*"
 
 #. js-lingui-id: 83Wi6G
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1790,7 +1796,7 @@ msgstr "Сначала предоставьте лучшее подтвержд�
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Beta"
-msgstr ""
+msgstr "Бета"
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1835,7 +1841,7 @@ msgstr "Иллюстрация синего окна с кодом"
 #. js-lingui-id: NhBE23
 #: src/sections/menu/data/menu.ts
 msgid "Blue laptop illustration"
-msgstr ""
+msgstr "Иллюстрация синего ноутбука"
 
 #. js-lingui-id: go4Mpk
 #: src/sections/menu/data/menu.ts
@@ -1845,7 +1851,7 @@ msgstr "Иллюстрация синего мегафона"
 #. js-lingui-id: vq+BH/
 #: src/sections/menu/data/menu.ts
 msgid "Blue play button illustration"
-msgstr ""
+msgstr "Иллюстрация синей кнопки воспроизведения"
 
 #. js-lingui-id: TVJDFA
 #: src/partner-application/data/partner-country-options.ts
@@ -1880,7 +1886,7 @@ msgstr "Бразилия 🇧🇷"
 #. js-lingui-id: e+xWFk
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Bring your clients"
-msgstr ""
+msgstr "Привлекайте клиентов"
 
 #. js-lingui-id: ISQOxf
 #: src/sections/pricing-plans/plans-data.ts
@@ -2210,7 +2216,7 @@ msgstr "Более понятные числа на дашбордах"
 #. js-lingui-id: HdvI9Q
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Apply as an integrator and complete the short application: who you are, the clients you work with, and what you have built with Twenty. We review every application by hand."
-msgstr ""
+msgstr "Нажмите «Подать заявку как интегратор» и заполните короткую заявку: расскажите, кто вы, с какими клиентами работаете и что создали с помощью Twenty. Мы вручную рассматриваем каждую заявку."
 
 #. js-lingui-id: glfrZq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2220,7 +2226,7 @@ msgstr "При нажатии на звонок в виджете «Записи
 #. js-lingui-id: mmtQBv
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Client briefs from companies looking for a Twenty partner"
-msgstr ""
+msgstr "Брифы клиентов от компаний, ищущих партнёра Twenty"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2352,7 +2358,7 @@ msgstr "Компании"
 #. js-lingui-id: 9JImJx
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Companies submit a project brief with scope, timeline, and budget. We pick the Lead Integrators who fit and make the introduction within 48 hours. Clients from these briefs do not earn a commission."
-msgstr ""
+msgstr "Компании отправляют бриф проекта с описанием объёма работ, сроков и бюджета. Мы выбираем подходящих ведущих интеграторов и знакомим их в течение 48 часов. Клиенты из этих брифов не приносят комиссию."
 
 #. js-lingui-id: 7i8j3G
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2636,7 +2642,7 @@ msgstr "Создавайте события календаря прямо на �
 #. js-lingui-id: qYvjpx
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year."
-msgstr ""
+msgstr "Создавайте контент или развивайте сообщество. Получайте 20% за каждую команду, которую вы привлечёте в Twenty, каждый месяц в течение года."
 
 #. js-lingui-id: 20ZdFp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2701,7 +2707,7 @@ msgstr "Дата создания"
 #. js-lingui-id: ztTeY6
 #: src/affiliate-application/AffiliateApplicationModal.tsx
 msgid "Creator application"
-msgstr ""
+msgstr "Заявка автора"
 
 #. js-lingui-id: 5HG2bB
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3436,27 +3442,27 @@ msgstr "Каждое рабочее пространство теперь пол
 #. js-lingui-id: LZphlk
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Earn 20% of seat revenue for 12 months on every client on Organization or Enterprise."
-msgstr ""
+msgstr "Получайте 20% дохода от мест в течение 12 месяцев за каждого клиента на тарифе Organization или Enterprise."
 
 #. js-lingui-id: BEQmN/
 #: src/platform/routing/static-website-routes.ts
 msgid "Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud. The creator program is for content creators, communities and tech partners."
-msgstr ""
+msgstr "Получайте 20% дохода от мест в течение 12 месяцев за каждую команду, привлечённую в Twenty Cloud. Программа для авторов предназначена для создателей контента, сообществ и технологических партнёров."
 
 #. js-lingui-id: LGRdoM
 #: src/sections/menu/data/menu.ts
 msgid "Earn 20% on every client you bring, every month for a year."
-msgstr ""
+msgstr "Получайте 20% за каждого привлечённого клиента каждый месяц в течение года."
 
 #. js-lingui-id: c4NUZh
 #: src/sections/menu/data/menu.ts
 msgid "Earn 20% on every team you bring, every month for a year."
-msgstr ""
+msgstr "Получайте 20% за каждую привлечённую команду каждый месяц в течение года."
 
 #. js-lingui-id: PmTEhm
 #: src/sections/menu/data/menu.ts
 msgid "Earn by sharing Twenty"
-msgstr ""
+msgstr "Зарабатывайте, рассказывая о Twenty"
 
 #. js-lingui-id: eBNtzO
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3709,7 +3715,7 @@ msgstr "Введите корректный адрес электронной п
 #. js-lingui-id: SAtoek
 #: src/partner-application/partner-application-copy.ts
 msgid "Enter a valid link, for example yourcompany.com."
-msgstr ""
+msgstr "Введите корректную ссылку, например yourcompany.com."
 
 #. js-lingui-id: GpB8YV
 #: src/sections/pricing-plans/plans-data.ts
@@ -3814,7 +3820,7 @@ msgstr "Всё из Pro, а также"
 #. js-lingui-id: LD8aEt
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Everything integrators get, once we have seen your work with clients."
-msgstr ""
+msgstr "Всё, что получают интеграторы, после того как мы увидим вашу работу с клиентами."
 
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -4191,7 +4197,7 @@ msgstr "Футер"
 #. js-lingui-id: v3LiLT
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "For 12 months"
-msgstr ""
+msgstr "В течение 12 месяцев"
 
 #. js-lingui-id: CKQ0za
 #: src/case-studies/case-study-stories.ts
@@ -4244,7 +4250,7 @@ msgstr "Четыре типа работ от команд, которые еж�
 #. js-lingui-id: L2irvT
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Four steps, and no fee to join. You set your own rates and keep what you bill."
-msgstr ""
+msgstr "Четыре шага и без платы за участие. Вы сами устанавливаете расценки и сохраняете всё, что выставляете к оплате."
 
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
@@ -4276,12 +4282,12 @@ msgstr "От"
 #. js-lingui-id: 04Bp5R
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "From $50, after a 30-day hold."
-msgstr ""
+msgstr "От $50 после 30-дневного удержания."
 
 #. js-lingui-id: ZmSqhT
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "From application *to clients*"
-msgstr ""
+msgstr "От заявки *до клиентов*"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -4419,7 +4425,7 @@ msgstr "Германия 🇩🇪"
 #. js-lingui-id: pMzICZ
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Get help when you need it"
-msgstr ""
+msgstr "Получайте помощь, когда она нужна"
 
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
@@ -4436,7 +4442,7 @@ msgstr "Подобрать партнёра"
 #. js-lingui-id: WClQV1
 #: src/sections/menu/data/menu.ts
 msgid "Get paid to share Twenty"
-msgstr ""
+msgstr "Получайте оплату за распространение Twenty"
 
 #. js-lingui-id: ZDIydz
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -4456,7 +4462,7 @@ msgstr "Начать"
 #. js-lingui-id: 4GorJz
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Get your partner code"
-msgstr ""
+msgstr "Получите свой партнёрский код"
 
 #. js-lingui-id: 7hktsm
 #: src/sections/compare/compare-data.ts
@@ -4550,7 +4556,7 @@ msgstr "Растите на гибком фундаменте"
 #. js-lingui-id: fZUmXy
 #: src/sections/menu/data/menu.ts
 msgid "Grow your practice with Twenty"
-msgstr ""
+msgstr "Развивайте свою практику с Twenty"
 
 #. js-lingui-id: M/8CC1
 #: src/partner-application/data/partner-country-options.ts
@@ -4719,7 +4725,7 @@ msgstr "Как проверяются партнёры?"
 #. js-lingui-id: oira4a
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "How do client briefs reach Lead Integrators?"
-msgstr ""
+msgstr "Как брифы клиентов поступают ведущим интеграторам?"
 
 #. js-lingui-id: YEWCmQ
 #: src/sections/faq/become-partner-faq.data.ts
@@ -4832,12 +4838,12 @@ msgstr "Венгрия 🇭🇺"
 #: src/partner-application/wizard/steps/CommercialsStep.tsx
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Partner Program Terms</0>"
-msgstr ""
+msgstr "Я принимаю <0>Условия партнёрской программы</0>"
 
 #. js-lingui-id: W336yc
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "I create content but do not implement Twenty. Is this for me?"
-msgstr ""
+msgstr "Я создаю контент, но не внедряю Twenty. Подходит ли это мне?"
 
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
@@ -4888,12 +4894,12 @@ msgstr "Имитировать пользователей"
 #. js-lingui-id: eq1tyZ
 #: src/sections/menu/data/menu.ts
 msgid "Implement Twenty for clients"
-msgstr ""
+msgstr "Внедряйте Twenty для клиентов"
 
 #. js-lingui-id: NUAkZc
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year."
-msgstr ""
+msgstr "Внедряйте Twenty для своих клиентов. Получайте 20% за каждого привлечённого клиента каждый месяц в течение года."
 
 #. js-lingui-id: N4OVNn
 #: src/sections/compare/compare-data.ts
@@ -5118,12 +5124,12 @@ msgstr "Интеграция"
 #. js-lingui-id: lAJNrz
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Integrator"
-msgstr ""
+msgstr "Интегратор"
 
 #. js-lingui-id: b+6eiV
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs."
-msgstr ""
+msgstr "Интеграторы получают 20% за привлечённых клиентов, а ведущие интеграторы также получают брифы клиентов."
 
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5224,7 +5230,7 @@ msgstr "Работать с Twenty — просто гораздо приятн�
 #. js-lingui-id: T6VZ3f
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "It takes a few minutes. We review every application by hand."
-msgstr ""
+msgstr "Это займёт несколько минут. Мы вручную рассматриваем каждую заявку."
 
 #. js-lingui-id: kqIAbN
 #: src/case-studies/case-study-stories.ts
@@ -5445,7 +5451,7 @@ msgstr "Интерфейс (layout)"
 #. js-lingui-id: N95Wp2
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Lead Integrator"
-msgstr ""
+msgstr "Ведущий интегратор"
 
 #. js-lingui-id: +Ss/og
 #: src/sections/menu/data/menu.ts
@@ -5466,7 +5472,7 @@ msgstr "Узнать больше о {0}"
 #. js-lingui-id: uiVldn
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Learn more about the integrator program"
-msgstr ""
+msgstr "Подробнее о программе для интеграторов"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -5491,7 +5497,7 @@ msgstr "Позвольте нам *подобрать* вам партнёра"
 #. js-lingui-id: JAeCrU
 #: src/sections/partner-programs/PartnerLevels.tsx
 msgid "Levels"
-msgstr ""
+msgstr "Уровни"
 
 #. js-lingui-id: rJargy
 #: src/partner-application/data/partner-country-options.ts
@@ -5929,7 +5935,7 @@ msgstr "Ежемесячно или ежегодно, отмена в любой
 #. js-lingui-id: rE6Bl1
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Monthly payouts"
-msgstr ""
+msgstr "Ежемесячные выплаты"
 
 #. js-lingui-id: Gie65U
 #: src/sections/faq/affiliate-program-faq.data.ts
@@ -6268,7 +6274,7 @@ msgstr "No-code"
 #. js-lingui-id: 03nBqG
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "No. Applying and joining are free. You set your own rates and keep what you bill."
-msgstr ""
+msgstr "Нет. Подача заявки и участие бесплатны. Вы сами устанавливаете расценки и сохраняете всё, что выставляете к оплате."
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
@@ -6362,7 +6368,7 @@ msgstr "Объекты, папки, ссылки и страницы тепер�
 #. js-lingui-id: 7DiXw2
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Of seat revenue on Cloud Organization and Enterprise plans."
-msgstr ""
+msgstr "От дохода от мест на тарифах Cloud Organization и Enterprise."
 
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
@@ -6662,7 +6668,7 @@ msgstr "Заявка партнера"
 #. js-lingui-id: 99Qame
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Partner Discord: help from our team and other partners"
-msgstr ""
+msgstr "Партнёрский Discord: помощь от нашей команды и других партнёров"
 
 #. js-lingui-id: mYGIvm
 #: src/partners-marketplace/PartnerProfile.tsx
@@ -6682,12 +6688,12 @@ msgstr "Партнер не найден — Twenty Partners"
 #. js-lingui-id: eaBcp2
 #: src/app/[locale]/(site)/partners/terms/page.tsx
 msgid "Partner Program Terms"
-msgstr ""
+msgstr "Условия партнёрской программы"
 
 #. js-lingui-id: jrUo5h
 #: src/platform/routing/static-website-routes.ts
 msgid "Partner Program Terms | Twenty"
-msgstr ""
+msgstr "Условия партнёрской программы | Twenty"
 
 #. js-lingui-id: dRIK0d
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
@@ -6697,7 +6703,7 @@ msgstr "Отзывы партнёров"
 #. js-lingui-id: 59ovfO
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Partner training, coming soon"
-msgstr ""
+msgstr "Обучение партнёров, скоро"
 
 #. js-lingui-id: 7nUw36
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -6740,7 +6746,7 @@ msgstr "Команды по работе с персоналом доверяю�
 #. js-lingui-id: Aui87G
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Per customer, counted from their first payment."
-msgstr ""
+msgstr "За каждого клиента, отсчёт с его первого платежа."
 
 #. js-lingui-id: nU1kSZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6860,7 +6866,7 @@ msgstr "Воспроизводите записи только со звуком
 #. js-lingui-id: 6A7hvF
 #: src/partner-application/partner-application-copy.ts
 msgid "Please agree to the Partner Program Terms."
-msgstr ""
+msgstr "Примите Условия партнёрской программы."
 
 #. js-lingui-id: 9FY7bP
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7188,7 +7194,7 @@ msgstr "Готово к вашей проверке безопасности"
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Ready to *apply?*"
-msgstr ""
+msgstr "Готовы *подать заявку?*"
 
 #. js-lingui-id: LNWY6D
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
@@ -7832,7 +7838,7 @@ msgstr "Просматривайте устройства в своей учет
 #. js-lingui-id: 8F9rVy
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "See the integrator program"
-msgstr ""
+msgstr "Посмотреть программу для интеграторов"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -8119,7 +8125,7 @@ msgstr "Зарегистрируйтесь в Cloud менее чем за ми�
 #. js-lingui-id: qZwLzB
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Signups within 30 days of a click on your link are yours."
-msgstr ""
+msgstr "Регистрации в течение 30 дней после перехода по вашей ссылке засчитываются вам."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -8332,7 +8338,7 @@ msgstr "SSO и правила безопасности: переход на Ulti
 #. js-lingui-id: bHl+Jk
 #: src/sections/partner-programs/PartnerLevels.tsx
 msgid "Start as an integrator, *grow into a lead*"
-msgstr ""
+msgstr "Начните как интегратор, *станьте ведущим*"
 
 #. js-lingui-id: wxW2Sv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -8645,7 +8651,7 @@ msgstr "Расскажите нам об реализации *"
 #. js-lingui-id: AvrleA
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Tell us about your company, the clients you work with and what you have built with Twenty."
-msgstr ""
+msgstr "Расскажите нам о своей компании, клиентах, с которыми вы работаете, и о том, что вы создали с помощью Twenty."
 
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
@@ -8790,7 +8796,7 @@ msgstr "Меню + редактора сообщения в чате прикр�
 #. js-lingui-id: v/rykv
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "The creator program fits you better: creators, communities and tech partners earn 20% on every team they bring."
-msgstr ""
+msgstr "Вам больше подходит программа для авторов: авторы, сообщества и технологические партнёры получают 20% за каждую привлечённую команду."
 
 #. js-lingui-id: 93BQde
 #: src/sections/compare/compare-data.ts
@@ -9011,7 +9017,7 @@ msgstr "Условия, регулирующие использование Twen
 #. js-lingui-id: ITDYrA
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms of the Twenty Partner Program for creators and integrators: qualified referrals, commissions, payouts and how you may promote Twenty."
-msgstr ""
+msgstr "Условия партнёрской программы Twenty для авторов и интеграторов: квалифицированные рекомендации, комиссии, выплаты и способы продвижения Twenty."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9261,7 +9267,7 @@ msgstr "Twenty как API-основа go-to-market-стека | Elevate Consult
 #. js-lingui-id: X1MsVg
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Creator Program — Earn 20% on Every Referral"
-msgstr ""
+msgstr "Программа для авторов Twenty — получайте 20% за каждую рекомендацию"
 
 #. js-lingui-id: neM1Ol
 #: src/platform/routing/static-website-routes.ts
@@ -9760,7 +9766,7 @@ msgstr "Мы существенно улучшили производитель�
 #. js-lingui-id: VAOWAS
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "We review every application by hand, then send you your partner code."
-msgstr ""
+msgstr "Мы вручную рассматриваем каждую заявку, затем отправляем вам партнёрский код."
 
 #. js-lingui-id: 7YB68b
 #: src/app/[locale]/(site)/partners/creators/page.tsx
@@ -9848,7 +9854,7 @@ msgstr "Что там стоит дороже"
 #. js-lingui-id: xv+Qm4
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What do I get as an integrator?"
-msgstr ""
+msgstr "Что я получаю как интегратор?"
 
 #. js-lingui-id: VkIKlY
 #: src/sections/faq/partner-faq.data.ts
@@ -9918,7 +9924,7 @@ msgstr "Что, если клиент зарегистрируется без м
 #. js-lingui-id: HJheXv
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What is a Lead Integrator?"
-msgstr ""
+msgstr "Кто такой ведущий интегратор?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
@@ -10416,12 +10422,12 @@ msgstr "Вы не покупаете свой конвейер развёрты�
 #. js-lingui-id: S7c1dR
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "You implement Twenty *for clients?*"
-msgstr ""
+msgstr "Вы внедряете Twenty *для клиентов?*"
 
 #. js-lingui-id: lcwHh9
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "You implement Twenty for clients you bring yourself."
-msgstr ""
+msgstr "Вы внедряете Twenty для клиентов, которых привлекаете самостоятельно."
 
 #. js-lingui-id: AUzqeZ
 #: src/platform/releases/ReleaseNotes.tsx
