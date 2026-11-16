@@ -11,10 +11,13 @@ import { parseEmailDocumentOrThrow } from 'src/engine/core-modules/tool/tools/em
 import { resolveWorkflowEmailTemplateString } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-workflow-email-template-string.util';
 
 // A whole-body variable may itself hold a serialized email document
-export const resolveEmailBody = (
-  body: string,
-  context: Record<string, unknown>,
-): EmailDocument => {
+export const resolveEmailBody = ({
+  body,
+  context,
+}: {
+  body: string;
+  context: Record<string, unknown>;
+}): EmailDocument => {
   const documentWithVariableValues = resolveEmailDocumentBindings(
     parseEmailDocumentOrThrow(parseJson<unknown>(body)),
     (value, stringContext) =>

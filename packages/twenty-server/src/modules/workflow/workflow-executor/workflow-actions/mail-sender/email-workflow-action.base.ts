@@ -81,7 +81,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       // Blank bodies stay valid until the 2-59 backfill reaches them, and in runs that snapshot their steps
       body: JSON.stringify(
         isNonEmptyString(body?.trim())
-          ? resolveEmailBody(body, context)
+          ? resolveEmailBody({ body: body, context: context })
           : EMPTY_EMAIL_DOCUMENT,
       ),
     };

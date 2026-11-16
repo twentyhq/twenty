@@ -26,11 +26,14 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = resolveEmailBody(body, {
-      trigger: {
-        name: 'Ada',
-        message: '{{trigger.secret}}',
-        secret: 'must remain private',
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: {
+          name: 'Ada',
+          message: '{{trigger.secret}}',
+          secret: 'must remain private',
+        },
       },
     });
 
@@ -56,8 +59,11 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = resolveEmailBody(body, {
-      trigger: { message: 'first\n\nthird' },
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: { message: 'first\n\nthird' },
+      },
     });
 
     expect(resolvedBody.content?.[0]?.content).toEqual([
@@ -79,8 +85,11 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = resolveEmailBody(body, {
-      trigger: { message: '<b>{{trigger.secret}}</b>', secret: 'hidden' },
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: { message: '<b>{{trigger.secret}}</b>', secret: 'hidden' },
+      },
     });
 
     expect(resolvedBody.content?.[0]?.attrs?.html).toBe(
@@ -99,28 +108,31 @@ describe('resolveEmailBody', () => {
       ],
     };
 
-    const resolvedBody = resolveEmailBody(
-      JSON.stringify(htmlDocument('{{record.body}}')),
-      { record: { body: JSON.stringify(storedDocument) } },
-    );
+    const resolvedBody = resolveEmailBody({
+      body: JSON.stringify(htmlDocument('{{record.body}}')),
+      context: { record: { body: JSON.stringify(storedDocument) } },
+    });
 
     expect(resolvedBody).toEqual(storedDocument);
   });
 
   it('should send the HTML held by a whole-body variable as written', () => {
-    const resolvedBody = resolveEmailBody(
-      JSON.stringify(htmlDocument('{{code.body}}')),
-      { code: { body: '<h1>Report</h1>' } },
-    );
+    const resolvedBody = resolveEmailBody({
+      body: JSON.stringify(htmlDocument('{{code.body}}')),
+      context: { code: { body: '<h1>Report</h1>' } },
+    });
 
     expect(resolvedBody).toEqual(htmlDocument('<h1>Report</h1>'));
   });
 
   it('should reject a whole-body variable holding an invalid email document', () => {
     expect(() =>
-      resolveEmailBody(JSON.stringify(htmlDocument('{{record.body}}')), {
-        record: {
-          body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+      resolveEmailBody({
+        body: JSON.stringify(htmlDocument('{{record.body}}')),
+        context: {
+          record: {
+            body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+          },
         },
       }),
     ).toThrow('Invalid email document');
@@ -135,7 +147,10 @@ describe('resolveEmailBody', () => {
     'should reject a body that is not a serialized email document: %s',
     (body) => {
       expect(() =>
-        resolveEmailBody(body, { trigger: { name: 'Ada' }, code: {} }),
+        resolveEmailBody({
+          body: body,
+          context: { trigger: { name: 'Ada' }, code: {} },
+        }),
       ).toThrow('Invalid email document');
     },
   );
