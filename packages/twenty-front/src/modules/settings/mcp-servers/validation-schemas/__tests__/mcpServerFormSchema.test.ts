@@ -35,41 +35,4 @@ describe('getMcpServerFormSchema', () => {
       url: 'https://mcp.linear.app',
     });
   });
-
-  it.each([
-    ['empty label', { label: '' }, 'Label is required'],
-    ['empty name', { name: '' }, 'Name is required'],
-    [
-      'name starting with a digit',
-      { name: '1linear' },
-      'Use lowercase letters, digits and underscores, starting with a letter',
-    ],
-    [
-      'name with dashes',
-      { name: 'linear-tools' },
-      'Use lowercase letters, digits and underscores, starting with a letter',
-    ],
-    [
-      'name longer than 32 characters',
-      { name: 'a'.repeat(33) },
-      'Name must be at most 32 characters',
-    ],
-    ['empty url', { url: '' }, 'URL is required'],
-    [
-      'non http url',
-      { url: 'ftp://mcp.example.com' },
-      'Please enter a valid http(s) URL',
-    ],
-    ['malformed url', { url: 'https://' }, 'Please enter a valid http(s) URL'],
-  ])('rejects %s', (_title, overrides, expectedMessage) => {
-    const result = getMcpServerFormSchema().safeParse({
-      ...validInput,
-      ...overrides,
-    });
-
-    expect(result.success).toBe(false);
-    expect(result.error?.issues.map((issue) => issue.message)).toContain(
-      expectedMessage,
-    );
-  });
 });

@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DELETE_MCP_SERVER_DIALOG_ID } from '@/settings/mcp-servers/constants/DeleteMcpServerDialogId';
 import { useDeleteMcpServer } from '@/settings/mcp-servers/hooks/useDeleteMcpServer';
-import { useSetMcpServerActive } from '@/settings/mcp-servers/hooks/useSetMcpServerActive';
+import { useUpdateMcpServer } from '@/settings/mcp-servers/hooks/useUpdateMcpServer';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type McpServer } from '~/generated-metadata/graphql';
@@ -29,8 +29,7 @@ export const SettingsMcpServerDangerZone = ({
   const { openDialog } = useDialog();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { deleteMcpServer } = useDeleteMcpServer();
-  const { setMcpServerActive, isSettingMcpServerActive } =
-    useSetMcpServerActive();
+  const { updateMcpServer, isUpdatingMcpServer } = useUpdateMcpServer();
 
   return (
     <Section.Root>
@@ -42,11 +41,11 @@ export const SettingsMcpServerDangerZone = ({
         <Button
           startIcon={mcpServer.isActive ? <IconArchive /> : <IconArchiveOff />}
           size="sm"
-          disabled={isSettingMcpServerActive}
+          disabled={isUpdatingMcpServer}
           onClick={() =>
-            setMcpServerActive({
+            updateMcpServer({
               mcpServerId: mcpServer.id,
-              isActive: !mcpServer.isActive,
+              update: { isActive: !mcpServer.isActive },
             })
           }
         >
