@@ -24,6 +24,7 @@ const personTableShape: WorkspaceTableShape = {
     jobTitle: buildColumn('jobTitle'),
   },
   columnNames: ['id', 'nameFirstName', 'jobTitle'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: false,
 };

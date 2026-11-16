@@ -1,9 +1,9 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
-import { type Instruction } from 'expr-eval-fork';
 import {
   assertUnreachable,
+  type ComputedFieldExpressionInstruction,
+  getComputedFieldExpressionInstructions,
   isDefined,
-  parseComputedFieldExpression,
 } from 'twenty-shared/utils';
 import {
   COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES,
@@ -29,11 +29,6 @@ const UNARY_OPERATOR_SQL: Record<string, (operand: string) => string> = {
   '-': (operand) => `(-${operand})`,
   '+': (operand) => operand,
   not: (operand) => `(NOT ${operand})`,
-  abs: (operand) => `ABS(${operand})`,
-  ceil: (operand) => `CEIL(${operand})`,
-  floor: (operand) => `FLOOR(${operand})`,
-  round: (operand) => `ROUND(${operand})`,
-  trunc: (operand) => `TRUNC(${operand})`,
 };
 
 const BINARY_OPERATOR_SQL: Record<
@@ -68,6 +63,10 @@ const FUNCTION_ARGUMENT_COUNTS: Record<
   min: { minimum: 1, maximum: Infinity },
   max: { minimum: 1, maximum: Infinity },
   round: { minimum: 1, maximum: 2 },
+  abs: { minimum: 1, maximum: 1 },
+  ceil: { minimum: 1, maximum: 1 },
+  floor: { minimum: 1, maximum: 1 },
+  trunc: { minimum: 1, maximum: 1 },
   concat: { minimum: 1, maximum: Infinity },
   lower: { minimum: 1, maximum: 1 },
   upper: { minimum: 1, maximum: 1 },
@@ -100,6 +99,14 @@ const compileFunctionCall = (
       return isDefined(second)
         ? `ROUND(${first}::numeric, ${second}::int)`
         : `ROUND(${first}::numeric)`;
+    case 'abs':
+      return `ABS(${first})`;
+    case 'ceil':
+      return `CEIL(${first})`;
+    case 'floor':
+      return `FLOOR(${first})`;
+    case 'trunc':
+      return `TRUNC(${first})`;
     case 'concat':
       return `CONCAT(${joinedArguments})`;
     case 'lower':
@@ -146,7 +153,7 @@ const compileInstructions = ({
   instructions,
   resolveFieldPathSql,
 }: {
-  instructions: Instruction[];
+  instructions: ComputedFieldExpressionInstruction[];
   resolveFieldPathSql: (path: string[]) => string;
 }): string => {
   const operands: Operand[] = [];
@@ -208,7 +215,7 @@ const compileInstructions = ({
         operands.push({
           kind: 'sql',
           sql: compileInstructions({
-            instructions: value as Instruction[],
+            instructions: value as ComputedFieldExpressionInstruction[],
             resolveFieldPathSql,
           }),
         });
@@ -337,10 +344,10 @@ export const compileComputedFieldExpressionToSql = ({
     );
   }
 
-  let instructions: Instruction[];
+  let instructions: ComputedFieldExpressionInstruction[];
 
   try {
-    instructions = parseComputedFieldExpression(expression).tokens;
+    instructions = getComputedFieldExpressionInstructions(expression);
   } catch (error) {
     throw new ComputedFieldExpressionException(
       error instanceof Error ? error.message : 'The expression cannot be read',

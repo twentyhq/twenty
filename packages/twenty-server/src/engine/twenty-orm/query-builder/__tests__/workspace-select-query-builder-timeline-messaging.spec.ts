@@ -23,6 +23,7 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
       columnNames.map((columnName) => [columnName, buildColumn(columnName)]),
     ),
     columnNames,
+    computedColumnNames: [],
     relationShapeByFieldName,
     hasDeletedAtColumn: true,
   });

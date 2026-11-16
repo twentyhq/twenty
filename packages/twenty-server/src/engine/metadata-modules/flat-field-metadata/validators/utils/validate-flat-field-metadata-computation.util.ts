@@ -20,6 +20,7 @@ import { getComputedFieldExpressionScopes } from 'src/engine/metadata-modules/co
 import { resolveComputedFieldPath } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -185,8 +186,8 @@ const getComputationShapeError = (
 
   if (computation.kind === 'FILTERED_RELATION') {
     if (
-      field.type !== FieldMetadataType.RELATION ||
-      field.universalSettings?.relationType !== RelationType.ONE_TO_MANY
+      !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+      field.universalSettings.relationType !== RelationType.ONE_TO_MANY
     ) {
       return 'A filtered relation must be a one-to-many relation field';
     }

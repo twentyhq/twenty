@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -14,10 +16,12 @@ export const buildOrmComputedFieldSchemaReader = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): ComputedFieldSchemaReader<FlatObjectMetadata, OrmFlatFieldMetadata> => {
   const findFieldById = (fieldMetadataId: string | undefined) =>
-    findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
   return {
     getObjectName: (flatObjectMetadata) => flatObjectMetadata.nameSingular,
@@ -43,9 +47,11 @@ export const buildOrmComputedFieldSchemaReader = ({
         ? flatFieldMetadata.settings?.relationType
         : undefined,
     findRelationTargetObject: (flatFieldMetadata) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      }),
+      isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined,
   };
 };

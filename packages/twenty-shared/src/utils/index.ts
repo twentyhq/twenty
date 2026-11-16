@@ -37,6 +37,8 @@ export { safeGetNestedProperty } from './command-menu-items/safeGetNestedPropert
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { computedFieldExpressionParser } from './computed-field/computedFieldExpressionParser';
 export { getComputedFieldExpressionFieldPaths } from './computed-field/getComputedFieldExpressionFieldPaths';
+export type { ComputedFieldExpressionInstruction } from './computed-field/getComputedFieldExpressionInstructions';
+export { getComputedFieldExpressionInstructions } from './computed-field/getComputedFieldExpressionInstructions';
 export { parseComputedFieldExpression } from './computed-field/parseComputedFieldExpression';
 export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
 export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';

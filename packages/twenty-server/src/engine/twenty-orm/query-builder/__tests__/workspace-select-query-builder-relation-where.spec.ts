@@ -200,6 +200,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
         tableName: 'person',
         columnShapeByColumnName: {},
         columnNames: [],
+        computedColumnNames: [],
         relationShapeByFieldName: {
           orphans: {
             fieldName: 'orphans',
