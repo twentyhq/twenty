@@ -85,8 +85,6 @@ export const getHoursDescription = (
       }),
     );
 
-    // Non-numeric minutes (*, */N, a range) cannot be formatted as a time;
-    // the caller composes the minutes pattern description instead
     if (
       formattedTimes.some((formattedTime) => !isNonEmptyString(formattedTime))
     ) {
