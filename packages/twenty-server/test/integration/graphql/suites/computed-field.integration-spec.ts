@@ -18,6 +18,7 @@ import {
   type FieldMetadataComputation,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -1048,7 +1049,13 @@ describe('Computed fields (e2e)', () => {
       const findFieldId = (
         fields: { node: { id: string; name: string } }[],
         name: string,
-      ) => fields.find(({ node }) => node.name === name)?.node.id ?? '';
+      ) => {
+        const field = fields.find(({ node }) => node.name === name);
+
+        assertIsDefinedOrThrow(field);
+
+        return field.node.id;
+      };
 
       const nextDueAt = {
         objectMetadataId: projectObjectMetadataId,

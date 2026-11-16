@@ -17,7 +17,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 // Follows the computed fields the field reads, to refuse one that ends up reading itself
-const assertComputationCanBeEvaluated = ({
+const assertComputationCanBeEvaluatedOrThrow = ({
   field,
   schemaReader,
   findObject,
@@ -74,7 +74,7 @@ const assertComputationCanBeEvaluated = ({
     });
 
     for (const path of getComputedFieldExpressionFieldPaths(expression)) {
-      assertComputationCanBeEvaluated({
+      assertComputationCanBeEvaluatedOrThrow({
         field: resolvePath(path).field,
         schemaReader,
         findObject,
@@ -115,7 +115,7 @@ export const getComputedFieldEvaluationError = ({
   ) => UniversalFlatObjectMetadata | undefined;
 }): string | undefined => {
   try {
-    assertComputationCanBeEvaluated({
+    assertComputationCanBeEvaluatedOrThrow({
       field: flatFieldMetadata,
       schemaReader,
       findObject,
