@@ -1197,19 +1197,27 @@ const createSettingsRouteElements = ({
     <Route
       element={
         <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          settingsPermission={PermissionFlagType.AI_SETTINGS}
           requiredFeatureFlag={FeatureFlagKey.IS_MCP_SERVERS_ENABLED}
         />
       }
     >
       <Route
-        path={SettingsPath.AiNewMcpServer}
-        element={<SettingsAiMcpServerNew />}
-      />
-      <Route
-        path={SettingsPath.AiMcpServerDetail}
-        element={<SettingsAiMcpServerDetail />}
-      />
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.AiNewMcpServer}
+          element={<SettingsAiMcpServerNew />}
+        />
+        <Route
+          path={SettingsPath.AiMcpServerDetail}
+          element={<SettingsAiMcpServerDetail />}
+        />
+      </Route>
     </Route>
 
     <Route

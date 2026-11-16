@@ -1,9 +1,8 @@
 import { t } from '@lingui/core/macro';
+import { isSnakeCaseToolName } from 'twenty-shared/ai';
 import { MCP_SERVER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { isHttpUrl } from 'twenty-shared/utils';
 import { z } from 'zod';
-
-import { MCP_SERVER_NAME_PATTERN } from '@/settings/mcp-servers/constants/McpServerNamePattern';
 
 export const getMcpServerFormSchema = () =>
   z.object({
@@ -19,7 +18,7 @@ export const getMcpServerFormSchema = () =>
         error: () =>
           t`Name must be at most ${MCP_SERVER_NAME_MAX_LENGTH} characters`,
       })
-      .regex(MCP_SERVER_NAME_PATTERN, {
+      .refine(isSnakeCaseToolName, {
         error: () =>
           t`Use lowercase letters, digits and underscores, starting with a letter`,
       }),
