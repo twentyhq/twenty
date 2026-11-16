@@ -62,7 +62,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     viewUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
         .universalIdentifier,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    parentUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
     position: 0,
   },
   allMessageLists: {
@@ -70,7 +70,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.messageList.views.allMessageLists.universalIdentifier,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    parentUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
     position: 1,
   },
   workflowsFolder: {
@@ -86,7 +86,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
     type: NavigationMenuItemType.NATIVE_PAGE,
     nativePageKey: 'workflows',
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    parentUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 0,
   },
   workflowsFolderAllWorkflowRuns: {
@@ -94,7 +94,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.universalIdentifier,
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    parentUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 1,
   },
   workflowsFolderAllWorkflowVersions: {
@@ -103,7 +103,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.views.allWorkflowVersions
         .universalIdentifier,
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    parentUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 2,
   },
 } as const;

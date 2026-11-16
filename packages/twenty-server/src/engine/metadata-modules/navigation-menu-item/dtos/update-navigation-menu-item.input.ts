@@ -17,6 +17,14 @@ export class UpdateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  parentId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use parentId instead.',
+  })
   folderId?: string | null;
 
   @IsNumber()

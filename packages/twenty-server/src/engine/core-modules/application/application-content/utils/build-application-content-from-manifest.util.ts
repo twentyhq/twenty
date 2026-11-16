@@ -234,9 +234,9 @@ export const buildApplicationContentFromManifest = (
         }),
       parentLabel: findByUniversalIdentifier({
         valueByUniversalIdentifier: navigationMenuItemNameByUniversalIdentifier,
-        universalIdentifier: navigationMenuItem.folderUniversalIdentifier,
+        universalIdentifier: navigationMenuItem.parentUniversalIdentifier,
       }),
-      parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
+      parentUniversalIdentifier: navigationMenuItem.parentUniversalIdentifier,
       tag: navigationMenuItem.type,
       position: navigationMenuItem.position,
     })),

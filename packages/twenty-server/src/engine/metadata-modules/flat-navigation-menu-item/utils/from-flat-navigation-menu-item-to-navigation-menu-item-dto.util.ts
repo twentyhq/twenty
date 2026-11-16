@@ -11,7 +11,8 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   targetObjectMetadataId:
     flatNavigationMenuItem.targetObjectMetadataId ?? undefined,
   viewId: flatNavigationMenuItem.viewId ?? undefined,
-  folderId: flatNavigationMenuItem.folderId ?? undefined,
+  parentId: flatNavigationMenuItem.parentId ?? undefined,
+  folderId: flatNavigationMenuItem.parentId ?? undefined,
   name: flatNavigationMenuItem.name ?? undefined,
   link: flatNavigationMenuItem.link ?? undefined,
   icon: flatNavigationMenuItem.icon ?? undefined,

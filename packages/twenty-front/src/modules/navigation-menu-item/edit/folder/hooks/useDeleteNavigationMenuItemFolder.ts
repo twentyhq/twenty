@@ -4,9 +4,9 @@ export const useDeleteNavigationMenuItemFolder = () => {
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const deleteNavigationMenuItemFolder = async (
-    folderId: string,
+    parentId: string,
   ): Promise<void> => {
-    await deleteManyNavigationMenuItems([folderId]);
+    await deleteManyNavigationMenuItems([parentId]);
   };
 
   return {

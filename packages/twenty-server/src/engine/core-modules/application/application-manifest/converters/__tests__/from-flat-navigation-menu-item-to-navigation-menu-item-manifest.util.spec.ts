@@ -22,7 +22,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   position: 12.5,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
-  folderUniversalIdentifier: FOLDER_UID,
+  parentUniversalIdentifier: FOLDER_UID,
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,

@@ -5,19 +5,19 @@ import { NavigationMenuItemFolderContent } from '@/navigation-menu-item/display/
 
 type NavigationMenuItemFolderContentDispatcherEffectProps = {
   folderName: string;
-  folderId: string;
+  parentId: string;
   navigationMenuItems?: NavigationMenuItem[];
 };
 
 export const NavigationMenuItemFolderContentDispatcherEffect = ({
   folderName,
-  folderId,
+  parentId,
   navigationMenuItems,
 }: NavigationMenuItemFolderContentDispatcherEffectProps) => {
   if (isDefined(navigationMenuItems)) {
     return (
       <NavigationMenuItemFolderContent
-        folderId={folderId}
+        parentId={parentId}
         folderName={folderName}
         navigationMenuItems={navigationMenuItems}
       />

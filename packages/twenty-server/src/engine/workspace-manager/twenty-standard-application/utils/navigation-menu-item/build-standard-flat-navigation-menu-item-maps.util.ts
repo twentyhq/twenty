@@ -54,7 +54,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 }): FlatNavigationMenuItemMaps => {
   const flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps = {
     ...createEmptyFlatEntityMaps(),
-    byUserWorkspaceIdAndFolderId: {},
+    byUserWorkspaceIdAndParentId: {},
   };
 
   for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
@@ -85,14 +85,14 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   for (const { folderName, itemNames } of FOLDERS) {
     const folderDefinition = STANDARD_NAVIGATION_MENU_ITEMS[folderName];
-    const folderId = v4();
+    const parentId = v4();
     const folder = createStandardNavigationMenuItemFolderFlatMetadata({
       universalIdentifier: folderDefinition.universalIdentifier,
       name: folderDefinition.name,
       icon: folderDefinition.icon,
       color: STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[folderName] ?? null,
       position: folderDefinition.position,
-      navigationMenuItemId: folderId,
+      navigationMenuItemId: parentId,
       workspaceId,
       twentyStandardApplicationId,
       now,
@@ -110,7 +110,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
       const folderItem = createStandardNavigationMenuItemFolderItemFlatMetadata(
         {
           ...folderItemDefinition,
-          folderId,
+          parentId,
           navigationMenuItemId: v4(),
           workspaceId,
           twentyStandardApplicationId,

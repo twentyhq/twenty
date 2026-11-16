@@ -18,7 +18,7 @@ export const useNavigationMenuItemEditSectionItems = (
   }
 
   const topLevelItems = navigationMenuItemsSorted.filter(
-    (item) => !item.folderId,
+    (item) => !item.parentId,
   );
 
   return flattenNavigationMenuItemsWithFolderChildren(

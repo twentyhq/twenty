@@ -882,7 +882,7 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
     },
     {
-      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "parentUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
       "icon": "IconTicket",
       "position": 41,
       "targetObjectUniversalIdentifier": "<TICKET_OBJECT>",
@@ -890,7 +890,7 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
     },
     {
-      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "parentUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
       "icon": "IconList",
       "name": "All tickets",
       "position": 42,

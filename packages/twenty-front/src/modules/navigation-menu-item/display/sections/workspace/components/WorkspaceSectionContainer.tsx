@@ -57,15 +57,15 @@ export const WorkspaceSectionContainer = ({
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const flatItems = items.filter((item) => !isDefined(item.folderId));
+  const flatItems = items.filter((item) => !isDefined(item.parentId));
 
   const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
     (acc, item) => {
-      const folderId = item.folderId;
-      if (isDefined(folderId)) {
-        const children = acc.get(folderId) ?? [];
+      const parentId = item.parentId;
+      if (isDefined(parentId)) {
+        const children = acc.get(parentId) ?? [];
         children.push(item);
-        acc.set(folderId, children);
+        acc.set(parentId, children);
       }
       return acc;
     },

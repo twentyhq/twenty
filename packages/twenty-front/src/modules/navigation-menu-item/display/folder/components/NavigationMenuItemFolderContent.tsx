@@ -20,14 +20,14 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useLingui } from '@lingui/react/macro';
 
 type NavigationMenuItemFolderContentProps = {
-  folderId: string;
+  parentId: string;
   folderName: string;
   navigationMenuItems: NavigationMenuItem[];
 };
 
 export const NavigationMenuItemFolderContent = ({
   folderName,
-  folderId,
+  parentId,
   navigationMenuItems,
 }: NavigationMenuItemFolderContentProps) => {
   const { t } = useLingui();
@@ -38,7 +38,7 @@ export const NavigationMenuItemFolderContent = ({
   );
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
+  const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${parentId}`;
 
   return (
     <>

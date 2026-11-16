@@ -19,7 +19,7 @@ export const MainNavigationDrawerNavigationContent = () => {
       {openedNavigationMenuItemFolder ? (
         <NavigationMenuItemFolderContentDispatcherEffect
           folderName={openedNavigationMenuItemFolder.folderName}
-          folderId={openedNavigationMenuItemFolder.id ?? ''}
+          parentId={openedNavigationMenuItemFolder.id ?? ''}
           navigationMenuItems={
             openedNavigationMenuItemFolder.navigationMenuItems
           }

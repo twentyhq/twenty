@@ -358,7 +358,9 @@ export const buildPullEntities = ({
   }
 
   for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
-    const { folderUniversalIdentifier } = navigationMenuItemManifest;
+    const parentUniversalIdentifier =
+      navigationMenuItemManifest.parentUniversalIdentifier ??
+      navigationMenuItemManifest.folderUniversalIdentifier;
 
     entities.push({
       kind: 'navigationMenuItem',
@@ -372,9 +374,9 @@ export const buildPullEntities = ({
         navigationMenuItemManifest,
         manifest,
       }),
-      parentName: isDefined(folderUniversalIdentifier)
+      parentName: isDefined(parentUniversalIdentifier)
         ? getNavigationFolderNameForPullFile({
-            folderUniversalIdentifier,
+            parentUniversalIdentifier,
             manifest,
           })
         : null,

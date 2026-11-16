@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Navigation Menu Item update should fail with circular dependency when folderId equals id (self-reference) 1`] = `
+exports[`Navigation Menu Item update should fail with circular dependency when parentId equals id (self-reference) 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
