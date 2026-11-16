@@ -245,15 +245,17 @@ export class RecordSharingReadService {
     workspaceId: string;
     grants: RecordShare[];
   }): Promise<RecordSharingGrantDTO[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
+        'flatRoleMaps',
       ]);
     const roleIds = resolveRecordSharePrincipalRoleIds({
       principals: grants,
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
+      flatRoleMaps,
     });
 
     return grants.map((grant, index) => ({

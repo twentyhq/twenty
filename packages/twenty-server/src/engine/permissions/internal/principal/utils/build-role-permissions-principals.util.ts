@@ -7,19 +7,17 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 export const buildRolePermissionsPrincipals = ({
   workspaceId,
   roleId,
-  systemSideEffectRoleIds = [],
+  roleIds = [],
 }: {
   workspaceId: string;
   roleId: string;
-  systemSideEffectRoleIds?: string[];
+  roleIds?: string[];
 }): PermissionsPrincipalsWithRolesContext => ({
   workspaceId,
   mainPrincipal: {
     type: 'role',
     roleId,
-    ...(isNonEmptyArray(systemSideEffectRoleIds)
-      ? { systemSideEffectRoleIds }
-      : {}),
+    ...(isNonEmptyArray(roleIds) ? { roleIds } : {}),
   },
   applicationPrincipal: { type: 'customApplication' },
 });

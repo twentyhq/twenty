@@ -3,7 +3,6 @@ import { type WorkspaceDerivedCacheKeyName } from 'src/engine/workspace-cache/ty
 export const WORKSPACE_DERIVED_CACHE_KEY_NAMES = {
   roleIdsWithAllRecordsAccess: true,
   userWorkspaceRoleMap: true,
-  userWorkspaceSystemSideEffectRoleIdsMap: true,
   apiKeyRoleMap: true,
   flatRoleTargetByAgentIdMaps: true,
   flatRoleTargetByApplicationIdMaps: true,

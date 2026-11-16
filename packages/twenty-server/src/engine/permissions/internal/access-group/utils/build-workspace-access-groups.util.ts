@@ -8,6 +8,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
@@ -23,21 +24,16 @@ type AccessGroupWorkspaceMemberMaps = Pick<
 
 const groupWorkspaceMembersByRoleId = ({
   userWorkspaceRoleMap,
-  userWorkspaceSystemSideEffectRoleIdsMap,
   flatWorkspaceMemberMaps,
 }: {
-  userWorkspaceRoleMap: Record<string, string>;
-  userWorkspaceSystemSideEffectRoleIdsMap: Record<string, string[]>;
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): Map<string, RlsWorkspaceMember[]> => {
   const workspaceMembersByRoleId = new Map<string, RlsWorkspaceMember[]>();
-  const userWorkspaceRoleIds = [
-    ...Object.entries(userWorkspaceRoleMap),
-    ...Object.entries(userWorkspaceSystemSideEffectRoleIdsMap).flatMap(
-      ([userWorkspaceId, roleIds]) =>
-        roleIds.map((roleId): [string, string] => [userWorkspaceId, roleId]),
-    ),
-  ];
+  const userWorkspaceRoleIds = Object.entries(userWorkspaceRoleMap).flatMap(
+    ([userWorkspaceId, roleIds]) =>
+      roleIds.map((roleId): [string, string] => [userWorkspaceId, roleId]),
+  );
 
   for (const [userWorkspaceId, roleId] of userWorkspaceRoleIds) {
     const workspaceMemberId =
@@ -63,15 +59,13 @@ export const buildWorkspaceAccessGroups = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   userWorkspaceRoleMap,
-  userWorkspaceSystemSideEffectRoleIdsMap = {},
   flatWorkspaceMemberMaps,
 }: {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  userWorkspaceRoleMap: Record<string, string>;
-  userWorkspaceSystemSideEffectRoleIdsMap?: Record<string, string[]>;
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): {
   accessGroups: AccessGroupWithoutCompactId[];
@@ -79,7 +73,6 @@ export const buildWorkspaceAccessGroups = ({
 } => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
-    userWorkspaceSystemSideEffectRoleIdsMap,
     flatWorkspaceMemberMaps,
   });
   const accessGroupByGroupHash = new Map<string, AccessGroupWithoutCompactId>();

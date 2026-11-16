@@ -19,6 +19,7 @@ import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/interna
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
+import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 
 @Injectable()
 export class SettingPermissionsService {
@@ -38,7 +39,6 @@ export class SettingPermissionsService {
     const {
       featureFlagsMap,
       userWorkspaceRoleMap,
-      userWorkspaceSystemSideEffectRoleIdsMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
@@ -47,7 +47,6 @@ export class SettingPermissionsService {
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'featureFlagsMap',
       'userWorkspaceRoleMap',
-      'userWorkspaceSystemSideEffectRoleIdsMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
@@ -79,8 +78,7 @@ export class SettingPermissionsService {
           principals: buildRolePermissionsPrincipals({
             workspaceId,
             roleId: flatRole.id,
-            systemSideEffectRoleIds:
-              userWorkspaceSystemSideEffectRoleIdsMap[userWorkspaceId],
+            roleIds: userWorkspaceRoleMap[userWorkspaceId],
           }),
           rolesPermissions,
           flatObjectMetadataMaps,
@@ -166,7 +164,13 @@ export class SettingPermissionsService {
       ]);
 
     return this.isPermissionFlagGrantedToRoles({
-      roleIds: [userWorkspaceRoleMap[userWorkspaceId]],
+      roleIds: [
+        findUserWorkspaceAssignedRoleId({
+          userWorkspaceId,
+          userWorkspaceRoleMap,
+          flatRoleMaps,
+        }),
+      ].filter(isDefined),
       permissionFlag,
       flatRoleMaps,
       flatRolePermissionFlagMaps,

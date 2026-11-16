@@ -57,7 +57,7 @@ describe('getPermissionsPrincipalsLimitingRoleIds', () => {
       getPermissionsPrincipalsLimitingRoleIds({
         mainPrincipal: {
           ...mainPrincipal,
-          systemSideEffectRoleIds: ['extra-role'],
+          roleIds: ['extra-role'],
         },
         applicationPrincipal: {
           type: 'application',

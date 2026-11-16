@@ -47,6 +47,7 @@ const buildRoleMaps = (
   },
 ): PermissionsPrincipalsRoleMaps => ({
   userWorkspaceRoleMap: {},
+  flatRoleMaps: createEmptyFlatEntityMaps(),
   apiKeyRoleMap: {},
   flatRoleTargetByAgentIdMaps: {},
   flatRoleTargetByApplicationIdMaps: {},
@@ -165,7 +166,7 @@ describe('computePrincipalsRecordsPermissions', () => {
         mainPrincipal: {
           type: 'role',
           roleId: 'default-role-id',
-          systemSideEffectRoleIds: ['agent-role-id'],
+          roleIds: ['agent-role-id'],
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
@@ -178,7 +179,7 @@ describe('computePrincipalsRecordsPermissions', () => {
         mainPrincipal: {
           type: 'role',
           roleId: 'default-role-id',
-          systemSideEffectRoleIds: ['agent-role-id'],
+          roleIds: ['agent-role-id'],
         },
         limitingPrincipal: {
           type: 'agent',
@@ -196,7 +197,7 @@ describe('computePrincipalsRecordsPermissions', () => {
         mainPrincipal: {
           type: 'role',
           roleId: 'agent-role-id',
-          systemSideEffectRoleIds: ['unknown-role-id'],
+          roleIds: ['unknown-role-id'],
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
@@ -501,7 +502,7 @@ describe('computePrincipalsRecordsPermissions', () => {
             userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
           },
           userWorkspaceRoleMap: isDefined(memberRoleId)
-            ? { 'user-workspace-id': memberRoleId }
+            ? { 'user-workspace-id': [memberRoleId] }
             : {},
         },
       });
@@ -770,7 +771,7 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
             userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
           },
           userWorkspaceRoleMap: {
-            'user-workspace-id': 'owning-application-role-id',
+            'user-workspace-id': ['owning-application-role-id'],
           },
         },
       });

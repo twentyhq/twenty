@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getPermissionsPrincipalsActingApplication } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 
@@ -103,7 +104,8 @@ describe('getPermissionsPrincipalsActingApplication', () => {
           application: { id: TWENTY_STANDARD_APPLICATION_ID },
         },
         roleMaps: {
-          userWorkspaceRoleMap: { 'user-workspace-1': ADMIN_ROLE_ID },
+          userWorkspaceRoleMap: { 'user-workspace-1': [ADMIN_ROLE_ID] },
+          flatRoleMaps: createEmptyFlatEntityMaps(),
           apiKeyRoleMap: {},
           flatRoleTargetByAgentIdMaps: {},
           flatRoleTargetByApplicationIdMaps,

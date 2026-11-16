@@ -4,6 +4,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { type ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -30,7 +31,11 @@ export const runWithReadOnlyChatPermission = async <TResult>({
     'flatObjectPermissionMaps',
     'flatObjectMetadataMaps',
   ]);
-  const roleId = userWorkspaceRoleMap[userWorkspaceId];
+  const roleId = findUserWorkspaceAssignedRoleId({
+    userWorkspaceId,
+    userWorkspaceRoleMap,
+    flatRoleMaps,
+  });
 
   ok(isDefined(roleId), 'The seeded chat member has no role');
 

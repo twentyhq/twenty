@@ -19,7 +19,7 @@ describe('getPermissionsPrincipalsMainRoleIds', () => {
         mainPrincipal: {
           type: 'workspaceMember',
           roleId: 'main-role',
-          systemSideEffectRoleIds: ['personal-role', 'main-role'],
+          roleIds: ['personal-role', 'main-role'],
           workspaceMemberId: 'member-1',
         },
       }),

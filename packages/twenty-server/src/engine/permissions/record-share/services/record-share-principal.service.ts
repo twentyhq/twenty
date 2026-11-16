@@ -67,16 +67,22 @@ export class RecordSharePrincipalService {
       return;
     }
 
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-        'rolesPermissions',
-      ]);
+    const {
+      flatWorkspaceMemberMaps,
+      userWorkspaceRoleMap,
+      flatRoleMaps,
+      rolesPermissions,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatWorkspaceMemberMaps',
+      'userWorkspaceRoleMap',
+      'flatRoleMaps',
+      'rolesPermissions',
+    ]);
     const roleIds = resolveRecordSharePrincipalRoleIds({
       principals: namedPrincipals,
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
+      flatRoleMaps,
     });
     const roleIdsUnableToReadObject =
       await this.recordPermissionsReadService.filterRoleIdsWithoutReadAccess({

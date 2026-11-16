@@ -49,15 +49,11 @@ export class PrincipalPermissionsReadService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<PermissionsPrincipalsWithRolesContext> {
-    const {
-      userWorkspaceRoleMap,
-      userWorkspaceSystemSideEffectRoleIdsMap,
-      flatRoleMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'userWorkspaceRoleMap',
-      'userWorkspaceSystemSideEffectRoleIdsMap',
-      'flatRoleMaps',
-    ]);
+    const { userWorkspaceRoleMap, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatRoleMaps',
+      ]);
     const flatRole = findUserWorkspaceFlatRoleOrThrow({
       userWorkspaceId,
       userWorkspaceRoleMap,
@@ -67,8 +63,7 @@ export class PrincipalPermissionsReadService {
     return buildRolePermissionsPrincipals({
       workspaceId,
       roleId: flatRole.id,
-      systemSideEffectRoleIds:
-        userWorkspaceSystemSideEffectRoleIdsMap[userWorkspaceId],
+      roleIds: userWorkspaceRoleMap[userWorkspaceId],
     });
   }
 
@@ -84,14 +79,14 @@ export class PrincipalPermissionsReadService {
     const workspaceId = authContext.workspace.id;
     const {
       userWorkspaceRoleMap,
-      userWorkspaceSystemSideEffectRoleIdsMap,
+      flatRoleMaps,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
       flatRoleTargetByApplicationIdMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
-      'userWorkspaceSystemSideEffectRoleIdsMap',
+      'flatRoleMaps',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
       'flatRoleTargetByApplicationIdMaps',
@@ -102,7 +97,7 @@ export class PrincipalPermissionsReadService {
       authContext,
       roleMaps: {
         userWorkspaceRoleMap,
-        userWorkspaceSystemSideEffectRoleIdsMap,
+        flatRoleMaps,
         apiKeyRoleMap,
         flatRoleTargetByAgentIdMaps,
         flatRoleTargetByApplicationIdMaps,

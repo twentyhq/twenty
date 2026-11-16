@@ -7,6 +7,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -22,7 +23,11 @@ export const findUserWorkspaceFlatRoleOrThrow = ({
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   flatRoleMaps: FlatRoleMaps;
 }): FlatRole => {
-  const roleId = userWorkspaceRoleMap[userWorkspaceId];
+  const roleId = findUserWorkspaceAssignedRoleId({
+    userWorkspaceId,
+    userWorkspaceRoleMap,
+    flatRoleMaps,
+  });
 
   const flatRole = isDefined(roleId)
     ? findFlatEntityByIdInFlatEntityMaps({

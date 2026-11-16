@@ -14,7 +14,6 @@ import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workf
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type FlatRoleTargetByApplicationIdMaps } from 'src/engine/metadata-modules/role-target/types/flat-role-target-by-application-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type UserWorkspaceSystemSideEffectRoleIdsMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-system-side-effect-role-ids-map.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
@@ -50,7 +49,6 @@ export type WorkspaceDerivedCacheDataMap = {
   fieldIdByObjectIdAndName: Map<string, string>;
   roleIdsWithAllRecordsAccess: string[];
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  userWorkspaceSystemSideEffectRoleIdsMap: UserWorkspaceSystemSideEffectRoleIdsMap;
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRoleTargetByApplicationIdMaps: FlatRoleTargetByApplicationIdMaps;

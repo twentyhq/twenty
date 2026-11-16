@@ -26,8 +26,9 @@ import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/fla
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type UserWorkspaceSystemSideEffectRoleIdsMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-system-side-effect-role-ids-map.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
+import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 
 export type PermissionsPrincipalsRoleMaps = {
@@ -36,7 +37,7 @@ export type PermissionsPrincipalsRoleMaps = {
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
   };
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  userWorkspaceSystemSideEffectRoleIdsMap?: UserWorkspaceSystemSideEffectRoleIdsMap;
+  flatRoleMaps: FlatRoleMaps;
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
@@ -108,7 +109,7 @@ const findWorkspaceMemberRoleId = ({
   workspaceMemberId: string;
   roleMaps: Pick<
     PermissionsPrincipalsRoleMaps,
-    'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap'
+    'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap' | 'flatRoleMaps'
   >;
 }): string | undefined => {
   const userWorkspaceId = findWorkspaceMemberUserWorkspaceId({
@@ -117,11 +118,15 @@ const findWorkspaceMemberRoleId = ({
   });
 
   return isDefined(userWorkspaceId)
-    ? roleMaps.userWorkspaceRoleMap[userWorkspaceId]
+    ? findUserWorkspaceAssignedRoleId({
+        userWorkspaceId,
+        userWorkspaceRoleMap: roleMaps.userWorkspaceRoleMap,
+        flatRoleMaps: roleMaps.flatRoleMaps,
+      })
     : undefined;
 };
 
-const findMainPrincipalSystemSideEffectRoleIds = ({
+const findMainPrincipalRoleIds = ({
   mainPrincipal,
   roleMaps,
 }: {
@@ -138,8 +143,7 @@ const findMainPrincipalSystemSideEffectRoleIds = ({
   });
 
   return isDefined(userWorkspaceId)
-    ? (roleMaps.userWorkspaceSystemSideEffectRoleIdsMap?.[userWorkspaceId] ??
-        [])
+    ? (roleMaps.userWorkspaceRoleMap[userWorkspaceId] ?? [])
     : [];
 };
 
@@ -321,16 +325,14 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
-  const systemSideEffectRoleIds = findMainPrincipalSystemSideEffectRoleIds({
+  const roleIds = findMainPrincipalRoleIds({
     mainPrincipal: identities.mainPrincipal,
     roleMaps,
   });
   const mainPrincipal: PermissionsMainPrincipalWithRole = {
     ...identities.mainPrincipal,
     roleId: mainRoleId,
-    ...(isNonEmptyArray(systemSideEffectRoleIds)
-      ? { systemSideEffectRoleIds }
-      : {}),
+    ...(isNonEmptyArray(roleIds) ? { roleIds } : {}),
   };
 
   const applicationPrincipal = resolveApplicationPrincipal({

@@ -5,8 +5,5 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 export const getPermissionsPrincipalsMainRoleIds = ({
   mainPrincipal,
 }: Pick<PermissionsPrincipalsWithRolesContext, 'mainPrincipal'>): string[] => [
-  ...new Set([
-    mainPrincipal.roleId,
-    ...(mainPrincipal.systemSideEffectRoleIds ?? []),
-  ]),
+  ...new Set([mainPrincipal.roleId, ...(mainPrincipal.roleIds ?? [])]),
 ];

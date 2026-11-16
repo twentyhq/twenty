@@ -5,6 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
+import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import {
@@ -42,12 +43,17 @@ export class RolePermissionsService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<string> {
-    const { userWorkspaceRoleMap } =
+    const { userWorkspaceRoleMap, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
+        'flatRoleMaps',
       ]);
 
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+    const roleId = findUserWorkspaceAssignedRoleId({
+      userWorkspaceId,
+      userWorkspaceRoleMap,
+      flatRoleMaps,
+    });
 
     if (!isDefined(roleId)) {
       throw new PermissionsException(
@@ -113,10 +119,11 @@ export class RolePermissionsService {
     workspaceId: string;
     workspaceMemberIds: string[];
   }): Promise<(string | undefined)[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
+        'flatRoleMaps',
       ]);
 
     return resolveRecordSharePrincipalRoleIds({
@@ -126,6 +133,7 @@ export class RolePermissionsService {
       })),
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
+      flatRoleMaps,
     });
   }
 

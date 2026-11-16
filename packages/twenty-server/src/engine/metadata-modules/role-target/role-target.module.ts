@@ -4,7 +4,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceApiKeyRoleMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-api-key-role-map-cache.service';
 import { WorkspaceFlatRoleTargetByApplicationIdMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-flat-role-target-by-application-id-map-cache.service';
-import { WorkspaceUserWorkspaceSystemSideEffectRoleIdsMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-system-side-effect-role-ids-map-cache.service';
 import { WorkspaceUserWorkspaceRoleMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -19,7 +18,6 @@ import { RoleTargetService } from './services/role-target.service';
   providers: [
     RoleTargetService,
     WorkspaceUserWorkspaceRoleMapCacheService,
-    WorkspaceUserWorkspaceSystemSideEffectRoleIdsMapCacheService,
     WorkspaceApiKeyRoleMapCacheService,
     WorkspaceFlatRoleTargetByApplicationIdMapCacheService,
   ],
