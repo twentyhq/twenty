@@ -15,9 +15,12 @@ const {
   matchTeamsDirectoryByEmailMock: vi.fn(),
 }));
 
-vi.mock('src/features/chat/logic-functions/utils/is-teams-chat-enabled', () => ({
-  isTeamsChatEnabled: isTeamsChatEnabledMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/utils/is-teams-chat-enabled',
+  () => ({
+    isTeamsChatEnabled: isTeamsChatEnabledMock,
+  }),
+);
 
 vi.mock(
   'src/features/chat/logic-functions/utils/current-user-has-roles-permission',

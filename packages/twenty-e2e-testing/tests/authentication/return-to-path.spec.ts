@@ -20,11 +20,11 @@ const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
 
   const workspaceButton = page.getByText('Apple', { exact: true });
 
-  await workspaceButton.waitFor({ state: 'visible', timeout: 30000 }).catch(
-    () => {
+  await workspaceButton
+    .waitFor({ state: 'visible', timeout: 30000 })
+    .catch(() => {
       // Single workspace mode — no workspace selection
-    },
-  );
+    });
 
   if (await workspaceButton.isVisible()) {
     await workspaceButton.click();
@@ -57,25 +57,19 @@ test.describe('Return-to-path after login', () => {
       await loginAndSelectWorkspace(loginPage, page);
     });
 
-    await test.step(
-      'Verify redirected to original deep link',
-      async () => {
-        await page.waitForURL(`**${deepLink}`, {
-          timeout: 30000,
-          waitUntil: 'commit',
-        });
-        expect(new URL(page.url()).pathname).toBe(deepLink);
-      },
-    );
+    await test.step('Verify redirected to original deep link', async () => {
+      await page.waitForURL(`**${deepLink}`, {
+        timeout: 30000,
+        waitUntil: 'commit',
+      });
+      expect(new URL(page.url()).pathname).toBe(deepLink);
+    });
 
-    await test.step(
-      'Verify return-to-path query param was consumed',
-      async () => {
-        const url = new URL(page.url());
+    await test.step('Verify return-to-path query param was consumed', async () => {
+      const url = new URL(page.url());
 
-        expect(url.searchParams.has('returnToPath')).toBe(false);
-      },
-    );
+      expect(url.searchParams.has('returnToPath')).toBe(false);
+    });
   });
 
   test('should preserve path with query params across login', async ({
@@ -85,32 +79,26 @@ test.describe('Return-to-path after login', () => {
     const targetPath = '/settings/accounts';
     const targetPathWithParams = `${targetPath}?tab=emails&filter=unread`;
 
-    await test.step(
-      'Navigate to path with query params while logged out',
-      async () => {
-        await page.goto(targetPathWithParams);
-        await page.waitForURL('**/welcome');
-        await page.waitForLoadState('domcontentloaded');
-      },
-    );
+    await test.step('Navigate to path with query params while logged out', async () => {
+      await page.goto(targetPathWithParams);
+      await page.waitForURL('**/welcome');
+      await page.waitForLoadState('domcontentloaded');
+    });
 
     await test.step('Log in and select workspace', async () => {
       await loginAndSelectWorkspace(loginPage, page);
     });
 
-    await test.step(
-      'Verify redirected to original path with query params',
-      async () => {
-        await page.waitForURL(`**${targetPath}**`, {
-          timeout: 30000,
-          waitUntil: 'commit',
-        });
-        const url = new URL(page.url());
+    await test.step('Verify redirected to original path with query params', async () => {
+      await page.waitForURL(`**${targetPath}**`, {
+        timeout: 30000,
+        waitUntil: 'commit',
+      });
+      const url = new URL(page.url());
 
-        expect(url.pathname).toBe(targetPath);
-        expect(url.searchParams.get('tab')).toBe('emails');
-        expect(url.searchParams.get('filter')).toBe('unread');
-      },
-    );
+      expect(url.pathname).toBe(targetPath);
+      expect(url.searchParams.get('tab')).toBe('emails');
+      expect(url.searchParams.get('filter')).toBe('unread');
+    });
   });
 });

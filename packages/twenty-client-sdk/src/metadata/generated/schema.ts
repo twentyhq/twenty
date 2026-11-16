@@ -1670,7 +1670,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -7709,7 +7709,7 @@ export interface ObjectGenqlSelection{
     duplicateCriteria?: boolean | number
     fields?: (ObjectFieldsConnectionGenqlSelection & { __args: {
     /** Specify to filter the records returned. */
-    filter: FieldFilter, 
+    filter: FieldFilter,
     /** Limit or page results. */
     paging: CursorPaging} })
     fieldsList?: FieldGenqlSelection
@@ -7719,7 +7719,7 @@ export interface ObjectGenqlSelection{
     indexMetadataList?: IndexGenqlSelection
     indexMetadatas?: (ObjectIndexMetadatasConnectionGenqlSelection & { __args: {
     /** Specify to filter the records returned. */
-    filter: IndexFilter, 
+    filter: IndexFilter,
     /** Limit or page results. */
     paging: CursorPaging} })
     isActive?: boolean | number
@@ -8153,7 +8153,7 @@ export interface QueryGenqlSelection{
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
-    agentRunInsights?: (AgentRunInsightsGenqlSelection & { __args: {agentId: Scalars['UUID'], 
+    agentRunInsights?: (AgentRunInsightsGenqlSelection & { __args: {agentId: Scalars['UUID'],
     /** IANA time zone the days are counted in */
     timeZone: Scalars['String']} })
     agentRunSummaries?: AgentRunSummaryGenqlSelection
@@ -8199,7 +8199,7 @@ export interface QueryGenqlSelection{
     id: Scalars['UUID']} })
     fields?: (FieldConnectionGenqlSelection & { __args: {
     /** Specify to filter the records returned. */
-    filter: FieldFilter, 
+    filter: FieldFilter,
     /** Limit or page results. */
     paging: CursorPaging} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
@@ -8296,7 +8296,7 @@ export interface QueryGenqlSelection{
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     objects?: (ObjectConnectionGenqlSelection & { __args: {
     /** Specify to filter the records returned. */
-    filter: ObjectFilter, 
+    filter: ObjectFilter,
     /** Limit or page results. */
     paging: CursorPaging} })
     pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
@@ -9869,7 +9869,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAccessGroupPropagationProgress"')
       return AccessGroupPropagationProgress_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Agent_possibleTypes: string[] = ['Agent']
@@ -9877,7 +9877,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgent"')
       return Agent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatChannel_possibleTypes: string[] = ['AgentChatChannel']
@@ -9885,7 +9885,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannel"')
       return AgentChatChannel_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatChannelRole_possibleTypes: string[] = ['AgentChatChannelRole']
@@ -9893,7 +9893,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelRole"')
       return AgentChatChannelRole_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatChannelSummary_possibleTypes: string[] = ['AgentChatChannelSummary']
@@ -9901,7 +9901,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelSummary"')
       return AgentChatChannelSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatChannelThreadIds_possibleTypes: string[] = ['AgentChatChannelThreadIds']
@@ -9909,7 +9909,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelThreadIds"')
       return AgentChatChannelThreadIds_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatEvent_possibleTypes: string[] = ['AgentChatEvent']
@@ -9917,7 +9917,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatOpenThreadsSummary_possibleTypes: string[] = ['AgentChatOpenThreadsSummary']
@@ -9925,7 +9925,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatOpenThreadsSummary"')
       return AgentChatOpenThreadsSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatThread_possibleTypes: string[] = ['AgentChatThread']
@@ -9933,7 +9933,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThread"')
       return AgentChatThread_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentChatThreadParticipant_possibleTypes: string[] = ['AgentChatThreadParticipant']
@@ -9941,7 +9941,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
       return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentDailyRunCount_possibleTypes: string[] = ['AgentDailyRunCount']
@@ -9949,7 +9949,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentDailyRunCount"')
       return AgentDailyRunCount_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentMessage_possibleTypes: string[] = ['AgentMessage']
@@ -9957,7 +9957,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
       return AgentMessage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
@@ -9965,7 +9965,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
       return AgentMessagePart_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentMessageReactionSummary_possibleTypes: string[] = ['AgentMessageReactionSummary']
@@ -9973,7 +9973,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessageReactionSummary"')
       return AgentMessageReactionSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentRecentRun_possibleTypes: string[] = ['AgentRecentRun']
@@ -9981,7 +9981,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRecentRun"')
       return AgentRecentRun_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentRun_possibleTypes: string[] = ['AgentRun']
@@ -9989,7 +9989,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
       return AgentRun_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentRunInsights_possibleTypes: string[] = ['AgentRunInsights']
@@ -9997,7 +9997,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunInsights"')
       return AgentRunInsights_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AgentRunSummary_possibleTypes: string[] = ['AgentRunSummary']
@@ -10005,7 +10005,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunSummary"')
       return AgentRunSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AggregateChartConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration']
@@ -10013,7 +10013,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAggregateChartConfiguration"')
       return AggregateChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiChatAssistantProfile_possibleTypes: string[] = ['AiChatAssistantProfile']
@@ -10021,7 +10021,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatAssistantProfile"')
       return AiChatAssistantProfile_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
@@ -10029,7 +10029,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
       return AiChatUsage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiChatUserCreditsUsage_possibleTypes: string[] = ['AiChatUserCreditsUsage']
@@ -10037,7 +10037,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUserCreditsUsage"')
       return AiChatUserCreditsUsage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiDataPolicy_possibleTypes: string[] = ['AiDataPolicy']
@@ -10045,7 +10045,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiDataPolicy"')
       return AiDataPolicy_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiRunUsage_possibleTypes: string[] = ['AiRunUsage']
@@ -10053,7 +10053,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiRunUsage"')
       return AiRunUsage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
@@ -10061,7 +10061,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
       return AiSystemPromptPreview_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AiSystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
@@ -10069,7 +10069,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptSection"')
       return AiSystemPromptSection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Analytics_possibleTypes: string[] = ['Analytics']
@@ -10077,7 +10077,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAnalytics"')
       return Analytics_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApiConfig_possibleTypes: string[] = ['ApiConfig']
@@ -10085,7 +10085,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiConfig"')
       return ApiConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApiKey_possibleTypes: string[] = ['ApiKey']
@@ -10093,7 +10093,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
       return ApiKey_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApiKeyForRole_possibleTypes: string[] = ['ApiKeyForRole']
@@ -10101,7 +10101,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKeyForRole"')
       return ApiKeyForRole_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApiKeyToken_possibleTypes: string[] = ['ApiKeyToken']
@@ -10109,7 +10109,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKeyToken"')
       return ApiKeyToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AppConnection_possibleTypes: string[] = ['AppConnection']
@@ -10117,7 +10117,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppConnection"')
       return AppConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AppKeyValue_possibleTypes: string[] = ['AppKeyValue']
@@ -10125,7 +10125,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
       return AppKeyValue_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Application_possibleTypes: string[] = ['Application']
@@ -10133,7 +10133,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplication"')
       return Application_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationAuthorization_possibleTypes: string[] = ['ApplicationAuthorization']
@@ -10141,7 +10141,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
       return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
@@ -10149,7 +10149,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
       return ApplicationCapabilityGrant_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationConnectedAccountDTO_possibleTypes: string[] = ['ApplicationConnectedAccountDTO']
@@ -10157,7 +10157,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedAccountDTO"')
       return ApplicationConnectedAccountDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationConnectionProvider_possibleTypes: string[] = ['ApplicationConnectionProvider']
@@ -10165,7 +10165,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProvider"')
       return ApplicationConnectionProvider_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationConnectionProviderOAuthConfig_possibleTypes: string[] = ['ApplicationConnectionProviderOAuthConfig']
@@ -10173,7 +10173,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
       return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationContent_possibleTypes: string[] = ['ApplicationContent']
@@ -10181,7 +10181,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContent"')
       return ApplicationContent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationContentItem_possibleTypes: string[] = ['ApplicationContentItem']
@@ -10189,7 +10189,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContentItem"')
       return ApplicationContentItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
@@ -10197,7 +10197,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
       return ApplicationExport_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
@@ -10205,7 +10205,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
       return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
@@ -10213,7 +10213,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
       return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
@@ -10221,7 +10221,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
       return ApplicationExportFile_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationFileCompletionError_possibleTypes: string[] = ['ApplicationFileCompletionError']
@@ -10229,7 +10229,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileCompletionError"')
       return ApplicationFileCompletionError_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationFileUploadError_possibleTypes: string[] = ['ApplicationFileUploadError']
@@ -10237,7 +10237,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadError"')
       return ApplicationFileUploadError_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationFileUploadTarget_possibleTypes: string[] = ['ApplicationFileUploadTarget']
@@ -10245,7 +10245,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadTarget"')
       return ApplicationFileUploadTarget_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationHealthCheckAction_possibleTypes: string[] = ['ApplicationHealthCheckAction']
@@ -10253,7 +10253,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckAction"')
       return ApplicationHealthCheckAction_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationHealthCheckResult_possibleTypes: string[] = ['ApplicationHealthCheckResult']
@@ -10261,7 +10261,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
       return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoring_possibleTypes: string[] = ['ApplicationMonitoring']
@@ -10269,7 +10269,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoring"')
       return ApplicationMonitoring_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringActivityBucket_possibleTypes: string[] = ['ApplicationMonitoringActivityBucket']
@@ -10277,7 +10277,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringActivityBucket"')
       return ApplicationMonitoringActivityBucket_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringCreditBucket_possibleTypes: string[] = ['ApplicationMonitoringCreditBucket']
@@ -10285,7 +10285,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringCreditBucket"')
       return ApplicationMonitoringCreditBucket_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringFunction_possibleTypes: string[] = ['ApplicationMonitoringFunction']
@@ -10293,7 +10293,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringFunction"')
       return ApplicationMonitoringFunction_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringIssue_possibleTypes: string[] = ['ApplicationMonitoringIssue']
@@ -10301,7 +10301,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringIssue"')
       return ApplicationMonitoringIssue_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringLifecycleBucket_possibleTypes: string[] = ['ApplicationMonitoringLifecycleBucket']
@@ -10309,7 +10309,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringLifecycleBucket"')
       return ApplicationMonitoringLifecycleBucket_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationMonitoringVersion_possibleTypes: string[] = ['ApplicationMonitoringVersion']
@@ -10317,7 +10317,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringVersion"')
       return ApplicationMonitoringVersion_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationPreferences_possibleTypes: string[] = ['ApplicationPreferences']
@@ -10325,7 +10325,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationPreferences"')
       return ApplicationPreferences_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
@@ -10333,7 +10333,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
       return ApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
@@ -10341,7 +10341,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
       return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationRegistrationSummary_possibleTypes: string[] = ['ApplicationRegistrationSummary']
@@ -10349,7 +10349,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationSummary"')
       return ApplicationRegistrationSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationRegistrationVariable_possibleTypes: string[] = ['ApplicationRegistrationVariable']
@@ -10357,7 +10357,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
       return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
@@ -10365,7 +10365,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
       return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationVariable_possibleTypes: string[] = ['ApplicationVariable']
@@ -10373,7 +10373,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationVariable"')
       return ApplicationVariable_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
@@ -10381,7 +10381,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
       return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthBypassProviders_possibleTypes: string[] = ['AuthBypassProviders']
@@ -10389,7 +10389,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthBypassProviders"')
       return AuthBypassProviders_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthProviders_possibleTypes: string[] = ['AuthProviders']
@@ -10397,7 +10397,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthProviders"')
       return AuthProviders_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthToken_possibleTypes: string[] = ['AuthToken']
@@ -10405,7 +10405,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
       return AuthToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthTokenPair_possibleTypes: string[] = ['AuthTokenPair']
@@ -10413,7 +10413,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokenPair"')
       return AuthTokenPair_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthTokens_possibleTypes: string[] = ['AuthTokens']
@@ -10421,7 +10421,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokens"')
       return AuthTokens_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AuthorizeApp_possibleTypes: string[] = ['AuthorizeApp']
@@ -10429,7 +10429,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthorizeApp"')
       return AuthorizeApp_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AutocompleteResult_possibleTypes: string[] = ['AutocompleteResult']
@@ -10437,7 +10437,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAutocompleteResult"')
       return AutocompleteResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AvailableWorkspace_possibleTypes: string[] = ['AvailableWorkspace']
@@ -10445,7 +10445,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspace"')
       return AvailableWorkspace_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AvailableWorkspaces_possibleTypes: string[] = ['AvailableWorkspaces']
@@ -10453,7 +10453,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspaces"')
       return AvailableWorkspaces_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const AvailableWorkspacesAndAccessTokens_possibleTypes: string[] = ['AvailableWorkspacesAndAccessTokens']
@@ -10461,7 +10461,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspacesAndAccessTokens"')
       return AvailableWorkspacesAndAccessTokens_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BarChartConfiguration_possibleTypes: string[] = ['BarChartConfiguration']
@@ -10469,7 +10469,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartConfiguration"')
       return BarChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BarChartData_possibleTypes: string[] = ['BarChartData']
@@ -10477,7 +10477,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartData"')
       return BarChartData_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BarChartSeries_possibleTypes: string[] = ['BarChartSeries']
@@ -10485,7 +10485,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartSeries"')
       return BarChartSeries_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Billing_possibleTypes: string[] = ['Billing']
@@ -10493,7 +10493,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBilling"')
       return Billing_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
@@ -10501,7 +10501,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
       return BillingCustomer_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
@@ -10509,7 +10509,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
       return BillingEndTrialPeriod_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
@@ -10517,7 +10517,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
       return BillingEntitlement_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingLicensedProduct_possibleTypes: string[] = ['BillingLicensedProduct']
@@ -10525,7 +10525,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingLicensedProduct"')
       return BillingLicensedProduct_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingMeteredProduct_possibleTypes: string[] = ['BillingMeteredProduct']
@@ -10533,7 +10533,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
       return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPartnerCode_possibleTypes: string[] = ['BillingPartnerCode']
@@ -10541,7 +10541,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPartnerCode"')
       return BillingPartnerCode_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
@@ -10549,7 +10549,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
       return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPlan_possibleTypes: string[] = ['BillingPlan']
@@ -10557,7 +10557,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
       return BillingPlan_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPriceLicensed_possibleTypes: string[] = ['BillingPriceLicensed']
@@ -10565,7 +10565,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceLicensed"')
       return BillingPriceLicensed_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPriceMetered_possibleTypes: string[] = ['BillingPriceMetered']
@@ -10573,7 +10573,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceMetered"')
       return BillingPriceMetered_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingPriceTier_possibleTypes: string[] = ['BillingPriceTier']
@@ -10581,7 +10581,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceTier"')
       return BillingPriceTier_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingProduct_possibleTypes: string[] = ['BillingProduct']
@@ -10589,7 +10589,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProduct"')
       return BillingProduct_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
@@ -10597,7 +10597,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductDTO"')
       return BillingProductDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingProductMetadata_possibleTypes: string[] = ['BillingProductMetadata']
@@ -10605,7 +10605,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductMetadata"')
       return BillingProductMetadata_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingResourceCreditUsage_possibleTypes: string[] = ['BillingResourceCreditUsage']
@@ -10613,7 +10613,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingResourceCreditUsage"')
       return BillingResourceCreditUsage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingSession_possibleTypes: string[] = ['BillingSession']
@@ -10621,7 +10621,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSession"')
       return BillingSession_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
@@ -10629,7 +10629,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
       return BillingSubscription_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingSubscriptionItem_possibleTypes: string[] = ['BillingSubscriptionItem']
@@ -10637,7 +10637,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionItem"')
       return BillingSubscriptionItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingSubscriptionSchedulePhase_possibleTypes: string[] = ['BillingSubscriptionSchedulePhase']
@@ -10645,7 +10645,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhase"')
       return BillingSubscriptionSchedulePhase_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingSubscriptionSchedulePhaseItem_possibleTypes: string[] = ['BillingSubscriptionSchedulePhaseItem']
@@ -10653,7 +10653,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhaseItem"')
       return BillingSubscriptionSchedulePhaseItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
@@ -10661,7 +10661,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
       return BillingTrialPeriod_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const BillingUpdate_possibleTypes: string[] = ['BillingUpdate']
@@ -10669,7 +10669,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
       return BillingUpdate_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CalendarChannel_possibleTypes: string[] = ['CalendarChannel']
@@ -10677,7 +10677,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannel"')
       return CalendarChannel_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CalendarConfiguration_possibleTypes: string[] = ['CalendarConfiguration']
@@ -10685,7 +10685,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarConfiguration"')
       return CalendarConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CallRecordingSummaryConfiguration_possibleTypes: string[] = ['CallRecordingSummaryConfiguration']
@@ -10693,7 +10693,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCallRecordingSummaryConfiguration"')
       return CallRecordingSummaryConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CallRecordingTranscriptConfiguration_possibleTypes: string[] = ['CallRecordingTranscriptConfiguration']
@@ -10701,7 +10701,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCallRecordingTranscriptConfiguration"')
       return CallRecordingTranscriptConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
@@ -10709,7 +10709,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
       return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CancelMessageCampaignOutputDTO_possibleTypes: string[] = ['CancelMessageCampaignOutputDTO']
@@ -10717,7 +10717,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCancelMessageCampaignOutputDTO"')
       return CancelMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Captcha_possibleTypes: string[] = ['Captcha']
@@ -10725,7 +10725,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCaptcha"')
       return Captcha_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ChannelSyncSuccess_possibleTypes: string[] = ['ChannelSyncSuccess']
@@ -10733,7 +10733,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isChannelSyncSuccess"')
       return ChannelSyncSuccess_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ChatConfiguration_possibleTypes: string[] = ['ChatConfiguration']
@@ -10741,7 +10741,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isChatConfiguration"')
       return ChatConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ChatStreamCatchupChunks_possibleTypes: string[] = ['ChatStreamCatchupChunks']
@@ -10749,7 +10749,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamCatchupChunks"')
       return ChatStreamCatchupChunks_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ChatStreamError_possibleTypes: string[] = ['ChatStreamError']
@@ -10757,7 +10757,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamError"')
       return ChatStreamError_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ChatThreadsConfiguration_possibleTypes: string[] = ['ChatThreadsConfiguration']
@@ -10765,7 +10765,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isChatThreadsConfiguration"')
       return ChatThreadsConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CheckUserExist_possibleTypes: string[] = ['CheckUserExist']
@@ -10773,7 +10773,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCheckUserExist"')
       return CheckUserExist_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
@@ -10781,7 +10781,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
       return ClaimableApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClientAiEvaluationModelConfig_possibleTypes: string[] = ['ClientAiEvaluationModelConfig']
@@ -10789,7 +10789,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiEvaluationModelConfig"')
       return ClientAiEvaluationModelConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClientAiModelConfig_possibleTypes: string[] = ['ClientAiModelConfig']
@@ -10797,7 +10797,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClientAiModelTierConfig_possibleTypes: string[] = ['ClientAiModelTierConfig']
@@ -10805,7 +10805,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelTierConfig"')
       return ClientAiModelTierConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClientConfig_possibleTypes: string[] = ['ClientConfig']
@@ -10813,7 +10813,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
       return ClientConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ClientConfigMaintenanceMode_possibleTypes: string[] = ['ClientConfigMaintenanceMode']
@@ -10821,7 +10821,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfigMaintenanceMode"')
       return ClientConfigMaintenanceMode_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
@@ -10829,7 +10829,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
       return CollectionHash_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CommandMenuItem_possibleTypes: string[] = ['CommandMenuItem']
@@ -10837,7 +10837,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItem"')
       return CommandMenuItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload','PathCommandMenuItemPayload']
@@ -10845,7 +10845,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
       return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CompleteApplicationFileUploadsResult_possibleTypes: string[] = ['CompleteApplicationFileUploadsResult']
@@ -10853,7 +10853,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCompleteApplicationFileUploadsResult"')
       return CompleteApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
@@ -10861,7 +10861,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
       return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ConnectedImapSmtpCaldavAccount_possibleTypes: string[] = ['ConnectedImapSmtpCaldavAccount']
@@ -10869,7 +10869,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedImapSmtpCaldavAccount"')
       return ConnectedImapSmtpCaldavAccount_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CreateApplicationFileUploadsResult_possibleTypes: string[] = ['CreateApplicationFileUploadsResult']
@@ -10877,7 +10877,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationFileUploadsResult"')
       return CreateApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CreateApplicationRegistration_possibleTypes: string[] = ['CreateApplicationRegistration']
@@ -10885,7 +10885,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationRegistration"')
       return CreateApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CreateCalendarEventOutput_possibleTypes: string[] = ['CreateCalendarEventOutput']
@@ -10893,7 +10893,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateCalendarEventOutput"')
       return CreateCalendarEventOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
@@ -10901,7 +10901,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const CreditUsedItem_possibleTypes: string[] = ['CreditUsedItem']
@@ -10909,7 +10909,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreditUsedItem"')
       return CreditUsedItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DeleteSso_possibleTypes: string[] = ['DeleteSso']
@@ -10917,7 +10917,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteSso"')
       return DeleteSso_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DeleteTwoFactorAuthenticationMethod_possibleTypes: string[] = ['DeleteTwoFactorAuthenticationMethod']
@@ -10925,7 +10925,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteTwoFactorAuthenticationMethod"')
       return DeleteTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DeletedWorkspaceMember_possibleTypes: string[] = ['DeletedWorkspaceMember']
@@ -10933,7 +10933,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeletedWorkspaceMember"')
       return DeletedWorkspaceMember_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DevelopmentApplication_possibleTypes: string[] = ['DevelopmentApplication']
@@ -10941,7 +10941,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDevelopmentApplication"')
       return DevelopmentApplication_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DomainRecord_possibleTypes: string[] = ['DomainRecord']
@@ -10949,7 +10949,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDomainRecord"')
       return DomainRecord_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DomainValidRecords_possibleTypes: string[] = ['DomainValidRecords']
@@ -10957,7 +10957,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDomainValidRecords"')
       return DomainValidRecords_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DuplicatedDashboard_possibleTypes: string[] = ['DuplicatedDashboard']
@@ -10965,7 +10965,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedDashboard"')
       return DuplicatedDashboard_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const DuplicatedMessageList_possibleTypes: string[] = ['DuplicatedMessageList']
@@ -10973,7 +10973,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedMessageList"')
       return DuplicatedMessageList_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EditSso_possibleTypes: string[] = ['EditSso']
@@ -10981,7 +10981,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEditSso"')
       return EditSso_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EmailPasswordResetLink_possibleTypes: string[] = ['EmailPasswordResetLink']
@@ -10989,7 +10989,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailPasswordResetLink"')
       return EmailPasswordResetLink_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EmailThreadConfiguration_possibleTypes: string[] = ['EmailThreadConfiguration']
@@ -10997,7 +10997,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailThreadConfiguration"')
       return EmailThreadConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EmailingDomain_possibleTypes: string[] = ['EmailingDomain']
@@ -11005,7 +11005,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
       return EmailingDomain_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EmailsConfiguration_possibleTypes: string[] = ['EmailsConfiguration']
@@ -11013,7 +11013,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailsConfiguration"')
       return EmailsConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EnqueueJobResult_possibleTypes: string[] = ['EnqueueJobResult']
@@ -11021,7 +11021,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobResult"')
       return EnqueueJobResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EnqueueJobsResult_possibleTypes: string[] = ['EnqueueJobsResult']
@@ -11029,7 +11029,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobsResult"')
       return EnqueueJobsResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EnqueuedJob_possibleTypes: string[] = ['EnqueuedJob']
@@ -11037,7 +11037,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueuedJob"')
       return EnqueuedJob_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
@@ -11045,7 +11045,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
       return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
@@ -11053,7 +11053,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EventLogPageInfo_possibleTypes: string[] = ['EventLogPageInfo']
@@ -11061,7 +11061,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogPageInfo"')
       return EventLogPageInfo_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EventLogQueryResult_possibleTypes: string[] = ['EventLogQueryResult']
@@ -11069,7 +11069,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogQueryResult"')
       return EventLogQueryResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EventLogRecord_possibleTypes: string[] = ['EventLogRecord']
@@ -11077,7 +11077,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogRecord"')
       return EventLogRecord_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const EventSubscription_possibleTypes: string[] = ['EventSubscription']
@@ -11085,7 +11085,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
       return EventSubscription_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FeatureFlag_possibleTypes: string[] = ['FeatureFlag']
@@ -11093,7 +11093,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFeatureFlag"')
       return FeatureFlag_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Field_possibleTypes: string[] = ['Field']
@@ -11101,7 +11101,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
       return Field_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldConfiguration_possibleTypes: string[] = ['FieldConfiguration']
@@ -11109,7 +11109,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConfiguration"')
       return FieldConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldConnection_possibleTypes: string[] = ['FieldConnection']
@@ -11117,7 +11117,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
       return FieldConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldEdge_possibleTypes: string[] = ['FieldEdge']
@@ -11125,7 +11125,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldEdge"')
       return FieldEdge_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldPermission_possibleTypes: string[] = ['FieldPermission']
@@ -11133,7 +11133,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldPermission"')
       return FieldPermission_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldRichTextConfiguration_possibleTypes: string[] = ['FieldRichTextConfiguration']
@@ -11141,7 +11141,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldRichTextConfiguration"')
       return FieldRichTextConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FieldsConfiguration_possibleTypes: string[] = ['FieldsConfiguration']
@@ -11149,7 +11149,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldsConfiguration"')
       return FieldsConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const File_possibleTypes: string[] = ['File']
@@ -11157,7 +11157,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
       return File_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FileUploadTarget_possibleTypes: string[] = ['FileUploadTarget']
@@ -11165,7 +11165,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFileUploadTarget"')
       return FileUploadTarget_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
@@ -11173,7 +11173,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
       return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FilesConfiguration_possibleTypes: string[] = ['FilesConfiguration']
@@ -11181,7 +11181,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFilesConfiguration"')
       return FilesConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FindAvailableSSOIDP_possibleTypes: string[] = ['FindAvailableSSOIDP']
@@ -11189,7 +11189,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFindAvailableSSOIDP"')
       return FindAvailableSSOIDP_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FormFieldConfiguration_possibleTypes: string[] = ['FormFieldConfiguration']
@@ -11197,7 +11197,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFormFieldConfiguration"')
       return FormFieldConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FrontComponent_possibleTypes: string[] = ['FrontComponent']
@@ -11205,7 +11205,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponent"')
       return FrontComponent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FrontComponentConfiguration_possibleTypes: string[] = ['FrontComponentConfiguration']
@@ -11213,7 +11213,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentConfiguration"')
       return FrontComponentConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FrontComponentWidgetAvailability_possibleTypes: string[] = ['FrontComponentWidgetAvailability']
@@ -11221,7 +11221,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentWidgetAvailability"')
       return FrontComponentWidgetAvailability_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const FullName_possibleTypes: string[] = ['FullName']
@@ -11229,7 +11229,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
       return FullName_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GenerateResult_possibleTypes: string[] = ['GenerateResult']
@@ -11237,7 +11237,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateResult"')
       return GenerateResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GetAuthorizationUrlForSSO_possibleTypes: string[] = ['GetAuthorizationUrlForSSO']
@@ -11245,7 +11245,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGetAuthorizationUrlForSSO"')
       return GetAuthorizationUrlForSSO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedProgress_possibleTypes: string[] = ['GettingStartedProgress']
@@ -11253,7 +11253,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedProgress"')
       return GettingStartedProgress_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedStepDefinition_possibleTypes: string[] = ['GettingStartedStepDefinition']
@@ -11261,7 +11261,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedStepDefinition"')
       return GettingStartedStepDefinition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedWorkflow_possibleTypes: string[] = ['GettingStartedWorkflow']
@@ -11269,7 +11269,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflow"')
       return GettingStartedWorkflow_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedWorkflowPreview_possibleTypes: string[] = ['GettingStartedWorkflowPreview']
@@ -11277,7 +11277,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreview"')
       return GettingStartedWorkflowPreview_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedWorkflowPreviewAction_possibleTypes: string[] = ['GettingStartedWorkflowPreviewAction']
@@ -11285,7 +11285,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreviewAction"')
       return GettingStartedWorkflowPreviewAction_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GettingStartedWorkflowPreviewTrigger_possibleTypes: string[] = ['GettingStartedWorkflowPreviewTrigger']
@@ -11293,7 +11293,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreviewTrigger"')
       return GettingStartedWorkflowPreviewTrigger_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const GridPosition_possibleTypes: string[] = ['GridPosition']
@@ -11301,7 +11301,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
       return GridPosition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IframeConfiguration_possibleTypes: string[] = ['IframeConfiguration']
@@ -11309,7 +11309,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIframeConfiguration"')
       return IframeConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IframeMediaPermission_possibleTypes: string[] = ['IframeMediaPermission']
@@ -11317,7 +11317,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIframeMediaPermission"')
       return IframeMediaPermission_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ImapSmtpCaldavConnectionSuccess_possibleTypes: string[] = ['ImapSmtpCaldavConnectionSuccess']
@@ -11325,7 +11325,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavConnectionSuccess"')
       return ImapSmtpCaldavConnectionSuccess_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ImapSmtpCaldavPublicConnectionParameters_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParameters']
@@ -11333,7 +11333,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParameters"')
       return ImapSmtpCaldavPublicConnectionParameters_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ImapSmtpCaldavPublicConnectionParams_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParams']
@@ -11341,7 +11341,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParams"')
       return ImapSmtpCaldavPublicConnectionParams_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Impersonate_possibleTypes: string[] = ['Impersonate']
@@ -11349,7 +11349,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isImpersonate"')
       return Impersonate_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Index_possibleTypes: string[] = ['Index']
@@ -11357,7 +11357,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndex"')
       return Index_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IndexEdge_possibleTypes: string[] = ['IndexEdge']
@@ -11365,7 +11365,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
       return IndexEdge_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IndexField_possibleTypes: string[] = ['IndexField']
@@ -11373,7 +11373,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIndexField"')
       return IndexField_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IngestAppMessagesOutput_possibleTypes: string[] = ['IngestAppMessagesOutput']
@@ -11381,7 +11381,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIngestAppMessagesOutput"')
       return IngestAppMessagesOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const IngestedAppMessage_possibleTypes: string[] = ['IngestedAppMessage']
@@ -11389,7 +11389,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIngestedAppMessage"')
       return IngestedAppMessage_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const InitiateTwoFactorAuthenticationProvisioning_possibleTypes: string[] = ['InitiateTwoFactorAuthenticationProvisioning']
@@ -11397,7 +11397,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isInitiateTwoFactorAuthenticationProvisioning"')
       return InitiateTwoFactorAuthenticationProvisioning_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const InvalidatePassword_possibleTypes: string[] = ['InvalidatePassword']
@@ -11405,7 +11405,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isInvalidatePassword"')
       return InvalidatePassword_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
@@ -11413,7 +11413,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
       return InviteSuggestion_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const JobStatus_possibleTypes: string[] = ['JobStatus']
@@ -11421,7 +11421,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isJobStatus"')
       return JobStatus_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LineChartConfiguration_possibleTypes: string[] = ['LineChartConfiguration']
@@ -11429,7 +11429,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartConfiguration"')
       return LineChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LineChartData_possibleTypes: string[] = ['LineChartData']
@@ -11437,7 +11437,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartData"')
       return LineChartData_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LineChartDataPoint_possibleTypes: string[] = ['LineChartDataPoint']
@@ -11445,7 +11445,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartDataPoint"')
       return LineChartDataPoint_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LineChartSeries_possibleTypes: string[] = ['LineChartSeries']
@@ -11453,7 +11453,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartSeries"')
       return LineChartSeries_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Location_possibleTypes: string[] = ['Location']
@@ -11461,7 +11461,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLocation"')
       return Location_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LogicFunction_possibleTypes: string[] = ['LogicFunction']
@@ -11469,7 +11469,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunction"')
       return LogicFunction_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
@@ -11477,7 +11477,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
       return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LogicFunctionLogs_possibleTypes: string[] = ['LogicFunctionLogs']
@@ -11485,7 +11485,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
       return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const LoginToken_possibleTypes: string[] = ['LoginToken']
@@ -11493,7 +11493,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLoginToken"')
       return LoginToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceApp_possibleTypes: string[] = ['MarketplaceApp']
@@ -11501,7 +11501,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
       return MarketplaceApp_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceAppDetail_possibleTypes: string[] = ['MarketplaceAppDetail']
@@ -11509,7 +11509,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
       return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceAppObject_possibleTypes: string[] = ['MarketplaceAppObject']
@@ -11517,7 +11517,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
       return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceAppRole_possibleTypes: string[] = ['MarketplaceAppRole']
@@ -11525,7 +11525,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRole"')
       return MarketplaceAppRole_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceAppRoleFieldPermission_possibleTypes: string[] = ['MarketplaceAppRoleFieldPermission']
@@ -11533,7 +11533,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleFieldPermission"')
       return MarketplaceAppRoleFieldPermission_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MarketplaceAppRoleObjectPermission_possibleTypes: string[] = ['MarketplaceAppRoleObjectPermission']
@@ -11541,7 +11541,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleObjectPermission"')
       return MarketplaceAppRoleObjectPermission_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const McpServer_possibleTypes: string[] = ['McpServer']
@@ -11549,7 +11549,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServer"')
       return McpServer_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const McpServerTool_possibleTypes: string[] = ['McpServerTool']
@@ -11557,7 +11557,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServerTool"')
       return McpServerTool_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageCampaignBodyConfiguration_possibleTypes: string[] = ['MessageCampaignBodyConfiguration']
@@ -11565,7 +11565,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignBodyConfiguration"')
       return MessageCampaignBodyConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageCampaignDetailsConfiguration_possibleTypes: string[] = ['MessageCampaignDetailsConfiguration']
@@ -11573,7 +11573,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignDetailsConfiguration"')
       return MessageCampaignDetailsConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageCampaignSendBlockerDTO_possibleTypes: string[] = ['MessageCampaignSendBlockerDTO']
@@ -11581,7 +11581,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignSendBlockerDTO"')
       return MessageCampaignSendBlockerDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageChannel_possibleTypes: string[] = ['MessageChannel']
@@ -11589,7 +11589,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
       return MessageChannel_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageFolder_possibleTypes: string[] = ['MessageFolder']
@@ -11597,7 +11597,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageFolder"')
       return MessageFolder_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageSuppression_possibleTypes: string[] = ['MessageSuppression']
@@ -11605,7 +11605,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppression"')
       return MessageSuppression_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MessageSuppressionList_possibleTypes: string[] = ['MessageSuppressionList']
@@ -11613,7 +11613,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppressionList"')
       return MessageSuppressionList_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MetadataEvent_possibleTypes: string[] = ['MetadataEvent']
@@ -11621,7 +11621,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataEvent"')
       return MetadataEvent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MetadataTranslation_possibleTypes: string[] = ['MetadataTranslation']
@@ -11629,7 +11629,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataTranslation"')
       return MetadataTranslation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
@@ -11637,7 +11637,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
       return MinimalMetadata_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
@@ -11645,7 +11645,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
       return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MinimalView_possibleTypes: string[] = ['MinimalView']
@@ -11653,7 +11653,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
       return MinimalView_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Mutation_possibleTypes: string[] = ['Mutation']
@@ -11661,7 +11661,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMutation"')
       return Mutation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const NativeModelCapabilities_possibleTypes: string[] = ['NativeModelCapabilities']
@@ -11669,7 +11669,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNativeModelCapabilities"')
       return NativeModelCapabilities_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
@@ -11677,7 +11677,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
       return NavigationMenuItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const NotesConfiguration_possibleTypes: string[] = ['NotesConfiguration']
@@ -11685,7 +11685,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNotesConfiguration"')
       return NotesConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Object_possibleTypes: string[] = ['Object']
@@ -11693,7 +11693,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObject"')
       return Object_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
@@ -11701,7 +11701,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
       return ObjectConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
@@ -11709,7 +11709,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
       return ObjectEdge_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectFieldsConnection_possibleTypes: string[] = ['ObjectFieldsConnection']
@@ -11717,7 +11717,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectFieldsConnection"')
       return ObjectFieldsConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectIndexMetadatasConnection_possibleTypes: string[] = ['ObjectIndexMetadatasConnection']
@@ -11725,7 +11725,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectIndexMetadatasConnection"')
       return ObjectIndexMetadatasConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
@@ -11733,7 +11733,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
       return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectPermission_possibleTypes: string[] = ['ObjectPermission']
@@ -11741,7 +11741,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectPermission"')
       return ObjectPermission_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
@@ -11749,7 +11749,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
       return ObjectRecordCount_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectRecordEvent_possibleTypes: string[] = ['ObjectRecordEvent']
@@ -11757,7 +11757,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEvent"')
       return ObjectRecordEvent_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectRecordEventProperties_possibleTypes: string[] = ['ObjectRecordEventProperties']
@@ -11765,7 +11765,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventProperties"')
       return ObjectRecordEventProperties_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectRecordEventWithQueryIds_possibleTypes: string[] = ['ObjectRecordEventWithQueryIds']
@@ -11773,7 +11773,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventWithQueryIds"')
       return ObjectRecordEventWithQueryIds_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ObjectRecordsPermissions_possibleTypes: string[] = ['ObjectRecordsPermissions']
@@ -11781,7 +11781,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordsPermissions"')
       return ObjectRecordsPermissions_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
@@ -11789,7 +11789,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
       return OnboardingStepNavigation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
@@ -11797,7 +11797,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
       return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageInfo_possibleTypes: string[] = ['PageInfo']
@@ -11805,7 +11805,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
       return PageInfo_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayout_possibleTypes: string[] = ['PageLayout']
@@ -11813,7 +11813,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayout"')
       return PageLayout_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutTab_possibleTypes: string[] = ['PageLayoutTab']
@@ -11821,7 +11821,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutTab"')
       return PageLayoutTab_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutWidget_possibleTypes: string[] = ['PageLayoutWidget']
@@ -11829,7 +11829,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidget"')
       return PageLayoutWidget_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutWidgetCanvasPosition_possibleTypes: string[] = ['PageLayoutWidgetCanvasPosition']
@@ -11837,7 +11837,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetCanvasPosition"')
       return PageLayoutWidgetCanvasPosition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutWidgetGridPosition_possibleTypes: string[] = ['PageLayoutWidgetGridPosition']
@@ -11845,7 +11845,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetGridPosition"')
       return PageLayoutWidgetGridPosition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutWidgetPosition_possibleTypes: string[] = ['PageLayoutWidgetCanvasPosition','PageLayoutWidgetGridPosition','PageLayoutWidgetVerticalListPosition']
@@ -11853,7 +11853,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetPosition"')
       return PageLayoutWidgetPosition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PageLayoutWidgetVerticalListPosition_possibleTypes: string[] = ['PageLayoutWidgetVerticalListPosition']
@@ -11861,7 +11861,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetVerticalListPosition"')
       return PageLayoutWidgetVerticalListPosition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PathCommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
@@ -11869,7 +11869,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
       return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
@@ -11877,7 +11877,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
       return PermissionFlag_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PieChartConfiguration_possibleTypes: string[] = ['PieChartConfiguration']
@@ -11885,7 +11885,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartConfiguration"')
       return PieChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PieChartData_possibleTypes: string[] = ['PieChartData']
@@ -11893,7 +11893,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartData"')
       return PieChartData_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PieChartDataItem_possibleTypes: string[] = ['PieChartDataItem']
@@ -11901,7 +11901,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartDataItem"')
       return PieChartDataItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PlaceDetailsResult_possibleTypes: string[] = ['PlaceDetailsResult']
@@ -11909,7 +11909,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
       return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PreviewMessageCampaignSendOutputDTO_possibleTypes: string[] = ['PreviewMessageCampaignSendOutputDTO']
@@ -11917,7 +11917,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPreviewMessageCampaignSendOutputDTO"')
       return PreviewMessageCampaignSendOutputDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicApplicationRegistration_possibleTypes: string[] = ['PublicApplicationRegistration']
@@ -11925,7 +11925,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicApplicationRegistration"')
       return PublicApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
@@ -11933,7 +11933,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
       return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']
@@ -11941,7 +11941,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
       return PublicDomain_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicFeatureFlag_possibleTypes: string[] = ['PublicFeatureFlag']
@@ -11949,7 +11949,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicFeatureFlag"')
       return PublicFeatureFlag_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicFeatureFlagMetadata_possibleTypes: string[] = ['PublicFeatureFlagMetadata']
@@ -11957,7 +11957,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicFeatureFlagMetadata"')
       return PublicFeatureFlagMetadata_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
@@ -11965,7 +11965,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
       return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicWorkspaceData_possibleTypes: string[] = ['PublicWorkspaceData']
@@ -11973,7 +11973,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceData"')
       return PublicWorkspaceData_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const PublicWorkspaceDataSummary_possibleTypes: string[] = ['PublicWorkspaceDataSummary']
@@ -11981,7 +11981,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceDataSummary"')
       return PublicWorkspaceDataSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Query_possibleTypes: string[] = ['Query']
@@ -11989,7 +11989,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isQuery"')
       return Query_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RatioAggregateConfig_possibleTypes: string[] = ['RatioAggregateConfig']
@@ -11997,7 +11997,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRatioAggregateConfig"')
       return RatioAggregateConfig_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordExport_possibleTypes: string[] = ['RecordExport']
@@ -12005,7 +12005,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
       return RecordExport_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
@@ -12013,7 +12013,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
       return RecordIdentifier_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordPermissionsDTO_possibleTypes: string[] = ['RecordPermissionsDTO']
@@ -12021,7 +12021,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordPermissionsDTO"')
       return RecordPermissionsDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordPermissionsResult_possibleTypes: string[] = ['RecordPermissionsResult']
@@ -12029,7 +12029,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordPermissionsResult"')
       return RecordPermissionsResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordSharingDTO_possibleTypes: string[] = ['RecordSharingDTO']
@@ -12037,7 +12037,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordSharingDTO"')
       return RecordSharingDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordSharingGrantDTO_possibleTypes: string[] = ['RecordSharingGrantDTO']
@@ -12045,7 +12045,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordSharingGrantDTO"')
       return RecordSharingGrantDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordSharingRoleDTO_possibleTypes: string[] = ['RecordSharingRoleDTO']
@@ -12053,7 +12053,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordSharingRoleDTO"')
       return RecordSharingRoleDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RecordTableConfiguration_possibleTypes: string[] = ['RecordTableConfiguration']
@@ -12061,7 +12061,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordTableConfiguration"')
       return RecordTableConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RelatedRecordPath_possibleTypes: string[] = ['RelatedRecordPath']
@@ -12069,7 +12069,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRelatedRecordPath"')
       return RelatedRecordPath_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Relation_possibleTypes: string[] = ['Relation']
@@ -12077,7 +12077,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
       return Relation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ResendEmailVerificationToken_possibleTypes: string[] = ['ResendEmailVerificationToken']
@@ -12085,7 +12085,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isResendEmailVerificationToken"')
       return ResendEmailVerificationToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RichTextBody_possibleTypes: string[] = ['RichTextBody']
@@ -12093,7 +12093,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
       return RichTextBody_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Role_possibleTypes: string[] = ['Role']
@@ -12101,7 +12101,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRole"')
       return Role_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RolePermissionFlag_possibleTypes: string[] = ['RolePermissionFlag']
@@ -12109,7 +12109,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRolePermissionFlag"')
       return RolePermissionFlag_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RotateClientSecret_possibleTypes: string[] = ['RotateClientSecret']
@@ -12117,7 +12117,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRotateClientSecret"')
       return RotateClientSecret_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RowLevelPermissionPredicate_possibleTypes: string[] = ['RowLevelPermissionPredicate']
@@ -12125,7 +12125,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicate"')
       return RowLevelPermissionPredicate_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RowLevelPermissionPredicateGroup_possibleTypes: string[] = ['RowLevelPermissionPredicateGroup']
@@ -12133,7 +12133,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicateGroup"')
       return RowLevelPermissionPredicateGroup_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RowLevelPermissionRule_possibleTypes: string[] = ['RowLevelPermissionRule']
@@ -12141,7 +12141,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionRule"')
       return RowLevelPermissionRule_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RowLevelRecordsPermissions_possibleTypes: string[] = ['RowLevelRecordsPermissions']
@@ -12149,7 +12149,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelRecordsPermissions"')
       return RowLevelRecordsPermissions_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const RunAgentResult_possibleTypes: string[] = ['RunAgentResult']
@@ -12157,7 +12157,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRunAgentResult"')
       return RunAgentResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SSOConnection_possibleTypes: string[] = ['SSOConnection']
@@ -12165,7 +12165,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSSOConnection"')
       return SSOConnection_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SSOIdentityProvider_possibleTypes: string[] = ['SSOIdentityProvider']
@@ -12173,7 +12173,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSSOIdentityProvider"')
       return SSOIdentityProvider_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SdkClientChecksums_possibleTypes: string[] = ['SdkClientChecksums']
@@ -12181,7 +12181,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSdkClientChecksums"')
       return SdkClientChecksums_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SearchField_possibleTypes: string[] = ['SearchField']
@@ -12189,7 +12189,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSearchField"')
       return SearchField_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendAppChannelMessageOutput_possibleTypes: string[] = ['SendAppChannelMessageOutput']
@@ -12197,7 +12197,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendAppChannelMessageOutput"')
       return SendAppChannelMessageOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendChatMessageResult_possibleTypes: string[] = ['SendChatMessageResult']
@@ -12205,7 +12205,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
       return SendChatMessageResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendEmailOutput_possibleTypes: string[] = ['SendEmailOutput']
@@ -12213,7 +12213,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailOutput"')
       return SendEmailOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
@@ -12221,7 +12221,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
       return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendInboxMessageResult_possibleTypes: string[] = ['SendInboxMessageResult']
@@ -12229,7 +12229,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendInboxMessageResult"')
       return SendInboxMessageResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendInvitations_possibleTypes: string[] = ['SendInvitations']
@@ -12237,7 +12237,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendInvitations"')
       return SendInvitations_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
@@ -12245,7 +12245,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
       return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Sentry_possibleTypes: string[] = ['Sentry']
@@ -12253,7 +12253,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSentry"')
       return Sentry_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SettingsMenuItem_possibleTypes: string[] = ['SettingsMenuItem']
@@ -12261,7 +12261,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSettingsMenuItem"')
       return SettingsMenuItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SetupSso_possibleTypes: string[] = ['SetupSso']
@@ -12269,7 +12269,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSetupSso"')
       return SetupSso_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SignUp_possibleTypes: string[] = ['SignUp']
@@ -12277,7 +12277,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSignUp"')
       return SignUp_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Skill_possibleTypes: string[] = ['Skill']
@@ -12285,7 +12285,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSkill"')
       return Skill_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const StandaloneRichTextConfiguration_possibleTypes: string[] = ['StandaloneRichTextConfiguration']
@@ -12293,7 +12293,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isStandaloneRichTextConfiguration"')
       return StandaloneRichTextConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const StartWorkspaceSetupChatResult_possibleTypes: string[] = ['StartWorkspaceSetupChatResult']
@@ -12301,7 +12301,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isStartWorkspaceSetupChatResult"')
       return StartWorkspaceSetupChatResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const StopImpersonation_possibleTypes: string[] = ['StopImpersonation']
@@ -12309,7 +12309,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
       return StopImpersonation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const SubdomainAvailabilityDTO_possibleTypes: string[] = ['SubdomainAvailabilityDTO']
@@ -12317,7 +12317,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSubdomainAvailabilityDTO"')
       return SubdomainAvailabilityDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Subscription_possibleTypes: string[] = ['Subscription']
@@ -12325,7 +12325,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSubscription"')
       return Subscription_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Support_possibleTypes: string[] = ['Support']
@@ -12333,7 +12333,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSupport"')
       return Support_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TasksConfiguration_possibleTypes: string[] = ['TasksConfiguration']
@@ -12341,7 +12341,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTasksConfiguration"')
       return TasksConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
@@ -12349,7 +12349,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
       return TimelineActivityType_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
@@ -12357,7 +12357,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
       return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TimelineActivityTypeEmitThrough_possibleTypes: string[] = ['TimelineActivityTypeEmitThrough']
@@ -12365,7 +12365,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
       return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TimelineConfiguration_possibleTypes: string[] = ['TimelineConfiguration']
@@ -12373,7 +12373,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineConfiguration"')
       return TimelineConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
@@ -12381,7 +12381,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
       return ToolIndexEntry_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TransientToken_possibleTypes: string[] = ['TransientToken']
@@ -12389,7 +12389,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTransientToken"')
       return TransientToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerAddPeopleToMessageListJobResult_possibleTypes: string[] = ['TriggerAddPeopleToMessageListJobResult']
@@ -12397,7 +12397,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerAddPeopleToMessageListJobResult"')
       return TriggerAddPeopleToMessageListJobResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerInstallApplicationJobResult_possibleTypes: string[] = ['TriggerInstallApplicationJobResult']
@@ -12405,7 +12405,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationJobResult"')
       return TriggerInstallApplicationJobResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerInstallApplicationResult_possibleTypes: string[] = ['TriggerInstallApplicationResult']
@@ -12413,7 +12413,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationResult"')
       return TriggerInstallApplicationResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerUninstallApplicationJobResult_possibleTypes: string[] = ['TriggerUninstallApplicationJobResult']
@@ -12421,7 +12421,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
       return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerUninstallApplicationResult_possibleTypes: string[] = ['TriggerUninstallApplicationResult']
@@ -12429,7 +12429,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationResult"')
       return TriggerUninstallApplicationResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TriggerUpgradeApplicationResult_possibleTypes: string[] = ['TriggerUpgradeApplicationResult']
@@ -12437,7 +12437,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUpgradeApplicationResult"')
       return TriggerUpgradeApplicationResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationBackupCodeStatus_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodeStatus']
@@ -12445,7 +12445,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodeStatus"')
       return TwoFactorAuthenticationBackupCodeStatus_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationBackupCodes_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodes']
@@ -12453,7 +12453,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodes"')
       return TwoFactorAuthenticationBackupCodes_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationMethodSummary_possibleTypes: string[] = ['TwoFactorAuthenticationMethodSummary']
@@ -12461,7 +12461,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationMethodSummary"')
       return TwoFactorAuthenticationMethodSummary_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
@@ -12469,7 +12469,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
       return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCodeRedemption']
@@ -12477,7 +12477,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCodeRedemption"')
       return TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const TwoFactorAuthenticationRecoveryStatus_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryStatus']
@@ -12485,7 +12485,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryStatus"')
       return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
@@ -12493,7 +12493,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
       return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
@@ -12501,7 +12501,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
       return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
@@ -12509,7 +12509,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
@@ -12517,7 +12517,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
       return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageLimit_possibleTypes: string[] = ['UsageLimit']
@@ -12525,7 +12525,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
       return UsageLimit_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageLimitOperationDefinition_possibleTypes: string[] = ['UsageLimitOperationDefinition']
@@ -12533,7 +12533,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
       return UsageLimitOperationDefinition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaDefinition_possibleTypes: string[] = ['UsageQuotaDefinition']
@@ -12541,7 +12541,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaDefinition"')
       return UsageQuotaDefinition_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaDefinitions_possibleTypes: string[] = ['UsageQuotaDefinitions']
@@ -12549,7 +12549,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaDefinitions"')
       return UsageQuotaDefinitions_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaOperatorOnlyScope_possibleTypes: string[] = ['UsageQuotaOperatorOnlyScope']
@@ -12557,7 +12557,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaOperatorOnlyScope"')
       return UsageQuotaOperatorOnlyScope_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaScopeConsumption_possibleTypes: string[] = ['UsageQuotaScopeConsumption']
@@ -12565,7 +12565,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaScopeConsumption"')
       return UsageQuotaScopeConsumption_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaWithConsumption_possibleTypes: string[] = ['UsageQuotaWithConsumption']
@@ -12573,7 +12573,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaWithConsumption"')
       return UsageQuotaWithConsumption_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
@@ -12581,7 +12581,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
       return UsageTimeSeries_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
@@ -12589,7 +12589,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
       return UsageUserDaily_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const User_possibleTypes: string[] = ['User']
@@ -12597,7 +12597,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUser"')
       return User_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UserApplicationVariableValue_possibleTypes: string[] = ['UserApplicationVariableValue']
@@ -12605,7 +12605,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserApplicationVariableValue"')
       return UserApplicationVariableValue_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UserSession_possibleTypes: string[] = ['UserSession']
@@ -12613,7 +12613,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
       return UserSession_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UserWorkspace_possibleTypes: string[] = ['UserWorkspace']
@@ -12621,7 +12621,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserWorkspace"')
       return UserWorkspace_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ValidatePasswordResetToken_possibleTypes: string[] = ['ValidatePasswordResetToken']
@@ -12629,7 +12629,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isValidatePasswordResetToken"')
       return ValidatePasswordResetToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ValidationRule_possibleTypes: string[] = ['ValidationRule']
@@ -12637,7 +12637,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isValidationRule"')
       return ValidationRule_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const VerificationRecord_possibleTypes: string[] = ['VerificationRecord']
@@ -12645,7 +12645,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerificationRecord"')
       return VerificationRecord_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const VerifyEmailAndGetLoginToken_possibleTypes: string[] = ['VerifyEmailAndGetLoginToken']
@@ -12653,7 +12653,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyEmailAndGetLoginToken"')
       return VerifyEmailAndGetLoginToken_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const VerifyTwoFactorAuthenticationMethod_possibleTypes: string[] = ['VerifyTwoFactorAuthenticationMethod']
@@ -12661,7 +12661,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
       return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
@@ -12669,7 +12669,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
       return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const View_possibleTypes: string[] = ['View']
@@ -12677,7 +12677,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isView"')
       return View_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewConfiguration_possibleTypes: string[] = ['ViewConfiguration']
@@ -12685,7 +12685,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewConfiguration"')
       return ViewConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewField_possibleTypes: string[] = ['ViewField']
@@ -12693,7 +12693,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewField"')
       return ViewField_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewFieldGroup_possibleTypes: string[] = ['ViewFieldGroup']
@@ -12701,7 +12701,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldGroup"')
       return ViewFieldGroup_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewFilter_possibleTypes: string[] = ['ViewFilter']
@@ -12709,7 +12709,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilter"')
       return ViewFilter_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewFilterGroup_possibleTypes: string[] = ['ViewFilterGroup']
@@ -12717,7 +12717,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilterGroup"')
       return ViewFilterGroup_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewGroup_possibleTypes: string[] = ['ViewGroup']
@@ -12725,7 +12725,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewGroup"')
       return ViewGroup_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ViewSort_possibleTypes: string[] = ['ViewSort']
@@ -12733,7 +12733,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewSort"')
       return ViewSort_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Webhook_possibleTypes: string[] = ['Webhook']
@@ -12741,7 +12741,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
       return Webhook_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','BarChartConfiguration','CalendarConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','ChatConfiguration','ChatThreadsConfiguration','EmailThreadConfiguration','EmailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','FormFieldConfiguration','FrontComponentConfiguration','IframeConfiguration','LineChartConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','NotesConfiguration','PieChartConfiguration','RecordTableConfiguration','StandaloneRichTextConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
@@ -12749,7 +12749,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkflowConfiguration_possibleTypes: string[] = ['WorkflowConfiguration']
@@ -12757,7 +12757,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowConfiguration"')
       return WorkflowConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkflowRunConfiguration_possibleTypes: string[] = ['WorkflowRunConfiguration']
@@ -12765,7 +12765,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowRunConfiguration"')
       return WorkflowRunConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkflowVersionConfiguration_possibleTypes: string[] = ['WorkflowVersionConfiguration']
@@ -12773,7 +12773,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowVersionConfiguration"')
       return WorkflowVersionConfiguration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const Workspace_possibleTypes: string[] = ['Workspace']
@@ -12781,7 +12781,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspace"')
       return Workspace_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
@@ -12789,7 +12789,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
       return WorkspaceAiStats_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
@@ -12797,7 +12797,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
       return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceCreationDefaultsDTO_possibleTypes: string[] = ['WorkspaceCreationDefaultsDTO']
@@ -12805,7 +12805,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
       return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceInvitation_possibleTypes: string[] = ['WorkspaceInvitation']
@@ -12813,7 +12813,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInvitation"')
       return WorkspaceInvitation_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceInviteHashValid_possibleTypes: string[] = ['WorkspaceInviteHashValid']
@@ -12821,7 +12821,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInviteHashValid"')
       return WorkspaceInviteHashValid_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceMember_possibleTypes: string[] = ['WorkspaceMember']
@@ -12829,7 +12829,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMember"')
       return WorkspaceMember_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceMemberApplicationVariables_possibleTypes: string[] = ['WorkspaceMemberApplicationVariables']
@@ -12837,7 +12837,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMemberApplicationVariables"')
       return WorkspaceMemberApplicationVariables_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceMigration_possibleTypes: string[] = ['WorkspaceMigration']
@@ -12845,7 +12845,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMigration"')
       return WorkspaceMigration_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceNameAndId_possibleTypes: string[] = ['WorkspaceNameAndId']
@@ -12853,7 +12853,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceNameAndId"')
       return WorkspaceNameAndId_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceUrls_possibleTypes: string[] = ['WorkspaceUrls']
@@ -12861,7 +12861,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceUrls"')
       return WorkspaceUrls_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const WorkspaceUrlsAndId_possibleTypes: string[] = ['WorkspaceUrlsAndId']
@@ -12869,7 +12869,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceUrlsAndId"')
       return WorkspaceUrlsAndId_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 export const enumAgentChatChannelAssignmentFilter = {
    ANY: 'ANY' as const,
@@ -13272,6 +13272,7 @@ export const enumFeatureFlagKey = {
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
+   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
