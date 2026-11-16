@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
 import { IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -15,7 +15,7 @@ export class UpsertViewWidgetViewFilterGroupInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  parentViewFilterGroupId?: string;
+  parentViewFilterGroupId?: string | null;
 
   @Field(() => ViewFilterGroupLogicalOperator, {
     nullable: true,
@@ -25,6 +25,6 @@ export class UpsertViewWidgetViewFilterGroupInput {
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
-  positionInViewFilterGroup?: number;
+  @Field(() => Float, { nullable: true })
+  positionInViewFilterGroup?: number | null;
 }

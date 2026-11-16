@@ -23,6 +23,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { updateMessageChannel } from 'test/integration/utils/query-messaging.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
+import { serializeEmailBody } from 'test/integration/utils/serialize-email-body.util';
 
 const HANDLE = 'gmail-outbound@apple.dev';
 const ALIAS = 'gmail-outbound-alias@apple.dev';
@@ -93,7 +94,10 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       cc: RECIPIENTS.cc,
       bcc: RECIPIENTS.bcc,
       subject,
-      body: '<p>Gmail reply body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Gmail reply body</p>',
+      }),
       inReplyTo: '<gmail-parent@example.com>',
     });
 
@@ -200,7 +204,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       cc: RECIPIENTS.cc,
       bcc: RECIPIENTS.bcc,
       subject: DRAFT_SUBJECT,
-      body: 'Gmail draft body',
+      body: serializeEmailBody({ type: 'text', text: 'Gmail draft body' }),
       draftMessageId: draft.id,
     });
 
@@ -250,7 +254,10 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       fromHandle: ALIAS,
       to: RECIPIENTS.to,
       subject,
-      body: '<p>Gmail alias body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Gmail alias body</p>',
+      }),
     });
 
     expect(result).toMatchObject({ success: true });
@@ -274,7 +281,10 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       fromHandle: 'not-my-alias@apple.dev',
       to: RECIPIENTS.to,
       subject: `Gmail rejected sender ${randomUUID()}`,
-      body: '<p>Gmail rejected body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Gmail rejected body</p>',
+      }),
     });
 
     expect(result).toMatchObject({
@@ -291,7 +301,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       connectedAccountId: channel.connectedAccountId,
       to: RECIPIENTS.to,
       subject,
-      body: '<p>Gmail body</p>',
+      body: serializeEmailBody({ type: 'html', html: '<p>Gmail body</p>' }),
     });
 
     expect(result).toMatchObject({ success: true });
@@ -324,7 +334,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       connectedAccountId: channel.connectedAccountId,
       to: RECIPIENTS.to,
       subject,
-      body: '<p>Gmail body</p>',
+      body: serializeEmailBody({ type: 'html', html: '<p>Gmail body</p>' }),
     });
 
     expect(result).toMatchObject({ success: true });

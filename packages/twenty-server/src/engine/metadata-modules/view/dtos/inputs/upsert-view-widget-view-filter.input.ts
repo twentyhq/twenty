@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
 import {
   IsDefined,
@@ -37,20 +37,20 @@ export class UpsertViewWidgetViewFilterInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  viewFilterGroupId?: string;
+  viewFilterGroupId?: string | null;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
-  positionInViewFilterGroup?: number;
+  @Field(() => Float, { nullable: true })
+  positionInViewFilterGroup?: number | null;
 
   @IsOptional()
   @IsString()
-  @Field({ nullable: true })
-  subFieldName?: string;
+  @Field(() => String, { nullable: true })
+  subFieldName?: string | null;
 
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  relationTargetFieldMetadataId?: string;
+  relationTargetFieldMetadataId?: string | null;
 }

@@ -1,5 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { isDefined } from 'twenty-shared/utils';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION, isDefined } from 'twenty-shared/utils';
 
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import {
@@ -12,6 +12,11 @@ import { SendEmailResolver } from 'src/modules/messaging/message-outbound-manage
 
 const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
 const USER_WORKSPACE_ID = '66666666-6666-4666-8666-666666666666';
+const SERIALIZED_BODY = JSON.stringify({
+  type: 'doc',
+  attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+  content: [{ type: 'paragraph', content: [{ type: 'text', text: 'body' }] }],
+});
 
 describe('SendEmailResolver errors', () => {
   const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
@@ -20,7 +25,7 @@ describe('SendEmailResolver errors', () => {
     connectedAccountId: 'connected-account-id',
     to: 'recipient@example.com',
     subject: 'Subject',
-    body: '<p>body</p>',
+    body: SERIALIZED_BODY,
   } as SendEmailInput;
 
   const buildResolver = (composeEmail: jest.Mock) => {
@@ -113,7 +118,7 @@ describe('SendEmailResolver target record linking', () => {
     connectedAccountId: 'connected-account-id',
     to: 'recipient@example.com',
     subject: 'Subject',
-    body: '<p>body</p>',
+    body: SERIALIZED_BODY,
   } as SendEmailInput;
 
   const buildResolver = ({

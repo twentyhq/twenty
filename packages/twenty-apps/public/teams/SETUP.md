@@ -87,7 +87,10 @@ setting.
    Adding it claims the connection's Microsoft tenant for this workspace, so
    activities from that tenant route here, and links every directory user whose
    email matches a workspace member. Personal connections do not claim a tenant,
-   and a tenant can only be claimed by one workspace.
+   and a tenant can only be claimed by one workspace. When another workspace
+   already holds the tenant, the connection is kept for transcripts and the app
+   settings page shows an error banner until that workspace disconnects and
+   this one reconnects.
 
 The route verifies the Bot Framework token on every activity and ignores
 activities from tenants no workspace has claimed. The bot answers direct
@@ -297,6 +300,10 @@ workspace. Public apps use the monorepo CI workflows.
   were disabled.
 - `Microsoft Teams is not connected`: the requesting user has no personal
   connection and the workspace has no shared one.
+- `Microsoft Teams chat is taken by another workspace`: another workspace on
+  this Twenty instance claimed the same Microsoft tenant first, so chat
+  activities route there. Disconnect Microsoft Teams in that workspace, then
+  remove and add the workspace connection here to claim the tenant.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
 - Call Recording without speaker names: the organization has **Include speaker

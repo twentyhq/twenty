@@ -16,8 +16,8 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({ openRecordInSidePanel }),
 }));
 
-jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
-  AiChatThreadActionsDropdown: () => null,
+jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
+  InboxThreadActionsDropdown: () => null,
 }));
 
 const THREAD: AiChatThreadRecord = {
