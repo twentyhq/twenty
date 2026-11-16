@@ -127,7 +127,6 @@ export class McpServerConnectedAccountService {
     });
   }
 
-  // A concurrent call may have replaced the rejected token already; refreshing again would spend its rotated refresh token.
   async refreshRejectedAccessTokenOrMarkAuthFailed({
     connectedAccount,
     workspaceId,
@@ -165,7 +164,6 @@ export class McpServerConnectedAccountService {
     });
   }
 
-  // No app logic reports failures for these accounts, so a rejected refresh signs the account out here.
   private async decryptAccessTokenOrMarkAuthFailed({
     connectedAccount,
     workspaceId,

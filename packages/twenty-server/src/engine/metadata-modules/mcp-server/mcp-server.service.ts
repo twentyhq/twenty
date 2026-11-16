@@ -87,8 +87,10 @@ export class McpServerService {
               label: input.label,
               url,
               workspaceId,
+              applicationId: workspaceCustomFlatApplication.id,
+              applicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
             },
-            flatApplication: workspaceCustomFlatApplication,
             scope: input.signInScope ?? 'USER',
           },
         );
@@ -232,9 +234,10 @@ export class McpServerService {
     userWorkspaceId?: string;
     shouldDiscardToolsOnFailure?: boolean;
   }): Promise<McpServerDTO> {
+    const { flatMcpServerMaps } =
+      await this.mcpServerMigrationService.getFlatMaps(workspaceId);
     const flatMcpServer = findFlatMcpServerByIdOrThrow({
-      flatMcpServerMaps:
-        await this.mcpServerMigrationService.getFlatMcpServerMaps(workspaceId),
+      flatMcpServerMaps,
       mcpServerId: id,
     });
 
@@ -246,7 +249,6 @@ export class McpServerService {
 
     const syncedMcpServer = await this.findByIdOrThrow({ id, workspaceId });
 
-    // The sign-in check at creation can miss a server that was down or started asking later
     if (
       isDefined(syncedMcpServer.connectionProviderId) ||
       !isDefined(syncedMcpServer.toolsSyncError)
