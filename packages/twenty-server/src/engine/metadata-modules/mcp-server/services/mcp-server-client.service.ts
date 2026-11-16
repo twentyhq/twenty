@@ -113,18 +113,18 @@ export class McpServerClientService {
         throw error;
       }
 
-      if (!isDefined(connectedAccount)) {
+      if (!isDefined(connectedAccount) || !isDefined(accessToken)) {
         throw buildMcpServerSignInRequiredException();
       }
     }
 
     // The server may stop honoring a token before its assumed expiry; one refresh tells a stale token from a revoked account.
     const refreshedAccessToken =
-      await this.mcpServerConnectedAccountService.resolveAccessTokenOrMarkAuthFailed(
+      await this.mcpServerConnectedAccountService.refreshRejectedAccessTokenOrMarkAuthFailed(
         {
           connectedAccount,
           workspaceId,
-          shouldForceRefresh: true,
+          rejectedAccessToken: accessToken,
         },
       );
 

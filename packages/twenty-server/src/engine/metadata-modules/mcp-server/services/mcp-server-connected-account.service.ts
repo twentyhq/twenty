@@ -17,7 +17,10 @@ import {
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { type McpServerTarget } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-target.type';
 import { buildMcpServerSignInRequiredException } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-required-exception.util';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import {
+  ConnectedAccountRefreshTokensService,
+  type ConnectedAccountTokens,
+} from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 type ConnectedAccountLookup = Pick<
   McpServerTarget,
@@ -106,29 +109,74 @@ export class McpServerConnectedAccountService {
     );
   }
 
-  // No app logic reports failures for these accounts, so a rejected refresh signs the account out here.
   async resolveAccessTokenOrMarkAuthFailed({
     connectedAccount,
     workspaceId,
-    shouldForceRefresh = false,
   }: {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
-    shouldForceRefresh?: boolean;
+  }): Promise<string> {
+    return this.decryptAccessTokenOrMarkAuthFailed({
+      connectedAccount,
+      workspaceId,
+      resolveTokens: () =>
+        this.connectedAccountRefreshTokensService.resolveTokens(
+          connectedAccount,
+          workspaceId,
+        ),
+    });
+  }
+
+  // A concurrent call may have replaced the rejected token already; refreshing again would spend its rotated refresh token.
+  async refreshRejectedAccessTokenOrMarkAuthFailed({
+    connectedAccount,
+    workspaceId,
+    rejectedAccessToken,
+  }: {
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+    rejectedAccessToken: string;
+  }): Promise<string> {
+    return this.decryptAccessTokenOrMarkAuthFailed({
+      connectedAccount,
+      workspaceId,
+      resolveTokens: async () => {
+        const latestConnectedAccount = await this.reloadConnectedAccount({
+          connectedAccount,
+          workspaceId,
+        });
+        const latestAccessToken = latestConnectedAccount.accessToken;
+
+        if (
+          isDefined(latestAccessToken) &&
+          this.connectedAccountTokenEncryptionService.decrypt({
+            ciphertext: latestAccessToken,
+            workspaceId,
+          }) !== rejectedAccessToken
+        ) {
+          return { accessToken: latestAccessToken };
+        }
+
+        return this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+          latestConnectedAccount,
+          workspaceId,
+        );
+      },
+    });
+  }
+
+  // No app logic reports failures for these accounts, so a rejected refresh signs the account out here.
+  private async decryptAccessTokenOrMarkAuthFailed({
+    connectedAccount,
+    workspaceId,
+    resolveTokens,
+  }: {
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+    resolveTokens: () => Promise<Pick<ConnectedAccountTokens, 'accessToken'>>;
   }): Promise<string> {
     try {
-      const { accessToken } = shouldForceRefresh
-        ? await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-            await this.reloadConnectedAccount({
-              connectedAccount,
-              workspaceId,
-            }),
-            workspaceId,
-          )
-        : await this.connectedAccountRefreshTokensService.resolveTokens(
-            connectedAccount,
-            workspaceId,
-          );
+      const { accessToken } = await resolveTokens();
 
       return this.connectedAccountTokenEncryptionService.decrypt({
         ciphertext: accessToken,
@@ -155,7 +203,6 @@ export class McpServerConnectedAccountService {
     }
   }
 
-  // The first call may have refreshed already; a forced refresh must compare against the saved timestamp, not the one loaded before it.
   private async reloadConnectedAccount({
     connectedAccount,
     workspaceId,
