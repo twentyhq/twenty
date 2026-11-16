@@ -1915,7 +1915,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  // Loops because a computed column can itself read other computed columns
   private buildComputedFieldExpressionSql(
     args: Parameters<QueryBuilderContext['buildComputedFieldExpressionSql']>[0],
   ) {
@@ -1927,6 +1926,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
+  // Loops because a computed column can itself read other computed columns
   private async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
