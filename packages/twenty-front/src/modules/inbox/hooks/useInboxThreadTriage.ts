@@ -1,19 +1,15 @@
-import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { useInboxThreadMemberStateByThreadId } from '@/inbox/hooks/useInboxThreadMemberStateByThreadId';
 import { getInboxThreadTriageStatus } from '@/inbox/utils/getInboxThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useInboxThreadTriage = ({
   threadId,
@@ -29,17 +25,13 @@ export const useInboxThreadTriage = ({
   const aiChatThreadParticipants = useAtomStateValue(
     aiChatThreadParticipantsState,
   );
-  const location = useLocation();
-  const inboxSelectedChannelView = useAtomStateValue(
-    inboxSelectedChannelViewSelector,
-  );
-  const channelId = isInboxPath(location.pathname)
-    ? (inboxSelectedChannelView?.channelId ?? null)
-    : (channelIdOutsideInbox ?? null);
-  const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
-    { threadIds: [threadId], channelId },
-  );
+  const {
+    inboxThreadMemberStateByThreadId: { [threadId]: inboxStatus },
+    channelId,
+  } = useInboxThreadMemberStateByThreadId({
+    threadIds: [threadId],
+    channelIdOutsideInbox,
+  });
   const isInChannel = inboxStatus?.isChannelCopy ?? false;
 
   return {

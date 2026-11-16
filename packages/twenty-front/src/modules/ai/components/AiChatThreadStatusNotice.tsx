@@ -44,7 +44,8 @@ export const AiChatThreadStatusNotice = () => {
   const notice = {
     SNOOZED: { Icon: IconZzz, text: t`Snoozed until ${eventTime}` },
     SNOOZE_ENDED: { Icon: IconZzz, text: t`Snooze ended ${eventTime}` },
-    DONE: { Icon: IconCheck, text: t`Marked as done ${eventTime}` },
+    // Also shown after re-subscribing, which keeps the chat in Done
+    DONE: { Icon: IconCheck, text: t`Moved to Done ${eventTime}` },
     UNSUBSCRIBED: {
       Icon: IconBellOff,
       text: t`Unsubscribed ${eventTime}. New messages stay out of your inbox unless you're mentioned.`,

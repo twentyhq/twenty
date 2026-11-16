@@ -1,6 +1,5 @@
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { useInboxThreadMemberStateByThreadId } from '@/inbox/hooks/useInboxThreadMemberStateByThreadId';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -41,15 +40,11 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
-import { useLocation } from 'react-router-dom';
-
-import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const workspaceSurface = useWorkspaceSurface();
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const contextStoreInstanceId = useContextStoreInstanceId();
-  const location = useLocation();
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -116,20 +111,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     isDefined(aiChatThreadParticipants)
       ? (recordIds ?? [])
       : [];
-  const inboxSelectedChannelView = useAtomStateValue(
-    inboxSelectedChannelViewSelector,
-  );
-  const inboxThreadMemberStateByThreadId = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
-    {
-      threadIds: inboxStatusThreadIds,
-      // Every menu on the inbox page, the open chat's included, files the
-      // chats of the channel on screen for the channel
-      channelId: isInboxPath(location.pathname)
-        ? (inboxSelectedChannelView?.channelId ?? null)
-        : null,
-    },
-  );
+  // Every menu on the inbox page, the open chat's included, files the
+  // chats of the channel on screen for the channel
+  const { inboxThreadMemberStateByThreadId } =
+    useInboxThreadMemberStateByThreadId({ threadIds: inboxStatusThreadIds });
 
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record
   const selectedRecords = storedSelectedRecords.map((record): ObjectRecord => ({
