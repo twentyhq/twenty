@@ -38,6 +38,10 @@ const isForeignKeyViolation = (error: unknown): boolean =>
   (error as Error & { cause?: { code?: unknown } }).cause?.code ===
   POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION;
 
+const isMergeableTimelineActivity = (
+  payload: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'][number],
+) => payload.timelineActivityTypeSnapshot.action !== 'updated';
+
 @Injectable()
 export class TimelineActivityRepository {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
@@ -196,12 +200,15 @@ export class TimelineActivityRepository {
             'timelineActivity',
           );
 
+        const mergeablePayloads = payloads.filter(isMergeableTimelineActivity);
         const recentTimelineActivities =
-          await this.findRecentTimelineActivities({
-            timelineActivityRepository,
-            objectSingularName,
-            payloads,
-          });
+          mergeablePayloads.length === 0
+            ? []
+            : await this.findRecentTimelineActivities({
+                timelineActivityRepository,
+                objectSingularName,
+                payloads: mergeablePayloads,
+              });
 
         const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
           [];
@@ -242,6 +249,12 @@ export class TimelineActivityRepository {
         }
 
         for (const payload of payloads) {
+          if (!isMergeableTimelineActivity(payload)) {
+            payloadsToInsert.push(payload);
+
+            continue;
+          }
+
           const recentTimelineActivity =
             buildTimelineActivityMergeKeyCandidates({
               recordId: payload.recordId,
@@ -348,9 +361,15 @@ export class TimelineActivityRepository {
     workspaceId: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
+    const mergeablePayloads = payloads.filter(isMergeableTimelineActivity);
+
+    if (mergeablePayloads.length === 0) {
+      return;
+    }
+
     const lockNames = [
       ...new Set(
-        payloads.map((payload) =>
+        mergeablePayloads.map((payload) =>
           JSON.stringify([
             'timeline-activity-merge',
             workspaceId,
@@ -379,6 +398,10 @@ export class TimelineActivityRepository {
     objectSingularName: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
+    if (payloads.length === 0) {
+      return [];
+    }
+
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     const timelineActivityPropertyName =
