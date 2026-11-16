@@ -45,8 +45,8 @@ export class AccessGroupReadService {
         'flatFieldMetadataMaps',
       ]);
 
-    const workspaceMembers =
-      await this.findPrincipalsWorkspaceMembers(principals);
+    const workspaceMember = await this.findPrincipalWorkspaceMember(principals);
+    const workspaceMembers = [workspaceMember].filter(isDefined);
 
     return this.findCompactIds({
       workspaceId,
@@ -83,33 +83,30 @@ export class AccessGroupReadService {
       workspaceId,
       accessGroups: buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
         request,
-        workspaceMembers: await this.findPrincipalsWorkspaceMembers(
-          request.principals,
-        ),
+        workspaceMembers: [
+          await this.findPrincipalWorkspaceMember(request.principals),
+        ].filter(isDefined),
         flatFieldMetadataMaps,
       }),
     });
   }
 
-  private async findPrincipalsWorkspaceMembers({
+  private async findPrincipalWorkspaceMember({
     workspaceId,
     mainPrincipal,
   }: Pick<
     PermissionsPrincipalsWithRolesContext,
     'workspaceId' | 'mainPrincipal'
-  >): Promise<RlsWorkspaceMember[]> {
+  >): Promise<RlsWorkspaceMember | undefined> {
     if (!isPermissionMainPrincipalWorkspaceMember(mainPrincipal)) {
-      return [];
+      return undefined;
     }
 
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
-    const workspaceMember =
-      flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId];
-
-    return isDefined(workspaceMember) ? [workspaceMember] : [];
+    return flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId];
   }
 
   private async findCompactIds({
