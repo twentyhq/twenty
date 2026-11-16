@@ -133,6 +133,7 @@ export class WorkflowVersionCoreSyncService {
       return workflowVersion?.id ?? null;
     }, buildSystemAuthContext(workspaceId));
   }
+
   async invalidateAutomatedTriggerMaps(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',

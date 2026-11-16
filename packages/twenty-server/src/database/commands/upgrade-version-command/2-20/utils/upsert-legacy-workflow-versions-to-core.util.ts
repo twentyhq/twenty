@@ -18,7 +18,7 @@ import {
   CoreWorkflowMetadataException,
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
-import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
+import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/database/commands/upgrade-version-command/2-20/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
