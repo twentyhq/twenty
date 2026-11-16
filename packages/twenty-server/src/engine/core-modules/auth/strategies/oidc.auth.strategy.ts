@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { Strategy, type StrategyOptions, type TokenSet } from 'openid-client';
 
@@ -56,7 +57,7 @@ export class OidcAuthStrategy extends PassportStrategy(
         ...(req.query.workspaceInviteHash
           ? { workspaceInviteHash: req.query.workspaceInviteHash }
           : {}),
-        ...(typeof req.query.workspacePersonalInviteToken === 'string'
+        ...(isNonEmptyString(req.query.workspacePersonalInviteToken)
           ? {
               workspacePersonalInviteToken:
                 req.query.workspacePersonalInviteToken,
@@ -85,10 +86,11 @@ export class OidcAuthStrategy extends PassportStrategy(
       return {
         identityProviderId: state.identityProviderId,
         workspaceInviteHash: state.workspaceInviteHash,
-        workspacePersonalInviteToken:
-          typeof state.workspacePersonalInviteToken === 'string'
-            ? state.workspacePersonalInviteToken
-            : undefined,
+        workspacePersonalInviteToken: isNonEmptyString(
+          state.workspacePersonalInviteToken,
+        )
+          ? state.workspacePersonalInviteToken
+          : undefined,
       };
     } catch {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
