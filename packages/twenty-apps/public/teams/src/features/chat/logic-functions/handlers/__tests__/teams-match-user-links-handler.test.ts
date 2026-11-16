@@ -4,13 +4,19 @@ import { teamsMatchUserLinksHandler } from 'src/features/chat/logic-functions/ha
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 
 const {
+  isTeamsChatEnabledMock,
   hasRolesPermissionMock,
   getTeamsWorkspaceGraphAccessMock,
   matchTeamsDirectoryByEmailMock,
 } = vi.hoisted(() => ({
+  isTeamsChatEnabledMock: vi.fn(),
   hasRolesPermissionMock: vi.fn(),
   getTeamsWorkspaceGraphAccessMock: vi.fn(),
   matchTeamsDirectoryByEmailMock: vi.fn(),
+}));
+
+vi.mock('src/features/chat/logic-functions/utils/is-teams-chat-enabled', () => ({
+  isTeamsChatEnabled: isTeamsChatEnabledMock,
 }));
 
 vi.mock(
@@ -40,6 +46,7 @@ const SUMMARY = {
 describe('teamsMatchUserLinksHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    isTeamsChatEnabledMock.mockReturnValue(true);
     hasRolesPermissionMock.mockResolvedValue(true);
     getTeamsWorkspaceGraphAccessMock.mockResolvedValue({
       success: true,
@@ -47,6 +54,16 @@ describe('teamsMatchUserLinksHandler', () => {
       tenantId: 'tenant-1',
     });
     matchTeamsDirectoryByEmailMock.mockResolvedValue(SUMMARY);
+  });
+
+  it('refuses to run while chat is disabled', async () => {
+    isTeamsChatEnabledMock.mockReturnValue(false);
+
+    const result = await teamsMatchUserLinksHandler();
+
+    expect(result.success).toBe(false);
+    expect(hasRolesPermissionMock).not.toHaveBeenCalled();
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('refuses a member without the roles permission', async () => {

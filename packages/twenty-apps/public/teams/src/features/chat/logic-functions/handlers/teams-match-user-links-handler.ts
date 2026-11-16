@@ -2,11 +2,21 @@ import { type TeamsDirectoryMatchResult } from 'src/features/chat/logic-function
 import { buildTeamsDirectoryMatchMessage } from 'src/features/chat/logic-functions/utils/build-teams-directory-match-message';
 import { currentUserHasRolesPermission } from 'src/features/chat/logic-functions/utils/current-user-has-roles-permission';
 import { getTeamsWorkspaceGraphAccess } from 'src/features/chat/logic-functions/utils/get-teams-workspace-graph-access';
+import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { matchTeamsDirectoryByEmail } from 'src/features/chat/logic-functions/utils/match-teams-directory-by-email';
 import { toTeamsGraphUsersErrorMessage } from 'src/features/chat/logic-functions/utils/to-teams-graph-users-error-message';
 
 export const teamsMatchUserLinksHandler =
   async (): Promise<TeamsDirectoryMatchResult> => {
+    if (!isTeamsChatEnabled()) {
+      return {
+        success: false,
+        message: 'Chat is disabled',
+        error:
+          'Enable chat in the Microsoft Teams app settings before matching Teams users.',
+      };
+    }
+
     if (!(await currentUserHasRolesPermission())) {
       return {
         success: false,
