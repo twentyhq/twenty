@@ -13,14 +13,12 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const EmptyInboxPlaceholder = () => {
@@ -40,9 +38,6 @@ export const EmptyInboxPlaceholder = () => {
     refetch: refetchMyMessageChannels,
     hasLoaded: hasLoadedMyMessageChannels,
   } = useMyMessageChannels();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
@@ -105,13 +100,7 @@ export const EmptyInboxPlaceholder = () => {
         )}
         {!hasUsableAccount && (
           <Button
-            onClick={() =>
-              navigateSettings(
-                isAppPreferencesEnabled
-                  ? SettingsPath.AppPreferences
-                  : SettingsPath.NewAccount,
-              )
-            }
+            onClick={() => navigateSettings(SettingsPath.AppPreferences)}
             variant="outline"
           >{t`Connect an account`}</Button>
         )}

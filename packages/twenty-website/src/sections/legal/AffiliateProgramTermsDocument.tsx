@@ -1,12 +1,11 @@
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 
-// Change only together with the "Twenty Affiliate Program Terms" doc.
 export function AffiliateProgramTermsDocument() {
   return (
     <>
       <p>
         <strong>Last updated:</strong>
-        {' November 3, 2026'}
+        {' November 13, 2026'}
       </p>
 
       <h2>1. About these terms</h2>
@@ -14,16 +13,17 @@ export function AffiliateProgramTermsDocument() {
         These terms are an agreement between Twenty.com PBC, a public benefit
         corporation incorporated in Delaware, United States
         (&ldquo;Twenty&rdquo;, &ldquo;we&rdquo;), and you, the person or company
-        accepted into the Twenty Affiliate Program (&ldquo;you&rdquo;,
+        accepted into the Twenty Partner Program (&ldquo;you&rdquo;,
         &ldquo;Partner&rdquo;). You accept them when you tick &ldquo;I agree to
-        the affiliate program terms&rdquo; in the application form.
+        the Partner Program Terms&rdquo; in the application form.
       </p>
       <p>
-        In short: you share Twenty, and you earn{' '}
-        <strong>20% of the seat revenue</strong> from each new paying customer
-        you refer, <strong>for 12 months</strong> from their first payment.
-        Commissions are held 30 days, then paid monthly once your balance
-        reaches $50.
+        In short: you bring new customers to Twenty, as a creator sharing it
+        with your audience or as an integrator implementing it for clients, and
+        you earn <strong>20% of the seat revenue</strong> from each new paying
+        customer you refer, <strong>for 12 months</strong> from their first
+        payment. Commissions are held 30 days, then paid monthly once your
+        balance reaches $50.
       </p>
       <p>
         The program covers paid Twenty Cloud subscriptions on the Organization
@@ -33,9 +33,13 @@ export function AffiliateProgramTermsDocument() {
       <h2>2. Joining the program</h2>
       <ol>
         <li>
-          You apply through the form on{' '}
-          <LocalizedLink href="/affiliate-partners">
-            twenty.com/affiliate-partners
+          You apply through the form for your program: creators on{' '}
+          <LocalizedLink href="/partners/creators">
+            twenty.com/partners/creators
+          </LocalizedLink>
+          , integrators on{' '}
+          <LocalizedLink href="/partners/integrators">
+            twenty.com/partners/integrators
           </LocalizedLink>
           . You must be at least 18, or a registered business. Twenty employees,
           contractors and members of their household can&rsquo;t join.
@@ -134,6 +138,9 @@ export function AffiliateProgramTermsDocument() {
           Your own workspace, or one used by your company, a co-founder or an
           employee (self-referrals). Workspaces you set up and pay for on behalf
           of a client do qualify.
+        </li>
+        <li>
+          Clients Twenty introduces to a Lead Integrator through a client brief.
         </li>
         <li>Customers obtained by breaking these terms (section 8).</li>
       </ul>
@@ -257,12 +264,13 @@ export function AffiliateProgramTermsDocument() {
       <ul>
         <li>
           Say clearly that you earn a commission when you share your link or
-          code (for example &ldquo;affiliate link&rdquo; or &ldquo;#ad&rdquo;),
-          as required by the FTC and similar rules in other countries.
+          code (for example &ldquo;#ad&rdquo; or &ldquo;I earn a commission if
+          you sign up&rdquo;), as required by the FTC and similar rules in other
+          countries.
         </li>
         <li>
           Describe Twenty accurately: no invented features, prices, discounts or
-          claims of partnership beyond being an affiliate.
+          claims of a closer relationship with Twenty than the Partner Program.
         </li>
         <li>
           Follow the rules of the platforms you post on, and anti-spam laws when
