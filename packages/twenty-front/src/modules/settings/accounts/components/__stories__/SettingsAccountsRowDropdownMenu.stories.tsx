@@ -199,7 +199,7 @@ export const ReconnectArchivedAccount: Story = {
 
       await waitFor(() =>
         expect(openWindow).toHaveBeenCalledWith(
-          `${REACT_APP_SERVER_BASE_URL}/auth/google-apis?transientToken=reconnect-token&redirectLocation=%2Fsettings%2Faccounts&loginHint=${mockedDropdownConnectedAccount.handle}`,
+          `${REACT_APP_SERVER_BASE_URL}/auth/google-apis?transientToken=reconnect-token&redirectLocation=%2Fsettings%2Fapp-preferences&loginHint=${mockedDropdownConnectedAccount.handle}`,
           '_self',
         ),
       );
