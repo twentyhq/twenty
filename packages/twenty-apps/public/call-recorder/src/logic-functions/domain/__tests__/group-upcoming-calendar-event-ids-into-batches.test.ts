@@ -7,20 +7,27 @@ import { type UpcomingCalendarEvent } from 'src/logic-functions/types/upcoming-c
 const buildStartsAt = (minutesAfterNoon: number): string =>
   new Date(Date.UTC(2026, 6, 4, 12, minutesAfterNoon)).toISOString();
 
-const buildEventsWithDistinctStarts = (
-  count: number,
-  prefix: string,
-): UpcomingCalendarEvent[] =>
+const buildEventsWithDistinctStarts = ({
+  count,
+  prefix,
+}: {
+  count: number;
+  prefix: string;
+}): UpcomingCalendarEvent[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `${prefix}-${index}`,
     startsAt: buildStartsAt(index),
   }));
 
-const buildEventsSharingStart = (
-  count: number,
-  prefix: string,
-  startsAt: string | undefined,
-): UpcomingCalendarEvent[] =>
+const buildEventsSharingStart = ({
+  count,
+  prefix,
+  startsAt,
+}: {
+  count: number;
+  prefix: string;
+  startsAt: string | undefined;
+}): UpcomingCalendarEvent[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `${prefix}-${index}`,
     startsAt,
@@ -32,10 +39,10 @@ describe('groupUpcomingCalendarEventIdsIntoBatches', () => {
   });
 
   it('keeps calendar copies of one meeting in one batch even when their ids sort apart', () => {
-    const otherMeetings = buildEventsWithDistinctStarts(
-      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE - 1,
-      'b-other',
-    );
+    const otherMeetings = buildEventsWithDistinctStarts({
+      count: UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE - 1,
+      prefix: 'b-other',
+    });
     const sharedStartsAt = buildStartsAt(
       UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
     );
@@ -63,11 +70,11 @@ describe('groupUpcomingCalendarEventIdsIntoBatches', () => {
   });
 
   it('keeps a start time shared by more events than the batch size whole', () => {
-    const oversizedGroup = buildEventsSharingStart(
-      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE + 5,
-      'all-hands',
-      buildStartsAt(30),
-    );
+    const oversizedGroup = buildEventsSharingStart({
+      count: UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE + 5,
+      prefix: 'all-hands',
+      startsAt: buildStartsAt(30),
+    });
 
     const batches = groupUpcomingCalendarEventIdsIntoBatches([
       { id: 'before', startsAt: buildStartsAt(0) },
@@ -83,10 +90,10 @@ describe('groupUpcomingCalendarEventIdsIntoBatches', () => {
   });
 
   it('fills a batch exactly to the batch size before starting the next one', () => {
-    const upcomingCalendarEvents = buildEventsWithDistinctStarts(
-      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE * 2 + 1,
-      'meeting',
-    );
+    const upcomingCalendarEvents = buildEventsWithDistinctStarts({
+      count: UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE * 2 + 1,
+      prefix: 'meeting',
+    });
 
     const batches = groupUpcomingCalendarEventIdsIntoBatches(
       upcomingCalendarEvents,
@@ -105,15 +112,17 @@ describe('groupUpcomingCalendarEventIdsIntoBatches', () => {
   });
 
   it('starts a new batch when a group would push the current one past the batch size', () => {
-    const firstMeetings = buildEventsWithDistinctStarts(
-      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE - 1,
-      'first',
-    );
-    const pairedMeeting = buildEventsSharingStart(
-      2,
-      'paired',
-      buildStartsAt(UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE),
-    );
+    const firstMeetings = buildEventsWithDistinctStarts({
+      count: UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE - 1,
+      prefix: 'first',
+    });
+    const pairedMeeting = buildEventsSharingStart({
+      count: 2,
+      prefix: 'paired',
+      startsAt: buildStartsAt(
+        UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
+      ),
+    });
 
     const batches = groupUpcomingCalendarEventIdsIntoBatches([
       ...firstMeetings,

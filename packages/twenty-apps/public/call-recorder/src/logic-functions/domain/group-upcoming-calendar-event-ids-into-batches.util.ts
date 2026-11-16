@@ -43,7 +43,9 @@ const groupCalendarEventIdsByStartsAt = (
       .entries(),
   ].map(([startsAt, calendarEventIds]) => ({ startsAt, calendarEventIds }));
 
-const getStartsAtGroupTimestamp = (startsAtGroup: StartsAtGroup): number =>
+const getStartsAtGroupTimestamp = (
+  startsAtGroup: Pick<StartsAtGroup, 'startsAt'>,
+): number =>
   isUndefined(startsAtGroup.startsAt)
     ? Number.POSITIVE_INFINITY
     : Date.parse(startsAtGroup.startsAt);
@@ -57,10 +59,13 @@ const sortStartsAtGroupsSoonestFirst = (
       getStartsAtGroupTimestamp(secondStartsAtGroup),
   );
 
-const appendStartsAtGroupToBatches = (
-  batches: string[][],
-  startsAtGroup: StartsAtGroup,
-): string[][] => {
+const appendStartsAtGroupToBatches = ({
+  batches,
+  startsAtGroup,
+}: {
+  batches: string[][];
+  startsAtGroup: Pick<StartsAtGroup, 'calendarEventIds'>;
+}): string[][] => {
   const lastBatch: string[] | undefined = batches[batches.length - 1];
 
   if (
@@ -84,4 +89,8 @@ export const groupUpcomingCalendarEventIdsIntoBatches = (
     groupCalendarEventIdsByStartsAt(
       getUniqueUpcomingCalendarEvents(upcomingCalendarEvents),
     ),
-  ).reduce(appendStartsAtGroupToBatches, []);
+  ).reduce<string[][]>(
+    (batches, startsAtGroup) =>
+      appendStartsAtGroupToBatches({ batches, startsAtGroup }),
+    [],
+  );
