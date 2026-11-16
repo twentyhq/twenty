@@ -73,6 +73,9 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionName';
+export type { ComputedFieldExpressionInstruction } from './ComputedFieldExpressionInstruction';
+export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableName';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';

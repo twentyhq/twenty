@@ -1,19 +1,19 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
+import { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from 'twenty-shared/constants';
 import {
-  COMPUTED_FIELD_EXPRESSION_MAX_LENGTH,
   type ComputedFieldExpressionFunctionName,
-} from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+  type ComputedFieldExpressionInstruction,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
-  type ComputedFieldExpressionInstruction,
   getComputedFieldExpressionInstructions,
   isDefined,
 } from 'twenty-shared/utils';
 
 import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
+import { type CompiledComputedFieldExpression } from 'src/engine/metadata-modules/computed-field/types/compiled-computed-field-expression.type';
 import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
-import { type SqlWithParameters } from 'src/engine/metadata-modules/computed-field/types/sql-with-parameters.type';
 
 // `type` is undefined when it cannot be known, as for a value the reader is not allowed to see.
 // A text literal keeps its parameter so it can be compared to a date as a date.
@@ -28,10 +28,6 @@ type Operand =
   | ValueOperand
   | { kind: 'path'; path: string[] }
   | { kind: 'list'; items: ValueOperand[] };
-
-export type CompiledComputedFieldExpression = SqlWithParameters & {
-  type: ComputedFieldValueType | undefined;
-};
 
 const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 

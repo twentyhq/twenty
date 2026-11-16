@@ -3,7 +3,7 @@ import { isComputedField, isDefined } from 'twenty-shared/utils';
 
 import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { getComputedFieldEvaluationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-computation.util';
+import { getComputedFieldEvaluationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/get-computed-field-evaluation-error.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,

@@ -7,10 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
 import { type ComputedFieldPathResolution } from 'src/engine/metadata-modules/computed-field/types/computed-field-path-resolution.type';
-import {
-  type ComputedFieldSchemaField,
-  type ComputedFieldSchemaReader,
-} from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
+import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
+import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

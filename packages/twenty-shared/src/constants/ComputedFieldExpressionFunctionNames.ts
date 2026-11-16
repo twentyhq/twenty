@@ -17,6 +17,3 @@ export const COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES = [
   'daysBetween',
   'daysSince',
 ] as const;
-
-export type ComputedFieldExpressionFunctionName =
-  (typeof COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES)[number];

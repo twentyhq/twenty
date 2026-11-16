@@ -17,10 +17,8 @@ export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapEleme
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
-export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionNames';
 export { COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES } from './ComputedFieldExpressionFunctionNames';
 export { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from './ComputedFieldExpressionMaxLength';
-export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableNames';
 export { COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES } from './ComputedFieldExpressionVariableNames';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';
 export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';
