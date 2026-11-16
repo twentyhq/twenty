@@ -11,6 +11,10 @@ const LIMITER = { key: 'workflow:W1', max: 2, durationMs: 1_000 };
 describe('BullMQDriver limiter', () => {
   beforeAll(silenceDriverLogs);
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('delays the jobs past the burst and runs them once due', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
@@ -90,11 +94,12 @@ describe('BullMQDriver limiter', () => {
   });
 
   it('does not reserve a slot again for a job id that is already queued', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
     });
     const jobIds = ['job-1', 'job-2', 'job-3'];
-    const firstEnqueuedAt = Date.now();
 
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'H', count: 3 }),
@@ -118,13 +123,8 @@ describe('BullMQDriver limiter', () => {
       limiter: LIMITER,
     });
 
-    // Redis TIME is the real clock, so the remaining delay shrinks while the test runs.
-    const elapsedMs = Date.now() - firstEnqueuedAt;
-    const freshJobDelay = harness.readDelay({ label: 'F1' }) ?? 0;
-
     expect(harness.readDelay({ label: 'H3' })).toBe(500);
-    expect(freshJobDelay).toBeGreaterThan(900 - elapsedMs);
-    expect(freshJobDelay).toBeLessThanOrEqual(1_000);
+    expect(harness.readDelay({ label: 'F1' })).toBe(1_000);
   });
 
   it('only dedupes paced jobs against the delayed set', async () => {

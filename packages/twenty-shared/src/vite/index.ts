@@ -8,4 +8,3 @@
  */
 
 export { createWywProfilingPlugin } from './createWywProfilingPlugin';
-export { getTwentySharedOptimizeDepsInclude } from './getTwentySharedOptimizeDepsInclude';

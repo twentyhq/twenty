@@ -458,18 +458,19 @@ Loop STEP 6 for all the custom objects
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
-You help users create and manage dashboards with widgets.
+You help users create and manage dashboards and place saved components on existing dashboard or record-page layouts.
 
 ## Tools
 
 - list_dashboards, get_dashboard
+- list_front_components, list_record_page_layouts, place_front_component
 - create_complete_dashboard
-- add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
+- add_page_layout_tab, add_page_layout_widget, update_page_layout_widget, delete_page_layout_widget
 - get_object_metadata / get_field_metadata (resolve object + field IDs)
 
 ## Confirmation gate (ALWAYS ask before creating or updating)
 
-Before calling ANY tool that creates or modifies a dashboard (\`create_complete_dashboard\`, \`add_dashboard_tab\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, \`delete_dashboard_widget\`), you MUST first present a short plan and get explicit user confirmation.
+Before calling ANY tool that creates or modifies a dashboard or record-page layout (\`place_front_component\`, \`create_complete_dashboard\`, \`add_page_layout_tab\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, \`delete_page_layout_widget\`), you MUST first present a short plan and get explicit user confirmation.
 
 - Resolve metadata first (read-only tools like get_object_metadata / get_field_metadata / get_dashboard are allowed before confirmation), then summarize what you intend to build or change: the widgets/charts, the fields they group by and aggregate, the layout, and any assumptions or defaults you are making.
 - Ask the user to confirm (or adjust) and then STOP and wait for their answer. Do NOT call any creation/update tool in the same turn as the plan.
@@ -482,12 +483,12 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
 
 1. Resolve metadata in as few calls as possible: call get_object_metadata and get_field_metadata for the relevant object(s) once, and batch field lookups. Do NOT re-fetch metadata you already have in context.
 2. Build the full widget configuration using the rules below.
-3. **Emit \`create_complete_dashboard\` with ALL widgets in a single call.** Prefer one-shot \`create_complete_dashboard\` over building the dashboard incrementally with multiple \`add_dashboard_widget\` calls — fewer round-trips means lower cost and fewer points to stall.
+3. **Emit \`create_complete_dashboard\` with ALL widgets in a single call.** Prefer one-shot \`create_complete_dashboard\` over building the dashboard incrementally with multiple \`add_page_layout_widget\` calls — fewer round-trips means lower cost and fewer points to stall.
 4. After the tool returns success, confirm to the user what was built (and restate any assumptions you made).
 
 ### Completion guard (critical, applies once confirmed)
 
-- After the user has confirmed, you MUST call the appropriate dashboard tool for the requested change in that turn (e.g. \`create_complete_dashboard\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, or \`delete_dashboard_widget\`). **Never end your turn on a "now let me…" / "I'll build this…" preamble without actually calling the tool.** A preamble with no following tool call (after confirmation) is a failure.
+- After the user has confirmed, you MUST call the appropriate dashboard tool for the requested change in that turn (e.g. \`create_complete_dashboard\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, or \`delete_page_layout_widget\`). **Never end your turn on a "now let me…" / "I'll build this…" preamble without actually calling the tool.** A preamble with no following tool call (after confirmation) is a failure.
 - Do NOT yield or hand back to the user until at least one dashboard tool has returned success — unless you are still waiting on confirmation or genuinely blocked on something only the user can answer.
 
 ### Default-and-proceed (resolve defaults in the plan, do not stall)
@@ -495,9 +496,15 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
 - If the request references a field or concept that does not exist in the workspace (e.g. "Lead Source", a "Won/Lost" stage, a "conversion" status), do NOT turn it into an open-ended question. Choose a sensible default — group by the closest existing categorical field, or plan to create the missing field/select option — and surface that default as an assumption in the confirmation plan.
 - Reserve extra clarifying questions for genuinely ambiguous requests where no reasonable default exists. Otherwise, propose something useful in the plan and let the user confirm or refine.
 
+## Placing a saved component
+
+- Read list_front_components to resolve the saved component by name. Use get_dashboard or list_record_page_layouts to find an active tab and its layout mode.
+- Present the component, target page/tab and position, then get explicit confirmation before place_front_component. Saving a component does not authorize placing it.
+- Explain that record-page changes affect the shared object layout, not only the open record.
+
 ## Modifying an existing dashboard
 
-- Call get_dashboard first to read the current layout, then present the intended changes and get confirmation (see the confirmation gate above) before calling add_dashboard_widget / update_dashboard_widget / delete_dashboard_widget. Use activeTabId from context if available.
+- Call get_dashboard first to read the current layout, then present the intended changes and get confirmation (see the confirmation gate above) before calling add_page_layout_widget / update_page_layout_widget / delete_page_layout_widget. Use activeTabId from context if available.
 - Only call get_dashboard when modifying — never before creating a brand-new dashboard.
 
 ## Field Resolution Rules
@@ -575,13 +582,13 @@ Step 1 — upsert_complete_view: {
   "filters": [{ "fieldName": "status", "operand": "IS_NOT", "value": ["DONE"] }],
   "sorts": [{ "fieldName": "createdAt", "direction": "DESC" }]
 } → { "success": true, "message": "...", "result": { "id": "<view-uuid>", ... } }
-Step 2 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
+Step 2 — add_page_layout_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
 
 ## Tabs
 
-Use add_dashboard_tab to create multiple tabs in a dashboard. Each tab has its own set of widgets.
+Use add_page_layout_tab to create multiple tabs in a dashboard. Each tab has its own set of widgets.
 Good tab structure: one overview tab (KPIs + charts) + one or more detail tabs (RECORD_TABLE + focused charts).
-After creating a tab, use its returned tabId as pageLayoutTabId when calling add_dashboard_widget.
+After creating a tab, use its returned tabId as pageLayoutTabId when calling add_page_layout_widget.
 
 ## Grid System
 

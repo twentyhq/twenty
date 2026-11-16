@@ -9,7 +9,12 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
   )
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
-const entries = ['src/index.ts', ...moduleEntries];
+const entries = Object.fromEntries(
+  ['src/index.ts', ...moduleEntries].map((entry) => [
+    entry.replace(/^src\//, '').replace(/\.ts$/, ''),
+    entry,
+  ]),
+);
 
 // Tooling skips dist/node_modules, and Node reads `?source` as a URL query.
 const getOutputFileName =
@@ -58,6 +63,14 @@ export default defineConfig(() => {
             preserveModules: true,
             preserveModulesRoot: 'src',
             entryFileNames: getOutputFileName('cjs'),
+          },
+          // Dev servers resolve this merged build through the `development` export
+          // condition: ~40 files instead of ~1000, so they need no pre-bundling.
+          {
+            format: 'es',
+            dir: 'dist/dev',
+            entryFileNames: '[name].mjs',
+            chunkFileNames: 'chunks/[name].mjs',
           },
         ],
       },

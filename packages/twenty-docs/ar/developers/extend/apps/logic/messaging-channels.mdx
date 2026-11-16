@@ -277,13 +277,56 @@ export const linkedinSendMessageHandler = async ({
 
 تتضمن الحمولة `messagingProviderName` و`threadExternalId` الخاص بالمحادثة كما استوعبته، و`text` و`idempotencyKey` و`recipients`: مشاركو أحدث رسالة في المحادثة باستثناء معرّف القناة نفسه، لذلك لا تتم مراسلة شخص شارك فقط في تبادل سابق. فضّل محادثة الموفّر نفسه على `recipients` عندما ترسل واجهة API الخاصة به إلى معرّف محادثة. أعِد معرّف الموفّر للرسالة المرسلة بوصفه `externalId`.
 
-يتطابق `conversationStyle` في الحمولة مع الخاص بالمزوّد (`'chat'` عندما لا يعلن عن أي نمط). مع `'email'` (مثلًا تطبيق يزامن Outlook أو Gmail)، يرد الأعضاء باستخدام محرر البريد الإلكتروني بدلًا من ذلك، وتحمل الحمولة أيضًا كتلة `email`: وهي `subject`، ومتن النص المنسق المُحوّل إلى `html`، ومستلمي `cc` و`bcc`، و`inReplyToExternalId`، أي `externalId` للرسالة التي يجري الرد عليها عندما يكون Twenty على علم به. تكون `recipients` حينها عناوين `To` التي اختارها العضو، ويكون `text` نسخة النص العادي من المتن. لا تُرسل المرفقات بعد. يتطلب `"engines": { "twenty": ">=2.58.0" }`.
+يتطابق `conversationStyle` في الحمولة مع الخاص بالمزوّد (`'chat'` عندما لا يعلن عن أي نمط). مع `'email'` (مثلًا تطبيق يزامن Outlook أو Gmail)، يرد الأعضاء باستخدام محرر البريد الإلكتروني بدلًا من ذلك، وتحمل الحمولة أيضًا كتلة `email`: وهي `subject`، ومتن النص المنسق المُحوّل إلى `html`، ومستلمي `cc` و`bcc`، و`inReplyToExternalId`، أي `externalId` للرسالة التي يجري الرد عليها عندما يكون Twenty على علم به. تكون `recipients` حينها عناوين `To` التي اختارها العضو، ويكون `text` نسخة النص العادي من المتن. يتطلب `"engines": { "twenty": ">=2.58.0" }`.
 
-يسجّل Twenty بعد ذلك الرد في المحادثة كرسالة صادرة من القناة، وبالمستلمين أنفسهم، ليظهر فورًا. عندما يسلّم webhook الخاص بك الرسالة نفسها لاحقًا، لا يغيّر استيعابها باستخدام `externalId` هذا شيئًا.
+عند تمكين مرفقات الرسائل في مساحة العمل، يمكن للعضو إرفاق ملفات برد، وقد يحتوي الرد حينها على `text` فارغ. تأخذ الطفرة أيضًا `attachments`، بحد أقصى 20، يحتوي كل منها على `id` لملف تم تحميله كمرفق بريد إلكتروني و`name` الخاص به. تسرد حمولة البيانات `attachments`، وتكون مصفوفة فارغة لرد نصي فقط. يحتوي كل منها على `filename` و`contentType` و`size` بالبايت و`downloadUrl`: رابط موقّع تجلبه دالتك للحصول على الملف، لذا لا تنتقل البايتات مطلقًا ضمن حمولة البيانات. تحقق من `size` مقارنةً بحد موفر الخدمة لديك قبل التنزيل، وأطلق استثناءً عندما يتعذر على موفر الخدمة تسليم ملف بدلًا من إرسال النص وحده، كي يرى العضو فشل الرد:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+يتطلب `attachments` وجود `"engines": { "twenty": ">=2.59.0" }`.
+
+بعد ذلك، يسجل Twenty الرد في سلسلة الرسائل كرسالة صادرة من القناة، مع المستلمين أنفسهم ومرفقاتها، بحيث يظهر فورًا. عندما يسلّم webhook الخاص بك الرسالة نفسها لاحقًا، لا يغيّر استيعابها باستخدام `externalId` هذا شيئًا.
 
 تعمل الدالة ضمن طلب `sendAppChannelMessage`. إذا أطلقت استثناءً أو لم تُرجع `externalId`، تفشل الطفرة ولا يُسجّل شيء.
 
 بمجرد أن تُرجع دالتك، يحتفظ Twenty بالتسليم لمدة 24 ساعة ضمن العضو والقناة والمحادثة و`idempotencyKey`. إذا فشل تسجيل الرد بعد ذلك، تفشل الطفرة، وتؤدي إعادة محاولتها بالمفتاح نفسه إلى تسجيل الرد المُسلَّم دون استدعاء دالتك مجددًا؛ وتُرجع إعادة محاولة رد مسجّل بالفعل ذلك الرد. تنتظر إعادة المحاولة بينما لا يزال الاستدعاء الأول يرسل حتى ينتهي. المفتاح الجديد يعني ردًا جديدًا. قد تظل دالتك تُستدعى مرتين لرد واحد إذا أعاد العميل المحاولة بمفتاح جديد أو بعد انقضاء 24 ساعة، أو إذا فشلت دالتك نفسها بعد أن قبل الموفّر الرسالة، لذا مرّر `idempotencyKey` إلى الموفّر عندما تدعم واجهة API الخاصة به عمليات الإرسال المتكررة الآمنة. ترفض قناة تحتوي على `isSyncEnabled: false` الردود دون استدعاء دالتك. لا يمكن لقناة ليس لها موفّر مراسلة، أو لموفّرها الذي ليس لديه `sendMessageLogicFunction` أو لم يعد موجودًا، الإرسال؛ وتبقى محادثاتها كما هي. يتطلب `"engines": { "twenty": ">=2.52.0" }`.
+
+## وضع علامة على سلاسل الرسائل كمقروءة
+
+لا يحتفظ Twenty بحالة قراءة لرسائل التطبيق، لكنه يستطيع إبلاغ موفّر الخدمة لديك عندما يقرأ عضو محادثة في Twenty لكي يضع موفّر الخدمة علامة عليها كمقروءة في المصدر. صرّح بالدالة `markThreadAsReadLogicFunction` لدى موفّر رسائل التطبيق:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-mark-thread-as-read-handler.ts
+import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinMarkThreadAsReadHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+}: MarkAppThreadAsReadPayload) => {
+  await markLinkedinConversationAsRead({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+  });
+};
+```
+
+عندما يفتح مالك حساب القناة إحدى سلاسل رسائلها، يستدعي Twenty طفرة `markAppChannelThreadAsRead`، التي تشغّل دالتك باستخدام `messagingProviderName` و`connectedAccountId` و`messageChannelId` و`threadExternalId` الخاص بالمحادثة. يتم تجاهل قيمة الإرجاع الخاصة بها. الأعضاء الذين لا تتم مشاركة الحساب إلا معهم لا يشغّلونه مطلقًا، ويتم تخطي الاستدعاءات للعضو والمحادثة نفسيهما لمدة 30 ثانية، لذا فإن إعادة فتح محادثة لا تستدعي موفر الخدمة لديك مجددًا. يُنفَّذ الاستدعاء على أساس أفضل جهد: تُفتح المحادثة مهما كانت نتيجة تنفيذ دالتك. لا يتم استدعاء موفر خدمة لا يحتوي على `markThreadAsReadLogicFunction` مطلقًا. يتطلب `"engines": { "twenty": ">=2.59.0" }`.
 
 ## إدراج القنوات وتحديثها
 

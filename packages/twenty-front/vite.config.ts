@@ -15,22 +15,12 @@ import {
 } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
-import {
-  createWywProfilingPlugin,
-  getTwentySharedOptimizeDepsInclude,
-} from 'twenty-shared/vite';
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
 import {
   API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from './src/config/apiProxyPrefixes';
-
-const twentySharedPackageJson = JSON.parse(
-  fs.readFileSync(
-    path.resolve(__dirname, '../twenty-shared/package.json'),
-    'utf8',
-  ),
-);
 
 const EMOJIBASE_DATA_FILE_NAMES = ['data.json', 'messages.json'];
 
@@ -227,8 +217,6 @@ export default defineConfig(({ mode }) => {
         'd3-shape',
         '@tiptap/pm/tables',
         '@calcom/embed-react',
-        // Linked packages aren't pre-bundled, and twenty-shared ships one file per module.
-        ...getTwentySharedOptimizeDepsInclude(twentySharedPackageJson.exports),
       ],
     },
 

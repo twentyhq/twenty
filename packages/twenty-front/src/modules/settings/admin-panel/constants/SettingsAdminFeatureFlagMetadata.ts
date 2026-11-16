@@ -24,6 +24,14 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
+    label: msg`Skip internal meetings`,
+    description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
+  },
+  [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
+    label: msg`Internal import setting column`,
+    description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,
@@ -35,10 +43,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: {
     label: msg`Direct message pair identity`,
     description: msg`Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes.`,
-  },
-  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
-    label: msg`App preferences`,
-    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,

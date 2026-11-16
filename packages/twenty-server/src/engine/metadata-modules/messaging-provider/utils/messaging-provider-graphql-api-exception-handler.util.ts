@@ -24,6 +24,7 @@ export const messagingProviderGraphqlApiExceptionHandler = (error: Error) => {
       case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);
       case MessagingProviderExceptionCode.SEND_MESSAGE_FAILED:
+      case MessagingProviderExceptionCode.MARK_THREAD_AS_READ_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

@@ -134,7 +134,7 @@ export class ApolloFactory implements ApolloManager {
             if (this.isPayloadTooLargeError(error)) {
               return false;
             }
-            return Boolean(error);
+            return true;
           },
         },
       });

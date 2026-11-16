@@ -3,7 +3,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type ObjectPermissionsByObjectMetadataId = Record<
@@ -29,7 +32,7 @@ const canReadRelationTarget = (
 ): boolean => {
   const canReadRelation =
     isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         fieldMetadataItem.relation?.targetObjectMetadata.id,
@@ -40,7 +43,7 @@ const canReadRelationTarget = (
   const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
     (morphRelation) =>
       isDefined(morphRelation.targetObjectMetadata.id) &&
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           morphRelation.targetObjectMetadata.id,

@@ -101,7 +101,7 @@ export const RecordCalendarCardBody = ({
         );
 
         return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+          <StopPropagationContainer key={recordField.id}>
             <FieldContext.Provider
               value={{
                 recordId,

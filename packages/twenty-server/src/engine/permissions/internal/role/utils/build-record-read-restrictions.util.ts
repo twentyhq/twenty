@@ -1,6 +1,9 @@
 /* @license Enterprise */
 
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -21,7 +24,7 @@ export const buildRecordReadRestrictions = ({
     }
 
     if (
-      !canReachSomeRecords({
+      !canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions,
         operationType: 'read',
       })

@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -18,11 +18,11 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const mockToggleAgentChatMessageReaction = jest.fn();
+const mockToggleAiChatMessageReaction = jest.fn();
 
-jest.mock('@/ai/hooks/useToggleAgentChatMessageReaction', () => ({
-  useToggleAgentChatMessageReaction: () => ({
-    toggleAgentChatMessageReaction: mockToggleAgentChatMessageReaction,
+jest.mock('@/ai/hooks/useToggleAiChatMessageReaction', () => ({
+  useToggleAiChatMessageReaction: () => ({
+    toggleAiChatMessageReaction: mockToggleAiChatMessageReaction,
   }),
 }));
 
@@ -54,7 +54,7 @@ const renderReactions = () =>
 describe('AiChatMessageReactions', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockToggleAgentChatMessageReaction.mockClear();
+    mockToggleAiChatMessageReaction.mockClear();
 
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
@@ -74,7 +74,7 @@ describe('AiChatMessageReactions', () => {
 
   it('shows each emoji with who used it and marks your own', () => {
     jotaiStore.set(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -105,7 +105,7 @@ describe('AiChatMessageReactions', () => {
 
   it('toggles your reaction when you click an emoji', async () => {
     jotaiStore.set(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -124,7 +124,7 @@ describe('AiChatMessageReactions', () => {
       screen.getByRole('button', { name: '🎉 by Tom Martin' }),
     );
 
-    expect(mockToggleAgentChatMessageReaction).toHaveBeenCalledWith({
+    expect(mockToggleAiChatMessageReaction).toHaveBeenCalledWith({
       messageId: MESSAGE_ID,
       emoji: '🎉',
     });
@@ -132,7 +132,7 @@ describe('AiChatMessageReactions', () => {
 
   it('names the assistant among those who used an emoji', () => {
     jotaiStore.set(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -154,7 +154,7 @@ describe('AiChatMessageReactions', () => {
   });
   it('counts agents next to members and the assistant', () => {
     jotaiStore.set(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [

@@ -6,6 +6,7 @@ import {
 } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { readApiKeyFromStandardInput } from '@/commands/auth/login/read-api-key-from-standard-input';
+import { readLoginProxyHeaderSettings } from '@/commands/auth/login/read-login-proxy-header-settings';
 import { getConfigPath } from '@/config/get-config-path';
 import { readConfig } from '@/config/read-config';
 import { replaceRemoteCredentials } from '@/config/replace-remote-credentials';
@@ -24,7 +25,16 @@ import { signInWithBrowser } from '@/oauth/sign-in-with-browser';
 import { type OutputMode } from '@/output/types/output-mode.type';
 import { type Output } from '@/output/types/output.type';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
+import { resolveProxyHeaders } from '@/proxy-headers/resolve-proxy-headers';
+import { toSavedProxyHeaderFields } from '@/proxy-headers/to-saved-proxy-header-fields';
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { fetchSignedInIdentity } from '@/transport/metadata/fetch-signed-in-identity';
+
+const withoutProxyHeaderFields = ({
+  proxyHeaders: _proxyHeaders,
+  proxyHeaderCommand: _proxyHeaderCommand,
+  ...remote
+}: RemoteEntry): RemoteEntry => remote;
 
 const findExistingRemote = (config: ConfigFile, remoteName: string) =>
   Object.hasOwn(config.remotes, remoteName)
@@ -62,12 +72,14 @@ const assertSameUrlOrReplace = ({
 const obtainCredentials = async ({
   options,
   apiUrl,
+  proxyHeaders,
   output,
   outputMode,
   signal,
 }: {
   options: Record<string, unknown>;
   apiUrl: string;
+  proxyHeaders: ProxyHeaders | undefined;
   output: Output;
   outputMode: OutputMode;
   signal: AbortSignal;
@@ -91,7 +103,7 @@ const obtainCredentials = async ({
 
   return {
     kind: 'oauth',
-    ...(await signInWithBrowser({ apiUrl, output, signal })),
+    ...(await signInWithBrowser({ apiUrl, proxyHeaders, output, signal })),
   };
 };
 
@@ -153,9 +165,20 @@ export const runAuthLoginCommand: CommandRun = async ({
 
   assertSameUrlOrReplace({ existingRemote, remoteName, apiUrl, replace });
 
+  const proxyHeaderSettings = readLoginProxyHeaderSettings({
+    options,
+    existingRemote,
+    remoteName,
+    apiUrl,
+  });
+  const proxyHeaders = resolveProxyHeaders({
+    environment: process.env,
+    savedSettings: proxyHeaderSettings,
+  });
   const credentials = await obtainCredentials({
     options,
     apiUrl,
+    proxyHeaders,
     output,
     outputMode,
     signal,
@@ -170,6 +193,7 @@ export const runAuthLoginCommand: CommandRun = async ({
       credentialKind: credentials.kind,
       source: 'remote',
       remoteName,
+      proxyHeaders,
     },
     signal,
   }).catch((error: unknown) => {
@@ -218,10 +242,13 @@ export const runAuthLoginCommand: CommandRun = async ({
           remotes: {
             ...config.remotes,
             [remoteName]: {
-              ...replaceRemoteCredentials({
-                remote: latestRemote ?? { apiUrl },
-                credentials,
-              }),
+              ...withoutProxyHeaderFields(
+                replaceRemoteCredentials({
+                  remote: latestRemote ?? { apiUrl },
+                  credentials,
+                }),
+              ),
+              ...toSavedProxyHeaderFields(proxyHeaderSettings),
               apiUrl,
               ...(isDefined(identity.workspaceName)
                 ? { workspaceName: identity.workspaceName }

@@ -249,6 +249,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'viewFieldGroupUniversalIdentifier',
     },
+    relationTargetFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'relationTargetFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'relationTargetFieldMetadataUniversalIdentifier',
+    },
     workspace: null,
     application: null,
   },

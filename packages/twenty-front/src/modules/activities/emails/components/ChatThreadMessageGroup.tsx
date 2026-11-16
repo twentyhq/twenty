@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import Linkify from 'linkify-react';
 
-import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { ChatThreadMessageReactions } from '@/activities/emails/components/ChatThreadMessageReactions';
 import { ChatThreadMessageSenderHeader } from '@/activities/emails/components/ChatThreadMessageSenderHeader';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageReaction';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
+import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
@@ -37,19 +37,6 @@ const StyledMessageText = styled.span`
   a {
     color: inherit;
     text-decoration: underline;
-  }
-`;
-
-const StyledFilesContainer = styled.div<{ isOutgoing: boolean }>`
-  align-items: ${({ isOutgoing }) => (isOutgoing ? 'flex-end' : 'flex-start')};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
-  width: 100%;
-
-  &:first-child {
-    margin-top: 0;
   }
 `;
 
@@ -128,11 +115,10 @@ export const ChatThreadMessageGroup = ({
               </StyledChatMessageBubble>
             )}
             {isNonEmptyArray(files) && (
-              <StyledFilesContainer isOutgoing={isOutgoing}>
-                {files.map((file) => (
-                  <ChatThreadMessageAttachment key={file.fileId} file={file} />
-                ))}
-              </StyledFilesContainer>
+              <ChatMessageAttachments
+                files={files}
+                isRightAligned={isOutgoing}
+              />
             )}
             {(hasText || hasReactions) && (
               <StyledChatMessageFooter isRightAligned={isOutgoing}>

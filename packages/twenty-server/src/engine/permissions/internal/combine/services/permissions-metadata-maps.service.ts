@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { RelatedRecordPathReadService } from 'src/engine/permissions/internal/related-record-path/services/related-record-path-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
@@ -37,11 +37,13 @@ export class PermissionsMetadataMapsService {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       featureFlagsMap,
       rolesPermissions,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
+      'flatFieldMetadataOptionMaps',
       'featureFlagsMap',
       'rolesPermissions',
     ]);
@@ -49,6 +51,7 @@ export class PermissionsMetadataMapsService {
     const metadataMaps: PermissionsMetadataMaps = {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       featureFlagsMap,
       rolesPermissions,
     };

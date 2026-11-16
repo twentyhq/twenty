@@ -1,5 +1,5 @@
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -13,7 +13,7 @@ export const useCanReadWorkflowRuns = () => {
     workflowRunObjectMetadataItem.id,
   );
 
-  return canReachSomeRecords({
+  return canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: workflowRunPermissions,
     operationType: 'read',
   });

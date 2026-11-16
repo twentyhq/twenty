@@ -8,8 +8,8 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 
@@ -59,16 +59,16 @@ export const buildAccessGroupMemberFieldValuesOrThrow = ({
   flatFieldMetadataMaps,
 }: {
   workspaceMemberBoundPredicates: RowLevelPermissionPredicate[];
-  workspaceMember: RowLevelPermissionWorkspaceMember;
+  workspaceMember: RlsWorkspaceMember;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): RowLevelPermissionMemberFieldValues[] =>
+}): RlsMemberFieldValues[] =>
   Object.entries(
     buildMemberFieldValuesOrThrow({
       workspaceMember,
       predicates: workspaceMemberBoundPredicates,
       flatFieldMetadataMaps,
     }),
-  ).reduce<RowLevelPermissionMemberFieldValues[]>(
+  ).reduce<RlsMemberFieldValues[]>(
     (combinations, [memberFieldKey, value]) =>
       combinations.flatMap((combination) =>
         splitMemberFieldValue({

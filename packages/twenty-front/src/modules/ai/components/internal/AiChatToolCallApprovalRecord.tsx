@@ -23,13 +23,13 @@ const StyledMissingRecord = styled.span`
 type AiChatToolCallApprovalRecordProps = {
   objectNameSingular: string;
   recordId: string;
-  isDeletion: boolean;
+  label?: string;
 };
 
 export const AiChatToolCallApprovalRecord = ({
   objectNameSingular,
   recordId,
-  isDeletion,
+  label,
 }: AiChatToolCallApprovalRecordProps) => {
   const { t } = useLingui();
   const { record, loading, error } = useFindOneRecord({
@@ -43,7 +43,7 @@ export const AiChatToolCallApprovalRecord = ({
 
   return (
     <StyledRecordRow>
-      {isDeletion ? t`This record will be deleted:` : t`Record:`}
+      {label}
       {isDefined(record) ? (
         <>
           <AiChatToolCallApprovalRecordStoreEffect record={record} />

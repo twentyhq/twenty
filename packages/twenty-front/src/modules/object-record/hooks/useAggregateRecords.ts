@@ -9,7 +9,10 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export type AggregateRecordsData = {
   [fieldName: string]: {
@@ -43,7 +46,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = canReachSomeRecords({
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });

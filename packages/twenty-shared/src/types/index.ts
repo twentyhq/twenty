@@ -304,6 +304,7 @@ export type {
   OrObjectRecordFilter,
   NotObjectRecordFilter,
   LeafObjectRecordFilter,
+  RelationObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';

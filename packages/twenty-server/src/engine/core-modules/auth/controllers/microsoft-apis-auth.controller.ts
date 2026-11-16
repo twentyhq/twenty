@@ -139,7 +139,7 @@ export class MicrosoftAPIsAuthController {
 
       const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
-          getSettingsPath(SettingsPath.AccountsConfiguration, {
+          getSettingsPath(SettingsPath.AppPreferencesAccountConfiguration, {
             connectedAccountId,
           }),
       );

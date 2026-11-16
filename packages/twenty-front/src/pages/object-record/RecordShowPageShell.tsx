@@ -29,6 +29,7 @@ type RecordShowPageShellProps = {
   loading: boolean;
   error?: ErrorLike;
   headerActions?: ReactNode;
+  headerTitle?: ReactNode;
   headerTitlePrefix?: ReactNode;
   headerTitleAccessory?: ReactNode;
   headerTitleMode?: RecordShowPageHeaderTitleMode;
@@ -42,6 +43,7 @@ export const RecordShowPageShell = ({
   loading,
   error,
   headerActions,
+  headerTitle,
   headerTitlePrefix,
   headerTitleAccessory,
   headerTitleMode,
@@ -91,6 +93,7 @@ export const RecordShowPageShell = ({
             <RecordShowPageHeader
               objectNameSingular={objectNameSingular}
               objectRecordId={objectRecordId}
+              title={headerTitle}
               titleMode={headerTitleMode}
               titlePrefix={headerTitlePrefix}
               titleAccessory={headerTitleAccessory}

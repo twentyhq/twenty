@@ -72,7 +72,46 @@ Puntos clave:
 * `responseFormat` (opcional) establece la estructura de salida predeterminada del agente. De forma predeterminada es `{ type: 'text' }` para texto de formato libre. Usa `{ type: 'json', schema }` para forzar una salida JSON estructurada. Una llamada a `runAgent()` o un paso de IA de un flujo de trabajo puede solicitar una estructura diferente, que tiene prioridad.
 * `roleUniversalIdentifier` (opcional) vincula el agente a un rol que define tu aplicación. Ese rol no debe otorgar más que el rol de la aplicación, o la compilación falla; consulta [Roles de agente](/es/developers/extend/apps/config/roles#agent-roles).
 * `modelConfiguration` (opcional) activa las herramientas nativas del modelo, como lo hace la página de configuración del agente: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Cada herramienta solo funciona con los modelos que la admiten. Omítelo para mantenerlas desactivadas.
+* `triggers` (opcional) ejecuta el agente por sí solo, según una programación o cuando cambian los registros. Consulta [Activadores del agente](#agent-triggers).
 * `isSystem` (opcional, el valor predeterminado es `false`) oculta el agente de las listas de agentes, como los agentes que Twenty crea para los pasos de IA de flujo de trabajo. Solo cambia lo que se muestra: los agentes de una aplicación solo se pueden cambiar mediante la aplicación, independientemente de lo que indique esta marca.
+
+#### Activadores del agente
+
+Cada activador inicia una ejecución que aparece en las ejecuciones del agente, junto con el registro que lo activó:
+
+```ts src/agents/deal-watcher.ts
+import {
+  defineAgent,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineAgent({
+  ...,
+  triggers: [
+    {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'EVENT',
+      settings: {
+        on: 'recordEvent',
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        action: 'updated',
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      },
+      instructions: 'Draft the onboarding plan for this new customer.',
+    },
+    {
+      universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+});
+```
+
+Un activador `EVENT` tiene la misma configuración que [`eventTriggerSettings` de una función lógica](/es/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), excepto que necesita un objeto y una acción. El activador `DATABASE_EVENT` anterior con un `eventName` aún se acepta. `instructions` (opcional) se añaden al prompt del agente para las ejecuciones que inicia el activador.
 
 De forma predeterminada, un agente devuelve texto de formato libre. Para obtener una salida estructurada, establece `responseFormat` en `{ type: 'json' }` y proporciona un `schema`:
 
@@ -194,7 +233,11 @@ export default defineApplicationRole({
 ```
 
 <Warning>
-  **Evita los bucles:** si llamas a `runAgent()` desde un trigger de evento de base de datos `*.updated` y el agente actualiza el mismo registro, limita el alcance del trigger con `updatedFields` a un campo que el agente nunca escriba (por ejemplo, la URL de origen), o comprueba si algún campo de destino sigue vacío antes de llamar a `runAgent()`.
+  **Evita los bucles:** si llamas a `runAgent()` desde un activador de evento de base de datos `*.updated`
+  y el agente actualiza el mismo registro, limita el alcance del activador con
+  `watchedFieldUniversalIdentifiers` a un campo en el que el agente nunca escribe (p. ej., la
+  URL de origen), o con una `condition` que solo se cumple mientras un campo de destino
+  siga vacío, como `isEmpty(summary)`.
 </Warning>
 
 ### Envío de archivos con un mensaje

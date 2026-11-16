@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import {
   Logger,
   type OnModuleDestroy,
@@ -479,9 +481,10 @@ export class BullMQDriver
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
-    this.workerMap[queueName].on('completed', (job) =>
-      this.releaseFinishedJobMemory({ queueName, job }),
-    );
+    this.workerMap[queueName].on('completed', (job) => {
+      void this.clearOversizedCompletedJobData(job);
+      this.releaseFinishedJobMemory({ queueName, job });
+    });
     this.workerMap[queueName].on('failed', (job) => {
       if (isDefined(job?.finishedOn)) {
         this.releaseFinishedJobMemory({ queueName, job });
@@ -895,6 +898,34 @@ export class BullMQDriver
     });
   }
 
+  private async clearOversizedCompletedJobData(job: Job): Promise<void> {
+    const { memorySizeBytes: chargedSizeBytes }: BullMQJobsOptions = job.opts;
+    // A charged job was already sized at enqueue, so its payload is not serialized again here
+    const memorySizeBytes =
+      chargedSizeBytes ??
+      computeJobSizeBytes({ data: job.data, options: job.opts });
+
+    if (
+      memorySizeBytes <=
+      this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES')
+    ) {
+      return;
+    }
+
+    try {
+      await job.updateData({
+        memorySizeBytes,
+        hash: createHash('sha256')
+          .update(JSON.stringify(job.data) ?? '')
+          .digest('hex'),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   private releaseFinishedJobMemory({
     queueName,
     job,
@@ -1074,6 +1105,39 @@ export class BullMQDriver
       ),
       availableBytes,
     };
+  }
+
+  async removeJob(queueName: MessageQueue, jobId: string): Promise<boolean> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job)) {
+      return false;
+    }
+
+    const { memoryGroupKeys, memorySizeBytes }: BullMQJobsOptions = job.opts;
+    const chargedJob = isNonEmptyArray(memoryGroupKeys)
+      ? { queueName, jobId, groupKeys: memoryGroupKeys }
+      : undefined;
+
+    // Released while the job exists, so a re-enqueue of its id is deduplicated, not admitted on this charge
+    if (isDefined(chargedJob)) {
+      await this.jobMemoryLimiter.release(chargedJob);
+    }
+
+    try {
+      await job.remove();
+    } catch (error) {
+      if (isDefined(chargedJob) && isDefined(memorySizeBytes)) {
+        await this.jobMemoryLimiter.restore({
+          ...chargedJob,
+          sizeBytes: memorySizeBytes,
+        });
+      }
+
+      throw error;
+    }
+
+    return true;
   }
 
   async getJobs<T extends MessageQueueJobData>(

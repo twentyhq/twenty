@@ -83,7 +83,11 @@ export const AiChatToolCallApprovalArgumentsCard = ({
         <AiChatToolCallApprovalRecord
           objectNameSingular={objectNameSingular}
           recordId={recordId}
-          isDeletion={template === 'recordDelete'}
+          label={
+            template === 'recordDelete'
+              ? t`This record will be deleted:`
+              : t`Record:`
+          }
         />
       )}
       {hasRecordFields && (

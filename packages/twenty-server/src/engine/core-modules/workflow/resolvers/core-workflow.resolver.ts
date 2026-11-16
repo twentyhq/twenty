@@ -135,18 +135,17 @@ export class CoreWorkflowResolver {
     });
   }
 
-  @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  @Mutation(() => CoreWorkflowDTO, {
+    nullable: true,
+    deprecationReason: 'Use updateCoreWorkflow with a visibility instead',
+  })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async updateCoreWorkflowVisibility(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input') input: UpdateCoreWorkflowVisibilityInput,
   ): Promise<CoreWorkflowDTO | null> {
-    return this.coreWorkflowMutationWorkspaceService.updateWorkflowVisibility({
-      workspaceId,
-      userWorkspaceId,
-      ...input,
-    });
+    return this.updateCoreWorkflow(workspace, userWorkspaceId, input);
   }
 
   @Mutation(() => CoreWorkflowDTO)

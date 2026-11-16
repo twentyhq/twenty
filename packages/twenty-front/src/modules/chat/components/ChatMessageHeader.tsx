@@ -32,12 +32,14 @@ type ChatMessageHeaderProps = {
   avatar: ReactNode;
   name: string;
   createdAt?: Date | string;
+  receipt?: ReactNode;
 };
 
 export const ChatMessageHeader = ({
   avatar,
   name,
   createdAt,
+  receipt,
 }: ChatMessageHeaderProps) => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -59,6 +61,7 @@ export const ChatMessageHeader = ({
             {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
           </Text>
         )}
+        {receipt}
       </StyledAuthor>
     </StyledHeader>
   );

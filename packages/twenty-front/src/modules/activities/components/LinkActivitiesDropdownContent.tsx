@@ -36,7 +36,7 @@ export type LinkActivitiesDropdownContentProps<
   getSearchResults: (
     data: TSearchData,
   ) => LinkActivitiesSearchResults<TActivity>;
-  timelineQuery: DocumentNode;
+  timelineQueries: DocumentNode[];
   getOption: (activity: TActivity) => LinkActivitiesOption;
   labels: LinkActivitiesLabels;
 };
@@ -49,7 +49,7 @@ export const LinkActivitiesDropdownContent = <
   activityLinkConfig,
   searchQuery,
   getSearchResults,
-  timelineQuery,
+  timelineQueries,
   getOption,
   labels,
 }: LinkActivitiesDropdownContentProps<TActivity, TSearchData> & {
@@ -85,7 +85,7 @@ export const LinkActivitiesDropdownContent = <
     targetRecord,
     activityLinkConfig,
     activityIds: [...recordActivities, ...otherActivities].map(({ id }) => id),
-    timelineQuery,
+    timelineQueries,
   });
 
   const areActivitiesStale = loading || debouncedSearch !== trimmedSearch;

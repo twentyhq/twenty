@@ -72,7 +72,46 @@ export default defineAgent({
 * `responseFormat` (اختياري) يحدد شكل الإخراج الافتراضي للوكيل. القيمة الافتراضية هي `{ type: 'text' }` للنص الحر. استخدم `{ type: 'json', schema }` لفرض مخرجات JSON منظمة. يمكن لاستدعاء `runAgent()` أو لخطوة ذكاء اصطناعي في سير عمل طلب شكل مختلف، ويكون له الأسبقية.
 * يربط `roleUniversalIdentifier` (اختياري) الوكيل بدور يحدده تطبيقك. يجب ألا يمنح ذلك الدور صلاحيات أكثر من دور التطبيق، وإلا فسيفشل الإصدار؛ راجع [أدوار الوكلاء](/ar/developers/extend/apps/config/roles#agent-roles).
 * يُفعّل `modelConfiguration` (اختياري) الأدوات الأصلية للنموذج، كما تفعل صفحة إعدادات الوكيل: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. لا تعمل كل أداة إلا مع النماذج التي تدعمها. اتركه خارجًا لإبقائها معطلة.
+* `triggers` (اختيارية) تشغّل الوكيل تلقائيًا، وفق جدول زمني أو عند تغيّر السجلات. راجع [محفزات الوكيل](#agent-triggers).
 * يُخفي `isSystem` (اختياري، وقيمته الافتراضية `false`) الوكيل من قوائم الوكلاء، مثل الوكلاء الذين ينشئهم Twenty لخطوات الذكاء الاصطناعي لسير العمل. إنه يغيّر ما يُعرض فقط: لا يمكن تغيير وكلاء التطبيق إلا من خلال التطبيق، بغض النظر عما تقوله هذه العلامة.
+
+#### محفزات الوكيل
+
+يبدأ كل محفز عملية تشغيل تظهر ضمن عمليات تشغيل الوكيل، مع السجل الذي حفّزها:
+
+```ts src/agents/deal-watcher.ts
+import {
+  defineAgent,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineAgent({
+  ...,
+  triggers: [
+    {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'EVENT',
+      settings: {
+        on: 'recordEvent',
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        action: 'updated',
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      },
+      instructions: 'Draft the onboarding plan for this new customer.',
+    },
+    {
+      universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+});
+```
+
+يأخذ محفز `EVENT` الإعدادات نفسها التي تأخذها [إعدادات `eventTriggerSettings` لدالة منطقية](/ar/developers/extend/apps/logic/logic-functions#database-event-trigger-payload)، باستثناء أنه يحتاج إلى كائن واحد وإجراء واحد. لا يزال محفز `DATABASE_EVENT` السابق الذي يحتوي على `eventName` مقبولًا. تُضاف `instructions` (اختيارية) إلى مطالبة الوكيل لعمليات التشغيل التي يبدأها المحفز.
 
 بشكل افتراضي، يعيد الوكيل نصًا حرًا. للحصول على مخرجات منظمة، عيّن `responseFormat` إلى `{ type: 'json' }` ووفّر `schema`:
 
@@ -193,7 +232,11 @@ export default defineApplicationRole({
 ```
 
 <Warning>
-  **تجنب الحلقات:** إذا استدعيت `runAgent()` من مشغل حدث قاعدة بيانات من نوع `*.updated` وقام الوكيل بتحديث نفس السجل، فحدد نطاق المشغل باستخدام `updatedFields` إلى حقل لا يكتبه الوكيل أبدًا (مثل عنوان URL المصدر)، أو تحقَّق مما إذا كان أي حقل مستهدف لا يزال فارغًا قبل استدعاء `runAgent()`.
+  **تجنب الحلقات:** إذا استدعيت `runAgent()` من محفز حدث قاعدة بيانات من نوع `*.updated`
+  وقام الوكيل بتحديث السجل نفسه، فقيّد نطاق المحفز باستخدام
+  `watchedFieldUniversalIdentifiers` إلى حقل لا يكتب فيه الوكيل أبدًا (مثل
+  عنوان URL المصدر)، أو باستخدام `condition` لا يتحقق إلا عندما يظل حقل مستهدف
+  فارغًا، مثل `isEmpty(summary)`.
 </Warning>
 
 ### إرسال الملفات مع رسالة

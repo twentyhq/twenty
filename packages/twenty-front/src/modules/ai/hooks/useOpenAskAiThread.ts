@@ -1,14 +1,12 @@
+import { useStore } from 'jotai';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const agentChatVisibleThreads = useAtomStateValue(
-    agentChatVisibleThreadsSelector,
-  );
+  const store = useStore();
   const { selectAiChatThread } = useSelectAiChatThread();
 
   const { handleThreadClick } = useAiChatThreadClick({
@@ -17,11 +15,11 @@ export const useOpenAskAiThread = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const openAskAiThread = (threadId: string) => {
-    const thread = agentChatVisibleThreads.find(
-      (visibleThread) => visibleThread.id === threadId,
+    const thread = store.get(
+      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
 
-    if (isDefined(thread)) {
+    if (isDefined(thread) && !isDefined(thread.deletedAt)) {
       handleThreadClick(thread);
       return;
     }

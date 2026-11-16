@@ -1,4 +1,4 @@
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -474,7 +474,7 @@ describe('buildEffectiveSelectedFields', () => {
         readableObjectMetadataIds: new Set(
           Object.entries(recordsPermissions.objects)
             .filter(([, objectRecordsPermissions]) =>
-              canReachSomeRecords({
+              canAccessThroughAllRecordsOrRlsPermission({
                 objectRecordsPermissions,
                 operationType: 'read',
               }),

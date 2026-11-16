@@ -14,6 +14,7 @@ import { DateTimePicker } from '@/ui/input/components/internal/date/components/D
 import { useIsDatePickerDropdownOpen } from '@/ui/input/components/internal/date/hooks/useIsDatePickerDropdownOpen';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -66,6 +67,7 @@ type SettingsDatePickerInputProps = {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
+  isInModal?: boolean;
 };
 
 export const SettingsDatePickerInput = ({
@@ -74,6 +76,7 @@ export const SettingsDatePickerInput = ({
   value,
   onChange,
   placeholder,
+  isInModal = false,
 }: SettingsDatePickerInputProps) => {
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
@@ -117,7 +120,8 @@ export const SettingsDatePickerInput = ({
     }
   };
 
-  const handleDateTimeClose = (_newDateTime: Temporal.ZonedDateTime | null) => {
+  const handleDateTimeClose = (newDateTime: Temporal.ZonedDateTime | null) => {
+    handleDateTimeChange(newDateTime);
     handleClose();
   };
 
@@ -162,10 +166,11 @@ export const SettingsDatePickerInput = ({
       </StyledInput>
       {isOpen && (
         <FloatingPortal>
-          <div
+          <StyledOverlayPortalLayer
             ref={refs.setFloating}
             style={floatingStyles}
             data-click-outside-id={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
+            isAboveModal={isInModal}
           >
             <OverlayContainer>
               <ParentClickOutsideIdContext.Provider
@@ -181,7 +186,7 @@ export const SettingsDatePickerInput = ({
                 />
               </ParentClickOutsideIdContext.Provider>
             </OverlayContainer>
-          </div>
+          </StyledOverlayPortalLayer>
         </FloatingPortal>
       )}
     </StyledInputContainer>

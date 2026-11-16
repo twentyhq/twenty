@@ -44,7 +44,7 @@ export class AgentRunCallerContextService {
     // differs from application when an application runs an agent of another one
     callerApplication: FlatApplication | undefined;
   }): Promise<AgentRunExecutionContext> {
-    const { authContext: callerAuthContext, actorContext } =
+    const { authContext: callerAuthContext, actorMetadata } =
       await this.buildCallerContextOrThrow({
         workspace,
         callerRef,
@@ -60,9 +60,9 @@ export class AgentRunCallerContextService {
 
     return {
       authContext,
-      actorContext,
+      actorMetadata,
       turnCreatedBy: buildAgentRunTurnCreatedBy({
-        actorContext,
+        actorMetadata,
         callerApplication,
         authContext,
       }),
@@ -89,13 +89,13 @@ export class AgentRunCallerContextService {
     applicationAuthContext?: ApplicationWorkspaceAuthContext;
   }): Promise<AgentRunCallerContext> {
     if (isDefined(callerRef.callerWorkspaceMemberId)) {
-      const { authContext, actorContext } =
+      const { authContext, actorMetadata } =
         await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
           workspaceMemberId: callerRef.callerWorkspaceMemberId,
           workspaceId: workspace.id,
         });
 
-      return { authContext, actorContext };
+      return { authContext, actorMetadata };
     }
 
     if (isDefined(callerRef.callerApiKeyId)) {

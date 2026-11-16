@@ -59,6 +59,8 @@ type BullMQDouble = {
   nextJobIndex: number;
   nextAddFailure: AddFailure | undefined;
   isGetJobBroken: boolean;
+  lockedJobIds: Set<string>;
+  beforeRemove: (() => Promise<void>) | undefined;
   processor: ((job: object) => Promise<void>) | undefined;
   listeners: { event: string; listener: WorkerListener }[];
   client: unknown;
@@ -69,6 +71,7 @@ type BullMQDouble = {
   addAll: (
     jobs: { name: string; data: unknown; opts: unknown }[],
   ) => Promise<{ id: string }[]>;
+  remove: (jobId: string) => Promise<void>;
   reset: (store: { redis: Redis; client: unknown }) => void;
 };
 
@@ -81,6 +84,8 @@ const mockBullMQ: BullMQDouble = {
   nextJobIndex: 0,
   nextAddFailure: undefined,
   isGetJobBroken: false,
+  lockedJobIds: new Set(),
+  beforeRemove: undefined,
   processor: undefined,
   listeners: [],
   client: undefined,
@@ -140,6 +145,19 @@ const mockBullMQ: BullMQDouble = {
 
     return addedJobs;
   },
+  remove: async (jobId) => {
+    await mockBullMQ.beforeRemove?.();
+
+    if (mockBullMQ.lockedJobIds.has(jobId)) {
+      throw new Error(`Job ${jobId} is locked`);
+    }
+
+    mockBullMQ.jobs.delete(jobId);
+    mockBullMQ.waitingJobIds = mockBullMQ.waitingJobIds.filter(
+      (waitingJobId) => waitingJobId !== jobId,
+    );
+    await mockBullMQ.redis?.del(buildJobKey(jobId));
+  },
   reset: ({ redis, client }) => {
     mockBullMQ.jobs = new Map();
     mockBullMQ.waitingJobIds = [];
@@ -147,6 +165,8 @@ const mockBullMQ: BullMQDouble = {
     mockBullMQ.nextJobIndex = 0;
     mockBullMQ.nextAddFailure = undefined;
     mockBullMQ.isGetJobBroken = false;
+    mockBullMQ.lockedJobIds = new Set();
+    mockBullMQ.beforeRemove = undefined;
     mockBullMQ.processor = undefined;
     mockBullMQ.listeners = [];
     mockBullMQ.redis = redis;
@@ -172,7 +192,11 @@ jest.mock('bullmq', () => ({
         throw new Error('connection lost');
       }
 
-      return mockBullMQ.jobs.get(jobId);
+      const job = mockBullMQ.jobs.get(jobId);
+
+      return isDefined(job)
+        ? Object.assign(job, { remove: () => mockBullMQ.remove(jobId) })
+        : undefined;
     },
     getRanges: async () => [...mockBullMQ.waitingJobIds],
     setGlobalConcurrency: jest.fn(),
@@ -430,6 +454,8 @@ export const createMemoryHarness = async ({
       job.data = data;
     };
 
+    Object.assign(job, { updateData });
+
     try {
       await mockBullMQ.processor({ ...job, updateData, timestamp: Date.now() });
     } catch (error) {
@@ -488,6 +514,17 @@ export const createMemoryHarness = async ({
     readChargedJobs: (groupKey: string) =>
       redis.hgetall(`${JOBS_KEY_PREFIX}${groupKey}`),
     readTtl: (groupKey: string) => redis.ttl(`${USED_KEY_PREFIX}${groupKey}`),
+    removeJob: (jobId: string) =>
+      driver.removeJob(MEMORY_SCENARIO_QUEUE, jobId),
+    lockJob: (jobId: string) => {
+      mockBullMQ.lockedJobIds.add(jobId);
+    },
+    markFinished: async (jobId: string) => {
+      await redis.hset(buildJobKey(jobId), 'finishedOn', Date.now());
+    },
+    onBeforeRemove: (beforeRemove: () => Promise<void>) => {
+      mockBullMQ.beforeRemove = beforeRemove;
+    },
     storedJobIds: () => [...mockBullMQ.jobs.keys()],
     storedJob: (jobId: string) => mockBullMQ.jobs.get(jobId),
     failNextAdd: (failure: AddFailure) => {

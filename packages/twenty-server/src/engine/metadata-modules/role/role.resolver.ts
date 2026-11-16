@@ -65,6 +65,8 @@ import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
+import { AccessGroupPropagationProgressReadService } from 'src/engine/permissions/access-group-propagation-progress-read.service';
+import { AccessGroupPropagationProgressDTO } from 'src/engine/permissions/dtos/access-group-propagation-progress.dto';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -91,6 +93,7 @@ export class RoleResolver {
     private readonly applicationService: ApplicationService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly accessGroupPropagationProgressReadService: AccessGroupPropagationProgressReadService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -117,6 +120,16 @@ export class RoleResolver {
     }
 
     return role;
+  }
+
+  @Query(() => AccessGroupPropagationProgressDTO)
+  @UseGuards(AccessPolicyGuard(ROLE_READ_ACCESS_POLICY))
+  async accessGroupPropagationProgress(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<AccessGroupPropagationProgressDTO> {
+    return this.accessGroupPropagationProgressReadService.findProgress(
+      workspace.id,
+    );
   }
 
   @Mutation(() => WorkspaceMemberDTO)

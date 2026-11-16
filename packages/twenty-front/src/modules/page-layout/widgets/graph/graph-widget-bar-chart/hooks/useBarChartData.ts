@@ -16,7 +16,6 @@ type UseBarChartDataProps = {
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
   colorMode: GraphColorMode;
-  instanceId?: string;
 };
 
 export const useBarChartData = ({
@@ -25,11 +24,9 @@ export const useBarChartData = ({
   colorRegistry,
   seriesLabels,
   colorMode,
-  instanceId,
 }: UseBarChartDataProps) => {
   const graphWidgetHiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
-    instanceId,
   );
 
   const seriesConfigMap = useMemo(

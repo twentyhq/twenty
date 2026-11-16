@@ -53,6 +53,41 @@ export class RecordAccessGroupRepository {
     return rows.map(({ id }) => id);
   }
 
+  async estimateRecordCountByObjectMetadataId({
+    workspaceId,
+    flatObjectMetadatas,
+  }: {
+    workspaceId: string;
+    flatObjectMetadatas: FlatObjectMetadata[];
+  }): Promise<Map<string, number>> {
+    const rows = await this.recordPermissionQueryService.execute<{
+      count: string;
+    }>({
+      workspaceId,
+      query: {
+        sql: `SELECT GREATEST(COALESCE("reltuples", 0), COALESCE(pg_stat_get_live_tuples(pg_class."oid"), 0), 0)::bigint AS "count"
+          FROM unnest(:tableExpressions::text[]) WITH ORDINALITY AS "table"("expression", "position")
+          LEFT JOIN pg_class ON pg_class."oid" = to_regclass("table"."expression")
+          ORDER BY "table"."position"`,
+        parameters: {
+          tableExpressions: flatObjectMetadatas.map((flatObjectMetadata) =>
+            buildWorkspaceTableExpression({
+              workspaceId,
+              tableName: computeObjectTargetTable(flatObjectMetadata),
+            }),
+          ),
+        },
+      },
+    });
+
+    return new Map(
+      flatObjectMetadatas.map(({ id }, index) => [
+        id,
+        Number(rows[index]?.count ?? 0),
+      ]),
+    );
+  }
+
   async findRelatedRecordIds({
     workspaceId,
     sourceFlatObjectMetadata,

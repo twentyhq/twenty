@@ -7,6 +7,8 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -99,16 +101,20 @@ describe('app connection OAuth callback', () => {
     });
   };
 
+  let browserCookie: string | undefined;
+
   type AuthorizeArgs = {
     reconnectingConnectedAccountId?: string;
     redirectLocation?: string;
     providerName?: string;
+    browserHeaders?: Record<string, string>;
   };
 
   const requestAuthorization = async ({
     reconnectingConnectedAccountId,
     redirectLocation,
     providerName = provider.name,
+    browserHeaders,
   }: AuthorizeArgs = {}): Promise<URL> => {
     const transient = await generateTransientTokenResponse({
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -116,18 +122,24 @@ describe('app connection OAuth callback', () => {
 
     expect(transient.errors).toBeUndefined();
 
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(
+        browserHeaders ??
+          (await buildSignedInBrowserHeaders({ transientToken })),
+      )
       .query({
         applicationId: provider.applicationId,
         providerName,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
         reconnectingConnectedAccountId,
         redirectLocation,
       });
 
     expect(response.status).toBe(302);
+    browserCookie = readFlowCookie(response);
 
     return new URL(response.headers.location);
   };
@@ -148,6 +160,7 @@ describe('app connection OAuth callback', () => {
   const callback = async (state: string, code: string): Promise<URL> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/callback')
+      .set('Cookie', browserCookie ?? '')
       .query({ state, code });
 
     expect(response.status).toBe(302);
@@ -280,6 +293,47 @@ describe('app connection OAuth callback', () => {
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
     });
     await markerServer.close();
+  });
+
+  it('refuses a callback from a browser that did not start the sign-in', async () => {
+    const state = await authorize();
+
+    browserCookie = undefined;
+
+    const redirect = await callback(state, 'team-a:first');
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'browser that started it',
+    );
+    expect(await readAccounts()).toEqual([]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
+  });
+
+  it('refuses to start a sign-in in a browser that is not signed in to Twenty', async () => {
+    const redirect = await requestAuthorization({ browserHeaders: {} });
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'signed in as the requesting user',
+    );
+    expect(browserCookie).toBeUndefined();
+  });
+
+  it('refuses to start a sign-in in a browser signed in as another member', async () => {
+    const otherMember = await generateTransientTokenResponse({
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    });
+
+    const redirect = await requestAuthorization({
+      browserHeaders: await buildSignedInBrowserHeaders({
+        transientToken:
+          otherMember.data.generateTransientToken.transientToken.token,
+      }),
+    });
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'signed in as the requesting user',
+    );
+    expect(browserCookie).toBeUndefined();
   });
 
   it('stores the identified account on first connect and runs onConnect for it', async () => {
@@ -441,7 +495,7 @@ describe('app connection OAuth callback', () => {
   });
 
   it('returns to where the flow started with a short message when the token exchange fails', async () => {
-    const redirectLocation = `/settings/accounts/applications/${provider.applicationId}#connections`;
+    const redirectLocation = `/settings/app-preferences/${provider.applicationId}#connections`;
 
     const redirect = await callback(
       await authorize({ redirectLocation }),
@@ -449,7 +503,7 @@ describe('app connection OAuth callback', () => {
     );
 
     expect(redirect.pathname).toBe(
-      `/settings/accounts/applications/${provider.applicationId}`,
+      `/settings/app-preferences/${provider.applicationId}`,
     );
     expect(redirect.hash).toBe('#connections');
     expect(redirect.searchParams.get('errorMessage')).toBe(
@@ -480,7 +534,7 @@ describe('app connection OAuth callback', () => {
     );
 
     it.each(['http://', '//'])(
-      'falls back to the accounts page when redirectLocation is the malformed %s',
+      'falls back to the app preferences page when redirectLocation is the malformed %s',
       async (redirectLocation) => {
         const fallbackRedirect = await requestAuthorization({
           providerName: UNKNOWN_PROVIDER_NAME,
@@ -491,7 +545,7 @@ describe('app connection OAuth callback', () => {
         });
 
         expect(redirect.origin).toBe(fallbackRedirect.origin);
-        expect(redirect.pathname).toBe('/settings/accounts');
+        expect(redirect.pathname).toBe('/settings/app-preferences');
         expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
       },
     );
@@ -535,7 +589,7 @@ describe('app connection OAuth callback', () => {
     expect(redirect.searchParams.get('errorMessage')).toContain(
       'invalid or expired',
     );
-    expect(redirect.pathname).toBe('/settings/accounts');
+    expect(redirect.pathname).toBe('/settings/app-preferences');
     expect(tokenExchanges).toEqual([]);
     expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
     expect(await readAccounts()).toEqual([]);

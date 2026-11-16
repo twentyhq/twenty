@@ -88,7 +88,7 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsReadService.canAllRecordsOrRowLevelPermissionsGrantOperation(
+            !(await this.recordPermissionsReadService.canAllRecordsOrRlsAccessOperation(
               {
                 operationType: 'update',
                 principals,

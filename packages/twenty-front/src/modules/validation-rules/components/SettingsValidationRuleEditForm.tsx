@@ -8,18 +8,16 @@ import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SettingsValidationRuleForm } from '@/validation-rules/components/SettingsValidationRuleForm';
 import { SettingsValidationRulePageLayout } from '@/validation-rules/components/SettingsValidationRulePageLayout';
 import { useNavigateToObjectValidationRules } from '@/validation-rules/hooks/useNavigateToObjectValidationRules';
+import { useValidationRuleFields } from '@/validation-rules/hooks/useValidationRuleFields';
 import { useValidationRuleMutations } from '@/validation-rules/hooks/useValidationRuleMutations';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
-import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildValidationRuleEditorFields';
-import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { getValidationRuleFormEdits } from '@/validation-rules/utils/getValidationRuleFormEdits';
 import { getValidationRuleFormValues } from '@/validation-rules/utils/getValidationRuleFormValues';
 import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
@@ -44,7 +42,9 @@ export const SettingsValidationRuleEditForm = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { fields, editorFields } = useValidationRuleFields({
+    objectMetadataItem,
+  });
   const navigateToObjectValidationRules = useNavigateToObjectValidationRules({
     objectNamePlural: objectMetadataItem.namePlural,
   });
@@ -76,15 +76,6 @@ export const SettingsValidationRuleEditForm = ({
         serverFormValues,
       }),
     );
-
-  const fields = buildValidationRuleFieldDescriptors({
-    objectMetadataItem,
-    objectMetadataItems,
-  });
-  const editorFields = buildValidationRuleEditorFields({
-    objectMetadataItem,
-    objectMetadataItems,
-  });
 
   const handleSave = async () => {
     try {

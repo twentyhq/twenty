@@ -142,18 +142,28 @@ export const Settings: Story = {
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to={getSettingsPath(SettingsPath.Accounts)}
+              to={getSettingsPath(SettingsPath.AppPreferences)}
               Icon={IconAt}
             />
             <NavigationDrawerSubItem
               label="Emails"
-              to={getSettingsPath(SettingsPath.AccountsEmails)}
+              to={getSettingsPath(
+                SettingsPath.AppPreferences,
+                undefined,
+                undefined,
+                'emails',
+              )}
               Icon={IconMail}
               subItemState="intermediate-before-selected"
             />
             <NavigationDrawerSubItem
               label="Calendar"
-              to={getSettingsPath(SettingsPath.AccountsCalendars)}
+              to={getSettingsPath(
+                SettingsPath.AppPreferences,
+                undefined,
+                undefined,
+                'calendar',
+              )}
               Icon={IconCalendarEvent}
               subItemState="last-selected"
             />

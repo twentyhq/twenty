@@ -21,7 +21,10 @@ export const MentionChip = ({ node }: MentionChipProps) => {
     })
   ) {
     return (
-      <NodeViewWrapper as="span" style={{ display: 'inline' }}>
+      <NodeViewWrapper
+        as="span"
+        style={{ display: 'inline-flex', verticalAlign: 'middle' }}
+      >
         <AiChatAssistantMentionChip />
       </NodeViewWrapper>
     );

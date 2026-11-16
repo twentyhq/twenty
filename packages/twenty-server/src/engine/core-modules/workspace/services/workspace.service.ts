@@ -172,6 +172,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isInternalImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
@@ -629,12 +630,20 @@ export class WorkspaceService {
       });
     }
 
+    const isInternalImportEnabled =
+      payload.isInternalImportEnabled ??
+      payload.isInternalMessagesImportEnabled;
+
     let updatedWorkspace: WorkspaceEntity;
 
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
         ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
+        ...(isDefined(isInternalImportEnabled) && {
+          isInternalImportEnabled,
+          isInternalMessagesImportEnabled: isInternalImportEnabled,
+        }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
@@ -1258,6 +1267,60 @@ export class WorkspaceService {
     }
 
     return totalDeleted;
+  }
+
+  async assertNotRemovingLastServerAdminOrThrow(removedUserIds: string[]) {
+    const isRemovingServerAdmin = await this.userRepository.exists({
+      where: { id: In(removedUserIds), canAccessFullAdminPanel: true },
+    });
+
+    if (!isRemovingServerAdmin) {
+      return;
+    }
+
+    const hasRemainingServerAdmin = await this.userRepository.exists({
+      where: { id: Not(In(removedUserIds)), canAccessFullAdminPanel: true },
+    });
+
+    if (hasRemainingServerAdmin) {
+      return;
+    }
+
+    const hasRemainingUser = await this.userRepository.exists({
+      where: { id: Not(In(removedUserIds)) },
+    });
+
+    if (!hasRemainingUser) {
+      return;
+    }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    );
+  }
+
+  async assertWorkspaceDeletionKeepsServerAdminOrThrow(workspaceId: string) {
+    const members = await this.userWorkspaceRepository.find({
+      select: { userId: true },
+      where: { workspaceId },
+      withDeleted: true,
+    });
+
+    const memberIds = members.map(({ userId }) => userId);
+
+    const membersInOtherWorkspaces = await this.userWorkspaceRepository.find({
+      select: { userId: true },
+      where: { userId: In(memberIds), workspaceId: Not(workspaceId) },
+    });
+
+    const keptUserIds = new Set(
+      membersInOtherWorkspaces.map(({ userId }) => userId),
+    );
+
+    await this.assertNotRemovingLastServerAdminOrThrow(
+      memberIds.filter((userId) => !keptUserIds.has(userId)),
+    );
   }
 
   async handleRemoveWorkspaceMember(

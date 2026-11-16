@@ -1,6 +1,5 @@
 import chunk from 'lodash.chunk';
 
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -9,12 +8,19 @@ import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
+import { type filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
 
-export const transformEventBatchToEventPayloads = ({
+type FilterMatchingEvents = (
+  args: Pick<
+    Parameters<typeof filterEventsMatchingDatabaseEventTrigger>[0],
+    'events' | 'eventName' | 'watchedFields' | 'condition' | 'conditionBindings'
+  >,
+) => ReturnType<typeof filterEventsMatchingDatabaseEventTrigger>;
+
+export const transformEventBatchToEventPayloads = async ({
   workspaceEventBatch,
   logicFunctions,
-  conditionFields = [],
+  filterMatchingEvents,
   onConditionError,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
@@ -22,12 +28,12 @@ export const transformEventBatchToEventPayloads = ({
     LogicFunctionEntity,
     'id' | 'workspaceId' | 'databaseEventTriggerSettings'
   >[];
-  conditionFields?: ValidationRuleFieldDescriptor[];
+  filterMatchingEvents: FilterMatchingEvents;
   onConditionError?: (conditionError: {
     logicFunctionId: string;
     errorMessage: string;
   }) => void;
-}): LogicFunctionTriggerJobData[] => {
+}): Promise<LogicFunctionTriggerJobData[]> => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
 
@@ -35,12 +41,12 @@ export const transformEventBatchToEventPayloads = ({
     const triggerSettings = logicFunction.databaseEventTriggerSettings;
 
     const { events: filteredEvents, conditionErrorMessage } =
-      filterEventsMatchingDatabaseEventTrigger({
+      await filterMatchingEvents({
         events,
         eventName: workspaceEventBatch.name,
         watchedFields: triggerSettings?.updatedFields,
         condition: triggerSettings?.condition,
-        fields: conditionFields,
+        conditionBindings: triggerSettings?.conditionBindings,
       });
 
     if (isDefined(conditionErrorMessage)) {

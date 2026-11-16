@@ -1,11 +1,8 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import {
-  convertEmailBodyToEmailDocument,
-  parseCanonicalEmailDocument,
-  parseJson,
-} from 'twenty-shared/utils';
+import { parseCanonicalEmailDocument, parseJson } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
+import { convertEmailBodyToEmailDocument } from 'src/database/commands/upgrade-version-command/2-47/utils/convert-email-body-to-email-document.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const convertBodyToEmailDocumentJson = (body: unknown): string | undefined => {

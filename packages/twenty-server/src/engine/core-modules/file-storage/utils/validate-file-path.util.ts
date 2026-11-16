@@ -9,9 +9,11 @@ import { validateSafeRelativePath } from 'src/engine/core-modules/file-storage/u
 export const validateFilePath = ({
   resourcePath,
   fileFolder,
+  allowedExtensions,
 }: {
   resourcePath: string;
   fileFolder: FileFolder | ServerFileFolder;
+  allowedExtensions?: Readonly<Record<string, true>>;
 }): ResourcePathValidationResult => {
   const safePathResult = validateSafeRelativePath({ resourcePath });
 
@@ -35,5 +37,5 @@ export const validateFilePath = ({
     };
   }
 
-  return validateFileExtension({ resourcePath, fileFolder });
+  return validateFileExtension({ resourcePath, fileFolder, allowedExtensions });
 };

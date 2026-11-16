@@ -4,9 +4,13 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from '@/page-layout/widgets/call-recording-transcript/components/__stories__/mockCallRecordingAudio';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const buildVoiceNoteMessage = (url: string) =>
   ({
@@ -114,6 +118,56 @@ export const UnplayableVoiceNote: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'Play' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const SeveralImages: Story = {
+  decorators: [RootDecorator],
+  beforeEach: () => {
+    jotaiStore.set(isAttachmentPreviewEnabledState.atom, true);
+  },
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: false,
+      messages: [
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'images-message-id',
+          text: 'Photos from the offsite and the agenda.',
+          attachments: [
+            {
+              id: 'images-attachment-id',
+              file: [
+                ...[1, 2, 3, 4, 5, 6].map((photoNumber) => ({
+                  fileId: `photo-${photoNumber}`,
+                  label: `photo-${photoNumber}.png`,
+                  extension: 'png',
+                  url: IMAGE_URL_MOCK,
+                })),
+                {
+                  fileId: 'agenda-file-id',
+                  label: 'agenda.pdf',
+                  extension: 'pdf',
+                  url: 'https://example.com/agenda.pdf',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show 3 more images' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'photo-3.png' }),
+    ).toBeVisible();
+    await expect(canvas.getByText('agenda.pdf')).toBeVisible();
   },
 };
 

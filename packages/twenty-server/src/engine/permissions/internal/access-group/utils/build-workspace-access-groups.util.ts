@@ -9,10 +9,10 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
+import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
@@ -27,11 +27,8 @@ const groupWorkspaceMembersByRoleId = ({
 }: {
   userWorkspaceRoleMap: Record<string, string>;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
-}): Map<string, RowLevelPermissionWorkspaceMember[]> => {
-  const workspaceMembersByRoleId = new Map<
-    string,
-    RowLevelPermissionWorkspaceMember[]
-  >();
+}): Map<string, RlsWorkspaceMember[]> => {
+  const workspaceMembersByRoleId = new Map<string, RlsWorkspaceMember[]>();
 
   for (const [userWorkspaceId, roleId] of Object.entries(
     userWorkspaceRoleMap,
@@ -101,8 +98,7 @@ export const buildWorkspaceAccessGroups = ({
           objectRecordsPermissions,
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
           flatFieldMetadataMaps,
-          isRelationHopEnabled:
-            isRowLevelPermissionRelationHopEnabled(featureFlagsMap),
+          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
         })) {
           accessGroupByGroupHash.set(accessGroup.groupHash, accessGroup);
         }

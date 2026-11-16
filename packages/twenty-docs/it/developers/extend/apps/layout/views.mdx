@@ -39,6 +39,7 @@ export default defineView({
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista. Può essere un oggetto personalizzato che hai definito o un oggetto Twenty standard.
 * La vista principale dell'elenco dell'oggetto è di proprietà del server: `key` è deprecato e ignorato, quindi una vista del manifest non potrà mai rivendicarla. Distribuisci un elemento di navigazione `VIEW` se vuoi avere la tua vista a un clic di distanza nella barra laterale.
 * `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`. Per fare riferimento a un campo di sistema creato automaticamente come `createdAt`, vedi [Targeting System Metadata](/it/developers/extend/apps/data/system-fields).
+* Imposta `isCanonical: false` su un campo per aggiungere una colonna aggiuntiva per un campo che la vista mostra già. Una vista ha al massimo una colonna canonica per campo, ma qualsiasi numero di colonne non canoniche. Non sono consentite nel campo identificatore dell'etichetta dell'oggetto né nelle viste widget e `isCanonical` viene impostato quando viene creata la colonna: modificarlo in seguito non ha alcun effetto.
 * Puoi anche definire `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` per configurazioni più avanzate.
 * `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
 
