@@ -155,7 +155,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       type: NavigationMenuItemType.OBJECT,
       viewId: null,
       targetObjectMetadataId: null,
-      folderId: null,
+      parentId: null,
       name: null,
       link: null,
       icon: null,

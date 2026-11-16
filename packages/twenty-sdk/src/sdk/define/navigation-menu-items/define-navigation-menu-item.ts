@@ -1,6 +1,9 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type NavigationMenuItemManifest } from 'twenty-shared/application';
+import {
+  type NavigationMenuItemManifest,
+  normalizeNavigationMenuItemManifest,
+} from 'twenty-shared/application';
 
 export const defineNavigationMenuItem: DefineEntity<
   NavigationMenuItemManifest
@@ -15,5 +18,8 @@ export const defineNavigationMenuItem: DefineEntity<
     errors.push('NavigationMenuItem must have a position');
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({
+    config: normalizeNavigationMenuItemManifest(config),
+    errors,
+  });
 };

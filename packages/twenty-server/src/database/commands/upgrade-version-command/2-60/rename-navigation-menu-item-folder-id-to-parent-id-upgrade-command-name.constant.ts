@@ -1,0 +1,2 @@
+export const RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME =
+  '2.60.0_RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand_1794839679151';
