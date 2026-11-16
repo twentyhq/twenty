@@ -223,7 +223,7 @@ msgstr "Ένα έναυσμα συμβάντος βάσης δεδομένων �
 #. js-lingui-id: RRhkpY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
-msgstr ""
+msgstr "Ένα απενεργοποιημένο πεδίο δεν μπορεί να εμφανιστεί σε μια στήλη"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -413,12 +413,12 @@ msgstr "Μια ηχογράφηση μιας συνάντησης"
 #. js-lingui-id: p5HHUZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr ""
+msgstr "Ένα πεδίο σχετικής εγγραφής μπορεί να εμφανιστεί μόνο σε ένα πεδίο σχέσης πολλά-προς-ένα"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
-msgstr ""
+msgstr "Η σχέση μιας σχετικής εγγραφής δεν μπορεί να εμφανιστεί σε μια στήλη"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -601,7 +601,7 @@ msgstr "Παρουσιάστηκε σφάλμα ομάδας πεδίων προ
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
-msgstr ""
+msgstr "Ένα φίλτρο προβολής δεν μπορεί να παραμείνει σε μια ομάδα φίλτρων προβολής που καταργείται"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -611,7 +611,7 @@ msgstr "Παρουσιάστηκε σφάλμα φίλτρου προβολής.
 #. js-lingui-id: yPKHXO
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter group cannot stay under a parent group that is being removed"
-msgstr ""
+msgstr "Μια ομάδα φίλτρων προβολής δεν μπορεί να παραμείνει κάτω από μια γονική ομάδα που καταργείται"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -1596,7 +1596,7 @@ msgstr "Εφαρμογές"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Apps preferences"
-msgstr ""
+msgstr "Προτιμήσεις εφαρμογών"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6353,7 +6353,7 @@ msgstr "Μετάβαση στις ρυθμίσεις AI"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
-msgstr ""
+msgstr "Μετάβαση στις προτιμήσεις εφαρμογών"
 
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10036,7 +10036,7 @@ msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσ�
 #. js-lingui-id: A69o8a
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record can show a field of that record"
-msgstr ""
+msgstr "Μόνο μια στήλη που συνδέεται με μία εγγραφή μπορεί να εμφανίσει ένα πεδίο αυτής της εγγραφής"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,7 +10066,7 @@ msgstr "Μόνο ένα μέλος του χώρου εργασίας μπορε
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
-msgstr ""
+msgstr "Μόνο οι προστιθέμενες στήλες μπορούν να εμφανίσουν ένα πεδίο της σχετικής εγγραφής"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10101,7 +10101,7 @@ msgstr "Επιτρέπονται μόνο περιορισμοί πεδίων."
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only non-canonical view fields can show a related record field"
-msgstr ""
+msgstr "Μόνο τα μη κανονικά πεδία προβολής μπορούν να εμφανίσουν ένα πεδίο σχετικής εγγραφής"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14073,7 +14073,7 @@ msgstr "Το πεδίο που έχει ρυθμιστεί για αυτό το 
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The field must belong to the related object"
-msgstr ""
+msgstr "Το πεδίο πρέπει να ανήκει στο σχετικό αντικείμενο"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14347,22 +14347,22 @@ msgstr "Το περιεχόμενο του ληφθέντος email δεν εί�
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field cannot be a relation"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής δεν μπορεί να είναι σχέση"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must be active"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής πρέπει να είναι ενεργό"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής πρέπει να ανήκει στο αντικείμενο προορισμού της σχέσης"
 
 #. js-lingui-id: bb3jnG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής μιας στήλης που ανήκει σε μια εφαρμογή δεν μπορεί να αλλάξει"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14828,7 +14828,7 @@ msgstr "Αυτός ο κώδικας ανήκει σε δημοσιευμένη 
 #. js-lingui-id: t/Gj4r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
-msgstr ""
+msgstr "Αυτή η στήλη προέρχεται από μια εφαρμογή, επομένως το πεδίο σχετικής εγγραφής που εμφανίζει δεν μπορεί να αλλάξει"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
