@@ -440,7 +440,8 @@ describe('useEmailComposerState', () => {
             <MockedProvider
               mocks={[
                 createSendEmailMock({
-                  connectedAccountId: 'account-1',
+                  connectedAccountId: 'account-2',
+                  fromHandle: 'sales@twenty.com',
                   subject: 'Re: Hello',
                   body: 'Long reply',
                 }),
@@ -457,6 +458,10 @@ describe('useEmailComposerState', () => {
     act(() => {
       firstComposer.result.current.setSubject('Re: Hello');
       firstComposer.result.current.setBody('Long reply');
+      firstComposer.result.current.setSender({
+        connectedAccountId: 'account-2',
+        fromHandle: 'sales@twenty.com',
+      });
     });
 
     firstComposer.unmount();
@@ -466,6 +471,12 @@ describe('useEmailComposerState', () => {
 
     expect(remountedComposer.result.current.subject).toBe('Re: Hello');
     expect(remountedComposer.result.current.body).toBe('Long reply');
+    expect(remountedComposer.result.current.connectedAccountId).toBe(
+      'account-2',
+    );
+    expect(remountedComposer.result.current.fromHandle).toBe(
+      'sales@twenty.com',
+    );
 
     await act(async () => {
       await remountedComposer.result.current.handleSend();
@@ -479,6 +490,9 @@ describe('useEmailComposerState', () => {
 
     expect(composerAfterSend.result.current.subject).toBe('Hello');
     expect(composerAfterSend.result.current.body).toBe('');
+    expect(composerAfterSend.result.current.connectedAccountId).toBe(
+      'account-1',
+    );
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

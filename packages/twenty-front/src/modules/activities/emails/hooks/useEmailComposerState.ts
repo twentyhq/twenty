@@ -62,6 +62,7 @@ export const useEmailComposerState = ({
     subject: draftPrefill?.subject ?? defaultSubject,
     body: draftPrefill?.body ?? '',
     files: [],
+    pickedSender: null,
   }));
   const [storedDraft, setStoredDraft] = useComposerDraft({
     draftFamilyState: emailComposerDraftFamilyState,
@@ -73,6 +74,7 @@ export const useEmailComposerState = ({
     subject,
     body,
     files: attachedFiles,
+    pickedSender,
   } = storedDraft ?? initialDraft;
   const { to, cc, bcc } = recipientsByFieldId;
 
@@ -105,19 +107,18 @@ export const useEmailComposerState = ({
       files: typeof update === 'function' ? update(draft.files) : update,
     }));
 
-  const [sender, setSender] = useState<ConnectedAccountSender>({
-    connectedAccountId: initialConnectedAccountId,
-  });
-  const [previousConnectedAccountId, setPreviousConnectedAccountId] = useState(
-    initialConnectedAccountId,
-  );
+  const setSender = (sender: ConnectedAccountSender) =>
+    updateDraft(() => ({
+      pickedSender: {
+        defaultConnectedAccountId: initialConnectedAccountId,
+        sender,
+      },
+    }));
 
-  if (previousConnectedAccountId !== initialConnectedAccountId) {
-    setPreviousConnectedAccountId(initialConnectedAccountId);
-    setSender({ connectedAccountId: initialConnectedAccountId });
-  }
-
-  const { connectedAccountId, fromHandle } = sender;
+  const { connectedAccountId, fromHandle } =
+    pickedSender?.defaultConnectedAccountId === initialConnectedAccountId
+      ? pickedSender.sender
+      : { connectedAccountId: initialConnectedAccountId };
 
   const isSendingThroughAppSender =
     isDefined(appReplyTarget) &&

@@ -1,5 +1,6 @@
 import { type EmailAttachment } from 'twenty-shared/types';
 
+import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 
 export type EmailComposerDraft = {
@@ -7,4 +8,8 @@ export type EmailComposerDraft = {
   subject: string;
   body: string;
   files: EmailAttachment[];
+  pickedSender: {
+    defaultConnectedAccountId: string;
+    sender: ConnectedAccountSender;
+  } | null;
 };
