@@ -5,6 +5,7 @@ import {
   isString,
   isUndefined,
 } from '@sniptt/guards';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import {
   FIELD_METADATA_ROLLUP_OPERATIONS,
   type FieldMetadataComputation,
@@ -83,8 +84,6 @@ const isFieldMetadataComputation = (
       return false;
   }
 };
-
-const MAX_FILTERED_RELATION_LIMIT = 60;
 
 const assertValueFitsType = ({
   valueType,
@@ -240,10 +239,10 @@ const assertComputationCanBeEvaluated = ({
       isDefined(computation.limit) &&
       (!Number.isInteger(computation.limit) ||
         computation.limit < 1 ||
-        computation.limit > MAX_FILTERED_RELATION_LIMIT)
+        computation.limit > QUERY_MAX_RECORDS_FROM_RELATION)
     ) {
       throw new ComputedFieldExpressionException(
-        `The limit of a filtered relation must be between 1 and ${MAX_FILTERED_RELATION_LIMIT}`,
+        `The limit of a filtered relation must be between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
       );
     }
 
