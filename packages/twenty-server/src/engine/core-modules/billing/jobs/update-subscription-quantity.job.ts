@@ -2,9 +2,8 @@
 
 import { Scope } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { getRecentRenewalDate } from 'src/engine/core-modules/billing/utils/get-recent-renewal-date.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -23,12 +22,13 @@ export class UpdateSubscriptionQuantityJob {
   ) {}
 
   @Process(UpdateSubscriptionQuantityJob.name)
-  async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
+  async handle({
+    workspaceId,
+    renewalDateMs,
+  }: UpdateSubscriptionQuantityJobData): Promise<void> {
     await this.billingSubscriptionUpdateService.syncSeats({
-      workspaceId: data.workspaceId,
-      renewalDate: isDefined(data.renewalDateMs)
-        ? new Date(data.renewalDateMs)
-        : undefined,
+      workspaceId,
+      renewalDate: getRecentRenewalDate({ renewalDateMs, nowMs: Date.now() }),
     });
   }
 }
