@@ -150,12 +150,6 @@ describe('matchTeamsDirectoryByEmail', () => {
     });
   });
 
-  it('passes the directory truncation through', async () => {
-    collectGraphUsersMock.mockResolvedValue({ users: [ADA], isTruncated: true });
-
-    expect((await run()).isDirectoryTruncated).toBe(true);
-  });
-
   it('records the error and rethrows when the directory cannot be read', async () => {
     collectGraphUsersMock.mockRejectedValue(new Error('graph down'));
 

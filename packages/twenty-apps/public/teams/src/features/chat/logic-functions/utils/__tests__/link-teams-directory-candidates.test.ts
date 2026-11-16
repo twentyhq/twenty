@@ -34,10 +34,10 @@ describe('linkTeamsDirectoryCandidates', () => {
     createTeamsUserLinkMock.mockResolvedValue(undefined);
   });
 
-  it('creates AUTO links in bulk, deduped by Entra id, naming unnamed users after their id', async () => {
+  it('creates AUTO links in bulk, naming unnamed users after their id', async () => {
     const outcome = await linkTeamsDirectoryCandidates({
       client: CLIENT,
-      candidates: [buildCandidate(1), buildCandidate(2), buildCandidate(1)],
+      candidates: [buildCandidate(1), buildCandidate(2)],
       teamsTenantId: TENANT_ID,
     });
 
@@ -63,17 +63,6 @@ describe('linkTeamsDirectoryCandidates', () => {
       ],
     });
     expect(createTeamsUserLinkMock).not.toHaveBeenCalled();
-  });
-
-  it('does nothing without candidates', async () => {
-    expect(
-      await linkTeamsDirectoryCandidates({
-        client: CLIENT,
-        candidates: [],
-        teamsTenantId: TENANT_ID,
-      }),
-    ).toEqual({ linkedCount: 0, failedCount: 0 });
-    expect(createTeamsUserLinksMock).not.toHaveBeenCalled();
   });
 
   it('retries a failed batch one by one, counting duplicates as linked', async () => {

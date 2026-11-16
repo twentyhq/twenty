@@ -16,7 +16,6 @@ const DIRECTORY_GRAPH_URL =
   'users?$select=id,displayName,mail,userPrincipalName&$top=999';
 const DIRECTORY_MAX_PAGES = 10;
 
-// Written before the run so a function killed by its timeout still reads as unfinished
 const INTERRUPTED_RUN_OUTCOME: TeamsDirectoryMatchRunOutcome = {
   isSuccessful: false,
   errorMessage: 'The directory match was interrupted before it finished.',

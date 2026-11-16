@@ -11,7 +11,6 @@ import { toErrorMessage } from 'src/utils/to-error-message';
 
 const LINKS_PER_BATCH = 200;
 
-// Caps slow one-by-one retries so a run failing in bulk cannot eat the function timeout
 const MAX_ONE_BY_ONE_RETRIES = LINKS_PER_BATCH;
 
 type TeamsDirectoryLinkOutcome = {
@@ -34,14 +33,6 @@ const toTeamsUserLinkDraft = ({
     : candidate.teamsUserAadObjectId,
   source: TEAMS_USER_LINK_SOURCE.AUTO,
 });
-
-const dedupeCandidatesByAadObjectId = (
-  candidates: TeamsDirectoryMatchCandidate[],
-): TeamsDirectoryMatchCandidate[] => [
-  ...new Map(
-    candidates.map((candidate) => [candidate.teamsUserAadObjectId, candidate]),
-  ).values(),
-];
 
 const createCandidatesOneByOne = async ({
   client,
@@ -85,16 +76,15 @@ export const linkTeamsDirectoryCandidates = async ({
   candidates: TeamsDirectoryMatchCandidate[];
   teamsTenantId: string;
 }): Promise<TeamsDirectoryLinkOutcome> => {
-  const uniqueCandidates = dedupeCandidatesByAadObjectId(candidates);
   const outcome: TeamsDirectoryLinkOutcome = { linkedCount: 0, failedCount: 0 };
   let remainingOneByOneRetries = MAX_ONE_BY_ONE_RETRIES;
 
   for (
     let batchStart = 0;
-    batchStart < uniqueCandidates.length;
+    batchStart < candidates.length;
     batchStart += LINKS_PER_BATCH
   ) {
-    const batchCandidates = uniqueCandidates.slice(
+    const batchCandidates = candidates.slice(
       batchStart,
       batchStart + LINKS_PER_BATCH,
     );

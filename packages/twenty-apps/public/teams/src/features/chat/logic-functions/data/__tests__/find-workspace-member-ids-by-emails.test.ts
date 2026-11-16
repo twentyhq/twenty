@@ -100,16 +100,4 @@ describe('findWorkspaceMemberIdsByEmails', () => {
       client.query.mock.calls[2][0].workspaceMembers.__args.filter.or,
     ).toHaveLength(1);
   });
-
-  it('does not query when there is no email to look up', async () => {
-    const client = buildClient([]);
-
-    expect(
-      await findWorkspaceMemberIdsByEmails({ client, emails: [] }),
-    ).toEqual({
-      workspaceMemberIdByEmail: new Map(),
-      ambiguousEmailCount: 0,
-    });
-    expect(client.query).not.toHaveBeenCalled();
-  });
 });

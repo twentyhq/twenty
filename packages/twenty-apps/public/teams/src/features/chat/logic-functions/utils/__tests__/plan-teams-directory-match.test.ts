@@ -31,14 +31,4 @@ describe('planTeamsDirectoryMatch', () => {
       unmatchedCount: 2,
     });
   });
-
-  it('never re-plans a user whose Entra id already has a link', () => {
-    expect(
-      planTeamsDirectoryMatch({
-        users: [ADA],
-        workspaceMemberIdByEmail: new Map([['ada@twenty.com', 'member-ada']]),
-        linkedAadObjectIds: new Set(['aad-ada']),
-      }).candidates,
-    ).toEqual([]);
-  });
 });

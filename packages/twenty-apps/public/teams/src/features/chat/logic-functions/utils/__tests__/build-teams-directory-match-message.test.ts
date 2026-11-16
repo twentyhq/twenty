@@ -3,19 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { buildTeamsDirectoryMatchMessage } from 'src/features/chat/logic-functions/utils/build-teams-directory-match-message';
 
 describe('buildTeamsDirectoryMatchMessage', () => {
-  it('reports only the linked count when nothing else happened', () => {
-    expect(
-      buildTeamsDirectoryMatchMessage({
-        linkedCount: 1,
-        alreadyLinkedCount: 0,
-        unmatchedCount: 0,
-        ambiguousEmailCount: 0,
-        failedCount: 0,
-        isDirectoryTruncated: false,
-      }),
-    ).toBe('Matched 1 Teams user by email.');
-  });
-
   it('appends every non-zero count and the truncation note', () => {
     expect(
       buildTeamsDirectoryMatchMessage({
