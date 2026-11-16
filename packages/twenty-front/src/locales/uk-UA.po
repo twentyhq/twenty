@@ -12953,6 +12953,11 @@ msgstr "Не вдалося додати запис"
 msgid "Failed to cancel campaign"
 msgstr "Не вдалося скасувати кампанію"
 
+#. js-lingui-id: Rw92kd
+#: src/modules/settings/applications/hooks/useRunApplicationHealthCheck.ts
+msgid "Failed to check the app's health."
+msgstr ""
+
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to claim ownership."
