@@ -155,7 +155,6 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
         </PageLayoutSidePanelTargetContext.Provider>
       </PageLayoutTestWrapper>,
     );
-
   };
 
   it('groups the widgets of this record apart from its related records', () => {
@@ -184,7 +183,9 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
   it('creates related records in the picked layout', async () => {
     renderWidgetTypeSelect();
 
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Kanban' }));
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'Kanban' }));
 
     expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledWith({
       tabId: 'tab-1',

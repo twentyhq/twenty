@@ -39,13 +39,16 @@ jest.mock('@/page-layout/hooks/useCreateRecordPageFieldsWidget', () => ({
   }),
 }));
 
-jest.mock('@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget', () => ({
-  useCreateRecordPageRelatedRecordsWidget: () => ({
-    createRecordPageRelatedRecordsWidget:
-      mockCreateRecordPageRelatedRecordsWidget,
-    relatedRecordsLayoutOptions: [{ viewType: 'TABLE_WIDGET' }],
+jest.mock(
+  '@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget',
+  () => ({
+    useCreateRecordPageRelatedRecordsWidget: () => ({
+      createRecordPageRelatedRecordsWidget:
+        mockCreateRecordPageRelatedRecordsWidget,
+      relatedRecordsLayoutOptions: [{ viewType: 'TABLE_WIDGET' }],
+    }),
   }),
-}));
+);
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
   useTargetRecord: () => ({ targetObjectNameSingular: 'company' }),
 }));

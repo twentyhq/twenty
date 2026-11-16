@@ -72,7 +72,9 @@ export const useCreateRecordPageRelatedRecordsWidget = ({
   const relatedRecordsLayoutOptions =
     relatedRecordsWidgetSources.length > 0
       ? getRecordTableWidgetLayoutPickerOptions({
-          isKanbanAvailable: hasSourceAvailableForLayout(ViewType.KANBAN_WIDGET),
+          isKanbanAvailable: hasSourceAvailableForLayout(
+            ViewType.KANBAN_WIDGET,
+          ),
           isCalendarAvailable: hasSourceAvailableForLayout(
             ViewType.CALENDAR_WIDGET,
           ),

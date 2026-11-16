@@ -34,9 +34,9 @@ describe('getRelatedRecordsWidgetSources', () => {
       objectMetadataItems,
     });
 
-    expect(sources.map(({ fieldMetadataItem }) => fieldMetadataItem.name)).toEqual(
-      ['people', 'attachments'],
-    );
+    expect(
+      sources.map(({ fieldMetadataItem }) => fieldMetadataItem.name),
+    ).toEqual(['people', 'attachments']);
   });
 
   it('should return no source for an object without has-many relations', () => {
