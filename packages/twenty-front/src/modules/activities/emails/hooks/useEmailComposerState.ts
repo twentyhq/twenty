@@ -1,8 +1,9 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useCallback, useMemo, useState } from 'react';
+import { type SetStateAction, useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
+import { useEmailComposerDraft } from '@/activities/emails/hooks/useEmailComposerDraft';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
@@ -19,6 +20,7 @@ import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/uti
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
+import { type EmailComposerDraft } from '@/activities/emails/types/EmailComposerDraft';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
@@ -30,6 +32,7 @@ type UseEmailComposerStateArgs = {
   defaultInReplyTo?: string;
   contextRecord?: EmailComposerContextRecord | null;
   appReplyTarget?: AppReplyTarget | null;
+  draftKey?: string;
   onSent?: (messageThreadId: string | null) => void;
 };
 
@@ -46,13 +49,56 @@ export const useEmailComposerState = ({
   defaultInReplyTo,
   contextRecord,
   appReplyTarget,
+  draftKey,
   onSent,
 }: UseEmailComposerStateArgs) => {
-  const initialTo = draftPrefill?.to ?? defaultTo;
-  const initialCc = draftPrefill?.cc ?? '';
-  const initialBcc = draftPrefill?.bcc ?? '';
-  const initialSubject = draftPrefill?.subject ?? defaultSubject;
-  const initialBody = draftPrefill?.body ?? '';
+  const [initialDraft] = useState<EmailComposerDraft>(() => ({
+    recipientsByFieldId: {
+      to: parseEmailRecipients(draftPrefill?.to ?? defaultTo),
+      cc: parseEmailRecipients(draftPrefill?.cc ?? ''),
+      bcc: parseEmailRecipients(draftPrefill?.bcc ?? ''),
+    },
+    subject: draftPrefill?.subject ?? defaultSubject,
+    body: draftPrefill?.body ?? '',
+    files: [],
+  }));
+  const [storedDraft, setStoredDraft] = useEmailComposerDraft(draftKey);
+  const {
+    recipientsByFieldId,
+    subject,
+    body,
+    files: attachedFiles,
+  } = storedDraft ?? initialDraft;
+  const { to, cc, bcc } = recipientsByFieldId;
+
+  const updateDraft = (
+    getChanges: (draft: EmailComposerDraft) => Partial<EmailComposerDraft>,
+  ) =>
+    setStoredDraft((previousDraft) => {
+      const draft = previousDraft ?? initialDraft;
+
+      return { ...draft, ...getChanges(draft) };
+    });
+
+  const setRecipientsByFieldId = (
+    update: SetStateAction<EmailRecipientsByFieldId>,
+  ) =>
+    updateDraft((draft) => ({
+      recipientsByFieldId:
+        typeof update === 'function'
+          ? update(draft.recipientsByFieldId)
+          : update,
+    }));
+
+  const setSubject = (nextSubject: string) =>
+    updateDraft(() => ({ subject: nextSubject }));
+
+  const setBody = (nextBody: string) => updateDraft(() => ({ body: nextBody }));
+
+  const setFiles = (update: SetStateAction<EmailAttachment[]>) =>
+    updateDraft((draft) => ({
+      files: typeof update === 'function' ? update(draft.files) : update,
+    }));
 
   const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
@@ -67,16 +113,6 @@ export const useEmailComposerState = ({
   }
 
   const { connectedAccountId, fromHandle } = sender;
-  const [recipientsByFieldId, setRecipientsByFieldId] =
-    useState<EmailRecipientsByFieldId>(() => ({
-      to: parseEmailRecipients(initialTo),
-      cc: parseEmailRecipients(initialCc),
-      bcc: parseEmailRecipients(initialBcc),
-    }));
-  const { to, cc, bcc } = recipientsByFieldId;
-  const [subject, setSubject] = useState(initialSubject);
-  const [body, setBody] = useState(initialBody);
-  const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
   const isSendingThroughAppSender =
     isDefined(appReplyTarget) &&
@@ -159,6 +195,7 @@ export const useEmailComposerState = ({
         });
 
         setPendingAppSend(null);
+        setStoredDraft(null);
         onSent?.(sentMessage?.messageThreadId ?? null);
       } catch (error) {
         enqueueToast({
@@ -189,6 +226,7 @@ export const useEmailComposerState = ({
     });
 
     if (success) {
+      setStoredDraft(null);
       onSent?.(messageThreadId);
     }
   }, [
@@ -210,6 +248,7 @@ export const useEmailComposerState = ({
     sendEmail,
     sendAppChannelMessage,
     enqueueToast,
+    setStoredDraft,
     onSent,
   ]);
 
@@ -229,8 +268,6 @@ export const useEmailComposerState = ({
     handleSend,
     loading,
     canSend,
-    initialSubject,
-    initialBody,
     recipientCount,
     exceedsRecipientLimit,
     maxRecipients: MAX_EMAIL_RECIPIENTS,

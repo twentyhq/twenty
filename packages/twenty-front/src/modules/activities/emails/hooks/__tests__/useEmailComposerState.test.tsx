@@ -34,6 +34,7 @@ const createSendEmailMock = (input: {
   connectedAccountId: string;
   fromHandle?: string;
   subject?: string;
+  body?: string;
   inReplyTo?: string;
   targetRecord?: { objectNameSingular: string; recordId: string };
 }) => ({
@@ -421,6 +422,63 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+  });
+
+  it('keeps an unsent reply through a remount until it is sent', async () => {
+    const renderReplyComposerState = (onSent: () => void) =>
+      renderHook(
+        () =>
+          useEmailComposerState({
+            connectedAccountId: 'account-1',
+            defaultTo: 'ada@lovelace.com',
+            defaultSubject: 'Hello',
+            draftKey: 'message-thread-1',
+            onSent,
+          }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <MockedProvider
+              mocks={[
+                createSendEmailMock({
+                  connectedAccountId: 'account-1',
+                  subject: 'Re: Hello',
+                  body: 'Long reply',
+                }),
+              ]}
+            >
+              {children}
+            </MockedProvider>
+          ),
+        },
+      );
+
+    const firstComposer = renderReplyComposerState(jest.fn());
+
+    act(() => {
+      firstComposer.result.current.setSubject('Re: Hello');
+      firstComposer.result.current.setBody('Long reply');
+    });
+
+    firstComposer.unmount();
+
+    const onSent = jest.fn();
+    const remountedComposer = renderReplyComposerState(onSent);
+
+    expect(remountedComposer.result.current.subject).toBe('Re: Hello');
+    expect(remountedComposer.result.current.body).toBe('Long reply');
+
+    await act(async () => {
+      await remountedComposer.result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+
+    remountedComposer.unmount();
+
+    const composerAfterSend = renderReplyComposerState(jest.fn());
+
+    expect(composerAfterSend.result.current.subject).toBe('Hello');
+    expect(composerAfterSend.result.current.body).toBe('');
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

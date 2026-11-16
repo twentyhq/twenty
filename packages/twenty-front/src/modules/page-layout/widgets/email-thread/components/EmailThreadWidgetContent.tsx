@@ -5,6 +5,7 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
@@ -16,6 +17,8 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -53,13 +56,26 @@ export const EmailThreadWidgetContent = ({
     setClickedDraftPrefill(null);
   }
 
-  const handleComposerOpenChange = useCallback((open: boolean) => {
-    setComposerIntent(open ? 'opened' : 'closed');
+  const emailComposerDraft = useAtomFamilyStateValue(
+    emailComposerDraftFamilyState,
+    targetRecord.id,
+  );
+  const setEmailComposerDraft = useSetAtomFamilyState(
+    emailComposerDraftFamilyState,
+    targetRecord.id,
+  );
 
-    if (!open) {
-      setClickedDraftPrefill(null);
-    }
-  }, []);
+  const handleComposerOpenChange = useCallback(
+    (open: boolean) => {
+      setComposerIntent(open ? 'opened' : 'closed');
+
+      if (!open) {
+        setClickedDraftPrefill(null);
+        setEmailComposerDraft(null);
+      }
+    },
+    [setEmailComposerDraft],
+  );
 
   const handleDraftClick = useCallback(
     (message: EmailThreadMessageWithSender) => {
@@ -95,7 +111,8 @@ export const EmailThreadWidgetContent = ({
       : null);
   const isComposerOpen =
     composerIntent === 'opened' ||
-    (composerIntent === null && isDefined(trailingDraft));
+    (composerIntent === null &&
+      (isDefined(trailingDraft) || isDefined(emailComposerDraft)));
 
   return (
     <StyledWidgetContentContainer>
@@ -132,6 +149,7 @@ export const EmailThreadWidgetContent = ({
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
           draftPrefill={draftPrefill}
+          draftKey={isDefined(draftPrefill) ? undefined : targetRecord.id}
           appReplyTarget={appReplyTarget}
         />
       )}

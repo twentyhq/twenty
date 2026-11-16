@@ -39,6 +39,7 @@ type EmailThreadComposerProps = {
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
   draftPrefill?: EmailDraftPrefill | null;
+  draftKey?: string;
   appReplyTarget?: AppReplyTarget | null;
 };
 
@@ -48,6 +49,7 @@ export const EmailThreadComposer = ({
   isComposerOpen,
   setIsComposerOpen,
   draftPrefill,
+  draftKey,
   appReplyTarget,
 }: EmailThreadComposerProps) => {
   const { t } = useLingui();
@@ -74,6 +76,7 @@ export const EmailThreadComposer = ({
     defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,
     appReplyTarget,
+    draftKey,
     onSent: handleReplySent,
   });
 
