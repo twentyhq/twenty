@@ -226,7 +226,9 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 
-const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<
+  Omit<NavigationMenuItemManifest, 'folderUniversalIdentifier'>
+> = {
   universalIdentifier: '77777777-7777-4777-8777-777777777777',
   type: NavigationMenuItemType.VIEW,
   name: 'All pets',
@@ -235,7 +237,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   position: 12,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
-  folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
+  parentUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',

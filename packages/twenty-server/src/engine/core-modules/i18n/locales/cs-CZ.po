@@ -223,7 +223,7 @@ msgstr "Databázový trigger události v této aplikaci je neplatný."
 #. js-lingui-id: RRhkpY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
-msgstr ""
+msgstr "Deaktivované pole nelze zobrazit ve sloupci"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -413,12 +413,12 @@ msgstr "Záznam schůzky"
 #. js-lingui-id: p5HHUZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr ""
+msgstr "Pole souvisejícího záznamu lze zobrazit pouze u pole vztahu typu many-to-one"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
-msgstr ""
+msgstr "Vztah souvisejícího záznamu nelze zobrazit ve sloupci"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -601,7 +601,7 @@ msgstr "Došlo k chybě skupiny polí zobrazení."
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
-msgstr ""
+msgstr "Filtr zobrazení nemůže zůstat ve skupině filtrů zobrazení, která se odstraňuje"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -611,7 +611,7 @@ msgstr "Došlo k chybě filtru zobrazení."
 #. js-lingui-id: yPKHXO
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter group cannot stay under a parent group that is being removed"
-msgstr ""
+msgstr "Skupina filtrů zobrazení nemůže zůstat pod nadřazenou skupinou, která se odstraňuje"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -723,12 +723,6 @@ msgstr "Vlastník účtu pro firmy"
 msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Vlastník účtu pro firmy"
-
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "Účty"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1598,6 +1592,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "Aplikace"
 
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "Předvolby aplikací"
+
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
@@ -2444,12 +2444,6 @@ msgstr "Zobrazení kalendáře musí mít pole kalendáře"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "Zobrazení kalendáře musí mít rozvržení kalendáře"
-
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "Kalendáře"
 
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -4995,12 +4989,6 @@ msgstr "Ověření e-mailu není vyžadováno."
 msgid "Email verification not required."
 msgstr "Ověření emailu není požadováno."
 
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "E-maily"
-
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -6349,12 +6337,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Přejít na {objectLabelPlural}"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "Přejít do nastavení účtů"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6367,6 +6349,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "Přejít do nastavení AI"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "Přejít do předvoleb aplikací"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6378,12 +6366,6 @@ msgstr "Přejít do nastavení aplikací"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "Přejít do nastavení fakturace"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "Přejít do nastavení kalendářů"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6408,12 +6390,6 @@ msgstr "Přejít do nastavení pro vývojáře"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "Přejít do nastavení domén"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "Přejít do nastavení e‑mailů"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10060,7 +10036,7 @@ msgstr "Jeden nebo více požadovaných rozsahů oprávnění jsou neplatné."
 #. js-lingui-id: A69o8a
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record can show a field of that record"
-msgstr ""
+msgstr "Pouze sloupec odkazující na jeden záznam může zobrazit pole daného záznamu"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10090,7 +10066,7 @@ msgstr "Pouze člen pracovního prostoru může změnit, kdo uvidí workflow"
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
-msgstr ""
+msgstr "Pouze přidané sloupce mohou zobrazit pole souvisejícího záznamu"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10125,7 +10101,7 @@ msgstr "Jsou povolena pouze omezení polí."
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only non-canonical view fields can show a related record field"
-msgstr ""
+msgstr "Pouze nekanonická pole zobrazení mohou zobrazit pole souvisejícího záznamu"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14097,7 +14073,7 @@ msgstr "Pole nakonfigurované pro tento widget nebylo nalezeno."
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The field must belong to the related object"
-msgstr ""
+msgstr "Pole musí patřit souvisejícímu objektu"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14371,22 +14347,22 @@ msgstr "Obsah přijatého e‑mailu již není k dispozici."
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field cannot be a relation"
-msgstr ""
+msgstr "Pole souvisejícího záznamu nemůže být vztahem"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must be active"
-msgstr ""
+msgstr "Pole souvisejícího záznamu musí být aktivní"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
-msgstr ""
+msgstr "Pole souvisejícího záznamu musí patřit cílovému objektu vztahu"
 
 #. js-lingui-id: bb3jnG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Pole souvisejícího záznamu ve sloupci vlastněném aplikací nelze změnit"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14852,7 +14828,7 @@ msgstr "Tento kód patří k publikované verzi workflow. Upravte jej z konceptu
 #. js-lingui-id: t/Gj4r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
-msgstr ""
+msgstr "Tento sloupec pochází z aplikace, takže pole souvisejícího záznamu, které zobrazuje, nelze změnit"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

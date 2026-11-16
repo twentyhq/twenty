@@ -54,7 +54,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  CustomError,
+  getAppPath,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -132,6 +137,7 @@ export const useFrontComponentExecutionContext = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   colorScheme,
 }: {
   frontComponentId: string;
@@ -142,6 +148,7 @@ export const useFrontComponentExecutionContext = ({
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -503,6 +510,19 @@ export const useFrontComponentExecutionContext = ({
       setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
     };
 
+  const setToolCallArguments: FrontComponentHostCommunicationApi['setToolCallArguments'] =
+    async (toolArguments) => {
+      if (
+        toolCall?.status !== 'approval-requested' ||
+        !isDefined(onToolCallArgumentsChange) ||
+        !isPlainObject(toolArguments)
+      ) {
+        return;
+      }
+
+      onToolCallArgumentsChange(toolArguments);
+    };
+
   const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
     async (text) => {
       if (!isNonEmptyString(text)) {
@@ -640,6 +660,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      setToolCallArguments,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

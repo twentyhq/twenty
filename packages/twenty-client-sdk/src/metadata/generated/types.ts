@@ -4031,6 +4031,9 @@ export default {
             "pageLayoutId": [
                 564
             ],
+            "parentId": [
+                564
+            ],
             "position": [
                 8
             ],
@@ -10393,6 +10396,9 @@ export default {
             "pageLayoutId": [
                 564
             ],
+            "parentId": [
+                564
+            ],
             "position": [
                 8
             ],
@@ -14867,6 +14873,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [

@@ -366,7 +366,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
       workflowRunId,
       coreWorkflowId: workflow.coreWorkflowId,
       coreWorkflowVersionId: workflow.coreWorkflowVersionId,
-      workspaceWorkflowVersionId: null,
       workflowName: workflow.name,
       trigger: workflow.trigger,
       steps: [workflow.step],

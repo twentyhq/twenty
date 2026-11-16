@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.60.0', 1794828558752)
+@RegisteredInstanceCommand('2.60.0', 1794850068948)
 export class AllowSystemSideEffectRoleTargetsPerUserWorkspaceFastInstanceCommand
   implements FastInstanceCommand
 {

@@ -4,6 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { useRefreshInboxChannels } from '@/inbox/hooks/useRefreshInboxChannels';
+import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatThreadRecordUpdateCountState } from '@/ai/states/aiChatThreadRecordUpdateCountState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
@@ -34,15 +35,17 @@ export const InboxChannelsEffect = () => {
 
   const { refreshInboxChannels } = useRefreshInboxChannels();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
+  const { refreshInboxOpenThreadsSummary } =
+    useRefreshInboxOpenThreadsSummary();
 
   const debouncedRefreshChannels = useDebouncedCallback(
     () => void refreshInboxChannels(),
     INBOX_CHANNELS_REFRESH_DEBOUNCE_MS,
   );
-  const debouncedRefreshSummaries = useDebouncedCallback(
-    () => void refreshInboxChannelSummaries(),
-    INBOX_CHANNELS_REFRESH_DEBOUNCE_MS,
-  );
+  const debouncedRefreshSummaries = useDebouncedCallback(() => {
+    refreshInboxOpenThreadsSummary();
+    void refreshInboxChannelSummaries();
+  }, INBOX_CHANNELS_REFRESH_DEBOUNCE_MS);
 
   useEffect(() => {
     if (isEnabled) {

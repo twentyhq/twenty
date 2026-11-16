@@ -13,7 +13,9 @@ const VIEW_UID = '55555555-5555-4555-8555-555555555555';
 const PAGE_LAYOUT_UID = '66666666-6666-4666-8666-666666666666';
 const NOW = '2026-09-09T10:00:00.000Z';
 
-const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<
+  Omit<NavigationMenuItemManifest, 'folderUniversalIdentifier'>
+> = {
   universalIdentifier: NAVIGATION_MENU_ITEM_UID,
   type: NavigationMenuItemType.VIEW,
   name: 'All pets',
@@ -22,7 +24,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   position: 12.5,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
-  folderUniversalIdentifier: FOLDER_UID,
+  parentUniversalIdentifier: FOLDER_UID,
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,

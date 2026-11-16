@@ -1,3 +1,4 @@
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -18,7 +19,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const loadInboxThreadList = jest.fn();
 const mockRefreshPermissions = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAiChatThreadPermissions', () => ({
   useRefreshAiChatThreadPermissions: () => ({
@@ -27,11 +27,6 @@ jest.mock('@/ai/hooks/useRefreshAiChatThreadPermissions', () => ({
 }));
 const subscribe = jest.fn();
 const disconnect = jest.fn();
-jest.mock('@/inbox/hooks/useLoadInboxThreadList', () => ({
-  useLoadInboxThreadList: () => ({
-    loadInboxThreadList,
-  }),
-}));
 const refreshAiChatUsage = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAiChatUsage', () => ({
   useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
@@ -91,7 +86,9 @@ describe('Shared conversation access revocation', () => {
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(1);
     act(heartbeat);
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
-    expect(loadInboxThreadList).not.toHaveBeenCalled();
+    expect(isGraphqlErrorOfType(jotaiStore.get(errorAtom), 'NOT_FOUND')).toBe(
+      false,
+    );
     unmount();
     act(heartbeat);
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
@@ -112,7 +109,6 @@ describe('Shared conversation access revocation', () => {
       expect(jotaiStore.get(fetchedAtom)).toEqual([]);
       expect(jotaiStore.get(queuedAtom)).toEqual([]);
       expect(jotaiStore.get(errorAtom)).toMatchObject({ code: 'NOT_FOUND' });
-      expect(loadInboxThreadList).toHaveBeenCalledTimes(1);
       expect(disconnect).toHaveBeenCalledTimes(1);
       unmount();
       expect(disconnect).toHaveBeenCalledTimes(1);
@@ -220,7 +216,9 @@ describe('Shared conversation access revocation', () => {
       expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
       expect(jotaiStore.get(fetchedAtom)).toHaveLength(1);
       expect(jotaiStore.get(queuedAtom)).toHaveLength(1);
-      expect(loadInboxThreadList).not.toHaveBeenCalled();
+      expect(isGraphqlErrorOfType(jotaiStore.get(errorAtom), 'NOT_FOUND')).toBe(
+        false,
+      );
       expect(disconnect).not.toHaveBeenCalled();
     },
   );
@@ -242,7 +240,9 @@ describe('Shared conversation access revocation', () => {
     renderHook(() => useAiChatSubscription('thread'), { wrapper: Wrapper });
     act(() => subscribe.mock.calls[0][1].error(new Error('offline')));
     expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
-    expect(loadInboxThreadList).not.toHaveBeenCalled();
+    expect(isGraphqlErrorOfType(jotaiStore.get(errorAtom), 'NOT_FOUND')).toBe(
+      false,
+    );
   });
 });
 

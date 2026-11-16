@@ -812,6 +812,17 @@ export default defineFrontComponent({
 
 The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
 
+When the agent proposes a call that waits for a person's approval, the approval card shows the same component in place of the raw JSON arguments. The card keeps its header, **Reject**, **Approve** and feedback. While `toolCall.status` is `approval-requested`, `input` holds the arguments **Approve** will submit, and the component can change them with `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
+
 Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
 
 <Note>

@@ -345,71 +345,13 @@ export class WorkflowVersionCoreSyncService {
 
     if (isDefined(workspaceWorkflowVersionId)) {
       return (
-        await this.findCoreVersionByWorkspaceVersionId(
-          workspaceId,
-          workspaceWorkflowVersionId,
-        )
+        await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+          where: { workspaceWorkflowVersionId },
+        })
       )?.id;
     }
 
     return lastPublishedCoreWorkflowVersionId ?? undefined;
-  }
-
-  async findCoreVersionByWorkspaceVersionId(
-    workspaceId: string,
-    workspaceWorkflowVersionId: string,
-  ): Promise<WorkflowVersionEntity | null> {
-    const aliasedCoreVersion = await this.coreWorkflowVersionRepository.findOne(
-      workspaceId,
-      { where: { workspaceWorkflowVersionId } },
-    );
-
-    if (isDefined(aliasedCoreVersion)) {
-      return aliasedCoreVersion;
-    }
-
-    const linkedCoreVersionId =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowVersion = await this.workspaceOrmManager
-          .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
-            'workflowVersion',
-          )
-          .findOne({
-            where: { id: workspaceWorkflowVersionId },
-            select: { coreWorkflowVersionId: true },
-          });
-
-        return workflowVersion?.coreWorkflowVersionId ?? null;
-      }, buildSystemAuthContext(workspaceId));
-
-    if (!isNonEmptyString(linkedCoreVersionId)) {
-      return null;
-    }
-
-    const linkedCoreVersion = await this.coreWorkflowVersionRepository.findOne(
-      workspaceId,
-      { where: { id: linkedCoreVersionId } },
-    );
-
-    return isDefined(linkedCoreVersion) &&
-      !isDefined(linkedCoreVersion.workspaceWorkflowVersionId)
-      ? linkedCoreVersion
-      : null;
-  }
-
-  async findWorkspaceVersionIdByCoreVersionId(
-    workspaceId: string,
-    coreWorkflowVersionId: string,
-  ): Promise<string | null> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersion = await this.workspaceOrmManager
-        .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-        )
-        .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
-
-      return workflowVersion?.id ?? null;
-    }, buildSystemAuthContext(workspaceId));
   }
 
   private async resolveCoreWorkflowIdByWorkflowId(

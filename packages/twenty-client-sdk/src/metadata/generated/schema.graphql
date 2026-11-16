@@ -1810,13 +1810,14 @@ input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
   targetObjectMetadataId: UUID
   targetRecordId: UUID
@@ -2511,10 +2512,10 @@ enum FeatureFlagKey {
   IS_AI_DATA_POLICY_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
+  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
-  IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
@@ -3856,13 +3857,14 @@ type NavigationMenuItem {
   applicationId: UUID
   color: String
   createdAt: DateTime!
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float!
   targetObjectMetadataId: UUID
   targetRecordId: UUID
@@ -5569,11 +5571,12 @@ input UpdateMessageFoldersInput {
 
 input UpdateNavigationMenuItemInput {
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   link: String
   name: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
 }
 

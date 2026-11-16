@@ -1,3 +1,4 @@
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
@@ -11,7 +12,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconSettings } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -48,9 +53,12 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItemToFilter) =>
-      !visibleRecordFields
-        .map((recordField) => recordField.fieldMetadataItemId)
-        .includes(fieldMetadataItemToFilter.id),
+      !isDefined(
+        findCanonicalRecordField({
+          recordFields: visibleRecordFields,
+          fieldMetadataItemId: fieldMetadataItemToFilter.id,
+        }),
+      ),
   );
 
   const filteredFieldMetadataItems = availableFieldMetadataItemsToShow.filter(
