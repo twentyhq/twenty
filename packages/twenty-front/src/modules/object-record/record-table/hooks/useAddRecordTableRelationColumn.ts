@@ -1,17 +1,20 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import {
   buildRecordTableRelationColumn,
   type RecordTableRelationColumnTarget,
 } from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useAddRecordTableRelationColumn = (recordTableId: string) => {
   const store = useStore();
-  const { currentView } = useGetCurrentViewOnly();
+  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
+    contextStoreCurrentViewIdComponentState,
+  );
   const { performViewFieldApiCreate } = usePerformViewFieldApiPersist();
 
   const addRecordTableRelationColumn = useCallback(
@@ -21,7 +24,9 @@ export const useAddRecordTableRelationColumn = (recordTableId: string) => {
     }: {
       relationFieldMetadataItemId: string;
     } & RecordTableRelationColumnTarget) => {
-      if (!isDefined(currentView)) {
+      const currentViewId = store.get(currentViewIdCallbackState);
+
+      if (!isDefined(currentViewId)) {
         return false;
       }
 
@@ -45,7 +50,7 @@ export const useAddRecordTableRelationColumn = (recordTableId: string) => {
         inputs: [
           {
             id: relationColumn.id,
-            viewId: currentView.id,
+            viewId: currentViewId,
             fieldMetadataId: relationColumn.fieldMetadataItemId,
             relationTargetFieldMetadataId:
               relationColumn.relationTargetFieldMetadataId,
@@ -67,7 +72,12 @@ export const useAddRecordTableRelationColumn = (recordTableId: string) => {
 
       return result.status === 'successful';
     },
-    [currentView, performViewFieldApiCreate, recordTableId, store],
+    [
+      currentViewIdCallbackState,
+      performViewFieldApiCreate,
+      recordTableId,
+      store,
+    ],
   );
 
   return { addRecordTableRelationColumn };
