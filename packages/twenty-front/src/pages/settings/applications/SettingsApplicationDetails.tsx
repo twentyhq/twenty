@@ -3,7 +3,6 @@ import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetc
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
-import { useRefetchWorkspaceApplicationVariables } from '@/settings/applications/hooks/useRefetchWorkspaceApplicationVariables';
 import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
@@ -161,11 +160,6 @@ export const SettingsApplicationDetails = () => {
     UpdateOneApplicationVariableDocument,
   );
 
-  const { refetchApplicationVariables } =
-    useRefetchWorkspaceApplicationVariables({
-      refetchApplication: refetch,
-    });
-
   const {
     draftApplicationVariables,
     setApplicationVariableValue,
@@ -181,7 +175,7 @@ export const SettingsApplicationDetails = () => {
       updateOneApplicationVariable({
         variables: { key, value, applicationId },
       }),
-    refetchApplicationVariables,
+    refetchApplicationVariables: refetch,
   });
 
   const workspaceSettingsMenuItems = getSettingsMenuItemsForScope({
@@ -205,7 +199,6 @@ export const SettingsApplicationDetails = () => {
     useSaveApplicationVariablesAndRecheckHealth({
       applicationId,
       runner: WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER,
-      hasMissingRequiredVariables,
       saveApplicationVariables,
     });
 

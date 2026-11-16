@@ -43,9 +43,7 @@ const renderVariablesDraft = ({
   applicationVariables?: { key: string; value: string; isSecret: boolean }[];
   updateApplicationVariable?: jest.Mock;
 }) => {
-  const refetchApplicationVariables = jest.fn().mockResolvedValue({
-    hasMissingRequiredVariables: false,
-  });
+  const refetchApplicationVariables = jest.fn().mockResolvedValue(undefined);
 
   const { result, rerender } = renderHook(
     ({ currentApplicationVariables }) =>
@@ -110,10 +108,9 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     await act(async () => {
-      await expect(result.current.saveApplicationVariables()).resolves.toEqual({
-        isSaved: true,
-        hasMissingRequiredVariables: false,
-      });
+      await expect(result.current.saveApplicationVariables()).resolves.toBe(
+        true,
+      );
     });
 
     expect(updateApplicationVariable.mock.calls).toEqual([
@@ -167,9 +164,9 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     await act(async () => {
-      await expect(result.current.saveApplicationVariables()).resolves.toEqual({
-        isSaved: false,
-      });
+      await expect(result.current.saveApplicationVariables()).resolves.toBe(
+        false,
+      );
     });
 
     expect(refetchApplicationVariables).not.toHaveBeenCalled();
@@ -202,26 +199,6 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     expect(result.current.hasUnsavedApplicationVariables).toBe(false);
-  });
-
-  it('returns configuration completeness from the refetch after saving', async () => {
-    const { result, refetchApplicationVariables } = renderVariablesDraft({
-      applicationId: 'app-required-value-cleared',
-    });
-    refetchApplicationVariables.mockResolvedValue({
-      hasMissingRequiredVariables: true,
-    });
-
-    act(() => {
-      result.current.clearApplicationVariableValue(KEY);
-    });
-
-    await act(async () => {
-      await expect(result.current.saveApplicationVariables()).resolves.toEqual({
-        isSaved: true,
-        hasMissingRequiredVariables: true,
-      });
-    });
   });
 
   it('replaces a saved secret with only the newly typed value', async () => {

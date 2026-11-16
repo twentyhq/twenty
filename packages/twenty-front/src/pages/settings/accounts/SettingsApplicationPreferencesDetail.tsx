@@ -8,8 +8,6 @@ import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/com
 import { MY_APPLICATION_HEALTH_CHECK_RUNNER } from '@/settings/app-preferences/constants/MyApplicationHealthCheckRunner';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { type useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { useRefetchApplicationPreferencesVariables } from '@/settings/app-preferences/hooks/useRefetchApplicationPreferencesVariables';
 import { SettingsApplicationHealthCheckBanner } from '@/settings/applications/components/SettingsApplicationHealthCheckBanner';
 import { SettingsApplicationHealthCheckEffect } from '@/settings/applications/components/SettingsApplicationHealthCheckEffect';
 import { useSaveApplicationVariablesAndRecheckHealth } from '@/settings/applications/hooks/useSaveApplicationVariablesAndRecheckHealth';
@@ -45,9 +43,7 @@ import { SettingsApplicationStoppedBanner } from '@/settings/applications/compon
 
 type SettingsApplicationPreferencesDetailProps = {
   applicationWithPreferences: ApplicationWithPreferences;
-  refetchApplicationsWithPreferences: ReturnType<
-    typeof useApplicationsWithPreferences
-  >['refetch'];
+  refetchApplicationsWithPreferences: () => Promise<unknown>;
 };
 
 export const SettingsApplicationPreferencesDetail = ({
@@ -70,12 +66,6 @@ export const SettingsApplicationPreferencesDetail = ({
     UpdateMyUserApplicationVariableDocument,
   );
 
-  const { refetchApplicationVariables } =
-    useRefetchApplicationPreferencesVariables({
-      applicationId: application.id,
-      refetchApplicationsWithPreferences,
-    });
-
   const {
     draftApplicationVariables,
     setApplicationVariableValue,
@@ -95,7 +85,7 @@ export const SettingsApplicationPreferencesDetail = ({
           value,
         },
       }),
-    refetchApplicationVariables,
+    refetchApplicationVariables: refetchApplicationsWithPreferences,
   });
 
   const hasMissingRequiredVariables = isNonEmptyArray(missingRequiredVariables);
@@ -104,7 +94,6 @@ export const SettingsApplicationPreferencesDetail = ({
     useSaveApplicationVariablesAndRecheckHealth({
       applicationId: application.id,
       runner: MY_APPLICATION_HEALTH_CHECK_RUNNER,
-      hasMissingRequiredVariables,
       saveApplicationVariables,
     });
 

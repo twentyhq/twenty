@@ -136,7 +136,7 @@ export const ClearedValueFallsBackToTheDefault: Story = {
   },
 };
 
-export const RequiredValueGatesHealthChecksAfterSave: Story = {
+export const RequiredValueGatesHealthCheckBanner: Story = {
   args: { routeHash: '#variables' },
   beforeEach: async () => {
     await seedApplicationPreferencesStory();
@@ -207,6 +207,7 @@ export const RequiredValueGatesHealthChecksAfterSave: Story = {
     ).toBeVisible();
     expect(runMyApplicationHealthCheck.mock.calls).toEqual([
       [{ applicationId: FATHOM_APPLICATION_ID }],
+      [{ applicationId: FATHOM_APPLICATION_ID }],
     ]);
 
     await userEvent.click(canvas.getByRole('link', { name: 'Variables' }));
@@ -223,7 +224,12 @@ export const RequiredValueGatesHealthChecksAfterSave: Story = {
         canvas.getByRole('button', { name: 'Save settings' }),
       ).toBeDisabled(),
     );
-    expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(3),
+    );
+    expect(
+      canvas.queryByText('Your Fathom plan does not include recordings'),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -277,7 +283,7 @@ export const UserHealthCheckShowsItsBannerOnOpen: Story = {
 };
 
 export const FailedUserHealthCheckRetainsItsBanner: Story = {
-  ...RequiredValueGatesHealthChecksAfterSave,
+  ...RequiredValueGatesHealthCheckBanner,
   decorators: [
     (Story) => (
       <>
@@ -307,6 +313,9 @@ export const FailedUserHealthCheckRetainsItsBanner: Story = {
     expect(
       await canvas.findByText('Your Fathom plan does not include recordings'),
     ).toBeVisible();
+    await waitFor(() =>
+      expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(2),
+    );
     failNextUserHealthCheckRequest();
 
     const recordMyMeetingsInput = canvas.getByDisplayValue('always');
@@ -323,7 +332,7 @@ export const FailedUserHealthCheckRetainsItsBanner: Story = {
     expect(
       canvas.getByText('Your Fathom plan does not include recordings'),
     ).toBeVisible();
-    expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(2);
+    expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(3);
   },
 };
 
@@ -390,6 +399,9 @@ export const UnreadableUserHealthCheckClearsTheBannerAfterSave: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
+    await waitFor(() =>
+      expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(2),
+    );
 
     declareUserHealthCheck({
       applicationId: FATHOM_APPLICATION_ID,
@@ -413,7 +425,7 @@ export const UnreadableUserHealthCheckClearsTheBannerAfterSave: Story = {
         canvas.queryByText('Your Fathom key was revoked'),
       ).not.toBeInTheDocument(),
     );
-    expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(2);
+    expect(runMyApplicationHealthCheck).toHaveBeenCalledTimes(3);
   },
 };
 

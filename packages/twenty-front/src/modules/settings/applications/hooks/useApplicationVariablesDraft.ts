@@ -7,7 +7,6 @@ import {
   type ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
 import { applicationVariablesDraftFamilyState } from '@/settings/applications/states/applicationVariablesDraftFamilyState';
-import { type ApplicationVariablesSaveResult } from '@/settings/applications/types/ApplicationVariablesSaveResult';
 import { useLingui } from '@lingui/react/macro';
 
 export const useApplicationVariablesDraft = <
@@ -28,9 +27,7 @@ export const useApplicationVariablesDraft = <
   updateApplicationVariable: (
     applicationVariable: Pick<ApplicationVariable, 'key' | 'value'>,
   ) => Promise<unknown>;
-  refetchApplicationVariables: () => Promise<{
-    hasMissingRequiredVariables: boolean;
-  }>;
+  refetchApplicationVariables: () => Promise<unknown>;
 }) => {
   const { t } = useLingui();
   const [draftValueByKey, setDraftValueByKey] = useAtomFamilyState(
@@ -79,44 +76,47 @@ export const useApplicationVariablesDraft = <
     }));
   };
 
-  const saveApplicationVariables =
-    async (): Promise<ApplicationVariablesSaveResult> => {
-      const submittedValueByKey = Object.fromEntries(
-        editedApplicationVariables.map(({ key, value }) => [key, value]),
+  const saveApplicationVariables = async (): Promise<boolean> => {
+    const submittedValueByKey = Object.fromEntries(
+      editedApplicationVariables.map(({ key, value }) => [key, value]),
+    );
+
+    setIsSavingApplicationVariables(true);
+
+    try {
+      await Promise.all(
+        Object.entries(submittedValueByKey).map(([key, value]) =>
+          updateApplicationVariable({ key, value }),
+        ),
       );
 
-      setIsSavingApplicationVariables(true);
+      // A single refetch after every mutation settled, awaited before dropping
+      // the draft: per-mutation refetches can land out of order and write back
+      // a snapshot taken before the last write.
+      await refetchApplicationVariables();
 
-      try {
-        await Promise.all(
-          Object.entries(submittedValueByKey).map(([key, value]) =>
-            updateApplicationVariable({ key, value }),
+      // Only the entries that still hold what was submitted are dropped, so a
+      // variable edited again while the save was in flight keeps that edit.
+      setDraftValueByKey((previousDraftValueByKey) =>
+        Object.fromEntries(
+          Object.entries(previousDraftValueByKey).filter(
+            ([key, value]) => submittedValueByKey[key] !== (value ?? ''),
           ),
-        );
+        ),
+      );
 
-        const { hasMissingRequiredVariables } =
-          await refetchApplicationVariables();
+      return true;
+    } catch {
+      enqueueToast({
+        status: 'error',
+        children: t`Failed to save the app settings.`,
+      });
 
-        setDraftValueByKey((previousDraftValueByKey) =>
-          Object.fromEntries(
-            Object.entries(previousDraftValueByKey).filter(
-              ([key, value]) => submittedValueByKey[key] !== (value ?? ''),
-            ),
-          ),
-        );
-
-        return { isSaved: true, hasMissingRequiredVariables };
-      } catch {
-        enqueueToast({
-          status: 'error',
-          children: t`Failed to save the app settings.`,
-        });
-
-        return { isSaved: false };
-      } finally {
-        setIsSavingApplicationVariables(false);
-      }
-    };
+      return false;
+    } finally {
+      setIsSavingApplicationVariables(false);
+    }
+  };
 
   return {
     draftApplicationVariables,
