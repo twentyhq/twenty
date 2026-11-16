@@ -5,7 +5,9 @@ import { isDefined } from '@/utils/validation/isDefined';
 export const normalizeNavigationMenuItemManifest = <
   TNavigationMenuItemManifest extends Pick<
     NavigationMenuItemManifest,
-    'parentUniversalIdentifier' | 'folderUniversalIdentifier'
+    | 'universalIdentifier'
+    | 'parentUniversalIdentifier'
+    | 'folderUniversalIdentifier'
   >,
 >(
   navigationMenuItemManifest: TNavigationMenuItemManifest,
