@@ -128,6 +128,8 @@ describe('compileComputedFieldExpressionToSql', () => {
     ['upper(amount)', '"upper" expects text, not number'],
     ['round(name)', '"round" expects number, not text'],
     ['amount and isActive', '"and" expects boolean, not number'],
+    ["dueAt > 'tomorrow-ish'", "which is not a date such as '2030-01-31'"],
+    ["coalesce(dueAt, 'n/a')", "which is not a date such as '2030-01-31'"],
   ])('rejects the types of %s', (expression, expectedMessage) => {
     expect(() => compile(expression)).toThrow(expectedMessage);
   });
