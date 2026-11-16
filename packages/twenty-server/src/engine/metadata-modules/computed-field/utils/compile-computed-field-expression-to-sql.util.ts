@@ -389,7 +389,10 @@ const compileInstructions = (
         return operand;
       case 'path':
         return operand.path.length === 1 &&
-          isDefined(VARIABLE_BY_NAME[operand.path[0]])
+          Object.prototype.hasOwnProperty.call(
+            VARIABLE_BY_NAME,
+            operand.path[0],
+          )
           ? VARIABLE_BY_NAME[operand.path[0]]
           : { kind: 'value', ...context.resolveField(operand.path) };
       case 'list':
@@ -546,7 +549,6 @@ const compileInstructions = (
   return result;
 };
 
-// Text values travel as parameters; numbers and booleans are written from typed literals
 export const compileComputedFieldExpressionToSql = ({
   expression,
   resolveField,
