@@ -7,7 +7,7 @@ import {
   GO_TO_SETTINGS_ACCOUNTS_UNIVERSAL_IDENTIFIER,
   LEGACY_ACCOUNTS_PATH,
   LEGACY_PATH_BY_REMOVED_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/upgrade-version-command/2-59/utils/build-app-preferences-command-menu-item-operations.util';
+} from 'src/database/commands/upgrade-version-command/2-60/utils/build-app-preferences-command-menu-item-operations.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';

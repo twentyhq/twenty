@@ -6,15 +6,15 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildAppPreferencesCommandMenuItemOperations } from 'src/database/commands/upgrade-version-command/2-59/utils/build-app-preferences-command-menu-item-operations.util';
+import { buildAppPreferencesCommandMenuItemOperations } from 'src/database/commands/upgrade-version-command/2-60/utils/build-app-preferences-command-menu-item-operations.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.59.0', 1794819751396)
+@RegisteredWorkspaceCommand('2.60.0', 1794826956977)
 @Command({
-  name: 'upgrade:2-59:point-accounts-command-menu-items-to-app-preferences',
+  name: 'upgrade:2-60:point-accounts-command-menu-items-to-app-preferences',
   description:
     'Point the Accounts settings command at Apps preferences and remove the Emails and Calendars settings commands',
 })
