@@ -29,7 +29,7 @@ const StyledLoadingContainer = styled.div`
 export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
   const {

@@ -8,9 +8,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
@@ -19,7 +17,6 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
-  FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
 } from '~/generated-metadata/graphql';
 
@@ -348,32 +345,18 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
   },
 };
 
-const seedBuiltInAccountAppStory = ({
-  isAppPreferencesEnabled,
-}: {
-  isAppPreferencesEnabled: boolean;
-}) => {
+const seedBuiltInAccountAppStory = () => {
   jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
   jotaiStore.set(isGoogleCalendarEnabledState.atom, true);
   jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
   jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-        value: isAppPreferencesEnabled,
-      },
-    ],
-  });
 };
 
 export const BuiltInAccountAppHidesSingleGeneralTab: Story = {
   args: {
     routeParams: { ':applicationId': 'google' },
   },
-  beforeEach: () =>
-    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
+  beforeEach: () => seedBuiltInAccountAppStory(),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -390,31 +373,11 @@ export const BuiltInAccountAppHidesSingleGeneralTab: Story = {
   },
 };
 
-export const BuiltInAccountAppIsNotInstalledWhenFeatureFlagIsOff: Story = {
-  args: {
-    routeParams: { ':applicationId': 'google' },
-  },
-  beforeEach: () =>
-    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: false }),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText(
-        /This application is not installed on this workspace/,
-        undefined,
-        { timeout: 3000 },
-      ),
-    ).toBeVisible();
-  },
-};
-
 export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
   args: {
     routeParams: { ':applicationId': 'outlook' },
   },
-  beforeEach: () =>
-    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
+  beforeEach: () => seedBuiltInAccountAppStory(),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

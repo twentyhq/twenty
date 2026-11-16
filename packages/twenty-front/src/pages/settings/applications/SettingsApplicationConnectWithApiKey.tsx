@@ -30,7 +30,7 @@ export const SettingsApplicationConnectWithApiKey = () => {
   const reconnectingConnectedAccountId = searchParams.get(
     'reconnectingConnectedAccountId',
   );
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
   const [apiKey, setApiKey] = useState('');

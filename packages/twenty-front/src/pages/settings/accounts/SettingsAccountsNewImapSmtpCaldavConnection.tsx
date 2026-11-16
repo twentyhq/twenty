@@ -16,7 +16,7 @@ import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useIm
 export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
 
   const {
     formMethods,
