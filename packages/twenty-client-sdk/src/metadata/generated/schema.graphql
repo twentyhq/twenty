@@ -2805,6 +2805,7 @@ type GetAuthorizationUrlForSSO {
 input GetAuthorizationUrlForSSOInput {
   identityProviderId: UUID!
   workspaceInviteHash: String
+  workspacePersonalInviteToken: String
 }
 
 type GettingStartedProgress {

@@ -11,6 +11,7 @@ import {
   type VerifyWithRequest,
 } from '@node-saml/passport-saml';
 import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,9 +24,20 @@ import {
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
 
-const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
+const WORKSPACE_INVITE_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
+  workspacePersonalInviteToken: z.string().optional(),
 });
+
+const RELAY_STATE_PAYLOAD_SCHEMA = z
+  .object({
+    workspaceInviteHash: z.string().optional(),
+    token: z.string().optional(),
+  })
+  .transform(({ workspaceInviteHash, token }) => ({
+    workspaceInviteHash,
+    workspacePersonalInviteToken: token,
+  }));
 
 const RELAY_STATE_BODY_SCHEMA = z.object({
   RelayState: z
@@ -42,8 +54,23 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
         return z.NEVER;
       }
     })
-    .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
+    .pipe(RELAY_STATE_PAYLOAD_SCHEMA),
 });
+
+const buildRelayState = ({
+  workspaceInviteHash,
+  workspacePersonalInviteToken,
+}: z.infer<typeof WORKSPACE_INVITE_PAYLOAD_SCHEMA>) => {
+  if (isNonEmptyString(workspacePersonalInviteToken)) {
+    return { token: workspacePersonalInviteToken };
+  }
+
+  if (isDefined(workspaceInviteHash)) {
+    return { workspaceInviteHash };
+  }
+
+  return undefined;
+};
 
 const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
 
@@ -103,6 +130,7 @@ export type SamlRequest = Omit<
   user: {
     identityProviderId: string;
     workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     email: string;
   };
 };
@@ -157,33 +185,31 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
-    const queryParseResult = WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA.safeParse(
+    const queryParseResult = WORKSPACE_INVITE_PAYLOAD_SCHEMA.safeParse(
       req.query,
     );
-    const workspaceInviteHash = queryParseResult.success
-      ? queryParseResult.data.workspaceInviteHash
-      : undefined;
+    const { workspaceInviteHash, workspacePersonalInviteToken } =
+      queryParseResult.success ? queryParseResult.data : {};
+
+    const relayState = buildRelayState({
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    });
 
     super.authenticate(req, {
       ...options,
-      ...(workspaceInviteHash !== undefined
-        ? {
-            additionalParams: {
-              RelayState: JSON.stringify({ workspaceInviteHash }),
-            },
-          }
+      ...(isDefined(relayState)
+        ? { additionalParams: { RelayState: JSON.stringify(relayState) } }
         : {}),
     });
   }
 
-  private extractWorkspaceInviteHash(
+  private extractInvitePayload(
     req: Pick<Request, 'body'>,
-  ): string | undefined {
+  ): Partial<z.infer<typeof RELAY_STATE_PAYLOAD_SCHEMA>> {
     const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
-    return result.success
-      ? result.data.RelayState.workspaceInviteHash
-      : undefined;
+    return result.success ? result.data.RelayState : {};
   }
 
   validate = async (
@@ -241,9 +267,13 @@ export class SamlAuthStrategy extends PassportStrategy(
         );
       }
 
+      const { workspaceInviteHash, workspacePersonalInviteToken } =
+        this.extractInvitePayload(request);
+
       done(null, {
         identityProviderId: request.params.identityProviderId,
-        workspaceInviteHash: this.extractWorkspaceInviteHash(request),
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
         email,
       });
     } catch (err) {
