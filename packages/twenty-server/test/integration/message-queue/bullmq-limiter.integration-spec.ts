@@ -97,7 +97,13 @@ describe('BullMQDriver limiter (integration)', () => {
     await connection.quit();
   });
 
-  const expectDelayNear = (delayMs: number, expectedDelayMs: number) => {
+  const expectDelayNear = ({
+    delayMs,
+    expectedDelayMs,
+  }: {
+    delayMs: number;
+    expectedDelayMs: number;
+  }) => {
     expect(delayMs).toBeGreaterThan(expectedDelayMs - TOLERANCE_MS);
     expect(delayMs).toBeLessThanOrEqual(expectedDelayMs);
   };
@@ -112,9 +118,15 @@ describe('BullMQDriver limiter (integration)', () => {
     const delayByLabel = await readDelayByLabel();
 
     expect(delayByLabel.H1).toBe(0);
-    expectDelayNear(delayByLabel.H2, INTERVAL_MS);
-    expectDelayNear(delayByLabel.H3, 2 * INTERVAL_MS);
-    expectDelayNear(delayByLabel.H4, 3 * INTERVAL_MS);
+    expectDelayNear({ delayMs: delayByLabel.H2, expectedDelayMs: INTERVAL_MS });
+    expectDelayNear({
+      delayMs: delayByLabel.H3,
+      expectedDelayMs: 2 * INTERVAL_MS,
+    });
+    expectDelayNear({
+      delayMs: delayByLabel.H4,
+      expectedDelayMs: 3 * INTERVAL_MS,
+    });
   });
 
   it('keeps one slot sequence per key across successive enqueues', async () => {
@@ -160,7 +172,10 @@ describe('BullMQDriver limiter (integration)', () => {
 
     expect(delays[0]).toBe(0);
     delays.slice(1).forEach((delayMs, index) => {
-      expectDelayNear(delayMs, (index + 1) * INTERVAL_MS);
+      expectDelayNear({
+        delayMs,
+        expectedDelayMs: (index + 1) * INTERVAL_MS,
+      });
     });
   });
 
@@ -196,8 +211,11 @@ describe('BullMQDriver limiter (integration)', () => {
     const delayByLabel = await readDelayByLabel();
 
     expect(delayByLabel.I1).toBe(0);
-    expectDelayNear(delayByLabel.I2, INTERVAL_MS);
-    expectDelayNear(delayByLabel.I3, 2 * INTERVAL_MS);
+    expectDelayNear({ delayMs: delayByLabel.I2, expectedDelayMs: INTERVAL_MS });
+    expectDelayNear({
+      delayMs: delayByLabel.I3,
+      expectedDelayMs: 2 * INTERVAL_MS,
+    });
   }, 15_000);
 
   it('starts pacing at the caller delay', async () => {
@@ -211,8 +229,14 @@ describe('BullMQDriver limiter (integration)', () => {
     const delayByLabel = await readDelayByLabel();
 
     expect(delayByLabel.H1).toBe(1_500);
-    expectDelayNear(delayByLabel.H2, 1_500 + INTERVAL_MS);
-    expectDelayNear(delayByLabel.H3, 1_500 + 2 * INTERVAL_MS);
+    expectDelayNear({
+      delayMs: delayByLabel.H2,
+      expectedDelayMs: 1_500 + INTERVAL_MS,
+    });
+    expectDelayNear({
+      delayMs: delayByLabel.H3,
+      expectedDelayMs: 1_500 + 2 * INTERVAL_MS,
+    });
   });
 
   it('does not reserve a slot again for a job id that is already queued', async () => {
