@@ -22,7 +22,7 @@ const updateNavigationMenuItemInputSchema = z.object({
   icon: z.string().optional().describe('New icon identifier'),
   color: z.string().optional().describe('New hex colour'),
   position: z.number().optional().describe('New position among siblings'),
-  folderId: z
+  parentId: z
     .string()
     .nullable()
     .optional()
@@ -78,8 +78,8 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
       if (input.position !== undefined) {
         update.position = input.position;
       }
-      if (input.folderId !== undefined) {
-        update.folderId = input.folderId;
+      if (input.parentId !== undefined) {
+        update.parentId = input.parentId;
       }
       if (input.link !== undefined) {
         update.link = input.link;
@@ -101,7 +101,7 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
           id: updated.id,
           type: updated.type,
           name: updated.name,
-          folderId: updated.folderId,
+          parentId: updated.parentId,
           position: updated.position,
         },
       };

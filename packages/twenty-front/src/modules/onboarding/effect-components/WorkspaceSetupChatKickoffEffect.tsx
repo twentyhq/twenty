@@ -1,4 +1,4 @@
-import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -28,7 +28,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
   const store = useStore();
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
-  const { addAiChatThread } = useApplyAiChatThreadUpdate();
+  const { addInboxThread } = useAddInboxThread();
   const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
     isCompanyEnrichmentFetchInFlightState,
   );
@@ -86,7 +86,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           return;
         }
 
-        addAiChatThread({
+        addInboxThread({
           id: thread.id,
           title: thread.title ?? null,
           createdAt: thread.createdAt,
@@ -119,7 +119,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     startWorkspaceSetupChatMutation,
     refreshAiChatThreadPermissions,
     store,
-    addAiChatThread,
+    addInboxThread,
     isCompanyEnrichmentFetchInFlight,
     hasWaitedForCompanyEnrichment,
   ]);

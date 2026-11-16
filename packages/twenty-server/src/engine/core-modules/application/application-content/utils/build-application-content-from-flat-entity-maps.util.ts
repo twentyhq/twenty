@@ -319,9 +319,9 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       parentLabel: findByUniversalIdentifier({
         valueByUniversalIdentifier:
           flatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier,
-        universalIdentifier: navigationMenuItem.folderUniversalIdentifier,
+        universalIdentifier: navigationMenuItem.parentUniversalIdentifier,
       })?.name,
-      parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
+      parentUniversalIdentifier: navigationMenuItem.parentUniversalIdentifier,
       tag: navigationMenuItem.type,
       position: navigationMenuItem.position,
     })),

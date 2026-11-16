@@ -5,6 +5,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
@@ -48,8 +49,8 @@ export const InboxThreadRecordOperationsEffect = () => {
       objectNameType: 'singular',
     },
   );
-  const { applyAiChatThreadUpdate, addAiChatThread } =
-    useApplyAiChatThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { addInboxThread } = useAddInboxThread();
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const refreshAiChatThreads = useCallback(
     () =>
@@ -100,7 +101,7 @@ export const InboxThreadRecordOperationsEffect = () => {
         case 'create-one': {
           const createdThread = operation.createdRecord as AiChatThreadRecord;
 
-          addAiChatThread(createdThread);
+          addInboxThread(createdThread);
           return;
         }
         case 'update-one':
@@ -158,7 +159,7 @@ export const InboxThreadRecordOperationsEffect = () => {
       }
     },
     [
-      addAiChatThread,
+      addInboxThread,
       applyAiChatThreadUpdate,
       refreshInboxOpenThreadsSummary,
       refreshAiChatThreads,

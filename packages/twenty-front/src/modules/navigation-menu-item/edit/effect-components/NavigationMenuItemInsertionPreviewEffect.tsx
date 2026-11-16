@@ -7,7 +7,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 type NavigationMenuItemInsertionPreviewEffectProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
-  folderId: string | null;
+  parentId: string | null;
   index: number;
 };
 
@@ -16,7 +16,7 @@ type NavigationMenuItemInsertionPreviewEffectProps = {
 export const NavigationMenuItemInsertionPreviewEffect = ({
   dropdownId,
   section,
-  folderId,
+  parentId,
   index,
 }: NavigationMenuItemInsertionPreviewEffectProps) => {
   const setNavigationMenuItemInsertionPreview = useSetAtomState(
@@ -27,7 +27,7 @@ export const NavigationMenuItemInsertionPreviewEffect = ({
     setNavigationMenuItemInsertionPreview({
       dropdownId,
       section,
-      folderId,
+      parentId,
       index,
     });
 
@@ -38,7 +38,7 @@ export const NavigationMenuItemInsertionPreviewEffect = ({
   }, [
     dropdownId,
     section,
-    folderId,
+    parentId,
     index,
     setNavigationMenuItemInsertionPreview,
   ]);
