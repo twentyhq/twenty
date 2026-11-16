@@ -35,7 +35,7 @@ export default defineNavigationMenuItem({
   | ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
   | `NavigationMenuItemType.VIEW`        | Apre una vista salvata                               | `viewUniversalIdentifier`                                                                         |
   | `NavigationMenuItemType.LINK`        | Apre un URL esterno                                  | `link`                                                                                            |
-  | `NavigationMenuItemType.FOLDER`      | Raggruppa gli elementi nidificati sotto un’etichetta | `name` (e gli elementi figli fanno riferimento alla cartella tramite `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.FOLDER`      | Raggruppa gli elementi nidificati sotto un’etichetta | `name` (e gli elementi figli fanno riferimento alla cartella tramite `parentUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Apre la pagina indice predefinita di un oggetto      | `targetObjectUniversalIdentifier`                                                                 |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Apre un layout di pagina autonomo                    | `pageLayoutUniversalIdentifier`                                                                   |
   | `NavigationMenuItemType.NATIVE_PAGE` | Apre una pagina integrata                            | `nativePageKey`: `'workflows'` o `'agents'`                                                       |
@@ -48,7 +48,7 @@ export default defineNavigationMenuItem({
 
 * `icon` e `color` sono opzionali e personalizzano l’aspetto della voce.
 
-* `folderUniversalIdentifier` è inoltre disponibile su qualsiasi elemento per annidarlo all’interno di un genitore di tipo `FOLDER`.
+* `parentUniversalIdentifier` è inoltre disponibile su qualsiasi elemento per annidarlo all’interno di un genitore di tipo `FOLDER`. Il nome precedente, `folderUniversalIdentifier`, è deprecato ma ancora accettato.
 
 * `twenty app pull` riscrive le voci del menu di navigazione come file `defineNavigationMenuItem()`. Un elemento che un membro dello spazio di lavoro ha aggiunto alla propria barra laterale e uno fissato a un record appartengono a quello spazio di lavoro anziché alla tua app e vengono invece segnalati; consulta [cosa pull non scrive](/it/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
