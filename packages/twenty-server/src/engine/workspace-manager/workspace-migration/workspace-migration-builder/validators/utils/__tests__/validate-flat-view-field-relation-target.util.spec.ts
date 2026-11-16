@@ -191,8 +191,8 @@ describe('validateFlatViewFieldRelationTarget', () => {
       },
     ])(
       'accepts $relationAggregateOperation on $relationTargetFieldMetadataUniversalIdentifier',
-      (args) => {
-        expect(validateAggregate(args)).toEqual([]);
+      (aggregateArguments) => {
+        expect(validateAggregate(aggregateArguments)).toEqual([]);
       },
     );
 
@@ -262,10 +262,13 @@ describe('validateFlatViewFieldRelationTarget', () => {
         relationTargetFieldMetadataUniversalIdentifier: 'company-field',
         expectedMessage: 'cannot be a relation',
       },
-    ])('rejects $title', ({ title: _title, expectedMessage, ...args }) => {
-      expect(validateAggregate(args)).toMatchObject([
-        { message: expect.stringContaining(expectedMessage) },
-      ]);
-    });
+    ])(
+      'rejects $title',
+      ({ title: _title, expectedMessage, ...aggregateArguments }) => {
+        expect(validateAggregate(aggregateArguments)).toMatchObject([
+          { message: expect.stringContaining(expectedMessage) },
+        ]);
+      },
+    );
   });
 });

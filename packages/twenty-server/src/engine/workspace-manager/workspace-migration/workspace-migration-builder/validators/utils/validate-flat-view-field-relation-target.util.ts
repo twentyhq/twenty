@@ -37,7 +37,10 @@ const validateRelationTargetFlatFieldMetadata = ({
   flatFieldMetadata,
 }: {
   relationTargetFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
-  flatFieldMetadata: UniversalFlatFieldMetadata;
+  flatFieldMetadata: Pick<
+    UniversalFlatFieldMetadata,
+    'relationTargetObjectMetadataUniversalIdentifier'
+  >;
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (
     !isDefined(relationTargetFlatFieldMetadata) ||

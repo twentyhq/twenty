@@ -13,6 +13,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { isDefined } from 'twenty-shared/utils';
 
 const RECORD_ID = 'company-1';
 
@@ -41,7 +42,7 @@ const getAggregateTarget = ({
     objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
   });
 
-  if (aggregateTarget === undefined) {
+  if (!isDefined(aggregateTarget)) {
     throw new Error('Aggregate target not found');
   }
 

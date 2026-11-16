@@ -1,3 +1,4 @@
+import { type RecordTableRelationColumnTarget } from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -141,6 +142,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { addRecordTableRelationColumn } =
     useAddRecordTableRelationColumn(recordTableId);
 
+  const handleRelationColumnSelect = (
+    relationColumnTarget: RecordTableRelationColumnTarget,
+  ) =>
+    addRecordTableRelationColumn({
+      relationFieldMetadataItemId: recordField.fieldMetadataItemId,
+      ...relationColumnTarget,
+    });
+
   const hasColumnActions =
     canAddLookupColumn ||
     canAddAggregateColumn ||
@@ -211,24 +220,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
         <RecordTableLookupColumnPage
           pageId={LOOKUP_TARGET_PAGE_ID}
           relationFieldMetadataItem={fieldMetadataItem}
-          onSelect={(relationColumnTarget) =>
-            addRecordTableRelationColumn({
-              relationFieldMetadataItemId: fieldMetadataItem.id,
-              ...relationColumnTarget,
-            })
-          }
+          onSelect={handleRelationColumnSelect}
         />
       )}
       {canAddAggregateColumn && (
         <RecordTableAggregateColumnPages
           pageId={AGGREGATE_TARGET_PAGE_ID}
           relationFieldMetadataItem={fieldMetadataItem}
-          onSelect={(relationColumnTarget) =>
-            addRecordTableRelationColumn({
-              relationFieldMetadataItemId: fieldMetadataItem.id,
-              ...relationColumnTarget,
-            })
-          }
+          onSelect={handleRelationColumnSelect}
         />
       )}
     </>

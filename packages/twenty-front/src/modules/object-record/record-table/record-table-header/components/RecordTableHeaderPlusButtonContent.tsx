@@ -169,7 +169,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
         </Dropdown.Section>
       </Dropdown.Page>
       {relationColumnFieldMetadataItems.map((relationFieldMetadataItem) => {
-        const showRelationItem = !isFieldVisible(relationFieldMetadataItem) && (
+        const relationItem = !isFieldVisible(relationFieldMetadataItem) && (
           <>
             <Dropdown.Section scrollable={false}>
               <Dropdown.ActionItem
@@ -209,7 +209,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
               })
             }
           >
-            {showRelationItem}
+            {relationItem}
           </RelationColumnPages>
         );
       })}
