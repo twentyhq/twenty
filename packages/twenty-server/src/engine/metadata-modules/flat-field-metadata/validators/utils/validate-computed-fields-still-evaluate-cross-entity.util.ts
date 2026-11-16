@@ -1,7 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { isComputedField, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
+import { findFlatComputedFieldsReadingField } from 'src/engine/metadata-modules/computed-field/utils/find-flat-computed-fields-reading-field.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { getComputedFieldEvaluationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/get-computed-field-evaluation-error.util';
 import {
@@ -29,10 +30,12 @@ export const validateComputedFieldsStillEvaluateCrossEntity = ({
     fieldMetadata: [],
   };
 
-  if (
-    orchestratorActionsReport.fieldMetadata.delete.length === 0 &&
-    orchestratorActionsReport.fieldMetadata.update.length === 0
-  ) {
+  const changedFieldUniversalIdentifiers = [
+    ...orchestratorActionsReport.fieldMetadata.update,
+    ...orchestratorActionsReport.fieldMetadata.delete,
+  ].map(({ universalIdentifier }) => universalIdentifier);
+
+  if (changedFieldUniversalIdentifiers.length === 0) {
     return validationErrors;
   }
 
@@ -41,13 +44,11 @@ export const validateComputedFieldsStillEvaluateCrossEntity = ({
     flatFieldMetadataMapsList: [flatFieldMetadataMaps],
   });
 
-  for (const flatFieldMetadata of Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  )) {
-    if (!isDefined(flatFieldMetadata) || !isComputedField(flatFieldMetadata)) {
-      continue;
-    }
-
+  // Only a field a computation is bound to can stop it from working
+  for (const flatFieldMetadata of findFlatComputedFieldsReadingField({
+    fieldUniversalIdentifiers: changedFieldUniversalIdentifiers,
+    flatFieldMetadataMaps,
+  })) {
     const evaluationError = getComputedFieldEvaluationError({
       flatFieldMetadata,
       ...computedFieldSchema,

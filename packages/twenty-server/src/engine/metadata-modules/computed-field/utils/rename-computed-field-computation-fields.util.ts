@@ -1,152 +1,80 @@
-import { type FieldMetadataComputation } from 'twenty-shared/types';
 import {
-  getComputedFieldExpressionFieldPaths,
+  type FieldMetadataComputation,
+  type FieldMetadataComputationBindings,
+} from 'twenty-shared/types';
+import {
   isDefined,
   renameValidationRuleExpressionFields,
+  renameValidationRulePath,
 } from 'twenty-shared/utils';
 
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
-import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
-import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
-import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
-
-type RenamableField = ComputedFieldSchemaField & {
-  universalIdentifier: string;
-};
-
-// `projectId` reads the relation `project`: it follows the relation when it is renamed
-const getJoinColumnBinding = (relationFieldUniversalIdentifier: string) =>
-  `${relationFieldUniversalIdentifier}:joinColumn`;
-
-const ignoreUnresolvable = <TResult>(
-  resolve: () => TResult,
-): TResult | undefined => {
-  try {
-    return resolve();
-  } catch (error) {
-    if (error instanceof ComputedFieldExpressionException) {
-      return undefined;
-    }
-
-    throw error;
-  }
-};
-
-// `schemaReader` reads the fields as they were before the rename; what cannot be resolved is left as written
-export const renameComputedFieldComputationFields = <
-  TObject,
-  TField extends RenamableField,
->({
+export const renameComputedFieldComputationFields = ({
   computation,
-  object,
-  schemaReader,
   fieldNameByUniversalIdentifier,
 }: {
   computation: FieldMetadataComputation;
-  object: TObject;
-  schemaReader: ComputedFieldSchemaReader<TObject, TField>;
   fieldNameByUniversalIdentifier: Map<string, string>;
 }): FieldMetadataComputation => {
-  const nameByBinding = new Map(
-    [...fieldNameByUniversalIdentifier].flatMap(
-      ([universalIdentifier, name]) => [
-        [universalIdentifier, name],
-        [
-          getJoinColumnBinding(universalIdentifier),
-          computeMorphOrRelationFieldJoinColumnName({ name }),
-        ],
-      ],
-    ),
-  );
+  const { bindings } = computation;
 
-  const renameExpression = (
-    expression: string | undefined,
-    evaluatedObject: TObject,
-  ): string | undefined => {
-    const paths = isDefined(expression)
-      ? ignoreUnresolvable(() =>
-          getComputedFieldExpressionFieldPaths(expression),
-        )
-      : undefined;
+  if (!isDefined(bindings)) {
+    return computation;
+  }
 
-    if (!isDefined(expression) || !isDefined(paths)) {
-      return expression;
-    }
-
-    const bindings = Object.fromEntries(
-      paths.flatMap((path) => {
-        const resolution = ignoreUnresolvable(() =>
-          resolveComputedFieldPathOrThrow({
-            path,
-            object: evaluatedObject,
-            schemaReader,
-          }),
-        );
-
-        if (!isDefined(resolution)) {
-          return [];
-        }
-
-        return [
-          ...resolution.toOneRelationHops.map(
-            ({ relationField }) => relationField,
-          ),
-          resolution.field,
-        ].map((field, index) => [
-          path.slice(0, index + 1).join('.'),
-          field.name === path[index]
-            ? field.universalIdentifier
-            : getJoinColumnBinding(field.universalIdentifier),
-        ]);
-      }),
-    );
-
-    return renameValidationRuleExpressionFields({
-      expression,
+  const renamePath = (path: string): string =>
+    renameValidationRulePath({
+      path,
       bindings,
-      fieldNameByUniversalIdentifier: nameByBinding,
+      fieldNameByUniversalIdentifier,
     });
-  };
+  const renamedBindings: FieldMetadataComputationBindings = Object.fromEntries(
+    Object.entries(bindings).map(([path, boundUniversalIdentifier]) => [
+      renamePath(path),
+      boundUniversalIdentifier,
+    ]),
+  );
 
   if (computation.kind === 'FORMULA') {
     return {
       ...computation,
-      expression:
-        renameExpression(computation.expression, object) ??
-        computation.expression,
+      expression: renameValidationRuleExpressionFields({
+        expression: computation.expression,
+        bindings,
+        fieldNameByUniversalIdentifier,
+      }),
+      bindings: renamedBindings,
     };
   }
 
-  const sourceRelation = ignoreUnresolvable(() =>
-    resolveComputedFieldSourceRelationOrThrow({
-      relationFieldName: computation.relationFieldName,
-      object,
-      schemaReader,
-    }),
-  );
+  // A rollup's expressions are written from the related object, its bindings from the field's own object
+  const relationPathPrefix = `${computation.relationFieldName}.`;
+  const relatedObjectBindings: FieldMetadataComputationBindings =
+    Object.fromEntries(
+      Object.entries(bindings).flatMap(([path, boundUniversalIdentifier]) =>
+        path.startsWith(relationPathPrefix)
+          ? [[path.slice(relationPathPrefix.length), boundUniversalIdentifier]]
+          : [],
+      ),
+    );
+  const renameRelatedObjectExpression = (
+    expression: string | undefined,
+  ): string | undefined =>
+    isDefined(expression)
+      ? renameValidationRuleExpressionFields({
+          expression,
+          bindings: relatedObjectBindings,
+          fieldNameByUniversalIdentifier,
+        })
+      : undefined;
 
-  if (!isDefined(sourceRelation)) {
-    return computation;
-  }
-
-  const expression = renameExpression(
-    computation.expression,
-    sourceRelation.relatedObject,
-  );
-  const filter = renameExpression(
-    computation.filter,
-    sourceRelation.relatedObject,
-  );
+  const expression = renameRelatedObjectExpression(computation.expression);
+  const filter = renameRelatedObjectExpression(computation.filter);
 
   return {
     ...computation,
-    relationFieldName:
-      fieldNameByUniversalIdentifier.get(
-        sourceRelation.relationField.universalIdentifier,
-      ) ?? computation.relationFieldName,
+    relationFieldName: renamePath(computation.relationFieldName),
     ...(isDefined(expression) ? { expression } : {}),
     ...(isDefined(filter) ? { filter } : {}),
+    bindings: renamedBindings,
   };
 };

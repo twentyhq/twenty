@@ -12,7 +12,9 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
+  FeatureFlagKey,
   type FieldMetadataComputation,
   FieldMetadataType,
 } from 'twenty-shared/types';
@@ -110,6 +112,32 @@ describe('Computed fields (e2e)', () => {
       ({ node }: { node: ProjectNode }) => node,
     );
   };
+
+  const findComputation = async ({
+    objectMetadataId,
+    fieldMetadataId,
+  }: {
+    objectMetadataId: string;
+    fieldMetadataId: string;
+  }): Promise<FieldMetadataComputation> => {
+    const { fields } = await findManyFieldsMetadata({
+      expectToFail: false,
+      input: {
+        filter: { objectMetadataId: { eq: objectMetadataId } },
+        paging: { first: 100 },
+      },
+      gqlFields: 'id computation',
+    });
+
+    return fields.find(
+      ({ node }: { node: { id: string } }) => node.id === fieldMetadataId,
+    )?.node.computation;
+  };
+
+  const findBoundPaths = async (ids: {
+    objectMetadataId: string;
+    fieldMetadataId: string;
+  }) => Object.keys((await findComputation(ids)).bindings ?? {}).sort();
 
   const findProjectValuesById = async (fieldName: string) =>
     Object.fromEntries(
@@ -509,6 +537,153 @@ describe('Computed fields (e2e)', () => {
     });
   });
 
+  describe('long names', () => {
+    const DELIVERABLE_OBJECT_NAME =
+      'rollupDeliverableNamedLongEnoughToOverflowAnAlias';
+    const TASK_RELATION_NAME = 'taskNamedLongEnoughToOverflowAnAlias';
+    const DELIVERABLE_POINTS_FIELD_NAME =
+      'deliverablePointsNamedLongEnoughToOverflowAnAliasOfItsOwn';
+    const DELIVERABLE_ID = '20202020-c0f3-4000-8000-000000000001';
+
+    // Truncated to 63 bytes, the alias of a nested read would be the alias of the read around it
+    it('evaluates nested to-one reads and rollups whose aliases exceed the Postgres identifier limit', async () => {
+      expect(
+        `${DELIVERABLE_OBJECT_NAME}_${TASK_RELATION_NAME}Id`.length,
+      ).toBeGreaterThan(63);
+      expect(
+        `rollupTask_${DELIVERABLE_POINTS_FIELD_NAME}`.length,
+      ).toBeGreaterThan(63);
+
+      const { data: deliverableObject } = await createOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          nameSingular: DELIVERABLE_OBJECT_NAME,
+          namePlural: `${DELIVERABLE_OBJECT_NAME}s`,
+          labelSingular: 'Long named deliverable',
+          labelPlural: 'Long named deliverables',
+          icon: 'IconBox',
+        },
+      });
+      const deliverableObjectMetadataId = deliverableObject.createOneObject.id;
+      let deliverablePointsFieldMetadataId = '';
+
+      try {
+        await createRelationBetweenObjects({
+          objectMetadataId: deliverableObjectMetadataId,
+          targetObjectMetadataId: taskObjectMetadataId,
+          type: FieldMetadataType.RELATION,
+          relationType: RelationType.MANY_TO_ONE,
+          name: TASK_RELATION_NAME,
+          label: 'Task',
+          targetFieldLabel: 'Long named deliverables',
+        });
+        await createField({
+          objectMetadataId: deliverableObjectMetadataId,
+          name: 'projectBudget',
+          type: FieldMetadataType.NUMBER,
+          computation: {
+            kind: 'FORMULA',
+            expression: `${TASK_RELATION_NAME}.project.budget`,
+          },
+        });
+
+        const { data: deliverablePointsField } = await createField({
+          objectMetadataId: taskObjectMetadataId,
+          name: DELIVERABLE_POINTS_FIELD_NAME,
+          type: FieldMetadataType.NUMBER,
+          computation: {
+            kind: 'ROLLUP',
+            relationFieldName: 'longNamedDeliverables',
+            operation: 'SUM',
+            expression: `${TASK_RELATION_NAME}.points`,
+            filter: `${TASK_RELATION_NAME}.project.budget > 50`,
+          },
+        });
+
+        deliverablePointsFieldMetadataId =
+          deliverablePointsField.createOneField.id;
+
+        const createResponse = await makeGraphqlApiRequest(
+          createManyOperationFactory({
+            objectMetadataSingularName: DELIVERABLE_OBJECT_NAME,
+            objectMetadataPluralName: `${DELIVERABLE_OBJECT_NAME}s`,
+            gqlFields: 'id projectBudget',
+            data: [
+              {
+                id: DELIVERABLE_ID,
+                [`${TASK_RELATION_NAME}Id`]: TASKS[0].id,
+              },
+            ],
+            upsert: false,
+          }),
+        );
+
+        expect(createResponse.body.errors).toBeUndefined();
+
+        const deliverablesResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: DELIVERABLE_OBJECT_NAME,
+            objectMetadataPluralName: `${DELIVERABLE_OBJECT_NAME}s`,
+            gqlFields: 'id projectBudget',
+          }),
+        );
+
+        expect(deliverablesResponse.body.errors).toBeUndefined();
+        expect(
+          deliverablesResponse.body.data[`${DELIVERABLE_OBJECT_NAME}s`].edges,
+        ).toMatchObject([{ node: { id: DELIVERABLE_ID, projectBudget: 100 } }]);
+
+        const tasksResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: 'rollupTask',
+            objectMetadataPluralName: 'rollupTasks',
+            gqlFields: `id ${DELIVERABLE_POINTS_FIELD_NAME}`,
+            filter: { id: { in: [TASKS[0].id, TASKS[3].id] } },
+          }),
+        );
+
+        expect(tasksResponse.body.errors).toBeUndefined();
+        expect(
+          Object.fromEntries(
+            tasksResponse.body.data.rollupTasks.edges.map(
+              ({ node }: { node: Record<string, unknown> }) => [
+                node.id,
+                node[DELIVERABLE_POINTS_FIELD_NAME],
+              ],
+            ),
+          ),
+        ).toEqual({ [TASKS[0].id]: 3, [TASKS[3].id]: null });
+      } finally {
+        // The rollup reads the deliverables, and a field read by a computed field cannot be deleted
+        if (isNonEmptyString(deliverablePointsFieldMetadataId)) {
+          await updateOneFieldMetadata({
+            expectToFail: false,
+            input: {
+              idToUpdate: deliverablePointsFieldMetadataId,
+              updatePayload: { isActive: false },
+            },
+          });
+          await deleteOneFieldMetadata({
+            expectToFail: false,
+            input: { idToDelete: deliverablePointsFieldMetadataId },
+          });
+        }
+
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: deliverableObjectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: deliverableObjectMetadataId },
+        });
+      }
+    });
+  });
+
   describe('metadata validation', () => {
     const expectCreationToFail = async (
       computation: FieldMetadataComputation,
@@ -625,7 +800,10 @@ describe('Computed fields (e2e)', () => {
 
       const {
         data: {
-          createOneField: { id: budgetWithBonusFieldId },
+          createOneField: {
+            id: budgetWithBonusFieldId,
+            computation: createdComputation,
+          },
         },
       } = await createField({
         objectMetadataId: projectObjectMetadataId,
@@ -634,8 +812,16 @@ describe('Computed fields (e2e)', () => {
         computation: {
           kind: 'FORMULA',
           expression: 'budget + coalesce(bonus, 0)',
+          bindings: { budget: 'sent-by-the-client' },
         },
       });
+
+      const createdBindings = createdComputation?.bindings ?? {};
+
+      expect(Object.keys(createdBindings).sort()).toEqual(['bonus', 'budget']);
+      expect(Object.values(createdBindings)).not.toContain(
+        'sent-by-the-client',
+      );
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -645,23 +831,18 @@ describe('Computed fields (e2e)', () => {
         },
       });
 
-      const { fields } = await findManyFieldsMetadata({
-        expectToFail: false,
-        input: {
-          filter: { objectMetadataId: { eq: projectObjectMetadataId } },
-          paging: { first: 100 },
-        },
-        gqlFields: 'id computation',
-      });
-
       expect(
-        fields.find(
-          ({ node }: { node: { id: string } }) =>
-            node.id === budgetWithBonusFieldId,
-        )?.node.computation,
+        await findComputation({
+          objectMetadataId: projectObjectMetadataId,
+          fieldMetadataId: budgetWithBonusFieldId,
+        }),
       ).toEqual({
         kind: 'FORMULA',
         expression: 'budget + coalesce(extraBudget, 0)',
+        bindings: {
+          budget: createdBindings.budget,
+          extraBudget: createdBindings.bonus,
+        },
       });
       expect(
         (await findProjectValuesById('budgetWithBonus'))[ALPHA_PROJECT_ID],
@@ -771,24 +952,22 @@ describe('Computed fields (e2e)', () => {
         type: FieldMetadataType.BOOLEAN,
         computation: {
           kind: 'FORMULA',
-          expression: `projectId == '${ALPHA_PROJECT_ID}'`,
+          expression: `project.id == '${ALPHA_PROJECT_ID}'`,
         },
       });
 
-      const findIsOnAlphaExpression = async () => {
-        const { fields } = await findManyFieldsMetadata({
-          expectToFail: false,
-          input: {
-            filter: { objectMetadataId: { eq: taskObjectMetadataId } },
-            paging: { first: 100 },
-          },
-          gqlFields: 'id computation',
+      const findIsOnAlpha = () =>
+        findComputation({
+          objectMetadataId: taskObjectMetadataId,
+          fieldMetadataId: isOnAlphaFieldId,
         });
 
-        return fields.find(
-          ({ node }: { node: { id: string } }) => node.id === isOnAlphaFieldId,
-        )?.node.computation.expression;
-      };
+      const { bindings } = await findIsOnAlpha();
+
+      expect(Object.keys(bindings ?? {}).sort()).toEqual([
+        'project',
+        'project.id',
+      ]);
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -798,9 +977,14 @@ describe('Computed fields (e2e)', () => {
         },
       });
 
-      expect(await findIsOnAlphaExpression()).toBe(
-        `parentProjectId == '${ALPHA_PROJECT_ID}'`,
-      );
+      expect(await findIsOnAlpha()).toEqual({
+        kind: 'FORMULA',
+        expression: `parentProject.id == '${ALPHA_PROJECT_ID}'`,
+        bindings: {
+          parentProject: bindings?.project,
+          'parentProject.id': bindings?.['project.id'],
+        },
+      });
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -810,9 +994,11 @@ describe('Computed fields (e2e)', () => {
         },
       });
 
-      expect(await findIsOnAlphaExpression()).toBe(
-        `projectId == '${ALPHA_PROJECT_ID}'`,
-      );
+      expect(await findIsOnAlpha()).toEqual({
+        kind: 'FORMULA',
+        expression: `project.id == '${ALPHA_PROJECT_ID}'`,
+        bindings,
+      });
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -825,6 +1011,165 @@ describe('Computed fields (e2e)', () => {
         expectToFail: false,
         input: { idToDelete: isOnAlphaFieldId },
       });
+    });
+
+    it('rejects a relation read through its id column', async () => {
+      const { errors } = await createField({
+        objectMetadataId: taskObjectMetadataId,
+        name: 'isOnAlphaById',
+        type: FieldMetadataType.BOOLEAN,
+        computation: {
+          kind: 'FORMULA',
+          expression: `projectId == '${ALPHA_PROJECT_ID}'`,
+        },
+        expectToFail: true,
+      });
+
+      expect(JSON.stringify(errors)).toContain('is not a field of rollupTask');
+    });
+
+    it('binds what a rollup reads from the relation of its own object, and follows a rename on the related object', async () => {
+      const { fields: projectFields } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: projectObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'id name',
+      });
+      const { fields: taskFields } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: taskObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'id name',
+      });
+      const findFieldId = (
+        fields: { node: { id: string; name: string } }[],
+        name: string,
+      ) => fields.find(({ node }) => node.name === name)?.node.id ?? '';
+
+      const nextDueAt = {
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: findFieldId(projectFields, 'nextDueAt'),
+      };
+      const statusFieldId = findFieldId(taskFields, 'status');
+
+      expect(await findBoundPaths(nextDueAt)).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.status',
+      ]);
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: statusFieldId, updatePayload: { name: 'stage' } },
+      });
+
+      expect(await findComputation(nextDueAt)).toMatchObject({
+        relationFieldName: 'tasks',
+        expression: 'dueAt',
+        filter: "stage != 'DONE'",
+      });
+      expect(await findBoundPaths(nextDueAt)).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.stage',
+      ]);
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: statusFieldId, updatePayload: { name: 'status' } },
+      });
+
+      expect(await findComputation(nextDueAt)).toMatchObject({
+        filter: "status != 'DONE'",
+      });
+    });
+
+    it('follows a rename while the feature flag is off, but refuses a new expression', async () => {
+      const {
+        data: {
+          createOneField: { id: discountFieldId },
+        },
+      } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'discount',
+        type: FieldMetadataType.NUMBER,
+      });
+      const {
+        data: {
+          createOneField: { id: discountedBudgetFieldId },
+        },
+      } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'discountedBudget',
+        type: FieldMetadataType.NUMBER,
+        computation: {
+          kind: 'FORMULA',
+          expression: 'budget - coalesce(discount, 0)',
+        },
+      });
+      const discountedBudget = {
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: discountedBudgetFieldId,
+      };
+
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+
+      try {
+        await updateOneFieldMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: discountFieldId,
+            updatePayload: { name: 'rebate' },
+          },
+        });
+
+        expect((await findComputation(discountedBudget)).expression).toBe(
+          'budget - coalesce(rebate, 0)',
+        );
+        expect(await findBoundPaths(discountedBudget)).toEqual([
+          'budget',
+          'rebate',
+        ]);
+
+        const { errors } = await updateOneFieldMetadata({
+          expectToFail: true,
+          input: {
+            idToUpdate: discountedBudgetFieldId,
+            updatePayload: {
+              computation: { kind: 'FORMULA', expression: 'budget - 1' },
+            },
+          },
+        });
+
+        expect(JSON.stringify(errors)).toContain(
+          'computed fields are not enabled for this workspace',
+        );
+      } finally {
+        await updateFeatureFlag({
+          featureFlag: FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      }
+
+      for (const idToDelete of [discountedBudgetFieldId, discountFieldId]) {
+        await updateOneFieldMetadata({
+          expectToFail: false,
+          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
+        });
+        await deleteOneFieldMetadata({
+          expectToFail: false,
+          input: { idToDelete },
+        });
+      }
     });
 
     it('rejects a computation whose value does not fit the type of its field', async () => {

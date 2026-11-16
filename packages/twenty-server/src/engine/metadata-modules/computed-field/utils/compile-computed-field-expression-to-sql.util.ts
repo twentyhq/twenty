@@ -1,3 +1,4 @@
+import { isValid, parseISO } from 'date-fns';
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import {
   COMPUTED_FIELD_EXPRESSION_MAX_LENGTH,
@@ -33,7 +34,10 @@ type ValueOperand = {
   sql: string;
   type: ComputedFieldValueType | undefined;
   textLiteralParameterName?: string;
+  textLiteral?: string;
 };
+
+const ISO_DATE_LITERAL = /^\d{4}-\d{2}-\d{2}([T ].+)?$/;
 
 type Operand =
   | ValueOperand
@@ -89,6 +93,16 @@ const unifyOperands = (
       isDefined(operand.textLiteralParameterName) &&
       (type === DATE || type === DATE_TIME)
     ) {
+      // Postgres would fail the cast on every read, so a text that is not a date is refused when saved
+      if (
+        !ISO_DATE_LITERAL.test(operand.textLiteral ?? '') ||
+        !isValid(parseISO(operand.textLiteral ?? ''))
+      ) {
+        throw new ComputedFieldExpressionException(
+          `${usage} compares a date with '${operand.textLiteral}', which is not a date such as '2030-01-31'`,
+        );
+      }
+
       return `:${operand.textLiteralParameterName}::${DATE_SQL_TYPE[type]}`;
     }
 
@@ -229,7 +243,7 @@ const toDateOperand = ({
   usage,
 }: {
   operand: ValueOperand;
-  context: CompilationContext;
+  context: Pick<CompilationContext, 'parameters'>;
   usage: string;
 }): DateOperand => {
   if (isDefined(operand.textLiteralParameterName)) {
@@ -604,6 +618,7 @@ const compileLiteral = (
     return {
       ...value(`:${textLiteralParameterName}::text`, TEXT),
       textLiteralParameterName,
+      textLiteral: literal,
     };
   }
 
