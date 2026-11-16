@@ -28,6 +28,7 @@ import {
   registerSelfSignedSamlIdentityProvider,
 } from 'test/integration/saml-callback/utils/register-self-signed-saml-identity-provider.util';
 import { deleteSsoConnectedAccounts } from 'test/integration/sso/utils/delete-sso-connected-accounts.util';
+import { expectNotInternalServerErrorSsoRedirectSnapshot } from 'test/integration/sso/utils/expect-not-internal-server-error-sso-redirect-snapshot.util';
 import { exchangeLoginToken } from 'test/integration/sso/utils/exchange-login-token.util';
 import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-ycombinator-admin-access-token.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
@@ -183,10 +184,7 @@ describe('SAML callback sign-in', () => {
         workspacePersonalInviteToken: 'unknown-personal-invite-token',
       });
 
-      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
-      expect(redirectUrl.searchParams.get('errorMessage')).toBe(
-        'User does not have access to this workspace',
-      );
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,

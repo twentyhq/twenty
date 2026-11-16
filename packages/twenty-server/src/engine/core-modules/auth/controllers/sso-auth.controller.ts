@@ -272,6 +272,20 @@ export class SsoAuthController {
         );
       }
 
+      if (
+        isDefined(invitation) &&
+        isNonEmptyString(existingUser.passwordHash) &&
+        !existingUser.isEmailVerified
+      ) {
+        throw new AuthException(
+          'An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO.`,
+          },
+        );
+      }
+
       if (!isDefined(invitation)) {
         await this.userService.hasUserAccessToWorkspaceOrThrow(
           existingUser.id,

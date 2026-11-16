@@ -20,6 +20,7 @@ import {
   setUserCanAccessFullAdminPanel,
 } from 'test/integration/saml-callback/utils/account-state-sql.util';
 import { deleteSsoConnectedAccounts } from 'test/integration/sso/utils/delete-sso-connected-accounts.util';
+import { expectNotInternalServerErrorSsoRedirectSnapshot } from 'test/integration/sso/utils/expect-not-internal-server-error-sso-redirect-snapshot.util';
 import { exchangeLoginToken } from 'test/integration/sso/utils/exchange-login-token.util';
 import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-ycombinator-admin-access-token.util';
 import { signInWithLocalOidcIssuer } from 'test/integration/sso/utils/sign-in-with-local-oidc-issuer.util';
@@ -205,7 +206,7 @@ describe('OIDC callback sign-in', () => {
           workspacePersonalInviteToken: otherInvitation.value,
         });
 
-        expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+        expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
         expect(
           await countUserWorkspaceMemberships({
             email: NON_YC_MEMBER_EMAIL,
@@ -239,7 +240,7 @@ describe('OIDC callback sign-in', () => {
         workspacePersonalInviteToken: expiredInviteToken,
       });
 
-      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,
@@ -267,7 +268,7 @@ describe('OIDC callback sign-in', () => {
           workspacePersonalInviteToken: otherWorkspaceInviteToken,
         });
 
-        expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+        expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
         expect(
           await countUserWorkspaceMemberships({
             email: NON_YC_MEMBER_EMAIL,
@@ -291,10 +292,7 @@ describe('OIDC callback sign-in', () => {
         workspacePersonalInviteToken: 'unknown-personal-invite-token',
       });
 
-      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
-      expect(redirectUrl.searchParams.get('errorMessage')).toBe(
-        'User does not have access to this workspace',
-      );
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,
@@ -348,10 +346,7 @@ describe('OIDC callback sign-in', () => {
         workspacePersonalInviteToken: invitation.value,
       });
 
-      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
-      expect(redirectUrl.searchParams.get('errorMessage')).toContain(
-        'Accounts with admin panel or impersonation access cannot join a workspace through SSO',
-      );
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,
@@ -425,6 +420,45 @@ describe('OIDC callback sign-in', () => {
       });
 
       expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
+      expect(
+        await countUserWorkspaceMemberships({
+          email: unverifiedEmail,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('refuses an unverified password account presenting its personal invite token and leaves it unverified', async () => {
+      assertIsDefinedOrThrow(unverifiedEmail);
+
+      await updateConfigVariable({
+        input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: true },
+      });
+      isEmailVerificationRequired = true;
+
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      await sendInvitations({
+        input: { emails: [unverifiedEmail] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const [invitation] = await findWorkspaceInvitationsByEmail({
+        email: unverifiedEmail,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(invitation);
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: unverifiedEmail,
+        workspacePersonalInviteToken: invitation.value,
+      });
+
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
       expect(
         await countUserWorkspaceMemberships({
