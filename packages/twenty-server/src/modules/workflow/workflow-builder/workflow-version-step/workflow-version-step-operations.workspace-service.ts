@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   inputSchemaToOutputSchema,
-  jsonSchemaToInputSchema,
   SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
 } from 'twenty-shared/logic-function';
 import {
@@ -22,6 +21,7 @@ import {
   WORKFLOW_ACTION_FEATURE_FLAGS,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
   WorkflowActionType,
+  getDefaultMcpToolInputFromJsonSchema,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
   workflowMcpToolActionSettingsSchema,
@@ -265,10 +265,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 toolName,
                 toolInput:
                   toolInput ??
-                  getFunctionInputFromInputSchema(
-                    jsonSchemaToInputSchema(tool.inputSchema),
-                  )[0] ??
-                  {},
+                  getDefaultMcpToolInputFromJsonSchema(tool.inputSchema),
               },
             },
           },

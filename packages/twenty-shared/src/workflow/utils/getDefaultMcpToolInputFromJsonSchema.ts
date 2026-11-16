@@ -1,6 +1,6 @@
+import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { type FunctionInput } from '@/workflow/types/FunctionInput';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { type InputJsonSchema } from 'twenty-shared/logic-function';
-import { type FunctionInput } from 'twenty-shared/workflow';
 
 const getDefaultPropertyValue = ({
   property,
@@ -10,7 +10,7 @@ const getDefaultPropertyValue = ({
   isRequired: boolean;
 }): FunctionInput => {
   if (property.type === 'object') {
-    return getDefaultToolInputFromJsonSchema(property);
+    return getDefaultMcpToolInputFromJsonSchema(property);
   }
 
   if (!isRequired) {
@@ -21,11 +21,11 @@ const getDefaultPropertyValue = ({
     return [];
   }
 
-  return isNonEmptyArray(property.enum) ? (property.enum[0] as string) : null;
+  return isNonEmptyArray(property.enum) ? property.enum[0] : null;
 };
 
 // Optional inputs stay null until the author fills them, so the tool never receives a seeded [] or first enum value.
-export const getDefaultToolInputFromJsonSchema = (
+export const getDefaultMcpToolInputFromJsonSchema = (
   jsonSchema: InputJsonSchema,
 ): FunctionInput =>
   Object.fromEntries(

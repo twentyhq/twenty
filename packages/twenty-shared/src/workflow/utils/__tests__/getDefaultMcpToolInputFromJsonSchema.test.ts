@@ -1,9 +1,9 @@
-import { getDefaultToolInputFromJsonSchema } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/getDefaultToolInputFromJsonSchema';
+import { getDefaultMcpToolInputFromJsonSchema } from '@/workflow';
 
-describe('getDefaultToolInputFromJsonSchema', () => {
+describe('getDefaultMcpToolInputFromJsonSchema', () => {
   it('seeds optional inputs with null and required ones with their default', () => {
     expect(
-      getDefaultToolInputFromJsonSchema({
+      getDefaultMcpToolInputFromJsonSchema({
         type: 'object',
         required: ['query', 'kinds', 'mode'],
         properties: {
@@ -27,7 +27,7 @@ describe('getDefaultToolInputFromJsonSchema', () => {
 
   it('keeps nested objects editable while their optional leaves stay null', () => {
     expect(
-      getDefaultToolInputFromJsonSchema({
+      getDefaultMcpToolInputFromJsonSchema({
         type: 'object',
         properties: {
           filter: {
@@ -44,6 +44,8 @@ describe('getDefaultToolInputFromJsonSchema', () => {
   });
 
   it('returns an empty input for a tool without properties', () => {
-    expect(getDefaultToolInputFromJsonSchema({ type: 'object' })).toEqual({});
+    expect(getDefaultMcpToolInputFromJsonSchema({ type: 'object' })).toEqual(
+      {},
+    );
   });
 });

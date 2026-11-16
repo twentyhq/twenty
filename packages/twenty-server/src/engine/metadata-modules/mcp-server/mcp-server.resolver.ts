@@ -84,8 +84,15 @@ export class McpServerResolver {
   ): Promise<McpServerDTO | null> {
     const mcpServer = await this.mcpServerService.findById(id, workspace.id);
 
-    return isDefined(mcpServer) &&
-      this.canCallerReachMcpServer({ mcpServer, workspace, callingApplication })
+    if (!isDefined(mcpServer)) {
+      return null;
+    }
+
+    return this.canCallerReachMcpServer({
+      mcpServer,
+      workspace,
+      callingApplication,
+    })
       ? mcpServer
       : null;
   }
@@ -144,14 +151,13 @@ export class McpServerResolver {
     return await this.mcpServerService.delete(id, workspace.id);
   }
 
-  // Workflow editors can only pick tools from servers their caller may trigger.
   private canCallerReachMcpServer({
     mcpServer,
     workspace,
     callingApplication,
   }: {
-    mcpServer: McpServerDTO;
-    workspace: WorkspaceEntity;
+    mcpServer: Pick<McpServerDTO, 'applicationId'>;
+    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId'>;
     callingApplication: FlatApplication | undefined;
   }): boolean {
     return canCallerReachApplication({
