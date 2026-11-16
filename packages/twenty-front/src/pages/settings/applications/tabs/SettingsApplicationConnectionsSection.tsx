@@ -1,9 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
+import { SETTINGS_APPLICATION_CONNECTIONS_SECTION_ID } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
-import { SETTINGS_APPLICATION_CONNECTIONS_SECTION_ID } from '@/settings/applications/constants/SettingsApplicationConnectionsSectionId';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';

@@ -36,6 +36,7 @@ import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/c
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationDetailPageLayout } from '@/settings/applications/components/SettingsApplicationDetailPageLayout';
 import { SettingsApplicationStoppedBanner } from '@/settings/applications/components/SettingsApplicationStoppedBanner';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 
 type SettingsApplicationPreferencesDetailProps = {
   applicationWithPreferences: ApplicationWithPreferences;
@@ -135,7 +136,7 @@ export const SettingsApplicationPreferencesDetail = ({
 
   const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
     settingsMenuItems,
-    hashTabId: hash.replace('#', ''),
+    hashTabId: parseTabRouteHash(hash).tabId,
   });
 
   if (isDefined(legacyTabIdRedirect)) {

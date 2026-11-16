@@ -1,19 +1,10 @@
 import { styled } from '@linaria/react';
-import {
-  type AnimationEvent,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type AnimationEvent, type ReactNode, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useSettingsSectionAnchorScroll } from '@/settings/hooks/useSettingsSectionAnchorScroll';
 import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
-
-const SETTINGS_SECTION_ANCHOR_SETTLE_DURATION_MS = 2000;
 
 const StyledAnchor = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -63,47 +54,7 @@ export const SettingsSectionAnchor = ({
   const isTargeted = parseTabRouteHash(hash).sectionId === sectionId;
   const isHighlighted = isTargeted && highlightEndedLocationKey !== locationKey;
 
-  useEffect(() => {
-    const anchorElement = anchorRef.current;
-
-    if (!isTargeted || !isDefined(anchorElement)) {
-      return;
-    }
-
-    const prefersReducedMotion = window.matchMedia(
-      doNotTranslate('(prefers-reduced-motion: reduce)'),
-    ).matches;
-
-    const scrollToAnchor = () => {
-      anchorElement.scrollIntoView?.({
-        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'start',
-      });
-    };
-
-    scrollToAnchor();
-
-    const pageElement = anchorElement.parentElement;
-
-    if (!isDefined(pageElement)) {
-      return;
-    }
-
-    // Sections above can still be loading and push the anchor back out of view
-    const resizeObserver = new ResizeObserver(scrollToAnchor);
-
-    resizeObserver.observe(pageElement);
-
-    const settleTimeout = window.setTimeout(
-      () => resizeObserver.disconnect(),
-      SETTINGS_SECTION_ANCHOR_SETTLE_DURATION_MS,
-    );
-
-    return () => {
-      window.clearTimeout(settleTimeout);
-      resizeObserver.disconnect();
-    };
-  }, [isTargeted, locationKey]);
+  useSettingsSectionAnchorScroll({ anchorRef, isTargeted, locationKey });
 
   const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
