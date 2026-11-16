@@ -3,7 +3,10 @@ import { createApprovedAccessDomain } from 'test/integration/graphql/utils/creat
 import { deleteApprovedAccessDomain } from 'test/integration/graphql/utils/delete-approved-access-domain.util';
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
-import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
+import {
+  deleteWorkspaceInvitationsByEmail,
+  findWorkspaceInvitationsByEmail,
+} from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
@@ -118,6 +121,72 @@ describe('SAML callback sign-in', () => {
       });
 
       expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('lets an existing account join with the personal invite token carried in RelayState', async () => {
+      identityProviderId = await registerSelfSignedSamlIdentityProvider({
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        credentials: identityProviderCredentials,
+      });
+
+      await sendInvitations({
+        input: { emails: [NON_YC_MEMBER_EMAIL] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const [invitation] = await findWorkspaceInvitationsByEmail({
+        email: NON_YC_MEMBER_EMAIL,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(invitation);
+
+      const redirectUrl = await postSelfSignedSamlAssertion({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        credentials: identityProviderCredentials,
+        workspacePersonalInviteToken: invitation.value,
+      });
+
+      expect(redirectUrl.searchParams.get('loginToken')).not.toBeNull();
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(1);
+    });
+
+    it('refuses an existing account presenting an unknown personal invite token in RelayState', async () => {
+      identityProviderId = await registerSelfSignedSamlIdentityProvider({
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        credentials: identityProviderCredentials,
+      });
+
+      await sendInvitations({
+        input: { emails: [NON_YC_MEMBER_EMAIL] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const redirectUrl = await postSelfSignedSamlAssertion({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        credentials: identityProviderCredentials,
+        workspacePersonalInviteToken: 'unknown-personal-invite-token',
+      });
+
+      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(redirectUrl.searchParams.get('errorMessage')).toBe(
+        'User does not have access to this workspace',
+      );
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,

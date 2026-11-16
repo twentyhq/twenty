@@ -12,6 +12,7 @@ type PostSelfSignedSamlAssertionArgs = {
   email: string;
   credentials: SelfSignedSamlCredentials;
   workspaceInviteHash?: string;
+  workspacePersonalInviteToken?: string;
 };
 
 // Posts a self-signed SAML assertion for the given email to the provider's
@@ -22,6 +23,7 @@ export const postSelfSignedSamlAssertion = async ({
   email,
   credentials,
   workspaceInviteHash,
+  workspacePersonalInviteToken,
 }: PostSelfSignedSamlAssertionArgs): Promise<URL> => {
   const samlResponse = signSamlResponse({
     identityProviderId,
@@ -33,8 +35,10 @@ export const postSelfSignedSamlAssertion = async ({
   return completeSamlLogin({
     callbackUrl: new URL(buildSamlCallbackUrl(identityProviderId)),
     samlResponse,
-    relayState: isDefined(workspaceInviteHash)
-      ? JSON.stringify({ workspaceInviteHash })
-      : undefined,
+    relayState: isDefined(workspacePersonalInviteToken)
+      ? JSON.stringify({ token: workspacePersonalInviteToken })
+      : isDefined(workspaceInviteHash)
+        ? JSON.stringify({ workspaceInviteHash })
+        : undefined,
   });
 };

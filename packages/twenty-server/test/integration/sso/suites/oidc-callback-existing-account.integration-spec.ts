@@ -4,6 +4,7 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import {
   deleteWorkspaceInvitationsByEmail,
   findWorkspaceInvitationsByEmail,
+  seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
@@ -30,7 +31,10 @@ import { updateConfigVariable } from 'test/integration/twenty-config/utils/updat
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const YCOMBINATOR_SUBDOMAIN = 'yc';
@@ -215,6 +219,88 @@ describe('OIDC callback sign-in', () => {
           workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
         });
       }
+    });
+
+    it('refuses an existing account presenting an expired personal invite token', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const expiredInviteToken = `expired-${uuidv4()}`;
+
+      await seedWorkspaceInvitation({
+        email: NON_YC_MEMBER_EMAIL,
+        value: expiredInviteToken,
+        expiresAt: new Date(Date.now() - 60_000),
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: expiredInviteToken,
+      });
+
+      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('refuses an existing account presenting a personal invite token from another workspace', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const otherWorkspaceInviteToken = `other-workspace-${uuidv4()}`;
+
+      await seedWorkspaceInvitation({
+        email: NON_YC_MEMBER_EMAIL,
+        value: otherWorkspaceInviteToken,
+        expiresAt: new Date(Date.now() + 60 * 60_000),
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      try {
+        const redirectUrl = await signInWithLocalOidcIssuer({
+          identityProviderId,
+          email: NON_YC_MEMBER_EMAIL,
+          workspacePersonalInviteToken: otherWorkspaceInviteToken,
+        });
+
+        expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+        expect(
+          await countUserWorkspaceMemberships({
+            email: NON_YC_MEMBER_EMAIL,
+            workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+          }),
+        ).toBe(0);
+      } finally {
+        await deleteWorkspaceInvitationsByEmail({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        });
+      }
+    });
+
+    it('refuses an existing account presenting an unknown personal invite token', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: 'unknown-personal-invite-token',
+      });
+
+      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(redirectUrl.searchParams.get('errorMessage')).toBe(
+        'User does not have access to this workspace',
+      );
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
     });
 
     it('refuses an existing account joining through the public invite link', async () => {
