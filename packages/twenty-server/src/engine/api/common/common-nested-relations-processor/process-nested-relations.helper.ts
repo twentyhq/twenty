@@ -201,7 +201,11 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName,
+        // A filtered relation loads the records of the relation it derives from, under its own name
+        sourceFieldName:
+          sourceFieldMetadata.computation?.kind === 'FILTERED_RELATION'
+            ? sourceFieldMetadata.computation.relationFieldName
+            : sourceFieldName,
         fieldMaps,
       });
 

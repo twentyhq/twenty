@@ -100,6 +100,11 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   workspaceId,
   additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
+  // A filtered relation has no inverse field of its own: the relation it derives from is checked with its computation
+  if (isComputedField(universalFlatFieldMetadataToValidate)) {
+    return [];
+  }
+
   const {
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
@@ -193,11 +198,9 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         });
       }
 
-      // A filtered relation borrows the inverse field of the relation it derives from
       if (
-        !isComputedField(universalFlatFieldMetadataToValidate) &&
         targetFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier !==
-          universalFlatFieldMetadataToValidate.universalIdentifier
+        universalFlatFieldMetadataToValidate.universalIdentifier
       ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

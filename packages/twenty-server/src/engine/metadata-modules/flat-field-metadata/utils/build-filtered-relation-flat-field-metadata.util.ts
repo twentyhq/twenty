@@ -9,8 +9,8 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// A filtered relation points to the same related object and inverse field as the relation it derives from,
-// so it loads like any one-to-many relation. Undefined when it derives from no stored one-to-many relation.
+// A filtered relation targets the same object as the relation it derives from and has no inverse field of its own:
+// an inverse field belongs to one relation. Undefined when it derives from no stored one-to-many relation.
 export const buildFilteredRelationFlatFieldMetadata = ({
   commonFlatFieldMetadata,
   relationFieldName,
@@ -21,7 +21,7 @@ export const buildFilteredRelationFlatFieldMetadata = ({
   relationFieldName: string;
   parentFlatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): UniversalFlatFieldMetadata<FieldMetadataType.RELATION> | undefined => {
+}): UniversalFlatFieldMetadata | undefined => {
   const sourceRelationFlatFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
     parentFlatObjectMetadata,
     flatFieldMetadataMaps,
@@ -48,7 +48,6 @@ export const buildFilteredRelationFlatFieldMetadata = ({
     universalSettings: { relationType: RelationType.ONE_TO_MANY },
     relationTargetObjectMetadataUniversalIdentifier:
       sourceRelationFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier:
-      sourceRelationFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier: null,
   };
 };

@@ -274,19 +274,24 @@ describe('Computed fields (e2e)', () => {
 
   afterAll(async () => {
     // Each object has a computed field reading the other, and a field read by a computed field cannot be deleted
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: projectBudgetFieldMetadataId,
-        updatePayload: { isActive: false },
-      },
-    });
-    await deleteOneFieldMetadata({
-      expectToFail: false,
-      input: { idToDelete: projectBudgetFieldMetadataId },
-    });
+    if (projectBudgetFieldMetadataId !== '') {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: projectBudgetFieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: projectBudgetFieldMetadataId },
+      });
+    }
 
-    for (const idToUpdate of [projectObjectMetadataId, taskObjectMetadataId]) {
+    for (const idToUpdate of [
+      projectObjectMetadataId,
+      taskObjectMetadataId,
+    ].filter((objectMetadataId) => objectMetadataId !== '')) {
       await updateOneObjectMetadata({
         expectToFail: false,
         input: { idToUpdate, updatePayload: { isActive: false } },

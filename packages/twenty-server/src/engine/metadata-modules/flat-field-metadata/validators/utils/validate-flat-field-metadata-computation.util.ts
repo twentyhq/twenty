@@ -103,6 +103,16 @@ const assertComputationCanBeEvaluated = ({
       ? undefined
       : findRelatedObject({ computation, object, schemaReader });
 
+  if (
+    computation.kind === 'FILTERED_RELATION' &&
+    relatedObject?.universalIdentifier !==
+      field.relationTargetObjectMetadataUniversalIdentifier
+  ) {
+    throw new ComputedFieldExpressionException(
+      `"${field.name}" must target the same object as "${computation.relationFieldName}"`,
+    );
+  }
+
   for (const {
     expression,
     isEvaluatedOnRelatedRecord,
