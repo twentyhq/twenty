@@ -37,8 +37,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const store = useStore();
 
-  // Extra columns depend on the view type, and nothing else reloads the fields on these switches.
-  // The view is read again since its columns may have changed during the update round trip.
+  // Nothing else reloads the type-dependent fields here; the latest view keeps columns changed meanwhile
   const syncViewFieldsForViewType = useCallback(
     (view: ViewWithRelations, viewType: ViewType) => {
       const latestView =
