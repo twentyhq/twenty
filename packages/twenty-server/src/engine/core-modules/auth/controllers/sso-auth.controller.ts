@@ -254,11 +254,13 @@ export class SsoAuthController {
       const hasInstancePrivileges =
         existingUser.canAccessFullAdminPanel || existingUser.canImpersonate;
 
-      const personalInvitation = await this.findPersonalInvitationForEmail({
-        currentWorkspace,
-        email: payload.email,
-        workspacePersonalInviteToken,
-      });
+      const personalInvitation = isNonEmptyString(workspacePersonalInviteToken)
+        ? await this.authService.findInvitationForSignInUp({
+            currentWorkspace,
+            workspacePersonalInviteToken,
+            email: payload.email,
+          })
+        : undefined;
 
       if (isDefined(personalInvitation) && !hasInstancePrivileges) {
         invitation = personalInvitation;
@@ -328,35 +330,5 @@ export class SsoAuthController {
         AuthProviderEnum.SSO,
       ),
     };
-  }
-
-  private async findPersonalInvitationForEmail({
-    currentWorkspace,
-    email,
-    workspacePersonalInviteToken,
-  }: {
-    currentWorkspace: WorkspaceEntity;
-    email: string;
-    workspacePersonalInviteToken?: string;
-  }): Promise<AppTokenEntity | undefined> {
-    if (!isNonEmptyString(workspacePersonalInviteToken)) {
-      return undefined;
-    }
-
-    const invitation = await this.authService.findInvitationForSignInUp({
-      currentWorkspace,
-      workspacePersonalInviteToken,
-    });
-
-    const invitedEmail = invitation?.context?.email;
-
-    if (
-      !isNonEmptyString(invitedEmail) ||
-      invitedEmail.toLowerCase() !== email.toLowerCase()
-    ) {
-      return undefined;
-    }
-
-    return invitation;
   }
 }
