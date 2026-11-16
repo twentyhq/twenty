@@ -2,7 +2,11 @@ import { isString } from '@sniptt/guards';
 import { type FieldManifest } from 'twenty-shared/application';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  removePropertiesFromRecord,
+} from 'twenty-shared/utils';
 
 import {
   getUnsupportedRelationFieldReason,
@@ -138,7 +142,13 @@ export const fromFlatFieldMetadataToFieldManifest = ({
         }
       : {}),
     ...(isDefined(flatFieldMetadata.computation)
-      ? { computation: flatFieldMetadata.computation }
+      ? {
+          // Bindings are filled by the server on sync, so an export without them round-trips
+          computation: removePropertiesFromRecord(
+            flatFieldMetadata.computation,
+            ['bindings'],
+          ),
+        }
       : {}),
     isNullable: flatFieldMetadata.isNullable,
     isUnique: flatFieldMetadata.isUnique ?? false,

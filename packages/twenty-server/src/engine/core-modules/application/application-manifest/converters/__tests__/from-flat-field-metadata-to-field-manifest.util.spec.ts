@@ -232,6 +232,26 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
   });
 
+  it('should export a computation without the bindings the server fills on sync', () => {
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      type: FieldMetadataType.NUMBER,
+      computation: {
+        kind: 'FORMULA',
+        expression: 'budget * 2',
+        bindings: { budget: TARGET_FIELD_UID },
+      },
+    });
+
+    expect(
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }).computation,
+    ).toEqual({ kind: 'FORMULA', expression: 'budget * 2' });
+  });
+
   it('should export the base values of an option a workspace overrides', () => {
     const optionUniversalIdentifier = '77777777-7777-4777-8777-777777777777';
     const flatFieldMetadata = getFlatFieldMetadataMock({

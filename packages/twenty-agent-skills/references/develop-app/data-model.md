@@ -142,7 +142,7 @@ computation: {
 },
 ```
 
-Expressions reference fields by name: `amount.amountMicros` for a composite sub-field, `company.name` for a field of a to-one relation, and other computed fields by their name. A value is null when its reader cannot read a field or object it uses. A field that a row-level permission rule hides on some records reads as empty on those records. A field read by a computed field cannot be deleted; renaming it updates the computed field.
+Expressions reference fields by name: `amount.amountMicros` for a composite sub-field, `company.name` for a field of a to-one relation (its id is `company.id`, not `companyId`), and other computed fields by their name. A value is null when its reader cannot read a field or object it uses. A field that a row-level permission rule hides on some records reads as empty on those records. A field read by a computed field cannot be deleted; renaming it updates the computed field.
 
 ## Roles And Permissions
 

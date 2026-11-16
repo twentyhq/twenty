@@ -31,24 +31,6 @@ export const resolveComputedFieldPathOrThrow = <
   const readablePath = path.join('.');
   const [fieldName, ...remainingPath] = path;
 
-  const toOneRelationFieldOfJoinColumn =
-    schemaReader.findToOneRelationFieldByJoinColumnName(object, fieldName);
-
-  if (isDefined(toOneRelationFieldOfJoinColumn)) {
-    if (remainingPath.length > 0) {
-      throw new ComputedFieldExpressionException(
-        `"${readablePath}" reads past the id "${fieldName}"`,
-      );
-    }
-
-    return {
-      toOneRelationHops: [],
-      field: toOneRelationFieldOfJoinColumn,
-      columnName: fieldName,
-      columnType: FieldMetadataType.UUID,
-    };
-  }
-
   const field = schemaReader.findFieldByName(object, fieldName);
 
   if (!isDefined(field)) {

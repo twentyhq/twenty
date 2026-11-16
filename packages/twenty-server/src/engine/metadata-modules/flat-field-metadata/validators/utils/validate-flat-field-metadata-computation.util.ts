@@ -1,68 +1,15 @@
 import { msg } from '@lingui/core/macro';
-import {
-  isNonEmptyString,
-  isNumber,
-  isString,
-  isUndefined,
-} from '@sniptt/guards';
-import { FIELD_METADATA_ROLLUP_OPERATIONS } from 'twenty-shared/constants';
-import {
-  type FieldMetadataComputation,
-  OrderByDirection,
-} from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import isEqual from 'lodash.isequal';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/universal-computed-field-schema-reader.type';
+import { computeComputedFieldBindings } from 'src/engine/metadata-modules/computed-field/utils/compute-computed-field-bindings.util';
+import { isFieldMetadataComputation } from 'src/engine/metadata-modules/computed-field/utils/is-field-metadata-computation.util';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { getComputedFieldEvaluationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/get-computed-field-evaluation-error.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-
-const isOptionalString = (value: unknown): value is string | undefined =>
-  isUndefined(value) || isString(value);
-
-// The computation comes from an API input or a manifest: nothing about its shape is known yet
-const isFieldMetadataComputation = (
-  computation: unknown,
-): computation is FieldMetadataComputation => {
-  if (!isPlainObject(computation)) {
-    return false;
-  }
-
-  switch (computation.kind) {
-    case 'FORMULA':
-      return isString(computation.expression);
-    case 'ROLLUP':
-      return (
-        isNonEmptyString(computation.relationFieldName) &&
-        (FIELD_METADATA_ROLLUP_OPERATIONS as readonly unknown[]).includes(
-          computation.operation,
-        ) &&
-        isOptionalString(computation.expression) &&
-        isOptionalString(computation.filter)
-      );
-    case 'FILTERED_RELATION':
-      return (
-        isNonEmptyString(computation.relationFieldName) &&
-        isOptionalString(computation.filter) &&
-        (isUndefined(computation.orderBy) ||
-          (Array.isArray(computation.orderBy) &&
-            computation.orderBy.every(
-              (sort) =>
-                isPlainObject(sort) &&
-                Object.values(sort).every((direction) =>
-                  (Object.values(OrderByDirection) as unknown[]).includes(
-                    direction,
-                  ),
-                ),
-            ))) &&
-        (isUndefined(computation.limit) || isNumber(computation.limit))
-      );
-    default:
-      return false;
-  }
-};
 
 export const validateFlatFieldMetadataComputation = ({
   flatFieldMetadataToValidate,
@@ -118,5 +65,25 @@ export const validateFlatFieldMetadataComputation = ({
     findObject,
   });
 
-  return isDefined(evaluationError) ? buildError(evaluationError) : [];
+  if (isDefined(evaluationError)) {
+    return buildError(evaluationError);
+  }
+
+  const object = findObject(
+    flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
+  );
+
+  if (
+    isDefined(object) &&
+    !isEqual(
+      computation.bindings,
+      computeComputedFieldBindings({ computation, object, schemaReader }),
+    )
+  ) {
+    return buildError(
+      'its bindings are not the fields it reads; they are filled when the field is saved',
+    );
+  }
+
+  return [];
 };
