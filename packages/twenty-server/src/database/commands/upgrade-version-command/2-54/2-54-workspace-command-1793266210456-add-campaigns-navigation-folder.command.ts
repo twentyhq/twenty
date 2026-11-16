@@ -99,9 +99,9 @@ export class AddCampaignsNavigationFolderCommand extends ProvisionedWorkspaceCom
       createStandardNavigationMenuItemFolderItemFlatMetadata({
         universalIdentifier: folderItemDefinition.universalIdentifier,
         viewUniversalIdentifier: folderItemDefinition.viewUniversalIdentifier,
-        parentId: folder.id,
-        parentUniversalIdentifier:
-          folderItemDefinition.parentUniversalIdentifier,
+        folderId: folder.id,
+        folderUniversalIdentifier:
+          folderItemDefinition.folderUniversalIdentifier,
         position: folderItemDefinition.position,
         navigationMenuItemId: v4(),
         workspaceId,

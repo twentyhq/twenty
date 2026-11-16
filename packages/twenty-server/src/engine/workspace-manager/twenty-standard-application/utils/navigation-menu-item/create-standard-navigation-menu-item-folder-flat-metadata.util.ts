@@ -66,8 +66,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
   nativePageKey,
-  parentId,
-  parentUniversalIdentifier,
+  folderId,
+  folderUniversalIdentifier,
   position,
   navigationMenuItemId,
   workspaceId,
@@ -78,8 +78,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier: string;
   viewUniversalIdentifier?: string;
   nativePageKey?: NativePageKey;
-  parentId: string;
-  parentUniversalIdentifier: string;
+  folderId: string;
+  folderUniversalIdentifier: string;
   position: number;
   navigationMenuItemId: string;
   workspaceId: string;
@@ -119,8 +119,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
       flatView?.objectMetadataUniversalIdentifier ?? null,
     viewId: null,
     viewUniversalIdentifier: null,
-    parentId,
-    parentUniversalIdentifier,
+    parentId: folderId,
+    parentUniversalIdentifier: folderUniversalIdentifier,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     agentChatChannelId: null,
