@@ -64,6 +64,7 @@ export const publishAppToServer = async ({
       message: `Uploading ${packedApp.name}@${packedApp.version} to ${target.apiUrl}…`,
     });
     const status = await putUploadFile({
+      target,
       uploadUrl: upload.uploadUrl,
       contentType: upload.contentType,
       bytes: await openAsBlob(packedApp.path),

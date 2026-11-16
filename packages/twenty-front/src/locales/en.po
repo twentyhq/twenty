@@ -181,6 +181,7 @@ msgstr "(selected: {selectedIconKey})"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "[empty string]"
 msgstr "[empty string]"
 
@@ -222,13 +223,13 @@ msgstr "{0, plural, one {{years} year} other {{years} years}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {# chat selected} other {# chats selected}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# chat} other {# chats}}"
 
@@ -361,7 +362,7 @@ msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't
 msgstr "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
 
 #. js-lingui-id: 2UOALe
-#. placeholder {0}: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[preset.avatarShape])
+#. placeholder {0}: t(AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS[preset.avatarShape])
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
@@ -463,7 +464,7 @@ msgstr "{0} retries"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -576,7 +577,7 @@ msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}
 msgstr "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
 
 #. js-lingui-id: lhr2m3
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentNewRoleDraftEffect.tsx
 msgid "{agentLabel} Agent Role"
 msgstr "{agentLabel} Agent Role"
 
@@ -663,6 +664,11 @@ msgstr "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgid "{channelName} is disconnected."
 msgstr "{channelName} is disconnected."
 
+#. js-lingui-id: 3gdGx+
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
+msgid "{connectionProviderDisplayName} connected"
+msgstr "{connectionProviderDisplayName} connected"
+
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -733,11 +739,6 @@ msgstr "{dayOfMonthDescription} and {dayOfWeekDescription}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} day} other {{days} days}}"
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr "{daysLeft, plural, one {# day left} other {# days left}}"
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -754,6 +755,11 @@ msgstr "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {examp
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 
+#. js-lingui-id: ANUXpJ
+#: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
+msgid "{details} · Paused"
+msgstr "{details} · Paused"
+
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -769,6 +775,11 @@ msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{fo
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji} by {reactorNames}"
+
+#. js-lingui-id: 1u0J17
+#: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
+msgid "{emoji} by {reactors}"
+msgstr "{emoji} by {reactors}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -1046,6 +1057,16 @@ msgstr "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Camp
 msgid "{queuedMessage}, skipping {skipReasons}"
 msgstr "{queuedMessage}, skipping {skipReasons}"
 
+#. js-lingui-id: SmbuF4
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+
+#. js-lingui-id: ociapy
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
+msgstr "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
+
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
@@ -1092,15 +1113,15 @@ msgstr "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 
-#. js-lingui-id: Mkqwbv
+#. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
-msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr "{runCount, plural, one {# run} other {# runs}}"
+msgid "{runCount, plural, one {# turn} other {# turns}}"
+msgstr "{runCount, plural, one {# turn} other {# turns}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1148,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} records selected · {skippedCount} records skipped"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} selected"
 
@@ -1158,7 +1179,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} options"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1266,6 +1287,11 @@ msgstr "{unitCount, plural, one {Year} other {Years}}"
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
 msgstr "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+
+#. js-lingui-id: rU6wAU
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
+msgstr "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1627,6 +1653,11 @@ msgstr "A form opens for the person who launches the workflow and is filled in o
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "A message can have up to {maxAttachmentCount} files"
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1848,6 +1879,7 @@ msgstr "Account settings"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -1927,6 +1959,7 @@ msgstr "Actions users can perform on this object"
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -1960,8 +1993,6 @@ msgid "Activating..."
 msgstr "Activating..."
 
 #. js-lingui-id: F6pfE9
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -2087,7 +2118,7 @@ msgid "Add a recipient before sending"
 msgstr "Add a recipient before sending"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Add a recipient or a channel before sending."
 
@@ -2212,7 +2243,7 @@ msgid "Add CC"
 msgstr "Add CC"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Add channel"
 
@@ -2275,12 +2306,6 @@ msgstr "Add Custom Provider"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
 msgstr "Add details for guests"
-
-#. Abbreviation of add direct message, sidebar button
-#. js-lingui-id: An/Fke
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-msgid "Add DM"
-msgstr "Add DM"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -2501,11 +2526,6 @@ msgstr "Add reaction"
 msgid "Add recipient"
 msgstr "Add recipient"
 
-#. js-lingui-id: pCK4rY
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Add record trigger"
-msgstr "Add record trigger"
-
 #. js-lingui-id: AmiJYR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -2553,11 +2573,6 @@ msgstr "Add rule"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
 msgstr "Add rule group"
-
-#. js-lingui-id: pM+R6K
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Add schedule"
-msgstr "Add schedule"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2629,7 +2644,7 @@ msgid "Add to Favorite"
 msgstr "Add to Favorite"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Add to favorites"
 
@@ -2643,6 +2658,12 @@ msgstr "Add to List"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 msgid "Add topic"
 msgstr "Add topic"
+
+#. js-lingui-id: tVVIF0
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Add trigger"
+msgstr "Add trigger"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2863,6 +2884,7 @@ msgstr "Administrators"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Advanced"
 
@@ -2927,11 +2949,12 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
-#: src/pages/object-core/AgentCoreShowPage.tsx
 msgid "Agent"
 msgstr "Agent"
 
@@ -2944,6 +2967,16 @@ msgstr "Agent · its model isn't allowed by these settings"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Agent configuration"
 msgstr "Agent configuration"
+
+#. js-lingui-id: tIhTfo
+#: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
+msgid "Agent name cannot be empty"
+msgstr "Agent name cannot be empty"
+
+#. js-lingui-id: VY/7j2
+#: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
+msgid "Agent name must contain letters or numbers"
+msgstr "Agent name must contain letters or numbers"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -2960,10 +2993,10 @@ msgstr "Agent roles"
 msgid "Agent run"
 msgstr "Agent run"
 
-#. js-lingui-id: Wfy3rU
+#. js-lingui-id: aeu9gE
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-msgid "Agent settings"
-msgstr "Agent settings"
+msgid "Agent sections"
+msgstr "Agent sections"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2972,7 +3005,10 @@ msgstr "Agent Web Search"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -3265,7 +3301,7 @@ msgid "All {objectLabelPlural}"
 msgstr "All {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "All actions"
 
@@ -3295,8 +3331,8 @@ msgid "All applications"
 msgstr "All applications"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "All channels"
 
@@ -3304,6 +3340,11 @@ msgstr "All channels"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "All Companies"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "All conversations"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3406,12 +3447,18 @@ msgstr "All reasons"
 msgid "all records"
 msgstr "all records"
 
+#. js-lingui-id: rAUKN+
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "All records"
+msgstr "All records"
+
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "All roles"
 
 #. js-lingui-id: 2ls1gc
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All settings"
 msgstr "All settings"
@@ -3668,6 +3715,7 @@ msgstr "An error occurred while uploading the picture."
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3800,6 +3848,7 @@ msgstr "API calls"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions.ts
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "API key"
 msgstr "API key"
 
@@ -3934,6 +3983,11 @@ msgstr "App logs"
 msgid "App Operation"
 msgstr "App Operation"
 
+#. js-lingui-id: 7f2JWJ
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
+msgid "App owner workspace"
+msgstr "App owner workspace"
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -4030,6 +4084,7 @@ msgstr "application variable"
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -4151,7 +4206,7 @@ msgid "Arabic"
 msgstr "Arabic"
 
 #. js-lingui-id: DzER9P
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Arch"
 msgstr "Arch"
 
@@ -4409,7 +4464,7 @@ msgid "Assignable to Workspace Members"
 msgstr "Assignable to Workspace Members"
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Assigned"
 
@@ -4424,7 +4479,7 @@ msgid "Assigned to"
 msgstr "Assigned to"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Assigned to me"
 
@@ -4444,8 +4499,8 @@ msgid "Assignment"
 msgstr "Assignment"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Assistant"
 
@@ -4548,6 +4603,7 @@ msgid "Attach file"
 msgstr "Attach file"
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -4780,6 +4836,13 @@ msgstr "Automatically upgrade this application when a new version is published"
 msgid "Automation and AI"
 msgstr "Automation and AI"
 
+#. js-lingui-id: EF+M0w
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+msgid "Automations"
+msgstr "Automations"
+
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Automations that run on triggers"
@@ -4807,6 +4870,7 @@ msgid "Available times"
 msgstr "Available times"
 
 #. js-lingui-id: kfcRb0
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
@@ -4818,6 +4882,12 @@ msgstr "Avatar"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Average"
 msgstr "Average"
+
+#. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Avg duration"
+msgstr "Avg duration"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -4865,7 +4935,7 @@ msgid "Back to customization"
 msgstr "Back to customization"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Back to inbox"
 
@@ -4902,6 +4972,16 @@ msgstr "Background Colors"
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
 msgid "Backspace"
 msgstr "Backspace"
+
+#. js-lingui-id: M2cci0
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Backup codes"
+msgstr "Backup codes"
+
+#. js-lingui-id: 6kNBNT
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Backup codes copied to clipboard"
+msgstr "Backup codes copied to clipboard"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -5320,8 +5400,8 @@ msgid "Bundled with {applicationName}"
 msgstr "Bundled with {applicationName}"
 
 #. js-lingui-id: /blpUq
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Burst"
 msgstr "Burst"
 
@@ -5615,6 +5695,11 @@ msgstr "Campaign unscheduled and back in your drafts"
 msgid "Can't scan? Copy the"
 msgstr "Can't scan? Copy the"
 
+#. js-lingui-id: ztvhPH
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Can't see"
+msgstr "Can't see"
+
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "Canada"
@@ -5624,6 +5709,7 @@ msgstr "Canada"
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5664,6 +5750,12 @@ msgstr "Cancel credit pack switching"
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
 msgid "Cancel credit pack switching?"
 msgstr "Cancel credit pack switching?"
+
+#. js-lingui-id: HYLdMN
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
+msgid "Cancel Edition"
+msgstr "Cancel Edition"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5733,7 +5825,7 @@ msgstr "Canceled at"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Cancelled"
 
@@ -5882,7 +5974,7 @@ msgid "Cell controls"
 msgstr "Cell controls"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Change"
 
@@ -5891,6 +5983,11 @@ msgstr "Change"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Change assignee"
 msgstr "Change assignee"
+
+#. js-lingui-id: VyTYmS
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
+msgid "Change avatar"
+msgstr "Change avatar"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5978,13 +6075,13 @@ msgid "Channel"
 msgstr "Channel"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Channel name"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Channel options"
 
@@ -5994,8 +6091,8 @@ msgid "channel role"
 msgstr "channel role"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Channels"
@@ -6018,7 +6115,7 @@ msgid "Chat actions"
 msgstr "Chat actions"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Chat channels this role reads and replies in"
 
@@ -6035,7 +6132,7 @@ msgid "Chat details"
 msgstr "Chat details"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Chat name"
 
@@ -6045,7 +6142,7 @@ msgid "Chat Sessions"
 msgstr "Chat Sessions"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat stopped: no more available credits."
 
@@ -6274,7 +6371,7 @@ msgid "Choose icon"
 msgstr "Choose icon"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Choose icon and color"
@@ -6375,7 +6472,7 @@ msgid "Choose your preferences for the apps installed on your workspace by the a
 msgstr "Choose your preferences for the apps installed on your workspace by the admin"
 
 #. js-lingui-id: 7xMmki
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Circle"
 msgstr "Circle"
 
@@ -6461,6 +6558,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -6478,8 +6576,8 @@ msgid "Clear search, go back, or close"
 msgstr "Clear search, go back, or close"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Clear selection"
@@ -6615,7 +6713,7 @@ msgstr "Clipboard requires a secure connection (HTTPS). Please access this app o
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Close"
@@ -6671,7 +6769,7 @@ msgid "Closes in 6 days"
 msgstr "Closes in 6 days"
 
 #. js-lingui-id: XLMJ7O
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cloud"
 msgstr "Cloud"
 
@@ -6681,7 +6779,7 @@ msgid "Cloudflare may expect a name relative to the zone rather than the full ho
 msgstr "Cloudflare may expect a name relative to the zone rather than the full hostname; avoid appending the domain twice. Show me the proposed changes and ask for confirmation before saving them."
 
 #. js-lingui-id: ExH3eu
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Clover"
 msgstr "Clover"
 
@@ -6775,6 +6873,7 @@ msgstr "collapse"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Collapse"
 msgstr "Collapse"
 
@@ -6807,6 +6906,7 @@ msgstr "collapsible"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
@@ -6924,6 +7024,11 @@ msgstr "Commands copied to clipboard"
 msgid "Commas and dot"
 msgstr "Commas and dot"
 
+#. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Comment"
+msgstr "Comment"
+
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -6974,9 +7079,15 @@ msgid "Compare plans"
 msgstr "Compare plans"
 
 #. js-lingui-id: amPBVF
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Compensation"
 msgstr "Compensation"
+
+#. js-lingui-id: 63EmVV
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Compensation for the October outage"
+msgstr "Compensation for the October outage"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -6998,6 +7109,7 @@ msgstr "completed"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7046,10 +7158,15 @@ msgid "Computed at"
 msgstr "Computed at"
 
 #. js-lingui-id: wpT1VN
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
 msgstr "Condition"
+
+#. js-lingui-id: jZ2sd2
+#: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
+msgid "Condition (Optional)"
+msgstr "Condition (Optional)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7291,10 +7408,25 @@ msgstr "Confirm upgrade"
 msgid "Confirming your payment"
 msgstr "Confirming your payment"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr "Connect"
+
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr "Connect {appName} to {workspaceName}"
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
 msgstr "Connect {appName} to your account"
+
+#. js-lingui-id: ZdoGKt
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Connect {connectionProviderDisplayName}"
+msgstr "Connect {connectionProviderDisplayName}"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7432,7 +7564,7 @@ msgid "Connection successfully updated"
 msgstr "Connection successfully updated"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Connection to the assistant was lost. Reload to see the response."
 
@@ -7596,8 +7728,8 @@ msgstr "Control which types of entities this role can be assigned to"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7614,7 +7746,7 @@ msgid "Conversation key"
 msgstr "Conversation key"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Conversation list"
 
@@ -7624,12 +7756,12 @@ msgid "Conversation title"
 msgstr "Conversation title"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Conversations"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Conversations in this channel will appear here."
 
@@ -7639,7 +7771,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Conversations linked to this record will appear here."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Conversations you can open will appear here."
 
@@ -7650,7 +7782,7 @@ msgid "Cook"
 msgstr "Cook"
 
 #. js-lingui-id: SB9yVb
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cookie"
 msgstr "Cookie"
 
@@ -7676,6 +7808,7 @@ msgstr "Copies a Cloudflare setup prompt for your AI coding tool"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
@@ -7913,8 +8046,13 @@ msgstr "Could not load preview."
 msgid "Could not load related records"
 msgstr "Could not load related records"
 
+#. js-lingui-id: 3167/q
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
+msgid "Could not load run insights"
+msgstr "Could not load run insights"
+
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Could not load runs"
 msgstr "Could not load runs"
 
@@ -7927,6 +8065,11 @@ msgstr "Could not load this workflow version."
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
 msgstr "Could not load this workflow."
+
+#. js-lingui-id: 6UPqqs
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Could not load turns"
+msgstr "Could not load turns"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8144,6 +8287,7 @@ msgstr "create"
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
+#: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create"
 msgstr "Create"
 
@@ -8159,6 +8303,16 @@ msgstr "Create {0}"
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
 msgstr "Create {objectLabelSingular}"
+
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr "Create {recordCount} {objectLabel}"
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr "Create {selectedCount}"
 
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
@@ -8186,11 +8340,6 @@ msgstr "Create a record"
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions.ts
 msgid "Create a relation with other objects"
 msgstr "Create a relation with other objects"
-
-#. js-lingui-id: ZITKtg
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
-msgid "Create a role to define permissions for this agent."
-msgstr "Create a role to define permissions for this agent."
 
 #. js-lingui-id: OW4ZDC
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -8227,6 +8376,12 @@ msgstr "Create a Workflow to automate your work."
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Create a workspace"
+
+#. js-lingui-id: TgkHRS
+#: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
+#: src/pages/object-core/AgentCoreIndexPage.tsx
+msgid "Create Agent"
+msgstr "Create Agent"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -8336,6 +8491,11 @@ msgstr "Create record"
 msgid "Create Record"
 msgstr "Create Record"
 
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
@@ -8348,7 +8508,6 @@ msgid "Create related"
 msgstr "Create related"
 
 #. js-lingui-id: RoyYUE
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "Create Role"
@@ -8413,7 +8572,6 @@ msgstr "Create, edit, and delete workspace views"
 
 #. js-lingui-id: d+F6q9
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
@@ -8450,11 +8608,6 @@ msgstr "Created object <0>{subscriptionsLabel}</0>"
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Created on {0}"
 msgstr "Created on {0}"
-
-#. js-lingui-id: esG9lm
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Created or updated"
-msgstr "Created or updated"
 
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
@@ -8569,7 +8722,8 @@ msgstr "credits"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -8577,6 +8731,11 @@ msgstr "credits"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Credits"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr "Credits · 14d"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8612,6 +8771,11 @@ msgstr "credits available during the trial period"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Credits handed out on top of the plan allowance. They stay spendable until used up."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr "Credits per day"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -8656,11 +8820,6 @@ msgstr "Cron (Custom)"
 #: src/utils/cron-to-human/utils/parseCronExpression.ts
 msgid "Cron expression is required"
 msgstr "Cron expression is required"
-
-#. js-lingui-id: 0KivXX
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Cron pattern"
-msgstr "Cron pattern"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -9072,7 +9231,6 @@ msgid "Daily, kept 30 days"
 msgstr "Daily, kept 30 days"
 
 #. js-lingui-id: Zz6Cxn
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -9116,6 +9274,7 @@ msgid "Dashboard widget"
 msgstr "Dashboard widget"
 
 #. js-lingui-id: HKH+W+
+#: src/modules/object-core/agents/components/CoreAgentTriggerTypeList.tsx
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -9123,6 +9282,11 @@ msgstr "Dashboard widget"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Data"
 msgstr "Data"
+
+#. js-lingui-id: PDNS5Z
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Data access"
+msgstr "Data access"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9334,6 +9498,7 @@ msgid "Days between triggers"
 msgstr "Days between triggers"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9519,6 +9684,8 @@ msgstr "delete"
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
@@ -9570,7 +9737,7 @@ msgid "Delete"
 msgstr "Delete"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "Delete {channelName}?"
 
@@ -9578,6 +9745,11 @@ msgstr "Delete {channelName}?"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
 msgstr "Delete {fieldLabel} field?"
+
+#. js-lingui-id: 2zz1P3
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete {numberOfCoreAgents} agents?"
+msgstr "Delete {numberOfCoreAgents} agents?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9599,10 +9771,20 @@ msgstr "Delete {objectLabel} object?"
 msgid "Delete {objectLabelPlural}"
 msgstr "Delete {objectLabelPlural}"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr "Delete {recordCount} {objectLabel}"
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "Delete {relationObjectLabelSingular}"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr "Delete {selectedCount}"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9644,12 +9826,38 @@ msgstr "Delete account and synced data"
 msgid "Delete account and synced data?"
 msgstr "Delete account and synced data?"
 
+#. js-lingui-id: 3F2bUD
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agent"
+msgstr "Delete agent"
+
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agent"
 msgstr "Delete Agent"
+
+#. js-lingui-id: 7j7Dud
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agent?"
+msgstr "Delete agent?"
+
+#. js-lingui-id: 3TMVdm
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agents"
+msgstr "Delete agents"
+
+#. js-lingui-id: 76cXD3
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Delete Agents"
+msgstr "Delete Agents"
+
+#. js-lingui-id: k2+blJ
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Delete all records"
+msgstr "Delete all records"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -9663,9 +9871,9 @@ msgid "Delete app"
 msgstr "Delete app"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Delete channel"
 
@@ -9718,6 +9926,12 @@ msgstr "Delete level"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Delete limit"
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr "Delete message"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -9773,11 +9987,6 @@ msgstr "Delete row"
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Delete Skill"
-
-#. js-lingui-id: DgHnjS
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Delete this agent"
-msgstr "Delete this agent"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -9883,7 +10092,6 @@ msgstr "Delete your whole workspace"
 
 #. js-lingui-id: vGjmyl
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/object-record/record-group/components/RecordGroupRelationChip.tsx
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 #: src/modules/object-record/record-show/utils/getRecordGroupByValueLabel.ts
@@ -9974,6 +10182,7 @@ msgstr "Describe what you want the AI to do..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentOverview.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10022,6 +10231,11 @@ msgstr "Desktop"
 msgid "destroy"
 msgstr "destroy"
 
+#. js-lingui-id: 2xxBws
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Destroy"
+msgstr "Destroy"
+
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Destroy {objectLabel}"
@@ -10031,6 +10245,11 @@ msgstr "Destroy {objectLabel}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Destroy {objectLabelPlural}"
 msgstr "Destroy {objectLabelPlural}"
+
+#. js-lingui-id: ud791S
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Destroy all records"
+msgstr "Destroy all records"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10148,6 +10367,16 @@ msgstr "Dictation is not supported in this browser."
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
 msgstr "Direct message pair identity"
+
+#. js-lingui-id: 23aX1b
+#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+msgid "Direct messages"
+msgstr "Direct messages"
+
+#. js-lingui-id: Rz4s9r
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
+msgid "Direct messages don't support attachments."
+msgstr "Direct messages don't support attachments."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10299,9 +10528,7 @@ msgstr "Divider"
 msgid "DMARC policy"
 msgstr "DMARC policy"
 
-#. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
-#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "DMs"
@@ -10406,12 +10633,12 @@ msgid "Don't import events marked as private"
 msgstr "Don't import events marked as private"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Done"
@@ -10455,6 +10682,7 @@ msgstr "Downgrade to monthly"
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Download"
 msgstr "Download"
@@ -10516,6 +10744,7 @@ msgid "Draft an email to this company about "
 msgstr "Draft an email to this company about "
 
 #. js-lingui-id: DbAw4C
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Draft email"
@@ -10602,7 +10831,8 @@ msgid "Duplicate widget"
 msgstr "Duplicate widget"
 
 #. js-lingui-id: lkz6PL
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -10708,7 +10938,7 @@ msgid "Each slice represents"
 msgstr "Each slice represents"
 
 #. js-lingui-id: 5oD9f/
-#: src/modules/ai/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupThreadsByDate.ts
 msgid "Earlier"
 msgstr "Earlier"
 
@@ -10745,6 +10975,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #. js-lingui-id: ePK91l
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -10758,6 +10989,11 @@ msgstr "eddy@gmail.com, @apple.com"
 msgid "Edit"
 msgstr "Edit"
 
+#. js-lingui-id: Fw7UIN
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Edit {label}, {description}"
+msgstr "Edit {label}, {description}"
+
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
@@ -10767,6 +11003,12 @@ msgstr "Edit {objectLabel}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Edit {objectLabelPlural}"
 msgstr "Edit {objectLabelPlural}"
+
+#. js-lingui-id: GsbKaa
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Edit access"
+msgstr "Edit access"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10780,6 +11022,11 @@ msgstr "Edit Account"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Edit actions"
 msgstr "Edit actions"
+
+#. js-lingui-id: Q0ytOP
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Edit all records"
+msgstr "Edit all records"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -10859,6 +11106,12 @@ msgstr "Edit link"
 msgid "Edit linked records"
 msgstr "Edit linked records"
 
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr "Edit message"
+
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Edit navigation"
@@ -10928,6 +11181,12 @@ msgstr "Edit tab icon"
 msgid "Edit this HTML in the block settings panel."
 msgstr "Edit this HTML in the block settings panel."
 
+#. js-lingui-id: fVQaN/
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Edit tools"
+msgstr "Edit tools"
+
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -10984,7 +11243,7 @@ msgid "else if"
 msgstr "else if"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -11260,6 +11519,7 @@ msgstr "Employees"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -11283,6 +11543,7 @@ msgstr "Empty"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Array"
 msgstr "Empty Array"
 
@@ -11301,6 +11562,7 @@ msgstr "Empty Array"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Object"
 msgstr "Empty Object"
 
@@ -11411,8 +11673,14 @@ msgstr "Endpoint URL"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr "Ends"
+
+#. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Ends (optional)"
+msgstr "Ends (optional)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11530,11 +11798,6 @@ msgstr "Enter a valid URL"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
 msgstr "Enter a value to store in database"
-
-#. js-lingui-id: P/e64M
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Enter agent name*"
-msgstr "Enter agent name*"
 
 #. js-lingui-id: lU5cVU
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -11679,6 +11942,11 @@ msgstr "Enter number greater than 1"
 msgid "Enter offset"
 msgstr "Enter offset"
 
+#. js-lingui-id: lRIswr
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
+msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+msgstr "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line"
@@ -11689,13 +11957,18 @@ msgstr "Enter one option per line"
 msgid "Enter one option per line. Each line will become a new option."
 msgstr "Enter one option per line. Each line will become a new option."
 
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+msgstr "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Enter phone number"
 msgstr "Enter phone number"
 
 #. js-lingui-id: xCiJkz
-#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepTestVariableInput.tsx
 msgid "Enter test value"
 msgstr "Enter test value"
 
@@ -11730,16 +12003,6 @@ msgstr "Enter the infos to set the connection"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Enter the message to post"
 msgstr "Enter the message to post"
-
-#. js-lingui-id: lZC0Js
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-
-#. js-lingui-id: 3EF9HN
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Enter the system prompt that defines this agent's behavior and capabilities"
-msgstr "Enter the system prompt that defines this agent's behavior and capabilities"
 
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -11781,7 +12044,7 @@ msgstr "Enter your text"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Enter your two-factor authentication code to confirm."
 
@@ -11841,6 +12104,7 @@ msgstr "Erasure of soft-deleted records"
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -12057,7 +12321,6 @@ msgstr "Evaluation"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -12130,7 +12393,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "every {stepNumStr} months, between {startMonth} and {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Every channel, including the ones created later"
 
@@ -12359,6 +12622,7 @@ msgstr "Exit import flow"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Expand"
 msgstr "Expand"
 
@@ -12594,7 +12858,8 @@ msgstr "Face"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12611,6 +12876,11 @@ msgstr "Face"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Failed"
 msgstr "Failed"
+
+#. js-lingui-id: GUHLDy
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failed · 14d"
+msgstr "Failed · 14d"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -12722,6 +12992,11 @@ msgstr "Failed to create unsubscribe topic."
 msgid "Failed to create workflow"
 msgstr "Failed to create workflow"
 
+#. js-lingui-id: qzWRef
+#: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
+msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
+msgstr "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -12812,6 +13087,11 @@ msgstr "Failed to finalize logo upload"
 msgid "Failed to generate a recovery code."
 msgstr "Failed to generate a recovery code."
 
+#. js-lingui-id: 3YKuoA
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Failed to generate backup codes."
+msgstr "Failed to generate backup codes."
+
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "Failed to get response"
@@ -12845,7 +13125,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Failed to link the related records to this event"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Failed to load agent details."
 
@@ -12971,11 +13251,6 @@ msgstr "Failed to save behavior settings. Try again."
 msgid "Failed to save layout customization"
 msgstr "Failed to save layout customization"
 
-#. js-lingui-id: y3HIOa
-#: src/modules/object-core/agents/hooks/useCoreAgentSave.ts
-msgid "Failed to save role permissions: {errorMessage}"
-msgstr "Failed to save role permissions: {errorMessage}"
-
 #. js-lingui-id: bH624/
 #: src/modules/settings/applications/hooks/useApplicationVariablesDraft.ts
 msgid "Failed to save the app settings."
@@ -12992,6 +13267,7 @@ msgid "Failed to send campaign"
 msgstr "Failed to send campaign"
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -13143,6 +13419,11 @@ msgstr "Failed to upload file: {fileName}"
 msgid "Failed to upload picture"
 msgstr "Failed to upload picture"
 
+#. js-lingui-id: D98pOW
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failure rate"
+msgstr "Failure rate"
+
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Failure Rate"
@@ -13182,7 +13463,7 @@ msgid "Fast"
 msgstr "Fast"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favorites"
@@ -13339,12 +13620,8 @@ msgstr "Field-level permissions"
 msgid "Fields"
 msgstr "Fields"
 
-#. js-lingui-id: K0tSFR
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Fields (optional)"
-msgstr "Fields (optional)"
-
 #. js-lingui-id: oy3EF7
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
@@ -13517,6 +13794,11 @@ msgstr "Fill with sample input from"
 msgid "Filter"
 msgstr "Filter"
 
+#. js-lingui-id: ndNAzG
+#: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
+msgid "Filter agents"
+msgstr "Filter agents"
+
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Filter applications"
@@ -13538,10 +13820,15 @@ msgid "Filter by record ID"
 msgstr "Filter by record ID"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filter chats"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr "Filter conversations"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -13724,13 +14011,14 @@ msgid "Fix the payment issue to restore your premium features."
 msgstr "Fix the payment issue to restore your premium features."
 
 #. js-lingui-id: ylQd2j
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Flow"
 msgstr "Flow"
 
 #. js-lingui-id: abEdHK
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Flower"
 msgstr "Flower"
 
@@ -13856,8 +14144,10 @@ msgid "Formats"
 msgstr "Formats"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
+#: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
 msgid "Former member"
 msgstr "Former member"
 
@@ -14111,7 +14401,7 @@ msgid "GDPR"
 msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Gem"
 msgstr "Gem"
 
@@ -14122,6 +14412,7 @@ msgstr "Gemini CLI"
 
 #. js-lingui-id: Weq9zb
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -14172,16 +14463,32 @@ msgstr "Generate a recovery code"
 msgid "Generate a signed copy in one click"
 msgstr "Generate a signed copy in one click"
 
+#. js-lingui-id: yf0GMx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate backup codes"
+msgstr "Generate backup codes"
+
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
 msgstr "Generate code"
+
+#. js-lingui-id: c63Wy6
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate codes"
+msgstr "Generate codes"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate DPA"
 msgstr "Generate DPA"
+
+#. js-lingui-id: P2msE+
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate new codes"
+msgstr "Generate new codes"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -14245,6 +14552,7 @@ msgstr "Gets this record only: their role can't access {objectLabelPlural}"
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14252,6 +14560,7 @@ msgid "Getting started"
 msgstr "Getting started"
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr "Getting started progress"
@@ -14758,7 +15067,7 @@ msgid "Help improve Twenty"
 msgstr "Help improve Twenty"
 
 #. js-lingui-id: tIb8bD
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Hexagon"
 msgstr "Hexagon"
 
@@ -14857,7 +15166,7 @@ msgid "Hide hidden groups"
 msgstr "Hide hidden groups"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Hide inbox"
 
@@ -15020,6 +15329,11 @@ msgstr "HTTP Request"
 msgid "HTTP request failed"
 msgstr "HTTP request failed"
 
+#. js-lingui-id: 82OlFB
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "HTTP requests in the logic function runtime"
+msgstr "HTTP requests in the logic function runtime"
+
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15094,7 +15408,7 @@ msgid "Icon"
 msgstr "Icon"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Icon and color"
 
@@ -15353,6 +15667,16 @@ msgstr "Import CSV files"
 msgid "Import data"
 msgstr "Import data"
 
+#. js-lingui-id: Iu+TFD
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Import new emails from this account"
+msgstr "Import new emails from this account"
+
+#. js-lingui-id: QOjodt
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Import new events from this account"
+msgstr "Import new events from this account"
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -15395,7 +15719,7 @@ msgid "Importing Data ..."
 msgstr "Importing Data ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "In {channelName}"
 
@@ -15408,11 +15732,6 @@ msgstr "In {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "In {listName}"
-
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr "In an hour"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -15435,6 +15754,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -15583,7 +15903,7 @@ msgstr "Initial values"
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -15772,7 +16092,7 @@ msgid "Instruction for AI"
 msgstr "Instruction for AI"
 
 #. js-lingui-id: NxHkkp
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15783,6 +16103,11 @@ msgstr "Instructions"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Instructions and tools agents can use"
 msgstr "Instructions and tools agents can use"
+
+#. js-lingui-id: oVi2Tk
+#: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
+msgid "Instructions cannot be empty"
+msgstr "Instructions cannot be empty"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15805,6 +16130,11 @@ msgstr "Intelligence"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Interface"
 msgstr "Interface"
+
+#. js-lingui-id: m/FXoF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Internal import setting column"
+msgstr "Internal import setting column"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -15951,10 +16281,10 @@ msgstr "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
 msgid "Invalid number"
 msgstr "Invalid number"
 
-#. js-lingui-id: Mwwd+k
+#. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Invalid or expired recovery code."
-msgstr "Invalid or expired recovery code."
+msgid "Invalid or expired code."
+msgstr "Invalid or expired code."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -16201,7 +16531,7 @@ msgid "Iterator"
 msgstr "Iterator"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Its chats move to {destinationChannelName}. This cannot be undone."
 
@@ -16332,11 +16662,6 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanban widget"
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr "Keep {planLabel}"
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16357,10 +16682,11 @@ msgstr "Keep tracking my opens"
 msgid "Keep tracking my opens and clicks"
 msgstr "Keep tracking my opens and clicks"
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
-msgstr "Keep your plan"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
+msgstr "Keep Twenty"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16691,6 +17017,12 @@ msgstr "Last payment failed. Please update your billing details."
 msgid "Last refreshed"
 msgstr "Last refreshed"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr "Last run"
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -16721,7 +17053,7 @@ msgid "Last Updated: {0}"
 msgstr "Last Updated: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Later today"
 
@@ -17366,7 +17698,7 @@ msgid "Loading jobs..."
 msgstr "Loading jobs..."
 
 #. js-lingui-id: YyMToN
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
 msgid "Loading members"
 msgstr "Loading members"
 
@@ -17404,7 +17736,7 @@ msgid "Loading retention configuration..."
 msgstr "Loading retention configuration..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Loading roles"
 
@@ -17437,6 +17769,7 @@ msgstr "Loading your progress"
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -17627,10 +17960,10 @@ msgstr "Look up"
 msgid "loop"
 msgstr "loop"
 
-#. js-lingui-id: B3teiJ
+#. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a recovery code"
-msgstr "Lost your authenticator? Use a recovery code"
+msgid "Lost your authenticator? Use a backup or recovery code"
+msgstr "Lost your authenticator? Use a backup or recovery code"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -17887,7 +18220,7 @@ msgid "Margin"
 msgstr "Margin"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Mark all done"
 
@@ -17907,7 +18240,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marked as done {eventTime}"
 
@@ -18003,6 +18336,7 @@ msgstr "Maximum values"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18026,6 +18360,16 @@ msgstr "MCP Server"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP servers"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP servers unavailable"
+
+#. js-lingui-id: iwK6Ak
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP tool step"
+msgstr "MCP tool step"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18113,7 +18457,7 @@ msgid "Member removed from workspace"
 msgstr "Member removed from workspace"
 
 #. js-lingui-id: wlQNTg
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -18145,7 +18489,7 @@ msgid "Mentioned you"
 msgstr "Mentioned you"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Mentions"
 
@@ -18434,6 +18778,7 @@ msgstr "Mode"
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
@@ -18686,8 +19031,8 @@ msgid "Move Down"
 msgstr "Move Down"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Move its chats to"
 
@@ -18718,9 +19063,9 @@ msgid "Move to another tab"
 msgstr "Move to another tab"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Move to channel"
 
@@ -18836,6 +19181,8 @@ msgstr "N/A"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -18862,7 +19209,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19005,8 +19352,8 @@ msgid "Needs a Select field"
 msgstr "Needs a Select field"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Needs input"
 
@@ -19019,6 +19366,7 @@ msgstr "Network error"
 
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
@@ -19097,20 +19445,25 @@ msgstr "New AI Provider"
 msgid "New Approved Access Domain"
 msgstr "New Approved Access Domain"
 
+#. js-lingui-id: pQIH+r
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "New backup codes replace your current ones, which stop working."
+msgstr "New backup codes replace your current ones, which stop working."
+
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
 msgstr "New calendar event"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "New channel"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "New chat"
@@ -19130,6 +19483,11 @@ msgstr "New conversation"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New credit pack"
 msgstr "New credit pack"
+
+#. js-lingui-id: ctNfZE
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+msgid "New direct message"
+msgstr "New direct message"
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -19305,6 +19663,7 @@ msgstr "Newsletters"
 
 #. js-lingui-id: hXzOVo
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+#: src/modules/getting-started/components/GettingStartedStepCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
@@ -19334,9 +19693,14 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Next charge {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Next chat"
+
+#. js-lingui-id: SKW82h
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Next file"
+msgstr "Next file"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19396,7 +19760,7 @@ msgid "Next Step"
 msgstr "Next Step"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Next week"
 
@@ -19511,8 +19875,8 @@ msgstr "No AI model on this workspace meets these settings."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
+#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "No AI provider is configured on this instance."
 
@@ -19614,7 +19978,7 @@ msgid "No calling code"
 msgstr "No calling code"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "No channel"
 
@@ -19654,9 +20018,14 @@ msgstr "No config variables match your current filters. Try adjusting your filte
 msgid "No content"
 msgstr "No content"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "No conversation uses this channel."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "No conversations"
 
@@ -19771,6 +20140,11 @@ msgstr "No email threads found"
 msgid "No emoji found"
 msgstr "No emoji found"
 
+#. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "No end date"
+msgstr "No end date"
+
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "No errors or warnings in this period"
@@ -19796,6 +20170,11 @@ msgstr "No events found"
 #: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "No events have been scheduled with this {objectName} yet."
+
+#. js-lingui-id: dAMlIe
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+msgid "No failed runs"
+msgstr "No failed runs"
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -19855,6 +20234,11 @@ msgstr "No input"
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "No input fields for this action"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "No input fields for this tool"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -19917,6 +20301,11 @@ msgstr "No logs were recorded for this step."
 msgid "No matching activity"
 msgstr "No matching activity"
 
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "No matching conversations"
+
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "No matching people or roles"
@@ -19933,7 +20322,7 @@ msgid "No members assigned"
 msgstr "No members assigned"
 
 #. js-lingui-id: FK5/sf
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
 msgid "No members found"
 msgstr "No members found"
 
@@ -19983,6 +20372,11 @@ msgstr "No model is available for this mode."
 msgid "No notes"
 msgstr "No notes"
 
+#. js-lingui-id: fq3TKy
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "No objects match your search"
+msgstr "No objects match your search"
+
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "No operations found"
@@ -20011,6 +20405,11 @@ msgstr "No output"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
 msgstr "No output available"
+
+#. js-lingui-id: LF3XrW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No output returned"
+msgstr "No output returned"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20169,7 +20568,7 @@ msgid "No role assigned to this member"
 msgstr "No role assigned to this member"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "No roles"
 
@@ -20189,7 +20588,7 @@ msgid "No rules yet"
 msgstr "No rules yet"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "No runs yet"
 msgstr "No runs yet"
 
@@ -20249,6 +20648,21 @@ msgstr "No subject"
 msgid "No targets available"
 msgstr "No targets available"
 
+#. js-lingui-id: n75Kxz
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No test result yet"
+msgstr "No test result yet"
+
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "No text content"
+
+#. js-lingui-id: h9Kktq
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "No tools match your search"
+msgstr "No tools match your search"
+
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "No tools were called"
@@ -20289,6 +20703,11 @@ msgstr "No trigger is configured for this function."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
+
+#. js-lingui-id: 96i2d6
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "No turns yet"
+msgstr "No turns yet"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -20450,6 +20869,8 @@ msgstr "Node settings"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -20561,7 +20982,7 @@ msgid "Not now"
 msgstr "Not now"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Not open to you"
 
@@ -20627,6 +21048,11 @@ msgstr "Not started"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Not synced"
+
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "Not yet"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -20911,6 +21337,11 @@ msgstr "Off the beaten path"
 msgid "Official app"
 msgstr "Official app"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr "Offline"
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -20947,7 +21378,6 @@ msgid "on {remainingDays} and {lastDay}"
 msgstr "on {remainingDays} and {lastDay}"
 
 #. js-lingui-id: 2AKHUG
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "On a schedule"
@@ -21039,10 +21469,20 @@ msgstr "One subscription provides one Organization key that powers one productio
 msgid "One-to-one conversations between people"
 msgstr "One-to-one conversations between people"
 
+#. js-lingui-id: oXOSPE
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr "Online"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Only applications published to npm can be claimed this way."
+
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr "Only continue if you started this connection from {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -21101,11 +21541,6 @@ msgstr "only on {dayName}"
 msgid "only on {remainingDays} and {lastDay}"
 msgstr "only on {remainingDays} and {lastDay}"
 
-#. js-lingui-id: IWOmp4
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Only run when one of these fields changes"
-msgstr "Only run when one of these fields changes"
-
 #. js-lingui-id: YSJayJ
 #: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
@@ -21148,8 +21583,8 @@ msgstr "Only you will be able to see your emails and events"
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21195,9 +21630,9 @@ msgid "Open chat"
 msgstr "Open chat"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Open chats in"
 
@@ -21248,6 +21683,7 @@ msgid "Open in full page"
 msgstr "Open in full page"
 
 #. js-lingui-id: DP5C7w
+#: src/modules/object-core/agents/components/SidePanelCoreAgentRoleLayout.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Open in Roles"
@@ -21444,6 +21880,11 @@ msgstr "Optional — a Bedrock API key, used instead of an access key pair or th
 msgid "Optional — uses IAM role if empty"
 msgstr "Optional — uses IAM role if empty"
 
+#. js-lingui-id: X8Kmj8
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "Optional · A short summary of what this agent does"
+msgstr "Optional · A short summary of what this agent does"
+
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -21576,8 +22017,10 @@ msgstr "Original message unavailable"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -21635,6 +22078,7 @@ msgid "Other workspaces rely on this app's server route, which is served from th
 msgstr "Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here."
 
 #. js-lingui-id: NuKR0h
+#: src/modules/object-core/agents/components/CoreAgentTriggerTypeList.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 msgid "Others"
 msgstr "Others"
@@ -21695,6 +22139,11 @@ msgstr "Output"
 msgid "Output cost"
 msgstr "Output cost"
 
+#. js-lingui-id: SkbJO4
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Output saved"
+msgstr "Output saved"
+
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
@@ -21718,6 +22167,8 @@ msgid "Override Draft"
 msgstr "Override Draft"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
@@ -21947,6 +22398,11 @@ msgstr "Past due"
 msgid "Past Due"
 msgstr "Past Due"
 
+#. js-lingui-id: ENlZ6C
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
+msgstr "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
+
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Paste expected call response here to use its keys later in the workflow"
@@ -21978,11 +22434,22 @@ msgid "Path"
 msgstr "Path"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Pause"
 msgstr "Pause"
+
+#. js-lingui-id: 03eLh4
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Pause or resume importing emails from this account"
+msgstr "Pause or resume importing emails from this account"
+
+#. js-lingui-id: ylzMCX
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Pause or resume importing events from this account"
+msgstr "Pause or resume importing events from this account"
 
 #. js-lingui-id: URAE3q
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -22118,7 +22585,6 @@ msgstr "Permanent deletion. Enter the number of days."
 
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Permanently deleted"
 msgstr "Permanently deleted"
 
@@ -22146,6 +22612,11 @@ msgstr "permission flag"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
 msgstr "Permission flags"
+
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "Permission tables"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -22189,11 +22660,6 @@ msgstr "Personal AI usage"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Personal usage"
-
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -22305,7 +22771,7 @@ msgid "Pie Chart"
 msgstr "Pie Chart"
 
 #. js-lingui-id: qoLYkj
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Pill"
 msgstr "Pill"
 
@@ -22388,6 +22854,7 @@ msgid "Plans"
 msgstr "Plans"
 
 #. js-lingui-id: T91vKp
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Play"
@@ -22617,7 +23084,7 @@ msgid "Previous"
 msgstr "Previous"
 
 #. js-lingui-id: x97ifc
-#: src/modules/ai/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "Previous 7 days"
 
@@ -22627,9 +23094,14 @@ msgid "Previous approval"
 msgstr "Previous approval"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Previous chat"
+
+#. js-lingui-id: QY5Szd
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Previous file"
+msgstr "Previous file"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23116,6 +23588,11 @@ msgstr "Reacted with {emoji}"
 msgid "Reacting with {emoji}"
 msgstr "Reacting with {emoji}"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr "Read"
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -23135,6 +23612,16 @@ msgstr "Read and write {target}"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read and write data model configuration"
 msgstr "Read and write data model configuration"
+
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "Read by {readerCount} of {recipientCount}"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "Read by {readerNames}"
 
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -23159,6 +23646,11 @@ msgstr "Read emails"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Read system prompts"
+
+#. js-lingui-id: h1Az4D
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
+msgstr "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -23210,6 +23702,7 @@ msgstr "Read/Edit/Delete permissions"
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23250,7 +23743,7 @@ msgid "Receive an email containing password update link"
 msgstr "Receive an email containing password update link"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Recent"
 
@@ -23258,6 +23751,18 @@ msgstr "Recent"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "Recent Events (oldest → newest)"
+
+#. js-lingui-id: gKFqSG
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Recent failed runs"
+msgstr "Recent failed runs"
+
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr "Recent runs"
 
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -23287,6 +23792,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -23375,6 +23881,7 @@ msgstr "Record change logs"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentTriggerTypeLabelAndIcon.ts
 msgid "Record changes"
 msgstr "Record changes"
 
@@ -23425,6 +23932,16 @@ msgstr "Record is created or updated"
 msgid "Record is deleted"
 msgstr "Record is deleted"
 
+#. js-lingui-id: B6/jGB
+#: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
+msgid "Record is permanently deleted"
+msgstr "Record is permanently deleted"
+
+#. js-lingui-id: 72O3vf
+#: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
+msgid "Record is restored"
+msgstr "Record is restored"
+
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -23439,7 +23956,7 @@ msgid "Record label"
 msgstr "Record label"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Record page"
@@ -23479,12 +23996,8 @@ msgstr "Record Table Settings"
 msgid "Record text"
 msgstr "Record text"
 
-#. js-lingui-id: CV/ZuS
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Record type"
-msgstr "Record type"
-
 #. js-lingui-id: kvxD0C
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Record Type"
@@ -23496,8 +24009,13 @@ msgstr "Record Type"
 msgid "Record-level"
 msgstr "Record-level"
 
+#. js-lingui-id: VQ4KjL
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Record-level filter"
+msgstr "Record-level filter"
+
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Record:"
 
@@ -23555,6 +24073,11 @@ msgstr "Records reached through these relations follow access to {objectLabel}."
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
 msgstr "Records selected"
+
+#. js-lingui-id: TZIC1Z
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Records this agent can see and change"
+msgstr "Records this agent can see and change"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23664,6 +24187,11 @@ msgstr "Register external MCP servers in Developers settings and expose their to
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Registered as a development instance. This instance will not be billed."
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr "Registered with Twenty as the official {appName}"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -23800,6 +24328,7 @@ msgstr "Remove"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "Remove {0}"
@@ -23816,30 +24345,45 @@ msgstr "Remove {0} navigation menu item?"
 msgid "Remove {0} navigation menu items?"
 msgstr "Remove {0} navigation menu items?"
 
-#. js-lingui-id: Q7qiJ+
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Remove {address}"
-msgstr "Remove {address}"
-
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Remove {displayName}"
 
 #. js-lingui-id: HND1q3
-#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+#: src/modules/chat/components/ChatRecipientChip.tsx
 msgid "Remove {label}"
 msgstr "Remove {label}"
+
+#. js-lingui-id: elnmVe
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Remove {label}, {description}"
+msgstr "Remove {label}, {description}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
 msgid "Remove {origin}"
 msgstr "Remove {origin}"
 
+#. js-lingui-id: wzdVhz
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Remove {toolName}"
+msgstr "Remove {toolName}"
+
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
 msgid "Remove access"
 msgstr "Remove access"
+
+#. js-lingui-id: wf5QIp
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Remove access to {objectLabel}"
+msgstr "Remove access to {objectLabel}"
+
+#. js-lingui-id: EK2N/p
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Remove access to all records"
+msgstr "Remove access to all records"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -23883,7 +24427,7 @@ msgid "Remove from blocklist"
 msgstr "Remove from blocklist"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24015,11 +24559,6 @@ msgstr "Remove sorting?"
 msgid "Remove this provider and disconnect all its models"
 msgstr "Remove this provider and disconnect all its models"
 
-#. js-lingui-id: txqag8
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Remove trigger"
-msgstr "Remove trigger"
-
 #. js-lingui-id: XrlYG5
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
@@ -24040,13 +24579,13 @@ msgstr "Remove widget"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Rename"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Rename chat"
 
@@ -24076,7 +24615,7 @@ msgid "Renews on"
 msgstr "Renews on"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Reopen"
 
@@ -24117,12 +24656,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit install links require an HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Reply"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Replying to"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -24381,7 +24926,6 @@ msgstr "Restore the activity type settings defined by the application"
 
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Restored"
 msgstr "Restored"
 
@@ -24399,6 +24943,7 @@ msgstr "Restricted"
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Result"
 msgstr "Result"
 
@@ -24491,11 +25036,6 @@ msgstr "Review additional microphone or camera access requested by this app. Mem
 msgid "Review media access"
 msgstr "Review media access"
 
-#. js-lingui-id: 35zlhZ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
-msgid "Review this email before it goes out"
-msgstr "Review this email before it goes out"
-
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -24566,8 +25106,6 @@ msgid "role"
 msgstr "role"
 
 #. js-lingui-id: GDvlUT
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -24579,7 +25117,7 @@ msgid "Role"
 msgstr "Role"
 
 #. js-lingui-id: l2yKTq
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentNewRoleDraftEffect.tsx
 msgid "Role for {agentLabel} agent"
 msgstr "Role for {agentLabel} agent"
 
@@ -24616,7 +25154,7 @@ msgid "Role updated successfully"
 msgstr "Role updated successfully"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -24629,8 +25167,8 @@ msgid "Roles"
 msgstr "Roles"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Roles in this channel"
 
@@ -24680,6 +25218,11 @@ msgstr "row level permission predicate"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate group"
 msgstr "row level permission predicate group"
+
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "row level permission rule"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -24731,6 +25274,11 @@ msgstr "Rule enabled."
 msgid "Rule updated."
 msgstr "Rule updated."
 
+#. js-lingui-id: 1GQ5z+
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Run a test to see what the tool returns and use its fields in the next steps."
+msgstr "Run a test to see what the tool returns and use its fields in the next steps."
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -24756,14 +25304,19 @@ msgstr "Run code to analyze files and data"
 msgid "Run Function"
 msgstr "Run Function"
 
-#. js-lingui-id: ++zKOb
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
-msgstr "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
+#. js-lingui-id: scFhaW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run this tool for real?"
+msgstr "Run this tool for real?"
+
+#. js-lingui-id: dLtKV9
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run tool"
+msgstr "Run tool"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "Running"
@@ -24783,6 +25336,11 @@ msgstr "Running code"
 msgid "Running function"
 msgstr "Running function"
 
+#. js-lingui-id: cHCb42
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Running the tool..."
+msgstr "Running the tool..."
+
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -24795,7 +25353,7 @@ msgid "runs"
 msgstr "runs"
 
 #. js-lingui-id: Tpm2G9
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24803,15 +25361,29 @@ msgstr "runs"
 msgid "Runs"
 msgstr "Runs"
 
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr "Runs · 14d"
+
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
 msgstr "Runs and failures per version"
 
-#. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
-msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr "Runs appear here once a workflow or an app uses this agent"
+#. js-lingui-id: +L9ulP
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
+msgid "Runs appear here once this workflow is triggered"
+msgstr "Runs appear here once this workflow is triggered"
+
+#. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Runs per day"
+msgstr "Runs per day"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24882,6 +25454,7 @@ msgid "Saturday"
 msgstr "Saturday"
 
 #. js-lingui-id: tfDRzk
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24897,6 +25470,12 @@ msgstr "Save"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Save 25% when billed annually"
 msgstr "Save 25% when billed annually"
+
+#. js-lingui-id: TXVA2l
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
+msgid "Save Agent"
+msgstr "Save Agent"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -24923,6 +25502,11 @@ msgstr "Save or cancel dashboard changes before editing the layout."
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
 msgstr "Save settings"
+
+#. js-lingui-id: /hNRXq
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
+msgstr "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -25336,13 +25920,14 @@ msgid "Search icon"
 msgstr "Search icon"
 
 #. js-lingui-id: AaDUlx
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Search members"
 
 #. js-lingui-id: two5rl
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -25406,6 +25991,11 @@ msgstr "Search skills"
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Search steps and fields"
 msgstr "Search steps and fields"
+
+#. js-lingui-id: mW8qA2
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "Search tools"
+msgstr "Search tools"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25580,6 +26170,7 @@ msgid "see"
 msgstr "see"
 
 #. js-lingui-id: h+8V38
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "See"
 msgstr "See"
@@ -25603,6 +26194,11 @@ msgstr "See all {relationLabelPlural} linked to this record"
 #: src/modules/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll.tsx
 msgid "See all call recordings linked to this calendar event"
 msgstr "See all call recordings linked to this calendar event"
+
+#. js-lingui-id: B5odfQ
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "See all records"
+msgstr "See all records"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25650,6 +26246,11 @@ msgstr "See records"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "See Records on All Objects"
 msgstr "See Records on All Objects"
+
+#. js-lingui-id: SXaufV
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "See Turns"
+msgstr "See Turns"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -25867,6 +26468,7 @@ msgid "Select all rows"
 msgstr "Select all rows"
 
 #. js-lingui-id: hVPa4O
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
@@ -25995,6 +26597,7 @@ msgid "Select Source"
 msgstr "Select Source"
 
 #. js-lingui-id: LHkEre
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Select specific fields to listen to"
 msgstr "Select specific fields to listen to"
@@ -26056,7 +26659,7 @@ msgid "Selected"
 msgstr "Selected"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Selected chats"
 
@@ -26104,6 +26707,7 @@ msgstr "Send Campaign"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Send email"
@@ -26188,11 +26792,21 @@ msgstr "Send Test Email"
 msgid "Send to Inbox"
 msgstr "Send to Inbox"
 
+#. js-lingui-id: 69d0/t
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+msgstr "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sender name"
 msgstr "Sender name"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr "Sending"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26205,6 +26819,7 @@ msgid "Sending email"
 msgstr "Sending email"
 
 #. js-lingui-id: G+UdVg
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Sending failed"
@@ -26231,6 +26846,7 @@ msgid "Sending..."
 msgstr "Sending..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
@@ -26437,6 +27053,7 @@ msgstr "Setting up your <0>database</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -26450,6 +27067,7 @@ msgstr "Setting up your <0>database</0>..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -26467,6 +27085,12 @@ msgstr "settings menu item"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Settings most workspaces never need to change"
 msgstr "Settings most workspaces never need to change"
+
+#. js-lingui-id: sWdVbT
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Settings permission"
+msgstr "Settings permission"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -26496,6 +27120,7 @@ msgid "Seventh"
 msgstr "Seventh"
 
 #. js-lingui-id: WkbAmY
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
@@ -26629,6 +27254,11 @@ msgstr "Should changing the label also change the API name?"
 msgid "Show {0}"
 msgstr "Show {0}"
 
+#. js-lingui-id: TsjNI1
+#: src/modules/chat/components/ChatMessageImageGridTile.tsx
+msgid "Show {hiddenImageCount} more images"
+msgstr "Show {hiddenImageCount} more images"
+
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
@@ -26689,13 +27319,14 @@ msgid "Show hidden objects"
 msgstr "Show hidden objects"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Show inbox"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Show less"
 
@@ -26706,6 +27337,7 @@ msgstr "Show logs"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -26950,10 +27582,20 @@ msgstr "Skip"
 msgid "Skip anyway"
 msgstr "Skip anyway"
 
+#. js-lingui-id: 5jWe/6
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
+msgstr "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
+
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Skip creating a Name field "
+
+#. js-lingui-id: pmVASU
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip internal meetings"
+msgstr "Skip internal meetings"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -27044,9 +27686,10 @@ msgid "snippet"
 msgstr "snippet"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Snooze"
@@ -27062,12 +27705,11 @@ msgid "Snooze ended"
 msgstr "Snooze ended"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snooze ended {eventTime}"
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -27080,13 +27722,13 @@ msgstr "Snooze until {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Snoozed"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Snoozed until {eventTime}"
 
@@ -27153,6 +27795,11 @@ msgstr "Something went wrong while creating your workspace. Please try again."
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "Something went wrong while fetching this record's conversations."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr "Something went wrong while fetching this record's messages."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -27227,7 +27874,7 @@ msgstr "Sorts"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -27322,7 +27969,7 @@ msgid "Split multiple values"
 msgstr "Split multiple values"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Split view"
 
@@ -27430,7 +28077,9 @@ msgid "Start Your Subscription"
 msgstr "Start Your Subscription"
 
 #. js-lingui-id: JEGlfK
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Started"
 msgstr "Started"
 
@@ -27484,7 +28133,8 @@ msgstr "Statistics"
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28019,15 +28669,26 @@ msgid "Switched to a production instance."
 msgstr "Switched to a production instance."
 
 #. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/SettingsAccountsChannelSyncSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
 msgstr "Sync"
+
+#. js-lingui-id: sCZwJy
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Sync calendar"
+msgstr "Sync calendar"
 
 #. js-lingui-id: NmHVSC
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Sync catalog"
+
+#. js-lingui-id: uhtQRu
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Sync emails"
+msgstr "Sync emails"
 
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -28106,7 +28767,6 @@ msgstr "Syncing will stop and this account's credentials will be removed. Your e
 
 #. js-lingui-id: D+NlUC
 #: src/modules/log-console/utils/getLogConsoleRecordChangeActor.ts
-#: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -28128,7 +28788,6 @@ msgid "System objects"
 msgstr "System objects"
 
 #. js-lingui-id: FHPe8O
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -28326,6 +28985,8 @@ msgstr "Terms of Service"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Test"
@@ -28350,6 +29011,11 @@ msgstr "Test this step to see its outputs"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Test your function"
 msgstr "Test your function"
+
+#. js-lingui-id: 4WDbC6
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
+msgstr "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28549,6 +29215,11 @@ msgstr "The export connection was lost. Please try again."
 msgid "The export was interrupted. Please try again."
 msgstr "The export was interrupted. Please try again."
 
+#. js-lingui-id: KXe+rm
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The fields below are now available as variables in the next steps."
+msgstr "The fields below are now available as variables in the next steps."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -28568,6 +29239,11 @@ msgstr "The mail server certificate is invalid"
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "The marketplace could not be loaded. Check your connection and try again."
+
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "The MCP servers could not be loaded, so this step cannot be edited right now."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -28625,6 +29301,11 @@ msgstr "The name recipients see next to your address in their inbox, instead of 
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "The name recipients see next to your address. It is set when the channel is created."
+
+#. js-lingui-id: op7R9r
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
+msgstr "The number of days from the date to today, in UTC. Negative for a date in the future."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28685,6 +29366,28 @@ msgstr "The selected records (up to {maxRecordsFormatted}) will be passed to you
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "The shared email you want to use."
+
+#. js-lingui-id: V27DQk
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
+msgid "The tool arguments must resolve to an object"
+msgstr "The tool arguments must resolve to an object"
+
+#. js-lingui-id: vglXPW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+msgid "The tool call failed"
+msgstr "The tool call failed"
+
+#. js-lingui-id: xOR8cR
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The tool ran but returned no fields, so the expected output was left unchanged."
+msgstr "The tool ran but returned no fields, so the expected output was left unchanged."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "The tool runs without arguments."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -28855,10 +29558,10 @@ msgstr ""
 "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 
-#. js-lingui-id: bNY3MH
+#. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
-msgid "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
-msgstr "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
+msgid "This action cannot be undone. This will permanently delete your agent."
+msgstr "This action cannot be undone. This will permanently delete your agent."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -28896,10 +29599,45 @@ msgstr "This action will delete this folder and the navigation menu item inside.
 msgid "This address is already taken"
 msgstr "This address is already taken"
 
-#. js-lingui-id: 4bI4er
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "This agent only runs when someone sends it a message."
-msgstr "This agent only runs when someone sends it a message."
+#. js-lingui-id: Wg5iFS
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "This agent can't see any records yet."
+msgstr "This agent can't see any records yet."
+
+#. js-lingui-id: zJHUio
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "This agent can't use any tools yet."
+msgstr "This agent can't use any tools yet."
+
+#. js-lingui-id: N5v8kc
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "This agent comes from an app, so its access can't be changed here."
+msgstr "This agent comes from an app, so its access can't be changed here."
+
+#. js-lingui-id: EVX1ND
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "This agent comes from an app, so its tools can't be changed here."
+msgstr "This agent comes from an app, so its tools can't be changed here."
+
+#. js-lingui-id: PGt3yj
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "This agent only runs when a workflow, an app or the API calls it."
+msgstr "This agent only runs when a workflow, an app or the API calls it."
+
+#. js-lingui-id: RKKH61
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
+msgstr "This agent shares its role with other members or agents. Change its access in Settings > Roles."
+
+#. js-lingui-id: YMrA7j
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
+msgstr "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29012,14 +29750,9 @@ msgstr "This connection does not exist or is not available for this application.
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "This conversation is no longer available."
-
-#. js-lingui-id: 4Rs3za
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "This cron pattern is not valid"
-msgstr "This cron pattern is not valid"
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -29037,7 +29770,7 @@ msgid "This device"
 msgstr "This device"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "This evening"
 
@@ -29162,10 +29895,20 @@ msgstr "This permanently deletes {accountHandle} and all of its synced emails an
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
 msgstr "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
 
+#. js-lingui-id: YMiCUw
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
+msgstr "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
+
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
 msgstr "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
+
+#. js-lingui-id: KNcaaQ
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "This permanently deletes this agent. This action cannot be undone."
+msgstr "This permanently deletes this agent. This action cannot be undone."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29208,7 +29951,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "This record no longer exists or you cannot see it."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "This record will be deleted:"
 
@@ -29221,11 +29964,6 @@ msgstr "This role can {humanReadableAction} all records"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "This role is assigned to these {roleTargetDisplayName}."
-
-#. js-lingui-id: fp6HUI
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
-msgid "This role is shared with other users or agents and cannot be edited here."
-msgstr "This role is shared with other users or agents and cannot be edited here."
 
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -29273,6 +30011,11 @@ msgstr "This subdomain is reserved"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -29302,7 +30045,7 @@ msgid "This website is already in the list."
 msgstr "This website is already in the list."
 
 #. js-lingui-id: yByRxz
-#: src/modules/ai/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29513,7 +30256,7 @@ msgid "To"
 msgstr "To"
 
 #. js-lingui-id: ecUA8p
-#: src/modules/ai/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -29524,7 +30267,7 @@ msgid "Today"
 msgstr "Today"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Today, {time}"
 
@@ -29601,11 +30344,16 @@ msgid "tokens"
 msgstr "tokens"
 
 #. js-lingui-id: 6RDwJM
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tokens"
 msgstr "Tokens"
+
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr "Tokens · 14d"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -29613,8 +30361,7 @@ msgid "Tomato"
 msgstr "Tomato"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Tomorrow"
@@ -29676,8 +30423,15 @@ msgstr "Tool deleted"
 msgid "Tool details: {displayMessage}"
 msgstr "Tool details: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Tool not found"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
@@ -29825,12 +30579,11 @@ msgid "Translations"
 msgstr "Translations"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Triage"
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -29886,6 +30639,7 @@ msgstr "Trialing"
 #. js-lingui-id: H2Sfhg
 #: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -29919,8 +30673,6 @@ msgid "Trigger Type"
 msgstr "Trigger Type"
 
 #. js-lingui-id: 34nxyb
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Triggers"
 msgstr "Triggers"
@@ -29971,6 +30723,11 @@ msgstr "True when at least one side is true."
 msgid "True when both sides are true."
 msgstr "True when both sides are true."
 
+#. js-lingui-id: NYXoie
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+msgstr "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
@@ -29998,6 +30755,7 @@ msgid "True/False"
 msgstr "True/False"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30008,7 +30766,9 @@ msgid "Try again"
 msgstr "Try again"
 
 #. js-lingui-id: P8jvuh
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Try again in a moment"
 
@@ -30054,6 +30814,16 @@ msgstr "Turn into"
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 msgstr "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 
+#. js-lingui-id: R3c2/s
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Turns"
+msgstr "Turns"
+
+#. js-lingui-id: ZKeDcZ
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Turns appear here once a workflow or an app uses this agent"
+msgstr "Turns appear here once a workflow or an app uses this agent"
+
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "Turns true into false and false into true."
@@ -30097,7 +30867,7 @@ msgid "Twenty works better with your team"
 msgstr "Twenty works better with your team"
 
 #. js-lingui-id: YIjS4q
-#: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
+#: src/modules/ai/hooks/useAgentModelCapabilities.ts
 msgid "Twitter/X Search"
 msgstr "Twitter/X Search"
 
@@ -30182,7 +30952,7 @@ msgid "Type \"yes\" to confirm."
 msgstr "Type \"yes\" to confirm."
 
 #. js-lingui-id: XhqvGG
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
 msgstr "Type a field name or a function"
 
@@ -30259,7 +31029,7 @@ msgid "Unanswered"
 msgstr "Unanswered"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Unassigned"
 
@@ -30472,7 +31242,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Unknown file"
 
@@ -30489,7 +31259,7 @@ msgstr "Unknown parsing error"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Unknown sender"
 
@@ -30667,7 +31437,7 @@ msgid "Unsubscribed"
 msgstr "Unsubscribed"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 
@@ -30691,16 +31461,17 @@ msgstr "Unsupported image format"
 msgid "Until {snoozedUntilDay}"
 msgstr "Until {snoozedUntilDay}"
 
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
-msgstr "Until the last 3 days"
-
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
+#: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemWorkflowOptions.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/components/CoreAgentNameCell.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
@@ -30818,6 +31589,16 @@ msgstr "Update {0}"
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Update {contextStoreNumberOfSelectedRecords} records"
 
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr "Update {recordCount} {objectLabel}"
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr "Update {selectedCount}"
+
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
 msgid "Update all workspace settings"
@@ -30886,7 +31667,6 @@ msgstr "updated"
 
 #. js-lingui-id: +b7T3G
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -31278,10 +32058,15 @@ msgstr "Usage period"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Use ‘{trimmedSidePanelSearch}’ with..."
 
-#. js-lingui-id: bmkeQS
+#. js-lingui-id: jFGgyP
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+msgstr "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+
+#. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
-msgid "Use a recovery code"
-msgstr "Use a recovery code"
+msgid "Use a backup or recovery code"
+msgstr "Use a backup or recovery code"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -31400,6 +32185,7 @@ msgstr "Useful for pivot/junction tables"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -31493,11 +32279,6 @@ msgstr "Using default application value. Configure via environment variables."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default value. Set a custom value to override."
 msgstr "Using default value. Set a custom value to override."
-
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
 
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -31636,6 +32417,7 @@ msgstr "Verifying your email"
 
 #. js-lingui-id: eE0JZ4
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
@@ -31806,7 +32588,7 @@ msgid "View only — You can read this conversation."
 msgstr "View only — You can read this conversation."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "View original message"
 
@@ -31937,12 +32719,12 @@ msgid "Wait for Event"
 msgstr "Wait for Event"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Wait for the attachments to finish uploading."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "Waiting"
@@ -31973,7 +32755,7 @@ msgid "Waiting for your approval"
 msgstr "Waiting for your approval"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Wake now"
 
@@ -32084,6 +32866,11 @@ msgstr "We couldn't confirm your payment method. Please retry."
 msgid "We couldn't load the conversations"
 msgstr "We couldn't load the conversations"
 
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr "We couldn't load the messages"
+
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
@@ -32157,7 +32944,7 @@ msgid "We're still waiting for the payment confirmation"
 msgstr "We're still waiting for the payment confirmation"
 
 #. js-lingui-id: LnnVIT
-#: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
+#: src/modules/ai/hooks/useAgentModelCapabilities.ts
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Web Search"
 msgstr "Web Search"
@@ -32268,6 +33055,21 @@ msgstr "Week"
 msgid "Weekly"
 msgstr "Weekly"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Weekly personal AI usage reached. Enable workspace credits to continue."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Weekly personal AI usage reached. Now using workspace credits."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32294,6 +33096,11 @@ msgstr "Welcome, {workspaceName}."
 msgid "What {applicationName} adds to your workspace"
 msgstr "What {applicationName} adds to your workspace"
 
+#. js-lingui-id: 1rpyKy
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
+msgid "What AI model should your agent run on"
+msgstr "What AI model should your agent run on"
+
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
@@ -32304,10 +33111,10 @@ msgstr "What can I help you with?"
 msgid "What can you do?"
 msgstr "What can you do?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -32324,10 +33131,10 @@ msgstr "What people see when the condition is false, and where it shows."
 msgid "What should be classified?"
 msgstr "What should be classified?"
 
-#. js-lingui-id: rmMbbz
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "What should the agent do when this trigger fires?"
-msgstr "What should the agent do when this trigger fires?"
+#. js-lingui-id: Z1117Y
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "What should the agent do every time it runs?"
+msgstr "What should the agent do every time it runs?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32339,6 +33146,11 @@ msgstr "What should the model decide?"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "What this API can do: Select a user role to define its permissions."
 msgstr "What this API can do: Select a user role to define its permissions."
+
+#. js-lingui-id: w7CKq8
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "What tools can this agent use for its mission"
+msgstr "What tools can this agent use for its mission"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32360,11 +33172,6 @@ msgstr "When a deal's stage changes to Closed Won, create a task assigned to the
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 
-#. js-lingui-id: 8bOffh
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "When a record changes"
-msgstr "When a record changes"
-
 #. js-lingui-id: haFWB2
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
@@ -32384,6 +33191,11 @@ msgstr "When off, the event is created with no attendees and nobody is notified.
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
 msgstr "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
+
+#. js-lingui-id: vn42KP
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "When should this agent run on its own"
+msgstr "When should this agent run on its own"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -32510,7 +33322,7 @@ msgid "Wink"
 msgstr "Wink"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 
@@ -32551,6 +33363,7 @@ msgid "workflow"
 msgstr "workflow"
 
 #. js-lingui-id: bLt/0J
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
@@ -32589,6 +33402,11 @@ msgstr "Workflow Execution"
 msgid "Workflow not found."
 msgstr "Workflow not found."
 
+#. js-lingui-id: fezYCQ
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
+msgid "Workflow sections"
+msgstr "Workflow sections"
+
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Workflow step results"
@@ -32617,6 +33435,7 @@ msgstr "Workflow versions"
 
 #. js-lingui-id: woYYQq
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -32692,6 +33511,7 @@ msgstr "Working hours start"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -32909,6 +33729,7 @@ msgid "Write {target}"
 msgstr "Write {target}"
 
 #. js-lingui-id: Q9pNST
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -32918,11 +33739,6 @@ msgstr "Write {target}"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Write a description"
 msgstr "Write a description"
-
-#. js-lingui-id: 7QXVrh
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Write a description for this agent"
-msgstr "Write a description for this agent"
 
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -32938,6 +33754,11 @@ msgstr "Write a message..."
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Write and delete {target}"
 msgstr "Write and delete {target}"
+
+#. js-lingui-id: qJSzDh
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "Write some instructions"
+msgstr "Write some instructions"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx
@@ -33043,7 +33864,7 @@ msgid "Yes"
 msgstr "Yes"
 
 #. js-lingui-id: y/0uwd
-#: src/modules/ai/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Yesterday"
@@ -33051,7 +33872,9 @@ msgstr "Yesterday"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

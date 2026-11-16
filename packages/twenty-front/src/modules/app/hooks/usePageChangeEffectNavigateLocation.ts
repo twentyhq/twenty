@@ -17,7 +17,7 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { matchPath, useLocation } from 'react-router-dom';
+import { matchPath, useLocation, useMatches } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -58,9 +58,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const objectNamePlural =
-    matchPath(AppPath.RecordIndexPage, location.pathname)?.params
-      .objectNamePlural ?? '';
+  const objectNamePlural = useMatches().at(-1)?.params.objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
@@ -217,6 +215,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     isMinimalMetadataReady &&
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
+    isNonEmptyString(objectNamePlural) &&
     !isDefined(objectMetadataItem)
   ) {
     return AppPath.NotFound;

@@ -93,6 +93,7 @@ describe('application workflow definitions', () => {
       ...before.workflow,
       workspaceId: APPLICATION_ID,
       applicationId: APPLICATION_ID,
+      navigationMenuItemIds: [],
     };
     const existingVersion: FlatWorkflowVersion = {
       ...before.version,

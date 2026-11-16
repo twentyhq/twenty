@@ -88,7 +88,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   let unreadableSourceWorkflow: LegacyCodeStepWorkflow;
   let otherApplicationWorkflow: LegacyCodeStepWorkflow;
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowIds: string[] = [];
+  const workspaceWorkflowVersionIds: string[] = [];
   const logicFunctionIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -305,7 +305,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowIds.push(workspaceWorkflowId);
+    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
 
     const [step] = await readSteps({
       schema: 'core',
@@ -361,9 +361,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    for (const workspaceWorkflowId of workspaceWorkflowIds) {
-      await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-    }
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
 
     for (const logicFunctionId of logicFunctionIds) {
       if (await logicFunctionExists(logicFunctionId)) {

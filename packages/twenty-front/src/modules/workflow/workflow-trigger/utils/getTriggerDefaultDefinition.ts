@@ -28,7 +28,6 @@ export const getTriggerDefaultDefinition = ({
 
   const baseTriggerDefinition = {
     name: defaultLabel,
-    position: { x: 0, y: 0 },
   };
 
   switch (type) {

@@ -6,11 +6,13 @@ import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastM
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
-import { AiChatThreadInboxStateNotice } from '@/ai/components/AiChatThreadInboxStateNotice';
-import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { AiChatThreadStatusNotice } from '@/ai/components/AiChatThreadStatusNotice';
+import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
+import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AiChatStreamingAutoScrollEffect';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { getAiChatScrollWrapperInstanceId } from '@/ai/utils/getAiChatScrollWrapperInstanceId';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
@@ -39,23 +41,29 @@ const StyledPreambleOutsideScrollContainer = styled(
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledMessageListContent = styled(StyledAiChatContentContainer)`
+const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
+  hasPageContentInset: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${({ hasPageContentInset }) =>
+    hasPageContentInset
+      ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING} 0`
+      : themeCssVariables.spacing[4]};
 `;
 
 export const AiChatTabMessageList = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const hasPageContentInset = useHasAiChatPageContentInset();
+  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
 
   const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(
     aiChatSurface ?? AI_CHAT_SURFACE.SIDE_PANEL,
   );
 
-  if (!agentChatHasMessage) {
+  if (!aiChatHasMessage) {
     if (!isWorkspaceSetupChat) {
       return null;
     }
@@ -75,7 +83,7 @@ export const AiChatTabMessageList = () => {
       <Suspense
         fallback={
           <StyledScrollWrapperContainer>
-            <StyledMessageListContent>
+            <StyledMessageListContent hasPageContentInset={hasPageContentInset}>
               <MarkdownLoadingSkeleton />
             </StyledMessageListContent>
           </StyledScrollWrapperContainer>
@@ -83,16 +91,16 @@ export const AiChatTabMessageList = () => {
       >
         <StyledScrollWrapperContainer>
           <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
-            <StyledMessageListContent>
+            <StyledMessageListContent hasPageContentInset={hasPageContentInset}>
               {isWorkspaceSetupChat && <WorkspaceSetupChatPreamble />}
               <AiChatNonLastMessageIdsList />
               <AiChatLastMessageWithStreamingState />
               <AiChatPendingResponseIndicator />
               <AiChatErrorUnderMessageList />
-              <AiChatThreadInboxStateNotice />
+              <AiChatThreadStatusNotice />
             </StyledMessageListContent>
-            <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-            <AgentChatStreamingAutoScrollEffect />
+            <AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
+            <AiChatStreamingAutoScrollEffect />
           </ScrollWrapper>
           <AiChatScrollToBottomButton />
         </StyledScrollWrapperContainer>

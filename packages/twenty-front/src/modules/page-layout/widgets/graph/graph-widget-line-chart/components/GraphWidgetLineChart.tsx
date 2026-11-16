@@ -50,6 +50,7 @@ type GraphWidgetLineChartProps = {
   axisDisplayType?: GraphValueFormatOptions['displayType'];
   data: LineChartSeriesWithColor[];
   showLegend?: boolean;
+  isLegendInteractive?: boolean;
   showGrid?: boolean;
   enablePointLabel?: boolean;
   xAxisLabel?: string;
@@ -77,6 +78,7 @@ const StyledContainer = styled.div`
 export const GraphWidgetLineChart = ({
   data,
   showLegend = true,
+  isLegendInteractive = true,
   showGrid = true,
   enableArea = true,
   enablePointLabel = false,
@@ -367,7 +369,11 @@ export const GraphWidgetLineChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       {showLegend && data.length > 0 && (
-        <GraphWidgetLegend show items={legendItems} />
+        <GraphWidgetLegend
+          items={legendItems}
+          show
+          isInteractive={isLegendInteractive}
+        />
       )}
     </StyledContainer>
   );

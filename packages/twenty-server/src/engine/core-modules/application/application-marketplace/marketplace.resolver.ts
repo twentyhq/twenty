@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
@@ -56,6 +57,7 @@ export class MarketplaceResolver {
   ): Promise<MarketplaceAppDTO[]> {
     return this.marketplaceQueryService.findManyMarketplaceApps({
       universalIdentifiers,
+      shouldIncludeBuiltInApplications: true,
     });
   }
 
@@ -64,9 +66,10 @@ export class MarketplaceResolver {
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
-    return this.marketplaceQueryService.findMarketplaceAppDetail(
+    return this.marketplaceQueryService.findMarketplaceAppDetail({
       universalIdentifier,
-    );
+      shouldIncludeBuiltInApplications: true,
+    });
   }
 
   @Mutation(() => Boolean)

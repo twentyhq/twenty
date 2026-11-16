@@ -67,6 +67,13 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
       oauthConfig,
       customConfig: toStoredCustomConfig(connectionProviderManifest),
+      oauthDiscoveryConfig:
+        connectionProviderManifest.type === 'oauth-discovery'
+          ? {
+              resourceUrl:
+                connectionProviderManifest.oauthDiscovery.resourceUrl,
+            }
+          : null,
       identifyAccountLogicFunctionUniversalIdentifier:
         connectionProviderManifest.identifyAccountLogicFunction
           ?.universalIdentifier ?? null,

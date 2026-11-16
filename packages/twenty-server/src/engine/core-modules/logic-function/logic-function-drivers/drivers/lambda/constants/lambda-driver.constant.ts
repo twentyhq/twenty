@@ -1,6 +1,7 @@
 import { join, resolve } from 'path';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
+import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-timeout-ms.constant';
 
 export const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60;
@@ -56,3 +57,15 @@ export const BUILDER_HANDLER_PATH = resolve(
     'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
   ),
 );
+
+export const HTTP_EGRESS_FUNCTION_NAME_PREFIX = 'twenty-http-egress';
+export const HTTP_EGRESS_LAMBDA_MEMORY_MB = 512;
+// Leaves the handler time to start and return after the request itself times out.
+export const HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS =
+  HTTP_TOOL_TIMEOUT_MS / 1000 + 5;
+// Synchronous invokes cap payloads at 6 MB each way, before JSON escaping.
+export const HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+export const HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES = 5_500_000;
+export const HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS = 10_000;
+export const HTTP_EGRESS_LAMBDA_MAX_INVOKE_ATTEMPTS = 3;
+export const HTTP_EGRESS_LAMBDA_RATE_LIMIT_RETRY_DELAY_MS = 250;

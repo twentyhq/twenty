@@ -2,6 +2,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -93,11 +94,13 @@ describe('field permissions on an RLS rule (integration)', () => {
     roleId = data.createOneRole.id;
     rlsRuleId = v4();
 
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
+        canReadRecords: true,
         predicateGroups: [
           {
             id: rlsRuleId,
@@ -419,11 +422,7 @@ describe('field permissions on an RLS rule (integration)', () => {
 
   it('should reject an update of an RLS rule uneditable field on a record it matches', async () => {
     await global.testDataSource.query(
-      `UPDATE core."objectPermission" SET "canUpdateObjectRecords" = TRUE WHERE "roleId" = $1`,
-      [roleId],
-    );
-    await global.testDataSource.query(
-      `UPDATE core."role" SET "canUpdateAllObjectRecords" = TRUE WHERE "id" = $1`,
+      `UPDATE core."rowLevelPermissionRule" SET "canUpdateRecords" = TRUE WHERE "roleId" = $1`,
       [roleId],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(
@@ -451,7 +450,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       expect(avatarUrl).toBe('Secret avatar');
     } finally {
       await global.testDataSource.query(
-        `UPDATE core."role" SET "canUpdateAllObjectRecords" = FALSE WHERE "id" = $1`,
+        `UPDATE core."rowLevelPermissionRule" SET "canUpdateRecords" = FALSE WHERE "roleId" = $1`,
         [roleId],
       );
       await getAppProviderByClassName<WorkspaceCacheService>(

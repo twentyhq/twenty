@@ -23,6 +23,7 @@ import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflo
 import { WorkflowEditActionIfElse } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElse';
 import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator';
 import { WorkflowEditActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction';
+import { WorkflowEditActionMcpTool } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool';
 import { WorkflowEditActionPickRecord } from '@/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
@@ -124,6 +125,15 @@ export const WorkflowStepDetail = ({
         case 'LOGIC_FUNCTION': {
           return (
             <WorkflowEditActionLogicFunction
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+        case 'MCP_TOOL': {
+          return (
+            <WorkflowEditActionMcpTool
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

@@ -16,6 +16,7 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
@@ -49,6 +50,13 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
         flatRole: flatEntityToValidate,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: flatEntityToValidate,
+        buildOptions,
       }),
     );
 
@@ -116,6 +124,13 @@ export class FlatRoleValidatorService {
       }),
     );
 
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: existingRole,
+        buildOptions,
+      }),
+    );
+
     if (
       !buildOptions.isSystemBuild &&
       existingRole.universalIdentifier === MEMBER_ROLE_UNIVERSAL_IDENTIFIER
@@ -167,6 +182,13 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
+        buildOptions,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: fromFlatRole,
         buildOptions,
       }),
     );

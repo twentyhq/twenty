@@ -40,15 +40,20 @@ const buildRole = (
 const ROLE_WITH_RULE = buildRole({
   ...allRecords,
   canReadAllRecords: false,
-  rowLevelRecordsPermissions: {
-    canCreateRecords: false,
-    canReadRecords: true,
-    canUpdateRecords: false,
-    canSoftDeleteRecords: false,
-    canDestroyRecords: false,
-    predicates: [],
-    predicateGroups: [],
-  },
+  rowLevelRecordsPermissions: [
+    {
+      ruleId: 'rule-id',
+      canCreateRecords: false,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields: [],
+    },
+  ],
 });
 
 describe('isObjectUsingRecordAccessGroups', () => {
@@ -57,6 +62,7 @@ describe('isObjectUsingRecordAccessGroups', () => {
       isObjectUsingRecordAccessGroups({
         rolesPermissions: { admin: buildRole(allRecords) },
         flatObjectMetadataMaps,
+        resolvedRelatedRecordPaths: [],
         objectMetadataId: OBJECT_METADATA_ID,
       }),
     ).toBe(false);
@@ -70,6 +76,7 @@ describe('isObjectUsingRecordAccessGroups', () => {
           sales: ROLE_WITH_RULE,
         },
         flatObjectMetadataMaps,
+        resolvedRelatedRecordPaths: [],
         objectMetadataId: OBJECT_METADATA_ID,
       }),
     ).toBe(true);
@@ -87,6 +94,7 @@ describe('isObjectUsingRecordAccessGroups', () => {
           }),
           flatEntityMaps: createEmptyFlatEntityMaps(),
         }),
+        resolvedRelatedRecordPaths: [],
         objectMetadataId: OBJECT_METADATA_ID,
       }),
     ).toBe(false);
@@ -97,6 +105,7 @@ describe('isObjectUsingRecordAccessGroups', () => {
       isObjectUsingRecordAccessGroups({
         rolesPermissions: { sales: ROLE_WITH_RULE },
         flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        resolvedRelatedRecordPaths: [],
         objectMetadataId: OBJECT_METADATA_ID,
       }),
     ).toBe(false);

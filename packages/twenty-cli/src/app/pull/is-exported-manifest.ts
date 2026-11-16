@@ -22,6 +22,11 @@ export const isExportedManifest = (value: unknown): value is ExportedManifest =>
   isPlainObject(value) &&
   isPlainObject(value.application) &&
   isString(value.application.universalIdentifier) &&
+  (!isDefined(value.publicAssets) ||
+    (isArray(value.publicAssets) &&
+      value.publicAssets.every(
+        (asset) => isPlainObject(asset) && isString(asset.filePath),
+      ))) &&
   (!isDefined(value.translations) ||
     (isPlainObject(value.translations) &&
       Object.values(value.translations).every(isLocaleCatalog))) &&

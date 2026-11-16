@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
+import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
 import { useSidePanelWorkflowVersionIdOrThrow } from '@/side-panel/pages/workflow/step/view/hooks/useSidePanelWorkflowVersionIdOrThrow';
 
 const StyledContainer = styled.div`
@@ -15,10 +16,13 @@ const StyledContainer = styled.div`
 
 const StyledActions = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
+  padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
 const StyledSpacer = styled.div`

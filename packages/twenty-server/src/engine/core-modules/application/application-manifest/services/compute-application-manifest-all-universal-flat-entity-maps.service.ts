@@ -6,6 +6,8 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
+  getDeclaredLegacyRoleRecordsPermissionsKeys,
+  normalizeLegacyCompliantRoleManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
@@ -15,26 +17,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
+import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
-import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
-import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
-import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
-import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
@@ -45,6 +44,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { findInactiveFieldMetadataOptionValues } from 'src/engine/core-modules/application/application-manifest/utils/find-inactive-field-metadata-option-values.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import {
@@ -52,6 +52,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildDatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-lookup.util';
+import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -70,11 +72,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
     now,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    // Triggers can listen on any object of the workspace, not only the app's own
+    existingAllFlatEntityMaps: AllFlatEntityMaps;
     now: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
@@ -227,11 +232,33 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       ),
     );
 
+    const databaseEventTriggerManifestLookup =
+      buildDatabaseEventTriggerManifestLookup({
+        manifestFlatEntityMaps: allUniversalFlatEntityMaps,
+        existingFlatEntityMaps: existingAllFlatEntityMaps,
+      });
+
     for (const logicFunctionManifest of manifest.logicFunctions) {
+      // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
+      const eventTriggerSettings =
+        logicFunctionManifest.eventTriggerSettings ??
+        logicFunctionManifest.databaseEventTriggerSettings;
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
-            logicFunctionManifest,
+            logicFunctionManifest: isDefined(eventTriggerSettings)
+              ? {
+                  ...logicFunctionManifest,
+                  eventTriggerSettings: undefined,
+                  databaseEventTriggerSettings:
+                    resolveDatabaseEventTriggerManifestSettingsOrThrow({
+                      settings: eventTriggerSettings,
+                      lookup: databaseEventTriggerManifestLookup,
+                      subject: `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier}`,
+                    }),
+                }
+              : logicFunctionManifest,
             applicationUniversalIdentifier,
             applicationSourceType,
             existingFlatLogicFunctionMaps:
@@ -336,45 +363,49 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    for (const roleManifest of manifest.roles) {
+    // Standard objects are not in the manifest, so the workspace ones come first
+    const objectDefaultsByUniversalIdentifier = {
+      ...existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+      ...allUniversalFlatEntityMaps.flatObjectMetadataMaps
+        .byUniversalIdentifier,
+    };
+
+    for (const role of manifest.roles) {
+      // A predicate that has no rule yet is still exported in the legacy properties
+      const conflictingLegacyKeys = getDeclaredLegacyRoleRecordsPermissionsKeys(
+        { role },
+      ).filter(
+        (legacyKey) =>
+          legacyKey !== 'rowLevelPermissionPredicates' &&
+          legacyKey !== 'rowLevelPermissionPredicateGroups',
+      );
+
+      if (
+        isDefined(role.recordsPermissions) &&
+        conflictingLegacyKeys.length > 0
+      ) {
+        throw new ApplicationException(
+          `Role "${role.universalIdentifier}" declares recordsPermissions together with the legacy properties ${conflictingLegacyKeys.join(', ')}`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      const roleManifest = normalizeLegacyCompliantRoleManifest({
+        role,
+        applicationUniversalIdentifier,
+        objectDefaultsByUniversalIdentifier,
+      });
+      const universalFlatRole = fromRoleManifestToUniversalFlatRole({
+        roleManifest,
+        applicationUniversalIdentifier,
+        now,
+      });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromRoleManifestToUniversalFlatRole({
-          roleManifest,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity: universalFlatRole,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatRoleMaps,
       });
-      for (const objectPermissionManifest of roleManifest.objectPermissions ??
-        []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromObjectPermissionManifestToUniversalFlatObjectPermission({
-              objectPermissionManifest,
-              roleUniversalIdentifier: roleManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatObjectPermissionMaps,
-        });
-      }
-
-      for (const fieldPermissionManifest of roleManifest.fieldPermissions ??
-        []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromFieldPermissionManifestToUniversalFlatFieldPermission({
-              fieldPermissionManifest,
-              roleUniversalIdentifier: roleManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatFieldPermissionMaps,
-        });
-      }
 
       for (const permissionFlagUniversalIdentifier of roleManifest.permissionFlagUniversalIdentifiers ??
         []) {
@@ -391,35 +422,53 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      for (const rowLevelPermissionPredicateGroupManifest of roleManifest.rowLevelPermissionPredicateGroups ??
-        []) {
+      const {
+        objectPermissions,
+        fieldPermissions,
+        rules,
+        predicateGroups: linkedPredicateGroups,
+        predicates: linkedPredicates,
+      } = fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
+        roleManifest,
+        applicationUniversalIdentifier,
+        now,
+      });
+
+      for (const fieldPermission of fieldPermissions) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
-              {
-                rowLevelPermissionPredicateGroupManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
-                applicationUniversalIdentifier,
-                now,
-              },
-            ),
+          universalFlatEntity: fieldPermission,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatFieldPermissionMaps,
+        });
+      }
+
+      for (const objectPermission of objectPermissions) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: objectPermission,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatObjectPermissionMaps,
+        });
+      }
+
+      for (const rule of rules) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: rule,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionRuleMaps,
+        });
+      }
+
+      for (const linkedPredicateGroup of linkedPredicateGroups) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: linkedPredicateGroup,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
         });
       }
 
-      for (const rowLevelPermissionPredicateManifest of roleManifest.rowLevelPermissionPredicates ??
-        []) {
+      for (const linkedPredicate of linkedPredicates) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-              {
-                rowLevelPermissionPredicateManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
-                applicationUniversalIdentifier,
-                now,
-              },
-            ),
+          universalFlatEntity: linkedPredicate,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
         });
@@ -441,7 +490,24 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const agentManifest of manifest.agents ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
-          agentManifest,
+          agentManifest: {
+            ...agentManifest,
+            // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
+            triggers: agentManifest.triggers?.map((trigger) =>
+              trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT'
+                ? {
+                    ...trigger,
+                    type: 'DATABASE_EVENT' as const,
+                    settings:
+                      resolveDatabaseEventTriggerManifestSettingsOrThrow({
+                        settings: trigger.settings,
+                        lookup: databaseEventTriggerManifestLookup,
+                        subject: `Agent ${agentManifest.name}`,
+                      }),
+                  }
+                : trigger,
+            ),
+          },
           applicationUniversalIdentifier,
           now,
         }),
@@ -528,7 +594,21 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
+      // Deactivating an option deletes its groups, so a sync must not bring its column back.
+      const inactiveOptionValues = findInactiveFieldMetadataOptionValues({
+        fieldMetadataUniversalIdentifier:
+          viewManifest.mainGroupByFieldMetadataUniversalIdentifier,
+        existingFlatFieldMetadataOptionMaps:
+          existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+        incomingFlatFieldMetadataOptionMaps:
+          allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+      });
+
       for (const viewGroupManifest of viewManifest.groups ?? []) {
+        if (inactiveOptionValues.has(viewGroupManifest.fieldValue)) {
+          continue;
+        }
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: fromViewGroupManifestToUniversalFlatViewGroup({
             viewGroupManifest,
@@ -772,7 +852,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         now,
       },
     )) {
-      // An option id reused across fields keeps its first field's row.
       if (
         isDefined(
           allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps
@@ -781,7 +860,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           ],
         )
       ) {
-        continue;
+        throw new ApplicationException(
+          `Option id ${universalFlatFieldMetadataOption.universalIdentifier} of field ${universalFlatFieldMetadata.name} is already used by another option`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
       }
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

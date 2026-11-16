@@ -16,10 +16,14 @@ import { canAuthContextHoldRoles } from 'src/engine/permissions/internal/princip
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 
 @Injectable()
 export class PrincipalPermissionsReadService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+  ) {}
 
   async resolvePermissionsPrincipalsOrThrow({
     authContext,
@@ -76,11 +80,13 @@ export class PrincipalPermissionsReadService {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatRoleTargetByApplicationIdMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
+      'flatRoleTargetByApplicationIdMaps',
       'flatApplicationMaps',
     ]);
 
@@ -90,6 +96,11 @@ export class PrincipalPermissionsReadService {
         userWorkspaceRoleMap,
         apiKeyRoleMap,
         flatRoleTargetByAgentIdMaps,
+        flatRoleTargetByApplicationIdMaps,
+        workspaceCustomApplicationId:
+          await this.applicationGrantRoleLookupService.findWorkspaceCustomApplicationIdOrThrow(
+            workspaceId,
+          ),
         flatApplicationMaps,
         flatWorkspaceMemberMaps:
           await this.findFlatWorkspaceMemberMaps(authContext),

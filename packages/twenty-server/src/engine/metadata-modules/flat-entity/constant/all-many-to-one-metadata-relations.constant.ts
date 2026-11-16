@@ -142,6 +142,20 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'agentChatChannelUniversalIdentifier',
     },
+    workflow: {
+      metadataName: 'workflow',
+      foreignKey: 'workflowId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'workflowUniversalIdentifier',
+    },
+    agent: {
+      metadataName: 'agent',
+      foreignKey: 'agentId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'agentUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {
@@ -410,6 +424,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey:
         'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -471,21 +492,21 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     fieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'fieldMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'rowLevelPermissionPredicates',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
     relationFieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'relationFieldMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'relationRowLevelPermissionPredicates',
       isNullable: true,
       universalForeignKey: 'relationFieldMetadataUniversalIdentifier',
     },
     workspaceMemberFieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'workspaceMemberFieldMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'workspaceMemberRowLevelPermissionPredicates',
       isNullable: true,
       universalForeignKey: 'workspaceMemberFieldMetadataUniversalIdentifier',
     },
@@ -505,6 +526,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
         'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
     application: null,
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
   },
   rowLevelPermissionPredicateGroup: {
     objectMetadata: {
@@ -528,6 +556,31 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey:
         'parentRowLevelPermissionPredicateGroupUniversalIdentifier',
+    },
+    workspace: null,
+    application: null,
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
+  },
+  rowLevelPermissionRule: {
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: 'rowLevelPermissionRules',
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'rowLevelPermissionRules',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
     },
     workspace: null,
     application: null,

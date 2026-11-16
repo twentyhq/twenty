@@ -121,6 +121,8 @@ export type AgentStepLoopInput = {
 export type AgentStepLoop = {
   stream: ReturnType<typeof streamText<ToolSet, Context, AgentStepLoopOutput>>;
   getStopReason: () => StepDebitResult['stopReason'];
+  // what a loop that ended early, such as a stopped one, did before it ended
+  getFinishedSteps: () => StepResult<ToolSet>[];
 };
 
 const sumSteps = (
@@ -389,6 +391,7 @@ export class AgentStepLoopService {
     return {
       stream,
       getStopReason: () => stopReason,
+      getFinishedSteps: () => [...finishedSteps],
     };
   }
 

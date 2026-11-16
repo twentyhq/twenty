@@ -13,6 +13,7 @@ import {
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { toStoredDatabaseEventTriggerSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
 const resolveExecutionMode = ({
@@ -70,6 +71,10 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     logicFunctionManifest.name ?? parse(logicFunctionManifest.handlerName).name;
 
   const timeoutSeconds = logicFunctionManifest.timeoutSeconds ?? 300;
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
+  const eventTriggerSettings =
+    logicFunctionManifest.eventTriggerSettings ??
+    logicFunctionManifest.databaseEventTriggerSettings;
 
   return {
     universalIdentifier: logicFunctionManifest.universalIdentifier,
@@ -87,8 +92,9 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
-    databaseEventTriggerSettings:
-      logicFunctionManifest.databaseEventTriggerSettings ?? null,
+    databaseEventTriggerSettings: isDefined(eventTriggerSettings)
+      ? toStoredDatabaseEventTriggerSettingsOrThrow(eventTriggerSettings)
+      : null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
     serverRouteTriggerSettings:
@@ -96,6 +102,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
+    jobConfig: null,
     isBuildUpToDate: true,
     executionMode: resolveExecutionMode({
       logicFunctionManifest,

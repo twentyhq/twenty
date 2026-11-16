@@ -4,6 +4,7 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { isGroupLoadLimitSupportedForViewType } from '@/object-record/record-group/utils/isGroupLoadLimitSupportedForViewType';
 import { isRecordGroupTabsSupportedForViewType } from '@/object-record/record-group/utils/isRecordGroupTabsSupportedForViewType';
@@ -107,10 +108,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     isDefined(recordIndexGroupFieldMetadataItem) &&
     isManyToOneRelationField(recordIndexGroupFieldMetadataItem);
 
-  const shouldShowGroupLoadLimit =
-    isDefined(recordIndexGroupFieldMetadataItem) &&
-    isGroupLoadLimitSupportedForViewType(viewType);
-
   const isRecordGroupTabsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED,
   );
@@ -118,6 +115,15 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const recordIndexShouldDisplayGroupsAsTabs = useAtomComponentStateValue(
     recordIndexShouldDisplayGroupsAsTabsComponentState,
   );
+
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
+
+  const shouldShowGroupLoadLimit =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isGroupLoadLimitSupportedForViewType(viewType) &&
+    !isRecordGroupTabsDisplayed;
 
   const shouldShowGroupDisplay =
     isRecordGroupTabsEnabled &&

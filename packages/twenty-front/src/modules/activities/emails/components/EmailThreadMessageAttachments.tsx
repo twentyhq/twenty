@@ -73,7 +73,7 @@ export const EmailThreadMessageAttachments = ({
                   <Dropdown.Trigger
                     render={
                       <LightIconButton
-                        size="sm"
+                        size="xs"
                         emphasis="subtle"
                         aria-label={t`More options`}
                       >

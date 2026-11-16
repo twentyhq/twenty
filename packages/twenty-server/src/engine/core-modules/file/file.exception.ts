@@ -14,6 +14,7 @@ export const FileExceptionCode = appendCommonExceptionCode({
   INVALID_FILE_FOLDER: 'INVALID_FILE_FOLDER',
   TEMPORARY_FILE_NOT_ALLOWED: 'TEMPORARY_FILE_NOT_ALLOWED',
   RANGE_NOT_SATISFIABLE: 'RANGE_NOT_SATISFIABLE',
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
 } as const);
 
 const getFileExceptionUserFriendlyMessage = (
@@ -30,6 +31,8 @@ const getFileExceptionUserFriendlyMessage = (
       return msg`Temporary file cannot be downloaded.`;
     case FileExceptionCode.RANGE_NOT_SATISFIABLE:
       return msg`Requested file range cannot be served.`;
+    case FileExceptionCode.TOO_MANY_REQUESTS:
+      return msg`Too many files are being opened. Please try again in a minute.`;
     case FileExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

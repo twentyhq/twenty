@@ -14,6 +14,7 @@ const buildStyleInjectionModule = (cssText: string): string =>
 
 type CssInjectionPluginOptions = {
   getBuildPlugins?: () => esbuild.Plugin[];
+  onSourceFiles?: (paths: string[]) => void;
 };
 
 export const createCssInjectionPlugin = (
@@ -60,14 +61,16 @@ export const createCssInjectionPlugin = (
         );
       }
 
+      const sourceFiles = Object.keys(result.metafile.inputs).map((input) =>
+        resolve(build.initialOptions.absWorkingDir ?? process.cwd(), input),
+      );
+      options?.onSourceFiles?.(sourceFiles);
       const cssText = outputFile.text;
 
       return {
         contents: buildStyleInjectionModule(cssText),
         loader: 'js',
-        watchFiles: Object.keys(result.metafile.inputs).map((input) =>
-          resolve(build.initialOptions.absWorkingDir ?? process.cwd(), input),
-        ),
+        watchFiles: sourceFiles,
       };
     });
   },

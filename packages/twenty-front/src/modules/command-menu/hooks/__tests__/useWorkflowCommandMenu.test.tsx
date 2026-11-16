@@ -30,14 +30,14 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   }),
 }));
 
-const workflowMockObjectMetadataItem =
+const workflowVersionMockObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'workflow',
+    (item) => item.nameSingular === 'workflowVersion',
   )!;
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: jest.fn(() => ({
-    objectMetadataItem: workflowMockObjectMetadataItem,
+    objectMetadataItem: workflowVersionMockObjectMetadataItem,
   })),
 }));
 
@@ -45,7 +45,7 @@ const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
   componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
-    workflowMockObjectMetadataItem.nameSingular,
+    workflowVersionMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',

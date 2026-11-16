@@ -55,6 +55,15 @@ export const GET_ROLES = gql`
       rowLevelPermissionPredicateGroups {
         ...RowLevelPermissionPredicateGroupFragment
       }
+      rowLevelPermissionRules {
+        id
+        objectMetadataId
+        canCreateRecords
+        canReadRecords
+        canUpdateRecords
+        canSoftDeleteRecords
+        canDestroyRecords
+      }
     }
   }
 `;

@@ -1,9 +1,13 @@
 import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
+import { hasUsableMessagingConnectedAccount } from '@/accounts/utils/hasUsableMessagingConnectedAccount';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { EmailsCardErrorState } from '@/activities/emails/components/EmailsCardErrorState';
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -29,6 +33,13 @@ export const EmptyInboxPlaceholder = () => {
   const { connectedAccountId, loading: connectedAccountLoading } =
     useFirstConnectedAccount();
   const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
+  const {
+    channels: myMessageChannels,
+    loading: myMessageChannelsLoading,
+    error: myMessageChannelsError,
+    refetch: refetchMyMessageChannels,
+    hasLoaded: hasLoadedMyMessageChannels,
+  } = useMyMessageChannels();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -43,6 +54,18 @@ export const EmptyInboxPlaceholder = () => {
   const recordName = recordIdentifier?.name;
   const hasAccountAbleToSend = isDefined(connectedAccountId);
   const hasConnectedAccount = isNonEmptyArray(myConnectedAccounts);
+  const hasUsableAccount = hasUsableMessagingConnectedAccount({
+    connectedAccounts: myConnectedAccounts ?? [],
+    messageChannels: myMessageChannels,
+  });
+
+  if (connectedAccountLoading || myMessageChannelsLoading) {
+    return <SkeletonLoader />;
+  }
+
+  if (isDefined(myMessageChannelsError) && !hasLoadedMyMessageChannels) {
+    return <EmailsCardErrorState onRetry={() => refetchMyMessageChannels()} />;
+  }
 
   return (
     <EmptyState.Root>
@@ -52,7 +75,7 @@ export const EmptyInboxPlaceholder = () => {
           <Trans>No messages yet</Trans>
         </EmptyState.Title>
         <EmptyState.Description>
-          {hasAccountAbleToSend
+          {hasUsableAccount
             ? isNonEmptyString(recordName)
               ? t`Your conversations with ${recordName} will show up here.`
               : t`Your conversations will show up here.`
@@ -61,39 +84,38 @@ export const EmptyInboxPlaceholder = () => {
               : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
         </EmptyState.Description>
       </EmptyState.Content>
-      {!connectedAccountLoading && (
-        <EmptyState.Actions>
-          {hasConnectedAccount && (
-            <LinkEmailThreadsDropdown
-              dropdownIdPrefix="empty-inbox-link-email-threads"
-              trigger={
-                <Button startIcon={<IconLink />} variant="outline">
-                  {t`Link email threads`}
-                </Button>
-              }
-            />
-          )}
-          {hasAccountAbleToSend ? (
-            <Button
-              startIcon={<IconMail />}
-              onClick={openComposer}
-              disabled={loading}
-              variant="outline"
-            >{t`Send Email`}</Button>
-          ) : (
-            <Button
-              onClick={() =>
-                navigateSettings(
-                  isAppPreferencesEnabled
-                    ? SettingsPath.AppPreferences
-                    : SettingsPath.NewAccount,
-                )
-              }
-              variant="outline"
-            >{t`Connect an account`}</Button>
-          )}
-        </EmptyState.Actions>
-      )}
+      <EmptyState.Actions>
+        {hasUsableAccount && hasConnectedAccount && (
+          <LinkEmailThreadsDropdown
+            dropdownIdPrefix="empty-inbox-link-email-threads"
+            trigger={
+              <Button startIcon={<IconLink />} variant="outline">
+                {t`Link email threads`}
+              </Button>
+            }
+          />
+        )}
+        {hasUsableAccount && hasAccountAbleToSend && (
+          <Button
+            startIcon={<IconMail />}
+            onClick={openComposer}
+            disabled={loading}
+            variant="outline"
+          >{t`Send Email`}</Button>
+        )}
+        {!hasUsableAccount && (
+          <Button
+            onClick={() =>
+              navigateSettings(
+                isAppPreferencesEnabled
+                  ? SettingsPath.AppPreferences
+                  : SettingsPath.NewAccount,
+              )
+            }
+            variant="outline"
+          >{t`Connect an account`}</Button>
+        )}
+      </EmptyState.Actions>
     </EmptyState.Root>
   );
 };

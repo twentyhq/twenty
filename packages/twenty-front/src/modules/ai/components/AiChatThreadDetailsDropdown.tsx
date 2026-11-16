@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { type ComponentProps, useRef } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,16 +17,18 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
-import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
+import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
+import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -65,10 +67,12 @@ const StyledDetails = styled.dl`
 
 type AiChatThreadDetailsDropdownProps = {
   threadId: string;
+  labels?: ComponentProps<typeof AiChatThreadLabelsField>;
 };
 
 export const AiChatThreadDetailsDropdown = ({
   threadId,
+  labels,
 }: AiChatThreadDetailsDropdownProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -76,11 +80,11 @@ export const AiChatThreadDetailsDropdown = ({
     `ai-chat-thread-details-${threadId}`,
   );
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     threadId,
   );
   const permissions = useAtomFamilySelectorValue(
-    agentChatThreadPermissionsFamilySelector,
+    aiChatThreadPermissionsFamilySelector,
     threadId,
   );
   const canChangeAssignee =
@@ -92,7 +96,7 @@ export const AiChatThreadDetailsDropdown = ({
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+  const channel = useAtomStateValue(aiChatChannelsState)?.find(
     ({ id }) => id === thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -215,7 +219,7 @@ export const AiChatThreadDetailsDropdown = ({
               label={t`Channel`}
               action={
                 isDefined(thread) && (
-                  <AiChatThreadChannelPicker
+                  <InboxThreadChannelPicker
                     thread={thread}
                     dropdownId={`${dropdownId}-channel-picker`}
                   />
@@ -224,7 +228,7 @@ export const AiChatThreadDetailsDropdown = ({
             >
               {isDefined(channel) ? (
                 <StyledChannel>
-                  <AgentChatChannelIcon
+                  <AiChatChannelIcon
                     channel={channel}
                     size={theme.icon.size.sm}
                   />
@@ -265,6 +269,15 @@ export const AiChatThreadDetailsDropdown = ({
                 <StyledEmptyValue>{t`None`}</StyledEmptyValue>
               )}
             </DetailsRow>
+            {isDefined(labels) && (
+              <AiChatThreadLabelsField
+                labels={labels.labels}
+                selectedLabelIds={labels.selectedLabelIds}
+                isSaving={labels.isSaving}
+                onLabelsChange={labels.onLabelsChange}
+              />
+            )}
+            <AiChatThreadDetailsFollowing threadId={threadId} />
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>

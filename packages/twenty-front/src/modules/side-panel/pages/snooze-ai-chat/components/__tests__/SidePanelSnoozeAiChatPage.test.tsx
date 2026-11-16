@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -15,18 +15,18 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
-const snoozeAgentChatThreadsInChannel = jest.fn();
+const snoozeInboxThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
-  useUpdateAgentChatThreadInboxState: () => ({
+jest.mock('@/ai/hooks/useUpdateAiChatThreadStatus', () => ({
+  useUpdateAiChatThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));
 
-jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
-  useSnoozeAgentChatThreadsInChannel: () => ({
-    snoozeAgentChatThreadsInChannel,
+jest.mock('@/inbox/hooks/useSnoozeInboxThreadsInChannel', () => ({
+  useSnoozeInboxThreadsInChannel: () => ({
+    snoozeInboxThreadsInChannel,
   }),
 }));
 
@@ -79,7 +79,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
 
   it('snoozes the chats for their channel from a channel view', () => {
     jotaiStore.set(
-      isSnoozeAiChatForChannelComponentState.atomFamily({
+      isSnoozeInboxForChannelComponentState.atomFamily({
         instanceId: PAGE_ID,
       }),
       true,
@@ -90,7 +90,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     fireEvent.click(screen.getByText('This evening'));
 
     expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
-    expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
+    expect(snoozeInboxThreadsInChannel).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });

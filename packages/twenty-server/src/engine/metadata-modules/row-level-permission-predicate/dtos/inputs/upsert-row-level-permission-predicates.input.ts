@@ -128,4 +128,29 @@ export class UpsertRowLevelPermissionPredicatesInput {
   @Type(() => RowLevelPermissionPredicateGroupInput)
   @Field(() => [RowLevelPermissionPredicateGroupInput])
   predicateGroups: RowLevelPermissionPredicateGroupInput[];
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canCreateRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canReadRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canUpdateRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canSoftDeleteRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canDestroyRecords?: boolean;
 }

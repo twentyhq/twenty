@@ -65,7 +65,13 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     searchFieldMetadataIds: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionIds: [],
+    rowLevelPermissionPredicateIds: [],
+    relationRowLevelPermissionPredicateIds: [],
+    workspaceMemberRowLevelPermissionPredicateIds: [],
     fieldMetadataOptionUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
     universalSettings: null,
     ...overrides,
   };

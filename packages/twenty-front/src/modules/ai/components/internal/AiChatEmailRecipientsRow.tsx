@@ -4,14 +4,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type KeyboardEvent, type ReactNode, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconX } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { EmailRecipientChip } from '@/activities/emails/recipients/components/EmailRecipientChip';
+import { useEmailRecipientsResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
+import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 
 const RECIPIENT_INPUT_MIN_WIDTH_PX = 80;
@@ -37,7 +38,6 @@ type AiChatEmailRecipientsRowProps = {
   disabled: boolean;
   onChange: (recipients: EmailRecipient[]) => void;
   trailing?: ReactNode;
-  isLabelVisible?: boolean;
 };
 
 export const AiChatEmailRecipientsRow = ({
@@ -46,10 +46,12 @@ export const AiChatEmailRecipientsRow = ({
   disabled,
   onChange,
   trailing,
-  isLabelVisible = true,
 }: AiChatEmailRecipientsRowProps) => {
   const { t } = useLingui();
   const [draftRecipient, setDraftRecipient] = useState('');
+  const { resolutionByRecipientKey } = useEmailRecipientsResolution({
+    recipients,
+  });
 
   const addDraftRecipients = () => {
     if (disabled) {
@@ -86,37 +88,28 @@ export const AiChatEmailRecipientsRow = ({
   };
 
   return (
-    <ComposerFieldRow
-      label={label}
-      isLabelVisible={isLabelVisible}
-      trailing={trailing}
-    >
+    <ComposerFieldRow label={label} trailing={trailing}>
       <StyledRow>
-        {recipients.map(({ address, displayName }) => (
-          <Chip
-            key={address}
-            variant="soft"
-            endElement={
-              disabled ? undefined : (
-                <LightIconButton
-                  size="xs"
-                  aria-label={t`Remove ${address}`}
-                  onClick={() =>
+        {recipients.map((recipient) => (
+          <EmailRecipientChip
+            key={recipient.address}
+            recipient={recipient}
+            resolution={resolutionByRecipientKey.get(
+              getEmailRecipientKey(recipient.address),
+            )}
+            title={formatEmailRecipient(recipient)}
+            onRemove={
+              disabled
+                ? undefined
+                : () =>
                     onChange(
                       recipients.filter(
-                        (recipient) => recipient.address !== address,
+                        ({ address }) => address !== recipient.address,
                       ),
                     )
-                  }
-                >
-                  <IconX />
-                </LightIconButton>
-              )
             }
-            title={address}
-          >
-            {isNonEmptyString(displayName) ? displayName : address}
-          </Chip>
+            removeAriaLabel={t`Remove ${recipient.address}`}
+          />
         ))}
         {!disabled && (
           <StyledInputContainer>

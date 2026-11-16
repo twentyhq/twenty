@@ -1,3 +1,5 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { type MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -16,10 +18,10 @@ export type Message = Omit<
   | 'messageCampaign'
   | 'messageCampaignId'
   | 'attachments'
+  | 'createdBy'
 > & {
-  attachments: {
-    filename: string;
-  }[];
+  createdBy?: ActorMetadata;
+  attachments: MessageAttachmentMetadata[];
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;
@@ -33,6 +35,14 @@ export type Message = Omit<
 export type MessageAttachmentFile = {
   fileId: string;
   label: string;
+};
+
+export type MessageAttachmentMetadata = {
+  externalId: string;
+  filename: string;
+  size: number;
+  contentType: string;
+  isInline: boolean;
 };
 
 export type MessageHeader = {

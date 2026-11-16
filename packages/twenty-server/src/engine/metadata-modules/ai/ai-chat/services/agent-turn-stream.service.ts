@@ -189,6 +189,7 @@ export class AgentTurnStreamService {
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(threadId, streamId);
     let stopHeartbeat: (() => void) | undefined;
+    let unsubscribeFromCancel: (() => Promise<void>) | undefined;
     let isStoppedByMember = false;
     let turnError: StreamErrorPayload | undefined;
 
@@ -199,10 +200,13 @@ export class AgentTurnStreamService {
       });
       stopHeartbeat = this.streamHeartbeatService.startRunning(streamId);
 
-      await this.cancelSubscriberService.subscribe(cancelChannel, () => {
-        isStoppedByMember = true;
-        abortController.abort();
-      });
+      unsubscribeFromCancel = await this.cancelSubscriberService.subscribe(
+        cancelChannel,
+        () => {
+          isStoppedByMember = true;
+          abortController.abort();
+        },
+      );
 
       jobAbortSignal?.addEventListener(
         'abort',
@@ -224,7 +228,7 @@ export class AgentTurnStreamService {
       throw error;
     } finally {
       stopHeartbeat?.();
-      await this.cancelSubscriberService.unsubscribe(cancelChannel);
+      await unsubscribeFromCancel?.();
       // what a member queued while they stopped the turn stays queued; a worker shutdown sends it
       await this.streamRecoveryService.release({
         ...claim,

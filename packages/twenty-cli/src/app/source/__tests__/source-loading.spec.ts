@@ -80,6 +80,31 @@ describe('CLI app source loading', () => {
     },
   );
 
+  it('keeps code-step files in the inventory without evaluating their definitions', async () => {
+    const markerPath = join(appPath, 'code-step-executed');
+    const codeStepPath = 'workflow.code.ts';
+    await writeFile(join(appPath, 'app.ts'), sourceApplication());
+    await writeFile(
+      join(appPath, codeStepPath),
+      sourceApplication(`import { writeFileSync } from 'node:fs';
+writeFileSync(${JSON.stringify(markerPath)}, 'executed');`),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: { universalIdentifier: SOURCE_TEST_APPLICATION_ID },
+    });
+    const files = await scanProjectSourceFiles({ appPath, signal });
+    expect(files.find((file) => file.relativePath === codeStepPath)).toEqual({
+      relativePath: codeStepPath,
+      entityKey: null,
+      targetFunctionName: null,
+      universalIdentifier: null,
+      isReadable: true,
+    });
+    await expect(readFile(markerPath)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
   it('recognizes a component definition after JSX in a TSX file', () => {
     expect(
       extractDefineEntity({

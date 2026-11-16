@@ -1,8 +1,10 @@
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { AgentChatReplyPolicyModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-reply-policy.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
 import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
 import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
+import { AgentChatMemberMessageReplayService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-replay.service';
 import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -61,6 +63,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
 
 @Module({
   imports: [
+    ApplicationGrantRoleLookupModule,
     CoreEntityCacheModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
@@ -99,6 +102,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentInboxResolver,
     AgentInboxProposalService,
     AgentChatQueueService,
+    AgentChatMemberMessageReplayService,
     AgentChatMemberMessageSenderService,
     AgentChatMemberMessageWriterService,
     AgentChatMemberMessagePartsService,

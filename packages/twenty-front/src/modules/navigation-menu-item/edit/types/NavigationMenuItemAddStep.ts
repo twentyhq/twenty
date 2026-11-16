@@ -4,4 +4,5 @@ export type NavigationMenuItemAddStep =
   | 'view'
   | 'record'
   | 'page'
-  | 'nativePage';
+  | 'nativePage'
+  | 'automation';

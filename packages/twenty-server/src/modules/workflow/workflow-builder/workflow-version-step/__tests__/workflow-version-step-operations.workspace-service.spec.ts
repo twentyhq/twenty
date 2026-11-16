@@ -108,3 +108,25 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     expect(clonedStep.settings).toEqual(step.settings);
   });
 });
+
+describe('WorkflowVersionStepOperationsWorkspaceService duplicate steps', () => {
+  it('places a duplicate next to a positioned source step', async () => {
+    const service = await buildService();
+    const step = {
+      ...buildCodeStep({ code: '', logicFunctionInput: {} }),
+      position: { x: 100, y: 200 },
+    };
+
+    expect(service.markStepAsDuplicate({ step }).position).toEqual({
+      x: 150,
+      y: 250,
+    });
+  });
+
+  it('leaves a duplicate unpositioned when its source step has no position', async () => {
+    const service = await buildService();
+    const step = buildCodeStep({ code: '', logicFunctionInput: {} });
+
+    expect(service.markStepAsDuplicate({ step }).position).toBeUndefined();
+  });
+});

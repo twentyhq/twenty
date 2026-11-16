@@ -2,11 +2,12 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
+import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledPendingResponseWrapper = styled.div`
@@ -16,25 +17,23 @@ const StyledPendingResponseWrapper = styled.div`
 `;
 
 export const AiChatPendingResponseIndicator = () => {
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
+    aiChatIsAssistantReplyPendingFamilySelector,
+    aiChatDisplayedThread,
   );
-  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
-    agentChatIsAwaitingFirstChunkFamilyState,
-    { threadId: agentChatDisplayedThread },
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
+    { threadId: aiChatDisplayedThread },
   );
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
-  );
-  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
+    threadId: aiChatDisplayedThread,
   });
 
   const shouldRender =
-    agentChatIsAwaitingFirstChunk &&
-    !agentChatIsStreaming &&
-    !isDefined(agentChatError);
+    aiChatIsAssistantReplyPending &&
+    !aiChatIsStreaming &&
+    !isDefined(aiChatError);
 
   if (!shouldRender) {
     return null;

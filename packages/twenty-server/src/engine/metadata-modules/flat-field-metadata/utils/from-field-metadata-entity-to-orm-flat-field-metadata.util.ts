@@ -7,14 +7,23 @@ import {
 export const fromFieldMetadataEntityToOrmFlatFieldMetadata = ({
   entity,
   isUnique,
+  fieldMetadataOptionUniversalIdentifiers,
 }: {
   entity: FieldMetadataEntity;
   isUnique: boolean;
+  fieldMetadataOptionUniversalIdentifiers: string[];
 }): OrmFlatFieldMetadata => {
+  const derivedProperties = {
+    isUnique,
+    fieldMetadataOptionUniversalIdentifiers,
+  };
+
   return Object.fromEntries(
     ORM_FLAT_FIELD_METADATA_KEYS.map((key) => [
       key,
-      key === 'isUnique' ? isUnique : entity[key],
+      key === 'isUnique' || key === 'fieldMetadataOptionUniversalIdentifiers'
+        ? derivedProperties[key]
+        : entity[key],
     ]),
   ) as OrmFlatFieldMetadata;
 };

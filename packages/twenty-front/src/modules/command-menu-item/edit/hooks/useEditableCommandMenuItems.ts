@@ -3,6 +3,7 @@ import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCu
 import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -24,6 +25,9 @@ export const useEditableCommandMenuItems = () => {
     return (commandMenuItemsDraft ?? [])
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+      )
+      .filter(
+        doesCommandMenuItemMatchObjectContext(currentObjectMetadataItemId),
       )
       .filter(
         doesCommandMenuItemMatchCoreObjectName(

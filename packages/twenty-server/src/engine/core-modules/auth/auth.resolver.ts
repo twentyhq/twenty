@@ -459,6 +459,8 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
+
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
       twoFactorAuthenticationVerificationInput.otp,
@@ -504,7 +506,9 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    const { provisioningUri } =
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
+
+    const { provisioningUri, isTwoFactorAuthenticationReset } =
       await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
         userId: user.id,
         userEmail: email,
@@ -513,7 +517,7 @@ export class AuthResolver {
       });
 
     if (isDefined(provisioningUri)) {
-      return { tokens: null, provisioningUri };
+      return { tokens: null, provisioningUri, isTwoFactorAuthenticationReset };
     }
 
     await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
@@ -530,7 +534,11 @@ export class AuthResolver {
       origin: 'sign_in',
     });
 
-    return { tokens: authTokens.tokens, provisioningUri: null };
+    return {
+      tokens: authTokens.tokens,
+      provisioningUri: null,
+      isTwoFactorAuthenticationReset,
+    };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
@@ -1120,6 +1128,7 @@ export class AuthResolver {
       user,
       workspace,
       requestBaseUrl: getRequestBaseUrl(context.req),
+      requestIp: context.req.ip,
     });
   }
 

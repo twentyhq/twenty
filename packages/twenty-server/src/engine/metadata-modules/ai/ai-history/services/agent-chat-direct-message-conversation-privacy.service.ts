@@ -17,6 +17,7 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -27,6 +28,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
   ) {}
 
   async isDirectMessageIdentityEnabled(workspaceId: string): Promise<boolean> {
@@ -69,7 +71,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
       return isDefined(member) && !isDefined(member.deletedAt);
     });
 
-    await this.recordShareSystemWriteService.setRecordsPrivacy({
+    await this.privateRecordSystemWriteService.setRecordsPrivacy({
       workspaceId,
       objectMetadataId: conversationObjectMetadata.id,
       recordIds: conversationRecordIds,

@@ -66,11 +66,52 @@ Key points:
 - `prompt` is the system prompt that defines the agent's behavior.
 - `description` (optional) provides context about what the agent does.
 - `icon` (optional) sets the icon displayed in the UI.
+- `avatarColor` (optional) sets the color of the agent's avatar: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` or `gray`. Leave it out to get a color picked from the agent's ID.
+- `avatarShape` (optional) sets the shape of the agent's avatar: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` or `hexagon`. Defaults to `circle`.
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
 - `modelConfiguration` (optional) turns on the model's native tools, as the agent settings page does: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Each tool only works on models that support it. Leave it out to keep them off.
+- `triggers` (optional) runs the agent by itself, on a schedule or when records change. See [Agent triggers](#agent-triggers).
 - `isSystem` (optional, defaults to `false`) hides the agent from agent lists, like the agents Twenty creates for workflow AI steps. It only changes what is displayed: an app's agents can only be changed through the app, whatever this flag says.
+
+#### Agent triggers
+
+Each trigger starts a run that shows up in the agent's runs, with the record that triggered it:
+
+```ts src/agents/deal-watcher.ts
+import {
+  defineAgent,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineAgent({
+  ...,
+  triggers: [
+    {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'EVENT',
+      settings: {
+        on: 'recordEvent',
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        action: 'updated',
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      },
+      instructions: 'Draft the onboarding plan for this new customer.',
+    },
+    {
+      universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+});
+```
+
+An `EVENT` trigger takes the same settings as a [logic function's `eventTriggerSettings`](/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), except that it needs one object and one action. The earlier `DATABASE_EVENT` trigger with an `eventName` is still accepted. `instructions` (optional) are added to the agent's prompt for the runs the trigger starts.
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
@@ -198,8 +239,9 @@ export default defineApplicationRole({
 <Warning>
   **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
   trigger and the agent updates the same record, scope the trigger with
-  `updatedFields` to a field the agent never writes (e.g. the source URL), or
-  guard on whether any target field is still empty before calling `runAgent()`.
+  `watchedFieldUniversalIdentifiers` to a field the agent never writes (e.g. the
+  source URL), or with a `condition` that only holds while a target field is
+  still empty, such as `isEmpty(summary)`.
 </Warning>
 
 ### Sending files with a message

@@ -101,13 +101,24 @@ Ask your AI assistant to interact with your CRM:
 
 ## Available Tools
 
-Once connected, the MCP server lists the tools your connection can use, with their input schemas: `find_many_companies`, `create_one_person`, `list_workflows`, and several hundred more. Your assistant calls them by name. Tools for objects or app functions created while you are connected appear after reconnecting.
+Once connected, the MCP server lists the same tools in every workspace:
+
+- **Record tools** take the object as an argument: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` and `merge_records`. For example, `find_records({ objectName: "company", select: ["name"] })`.
+- **Discovery tools** tell the assistant what your workspace contains: `list_object_metadata_names` for objects and `get_field_metadata` for the fields of an object.
+- **Metadata tools** to read and change the data model, such as `get_object_metadata` or `create_field_metadata`.
+- **Meta-tools** reach everything else, including workflows, views, dashboards, email and the functions of your installed apps: `get_tool_catalog` to browse a category, `learn_tools` for input schemas and `execute_tool` to run a tool.
+
+Because the list does not depend on your objects, it stays valid for clients that store it, such as apps published in a directory.
+
+### Direct mode
+
+Connect to `/mcp?mode=direct` to list one tool per object and operation instead, each with the exact input schema of that object: `find_many_companies`, `create_one_person`, and several hundred more. Tools for objects created while you are connected appear after reconnecting.
 
 This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do by default. A client that loads every tool definition up front, including Claude Code with tool search turned off, can run out of context.
 
 ### Meta mode
 
-For clients that load every tool up front, connect to `/mcp?mode=meta`. It lists a few meta-tools instead:
+Connect to `/mcp?mode=meta` to list only a few meta-tools:
 
 1. **`learn_tools`** — get the input schema for specific tools
 2. **`execute_tool`** — run a tool

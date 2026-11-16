@@ -18,9 +18,9 @@ export const expectSkeletonRoundCorners = async (
     await expect(getComputedStyle(placeholder).borderRadius).toBe(radius);
 
     if (CSS.supports('corner-shape', 'squircle')) {
-      await expect(
+      await expect(['round', 'superellipse(1)']).toContain(
         getComputedStyle(placeholder).getPropertyValue('corner-shape'),
-      ).toBe('round');
+      );
     }
   }
 };

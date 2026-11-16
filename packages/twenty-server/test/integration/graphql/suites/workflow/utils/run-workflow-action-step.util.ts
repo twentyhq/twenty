@@ -20,7 +20,9 @@ type WorkflowActionStepType =
   | 'CREATE_CALENDAR_EVENT'
   | 'CREATE_RECORD'
   | 'UPDATE_RECORD'
-  | 'CODE';
+  | 'CODE'
+  | 'HTTP_REQUEST'
+  | 'MCP_TOOL';
 
 export type WorkflowActionStepRun = {
   status?: WorkflowRunStatusType;
@@ -32,6 +34,7 @@ export type WorkflowActionStepRun = {
 export const runWorkflowActionStep = async ({
   name,
   stepType,
+  defaultSettings,
   input,
   payload,
   runToken,
@@ -40,6 +43,7 @@ export const runWorkflowActionStep = async ({
 }: {
   name: string;
   stepType: WorkflowActionStepType;
+  defaultSettings?: object;
   input: Record<string, unknown>;
   payload?: object;
   runToken?: string;
@@ -71,6 +75,7 @@ export const runWorkflowActionStep = async ({
     const step = await createCoreWorkflowVersionStep({
       coreWorkflowVersionId,
       stepType,
+      defaultSettings,
     });
 
     await updateCoreWorkflowVersionStep({

@@ -109,6 +109,7 @@ export class ViewWidgetUpsertService {
     const {
       flatPageLayoutWidgetMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatViewFieldMaps,
       flatViewFilterMaps,
       flatViewFilterGroupMaps,
@@ -122,6 +123,7 @@ export class ViewWidgetUpsertService {
           flatMapsKeys: [
             'flatPageLayoutWidgetMaps',
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
             'flatViewFieldMaps',
             'flatViewFilterMaps',
             'flatViewFilterGroupMaps',
@@ -319,6 +321,7 @@ export class ViewWidgetUpsertService {
           flatViewMaps,
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           callerApplicationUniversalIdentifier:
             upsertContext.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
@@ -473,7 +476,8 @@ export class ViewWidgetUpsertService {
         inputField.fieldMetadataId,
       )
         ? existingViewFields.find(
-            (f) => f.fieldMetadataId === inputField.fieldMetadataId,
+            (f) =>
+              f.isCanonical && f.fieldMetadataId === inputField.fieldMetadataId,
           )
         : undefined;
 
@@ -594,6 +598,7 @@ export class ViewWidgetUpsertService {
         universalOverrides: null,
         isActive: true,
         isSystemSideEffect: false,
+        isCanonical: true,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,

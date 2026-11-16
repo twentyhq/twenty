@@ -146,7 +146,13 @@ export const createStandardRelationFieldFlatMetadata = <
     searchFieldMetadataIds: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionIds: [],
+    rowLevelPermissionPredicateIds: [],
+    relationRowLevelPermissionPredicateIds: [],
+    workspaceMemberRowLevelPermissionPredicateIds: [],
     fieldMetadataOptionUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
     universalSettings: {
       ...settings,
       ...(junctionTargetFieldUniversalIdentifier && {

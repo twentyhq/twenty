@@ -33,7 +33,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { applyWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/apply-workflow-step-positions.util';
-import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { addEdgeToWorkflowVersionContent } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/add-edge-to-workflow-version-content.util';
 import {
@@ -532,31 +531,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
       ...applyWorkflowStepPositions({ trigger, steps, positions }),
-    });
-  }
-
-  async autoLayoutCoreWorkflowVersion({
-    workspaceId,
-    userWorkspaceId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    coreWorkflowVersionId: string;
-  }): Promise<void> {
-    const { trigger, steps } =
-      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
-      );
-
-    await this.updatePositions({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowVersionId,
-      positions: computeWorkflowStepPositions({
-        trigger,
-        steps: steps ?? [],
-      }),
     });
   }
 

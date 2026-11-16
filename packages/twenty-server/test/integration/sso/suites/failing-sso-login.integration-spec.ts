@@ -320,6 +320,43 @@ describe('SSO login should fail', () => {
       });
     });
 
+    it('when the callback state is altered', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      const { callbackUrl, sessionCookie } =
+        await authorizeAsPhil(identityProviderId);
+
+      callbackUrl.searchParams.set(
+        'state',
+        JSON.stringify({ identityProviderId, workspaceInviteHash: uuidv4() }),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl: await completeOidcLogin({ callbackUrl, sessionCookie }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        // openid-client fails a state mismatch without passing its message on
+        errorMessage: 'Authentication error: Unauthorized',
+      });
+    });
+
+    it('when the callback code comes from another login', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      const { callbackUrl } = await authorizeAsPhil(identityProviderId);
+      const { sessionCookie: otherLoginSessionCookie } =
+        await authorizeAsPhil(identityProviderId);
+
+      expectSsoErrorRedirect({
+        redirectUrl: await completeOidcLogin({
+          callbackUrl,
+          sessionCookie: otherLoginSessionCookie,
+        }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage:
+          'Authentication error: invalid_grant (PKCE verification failed.)',
+      });
+    });
+
     it('when the callback has no state', async () => {
       const redirectUrl = await replayRedirect(
         new URL('http://localhost/auth/oidc/callback?code=code'),

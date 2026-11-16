@@ -22,6 +22,15 @@ import { type WorkerQueueHealth } from 'src/engine/core-modules/admin-panel/type
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
+type SyncDetails = { status: string };
+
+type ServiceDetails = {
+  details?: {
+    messageSync?: SyncDetails;
+    calendarSync?: SyncDetails;
+  };
+};
+
 @Injectable()
 export class AdminPanelHealthService {
   private readonly logger = new Logger(AdminPanelHealthService.name);
@@ -43,14 +52,13 @@ export class AdminPanelHealthService {
     [HealthIndicatorId.app]: this.appHealth,
   };
 
-  private transformStatus(status: HealthIndicatorStatus) {
+  private transformStatus(status: HealthIndicatorStatus | string) {
     return status === 'up'
       ? AdminPanelHealthServiceStatus.OPERATIONAL
       : AdminPanelHealthServiceStatus.OUTAGE;
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  private transformServiceDetails(details: any) {
+  private transformServiceDetails(details: ServiceDetails) {
     if (!details) {
       return details;
     }

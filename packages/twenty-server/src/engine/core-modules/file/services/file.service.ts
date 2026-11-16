@@ -4,7 +4,7 @@ import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -18,6 +18,7 @@ import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
+import { FileRemoteContentService } from 'src/engine/core-modules/file/file-remote-content/services/file-remote-content.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
@@ -37,6 +38,7 @@ export class FileService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly fileRemoteContentService: FileRemoteContentService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -97,7 +99,7 @@ export class FileService {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
-        status: FILE_STATUS.UPLOADED,
+        status: In([FILE_STATUS.UPLOADED, FILE_STATUS.REMOTE]),
       },
     });
 
@@ -109,6 +111,13 @@ export class FileService {
 
     if (!allowedFileFolders.includes(fileFolder as FileFolder)) {
       return null;
+    }
+
+    if (file.status === FILE_STATUS.REMOTE) {
+      return this.fileRemoteContentService.openRemoteContent({
+        file,
+        workspaceId,
+      });
     }
 
     const application = await this.applicationRepository.findOne(workspaceId, {
@@ -159,12 +168,24 @@ export class FileService {
       where: {
         id: params.fileId,
         path: Like(`${params.fileFolder}/%`),
-        status: FILE_STATUS.UPLOADED,
+        status: In([FILE_STATUS.UPLOADED, FILE_STATUS.REMOTE]),
       },
     });
 
     if (file === null) {
       return null;
+    }
+
+    if (file.status === FILE_STATUS.REMOTE) {
+      const remoteContent =
+        await this.fileRemoteContentService.openRemoteContent({
+          file,
+          workspaceId: params.workspaceId,
+        });
+
+      return isDefined(remoteContent)
+        ? { type: 'stream', ...remoteContent }
+        : null;
     }
 
     const application = await this.applicationRepository.findOne(

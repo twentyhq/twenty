@@ -11,7 +11,7 @@ export const StyledMarkdownContainer = styled.div<{
       ? `calc(${themeCssVariables.text.lineHeight.lg} * 100%)`
       : themeCssVariables.spacing[6]};
   margin: ${({ displayMode }) =>
-    displayMode === 'bubble' ? '0' : `${themeCssVariables.spacing['1.5']} 0`};
+    displayMode === 'default' ? `${themeCssVariables.spacing['1.5']} 0` : '0'};
   overflow-x: auto;
   position: relative;
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};

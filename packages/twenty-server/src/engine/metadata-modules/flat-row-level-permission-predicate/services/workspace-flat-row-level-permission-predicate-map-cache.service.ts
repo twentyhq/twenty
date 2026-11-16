@@ -18,6 +18,7 @@ const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ROWS_REQUIREMENT = {
   fieldMetadata: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
+  rowLevelPermissionRule: ['id', 'universalIdentifier'],
   rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier'],
 } as const;
 
@@ -40,6 +41,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
       fieldMetadata: fieldMetadatas,
       objectMetadata: objectMetadatas,
       role: roles,
+      rowLevelPermissionRule: rowLevelPermissionRules,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
     } = rows;
 
@@ -51,6 +53,8 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
       createIdToUniversalIdentifierMap(objectMetadatas);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const rowLevelPermissionRuleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(rowLevelPermissionRules);
     const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups);
 
@@ -64,6 +68,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
           fieldMetadataIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           roleIdToUniversalIdentifierMap,
+          rowLevelPermissionRuleIdToUniversalIdentifierMap,
           rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
         });
 

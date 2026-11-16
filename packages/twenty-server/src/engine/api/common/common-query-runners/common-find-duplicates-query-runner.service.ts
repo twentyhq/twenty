@@ -78,7 +78,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         flatObjectMetadata,
         flatFieldMetadataMaps,
         unreadableFieldMetadataIds:
-          await this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
+          await this.recordFieldPermissionsReadService.findUnreadableFields({
             principals: permissionsPrincipals,
             objectMetadataId: flatObjectMetadata.id,
           }),

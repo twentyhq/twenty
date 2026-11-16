@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { getGettingStartedTrialCountdown } from '@/getting-started/utils/getGettingStartedTrialCountdown';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
@@ -24,18 +23,16 @@ export const useGettingStartedTrial = () => {
     billingHasPaymentMethodSelector,
   );
   const hasBillingPermission = useHasPermissionFlag(PermissionFlagType.BILLING);
-  const billing = useAtomStateValue(billingState);
   const { timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
-  const { trialEnd, isCountdownVisible, daysLeft, trialDays } =
+  const { trialEnd, isCountdownVisible, daysLeft } =
     getGettingStartedTrialCountdown({
       subscriptionStatus,
       currentPeriodEnd: currentBillingSubscription?.currentPeriodEnd,
       hasPaymentMethod: billingHasPaymentMethod,
-      trialPeriods: billing?.trialPeriods ?? [],
       now: new Date(),
     });
 
@@ -45,7 +42,6 @@ export const useGettingStartedTrial = () => {
     : undefined;
 
   return {
-    trialEnd,
     formattedTrialEnd:
       isCountdownVisible && isDefined(trialEnd)
         ? formatDateISOStringToCustomUnicodeFormat({
@@ -57,11 +53,7 @@ export const useGettingStartedTrial = () => {
         : undefined,
     planLabel,
     daysLeft,
-    trialDays,
     isCountdownVisible,
     canKeepPlan: isCountdownVisible && hasBillingPermission,
-    keepPlanLabel: isDefined(planLabel)
-      ? t`Keep ${planLabel}`
-      : t`Keep your plan`,
   };
 };

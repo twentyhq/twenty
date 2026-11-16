@@ -2,9 +2,8 @@
 // runtime list so the tool's JSON-Schema `enum` can reference it.
 export const EXA_CATEGORIES = [
   'company',
-  'research paper',
+  'publication',
   'news',
-  'pdf',
   'personal site',
   'financial report',
   'people',

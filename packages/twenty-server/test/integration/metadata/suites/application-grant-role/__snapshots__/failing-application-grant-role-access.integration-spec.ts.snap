@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Applications acting with their grant role should fail should refuse a LOCAL application acting alone updating a company it only reads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse a confined application acting alone updating a company its requested role only reads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse a confined application acting for an Admin member updating a company its requested role only reads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse an Admin member acting through a confined application destroying a record of its object, where destroying is disabled 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse an Admin member destroying a record of a confined application object, where destroying is disabled 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission: records of "grantRoleRefusedInvoice" are not writable through the API",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse an OAuth-only application acting alone reading a company 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse twenty-standard acting for an Admin member creating a record share, where creating is disabled 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;

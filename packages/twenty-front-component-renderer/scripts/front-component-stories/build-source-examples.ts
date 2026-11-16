@@ -48,32 +48,6 @@ const sdkFrontComponentIndex = path.resolve(
   '../../../twenty-sdk/dist/front-component/index.mjs',
 );
 
-const twentySharedIndividualDir = path.resolve(
-  dirname,
-  '../../../twenty-shared/dist/individual',
-);
-
-const TWENTY_SHARED_SUBMODULES = [
-  'ai',
-  'application',
-  'constants',
-  'database-events',
-  'metadata',
-  'testing',
-  'translations',
-  'types',
-  'utils',
-  'workflow',
-  'workspace',
-];
-
-const twentySharedAliases = Object.fromEntries(
-  TWENTY_SHARED_SUBMODULES.map((submodule) => [
-    `twenty-shared/${submodule}`,
-    path.join(twentySharedIndividualDir, submodule, 'index.js'),
-  ]),
-);
-
 const twentyUiSubmodules = Object.keys(twentyUiPackageJson.exports)
   .filter((subpath) => subpath !== '.' && !subpath.endsWith('.css'))
   .map((subpath) => subpath.slice(2));
@@ -95,7 +69,6 @@ const storyAlias = {
   'twenty-sdk/define': sdkDefineIndex,
   'twenty-sdk/front-component': sdkFrontComponentIndex,
   ...twentyUiAliases,
-  ...twentySharedAliases,
 };
 
 const ENTRY_POINT_PATTERN = /\.front-component\.tsx$/;

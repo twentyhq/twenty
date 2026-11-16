@@ -3,6 +3,7 @@ import { posix } from 'node:path';
 import { isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { CODE_STEP_FILE_SUFFIX } from '@/app/constants/code-step-file-suffix.constant';
 import {
   printString,
   typescriptExpression,
@@ -14,8 +15,6 @@ export type WorkflowCodeStepFile = {
   relativePath: string;
   content: string;
 };
-
-export const CODE_STEP_FILE_SUFFIX = '.code.ts';
 
 // The CLI evaluates definitions as CommonJS, where __dirname is the workflow file's folder
 const CODE_STEP_SOURCE_IMPORT_STATEMENTS = [

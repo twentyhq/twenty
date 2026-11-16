@@ -277,6 +277,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
+        cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
       })
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
@@ -333,6 +334,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
+        cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
       })
   > {
     const callerMetadataNames = Object.keys(
@@ -353,6 +355,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     let resolvedFlatEntityOperationRecordByMetadataName =
       allFlatEntityOperationRecordByMetadataName;
+    let cascadeDeletionParentByUniversalIdentifier: Record<string, string> = {};
 
     if (!skipSideEffectExpandEngine) {
       const sideEffectExpansionResult =
@@ -370,23 +373,32 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
       resolvedFlatEntityOperationRecordByMetadataName =
         sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
+      cascadeDeletionParentByUniversalIdentifier =
+        sideEffectExpansionResult.cascadeDeletionParentByUniversalIdentifier;
     }
 
-    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
-      allFlatEntityOperationRecordByMetadataName:
-        resolvedFlatEntityOperationRecordByMetadataName,
-      workspaceId,
-      isSystemBuild,
-      applicationUniversalIdentifier,
-      applicationDefaultRoleUniversalIdentifier,
-      providedIdByUniversalIdentifierByMetadataName:
-        idByUniversalIdentifierByMetadataName,
-      dryRun,
-      shouldDeferActions,
-      flatApplicationMaps,
-      allRelatedFlatEntityMaps,
-      allMetadataNameCacheToCompute,
-    });
+    const result =
+      await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
+        allFlatEntityOperationRecordByMetadataName:
+          resolvedFlatEntityOperationRecordByMetadataName,
+        workspaceId,
+        isSystemBuild,
+        applicationUniversalIdentifier,
+        applicationDefaultRoleUniversalIdentifier,
+        providedIdByUniversalIdentifierByMetadataName:
+          idByUniversalIdentifierByMetadataName,
+        dryRun,
+        shouldDeferActions,
+        flatApplicationMaps,
+        allRelatedFlatEntityMaps,
+        allMetadataNameCacheToCompute,
+      });
+
+    if (result.status === 'fail') {
+      return result;
+    }
+
+    return { ...result, cascadeDeletionParentByUniversalIdentifier };
   }
 
   private async computeAndRunWorkspaceMigrationFromResolvedOperations({

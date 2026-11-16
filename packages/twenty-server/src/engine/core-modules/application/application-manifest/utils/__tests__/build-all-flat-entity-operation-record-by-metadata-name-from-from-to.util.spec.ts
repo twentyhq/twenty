@@ -130,6 +130,10 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   pageLayoutUniversalIdentifier: null,
   agentChatChannelId: null,
   agentChatChannelUniversalIdentifier: null,
+  workflowId: null,
+  workflowUniversalIdentifier: null,
+  agentId: null,
+  agentUniversalIdentifier: null,
   position: 0,
 };
 
@@ -143,6 +147,8 @@ const AGENT: FlatAgent = {
   name: 'researcher',
   label: 'Researcher',
   icon: null,
+  avatarColor: null,
+  avatarShape: null,
   description: null,
   prompt: 'Research the company',
   modelId: 'auto',
@@ -152,6 +158,8 @@ const AGENT: FlatAgent = {
   isSystem: true,
   isActive: true,
   overrides: null,
+  navigationMenuItemIds: [],
+  navigationMenuItemUniversalIdentifiers: [],
   deletedAt: null,
 };
 
@@ -428,6 +436,20 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
 
     expect(result.navigationMenuItem?.flatEntityToDelete).toBeUndefined();
   });
+
+  it.each([
+    ['workflow', { workflowId: 'a-workflow-id' }],
+    ['agent', { agentId: 'an-agent-id' }],
+  ])(
+    'does not delete a %s pinned navigation item the manifest cannot express',
+    (_, pinnedTarget) => {
+      const result = inferDeletionOf(
+        withNavigationMenuItem({ ...NAVIGATION_MENU_ITEM, ...pinnedTarget }),
+      );
+
+      expect(result.navigationMenuItem?.flatEntityToDelete).toBeUndefined();
+    },
+  );
 
   it('still deletes a workspace navigation item', () => {
     const result = inferDeletionOf(

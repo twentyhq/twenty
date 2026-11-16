@@ -31,6 +31,11 @@ export type UpsertRowLevelPermissionPredicatesInput = {
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
     positionInRowLevelPermissionPredicateGroup?: number | null;
   }>;
+  canCreateRecords?: boolean;
+  canReadRecords?: boolean;
+  canUpdateRecords?: boolean;
+  canSoftDeleteRecords?: boolean;
+  canDestroyRecords?: boolean;
 };
 
 type UpsertRowLevelPermissionPredicatesResult = {

@@ -35,7 +35,6 @@ const updateStepResponse = (
 describe('Workflow version malformed validation (e2e)', () => {
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowId: string;
   let workspaceWorkflowVersionId: string;
   let createRecordStep: {
     id: string;
@@ -91,13 +90,14 @@ describe('Workflow version malformed validation (e2e)', () => {
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
     workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+    await deleteLegacyWorkspaceWorkflowRecords({
+      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+    });
   });
 
   const sendEmailStepWithBody = (body: string) => ({

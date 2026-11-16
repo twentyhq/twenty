@@ -107,7 +107,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 
 * Pașii de înregistrare folosesc `objectUniversalIdentifier` în locul numelui obiectului.
 * Filtrele și sortările indică spre câmpuri cu `fieldMetadataUniversalIdentifier`.
-* Operanzii de filtrare acceptă valori `ViewFilterOperand`, exportate de `twenty-sdk/define`. Operatorii grupului de filtre acceptă valori șir de caractere precum `'AND'` sau `'OR'`.
+* Operanzii de filtrare acceptă valori `ViewFilterOperand`. Operatorii de grup de filtre acceptă valori `StepLogicalOperator` în filtrele de pași și valori `RecordFilterGroupLogicalOperator` în filtrele de înregistrări, ambele `AND` sau `OR`. `twenty-sdk/define` exportă toate cele trei, împreună cu `ViewFilterOperandDeprecated` pentru operanzii pe care fluxurile de lucru mai vechi îi stochează încă.
 * Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
 * Un pas `CODE` își conține sursa TypeScript în `input.code`: un modul care exportă o funcție `main`, care primește `input.logicFunctionInput`. Pentru a partaja cod între fluxuri de lucru, folosește în schimb un pas `LOGIC_FUNCTION`.
 
@@ -137,7 +137,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
   * `connectedAccountId`: o variabilă, cum ar fi `{{trigger.properties.after.connectedAccountId}}`. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
 
   Setează exact unul dintre cele două.
-* `SEND_CHAT_MESSAGE` publică în căsuța de primire a unui membru al spațiului de lucru, setată cu `workspaceMemberId`. ID-urile membrilor sunt, de asemenea, locale pentru fiecare spațiu de lucru, astfel încât o aplicație transmite o variabilă, cum ar fi `{{trigger.properties.after.assigneeId}}`.
+* `SEND_CHAT_MESSAGE` publică în căsuța de primire a unui membru al spațiului de lucru, setată cu `workspaceMemberId`. ID-urile membrilor sunt, de asemenea, locale pentru fiecare spațiu de lucru, astfel încât o aplicație transmite o variabilă, cum ar fi `{{trigger.properties.after.assigneeId}}`. Membrii menționați în `text`-ul său, cum ar fi cei din corpul unei note transmis ca `{{trigger.properties.after.bodyV2.markdown}}`, sunt notificați, la fel ca în cazul [mesajelor din căsuța de primire](/ro/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## După instalare
 

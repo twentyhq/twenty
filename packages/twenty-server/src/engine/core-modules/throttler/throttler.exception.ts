@@ -10,7 +10,7 @@ export enum ThrottlerExceptionCode {
   LIMIT_REACHED = 'LIMIT_REACHED',
 }
 
-const getThrottlerExceptionUserFriendlyMessage = (
+export const getThrottlerExceptionUserFriendlyMessage = (
   code: ThrottlerExceptionCode,
 ) => {
   switch (code) {

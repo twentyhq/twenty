@@ -26,7 +26,6 @@ import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/typ
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { getWorkflowUsageSpenderId } from 'src/modules/workflow/workflow-executor/utils/get-workflow-usage-spender-id.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -112,11 +111,15 @@ export class WorkflowExecutionContextService {
     workflowRun: WorkflowRunWorkspaceEntity,
     workspace: FlatWorkspace,
   ): Promise<WorkflowExecutionContext> {
-    const { flatApplicationMaps, flatWorkflowMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-        'flatWorkflowMaps',
-      ]);
+    const {
+      flatApplicationMaps,
+      flatWorkflowMaps,
+      flatRoleTargetByApplicationIdMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspace.id, [
+      'flatApplicationMaps',
+      'flatWorkflowMaps',
+      'flatRoleTargetByApplicationIdMaps',
+    ]);
 
     const workflow = this.getRunWorkflowOrThrow({
       workflowRun,
@@ -126,6 +129,9 @@ export class WorkflowExecutionContextService {
     const application = resolveWorkflowRunApplicationOrThrow({
       applicationId: workflow.applicationId,
       applicationsById: flatApplicationMaps.byId,
+      workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      flatRoleTargetByApplicationIdMaps,
     });
 
     const isActingOnBehalfOfUser =
@@ -156,7 +162,8 @@ export class WorkflowExecutionContextService {
       initiator: workflowRun.createdBy,
       authContext,
       application,
-      workflowId: getWorkflowUsageSpenderId(workflow),
+      workflowId: workflow.id,
+      workflowName: workflow.name,
     };
   }
 

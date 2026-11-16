@@ -61,7 +61,7 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 * `eq`, `notEq`, `gt`, `gte`, `lt` e `lte` confrontano i valori.
 * `add`, `subtract`, `multiply` e `divide` calcolano i valori.
 * `isIn(field('stage'), ['NEW', 'WON'])` confronta un valore con un elenco.
-* Funzioni come `isNonEmptyString` e `isDefined`.
+* Funzioni come `isNonEmptyString` e `isDefined`, e le funzioni di data `daysSince(date)` (giorni interi dalla data, negativi per una data futura) e `isInRelativeDateRange(date, direction, amount, unit)`, con direction `'PAST'`, `'NEXT'` o `'THIS'` e unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`, come `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 Il builder produce una stringa semplice, che è ciò che [`twenty app pull`](/it/developers/extend/apps/operations/cli) riscrive. Puoi scrivere direttamente quella stringa:
 

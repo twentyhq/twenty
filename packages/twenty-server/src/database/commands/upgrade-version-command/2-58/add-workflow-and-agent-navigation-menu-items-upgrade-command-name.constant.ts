@@ -1,0 +1,2 @@
+export const ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand_1794298453467';

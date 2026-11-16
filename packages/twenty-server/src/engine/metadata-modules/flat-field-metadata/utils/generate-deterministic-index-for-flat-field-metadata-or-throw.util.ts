@@ -14,6 +14,7 @@ export const generateDeterministicIndexForFlatFieldMetadataOrThrow = ({
   flatObjectMetadata,
 }: GenerateDeterministicIndexForFlatFieldMetadataOrThrowArgs): UniversalFlatIndexMetadata => {
   const createdAt = new Date().toISOString();
+  const isUnique = flatFieldMetadata.isUnique ?? false;
 
   return generateDeterministicFlatIndexMetadataOrThrow({
     flatObjectMetadata,
@@ -31,8 +32,8 @@ export const generateDeterministicIndexForFlatFieldMetadataOrThrow = ({
         },
       ],
       indexType: IndexType.BTREE,
-      indexWhereClause: null,
-      isUnique: flatFieldMetadata.isUnique ?? false,
+      indexWhereClause: isUnique ? '"deletedAt" IS NULL' : null,
+      isUnique,
       isSystemSideEffect: true,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       updatedAt: createdAt,

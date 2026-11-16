@@ -1,4 +1,5 @@
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
@@ -118,9 +119,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
         recordPermissions: {} as never,
-        recordPermissionsOnlyRls: {
-          findRlsRuleUnreadableFieldsByRole: jest.fn(),
-          buildRlsRuleSqlConditionOrThrow: jest.fn(),
+        recordFieldPermissions: {
+          buildUnreadableFieldsSQLConditions: jest.fn(),
         },
         recordAccessGroupWrite: {
           isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
@@ -154,6 +154,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           {
             ...options.internalContext,
             authContext: options.authContext,
+            flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           },
           work,
         );

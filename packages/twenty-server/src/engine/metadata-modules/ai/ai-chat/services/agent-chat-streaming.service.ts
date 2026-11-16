@@ -114,12 +114,14 @@ export class AgentChatStreamingService {
     workspaceMemberId,
     workspace,
     modelId,
+    browsingContext,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id'>;
     modelId?: string;
+    browsingContext?: BrowsingContextType | null;
   }): Promise<{ streamId: string; messageId: string | null; turnId: string }> {
     const workspaceId = workspace.id;
     const thread = await this.threadService.getWritableThread({
@@ -192,6 +194,7 @@ export class AgentChatStreamingService {
           modelId,
           turnId,
           messageId: message?.id,
+          browsingContext,
         });
 
         return { streamId, messageId: message?.id ?? null, turnId };

@@ -2,13 +2,19 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import Linkify from 'linkify-react';
 
-import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
+import { ChatThreadMessageReactions } from '@/activities/emails/components/ChatThreadMessageReactions';
 import { ChatThreadMessageSenderHeader } from '@/activities/emails/components/ChatThreadMessageSenderHeader';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
+import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageReaction';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
+import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
+import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
+import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
+import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
+import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import {
@@ -34,25 +40,16 @@ const StyledMessageText = styled.span`
   }
 `;
 
-const StyledFilesContainer = styled.div<{ isOutgoing: boolean }>`
-  align-items: ${({ isOutgoing }) => (isOutgoing ? 'flex-end' : 'flex-start')};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
-  width: 100%;
-
-  &:first-child {
-    margin-top: 0;
-  }
-`;
-
 type ChatThreadMessageGroupProps = {
   group: ChatMessageGroup;
+  reactionsByMessageId?: Record<string, ChatMessageReaction[]>;
+  onReactionToggle?: (messageId: string, emoji: string) => void;
 };
 
 export const ChatThreadMessageGroup = ({
   group,
+  reactionsByMessageId,
+  onReactionToggle,
 }: ChatThreadMessageGroupProps) => {
   const [firstMessage] = group.messages;
   const { isOutgoing } = group;
@@ -87,36 +84,62 @@ export const ChatThreadMessageGroup = ({
           (attachment) => attachment.file ?? [],
         );
         const hasText = isNonEmptyString(message.text);
+        const reactions = reactionsByMessageId?.[message.id] ?? [];
+        const hasReactions = isNonEmptyArray(reactions);
 
         return (
           <StyledChatMessageRow key={message.id} isRightAligned={isOutgoing}>
             {senderHeader}
             {(hasText || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
-                <StyledMessageText>
-                  <Linkify
-                    options={{ target: '_blank', rel: 'noopener noreferrer' }}
-                  >
-                    {message.text}
-                  </Linkify>
-                </StyledMessageText>
+                <StyledChatMessageBubbleContent>
+                  <StyledMessageText>
+                    <Linkify
+                      options={{
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                      }}
+                    >
+                      {message.text}
+                    </Linkify>
+                  </StyledMessageText>
+                  {isOutgoing && (
+                    <StyledChatMessageMeta>
+                      {isDefined(message.receivedAt) && (
+                        <ChatMessageTime date={message.receivedAt} />
+                      )}
+                      <ChatMessageReceipt status="sent" />
+                    </StyledChatMessageMeta>
+                  )}
+                </StyledChatMessageBubbleContent>
               </StyledChatMessageBubble>
             )}
             {isNonEmptyArray(files) && (
-              <StyledFilesContainer isOutgoing={isOutgoing}>
-                {files.map((file) => (
-                  <ChatThreadMessageAttachment key={file.fileId} file={file} />
-                ))}
-              </StyledFilesContainer>
+              <ChatMessageAttachments
+                files={files}
+                isRightAligned={isOutgoing}
+              />
             )}
-            {hasText && (
+            {(hasText || hasReactions) && (
               <StyledChatMessageFooter isRightAligned={isOutgoing}>
-                <StyledChatMessageActions
-                  className="message-actions"
-                  isRightAligned={isOutgoing}
-                >
-                  <LightCopyIconButton copyText={message.text} />
-                </StyledChatMessageActions>
+                {hasReactions && (
+                  <ChatThreadMessageReactions
+                    reactions={reactions}
+                    onReactionToggle={
+                      isDefined(onReactionToggle)
+                        ? (emoji) => onReactionToggle(message.id, emoji)
+                        : undefined
+                    }
+                  />
+                )}
+                {hasText && (
+                  <StyledChatMessageActions
+                    className="message-actions"
+                    isRightAligned={isOutgoing}
+                  >
+                    <LightCopyIconButton copyText={message.text} />
+                  </StyledChatMessageActions>
+                )}
               </StyledChatMessageFooter>
             )}
           </StyledChatMessageRow>

@@ -109,7 +109,7 @@ export default defineLogicFunction({
   universalIdentifier: '4c6f9b2a-5d8e-4c2a-af18-3e0b9c6a7e4f',
   name: 'exa_web_search',
   description:
-    'Structured web search powered by Exa. Returns entity-aware results with category filtering (companies, people, research papers, news, and other content types). Prefer this when the query benefits from structured data or a specific category. For general real-time web browsing, prefer the native `web_search` tool when it is available.',
+    'Structured web search powered by Exa. Returns entity-aware results with category filtering (companies, people, publications, news, and other content types). Prefer this when the query benefits from structured data or a specific category. For general real-time web browsing, prefer the native `web_search` tool when it is available.',
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: exaWebSearchInputSchema,

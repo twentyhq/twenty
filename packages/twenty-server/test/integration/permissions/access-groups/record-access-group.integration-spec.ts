@@ -2,6 +2,7 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -22,6 +23,14 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
+
+const RULE_GRANTS = {
+  canCreateRecords: true,
+  canReadRecords: true,
+  canUpdateRecords: true,
+  canSoftDeleteRecords: true,
+  canDestroyRecords: true,
+};
 
 type PersonRow = { id: string; jobTitle: string; accessGroupIds: number[] };
 
@@ -49,7 +58,9 @@ describe('access group ids on records (integration)', () => {
       `SELECT "accessGroup"."compactId" FROM ${ACCESS_GROUP_TABLE} "accessGroup"
         JOIN core."role" "role" ON "role"."id" = "accessGroup"."roleId"
         WHERE "role"."label" = $1 AND "accessGroup"."objectMetadataId" = $2
-          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM $3`,
+          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM (
+            SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $3
+          )`,
       [roleLabel, objectMetadataId, predicateGroupId],
     );
 
@@ -134,12 +145,15 @@ describe('access group ids on records (integration)', () => {
     });
     const roleId = data.createOneRole.id;
     const predicateGroupId = v4();
+
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     const upsertRule = (value: string) =>
       upsertRowLevelPermissionPredicates({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
+          ...RULE_GRANTS,
           predicateGroups: [
             {
               id: predicateGroupId,
@@ -217,6 +231,8 @@ describe('access group ids on records (integration)', () => {
     });
     const roleId = data.createOneRole.id;
     const predicateGroupId = v4();
+
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     let createdPersonId: string | undefined;
 
     await upsertRowLevelPermissionPredicates({
@@ -224,6 +240,7 @@ describe('access group ids on records (integration)', () => {
       input: {
         roleId,
         objectMetadataId,
+        ...RULE_GRANTS,
         predicateGroups: [
           {
             id: predicateGroupId,

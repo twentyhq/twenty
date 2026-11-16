@@ -7,6 +7,7 @@ import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuI
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownNumberInputProps = {
   filterDropdownId: string;
@@ -31,9 +32,9 @@ export const ObjectFilterDropdownNumberInput = ({
 
   const handleInputRef = useCallback(
     (node: HTMLInputElement | null) => {
-      if (Boolean(node) && !hasFocused) {
-        node?.focus();
-        node?.select();
+      if (isDefined(node) && !hasFocused) {
+        node.focus();
+        node.select();
         setHasFocused(true);
       }
     },

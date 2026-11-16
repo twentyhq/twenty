@@ -49,6 +49,12 @@ export class FileApiExceptionFilter implements ExceptionFilter {
           response,
           416,
         );
+      case FileExceptionCode.TOO_MANY_REQUESTS:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          429,
+        );
       case FileExceptionCode.INTERNAL_SERVER_ERROR:
       default:
         return this.httpExceptionHandlerService.handleError(

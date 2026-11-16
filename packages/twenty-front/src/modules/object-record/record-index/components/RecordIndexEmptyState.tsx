@@ -12,7 +12,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type RecordIndexEmptyStateProps = {
@@ -68,7 +68,7 @@ export const RecordIndexEmptyState = ({
     : undefined;
 
   if (
-    !canReachSomeRecords({
+    !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: objectPermissions,
       operationType: 'create',
     })

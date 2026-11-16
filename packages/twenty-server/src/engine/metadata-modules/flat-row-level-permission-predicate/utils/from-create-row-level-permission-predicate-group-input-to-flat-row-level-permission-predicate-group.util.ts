@@ -55,6 +55,8 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       parentRowLevelPermissionPredicateGroupId:
         input.parentRowLevelPermissionPredicateGroupId ?? null,
       parentRowLevelPermissionPredicateGroupUniversalIdentifier,
+      rowLevelPermissionRuleId: null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
       canReadRecords: input.canReadRecords ?? false,

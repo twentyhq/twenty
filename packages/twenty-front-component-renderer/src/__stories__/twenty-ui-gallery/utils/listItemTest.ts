@@ -4,6 +4,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { hoverUntilTooltipOpens } from '@/__stories__/twenty-ui-gallery/utils/hoverUntilTooltipOpens';
 import { listItemButtonTest } from '@/__stories__/twenty-ui-gallery/utils/listItemButtonTest';
 import { listItemOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemOwnerTest';
 import { listItemPopupOwnerTest } from '@/__stories__/twenty-ui-gallery/utils/listItemPopupOwnerTest';
@@ -44,14 +45,18 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async (context) => {
     { timeout: INTERACTION_TIMEOUT },
   );
   await user.unhover(overflowingLabel);
-  await user.hover(overflowingLabel);
-  await waitFor(
-    () => {
-      expect(page.getByRole('tooltip')).toHaveTextContent(OVERFLOW_LABEL);
-      expect(page.getByRole('tooltip')).toBeVisible();
-    },
-    { timeout: INTERACTION_TIMEOUT },
-  );
+  await hoverUntilTooltipOpens({
+    user,
+    hoverTarget: overflowingLabel,
+    expectTooltipOpen: () =>
+      waitFor(
+        () => {
+          expect(page.getByRole('tooltip')).toHaveTextContent(OVERFLOW_LABEL);
+          expect(page.getByRole('tooltip')).toBeVisible();
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      ),
+  });
 
   expect(digest).toHaveFocus();
   await user.keyboard('{Escape}');

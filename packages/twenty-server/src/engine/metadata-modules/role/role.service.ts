@@ -93,8 +93,17 @@ export class RoleService {
         },
       );
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     return flatRoles.map((flatRole) => {
       const roleDto = fromFlatRoleToRoleDto(flatRole);
+
+      roleDto.isEditable =
+        flatRole.isEditable &&
+        flatRole.applicationId === workspaceCustomFlatApplication.id;
 
       roleDto.permissionFlags = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatRole.rolePermissionFlagIds,

@@ -26,7 +26,6 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
   { objectName: 'opportunity', fieldNames: ['attachments'], isInherent: true },
   { objectName: 'person', fieldNames: ['attachments'], isInherent: true },
   { objectName: 'task', fieldNames: ['attachments'], isInherent: true },
-  { objectName: 'workflow', fieldNames: ['attachments'], isInherent: true },
   {
     objectName: 'company',
     fieldNames: ['timelineActivities'],
@@ -59,11 +58,6 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     isInherent: true,
   },
   { objectName: 'task', fieldNames: ['timelineActivities'], isInherent: true },
-  {
-    objectName: 'workflow',
-    fieldNames: ['timelineActivities'],
-    isInherent: true,
-  },
   {
     objectName: 'workflowRun',
     fieldNames: ['timelineActivities'],

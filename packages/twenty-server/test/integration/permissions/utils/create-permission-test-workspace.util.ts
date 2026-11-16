@@ -3,6 +3,8 @@ import { createApiKey } from 'test/integration/graphql/utils/create-api-key.util
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createWebhook } from 'test/integration/metadata/suites/utils/webhook-test.util';
 import { addPermissionTestWorkspaceMember } from 'test/integration/permissions/utils/add-permission-test-workspace-member.util';
 import { createPermissionTestActiveWorkspace } from 'test/integration/permissions/utils/create-permission-test-active-workspace.util';
@@ -14,9 +16,14 @@ import {
   type PermissionTestWorkspace,
   type PermissionTestRoleGrant,
 } from 'test/integration/permissions/utils/permission-test-workspace.type';
+import { parse } from 'graphql';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 const OBJECT_NAME_SINGULAR = 'accessRecord';
+const SET_RECORD_SHARE = parse(
+  `mutation SetRecordShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing } }`,
+);
 
 const buildForEachPermissionTestRoleGrant = async <TValue>(
   build: (grant: PermissionTestRoleGrant) => Promise<TValue>,
@@ -125,12 +132,8 @@ export const createPermissionTestWorkspace =
 
     expect(webhookResponse.body.errors).toBeUndefined();
 
-    return {
-      workspaceId,
-      objectMetadataId,
-      objectNameSingular: OBJECT_NAME_SINGULAR,
-      roleIds,
-      workspaceMemberIds: await buildForEachPermissionTestRoleGrant((grant) =>
+    const workspaceMemberIds = await buildForEachPermissionTestRoleGrant(
+      (grant) =>
         addPermissionTestWorkspaceMember({
           workspaceId,
           workspaceOrigin,
@@ -138,7 +141,43 @@ export const createPermissionTestWorkspace =
           roleId: roleIds[grant],
           adminAccessToken: accessToken,
         }),
-      ),
+    );
+
+    const createRecordSharedWithMember = async (
+      workspaceMemberId: string,
+    ): Promise<string> => {
+      const recordId = await createRecord({});
+
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        workspaceId,
+        expectToFail: false,
+      });
+
+      const response = await makeMetadataApiRequest(
+        {
+          query: SET_RECORD_SHARE,
+          variables: {
+            target: { objectMetadataId, recordId },
+            principal: { workspaceMemberId },
+            accessLevel: RecordShareAccessLevel.READ_WRITE,
+          },
+        },
+        accessToken,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return recordId;
+    };
+
+    return {
+      workspaceId,
+      objectMetadataId,
+      objectNameSingular: OBJECT_NAME_SINGULAR,
+      roleIds,
+      workspaceMemberIds,
       apiKeyIds: await buildForEachPermissionTestRoleGrant(createApiKeyForRole),
       webhookId: webhookResponse.body.data.createWebhook.id,
       limitingAgentIds: await buildForEachPermissionTestRoleGrant((grant) =>
@@ -184,6 +223,9 @@ export const createPermissionTestWorkspace =
         outsideStatusFilter: await createRecord({ status: 'archived' }),
         outsideCategoryFilter: await createRecord({ category: 'other' }),
         outsideRegionFilter: await createRecord({ region: 'americas' }),
+        sharedWithMemberWithoutAccess: await createRecordSharedWithMember(
+          workspaceMemberIds.none,
+        ),
       },
     };
   };

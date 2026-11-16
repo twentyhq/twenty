@@ -1,9 +1,11 @@
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
+import { isWorkflowLayoutManual } from '@/workflow/workflow-diagram/utils/isWorkflowLayoutManual';
 import { useTidyUp } from '@/workflow/workflow-version/hooks/useTidyUp';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -42,6 +44,8 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     workflowDiagramRightClickMenuPositionState,
   );
 
+  const flow = useAtomComponentStateValue(flowComponentState);
+
   const { tidyUp } = useTidyUp();
 
   const handleReorderWorkflowDiagram = async () => {
@@ -75,10 +79,12 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
           startIcon={<IconPlus />}
           onClick={addNode}
         >{t`Add node`}</ListItemButton>
-        <ListItemButton
-          startIcon={<IconReorder />}
-          onClick={handleReorderWorkflowDiagram}
-        >{t`Tidy up workflow`}</ListItemButton>
+        {isWorkflowLayoutManual(flow) && (
+          <ListItemButton
+            startIcon={<IconReorder />}
+            onClick={handleReorderWorkflowDiagram}
+          >{t`Tidy up workflow`}</ListItemButton>
+        )}
       </StyledContainer>
       <WorkflowDiagramRightClickCommandMenuClickOutsideEffect
         rightClickCommandMenuRef={rightClickCommandMenuRef}

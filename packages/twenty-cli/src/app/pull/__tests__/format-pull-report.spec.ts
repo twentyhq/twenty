@@ -58,6 +58,24 @@ describe('formatPullReport', () => {
     expect(report).toContain('unchanged    3 file(s)');
   });
 
+  it('identifies pulled workflow code as workspace-authored text', () => {
+    const report = buildReport({
+      writes: [
+        {
+          kind: 'workflow',
+          universalIdentifier: 'step',
+          relativePath: 'src/workflows/welcome/format-name.code.ts',
+          isRegeneration: false,
+        },
+      ],
+    });
+
+    expect(report).toContain(
+      'Workflow Code-step files contain workspace-authored code, read as text during pull and build.',
+    );
+    expect(buildReport()).not.toContain('workspace-authored code');
+  });
+
   it('should count coverage rows per metadata name under a titled section', () => {
     const report = buildReport({
       coverage: buildCoverage([

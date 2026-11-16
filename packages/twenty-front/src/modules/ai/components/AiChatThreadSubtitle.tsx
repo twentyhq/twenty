@@ -4,9 +4,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
-import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAiChatThreadSubtitleContent';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
 const StyledSubtitle = styled.div`
   align-items: center;
@@ -26,7 +26,7 @@ const StyledPreview = styled.div`
 `;
 
 type AiChatThreadSubtitleProps = {
-  thread: AgentChatThreadRecord;
+  thread: AiChatThreadRecord;
   size?: 'sm' | 'md';
 };
 
@@ -34,9 +34,9 @@ export const AiChatThreadSubtitle = ({
   thread,
   size = 'sm',
 }: AiChatThreadSubtitleProps) => {
-  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
+  const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { isAwaitingAnswer, hasDraft, previewText } =
-    useAgentChatThreadSubtitleContent(thread);
+    useAiChatThreadSubtitleContent(thread);
 
   return (
     <Text

@@ -199,6 +199,10 @@ export const getUnsupportedPageLayoutWidgetReason = ({
     return 'page layout widget of the VIEW type, which the sync does not support yet';
   }
 
+  if (!isDefined(flatPageLayoutWidget.universalConfiguration)) {
+    return 'page layout widget without a configuration';
+  }
+
   if (!isDefined(flatPageLayoutWidget.position)) {
     return 'page layout widget without a position';
   }

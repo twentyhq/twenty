@@ -28,7 +28,13 @@ export const getMatchingRecordId = (
         return acc;
       }
 
-      const matchingRecord = existingRecords.find((existingRecord) =>
+      const candidateRecords = fieldGroup.isIgnoringDeletedRecords
+        ? existingRecords.filter(
+            (existingRecord) => !isDefined(existingRecord.deletedAt),
+          )
+        : existingRecords;
+
+      const matchingRecord = candidateRecords.find((existingRecord) =>
         requestFieldValues.every(({ conflictingProperty, value }) => {
           const existingFieldValue = getValueFromPath(
             existingRecord,

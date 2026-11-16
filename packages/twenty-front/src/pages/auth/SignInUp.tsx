@@ -118,7 +118,7 @@ export const SignInUp = () => {
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationRecovery) {
-      return t`Use a recovery code`;
+      return t`Use a backup or recovery code`;
     }
 
     if (isGlobalScope) {

@@ -4,6 +4,7 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
+import { PageLayoutWidgetCardHeader } from '@/page-layout/widgets/widget-card/components/PageLayoutWidgetCardHeader';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -29,7 +30,7 @@ const WidgetCardHeaderStory = ({
   <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widgetId }}>
       <WidgetHeaderCountEffect count={count} />
-      <WidgetCardHeader
+      <PageLayoutWidgetCardHeader
         widgetId={widgetId}
         variant="framed"
         isInEditMode={isInEditMode}
@@ -98,7 +99,7 @@ const UnmountingContentStory = () => {
         value={{ instanceId: `${WIDGET_ID}-unmount` }}
       >
         {isContentMounted && <WidgetHeaderCountEffect count={42} />}
-        <WidgetCardHeader
+        <PageLayoutWidgetCardHeader
           widgetId={`${WIDGET_ID}-unmount`}
           variant="framed"
           isInEditMode={false}
@@ -136,7 +137,7 @@ export const CountEffectNoOpsOutsideWidget: Story = {
       <WidgetComponentInstanceContext.Provider
         value={{ instanceId: `${WIDGET_ID}-outside` }}
       >
-        <WidgetCardHeader
+        <PageLayoutWidgetCardHeader
           widgetId={`${WIDGET_ID}-outside`}
           variant="framed"
           isInEditMode={false}
@@ -159,12 +160,7 @@ const WidgetHeaderClickStory = () => {
   return (
     <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
       <div onClick={() => setParentClickCount((count) => count + 1)}>
-        <WidgetCardHeader
-          widgetId={`${WIDGET_ID}-click`}
-          variant="flush"
-          isInEditMode
-          title="Timeline"
-        />
+        <WidgetCardHeader variant="flush" isInEditMode title="Timeline" />
       </div>
       <output aria-label="Parent click count">{parentClickCount}</output>
     </PageLayoutTestWrapper>

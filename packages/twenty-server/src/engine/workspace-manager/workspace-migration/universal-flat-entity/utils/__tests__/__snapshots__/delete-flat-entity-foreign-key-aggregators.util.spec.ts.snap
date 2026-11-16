@@ -29,8 +29,10 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "objectMetadataUniversalIdentifier": "object-metadata-universal-identifier",
   "options": null,
   "overrides": null,
+  "relationRowLevelPermissionPredicateUniversalIdentifiers": [],
   "relationTargetFieldMetadataUniversalIdentifier": null,
   "relationTargetObjectMetadataUniversalIdentifier": null,
+  "rowLevelPermissionPredicateUniversalIdentifiers": [],
   "searchFieldMetadataUniversalIdentifiers": [],
   "type": "TEXT",
   "universalIdentifier": "field-universal-identifier",
@@ -41,6 +43,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   ],
   "viewFilterUniversalIdentifiers": [],
   "viewSortUniversalIdentifiers": [],
+  "workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers": [],
 }
 `;
 
@@ -78,6 +81,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "openRecordIn": "USER_CHOICE",
   "overrides": null,
   "pageLayoutUniversalIdentifiers": [],
+  "rowLevelPermissionRuleUniversalIdentifiers": [],
   "searchFieldMetadataUniversalIdentifiers": [],
   "shortcut": "shortcut",
   "targetTableName": "",

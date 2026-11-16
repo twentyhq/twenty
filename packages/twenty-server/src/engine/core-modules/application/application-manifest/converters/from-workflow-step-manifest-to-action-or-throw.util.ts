@@ -14,11 +14,9 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 
 export const fromWorkflowStepManifestToActionOrThrow = ({
   step,
-  index,
   references,
 }: {
   step: WorkflowStepManifest;
-  index: number;
   references: WorkflowManifestReferences;
 }): WorkflowAction => {
   const {
@@ -223,9 +221,7 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     type: step.type,
     valid: true,
     nextStepIds: step.nextStepIds,
-    ...(step.position === null
-      ? {}
-      : { position: step.position ?? { x: 0, y: (index + 1) * 180 } }),
+    ...(isDefined(step.position) ? { position: step.position } : {}),
     settings: {
       input: structuredClone(input),
       outputSchema: structuredClone(

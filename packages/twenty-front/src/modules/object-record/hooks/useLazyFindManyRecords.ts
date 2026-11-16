@@ -15,7 +15,10 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
@@ -61,7 +64,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = canReachSomeRecords({
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });

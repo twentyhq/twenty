@@ -18,7 +18,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { type RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { type RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -32,7 +32,7 @@ describe('permissions read services', () => {
   let personFlatObjectMetadata: FlatObjectMetadata;
   let principalPermissionsReadService: PrincipalPermissionsReadService;
   let recordPermissionsReadService: RecordPermissionsReadService;
-  let recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService;
+  let recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
   let rolePermissionsService: RolePermissionsService;
   const missingRoleAuthContext: PermissionsAuthContext = {
     type: 'apiKey',
@@ -75,9 +75,9 @@ describe('permissions read services', () => {
       getAppProviderByClassName<RecordPermissionsReadService>(
         'RecordPermissionsReadService',
       );
-    recordPermissionsOnlyRoleReadService =
-      getAppProviderByClassName<RecordPermissionsOnlyRoleReadService>(
-        'RecordPermissionsOnlyRoleReadService',
+    recordFieldPermissionsReadService =
+      getAppProviderByClassName<RecordFieldPermissionsReadService>(
+        'RecordFieldPermissionsReadService',
       );
     rolePermissionsService = getAppProviderByClassName<RolePermissionsService>(
       'RolePermissionsService',
@@ -122,7 +122,7 @@ describe('permissions read services', () => {
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsReadService.canAccessKnownRecords({
+    recordPermissionsReadService.canAccessRecords({
       operationType,
       principals:
         await principalPermissionsReadService.resolvePermissionsPrincipals({
@@ -180,7 +180,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canAccessKnownRecords', () => {
+  describe('canAccessRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
@@ -344,7 +344,7 @@ describe('permissions read services', () => {
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
       const unreadableFieldMetadataIds =
-        await recordPermissionsOnlyRoleReadService.findUnreadableFields({
+        await recordFieldPermissionsReadService.findUnreadableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
@@ -352,7 +352,7 @@ describe('permissions read services', () => {
       expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
       expect(
-        await recordPermissionsOnlyRoleReadService.findUneditableFields({
+        await recordFieldPermissionsReadService.findUneditableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         }),
@@ -366,7 +366,7 @@ describe('permissions read services', () => {
         objectMetadataId: personFlatObjectMetadata.id,
       };
       const nonUpdatableFieldMetadataIds =
-        await recordPermissionsOnlyRoleReadService.findUneditableFields(
+        await recordFieldPermissionsReadService.findUneditableFields(
           objectQuestion,
         );
 
@@ -375,7 +375,7 @@ describe('permissions read services', () => {
         jobTitleFieldMetadataId,
       );
       expect(
-        await recordPermissionsOnlyRoleReadService.findUnreadableFields(
+        await recordFieldPermissionsReadService.findUnreadableFields(
           objectQuestion,
         ),
       ).not.toContain(introFieldMetadataId);

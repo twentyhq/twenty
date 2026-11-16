@@ -5,6 +5,8 @@ exports[`registry-derived override property maps derives the overridable propert
   "agent": [
     "label",
     "icon",
+    "avatarColor",
+    "avatarShape",
     "description",
     "prompt",
     "modelId",
@@ -82,6 +84,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
+  "rowLevelPermissionRule": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
   "skill": [

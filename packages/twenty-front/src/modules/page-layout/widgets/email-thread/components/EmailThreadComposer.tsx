@@ -4,6 +4,7 @@ import { EmailComposerFields } from '@/activities/emails/components/EmailCompose
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
+import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type WidgetCommandMenuItem } from '@/command-menu-item/types/WidgetCommandMenuItem';
 import { EmailThreadComposerCommandMenuItemsEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerCommandMenuItemsEffect';
@@ -38,6 +39,7 @@ type EmailThreadComposerProps = {
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
   draftPrefill?: EmailDraftPrefill | null;
+  appReplyTarget?: AppReplyTarget | null;
 };
 
 export const EmailThreadComposer = ({
@@ -46,6 +48,7 @@ export const EmailThreadComposer = ({
   isComposerOpen,
   setIsComposerOpen,
   draftPrefill,
+  appReplyTarget,
 }: EmailThreadComposerProps) => {
   const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -70,10 +73,11 @@ export const EmailThreadComposer = ({
     defaultTo: replyContext.to,
     defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,
+    appReplyTarget,
     onSent: handleReplySent,
   });
 
-  const { handleSend, canSend } = composerState;
+  const { handleSend, canSend, canAttachFiles } = composerState;
 
   const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
     onFilesAttached: composerState.setFiles,
@@ -121,18 +125,23 @@ export const EmailThreadComposer = ({
 
     return [
       cancelReplyCommandMenuItem,
-      {
-        id: 'attach-files',
-        label: t`Attach files`,
-        Icon: IconPaperclip,
-        isPinned: false,
-        onClick: openAttachmentPicker,
-      },
+      ...(canAttachFiles
+        ? [
+            {
+              id: 'attach-files',
+              label: t`Attach files`,
+              Icon: IconPaperclip,
+              isPinned: false,
+              onClick: openAttachmentPicker,
+            },
+          ]
+        : []),
       sendCommandMenuItem,
     ];
   }, [
     isComposerOpen,
     isInSidePanel,
+    canAttachFiles,
     handleSend,
     canSendReply,
     setIsComposerOpen,
@@ -163,7 +172,12 @@ export const EmailThreadComposer = ({
         <StyledComposerContainer>
           <EmailComposerFields
             composerState={composerState}
-            onAttachFiles={isInSidePanel ? undefined : openAttachmentPicker}
+            appSender={appReplyTarget}
+            onAttachFiles={
+              isInSidePanel || !canAttachFiles
+                ? undefined
+                : openAttachmentPicker
+            }
           />
         </StyledComposerContainer>
       )}

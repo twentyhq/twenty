@@ -5,19 +5,13 @@ import {
   RowLevelPermissionPredicateOperand,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/permissions/permissions.exception';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
-import { resolveWorkspaceMemberPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-workspace-member-predicate-value.util';
+import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 
 const ANY_OF_OPERANDS: RowLevelPermissionPredicateOperand[] = [
   RowLevelPermissionPredicateOperand.IS,
@@ -41,35 +35,13 @@ const canSplitMemberFieldValues = ({
   );
 };
 
-const resolveMemberFieldValuesOrThrow = ({
-  predicate,
-  workspaceMember,
-  flatFieldMetadataMaps,
+const splitMemberFieldValue = ({
+  value,
   canSplit,
 }: {
-  predicate: RowLevelPermissionPredicate;
-  workspaceMember: RowLevelPermissionWorkspaceMember;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  value: RowLevelPermissionPredicateValue;
   canSplit: boolean;
 }): RowLevelPermissionPredicateValue[] => {
-  const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: predicate.workspaceMemberFieldMetadataId ?? '',
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
-
-  if (!isDefined(workspaceMemberFieldMetadata)) {
-    throw new PermissionsException(
-      `Workspace member field metadata not found for row level predicate ${predicate.id}`,
-      PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
-    );
-  }
-
-  const value = resolveWorkspaceMemberPredicateValue({
-    workspaceMember,
-    workspaceMemberFieldMetadata,
-    workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName ?? null,
-  });
-
   if (!Array.isArray(value)) {
     return [value];
   }
@@ -87,35 +59,28 @@ export const buildAccessGroupMemberFieldValuesOrThrow = ({
   flatFieldMetadataMaps,
 }: {
   workspaceMemberBoundPredicates: RowLevelPermissionPredicate[];
-  workspaceMember: RowLevelPermissionWorkspaceMember;
+  workspaceMember: RlsWorkspaceMember;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): RowLevelPermissionMemberFieldValues[] => {
-  let combinations: RowLevelPermissionMemberFieldValues[] = [{}];
-
-  for (const predicate of workspaceMemberBoundPredicates) {
-    const memberFieldKey = buildMemberFieldKey(predicate);
-
-    if (memberFieldKey in combinations[0]) {
-      continue;
-    }
-
-    const memberFieldValues = resolveMemberFieldValuesOrThrow({
-      predicate,
+}): RlsMemberFieldValues[] =>
+  Object.entries(
+    buildMemberFieldValuesOrThrow({
       workspaceMember,
+      predicates: workspaceMemberBoundPredicates,
       flatFieldMetadataMaps,
-      canSplit: canSplitMemberFieldValues({
-        memberFieldKey,
-        workspaceMemberBoundPredicates,
-      }),
-    });
-
-    combinations = combinations.flatMap((combination) =>
-      memberFieldValues.map((memberFieldValue) => ({
-        ...combination,
-        [memberFieldKey]: memberFieldValue,
-      })),
-    );
-  }
-
-  return combinations;
-};
+    }),
+  ).reduce<RlsMemberFieldValues[]>(
+    (combinations, [memberFieldKey, value]) =>
+      combinations.flatMap((combination) =>
+        splitMemberFieldValue({
+          value,
+          canSplit: canSplitMemberFieldValues({
+            memberFieldKey,
+            workspaceMemberBoundPredicates,
+          }),
+        }).map((memberFieldValue) => ({
+          ...combination,
+          [memberFieldKey]: memberFieldValue,
+        })),
+      ),
+    [{}],
+  );

@@ -15,7 +15,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class CommonSelectFieldsBuilder {
   constructor(
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
   ) {}
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
@@ -71,7 +71,7 @@ export class CommonSelectFieldsBuilder {
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
         (selectedObjectMetadataId) =>
-          this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
+          this.recordFieldPermissionsReadService.findUnreadableFields({
             principals,
             objectMetadataId: selectedObjectMetadataId,
           }),

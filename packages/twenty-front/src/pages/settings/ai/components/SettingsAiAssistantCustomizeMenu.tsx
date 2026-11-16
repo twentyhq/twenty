@@ -17,7 +17,7 @@ import { SettingsAiAssistantNameInput } from '~/pages/settings/ai/components/Set
 import { SettingsAiAssistantAvatarMenuPage } from '~/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage';
 import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantColorLabels';
 import { SETTINGS_AI_ASSISTANT_FACE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantFaceLabels';
-import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantShapeLabels';
+import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai/constants/AiChatAssistantAvatarShapeLabels';
 
 type SettingsAiAssistantCustomizeMenuProps = {
   value: AiChatAssistantProfile;
@@ -56,7 +56,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
               />
             }
             description={t(
-              SETTINGS_AI_ASSISTANT_SHAPE_LABELS[value.avatarShape],
+              AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS[value.avatarShape],
             )}
             descriptionPlacement="end"
           >

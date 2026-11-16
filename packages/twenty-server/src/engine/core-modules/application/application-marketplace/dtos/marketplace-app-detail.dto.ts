@@ -82,6 +82,11 @@ export class MarketplaceAppDetailDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
+  connectUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
   aboutDescription?: string;
 
   @IsOptional()

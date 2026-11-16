@@ -34,6 +34,7 @@ const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
   numberOfSelectedRecords: 1,
   selectedRecords: [{ id: 'chat' }],
   objectMetadataItem: {
+    id: 'agent-chat-thread-object',
     nameSingular: StandardObjectNameSingular.AgentChatThread,
   },
   featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
@@ -103,7 +104,10 @@ export const CompanyHeader: Story = {
   args: {
     commandMenuContextApi: {
       ...CHAT_SHARING_CONTEXT_API,
-      objectMetadataItem: { nameSingular: StandardObjectNameSingular.Company },
+      objectMetadataItem: {
+        id: 'company-object',
+        nameSingular: StandardObjectNameSingular.Company,
+      },
     },
   },
   play: expectUnpinnedShare,

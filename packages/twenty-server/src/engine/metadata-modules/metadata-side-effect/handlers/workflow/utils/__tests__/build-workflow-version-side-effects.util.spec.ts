@@ -103,6 +103,7 @@ const persisted = ({ workflow, version }: ReturnType<typeof convert>) => {
     ...storedWorkflow,
     workspaceId: APPLICATION_ID,
     applicationId: APPLICATION_ID,
+    navigationMenuItemIds: [],
   };
   maps.flatWorkflowVersionMaps.byUniversalIdentifier[VERSION_ID] = {
     ...version,

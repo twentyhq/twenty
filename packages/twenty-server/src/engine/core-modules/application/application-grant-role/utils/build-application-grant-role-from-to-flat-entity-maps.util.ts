@@ -1,7 +1,11 @@
-import { getApplicationGrantRoleUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getApplicationGrantRoleUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4, v5 } from 'uuid';
 
+import { addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-legacy-row-level-permission-rule-grants-to-grant-role-object-permissions.util';
 import { computeApplicationGrantRoleLabel } from 'src/engine/core-modules/application/application-grant-role/utils/compute-application-grant-role-label.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -64,6 +68,8 @@ type BuildApplicationGrantRoleFromToFlatEntityMapsArgs = {
     | undefined;
   workspaceCustomApplicationUniversalIdentifier: string;
   flatEntityMaps: ApplicationGrantRoleFlatEntityMaps;
+  // Optional for the 2.57 backfill command, which ran before rules existed
+  flatRowLevelPermissionRuleMaps?: AllFlatEntityMaps['flatRowLevelPermissionRuleMaps'];
   now: string;
 };
 
@@ -188,6 +194,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
   existingGrantRole,
   workspaceCustomApplicationUniversalIdentifier,
   flatEntityMaps,
+  flatRowLevelPermissionRuleMaps,
   now,
 }: BuildApplicationGrantRoleFromToFlatEntityMapsArgs): ApplicationGrantRoleUniversalFlatEntityMaps => {
   const grantRoleIdentity = isDefined(existingGrantRole)
@@ -223,13 +230,6 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
   const toCopyUniversalIdentifier = (sourceUniversalIdentifier: string) =>
     v5(sourceUniversalIdentifier, grantRoleUniversalIdentifier);
 
-  const toNullableCopyUniversalIdentifier = (
-    sourceUniversalIdentifier: string | null,
-  ) =>
-    isDefined(sourceUniversalIdentifier)
-      ? toCopyUniversalIdentifier(sourceUniversalIdentifier)
-      : null;
-
   const owner = {
     applicationUniversalIdentifier:
       workspaceCustomApplicationUniversalIdentifier,
@@ -237,6 +237,55 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
     createdAt: now,
     updatedAt: now,
   };
+
+  const rolePermissionUniversalFlatEntityMaps =
+    findRolePermissionUniversalFlatEntityMaps({
+      flatRole: requestedFlatRole,
+      flatEntityMaps,
+      mappers: {
+        objectPermission: (source) => ({
+          ...owner,
+          universalIdentifier: toCopyUniversalIdentifier(
+            source.universalIdentifier,
+          ),
+          objectMetadataUniversalIdentifier:
+            source.objectMetadataUniversalIdentifier,
+          canReadObjectRecords: source.canReadObjectRecords ?? null,
+          canCreateObjectRecords: source.canCreateObjectRecords ?? null,
+          canUpdateObjectRecords: source.canUpdateObjectRecords ?? null,
+          canSoftDeleteObjectRecords: source.canSoftDeleteObjectRecords ?? null,
+          canDestroyObjectRecords: source.canDestroyObjectRecords ?? null,
+        }),
+        fieldPermission: (source) =>
+          isDefined(source.rowLevelPermissionPredicateGroupUniversalIdentifier)
+            ? undefined
+            : {
+                ...owner,
+                universalIdentifier: toCopyUniversalIdentifier(
+                  source.universalIdentifier,
+                ),
+                objectMetadataUniversalIdentifier:
+                  source.objectMetadataUniversalIdentifier,
+                fieldMetadataUniversalIdentifier:
+                  source.fieldMetadataUniversalIdentifier,
+                rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+                rowLevelPermissionRuleUniversalIdentifier: null,
+                canReadFieldValue: source.canReadFieldValue ?? null,
+                canUpdateFieldValue: source.canUpdateFieldValue ?? null,
+              },
+        rolePermissionFlag: (source) => ({
+          ...owner,
+          universalIdentifier: toCopyUniversalIdentifier(
+            source.universalIdentifier,
+          ),
+          permissionFlagUniversalIdentifier:
+            source.permissionFlagUniversalIdentifier,
+        }),
+        // An application role is a limiting role, which carries no RLS
+        rowLevelPermissionPredicateGroup: () => undefined,
+        rowLevelPermissionPredicate: () => undefined,
+      },
+    });
 
   return {
     flatRoleMaps: toUniversalFlatEntityMaps([
@@ -265,6 +314,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
         roleTargetUniversalIdentifiers: [],
         objectPermissionUniversalIdentifiers: [],
         fieldPermissionUniversalIdentifiers: [],
+        rowLevelPermissionRuleUniversalIdentifiers: [],
         rolePermissionFlagUniversalIdentifiers: [],
         rowLevelPermissionPredicateUniversalIdentifiers: [],
         rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
@@ -284,103 +334,40 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
           targetFlatApplication.universalIdentifier,
       },
     ]),
-    ...findRolePermissionUniversalFlatEntityMaps({
-      flatRole: requestedFlatRole,
-      flatEntityMaps,
-      mappers: {
-        objectPermission: (source) => ({
+    ...rolePermissionUniversalFlatEntityMaps,
+    flatObjectPermissionMaps: toUniversalFlatEntityMaps(
+      addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions({
+        grantRoleFlatObjectPermissions: Object.values(
+          rolePermissionUniversalFlatEntityMaps.flatObjectPermissionMaps
+            .byUniversalIdentifier,
+        ).filter(isDefined),
+        requestedRoleFlatRowLevelPermissionRules:
+          requestedFlatRole.rowLevelPermissionRuleUniversalIdentifiers
+            .map(
+              (ruleUniversalIdentifier) =>
+                flatRowLevelPermissionRuleMaps?.byUniversalIdentifier[
+                  ruleUniversalIdentifier
+                ],
+            )
+            .filter(isDefined),
+        buildGrantRoleFlatObjectPermission: ({
+          objectMetadataUniversalIdentifier,
+          grants,
+        }) => ({
           ...owner,
           universalIdentifier: toCopyUniversalIdentifier(
-            source.universalIdentifier,
+            getObjectPermissionUniversalIdentifier({
+              applicationUniversalIdentifier:
+                requestedFlatRole.applicationUniversalIdentifier,
+              roleUniversalIdentifier: requestedFlatRole.universalIdentifier,
+              objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+            }),
           ),
-          objectMetadataUniversalIdentifier:
-            source.objectMetadataUniversalIdentifier,
-          canReadObjectRecords: source.canReadObjectRecords ?? null,
-          canCreateObjectRecords: source.canCreateObjectRecords ?? null,
-          canUpdateObjectRecords: source.canUpdateObjectRecords ?? null,
-          canSoftDeleteObjectRecords: source.canSoftDeleteObjectRecords ?? null,
-          canDestroyObjectRecords: source.canDestroyObjectRecords ?? null,
+          objectMetadataUniversalIdentifier,
+          ...grants,
         }),
-        fieldPermission: (source) => ({
-          ...owner,
-          universalIdentifier: toCopyUniversalIdentifier(
-            source.universalIdentifier,
-          ),
-          objectMetadataUniversalIdentifier:
-            source.objectMetadataUniversalIdentifier,
-          fieldMetadataUniversalIdentifier:
-            source.fieldMetadataUniversalIdentifier,
-          rowLevelPermissionPredicateGroupUniversalIdentifier:
-            toNullableCopyUniversalIdentifier(
-              source.rowLevelPermissionPredicateGroupUniversalIdentifier,
-            ),
-          canReadFieldValue: source.canReadFieldValue ?? null,
-          canUpdateFieldValue: source.canUpdateFieldValue ?? null,
-        }),
-        rolePermissionFlag: (source) => ({
-          ...owner,
-          universalIdentifier: toCopyUniversalIdentifier(
-            source.universalIdentifier,
-          ),
-          permissionFlagUniversalIdentifier:
-            source.permissionFlagUniversalIdentifier,
-        }),
-        rowLevelPermissionPredicateGroup: (source) =>
-          isDefined(source.deletedAt)
-            ? undefined
-            : {
-                ...owner,
-                universalIdentifier: toCopyUniversalIdentifier(
-                  source.universalIdentifier,
-                ),
-                objectMetadataUniversalIdentifier:
-                  source.objectMetadataUniversalIdentifier,
-                logicalOperator: source.logicalOperator,
-                canReadRecords: source.canReadRecords,
-                canCreateRecords: source.canCreateRecords,
-                canUpdateRecords: source.canUpdateRecords,
-                canSoftDeleteRecords: source.canSoftDeleteRecords,
-                canDestroyRecords: source.canDestroyRecords,
-                parentRowLevelPermissionPredicateGroupUniversalIdentifier:
-                  toNullableCopyUniversalIdentifier(
-                    source.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
-                  ),
-                positionInRowLevelPermissionPredicateGroup:
-                  source.positionInRowLevelPermissionPredicateGroup,
-                childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-                rowLevelPermissionPredicateUniversalIdentifiers: [],
-                deletedAt: null,
-              },
-        rowLevelPermissionPredicate: (source) =>
-          isDefined(source.deletedAt)
-            ? undefined
-            : {
-                ...owner,
-                universalIdentifier: toCopyUniversalIdentifier(
-                  source.universalIdentifier,
-                ),
-                objectMetadataUniversalIdentifier:
-                  source.objectMetadataUniversalIdentifier,
-                fieldMetadataUniversalIdentifier:
-                  source.fieldMetadataUniversalIdentifier,
-                relationFieldMetadataUniversalIdentifier:
-                  source.relationFieldMetadataUniversalIdentifier,
-                operand: source.operand,
-                value: source.value,
-                subFieldName: source.subFieldName,
-                workspaceMemberFieldMetadataUniversalIdentifier:
-                  source.workspaceMemberFieldMetadataUniversalIdentifier,
-                workspaceMemberSubFieldName: source.workspaceMemberSubFieldName,
-                rowLevelPermissionPredicateGroupUniversalIdentifier:
-                  toNullableCopyUniversalIdentifier(
-                    source.rowLevelPermissionPredicateGroupUniversalIdentifier,
-                  ),
-                positionInRowLevelPermissionPredicateGroup:
-                  source.positionInRowLevelPermissionPredicateGroup,
-                deletedAt: null,
-              },
-      },
-    }),
+      }),
+    ),
   };
 };
 

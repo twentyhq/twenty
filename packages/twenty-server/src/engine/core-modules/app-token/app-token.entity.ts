@@ -29,6 +29,7 @@ export enum AppTokenType {
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
   SsoExchangeToken = 'SSO_EXCHANGE_TOKEN',
   TwoFactorAuthenticationRecoveryCode = 'TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE',
+  TwoFactorAuthenticationBackupCode = 'TWO_FACTOR_AUTHENTICATION_BACKUP_CODE',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
@@ -107,8 +108,10 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    resource?: string;
     authProvider?: AuthProviderEnum;
     revokedReason?: UserSessionRevokedReason;
     issuedByUserId?: string;
+    twoFactorAuthenticationMethodId?: string;
   } | null;
 }

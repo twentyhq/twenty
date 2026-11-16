@@ -16,6 +16,15 @@ export const buildAgentTurnStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
+  agentIdCreatedAtIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'agentIdCreatedAtIndex',
+      relatedFieldNames: ['agentId', 'createdAt'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
   threadIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {

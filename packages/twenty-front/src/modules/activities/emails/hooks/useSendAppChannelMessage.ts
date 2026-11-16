@@ -1,6 +1,6 @@
+import { TIMELINE_THREADS_REFETCH_QUERIES } from '@/activities/emails/constants/TimelineThreadsRefetchQueries';
 import { useMutation } from '@apollo/client/react';
 
-import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
@@ -15,26 +15,18 @@ export const useSendAppChannelMessage = () => {
     SendAppChannelMessageMutationVariables
   >(SEND_APP_CHANNEL_MESSAGE);
 
-  const sendAppChannelMessage = async ({
-    messageChannelId,
-    messageThreadId,
-    text,
-    idempotencyKey,
-  }: {
-    messageChannelId: string;
-    messageThreadId: string;
-    text: string;
-    idempotencyKey: string;
-  }) => {
-    await sendAppChannelMessageMutation({
-      variables: {
-        input: { messageChannelId, messageThreadId, text, idempotencyKey },
-      },
+  const sendAppChannelMessage = async (
+    input: SendAppChannelMessageMutationVariables['input'],
+  ) => {
+    const result = await sendAppChannelMessageMutation({
+      variables: { input },
     });
 
     await apolloCoreClient
-      .refetchQueries({ include: [getTimelineThreadsFromObjectRecord] })
+      .refetchQueries({ include: TIMELINE_THREADS_REFETCH_QUERIES })
       .catch(() => undefined);
+
+    return result.data?.sendAppChannelMessage ?? null;
   };
 
   return { sendAppChannelMessage };

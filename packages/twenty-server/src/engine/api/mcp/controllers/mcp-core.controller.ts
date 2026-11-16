@@ -21,6 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
+import { parseMcpToolMode } from 'src/engine/api/mcp/utils/parse-mcp-tool-mode.util';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
@@ -106,7 +107,7 @@ export class McpCoreController {
       apiKey,
       application,
       agentId: request.agentId,
-      isDirectMode: mode !== 'meta',
+      toolMode: parseMcpToolMode(mode),
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

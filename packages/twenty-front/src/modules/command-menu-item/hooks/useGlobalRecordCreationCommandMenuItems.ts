@@ -16,7 +16,8 @@ export const useGlobalRecordCreationCommandMenuItems = (
   const createRecordCommand = commandMenuItems.find(
     (item) =>
       item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
-      !isDefined(item.availabilityObjectMetadataId),
+      !isDefined(item.availabilityObjectMetadataId) &&
+      !isDefined(item.availabilityCoreObjectName),
   );
 
   const hasGlobalRecordCreationCommandTemplate = isDefined(createRecordCommand);

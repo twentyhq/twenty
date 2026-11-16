@@ -189,6 +189,7 @@ const syncWorkflow = ({
       ...universalFlatWorkflow,
       workspaceId: WORKSPACE_ID,
       applicationId: APP_ID,
+      navigationMenuItemIds: [],
       ...workflowOverrides,
     },
     flatWorkflowVersion: {

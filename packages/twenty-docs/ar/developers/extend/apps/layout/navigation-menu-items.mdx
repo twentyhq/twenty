@@ -44,7 +44,7 @@ export default defineNavigationMenuItem({
 
 * يُخفى عنصر `NATIVE_PAGE` عن الأعضاء الذين لا يملكون إذن الصفحة (سير العمل لـ `'workflows'`، والذكاء الاصطناعي لـ `'agents'`).
 
-* يحتوي التعداد أيضًا على `NavigationMenuItemType.RECORD`، ويُستخدم داخليًا لمفضّلات السجلات التي ينشئها المستخدم، وعلى `NavigationMenuItemType.AGENT_CHAT_CHANNEL`، ويُستخدم لقنوات الدردشة المثبّتة في المفضّلات. لا يمكن استخدام أيٍّ منهما من بيان التطبيق (إذ لا يوجد حقل للإشارة إلى سجل أو قناة).
+* يحتوي التعداد أيضًا على `NavigationMenuItemType.RECORD`، المستخدم داخليًا لسجلات المفضلة التي ينشئها المستخدم، و`NavigationMenuItemType.AGENT_CHAT_CHANNEL`، المستخدم لقنوات الدردشة المثبتة في المفضلة، و`NavigationMenuItemType.WORKFLOW` و`NavigationMenuItemType.AGENT`، المستخدمين لسير العمل والوكلاء المثبتين في الشريط الجانبي. لا يمكن استخدام أيٍّ منها من بيان التطبيق (لا يوجد حقل للإشارة إلى سجل أو قناة أو سير عمل أو وكيل).
 
 * `icon` و`color` اختياريان ويخصّصان مظهر الإدخال.
 

@@ -12,6 +12,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 type RecordShowPageHeaderProps = {
   objectNameSingular: string;
   objectRecordId: string;
+  title?: React.ReactNode;
   titleMode?: RecordShowPageHeaderTitleMode;
   titlePrefix?: React.ReactNode;
   titleAccessory?: React.ReactNode;
@@ -27,6 +28,7 @@ type RecordShowPagePanelHeaderProps = Omit<
 const RecordShowPageMainHeader = ({
   objectNameSingular,
   objectRecordId,
+  title,
   titleMode = 'breadcrumb',
   titlePrefix,
   titleAccessory,
@@ -46,10 +48,12 @@ const RecordShowPageMainHeader = ({
         title={
           <>
             {titlePrefix}
-            <RecordShowPageHeaderRecordTitle
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            />
+            {title ?? (
+              <RecordShowPageHeaderRecordTitle
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
+              />
+            )}
             {titleAccessory}
           </>
         }
@@ -76,9 +80,10 @@ const RecordShowPageMainHeader = ({
 const RecordShowPagePanelHeader = ({
   objectNameSingular,
   objectRecordId,
+  title,
   titleAccessory,
 }: RecordShowPagePanelHeaderProps) => {
-  const recordTitle = (
+  const recordTitle = title ?? (
     <RecordIdentifierBarTitle
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
@@ -109,6 +114,7 @@ const RecordShowPagePanelHeader = ({
 export const RecordShowPageHeader = ({
   objectNameSingular,
   objectRecordId,
+  title,
   titleMode,
   titlePrefix,
   titleAccessory,
@@ -120,12 +126,14 @@ export const RecordShowPageHeader = ({
     <RecordShowPagePanelHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
+      title={title}
       titleAccessory={titleAccessory}
     />
   ) : (
     <RecordShowPageMainHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
+      title={title}
       titleMode={titleMode}
       titlePrefix={titlePrefix}
       titleAccessory={titleAccessory}

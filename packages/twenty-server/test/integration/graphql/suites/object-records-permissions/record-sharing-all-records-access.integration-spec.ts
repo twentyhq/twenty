@@ -62,12 +62,14 @@ describe('Access to all records and ownership transfer', () => {
 
   const target = (recordId: string) => ({ objectMetadataId, recordId });
 
-  const setRecordSharingEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value,
-      expectToFail: false,
-    });
+  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+    for (const featureFlag of [
+      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+    ]) {
+      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+    }
+  };
 
   const setShare = ({
     recordId,
@@ -158,7 +160,7 @@ describe('Access to all records and ownership transfer', () => {
         isLabelSyncedWithName: false,
       },
     });
-    await setRecordSharingEnabled(true);
+    await setRecordSharingAndPrivateRecordsEnabled(true);
   });
 
   const makeRecordsPublic = () =>
@@ -211,7 +213,7 @@ describe('Access to all records and ownership transfer', () => {
 
   afterAll(async () => {
     await makeRecordsPublic();
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -303,14 +305,22 @@ describe('Access to all records and ownership transfer', () => {
   });
 
   it('should keep private records private while record sharing is off', async () => {
-    await setRecordSharingEnabled(false);
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
 
     try {
       expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
         RESTRICTED_RECORD_ID,
       );
     } finally {
-      await setRecordSharingEnabled(true);
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
     }
   });
 
