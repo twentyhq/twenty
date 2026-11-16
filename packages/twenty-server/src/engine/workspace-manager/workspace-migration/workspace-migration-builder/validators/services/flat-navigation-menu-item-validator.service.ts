@@ -5,7 +5,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { validateNavigationMenuItemParentType } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-parent-type.util';
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
+import { validateNavigationMenuItemVisibleItemLimit } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-visible-item-limit.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -18,7 +20,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
-const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
+const NAVIGATION_MENU_ITEM_MAX_DEPTH = 4;
 
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
@@ -159,6 +161,10 @@ export class FlatNavigationMenuItemValidatorService {
       ...validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem,
       }),
+      ...validateNavigationMenuItemVisibleItemLimit({
+        type: flatNavigationMenuItem.type,
+        visibleItemLimit: flatNavigationMenuItem.visibleItemLimit,
+      }),
       ...this.getUnresolvedReferenceValidationErrors({
         flatNavigationMenuItem,
         flatObjectMetadataMaps,
@@ -200,6 +206,15 @@ export class FlatNavigationMenuItemValidatorService {
           userFriendlyMessage: msg`Parent navigation menu item not found`,
         });
       }
+
+      validationResult.errors.push(
+        ...validateNavigationMenuItemParentType({
+          type: flatNavigationMenuItem.type,
+          parentType: (
+            referencedParentInOptimistic ?? referencedParentInRemaining
+          )?.type,
+        }),
+      );
     }
 
     return validationResult;
@@ -292,6 +307,10 @@ export class FlatNavigationMenuItemValidatorService {
       ...validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: toFlatNavigationMenuItem,
       }),
+      ...validateNavigationMenuItemVisibleItemLimit({
+        type: toFlatNavigationMenuItem.type,
+        visibleItemLimit: toFlatNavigationMenuItem.visibleItemLimit,
+      }),
     );
 
     const parentUniversalIdentifierUpdate =
@@ -329,6 +348,13 @@ export class FlatNavigationMenuItemValidatorService {
         userFriendlyMessage: msg`Parent navigation menu item not found`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateNavigationMenuItemParentType({
+        type: toFlatNavigationMenuItem.type,
+        parentType: referencedParentNavigationMenuItem?.type,
+      }),
+    );
 
     return validationResult;
   }

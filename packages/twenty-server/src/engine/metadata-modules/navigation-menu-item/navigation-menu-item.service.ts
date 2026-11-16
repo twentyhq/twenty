@@ -20,7 +20,9 @@ import {
   type UpdateNavigationMenuItemInput,
   type UpdateOneNavigationMenuItemInput,
 } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
+import { getNavigationMenuItemDescendantsDeepestFirst } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/get-navigation-menu-item-descendants-deepest-first.util';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { getNavigationMenuItemCreationRank } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-navigation-menu-item-creation-rank.util';
 import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
@@ -224,19 +226,18 @@ export class NavigationMenuItemService {
       existingFlatNavigationMenuItemMaps,
     );
 
-    const foldersFirst = [...inputs].sort((a, b) => {
-      const aIsFolder = a.type === NavigationMenuItemType.FOLDER ? 0 : 1;
-      const bIsFolder = b.type === NavigationMenuItemType.FOLDER ? 0 : 1;
-
-      return aIsFolder - bIsFolder;
-    });
+    const parentsFirst = [...inputs].sort(
+      (a, b) =>
+        getNavigationMenuItemCreationRank(a.type) -
+        getNavigationMenuItemCreationRank(b.type),
+    );
 
     const flatEntityByInput = new Map<
       CreateNavigationMenuItemInput,
       FlatNavigationMenuItem
     >();
 
-    const flatNavigationMenuItemsToCreate = foldersFirst.map((input) => {
+    const flatNavigationMenuItemsToCreate = parentsFirst.map((input) => {
       const normalizedInput: CreateNavigationMenuItemInput = {
         ...input,
         userWorkspaceId:
@@ -535,17 +536,16 @@ export class NavigationMenuItemService {
         ),
       );
 
-      const flatEntitiesForRoot = [flatNavigationMenuItemRoot];
-
-      if (flatNavigationMenuItemRoot.type === NavigationMenuItemType.FOLDER) {
-        const userWorkspaceIdKey =
-          flatNavigationMenuItemRoot.userWorkspaceId ?? 'null';
-        const folderChildren =
-          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
-            userWorkspaceIdKey
-          ]?.[requestedId] ?? [];
-        flatEntitiesForRoot.unshift(...folderChildren);
-      }
+      const flatEntitiesForRoot = [
+        ...getNavigationMenuItemDescendantsDeepestFirst({
+          parentId: requestedId,
+          userWorkspaceIdKey:
+            flatNavigationMenuItemRoot.userWorkspaceId ?? 'null',
+          childrenByUserWorkspaceIdAndParentId:
+            existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId,
+        }),
+        flatNavigationMenuItemRoot,
+      ];
 
       for (const flatEntity of flatEntitiesForRoot) {
         if (!seenDeleteId.has(flatEntity.id)) {

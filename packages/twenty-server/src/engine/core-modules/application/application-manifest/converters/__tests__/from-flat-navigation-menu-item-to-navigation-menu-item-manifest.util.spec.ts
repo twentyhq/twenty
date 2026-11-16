@@ -21,6 +21,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<
   name: 'All pets',
   icon: 'IconPaw',
   color: 'green',
+  visibleItemLimit: 5,
   position: 12.5,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',

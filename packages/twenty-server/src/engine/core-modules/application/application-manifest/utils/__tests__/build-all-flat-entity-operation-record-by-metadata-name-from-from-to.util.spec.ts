@@ -124,6 +124,7 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   nativePageKey: null,
   icon: null,
   color: null,
+  visibleItemLimit: null,
   parentId: null,
   parentUniversalIdentifier: null,
   pageLayoutId: null,
