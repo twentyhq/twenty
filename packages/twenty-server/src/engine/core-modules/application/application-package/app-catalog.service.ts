@@ -74,7 +74,9 @@ export class AppCatalogService {
     return integrity;
   }
 
-  private async fetchSignedCatalogOrThrow(catalogUrl: string): Promise<unknown> {
+  private async fetchSignedCatalogOrThrow(
+    catalogUrl: string,
+  ): Promise<unknown> {
     try {
       const response = await this.secureHttpClientService
         .getHttpClient({
