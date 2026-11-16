@@ -672,7 +672,7 @@ msgstr "{channelName} ist getrennt."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} verbunden"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3991,7 +3991,7 @@ msgstr "App-Operation"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "Arbeitsbereich des App-Inhabers"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7032,7 +7032,7 @@ msgstr "Kommas und Punkt"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7092,7 +7092,7 @@ msgstr "Entschädigung"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "Entschädigung für den Ausfall im Oktober"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7431,7 +7431,7 @@ msgstr "{appName} mit deinem Konto verbinden"
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "Mit {connectionProviderDisplayName} verbinden"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11685,7 +11685,7 @@ msgstr "Endet"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "Endet (optional)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11965,7 +11965,7 @@ msgstr "Geben Sie pro Zeile eine Option ein. Jede Zeile wird zu einer neuen Opti
 #. js-lingui-id: 6FyWNj
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
-msgstr ""
+msgstr "Geben Sie eine Option pro Zeile ein. Jede Zeile wird zu einer neuen Option. Optionen, die mit dem Feld geliefert werden, werden deaktiviert, wenn ihre Zeile entfernt wird."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -16139,7 +16139,7 @@ msgstr "Benutzeroberfläche"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "Spalte für die interne Importeinstellung"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -20148,7 +20148,7 @@ msgstr "Kein Emoji gefunden"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "Kein Enddatum"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22406,7 +22406,7 @@ msgstr "Überfällig"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "Fügen Sie einen Schlüssel aus Ihren {connectionProviderDisplayName}-Einstellungen ein. Er wird verschlüsselt gespeichert."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23655,7 +23655,7 @@ msgstr "System-Prompts lesen"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "Liest die interne Importeinstellung aus ihrer neuen Workspace-Spalte. Wird durch das Upgrade auf 2.59 aktiviert."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -27590,7 +27590,7 @@ msgstr "Trotzdem überspringen"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "Kalenderereignisse ohne Teilnehmer außerhalb der Workspace-Domain überspringen, es sei denn, der interne Import ist aktiviert."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27600,7 +27600,7 @@ msgstr "Erstellen eines Namensfelds überspringen "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "Interne Besprechungen überspringen"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

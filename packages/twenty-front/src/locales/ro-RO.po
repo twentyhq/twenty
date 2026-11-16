@@ -672,7 +672,7 @@ msgstr "{channelName} este deconectat."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} conectat"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3991,7 +3991,7 @@ msgstr "Operațiune a aplicației"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "Spațiul de lucru al proprietarului aplicației"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7032,7 +7032,7 @@ msgstr "Virgule și punct"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "Comentariu"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7092,7 +7092,7 @@ msgstr "Compensație"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "Compensație pentru întreruperea din octombrie"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7431,7 +7431,7 @@ msgstr "Conectați {appName} la contul dvs."
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "Conectare la {connectionProviderDisplayName}"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11685,7 +11685,7 @@ msgstr "Se termină"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "Se încheie (opțional)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11965,7 +11965,7 @@ msgstr "Introduceți câte o opțiune pe linie. Fiecare linie va deveni o nouă 
 #. js-lingui-id: 6FyWNj
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
-msgstr ""
+msgstr "Introduceți câte o opțiune pe fiecare rând. Fiecare rând va deveni o opțiune nouă. Opțiunile incluse cu câmpul sunt dezactivate atunci când rândul lor este eliminat."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -16139,7 +16139,7 @@ msgstr "Interfață"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "Coloana setării de import intern"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -20148,7 +20148,7 @@ msgstr "Nu a fost găsit niciun emoji"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "Fără dată de sfârșit"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22406,7 +22406,7 @@ msgstr "Restanță"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "Lipește o cheie din setările {connectionProviderDisplayName}. Aceasta este stocată criptat."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23655,7 +23655,7 @@ msgstr "Citește prompturile de sistem"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "Citește setarea de import intern din noua sa coloană de spațiu de lucru. Activată prin actualizarea la versiunea 2.59."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -27590,7 +27590,7 @@ msgstr "Omite oricum"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "Omiteți evenimentele din calendar fără niciun participant din afara domeniului spațiului de lucru, cu excepția cazului în care importul intern este activat."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27600,7 +27600,7 @@ msgstr "Omite crearea unui câmp Nume "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "Omiteți întâlnirile interne"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

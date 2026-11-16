@@ -672,7 +672,7 @@ msgstr "{channelName} le van választva."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} csatlakoztatva"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3991,7 +3991,7 @@ msgstr "Alkalmazásművelet"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "Az alkalmazás tulajdonosának munkaterülete"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7032,7 +7032,7 @@ msgstr "Vesszők és pont"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "Megjegyzés"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7092,7 +7092,7 @@ msgstr "Kompenzáció"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "Kompenzáció az októberi leállásért"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7431,7 +7431,7 @@ msgstr "{appName} csatlakoztatása a fiókodhoz"
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "Csatlakozás a(z) {connectionProviderDisplayName} szolgáltatáshoz"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11685,7 +11685,7 @@ msgstr "Befejezés"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "Vége (nem kötelező)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11965,7 +11965,7 @@ msgstr "Adjon meg soronként egy opciót. Minden sorból új opció lesz."
 #. js-lingui-id: 6FyWNj
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
-msgstr ""
+msgstr "Soronként egy lehetőséget adjon meg. Minden sor új lehetőséggé válik. A mezőhöz tartozó lehetőségek inaktiválódnak, ha a sorukat eltávolítják."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -16139,7 +16139,7 @@ msgstr "Felület"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "Belső importálási beállítás oszlopa"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -20148,7 +20148,7 @@ msgstr "Nem található emoji"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "Nincs befejezési dátum"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22406,7 +22406,7 @@ msgstr "Lejárt"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "Illesszen be egy kulcsot a(z) {connectionProviderDisplayName} beállításaiból. Titkosítva tároljuk."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23655,7 +23655,7 @@ msgstr "Olvassa el a rendszerutasításokat"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "A belső importálási beállítás beolvasása az új munkaterület-oszlopból. A 2.59-es frissítés kapcsolja be."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -27590,7 +27590,7 @@ msgstr "Kihagyás mégis"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "A belső import bekapcsolása esetén kívül hagyja azokat a naptáreseményeket, amelyeknek nincs a munkaterület domainjén kívüli résztvevője."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27600,7 +27600,7 @@ msgstr "A Név mező létrehozásának kihagyása "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "Belső megbeszélések kihagyása"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

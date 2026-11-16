@@ -672,7 +672,7 @@ msgstr "{channelName} 연결이 끊어졌습니다."
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 msgid "{connectionProviderDisplayName} connected"
-msgstr ""
+msgstr "{connectionProviderDisplayName} 연결됨"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3991,7 +3991,7 @@ msgstr "앱 작업"
 #. js-lingui-id: 7f2JWJ
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 msgid "App owner workspace"
-msgstr ""
+msgstr "앱 소유자 워크스페이스"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7032,7 +7032,7 @@ msgstr "쉼표와 마침표"
 #. js-lingui-id: NBdIgR
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
-msgstr ""
+msgstr "댓글"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7092,7 +7092,7 @@ msgstr "보상"
 #. js-lingui-id: 63EmVV
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Compensation for the October outage"
-msgstr ""
+msgstr "10월 서비스 중단에 대한 보상"
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7431,7 +7431,7 @@ msgstr "{appName}을(를) 계정에 연결"
 #. js-lingui-id: ZdoGKt
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Connect {connectionProviderDisplayName}"
-msgstr ""
+msgstr "{connectionProviderDisplayName} 연결"
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11685,7 +11685,7 @@ msgstr "종료"
 #. js-lingui-id: jV/TnE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
-msgstr ""
+msgstr "종료일(선택 사항)"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11965,7 +11965,7 @@ msgstr "한 줄에 하나의 옵션을 입력하세요. 각 줄이 새로운 옵
 #. js-lingui-id: 6FyWNj
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
-msgstr ""
+msgstr "한 줄에 옵션을 하나씩 입력하세요. 각 줄은 새 옵션이 됩니다. 해당 줄을 삭제하면 필드와 함께 제공되는 옵션이 비활성화됩니다."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -16139,7 +16139,7 @@ msgstr "인터페이스"
 #. js-lingui-id: m/FXoF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Internal import setting column"
-msgstr ""
+msgstr "내부 가져오기 설정 열"
 
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -20148,7 +20148,7 @@ msgstr "이모지를 찾을 수 없습니다"
 #. js-lingui-id: pZNOT9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
-msgstr ""
+msgstr "종료일 없음"
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -22406,7 +22406,7 @@ msgstr "연체"
 #. js-lingui-id: ENlZ6C
 #: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
-msgstr ""
+msgstr "{connectionProviderDisplayName} 설정에서 키를 붙여넣으세요. 암호화되어 저장됩니다."
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -23655,7 +23655,7 @@ msgstr "시스템 프롬프트 읽기"
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
-msgstr ""
+msgstr "새 작업 공간 열에서 내부 가져오기 설정을 읽습니다. 2.59 업그레이드로 활성화됩니다."
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -27590,7 +27590,7 @@ msgstr "그래도 건너뛰기"
 #. js-lingui-id: 5jWe/6
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
-msgstr ""
+msgstr "내부 가져오기가 켜져 있지 않은 경우, 워크스페이스 도메인 외부에 참여자가 없는 캘린더 이벤트를 건너뜁니다."
 
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -27600,7 +27600,7 @@ msgstr "이름 필드 생성을 건너뛰기 "
 #. js-lingui-id: pmVASU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Skip internal meetings"
-msgstr ""
+msgstr "내부 회의 건너뛰기"
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

@@ -1,15 +1,27 @@
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const CodeInterpreterInputZodSchema = z.object({
   code: z.string().describe('Python code to execute'),
   files: z
     .array(
-      z.object({
-        filename: z.string().describe('Name of the file'),
-        fileId: z
-          .string()
-          .describe('ID of the uploaded file (from user attachments)'),
-      }),
+      z
+        .object({
+          filename: z.string().describe('Name of the file'),
+          fileId: z
+            .string()
+            .optional()
+            .describe('ID of the uploaded file (from user attachments)'),
+          url: z
+            .string()
+            .optional()
+            .describe(
+              'Signed url of a file attached to a record, exactly as returned with the record',
+            ),
+        })
+        .refine(({ fileId, url }) => isDefined(fileId) !== isDefined(url), {
+          message: 'Provide exactly one of fileId or url',
+        }),
     )
     .optional()
     .describe('Files to make available in the execution environment'),
