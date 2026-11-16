@@ -1,8 +1,8 @@
-import { type RecordFieldColumnDescriptor } from '@/object-record/record-field/types/RecordFieldColumnDescriptor';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
-// Lookup cells read the related record from its own store entry, not from the row
+// Lookup cells read the related record from its own store entry, so the loaders store it next to the rows
 export const getLookupRelatedRecords = ({
   records,
   columnDescriptorByRecordFieldId,
@@ -10,7 +10,11 @@ export const getLookupRelatedRecords = ({
   records: ObjectRecord[];
   columnDescriptorByRecordFieldId: Record<
     string,
-    Pick<RecordFieldColumnDescriptor, 'lookupTarget'>
+    {
+      lookupTarget:
+        | Pick<RecordFieldLookupTarget, 'relationFieldName'>
+        | undefined;
+    }
   >;
 }): ObjectRecord[] =>
   Object.values(columnDescriptorByRecordFieldId).flatMap(({ lookupTarget }) =>

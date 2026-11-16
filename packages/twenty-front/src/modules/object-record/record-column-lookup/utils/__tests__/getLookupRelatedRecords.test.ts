@@ -1,9 +1,6 @@
-import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 
-const companyLookupTarget = {
-  relationFieldName: 'company',
-} as RecordFieldLookupTarget;
+const companyLookupTarget = { relationFieldName: 'company' };
 
 const company = { id: 'company-1', __typename: 'Company', city: 'Paris' };
 
