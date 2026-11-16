@@ -71,7 +71,7 @@ export const rule = defineRule({
       }
 
       const violatedDirection = findViolatedDirection(
-        context.filename,
+        context.filename.replace(/\\/g, '/'),
         importSource,
         directions,
       );

@@ -50,6 +50,13 @@ ruleTester.run(RULE_NAME, rule, {
   invalid: [
     {
       code: "import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';",
+      filename:
+        'C:\\repo\\packages\\twenty-front\\src\\modules\\ai\\hooks\\useAiChat.ts',
+      options,
+      errors: [{ messageId: 'forbiddenImport' }],
+    },
+    {
+      code: "import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';",
       filename: '/repo/packages/twenty-front/src/modules/ai/hooks/useAiChat.ts',
       options,
       errors: [{ messageId: 'forbiddenImport' }],
