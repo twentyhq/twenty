@@ -7,7 +7,10 @@ export const isRelatedRecordsWidgetSourceAvailableForLayout = ({
   relatedRecordsWidgetSource,
   layoutViewType,
 }: {
-  relatedRecordsWidgetSource: RelatedRecordsWidgetSource;
+  relatedRecordsWidgetSource: Pick<
+    RelatedRecordsWidgetSource,
+    'defaultGroupByFieldMetadataItem' | 'defaultCalendarFieldMetadataItem'
+  >;
   layoutViewType: RecordTableWidgetLayoutViewType;
 }) => {
   if (layoutViewType === ViewType.KANBAN_WIDGET) {
