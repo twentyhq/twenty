@@ -47,24 +47,6 @@ export class ApplicationUpgradeResolver {
     private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
   ) {}
 
-  @Mutation(() => Boolean)
-  @UseGuards(ApplicationTargetGuard)
-  async upgradeApplication(
-    @ApplicationTargetArg('appRegistrationId', {
-      kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
-    })
-    appRegistrationId: string,
-    @Args('targetVersion') targetVersion: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return this.applicationUpgradeService.upgradeApplication({
-      appRegistrationId,
-      targetVersion,
-      workspaceId: workspace.id,
-    });
-  }
-
   @Mutation(() => TriggerUpgradeApplicationResultDTO)
   @UseGuards(ApplicationTargetGuard)
   async triggerUpgradeApplication(
