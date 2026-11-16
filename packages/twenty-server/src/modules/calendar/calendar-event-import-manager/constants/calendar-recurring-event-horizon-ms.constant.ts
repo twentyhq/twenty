@@ -1,0 +1,1 @@
+export const CALENDAR_RECURRING_EVENT_HORIZON_MS = 1000 * 60 * 60 * 24 * 90;

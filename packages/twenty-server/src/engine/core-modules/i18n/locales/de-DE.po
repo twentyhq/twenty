@@ -223,7 +223,7 @@ msgstr "Ein Datenbankereignis-Trigger in dieser Anwendung ist ungültig."
 #. js-lingui-id: RRhkpY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
-msgstr ""
+msgstr "Ein deaktiviertes Feld kann nicht in einer Spalte angezeigt werden"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -413,12 +413,12 @@ msgstr "Eine Aufzeichnung eines Meetings"
 #. js-lingui-id: p5HHUZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr ""
+msgstr "Ein Feld eines verknüpften Datensatzes kann nur in einem Viele-zu-eins-Beziehungsfeld angezeigt werden"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
-msgstr ""
+msgstr "Die Beziehung eines verknüpften Datensatzes kann nicht in einer Spalte angezeigt werden"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -601,7 +601,7 @@ msgstr "Es ist ein Fehler in der Ansichtsfeldgruppe aufgetreten."
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
-msgstr ""
+msgstr "Ein Ansichtsfilter kann nicht in einer Ansichtsfiltergruppe verbleiben, die entfernt wird"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -611,7 +611,7 @@ msgstr "Es ist ein Fehler im Ansichtsfilter aufgetreten."
 #. js-lingui-id: yPKHXO
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter group cannot stay under a parent group that is being removed"
-msgstr ""
+msgstr "Eine Ansichtsfiltergruppe kann nicht unter einer übergeordneten Gruppe verbleiben, die entfernt wird"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -723,12 +723,6 @@ msgstr "Kontoinhaber für Unternehmen"
 msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Kontoinhaber für Unternehmen"
-
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "Konten"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1598,6 +1592,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "Apps"
 
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "App-Einstellungen"
+
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
@@ -2444,12 +2444,6 @@ msgstr "Kalenderansicht muss ein Kalenderfeld haben"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "Kalenderansicht muss ein Kalender-Layout haben"
-
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "Kalender"
 
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -4995,12 +4989,6 @@ msgstr "E-Mail-Verifizierung ist nicht erforderlich."
 msgid "Email verification not required."
 msgstr "E-Mail-Verifizierung nicht erforderlich."
 
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "E-Mails"
-
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -6349,12 +6337,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Zu {objectLabelPlural} gehen"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "Zu den Kontoeinstellungen gehen"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6367,6 +6349,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "Zu den KI-Einstellungen gehen"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "Zu den App-Einstellungen"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6378,12 +6366,6 @@ msgstr "Zu den Apps-Einstellungen gehen"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "Zu den Abrechnungseinstellungen gehen"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "Zu den Kalendereinstellungen gehen"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6408,12 +6390,6 @@ msgstr "Zu den Entwicklereinstellungen"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "Zu den Domäneneinstellungen gehen"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "Zu den E-Mail-Einstellungen gehen"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10060,7 +10036,7 @@ msgstr "Ein oder mehrere angeforderte Scopes sind ungültig."
 #. js-lingui-id: A69o8a
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record can show a field of that record"
-msgstr ""
+msgstr "Nur eine Spalte, die auf einen Datensatz verweist, kann ein Feld dieses Datensatzes anzeigen"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10090,7 +10066,7 @@ msgstr "Nur ein Workspace-Mitglied kann ändern, wer einen Workflow sehen kann"
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
-msgstr ""
+msgstr "Nur hinzugefügte Spalten können ein Feld des verknüpften Datensatzes anzeigen"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10125,7 +10101,7 @@ msgstr "Es sind nur Feldbeschränkungen zulässig."
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only non-canonical view fields can show a related record field"
-msgstr ""
+msgstr "Nur nicht-kanonische Ansichtsfelder können ein Feld eines verknüpften Datensatzes anzeigen"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -14097,7 +14073,7 @@ msgstr "Das für dieses Widget konfigurierte Feld konnte nicht gefunden werden."
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The field must belong to the related object"
-msgstr ""
+msgstr "Das Feld muss zum verknüpften Objekt gehören"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14371,22 +14347,22 @@ msgstr "Der empfangene E-Mail-Inhalt ist nicht mehr verfügbar."
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field cannot be a relation"
-msgstr ""
+msgstr "Das Feld des verknüpften Datensatzes kann keine Beziehung sein"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must be active"
-msgstr ""
+msgstr "Das Feld des verknüpften Datensatzes muss aktiv sein"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
-msgstr ""
+msgstr "Das Feld des verknüpften Datensatzes muss zum Zielobjekt der Beziehung gehören"
 
 #. js-lingui-id: bb3jnG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Das Feld des verknüpften Datensatzes einer Spalte, die zu einer Anwendung gehört, kann nicht geändert werden"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14852,7 +14828,7 @@ msgstr "Dieser Code gehört zu einer veröffentlichten Workflow-Version. Bearbei
 #. js-lingui-id: t/Gj4r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
-msgstr ""
+msgstr "Diese Spalte stammt aus einer Anwendung, daher kann das Feld des verknüpften Datensatzes, das sie anzeigt, nicht geändert werden"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts

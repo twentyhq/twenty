@@ -56,6 +56,7 @@ export class MicrosoftCalendarGetEventsService {
     return {
       calendarEventIds: eventIds,
       calendarEventIdsToDelete: eventIdsToDelete,
+      recurringEventExternalIdsBeyondHorizon: [],
       nextSyncCursor: pageIterator.getDeltaLink() || '',
     };
   }

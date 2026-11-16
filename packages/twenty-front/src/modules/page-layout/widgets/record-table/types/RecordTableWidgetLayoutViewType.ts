@@ -25,24 +25,29 @@ export const RECORD_TABLE_WIDGET_LAYOUT_OPTIONS = {
   [ViewType.TABLE_WIDGET]: {
     Icon: IconTable,
     label: msg`Table`,
+    description: msg`Rows and columns`,
   },
   [ViewType.KANBAN_WIDGET]: {
     Icon: IconLayoutKanban,
     label: msg`Kanban`,
+    description: msg`Cards grouped by a Select field`,
   },
   [ViewType.LIST_WIDGET]: {
     Icon: IconList,
     label: msg`List`,
+    description: msg`Compact list`,
   },
   [ViewType.CALENDAR_WIDGET]: {
     Icon: IconCalendar,
     label: msg`Calendar`,
+    description: msg`Records by date`,
   },
 } satisfies Record<
   RecordTableWidgetLayoutViewType,
   {
     Icon: IconComponent;
     label: MessageDescriptor;
+    description: MessageDescriptor;
   }
 >;
 

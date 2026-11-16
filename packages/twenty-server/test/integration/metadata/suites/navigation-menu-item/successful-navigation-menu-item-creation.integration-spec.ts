@@ -88,7 +88,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: personObjectMetadataId,
       userWorkspaceId: null,
-      folderId: null,
+      parentId: null,
       position: expect.any(Number),
     });
   });
@@ -107,10 +107,10 @@ describe('NavigationMenuItem creation should succeed', () => {
       },
     });
 
-    const folderId = folderData?.createNavigationMenuItem?.id;
+    const parentId = folderData?.createNavigationMenuItem?.id;
 
-    jestExpectToBeDefined(folderId);
-    createdFolderId = folderId;
+    jestExpectToBeDefined(parentId);
+    createdFolderId = parentId;
 
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
@@ -119,7 +119,7 @@ describe('NavigationMenuItem creation should succeed', () => {
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
-        folderId,
+        parentId,
         position: 5,
       },
     });
@@ -131,7 +131,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: companyObjectMetadataId,
       userWorkspaceId: validUserWorkspaceId,
-      folderId,
+      parentId,
       position: 5,
     });
   });

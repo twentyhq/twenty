@@ -1,3 +1,4 @@
+import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -30,6 +31,7 @@ describe('AiChatEmptyState', () => {
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
     jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {

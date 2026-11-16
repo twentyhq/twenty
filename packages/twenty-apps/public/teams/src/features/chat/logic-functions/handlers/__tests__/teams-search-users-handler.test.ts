@@ -71,9 +71,7 @@ describe('teamsSearchUsersHandler', () => {
         },
       ],
     });
-    expect(collectGraphUsersMock.mock.calls[0][0].url).toContain(
-      'startswith',
-    );
+    expect(collectGraphUsersMock.mock.calls[0][0].url).toContain('startswith');
   });
 
   it('fails with a structured error when the directory read throws', async () => {

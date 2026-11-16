@@ -64,7 +64,7 @@ const buildFlatNavigationMenuItem = ({
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
   viewId: null,
-  folderId: null,
+  parentId: null,
   targetObjectMetadataId: null,
   pageLayoutId: null,
   agentChatChannelId: null,
@@ -360,7 +360,7 @@ describe('reconstructNavigationMenuItemsManifest', () => {
       buildFlatNavigationMenuItem({
         universalIdentifier: 'folded-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: FOLDER_UID,
+        parentUniversalIdentifier: FOLDER_UID,
       }),
     ]);
 
@@ -374,12 +374,12 @@ describe('reconstructNavigationMenuItemsManifest', () => {
       buildFlatNavigationMenuItem({
         universalIdentifier: 'foreign-folder-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: FOREIGN_FOLDER_UID,
+        parentUniversalIdentifier: FOREIGN_FOLDER_UID,
       }),
       buildFlatNavigationMenuItem({
         universalIdentifier: 'missing-folder-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: MISSING_UID,
+        parentUniversalIdentifier: MISSING_UID,
       }),
     ]);
 
@@ -403,12 +403,12 @@ describe('reconstructNavigationMenuItemsManifest', () => {
         universalIdentifier: NESTED_FOLDER_UID,
         type: NavigationMenuItemType.FOLDER,
         name: 'Soft toys',
-        folderUniversalIdentifier: FOLDER_UID,
+        parentUniversalIdentifier: FOLDER_UID,
       }),
       buildFlatNavigationMenuItem({
         universalIdentifier: 'nested-item',
         targetObjectMetadataUniversalIdentifier: PET_UID,
-        folderUniversalIdentifier: NESTED_FOLDER_UID,
+        parentUniversalIdentifier: NESTED_FOLDER_UID,
       }),
     ]);
 
