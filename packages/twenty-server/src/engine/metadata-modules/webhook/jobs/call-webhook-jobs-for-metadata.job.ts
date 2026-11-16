@@ -104,7 +104,14 @@ export class CallWebhookJobsForMetadataJob {
         CallWebhookJob.name,
         webhookEventsChunk,
         {
-          ...getWebhookCallRetryJobOptions(this.twentyConfigService),
+          ...getWebhookCallRetryJobOptions({
+            retryLimit: this.twentyConfigService.get(
+              'WEBHOOK_CALL_RETRY_LIMIT',
+            ),
+            initialDelayMilliseconds: this.twentyConfigService.get(
+              'WEBHOOK_CALL_RETRY_INITIAL_DELAY_IN_MS',
+            ),
+          }),
           workspaceId: metadataEventBatch.workspaceId,
           isWorkspaceJob: true,
         },
