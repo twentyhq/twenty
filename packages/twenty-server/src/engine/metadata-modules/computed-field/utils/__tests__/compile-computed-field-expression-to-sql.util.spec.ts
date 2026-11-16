@@ -76,6 +76,25 @@ describe('compileComputedFieldExpressionToSql', () => {
     });
   });
 
+  it.each([
+    ['constructor', '"record"."constructor"'],
+    ['1 + toString', '(1 + "record"."toString")'],
+    ['abs(hasOwnProperty)', 'ABS("record"."hasOwnProperty")'],
+  ])(
+    'reads a field named like an Object.prototype member as a field, not as a variable: %s',
+    (expression, sql) => {
+      expect(
+        compileComputedFieldExpressionToSql({
+          expression,
+          resolveField: (path) => ({
+            sql: `"record"."${path.join('_')}"`,
+            type: NUMBER,
+          }),
+        }),
+      ).toEqual({ sql, type: NUMBER, parameters: {} });
+    },
+  );
+
   it('binds text values as parameters instead of writing them into the SQL', () => {
     expect(compile(`name == "'; DROP TABLE person; --"`)).toEqual({
       sql: '("record"."name" = :text0::text)',
