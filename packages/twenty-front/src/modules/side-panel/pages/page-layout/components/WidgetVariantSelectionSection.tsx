@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -70,7 +71,7 @@ export const WidgetVariantSelectionSection = <TVariant extends string>({
             fullWidth
             aria-label={label}
             aria-pressed={currentVariant === variant}
-            disabled={disabledReason !== undefined}
+            disabled={isDefined(disabledReason)}
             onClick={() => {
               onSelect(variant);
             }}

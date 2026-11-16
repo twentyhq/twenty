@@ -1,6 +1,5 @@
 import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
-import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
-import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
+import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutDefaultFields';
 import { getRecordTableWidgetViewSnapshotWithLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewSnapshotWithLayout';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -11,16 +10,9 @@ describe('getRecordTableWidgetViewSnapshotWithLayout', () => {
   const widgetViewSnapshot = buildRecordTableWidgetViewSnapshot(
     opportunityObjectMetadataItem,
   );
-  const defaultFields = {
-    defaultGroupByFieldMetadataItem:
-      opportunityObjectMetadataItem.fields.find(
-        isFieldMetadataItemAvailableAsWidgetGroupByField,
-      ) ?? null,
-    defaultCalendarFieldMetadataItem:
-      opportunityObjectMetadataItem.fields.find(
-        isFieldMetadataItemAvailableAsCalendarField,
-      ) ?? null,
-  };
+  const defaultFields = getRecordTableWidgetLayoutDefaultFields(
+    opportunityObjectMetadataItem,
+  );
 
   it('should group a kanban by the default select field', () => {
     const result = getRecordTableWidgetViewSnapshotWithLayout({

@@ -9,8 +9,11 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
-import { useRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutPickerOptions';
-import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import {
+  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
+  RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import { isRecordTableWidgetLayoutAvailable } from '@/page-layout/widgets/record-table/utils/isRecordTableWidgetLayoutAvailable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -81,28 +84,40 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     useAddDraftViewForRecordTableWidget(pageLayoutId);
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
 
-  // Opportunity first: unlike Company it has the select and date fields kanban and calendar need.
-  const firstAvailableObjectMetadataItem =
-    [StandardObjectNameSingular.Opportunity, StandardObjectNameSingular.Company]
+  const candidateObjectMetadataItems = [
+    ...[
+      StandardObjectNameSingular.Company,
+      StandardObjectNameSingular.Opportunity,
+    ]
       .map((nameSingular) =>
         readableObjectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.nameSingular === nameSingular,
         ),
       )
-      .find(isDefined) ||
-    [...readableObjectMetadataItems].sort((first, second) =>
-      first.labelPlural.localeCompare(second.labelPlural),
-    )[0];
+      .filter(isDefined),
+    ...readableObjectMetadataItems
+      .filter((objectMetadataItem) => !objectMetadataItem.isSystem)
+      .toSorted((first, second) =>
+        first.labelPlural.localeCompare(second.labelPlural),
+      ),
+  ];
 
-  const {
-    layoutOptions,
-    defaultGroupByFieldMetadataItem,
-    defaultCalendarFieldMetadataItem,
-  } = useRecordTableWidgetLayoutPickerOptions(firstAvailableObjectMetadataItem);
+  // Each layout defaults to the first object that supports it, so Company lacking a select field does not hide kanban.
+  const viewLayoutItems = RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES.flatMap(
+    (viewType) => {
+      const objectMetadataItem = candidateObjectMetadataItems.find(
+        (candidateObjectMetadataItem) =>
+          isRecordTableWidgetLayoutAvailable({
+            viewType,
+            objectMetadataItem: candidateObjectMetadataItem,
+          }),
+      );
 
-  const availableLayoutOptions = layoutOptions.filter(
-    (layoutOption) => !layoutOption.isDisabled,
+      return isDefined(objectMetadataItem)
+        ? [{ viewType, objectMetadataItem }]
+        : [];
+    },
   );
 
   const { data: frontComponentsData } = useQuery<{
@@ -207,31 +222,30 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleCreateViewWidget = (
-    targetViewType: RecordTableWidgetLayoutViewType,
-  ) => {
+  const handleCreateViewWidget = ({
+    viewType,
+    objectMetadataItem,
+  }: (typeof viewLayoutItems)[number]) => {
     if (isDefined(pageLayoutEditingWidgetId)) {
       removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
     }
 
     const newRecordTableWidget = createPageLayoutWidget({
       type: WidgetType.RECORD_TABLE,
-      title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
+      title: objectMetadataItem.labelPlural,
       configuration: {
         configurationType: WidgetConfigurationType.RECORD_TABLE,
         isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
       },
-      objectMetadataId: firstAvailableObjectMetadataItem?.id,
+      objectMetadataId: objectMetadataItem.id,
     });
 
     setPageLayoutEditingWidgetId(newRecordTableWidget.id);
 
     addDraftViewForRecordTableWidget({
       widgetId: newRecordTableWidget.id,
-      objectMetadataItem: firstAvailableObjectMetadataItem,
-      targetViewType,
-      defaultGroupByFieldMetadataItem,
-      defaultCalendarFieldMetadataItem,
+      objectMetadataItem,
+      targetViewType: viewType,
     });
 
     navigatePageLayoutSidePanel({
@@ -268,7 +282,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const selectableItemIds = [
     ...GRAPH_TYPE_OPTIONS,
-    ...availableLayoutOptions.map(({ viewType }) => viewType),
+    ...viewLayoutItems.map(({ viewType }) => viewType),
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -293,22 +307,30 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
         ))}
       </SidePanelGroup>
 
-      <SidePanelGroup heading={t`Views`}>
-        {availableLayoutOptions.map(({ viewType, Icon, label }) => (
-          <SelectableListItem
-            key={viewType}
-            itemId={viewType}
-            onEnter={() => handleCreateViewWidget(viewType)}
-          >
-            <CommandMenuItem
-              Icon={Icon}
-              label={t(label)}
-              id={viewType}
-              onClick={() => handleCreateViewWidget(viewType)}
-            />
-          </SelectableListItem>
-        ))}
-      </SidePanelGroup>
+      {viewLayoutItems.length > 0 && (
+        <SidePanelGroup heading={t`Views`}>
+          {viewLayoutItems.map((viewLayoutItem) => {
+            const { viewType } = viewLayoutItem;
+            const { Icon, label } =
+              RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[viewType];
+
+            return (
+              <SelectableListItem
+                key={viewType}
+                itemId={viewType}
+                onEnter={() => handleCreateViewWidget(viewLayoutItem)}
+              >
+                <CommandMenuItem
+                  Icon={Icon}
+                  label={t(label)}
+                  id={viewType}
+                  onClick={() => handleCreateViewWidget(viewLayoutItem)}
+                />
+              </SelectableListItem>
+            );
+          })}
+        </SidePanelGroup>
+      )}
 
       <SidePanelGroup heading={t`Other`}>
         <SelectableListItem
