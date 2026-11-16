@@ -862,12 +862,14 @@ export class ViewWidgetUpsertService {
           deletedAt: null,
         });
       } else {
+        // An omitted group keeps the saved one while it survives the upsert; an explicit null ungroups
         const isExistingGroupKept =
+          inputFilter.viewFilterGroupId === undefined &&
           isDefined(existingFilter.viewFilterGroupId) &&
           !removedViewFilterGroupIds.has(existingFilter.viewFilterGroupId);
-        const viewFilterGroupId =
-          inputFilter.viewFilterGroupId ??
-          (isExistingGroupKept ? existingFilter.viewFilterGroupId : null);
+        const viewFilterGroupId = isExistingGroupKept
+          ? existingFilter.viewFilterGroupId
+          : (inputFilter.viewFilterGroupId ?? null);
         const positionInViewFilterGroup =
           inputFilter.positionInViewFilterGroup ??
           (isExistingGroupKept
