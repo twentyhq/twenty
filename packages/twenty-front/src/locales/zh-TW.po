@@ -15296,11 +15296,6 @@ msgstr "HTTP請求"
 msgid "HTTP request failed"
 msgstr "HTTP 請求失敗"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "邏輯函式執行階段中的 HTTP 請求"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -26773,11 +26768,6 @@ msgstr "發送測試電子郵件"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "傳送至收件匣"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "透過邏輯函式驅動程式傳送工作流程 HTTP 請求、測試請求和 AI 代理 HTTP 工具；當邏輯函式在 Lambda 中執行時，驅動程式會在隔離的 Lambda 中執行這些請求。"
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

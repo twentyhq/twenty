@@ -15296,11 +15296,6 @@ msgstr "HTTP-запит"
 msgid "HTTP request failed"
 msgstr "HTTP-запит не вдався"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "HTTP-запити в середовищі виконання логічної функції"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -26773,11 +26768,6 @@ msgstr "Надіслати тестовий електронний лист"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "Надіслати до вхідних"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "Надсилайте HTTP-запити робочих процесів, тестові запити та HTTP-інструмент агента ШІ через драйвер логічної функції, який запускає їх в ізольованій Lambda, коли логічні функції виконуються в Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

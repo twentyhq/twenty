@@ -15296,11 +15296,6 @@ msgstr "Sol·licitud HTTP"
 msgid "HTTP request failed"
 msgstr "La sol·licitud HTTP ha fallat"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "Sol·licituds HTTP en el temps d'execució de la funció lògica"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -26773,11 +26768,6 @@ msgstr "Enviar correu electrònic de prova"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "Envia a la safata d'entrada"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "Envieu les sol·licituds HTTP dels fluxos de treball, les sol·licituds de prova i l'eina HTTP de l'agent d'IA a través del controlador de funcions lògiques, que les executa en una Lambda aïllada quan les funcions lògiques s'executen en Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

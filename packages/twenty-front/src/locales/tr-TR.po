@@ -15296,11 +15296,6 @@ msgstr "HTTP İsteği"
 msgid "HTTP request failed"
 msgstr "HTTP isteği başarısız oldu"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "Mantık işlevi çalışma zamanındaki HTTP istekleri"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -26773,11 +26768,6 @@ msgstr "Test E-postası Gönder"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "Gelen Kutusuna Gönder"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "İş akışı HTTP isteklerini, test isteklerini ve AI temsilcisi HTTP aracını, mantık işlevleri Lambda'da çalıştığında bunları yalıtılmış bir Lambda'da çalıştıran mantık işlevi sürücüsü üzerinden gönderin."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

@@ -15296,11 +15296,6 @@ msgstr "HTTPリクエスト"
 msgid "HTTP request failed"
 msgstr "HTTP リクエストに失敗しました"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "ロジック関数ランタイムでの HTTP リクエスト"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -26773,11 +26768,6 @@ msgstr "テストメールを送信"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "受信トレイに送信"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "ワークフローの HTTP リクエスト、テストリクエスト、AI エージェントの HTTP ツールをロジック関数ドライバー経由で送信します。ロジック関数が Lambda で実行される場合、これらは分離された Lambda で実行されます。"
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
