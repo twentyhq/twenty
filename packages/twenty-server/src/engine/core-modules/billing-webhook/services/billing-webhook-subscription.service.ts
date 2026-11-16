@@ -26,6 +26,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -71,6 +72,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingTrialExtensionService: BillingTrialExtensionService,
   ) {}
 
   async processStripeEvent(
@@ -168,6 +170,7 @@ export class BillingWebhookSubscriptionService {
           currentPeriodStart: true,
           currentPeriodEnd: true,
           currentPeriodMaxSeats: true,
+          trialEnd: true,
         },
         relations: [
           'billingSubscriptionItems',
@@ -208,6 +211,19 @@ export class BillingWebhookSubscriptionService {
       subscriptionWithSchedule,
       workspaceId,
     );
+
+    const isOtherSubscriptionLive = allLiveSubscriptions.some(
+      (customerSubscription) => customerSubscription.id !== data.object.id,
+    );
+
+    if (!isOtherSubscriptionLive) {
+      await this.billingTrialExtensionService.mirrorStripeTrialEnd({
+        workspaceId,
+        previousTrialEnd: storedSubscription?.trialEnd ?? null,
+        status: incomingSubscription.status,
+        trialEnd: incomingSubscription.trialEnd ?? null,
+      });
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',

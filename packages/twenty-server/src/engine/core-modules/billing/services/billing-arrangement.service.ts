@@ -82,6 +82,30 @@ export class BillingArrangementService {
     });
   }
 
+  async revokeArrangement({
+    workspaceId,
+    arrangementId,
+    revokedAt,
+    revokedByUserId,
+    entityManager,
+  }: {
+    workspaceId: string;
+    arrangementId: string;
+    revokedAt: Date;
+    revokedByUserId: string | null;
+    entityManager?: EntityManager;
+  }): Promise<void> {
+    const billingArrangementRepository = isDefined(entityManager)
+      ? this.billingArrangementRepository.withManager(entityManager)
+      : this.billingArrangementRepository;
+
+    await billingArrangementRepository.update(
+      workspaceId,
+      { id: arrangementId, revokedAt: IsNull() },
+      { revokedAt, revokedByUserId },
+    );
+  }
+
   async endLimitOverride({
     workspaceId,
     usageLimitId,

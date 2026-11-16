@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AdminPanelAiProviderResolver } from 'src/engine/core-modules/admin-panel/admin-panel-ai-provider.resolver';
 import { AdminPanelApplicationRegistrationResolver } from 'src/engine/core-modules/admin-panel/admin-panel-application-registration.resolver';
+import { AdminPanelTrialExtensionResolver } from 'src/engine/core-modules/admin-panel/admin-panel-trial-extension.resolver';
 import { AdminPanelUsageLimitResolver } from 'src/engine/core-modules/admin-panel/admin-panel-usage-limit.resolver';
 import { AdminPanelWorkspaceDataExportResolver } from 'src/engine/core-modules/admin-panel/admin-panel-workspace-data-export.resolver';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
@@ -93,6 +94,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelAiProviderResolver,
     AdminPanelApplicationRegistrationResolver,
     AdminPanelUsageLimitResolver,
+    AdminPanelTrialExtensionResolver,
     AdminPanelWorkspaceDataExportResolver,
     AdminPanelUsageLimitService,
     AdminPanelAiProviderService,

@@ -681,6 +681,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteJobs: DeleteJobsResponse;
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
+  extendWorkspaceTrial: Scalars['Boolean']['output'];
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
@@ -689,6 +690,7 @@ export type Mutation = {
   retryJobs: RetryJobsResponse;
   revokeSigningKey: SigningKeyDto;
   revokeWorkspaceCreditGrant: AdminPanelWorkspaceCreditGrant;
+  revokeWorkspaceTrialExtension: Scalars['Boolean']['output'];
   setAdminAiModelEnabled: Scalars['Boolean']['output'];
   setAdminAiModelsEnabled: Scalars['Boolean']['output'];
   setAdminDefaultAiModel: Scalars['Boolean']['output'];
@@ -751,6 +753,14 @@ export type MutationDeleteWorkspaceUsageLimitArgs = {
 };
 
 
+export type MutationExtendWorkspaceTrialArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<BillingArrangementLabel>;
+  trialEndsAt: Scalars['DateTime']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationGenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminArgs = {
   otp?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['UUID']['input'];
@@ -792,6 +802,11 @@ export type MutationRevokeSigningKeyArgs = {
 
 export type MutationRevokeWorkspaceCreditGrantArgs = {
   creditGrantId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceTrialExtensionArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 

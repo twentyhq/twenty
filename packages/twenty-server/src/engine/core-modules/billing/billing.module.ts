@@ -26,6 +26,7 @@ import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/s
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
@@ -107,6 +108,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
     BillingWorkspaceCreditAllowanceService,
+    BillingTrialExtensionService,
     provideWorkspaceScopedRepository(BillingArrangementEntity),
     provideWorkspaceScopedRepository(BillingCreditGrantEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
@@ -126,6 +128,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSeatService,
     ResourceCreditService,
     BillingWorkspaceCreditAllowanceService,
+    BillingTrialExtensionService,
   ],
 })
 export class BillingModule {}

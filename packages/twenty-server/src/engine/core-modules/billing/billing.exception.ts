@@ -44,6 +44,8 @@ export enum BillingExceptionCode {
   BILLING_PARTNER_CODE_INVALID = 'BILLING_PARTNER_CODE_INVALID',
   BILLING_PARTNER_CODE_LOCKED = 'BILLING_PARTNER_CODE_LOCKED',
   BILLING_PARTNER_CODE_NOT_ELIGIBLE = 'BILLING_PARTNER_CODE_NOT_ELIGIBLE',
+  BILLING_TRIAL_END_INVALID = 'BILLING_TRIAL_END_INVALID',
+  BILLING_TRIAL_EXTENSION_NOT_FOUND = 'BILLING_TRIAL_EXTENSION_NOT_FOUND',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -115,6 +117,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`The partner code can no longer be added or changed. Please contact support.`;
     case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
       return msg`Partner codes only apply to new Twenty customers.`;
+    case BillingExceptionCode.BILLING_TRIAL_END_INVALID:
+      return msg`The trial end date must be in the future.`;
+    case BillingExceptionCode.BILLING_TRIAL_EXTENSION_NOT_FOUND:
+      return msg`This workspace has no active trial extension.`;
     case BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED:
       return BILLING_SEAT_LIMIT_REACHED_MESSAGE;
     default:
