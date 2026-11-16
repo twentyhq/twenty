@@ -17,15 +17,17 @@ export const getLookupRelatedRecords = ({
     }
   >;
 }): ObjectRecord[] =>
-  Object.values(columnDescriptorByRecordFieldId).flatMap(({ lookupTarget }) =>
-    isDefined(lookupTarget)
-      ? records
-          .map(
-            (record): ObjectRecord | null | undefined =>
-              record[lookupTarget.relationFieldName],
-          )
-          .filter((relatedRecord): relatedRecord is ObjectRecord =>
-            isDefined(relatedRecord?.id),
-          )
-      : [],
-  );
+  Object.values(columnDescriptorByRecordFieldId).flatMap(({ lookupTarget }) => {
+    if (!isDefined(lookupTarget)) {
+      return [];
+    }
+
+    return records
+      .map(
+        (record): ObjectRecord | null | undefined =>
+          record[lookupTarget.relationFieldName],
+      )
+      .filter((relatedRecord): relatedRecord is ObjectRecord =>
+        isDefined(relatedRecord?.id),
+      );
+  });
