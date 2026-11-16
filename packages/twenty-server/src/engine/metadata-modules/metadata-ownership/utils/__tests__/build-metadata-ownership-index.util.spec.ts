@@ -53,7 +53,9 @@ describe('buildMetadataOwnershipIndex', () => {
         [OWNER_USER_WORKSPACE_ID]: ['private-workflow-1', 'private-workflow-2'],
         [OTHER_USER_WORKSPACE_ID]: ['other-private-workflow'],
       },
-      ownerUserWorkspaceIdByPrivateChildId: {},
+      ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: {
+        workflowVersion: {},
+      },
     });
   });
 
@@ -77,7 +79,9 @@ describe('buildMetadataOwnershipIndex', () => {
     expect(metadataOwnershipIndex).toEqual({
       ownerUserWorkspaceIdByPrivateRootId: { 'ownerless-workflow': null },
       privateRootIdsByOwnerUserWorkspaceId: {},
-      ownerUserWorkspaceIdByPrivateChildId: { 'ownerless-version': null },
+      ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: {
+        workflowVersion: { 'ownerless-version': null },
+      },
     });
   });
 
@@ -119,16 +123,57 @@ describe('buildMetadataOwnershipIndex', () => {
       },
     });
 
-    expect(metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildId).toEqual(
-      {
-        'private-view-field': OWNER_USER_WORKSPACE_ID,
-        'private-view-filter': OWNER_USER_WORKSPACE_ID,
-        'private-view-sort': OWNER_USER_WORKSPACE_ID,
-        'private-view-group': OWNER_USER_WORKSPACE_ID,
-        'private-view-filter-group': OWNER_USER_WORKSPACE_ID,
-        'private-view-field-group': OWNER_USER_WORKSPACE_ID,
+    expect(
+      metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName,
+    ).toEqual({
+      viewField: { 'private-view-field': OWNER_USER_WORKSPACE_ID },
+      viewFilter: { 'private-view-filter': OWNER_USER_WORKSPACE_ID },
+      viewSort: { 'private-view-sort': OWNER_USER_WORKSPACE_ID },
+      viewGroup: { 'private-view-group': OWNER_USER_WORKSPACE_ID },
+      viewFilterGroup: { 'private-view-filter-group': OWNER_USER_WORKSPACE_ID },
+      viewFieldGroup: { 'private-view-field-group': OWNER_USER_WORKSPACE_ID },
+    });
+  });
+
+  it('keeps children of different types apart when they share an id', () => {
+    const SHARED_CHILD_ID = 'shared-child-id';
+
+    const metadataOwnershipIndex = buildMetadataOwnershipIndex({
+      rootMetadataName: 'view',
+      rootFlatEntityMaps: buildFlatEntityMaps([
+        {
+          id: 'owner-view',
+          visibility: 'UNLISTED',
+          createdByUserWorkspaceId: OWNER_USER_WORKSPACE_ID,
+        },
+        {
+          id: 'other-view',
+          visibility: 'UNLISTED',
+          createdByUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        },
+      ]),
+      childFlatEntityMapsByMetadataName: {
+        viewField: buildFlatEntityMaps([
+          { id: SHARED_CHILD_ID, viewId: 'owner-view' },
+        ]),
+        viewFilter: buildFlatEntityMaps([
+          { id: SHARED_CHILD_ID, viewId: 'other-view' },
+        ]),
+        viewSort: buildFlatEntityMaps([]),
+        viewGroup: buildFlatEntityMaps([]),
+        viewFilterGroup: buildFlatEntityMaps([]),
+        viewFieldGroup: buildFlatEntityMaps([]),
       },
-    );
+    });
+
+    expect(
+      metadataOwnershipIndex
+        .ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName.viewField,
+    ).toEqual({ [SHARED_CHILD_ID]: OWNER_USER_WORKSPACE_ID });
+    expect(
+      metadataOwnershipIndex
+        .ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName.viewFilter,
+    ).toEqual({ [SHARED_CHILD_ID]: OTHER_USER_WORKSPACE_ID });
   });
 
   it('records a child whose root is missing as owned by nobody', () => {
@@ -143,8 +188,10 @@ describe('buildMetadataOwnershipIndex', () => {
       },
     });
 
-    expect(metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildId).toEqual(
-      { 'dangling-version': null, 'rootless-version': null },
-    );
+    expect(
+      metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName,
+    ).toEqual({
+      workflowVersion: { 'dangling-version': null, 'rootless-version': null },
+    });
   });
 });

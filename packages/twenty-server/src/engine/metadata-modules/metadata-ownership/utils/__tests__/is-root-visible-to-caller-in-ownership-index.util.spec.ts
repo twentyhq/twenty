@@ -23,7 +23,7 @@ const metadataOwnershipIndex: MetadataOwnershipIndex = {
     'ownerless-root': null,
   },
   privateRootIdsByOwnerUserWorkspaceId: {},
-  ownerUserWorkspaceIdByPrivateChildId: {},
+  ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: {},
 };
 
 describe('isRootVisibleToCallerInOwnershipIndex', () => {

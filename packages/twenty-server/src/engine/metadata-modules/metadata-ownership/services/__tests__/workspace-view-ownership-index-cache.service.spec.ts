@@ -65,8 +65,13 @@ describe('WorkspaceViewOwnershipIndexCacheService', () => {
       privateRootIdsByOwnerUserWorkspaceId: {
         [OWNER_USER_WORKSPACE_ID]: ['private-view'],
       },
-      ownerUserWorkspaceIdByPrivateChildId: {
-        'private-view-field': OWNER_USER_WORKSPACE_ID,
+      ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: {
+        viewField: { 'private-view-field': OWNER_USER_WORKSPACE_ID },
+        viewFilter: {},
+        viewSort: {},
+        viewGroup: {},
+        viewFilterGroup: {},
+        viewFieldGroup: {},
       },
     });
   });

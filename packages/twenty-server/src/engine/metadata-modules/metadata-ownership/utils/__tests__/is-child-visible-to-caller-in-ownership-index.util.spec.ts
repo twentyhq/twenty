@@ -8,9 +8,10 @@ const OWNER: MetadataCaller = {
   type: 'workspaceMember',
   userWorkspaceId: OWNER_USER_WORKSPACE_ID,
 };
+const OTHER_USER_WORKSPACE_ID = 'other-user-workspace-id';
 const OTHER_MEMBER: MetadataCaller = {
   type: 'workspaceMember',
-  userWorkspaceId: 'other-user-workspace-id',
+  userWorkspaceId: OTHER_USER_WORKSPACE_ID,
 };
 const WITHOUT_WORKSPACE_MEMBER: MetadataCaller = {
   type: 'withoutWorkspaceMember',
@@ -20,18 +21,41 @@ const BYPASSING_PRIVACY: MetadataCaller = { type: 'bypassesPrivacy' };
 const metadataOwnershipIndex: MetadataOwnershipIndex = {
   ownerUserWorkspaceIdByPrivateRootId: {},
   privateRootIdsByOwnerUserWorkspaceId: {},
-  ownerUserWorkspaceIdByPrivateChildId: {
-    'private-child': OWNER_USER_WORKSPACE_ID,
-    'rootless-child': null,
+  ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: {
+    viewField: {
+      'private-child': OWNER_USER_WORKSPACE_ID,
+      'rootless-child': null,
+    },
+    viewFilter: { 'private-child': OTHER_USER_WORKSPACE_ID },
   },
 };
 
 describe('isChildVisibleToCallerInOwnershipIndex', () => {
+  it('answers per child type when two children share an id', () => {
+    expect(
+      isChildVisibleToCallerInOwnershipIndex({
+        metadataOwnershipIndex,
+        childMetadataName: 'viewFilter',
+        childId: 'private-child',
+        caller: OWNER,
+      }),
+    ).toBe(false);
+    expect(
+      isChildVisibleToCallerInOwnershipIndex({
+        metadataOwnershipIndex,
+        childMetadataName: 'viewFilter',
+        childId: 'private-child',
+        caller: OTHER_MEMBER,
+      }),
+    ).toBe(true);
+  });
+
   it('shows a child absent from the index to every caller', () => {
     expect(
       [OWNER, OTHER_MEMBER, WITHOUT_WORKSPACE_MEMBER].map((caller) =>
         isChildVisibleToCallerInOwnershipIndex({
           metadataOwnershipIndex,
+          childMetadataName: 'viewField',
           childId: 'workspace-child',
           caller,
         }),
@@ -44,6 +68,7 @@ describe('isChildVisibleToCallerInOwnershipIndex', () => {
       [OWNER, OTHER_MEMBER, WITHOUT_WORKSPACE_MEMBER].map((caller) =>
         isChildVisibleToCallerInOwnershipIndex({
           metadataOwnershipIndex,
+          childMetadataName: 'viewField',
           childId: 'private-child',
           caller,
         }),
@@ -56,6 +81,7 @@ describe('isChildVisibleToCallerInOwnershipIndex', () => {
       [OWNER, WITHOUT_WORKSPACE_MEMBER, BYPASSING_PRIVACY].map((caller) =>
         isChildVisibleToCallerInOwnershipIndex({
           metadataOwnershipIndex,
+          childMetadataName: 'viewField',
           childId: 'rootless-child',
           caller,
         }),

@@ -1,5 +1,7 @@
 export type MetadataOwnershipIndex = {
   ownerUserWorkspaceIdByPrivateRootId: Partial<Record<string, string | null>>;
   privateRootIdsByOwnerUserWorkspaceId: Partial<Record<string, string[]>>;
-  ownerUserWorkspaceIdByPrivateChildId: Partial<Record<string, string | null>>;
+  ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: Partial<
+    Record<string, Partial<Record<string, string | null>>>
+  >;
 };

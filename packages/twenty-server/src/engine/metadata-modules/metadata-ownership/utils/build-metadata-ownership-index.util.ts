@@ -8,8 +8,10 @@ import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metada
 import { type OwnershipSourceFlatEntityMaps } from 'src/engine/metadata-modules/metadata-ownership/types/ownership-source-flat-entity-maps.type';
 import { resolveOwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/utils/resolve-ownable-root-privacy-state.util';
 
-export type BuildMetadataOwnershipIndexArgs = {
-  [P in OwnableRootMetadataName]: {
+export type BuildMetadataOwnershipIndexArgs<
+  TRootMetadataName extends OwnableRootMetadataName,
+> = {
+  [P in TRootMetadataName]: {
     rootMetadataName: P;
     rootFlatEntityMaps: OwnershipSourceFlatEntityMaps;
     childFlatEntityMapsByMetadataName: Record<
@@ -17,18 +19,24 @@ export type BuildMetadataOwnershipIndexArgs = {
       OwnershipSourceFlatEntityMaps
     >;
   };
-}[OwnableRootMetadataName];
+}[TRootMetadataName];
 
-export const buildMetadataOwnershipIndex = ({
+export const buildMetadataOwnershipIndex = <
+  TRootMetadataName extends OwnableRootMetadataName,
+>({
   rootMetadataName,
   rootFlatEntityMaps,
   childFlatEntityMapsByMetadataName,
-}: BuildMetadataOwnershipIndexArgs): MetadataOwnershipIndex => {
-  const metadataOwnershipIndex: MetadataOwnershipIndex = {
-    ownerUserWorkspaceIdByPrivateRootId: {},
-    privateRootIdsByOwnerUserWorkspaceId: {},
-    ownerUserWorkspaceIdByPrivateChildId: {},
-  };
+}: BuildMetadataOwnershipIndexArgs<TRootMetadataName>): MetadataOwnershipIndex => {
+  const ownerUserWorkspaceIdByPrivateRootId: Partial<
+    Record<string, string | null>
+  > = {};
+  const privateRootIdsByOwnerUserWorkspaceId: Partial<
+    Record<string, string[]>
+  > = {};
+  const ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName: Partial<
+    Record<string, Partial<Record<string, string | null>>>
+  > = {};
   const rootIds = new Set<string>();
 
   for (const root of Object.values(rootFlatEntityMaps.byUniversalIdentifier)) {
@@ -47,13 +55,12 @@ export const buildMetadataOwnershipIndex = ({
       continue;
     }
 
-    metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateRootId[root.id] =
-      ownerUserWorkspaceId;
+    ownerUserWorkspaceIdByPrivateRootId[root.id] = ownerUserWorkspaceId;
 
     if (isDefined(ownerUserWorkspaceId)) {
-      (metadataOwnershipIndex.privateRootIdsByOwnerUserWorkspaceId[
-        ownerUserWorkspaceId
-      ] ??= []).push(root.id);
+      (privateRootIdsByOwnerUserWorkspaceId[ownerUserWorkspaceId] ??= []).push(
+        root.id,
+      );
     }
   }
 
@@ -70,6 +77,11 @@ export const buildMetadataOwnershipIndex = ({
       continue;
     }
 
+    const ownerUserWorkspaceIdByPrivateChildId =
+      (ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName[
+        childMetadataName
+      ] ??= {});
+
     for (const child of Object.values(
       childFlatEntityMaps.byUniversalIdentifier,
     )) {
@@ -80,20 +92,23 @@ export const buildMetadataOwnershipIndex = ({
       const rootId = child[rootIdProperty];
 
       if (!isString(rootId) || !rootIds.has(rootId)) {
-        metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildId[child.id] =
-          null;
+        ownerUserWorkspaceIdByPrivateChildId[child.id] = null;
         continue;
       }
 
       const rootOwnerUserWorkspaceId =
-        metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateRootId[rootId];
+        ownerUserWorkspaceIdByPrivateRootId[rootId];
 
       if (!isUndefined(rootOwnerUserWorkspaceId)) {
-        metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateChildId[child.id] =
+        ownerUserWorkspaceIdByPrivateChildId[child.id] =
           rootOwnerUserWorkspaceId;
       }
     }
   }
 
-  return metadataOwnershipIndex;
+  return {
+    ownerUserWorkspaceIdByPrivateRootId,
+    privateRootIdsByOwnerUserWorkspaceId,
+    ownerUserWorkspaceIdByPrivateChildIdByChildMetadataName,
+  };
 };
