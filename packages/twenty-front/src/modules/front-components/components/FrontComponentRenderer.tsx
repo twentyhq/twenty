@@ -139,13 +139,6 @@ const FrontComponentRendererContent = ({
     frontComponentSharedDependenciesChecksum,
   } = frontComponent;
 
-  // A crashed build may keep running in its worker, so it must stop editing what Approve submits; a rebuild recovers.
-  const [failedComponentChecksum, setFailedComponentChecksum] = useState<
-    string | null
-  >(null);
-  const hasRuntimeError =
-    failedComponentChecksum === frontComponent.builtComponentChecksum;
-
   const {
     executionContext,
     frontComponentHostCommunicationApi,
@@ -159,9 +152,7 @@ const FrontComponentRendererContent = ({
     objectNameSingular,
     timelineActivityId,
     toolCall,
-    onToolCallArgumentsChange: hasRuntimeError
-      ? undefined
-      : onToolCallArgumentsChange,
+    onToolCallArgumentsChange,
     colorScheme,
   });
 
@@ -183,13 +174,12 @@ const FrontComponentRendererContent = ({
         return;
       }
 
-      setFailedComponentChecksum(frontComponent.builtComponentChecksum);
       enqueueToast({
         status: 'error',
         children: t`Failed to load front component: ${error.message}`,
       });
     },
-    [enqueueToast, frontComponent.builtComponentChecksum],
+    [enqueueToast],
   );
 
   const [initialApplicationVariables] = useState(

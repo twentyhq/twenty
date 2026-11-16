@@ -20,6 +20,7 @@ import { FrontComponentOutsidePressEffect } from '@/host/effect-components/Front
 import { FrontComponentPreventPageZoomEffect } from '@/host/effect-components/FrontComponentPreventPageZoomEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
@@ -27,7 +28,7 @@ import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { type RemoteReceiver } from '@remote-dom/react/host';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -112,6 +113,19 @@ export const FrontComponentRenderer = ({
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
+  // A crashed build may keep running in its worker; it must not edit what Approve submits until the error resets.
+  const activeHostCommunicationApi = useMemo(
+    () =>
+      isDefined(error)
+        ? {
+            ...frontComponentHostCommunicationApi,
+            setToolCallArguments:
+              FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.setToolCallArguments,
+          }
+        : frontComponentHostCommunicationApi,
+    [error, frontComponentHostCommunicationApi],
+  );
+
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
       <div
@@ -165,9 +179,7 @@ export const FrontComponentRenderer = ({
           <>
             <FrontComponentUpdateHostCommunicationApiEffect
               thread={thread}
-              frontComponentHostCommunicationApi={
-                frontComponentHostCommunicationApi
-              }
+              frontComponentHostCommunicationApi={activeHostCommunicationApi}
             />
             <FrontComponentInitializeHostCommunicationApiEffect
               thread={thread}
