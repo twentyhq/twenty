@@ -250,9 +250,6 @@ export class SsoAuthController {
     let invitation: AppTokenEntity | undefined;
 
     if (isDefined(existingUser)) {
-      // The identity provider is configured by the workspace, so it can assert any email.
-      // An existing account only joins through a personal invitation whose token was mailed to that address,
-      // and never when the account holds instance-level privileges the workspace's provider could then sign into.
       const hasInstancePrivileges =
         existingUser.canAccessFullAdminPanel || existingUser.canImpersonate;
 
