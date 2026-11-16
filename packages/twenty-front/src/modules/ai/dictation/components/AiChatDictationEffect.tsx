@@ -1,3 +1,5 @@
+import { useAiChatComposerThreadId } from '@/ai/hooks/useAiChatComposerThreadId';
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,6 +30,7 @@ export const AiChatDictationEffect = ({
 }: AiChatDictationEffectProps) => {
   const isSupported = useDictationAvailability();
   const store = useStore();
+  const aiChatComposerThreadId = useAiChatComposerThreadId();
 
   const [dictationEngine, setDictationEngine] =
     useAtomState(dictationEngineState);
@@ -104,11 +107,16 @@ export const AiChatDictationEffect = ({
   ]);
 
   // Both send paths dispatch this, so dictation needn't be lifted into the composer.
-  const handleSendMessage = useCallback(() => {
-    dictationEngine?.cancel();
-  }, [dictationEngine]);
+  const handleSendMessage = useCallback(
+    (detail?: AiChatThreadEventDetail) => {
+      if (detail?.threadId === aiChatComposerThreadId) {
+        dictationEngine?.cancel();
+      }
+    },
+    [aiChatComposerThreadId, dictationEngine],
+  );
 
-  useListenToBrowserEvent({
+  useListenToBrowserEvent<AiChatThreadEventDetail>({
     eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
   });

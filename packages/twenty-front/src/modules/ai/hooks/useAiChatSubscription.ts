@@ -1,3 +1,4 @@
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -228,7 +229,12 @@ export const useAiChatSubscription = (threadId: string | null) => {
     const chunkSequencer = createStreamChunkSequencer({
       onApply: applyChunk,
       onGapStalled: () =>
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME),
+        dispatchBrowserEvent<AiChatThreadEventDetail>(
+          AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+          {
+            threadId,
+          },
+        ),
     });
 
     const resetStreamProcessing = () => {
@@ -259,13 +265,23 @@ export const useAiChatSubscription = (threadId: string | null) => {
         case 'message-persisted': {
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+            {
+              threadId,
+            },
+          );
           break;
         }
 
         case 'message-added':
         case 'tool-call-resolved': {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+            {
+              threadId,
+            },
+          );
           break;
         }
 
@@ -291,7 +307,12 @@ export const useAiChatSubscription = (threadId: string | null) => {
         }
 
         case 'queue-updated': {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+            {
+              threadId,
+            },
+          );
           break;
         }
 
@@ -333,7 +354,12 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+            {
+              threadId,
+            },
+          );
           store.set(isStreamingAtom, false);
           break;
         }
@@ -409,7 +435,12 @@ export const useAiChatSubscription = (threadId: string | null) => {
               isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)
             ) {
               store.set(errorAtom, null);
-              dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+              dispatchBrowserEvent<AiChatThreadEventDetail>(
+                AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+                {
+                  threadId,
+                },
+              );
             }
             handleEvent(event);
           }
@@ -467,7 +498,12 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
       store.set(aiChatStreamRecoveryAttemptsState.atom, recoveryAttempts + 1);
       setResubscribeNonce((nonce) => nonce + 1);
-      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchBrowserEvent<AiChatThreadEventDetail>(
+        AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+        {
+          threadId,
+        },
+      );
     }, AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => {

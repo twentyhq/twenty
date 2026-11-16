@@ -1,3 +1,4 @@
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -48,7 +49,12 @@ export const useRetryChatMessage = () => {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 
-      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchBrowserEvent<AiChatThreadEventDetail>(
+        AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+        {
+          threadId,
+        },
+      );
     } catch (retryError) {
       store.set(isAwaitingFirstChunkAtom, false);
       store.set(

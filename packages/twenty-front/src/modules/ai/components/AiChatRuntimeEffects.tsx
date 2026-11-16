@@ -1,3 +1,4 @@
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatMessagesFetchEffect } from '@/ai/components/AiChatMessagesFetchEffect';
 import { AiChatPrepromptEffect } from '@/ai/components/AiChatPrepromptEffect';
 import { AiChatStreamSubscriptionEffect } from '@/ai/components/AiChatStreamSubscriptionEffect';
@@ -12,6 +13,7 @@ export const AiChatRuntimeEffects = () => {
   const aiChatUISessionStartTime = useAtomStateValue(
     aiChatUISessionStartTimeState,
   );
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -22,8 +24,8 @@ export const AiChatRuntimeEffects = () => {
 
   return (
     <>
-      <AiChatMessagesFetchEffect />
-      <AiChatStreamSubscriptionEffect />
+      <AiChatMessagesFetchEffect threadId={currentAiChatThread} />
+      <AiChatStreamSubscriptionEffect threadId={currentAiChatThread} />
       <AiChatPrepromptEffect />
     </>
   );

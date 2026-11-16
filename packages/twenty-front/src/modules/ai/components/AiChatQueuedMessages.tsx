@@ -1,3 +1,4 @@
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { isAiChatMessageOwn } from '@/ai/utils/isAiChatMessageOwn';
@@ -13,7 +14,6 @@ import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContent
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { aiChatQueuedMessagesFamilyState } from '@/ai/states/aiChatQueuedMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -36,7 +36,7 @@ export const AiChatQueuedMessages = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -45,7 +45,9 @@ export const AiChatQueuedMessages = () => {
     aiChatQueuedMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
-  const { deleteQueuedMessage } = useDeleteQueuedMessage();
+  const { deleteQueuedMessage } = useDeleteQueuedMessage({
+    threadId: currentAiChatThread,
+  });
 
   if (
     !isDefined(currentAiChatThread) ||

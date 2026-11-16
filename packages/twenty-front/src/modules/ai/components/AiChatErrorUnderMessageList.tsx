@@ -1,6 +1,6 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
@@ -16,7 +16,7 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
     threadId: aiChatDisplayedThread,
   });

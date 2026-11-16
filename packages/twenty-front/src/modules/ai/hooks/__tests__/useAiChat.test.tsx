@@ -247,11 +247,17 @@ const holdNextMutation = (apolloClient: ReturnType<typeof useApolloClient>) => {
   return releaseMutation;
 };
 
+const getComposerThreadId = () =>
+  jotaiStore.get(currentAiChatThreadState.atom) ??
+  jotaiStore.get(newAiChatThreadIdState.atom);
+
 const send = async (result: {
   current: Pick<ReturnType<typeof useAiChat>, 'handleSendMessage'>;
 }) => {
   await act(async () => {
-    await result.current.handleSendMessage();
+    await result.current.handleSendMessage({
+      threadId: getComposerThreadId(),
+    });
   });
 };
 
@@ -459,7 +465,9 @@ describe('useAiChat', () => {
     await send(result);
 
     expect(restoreEditorContent).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: { content: '' } }),
+      expect.objectContaining({
+        detail: { threadId: getComposerThreadId(), content: '' },
+      }),
     );
 
     window.removeEventListener(
@@ -686,7 +694,9 @@ describe('useAiChat', () => {
     let pendingSend: Promise<void> | undefined;
 
     await act(async () => {
-      pendingSend = result.current.handleSendMessage();
+      pendingSend = result.current.handleSendMessage({
+        threadId: getComposerThreadId(),
+      });
     });
 
     act(() => {
@@ -744,7 +754,9 @@ describe('useAiChat', () => {
     let pendingSend: Promise<void> | undefined;
 
     await act(async () => {
-      pendingSend = result.current.handleSendMessage();
+      pendingSend = result.current.handleSendMessage({
+        threadId: getComposerThreadId(),
+      });
     });
 
     act(() => {
@@ -973,7 +985,9 @@ describe('useAiChat', () => {
     let pendingSend: Promise<void> | undefined;
 
     await act(async () => {
-      pendingSend = result.current.handleSendMessage();
+      pendingSend = result.current.handleSendMessage({
+        threadId: getComposerThreadId(),
+      });
     });
     act(() => {
       jotaiStore.set(quotedMessageIdAtom, 'second-quoted-message');
@@ -1005,7 +1019,9 @@ describe('useAiChat', () => {
     let pendingSend: Promise<void> | undefined;
 
     await act(async () => {
-      pendingSend = result.current.handleSendMessage();
+      pendingSend = result.current.handleSendMessage({
+        threadId: getComposerThreadId(),
+      });
     });
 
     const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
@@ -1085,7 +1101,9 @@ describe('useAiChat', () => {
     let firstSend: Promise<void> | undefined;
 
     await act(async () => {
-      firstSend = result.current.handleSendMessage();
+      firstSend = result.current.handleSendMessage({
+        threadId: getComposerThreadId(),
+      });
     });
     act(() => {
       jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
@@ -1155,7 +1173,9 @@ describe('useAiChat', () => {
       let pendingSend: Promise<void> | undefined;
 
       await act(async () => {
-        pendingSend = result.current.handleSendMessage();
+        pendingSend = result.current.handleSendMessage({
+          threadId: getComposerThreadId(),
+        });
       });
 
       expect(jotaiStore.get(isAssistantReplyPendingAtom)).toBe(false);

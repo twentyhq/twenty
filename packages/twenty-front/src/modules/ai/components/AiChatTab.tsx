@@ -1,3 +1,4 @@
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
@@ -13,8 +14,6 @@ import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadReci
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
@@ -33,7 +32,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,

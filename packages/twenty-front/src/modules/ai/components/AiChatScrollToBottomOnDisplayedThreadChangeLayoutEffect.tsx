@@ -1,16 +1,15 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { pinAiChatScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 

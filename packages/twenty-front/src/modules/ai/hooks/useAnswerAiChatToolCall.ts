@@ -1,3 +1,4 @@
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -88,7 +89,12 @@ export const useAnswerAiChatToolCall = () => {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent<AiChatThreadEventDetail>(
+          AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+          {
+            threadId,
+          },
+        );
 
         return true;
       } catch (error) {
@@ -103,7 +109,12 @@ export const useAnswerAiChatToolCall = () => {
         if (
           isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
         ) {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+            {
+              threadId,
+            },
+          );
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
             updateToolPartOutput({

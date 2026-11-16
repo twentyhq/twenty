@@ -1,8 +1,10 @@
+import { useAiChatComposerThreadId } from '@/ai/hooks/useAiChatComposerThreadId';
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
 import { aiChatIsLoadingSelector } from '@/ai/states/selectors/aiChatIsLoadingSelector';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -25,7 +27,7 @@ export const SendMessageButton = ({
 
   const aiChatIsLoading = useAtomStateValue(aiChatIsLoadingSelector);
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
     { threadId: currentAiChatThread },
@@ -35,12 +37,19 @@ export const SendMessageButton = ({
     currentAiChatThread,
   );
 
+  const aiChatComposerThreadId = useAiChatComposerThreadId();
+
   const handleSendClick = () => {
-    dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+    dispatchBrowserEvent<AiChatThreadEventDetail>(
+      AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+      { threadId: aiChatComposerThreadId },
+    );
   };
 
   const handleStopClick = () => {
-    dispatchBrowserEvent(AI_CHAT_STOP_EVENT_NAME);
+    dispatchBrowserEvent<AiChatThreadEventDetail>(AI_CHAT_STOP_EVENT_NAME, {
+      threadId: aiChatComposerThreadId,
+    });
   };
 
   if (aiChatIsStreaming || aiChatIsAssistantReplyPending) {

@@ -1,5 +1,5 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatLastMessageIdSelector } from '@/ai/states/selectors/aiChatLastMessageIdSelector';
@@ -10,7 +10,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const AiChatLastMessageWithStreamingState = () => {
   const aiChatLastMessageId = useAtomStateValue(aiChatLastMessageIdSelector);
 
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
     { threadId: aiChatDisplayedThread },

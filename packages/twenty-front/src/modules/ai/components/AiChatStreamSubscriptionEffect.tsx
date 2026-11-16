@@ -1,23 +1,28 @@
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useEffect } from 'react';
 
 import { useAiChat } from '@/ai/hooks/useAiChat';
 import { useAiChatSubscription } from '@/ai/hooks/useAiChatSubscription';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessagesFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/aiChatIsAwaitingPersistedRefetchFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const AiChatStreamSubscriptionEffect = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+type AiChatStreamSubscriptionEffectProps = {
+  threadId: string | null;
+};
+
+export const AiChatStreamSubscriptionEffect = ({
+  threadId: currentAiChatThread,
+}: AiChatStreamSubscriptionEffectProps) => {
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const isOnNewAiChatSlot = currentAiChatThread === newAiChatThreadId;
 
   useAiChat();
 

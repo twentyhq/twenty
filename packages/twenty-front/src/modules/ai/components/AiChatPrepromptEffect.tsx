@@ -1,3 +1,8 @@
+import { useStore } from 'jotai';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +18,7 @@ export const AiChatPrepromptEffect = () => {
   const [aiChatPreprompt, setAiChatPreprompt] =
     useAtomState(aiChatPrepromptState);
   const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+  const store = useStore();
 
   useEffect(() => {
     if (!isDefined(aiChatPreprompt)) {
@@ -22,12 +28,20 @@ export const AiChatPrepromptEffect = () => {
     const { serializedDocument, mode } = aiChatPreprompt;
 
     const timeoutId = setTimeout(() => {
-      dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-        content: serializedDocument,
-      });
+      const threadId =
+        store.get(currentAiChatThreadState.atom) ??
+        store.get(newAiChatThreadIdState.atom);
+
+      dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+        AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+        { threadId, content: serializedDocument },
+      );
 
       if (mode === 'SEND') {
-        dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+        dispatchBrowserEvent<AiChatThreadEventDetail>(
+          AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+          { threadId },
+        );
       } else {
         setShouldFocusChatEditor(true);
       }
@@ -36,7 +50,7 @@ export const AiChatPrepromptEffect = () => {
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [aiChatPreprompt, setAiChatPreprompt, setShouldFocusChatEditor]);
+  }, [aiChatPreprompt, setAiChatPreprompt, setShouldFocusChatEditor, store]);
 
   return null;
 };

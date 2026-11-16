@@ -1,3 +1,4 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -6,7 +7,6 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
 import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
@@ -52,7 +52,7 @@ export const AiChatMessageReceipt = ({
   messageId,
 }: AiChatMessageReceiptProps) => {
   const { t } = useLingui();
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatThreadReadPositions = useAtomFamilyStateValue(
     aiChatThreadReadPositionsFamilyState,
     { threadId: aiChatDisplayedThread },

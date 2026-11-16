@@ -1,7 +1,7 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/aiChatDisplayedThreadMessagesSelector';
 import { type AiChatPendingToolCall } from '@/ai/types/AiChatPendingToolCall';
@@ -10,7 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatDisplayedThreadMessages = useAtomStateValue(
     aiChatDisplayedThreadMessagesSelector,
   );

@@ -1,10 +1,11 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -23,7 +24,6 @@ import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReacti
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
@@ -158,8 +158,8 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const currentAiChatThread = useAiChatThreadId();
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatThreadReadPositions = useAtomFamilyStateValue(
     aiChatThreadReadPositionsFamilyState,
     { threadId: aiChatDisplayedThread },

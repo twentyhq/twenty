@@ -1,3 +1,5 @@
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -321,7 +323,10 @@ export const useAiChat = () => {
           }
         }
 
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent<AiChatThreadEventDetail>(
+          AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+          { threadId },
+        );
       } catch (error) {
         rollbackOptimisticRestore();
 
@@ -358,9 +363,10 @@ export const useAiChat = () => {
         }
 
         if (store.get(currentAiChatThreadState.atom) === threadId) {
-          dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-            content: serializedContentToSend,
-          });
+          dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+            AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+            { threadId, content: serializedContentToSend },
+          );
         }
       } finally {
         store.set(isSendingMessageAtom, false);
@@ -382,230 +388,243 @@ export const useAiChat = () => {
     ],
   );
 
-  const handleSendMessage = useCallback(async () => {
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-    const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
-    const isNewChat = threadId === newAiChatThreadId;
-    const isDirectMessage = store.get(
-      aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
-    );
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId,
-    });
-
-    if (isNewChat && store.get(isSendingMessageAtom)) {
-      return;
-    }
-
-    const newInboxChatRecipients =
-      isNewChat && isAiChatInboxEnabled
-        ? store.get(aiChatNewThreadRecipientsFamilyState.atomFamily(threadId))
-        : undefined;
-    const serializedContentToSend =
-      store.get(aiChatDraftsByThreadIdState.atom)[threadId] ?? '';
-    const draftText = tipTapDocumentToMarkdown(serializedContentToSend).trim();
-
-    if (draftText === '') {
-      return;
-    }
-
-    const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily({
-      threadId,
-    });
-    const quotedMessageId = store.get(quotedMessageIdAtom);
-    const quotedMessage = store.get(
-      aiChatThreadMessageFamilySelector.selectorFamily({
-        threadId,
-        messageId: quotedMessageId,
-      }),
-    );
-    const quotedAgentId = quotedMessage?.metadata?.agentId;
-    // the composer preview starts loading the agent when the quote is picked; awaiting it here would race with further edits
-    const quotedAgentName = isDefined(quotedAgentId)
-      ? (apolloClient.cache.readQuery({
-          query: FindChatMessageAgentDocument,
-          variables: { id: quotedAgentId },
-        })?.findOneAgent.label ?? undefined)
-      : undefined;
-    const quotedMessageSource = isDefined(quotedMessage)
-      ? getAiChatMessageQuoteSource({
-          message: quotedMessage,
-          author: getAiChatMessageAuthor({
-            message: quotedMessage,
-            authorLookup: store.get(aiChatMessageAuthorLookupSelector.atom),
-            agentName: quotedAgentName,
-          }),
-        })
-      : null;
-    const contentToSend = isDefined(quotedMessageSource)
-      ? prependAiChatQuoteToText({
-          text: draftText,
-          authorName: quotedMessageSource.author.name,
-          excerpt: quotedMessageSource.excerpt,
-        })
-      : draftText;
-
-    const currentWorkspaceMemberId = store.get(
-      currentWorkspaceMemberState.atom,
-    )?.id;
-    const participantMentions = isDirectMessage
-      ? []
-      : getParticipantMentionsFromSerializedDocument(
-          serializedContentToSend,
-        ).filter(
-          ({ workspaceMemberId }) =>
-            workspaceMemberId !== currentWorkspaceMemberId,
-        );
-    const isAssistantMentioned = isAiChatAssistantMentionedInSerializedDocument(
-      serializedContentToSend,
-    );
-    const channelId = isNewChat
-      ? store.get(aiChatNewThreadChannelIdState.atom)
-      : undefined;
-    const initialRecipients = getAiChatInitialRecipients({
-      recipientWorkspaceMemberIds:
-        newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
-      workspaceMembers: store.get(currentWorkspaceMembersState.atom),
-    });
-    const hasRecipients =
-      newInboxChatRecipients?.isAssistantParticipant ||
-      isAssistantMentioned ||
-      isNonEmptyArray(initialRecipients) ||
-      isNonEmptyArray(participantMentions) ||
-      isDefined(channelId);
-
-    if (isDefined(newInboxChatRecipients) && !hasRecipients) {
-      enqueueToast({
-        status: 'error',
-        children: t`Add a recipient or a channel before sending.`,
-      });
-
-      return;
-    }
-
-    if (!canSendAiChatMessage) {
-      enqueueToast({
-        status: 'error',
-        children: t`No AI provider is configured on this instance.`,
-      });
-
-      return;
-    }
-
-    const directMessageWorkspaceMemberId =
-      getAiChatNewThreadDirectMessageWorkspaceMemberId({
-        isDirectMessageIdentityEnabled,
-        newInboxChatRecipients,
-        isAssistantMentioned,
-        channelId,
-        initialRecipients,
-        participantMentions,
-      });
-
-    if (isDefined(directMessageWorkspaceMemberId)) {
-      const directMessageThreadId = await openNewAiChatAsDirectMessage({
-        newChatThreadId: threadId,
-        workspaceMemberId: directMessageWorkspaceMemberId,
-        serializedDraft: serializedContentToSend,
-      });
-
-      if (isDefined(directMessageThreadId)) {
-        await sendToThread({
-          threadId: directMessageThreadId,
-          isNewChat: false,
-          isDirectMessage: true,
-          newInboxChatRecipients: undefined,
-          serializedContentToSend,
-          contentToSend,
-          participantMentions: [],
-          initialRecipients: [],
-          isAssistantMentioned: false,
-          channelId: undefined,
-          quotedMessageId: null,
-        });
+  const handleSendMessage = useCallback(
+    async (detail?: AiChatThreadEventDetail) => {
+      if (!isDefined(detail)) {
+        return;
       }
 
-      return;
-    }
+      const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+      const { threadId } = detail;
+      const isNewChat = threadId === newAiChatThreadId;
+      const isDirectMessage = store.get(
+        aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
+      );
+      const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily(
+        {
+          threadId,
+        },
+      );
 
-    const aiChatSelectedFiles = store.get(aiChatSelectedFilesState.atom);
+      if (isNewChat && store.get(isSendingMessageAtom)) {
+        return;
+      }
 
-    if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
-      enqueueToast({
-        status: 'error',
-        children: t`Wait for the attachments to finish uploading.`,
+      const newInboxChatRecipients =
+        isNewChat && isAiChatInboxEnabled
+          ? store.get(aiChatNewThreadRecipientsFamilyState.atomFamily(threadId))
+          : undefined;
+      const serializedContentToSend =
+        store.get(aiChatDraftsByThreadIdState.atom)[threadId] ?? '';
+      const draftText = tipTapDocumentToMarkdown(
+        serializedContentToSend,
+      ).trim();
+
+      if (draftText === '') {
+        return;
+      }
+
+      const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily({
+        threadId,
       });
+      const quotedMessageId = store.get(quotedMessageIdAtom);
+      const quotedMessage = store.get(
+        aiChatThreadMessageFamilySelector.selectorFamily({
+          threadId,
+          messageId: quotedMessageId,
+        }),
+      );
+      const quotedAgentId = quotedMessage?.metadata?.agentId;
+      // the composer preview starts loading the agent when the quote is picked; awaiting it here would race with further edits
+      const quotedAgentName = isDefined(quotedAgentId)
+        ? (apolloClient.cache.readQuery({
+            query: FindChatMessageAgentDocument,
+            variables: { id: quotedAgentId },
+          })?.findOneAgent.label ?? undefined)
+        : undefined;
+      const quotedMessageSource = isDefined(quotedMessage)
+        ? getAiChatMessageQuoteSource({
+            message: quotedMessage,
+            author: getAiChatMessageAuthor({
+              message: quotedMessage,
+              authorLookup: store.get(aiChatMessageAuthorLookupSelector.atom),
+              agentName: quotedAgentName,
+            }),
+          })
+        : null;
+      const contentToSend = isDefined(quotedMessageSource)
+        ? prependAiChatQuoteToText({
+            text: draftText,
+            authorName: quotedMessageSource.author.name,
+            excerpt: quotedMessageSource.excerpt,
+          })
+        : draftText;
 
-      return;
-    }
+      const currentWorkspaceMemberId = store.get(
+        currentWorkspaceMemberState.atom,
+      )?.id;
+      const participantMentions = isDirectMessage
+        ? []
+        : getParticipantMentionsFromSerializedDocument(
+            serializedContentToSend,
+          ).filter(
+            ({ workspaceMemberId }) =>
+              workspaceMemberId !== currentWorkspaceMemberId,
+          );
+      const isAssistantMentioned =
+        isAiChatAssistantMentionedInSerializedDocument(serializedContentToSend);
+      const channelId = isNewChat
+        ? store.get(aiChatNewThreadChannelIdState.atom)
+        : undefined;
+      const initialRecipients = getAiChatInitialRecipients({
+        recipientWorkspaceMemberIds:
+          newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
+        workspaceMembers: store.get(currentWorkspaceMembersState.atom),
+      });
+      const hasRecipients =
+        newInboxChatRecipients?.isAssistantParticipant ||
+        isAssistantMentioned ||
+        isNonEmptyArray(initialRecipients) ||
+        isNonEmptyArray(participantMentions) ||
+        isDefined(channelId);
 
-    setCurrentAiChatThread(threadId);
+      if (isDefined(newInboxChatRecipients) && !hasRecipients) {
+        enqueueToast({
+          status: 'error',
+          children: t`Add a recipient or a channel before sending.`,
+        });
 
-    setAiChatDraftsByThreadId((prev) => ({
-      ...prev,
-      [threadId]: '',
-    }));
-    store.set(quotedMessageIdAtom, null);
+        return;
+      }
 
-    dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-      content: '',
-    });
+      if (!canSendAiChatMessage) {
+        enqueueToast({
+          status: 'error',
+          children: t`No AI provider is configured on this instance.`,
+        });
 
-    await sendToThread({
-      threadId,
-      isNewChat,
-      isDirectMessage,
-      newInboxChatRecipients,
-      serializedContentToSend,
-      contentToSend,
-      participantMentions,
-      initialRecipients,
-      isAssistantMentioned,
-      channelId,
-      quotedMessageId,
-    });
-  }, [
-    store,
-    apolloClient,
-    setAiChatDraftsByThreadId,
-    canSendAiChatMessage,
-    isAiChatInboxEnabled,
-    isDirectMessageIdentityEnabled,
-    openNewAiChatAsDirectMessage,
-    enqueueToast,
-    setCurrentAiChatThread,
-    sendToThread,
-  ]);
+        return;
+      }
 
-  useListenToBrowserEvent({
+      const directMessageWorkspaceMemberId =
+        getAiChatNewThreadDirectMessageWorkspaceMemberId({
+          isDirectMessageIdentityEnabled,
+          newInboxChatRecipients,
+          isAssistantMentioned,
+          channelId,
+          initialRecipients,
+          participantMentions,
+        });
+
+      if (isDefined(directMessageWorkspaceMemberId)) {
+        const directMessageThreadId = await openNewAiChatAsDirectMessage({
+          newChatThreadId: threadId,
+          workspaceMemberId: directMessageWorkspaceMemberId,
+          serializedDraft: serializedContentToSend,
+        });
+
+        if (isDefined(directMessageThreadId)) {
+          await sendToThread({
+            threadId: directMessageThreadId,
+            isNewChat: false,
+            isDirectMessage: true,
+            newInboxChatRecipients: undefined,
+            serializedContentToSend,
+            contentToSend,
+            participantMentions: [],
+            initialRecipients: [],
+            isAssistantMentioned: false,
+            channelId: undefined,
+            quotedMessageId: null,
+          });
+        }
+
+        return;
+      }
+
+      const aiChatSelectedFiles = store.get(aiChatSelectedFilesState.atom);
+
+      if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
+        enqueueToast({
+          status: 'error',
+          children: t`Wait for the attachments to finish uploading.`,
+        });
+
+        return;
+      }
+
+      setCurrentAiChatThread(threadId);
+
+      setAiChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [threadId]: '',
+      }));
+      store.set(quotedMessageIdAtom, null);
+
+      dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+        AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+        { threadId, content: '' },
+      );
+
+      await sendToThread({
+        threadId,
+        isNewChat,
+        isDirectMessage,
+        newInboxChatRecipients,
+        serializedContentToSend,
+        contentToSend,
+        participantMentions,
+        initialRecipients,
+        isAssistantMentioned,
+        channelId,
+        quotedMessageId,
+      });
+    },
+    [
+      store,
+      apolloClient,
+      setAiChatDraftsByThreadId,
+      canSendAiChatMessage,
+      isAiChatInboxEnabled,
+      isDirectMessageIdentityEnabled,
+      openNewAiChatAsDirectMessage,
+      enqueueToast,
+      setCurrentAiChatThread,
+      sendToThread,
+    ],
+  );
+
+  useListenToBrowserEvent<AiChatThreadEventDetail>({
     eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
   });
 
-  const handleStop = useCallback(async () => {
-    const threadId = store.get(currentAiChatThreadState.atom);
+  const handleStop = useCallback(
+    async (detail?: AiChatThreadEventDetail) => {
+      if (!isDefined(detail)) {
+        return;
+      }
 
-    if (!isDefined(threadId)) {
-      return;
-    }
+      const { threadId } = detail;
 
-    store.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
-      false,
-    );
+      store.set(
+        aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
+        false,
+      );
 
-    try {
-      await apolloClient.mutate({
-        mutation: StopAgentChatStreamDocument,
-        variables: { threadId },
-      });
-    } catch (error) {
-      enqueueToast(getToastOptionsFromError({ error }));
-    }
-  }, [store, apolloClient, enqueueToast]);
+      try {
+        await apolloClient.mutate({
+          mutation: StopAgentChatStreamDocument,
+          variables: { threadId },
+        });
+      } catch (error) {
+        enqueueToast(getToastOptionsFromError({ error }));
+      }
+    },
+    [store, apolloClient, enqueueToast],
+  );
 
-  useListenToBrowserEvent({
+  useListenToBrowserEvent<AiChatThreadEventDetail>({
     eventName: AI_CHAT_STOP_EVENT_NAME,
     onBrowserEvent: handleStop,
   });

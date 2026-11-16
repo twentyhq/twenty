@@ -1,3 +1,4 @@
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { styled } from '@linaria/react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -7,7 +8,6 @@ import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatConten
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -30,7 +30,7 @@ const StyledContainer = styled(StyledAiChatContentContainer)<{
 
 export const AiChatTypingParticipants = () => {
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(

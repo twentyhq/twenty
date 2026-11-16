@@ -1,3 +1,4 @@
+import { useAiChatDisplayedThreadId } from '@/ai/hooks/useAiChatDisplayedThreadId';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -6,7 +7,6 @@ import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { aiChatIsLoadingSelector } from '@/ai/states/selectors/aiChatIsLoadingSelector';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -21,7 +21,7 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 export const AiChatStandaloneError = () => {
   const aiChatIsLoading = useAtomStateValue(aiChatIsLoadingSelector);
 
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAiChatDisplayedThreadId();
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
     threadId: aiChatDisplayedThread,
   });

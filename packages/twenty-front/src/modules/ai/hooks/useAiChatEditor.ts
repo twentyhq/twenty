@@ -1,3 +1,6 @@
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -12,7 +15,6 @@ import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile'
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -37,7 +39,7 @@ import { useLingui } from '@lingui/react/macro';
 export const useAiChatEditor = () => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const aiModels = useAtomStateValue(aiModelsState);
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
@@ -81,7 +83,10 @@ export const useAiChatEditor = () => {
           }
 
           event.preventDefault();
-          dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+          dispatchBrowserEvent<AiChatThreadEventDetail>(
+            AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+            { threadId: draftKey },
+          );
           return true;
         }
         return false;
@@ -176,8 +181,8 @@ export const useAiChatEditor = () => {
   }
 
   const handleRestoreEditorContent = useCallback(
-    (detail?: { content: string }) => {
-      if (isDefined(detail?.content)) {
+    (detail?: AiChatRestoreEditorContentEventDetail) => {
+      if (detail?.threadId === draftKey && isDefined(detail.content)) {
         editor?.commands.setContent(
           deserializeAdvancedTextEditorDocument({
             serializedDocument: detail.content,
@@ -185,10 +190,10 @@ export const useAiChatEditor = () => {
         );
       }
     },
-    [editor],
+    [draftKey, editor],
   );
 
-  useListenToBrowserEvent<{ content: string }>({
+  useListenToBrowserEvent<AiChatRestoreEditorContentEventDetail>({
     eventName: AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     onBrowserEvent: handleRestoreEditorContent,
   });

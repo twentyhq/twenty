@@ -1,3 +1,4 @@
+import { useAiChatThreadId } from '@/ai/hooks/useAiChatThreadId';
 import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
@@ -41,7 +42,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
@@ -152,7 +152,7 @@ const EditableAiChatEditorSection = () => {
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
   const canSendAiChatMessage = useCanSendAiChatMessage();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentAiChatThread = useAiChatThreadId();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,

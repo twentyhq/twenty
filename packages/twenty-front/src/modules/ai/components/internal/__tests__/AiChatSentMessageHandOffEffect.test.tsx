@@ -9,6 +9,7 @@ import { type ReactNode } from 'react';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import {
   jotaiStore,
@@ -68,7 +69,9 @@ describe('AiChatSentMessageHandOffEffect', () => {
         { wrapper: Wrapper },
       );
 
-      dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+      dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME, {
+        threadId: jotaiStore.get(newAiChatThreadIdState.atom),
+      });
 
       expect(jotaiStore.get(aiChatSentMessageHandOffState.atom)).toEqual(
         expectedHandOff,
