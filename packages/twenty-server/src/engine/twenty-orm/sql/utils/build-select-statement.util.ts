@@ -563,8 +563,12 @@ export const buildJoinClause = (state: SelectStatementState): string =>
 
       const joinSource = isDefined(toManyForeignKeyColumnName)
         ? buildToManyDedupedJoinSource({
-            // Aliased inside too: computed columns are written against the join's alias
-            tableExpression: `${tableSource} AS ${escapeIdentifier(joinClause.alias)}`,
+            // Computed columns are written against the join's alias, so a derived table carries it inside too
+            tableExpression: isDefined(
+              state.computedColumnSqlByAlias[joinClause.alias],
+            )
+              ? `${tableSource} AS ${escapeIdentifier(joinClause.alias)}`
+              : tableSource,
             foreignKeyColumnName: toManyForeignKeyColumnName,
             includeSoftDeleteFilter: softDeletePredicateApplies,
             dedupOrder: joinClause.toManyDedupOrder,
