@@ -70,19 +70,20 @@ export class RolePermissionsService {
       return new Map();
     }
 
-    const allRoleTargets = await this.roleTargetRepository.find(workspaceId, {
-      where: {
-        userWorkspaceId: In(userWorkspaceIds),
-        isSystemSideEffect: false,
-      },
-      relations: {
-        role: {
-          rolePermissionFlags: {
-            permissionFlag: true,
+    const allRoleTargets = (
+      await this.roleTargetRepository.find(workspaceId, {
+        where: {
+          userWorkspaceId: In(userWorkspaceIds),
+        },
+        relations: {
+          role: {
+            rolePermissionFlags: {
+              permissionFlag: true,
+            },
           },
         },
-      },
-    });
+      })
+    ).filter((roleTarget) => !roleTarget.isSystemSideEffect);
 
     if (!allRoleTargets.length) {
       return new Map();
