@@ -11,7 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
 import { AiChatThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
-import { AiChatThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
+import { InboxThreadTriageButtons } from '@/inbox/components/InboxThreadTriageButtons';
 
 const StyledSubtitle = styled.div`
   align-items: center;
@@ -50,7 +50,7 @@ const meta = {
       </Text>
     ),
     actions: (
-      <AiChatThreadTriageButtons
+      <InboxThreadTriageButtons
         status="open"
         onDone={onDone}
         onSnooze={onSnooze}
@@ -296,7 +296,7 @@ export const Snoozed: Story = {
       </Text>
     ),
     actions: (
-      <AiChatThreadTriageButtons
+      <InboxThreadTriageButtons
         status="snoozed"
         onDone={onDone}
         onSnooze={onSnooze}
@@ -374,7 +374,7 @@ export const CompactSnoozed: Story = {
 export const Done: Story = {
   args: {
     actions: (
-      <AiChatThreadTriageButtons
+      <InboxThreadTriageButtons
         status="done"
         onDone={onDone}
         onSnooze={onSnooze}

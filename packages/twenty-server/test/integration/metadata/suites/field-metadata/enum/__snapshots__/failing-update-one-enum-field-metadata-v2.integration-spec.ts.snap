@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with an invalid default value 1`] = `
 [
@@ -435,12 +435,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"\" must be one of the option values",
-                "value": "",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -603,20 +597,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               },
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"invalid\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"invalid\" must be one of the option values",
-                "value": "invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
                 "userFriendlyMessage": "Default value should be as quoted string",
-                "value": "format",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"format\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"format\" must be one of the option values",
                 "value": "format",
               },
             ],
@@ -695,8 +677,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
-                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+                "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
             ],
@@ -716,7 +698,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1062,12 +1044,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"\" must be one of the option values",
-                "value": "",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -1228,12 +1204,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" must be one of the option values",
-                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -1356,8 +1326,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               },
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
-                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+                "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -1474,8 +1444,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"'OPTION_42'\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"'OPTION_42'\" must be one of the option values",
+                "message": "Default value "'OPTION_42'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
                 "value": "'OPTION_42'",
               },
             ],
@@ -1485,7 +1455,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
-            "status": "fail",
             "type": "update",
           },
         ],
@@ -1495,7 +1464,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Default value \"'OPTION_42'\" must be one of the option values",
+      "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1514,8 +1483,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"'UNKNOWN_OPTION'\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"'UNKNOWN_OPTION'\" must be one of the option values",
+                "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
                 "value": "'UNKNOWN_OPTION'",
               },
             ],
@@ -1525,7 +1494,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
-            "status": "fail",
             "type": "update",
           },
         ],
@@ -1535,7 +1503,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Default value \"'UNKNOWN_OPTION'\" must be one of the option values",
+      "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1556,12 +1524,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
                 "userFriendlyMessage": "Default value should be as quoted string",
-                "value": "invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"invalid\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"invalid\" must be one of the option values",
                 "value": "invalid",
               },
             ],
@@ -1600,8 +1562,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"'OPTION_424242'\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"'OPTION_424242'\" must be one of the option values",
+                "message": "Default value "'OPTION_424242'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
                 "value": "'OPTION_424242'",
               },
             ],
@@ -1611,7 +1573,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
-            "status": "fail",
             "type": "update",
           },
         ],
@@ -1621,7 +1582,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Default value \"'OPTION_424242'\" must be one of the option values",
+      "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1944,12 +1905,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"\" must be one of the option values",
-                "value": "",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -2146,8 +2101,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
-                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+                "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
             ],
@@ -2167,7 +2122,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2473,12 +2428,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"\" must be one of the option values",
-                "value": "",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -2639,12 +2588,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" must be one of the option values",
-                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              },
             ],
             "flatEntityMinimalInformation": {
               "name": "testField",
@@ -2767,8 +2710,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               },
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
-                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+                "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -2885,8 +2828,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value \"'OPTION_42'\" must be one of the option values",
-                "userFriendlyMessage": "Default value \"'OPTION_42'\" must be one of the option values",
+                "message": "Default value "'OPTION_42'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
                 "value": "'OPTION_42'",
               },
             ],
@@ -2896,7 +2839,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
-            "status": "fail",
             "type": "update",
           },
         ],
@@ -2906,7 +2848,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Default value \"'OPTION_42'\" must be one of the option values",
+      "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",

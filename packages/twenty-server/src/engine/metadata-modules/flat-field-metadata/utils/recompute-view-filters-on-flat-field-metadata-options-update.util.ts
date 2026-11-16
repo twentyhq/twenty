@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type EnumFieldMetadataType } from 'twenty-shared/types';
+import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
 import {
   isDefined,
   isRecordFilterOperandExpectingValue,
@@ -14,8 +14,8 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 
 type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
-  toOptions: FlatFieldMetadata<EnumFieldMetadataType>['options'];
-} & Pick<AllFlatEntityMaps, 'flatViewFilterMaps'>;
+} & FromTo<FlatFieldMetadata<EnumFieldMetadataType>['options'], 'options'> &
+  Pick<AllFlatEntityMaps, 'flatViewFilterMaps'>;
 
 export type FlatViewFiltersToDeleteAndUpdate = {
   flatViewFiltersToDelete: FlatViewFilter[];
@@ -24,6 +24,7 @@ export type FlatViewFiltersToDeleteAndUpdate = {
 export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   flatViewFilterMaps,
   fromFlatFieldMetadata,
+  fromOptions,
   toOptions,
 }: RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs): FlatViewFiltersToDeleteAndUpdate => {
   const flatViewFiltersToCreateAndUpdate: FlatViewFiltersToDeleteAndUpdate = {
@@ -36,7 +37,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
     updated: updatedFieldMetadataOptions,
   } = compareTwoFlatFieldMetadataEnumOptions({
     compareLabel: false,
-    fromOptions: fromFlatFieldMetadata.options,
+    fromOptions,
     toOptions,
   });
 
@@ -71,13 +72,11 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
 
     const viewFilterOptions = viewFilterValue
       .flatMap((value) => {
-        if (!isDefined(fromFlatFieldMetadata.options)) {
+        if (!isDefined(fromOptions)) {
           return undefined;
         }
 
-        return fromFlatFieldMetadata.options.find(
-          (option) => option.value === value,
-        );
+        return fromOptions.find((option) => option.value === value);
       })
       .filter(isDefined);
 

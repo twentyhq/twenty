@@ -46,7 +46,7 @@ export const useCreateStep = () => {
     workflowVersionId?: string;
     defaultSettings?: Record<string, unknown>;
   }) => {
-    if (isLoading === true) {
+    if (isLoading) {
       return;
     }
 

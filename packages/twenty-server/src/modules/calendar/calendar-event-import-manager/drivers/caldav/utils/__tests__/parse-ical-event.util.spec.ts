@@ -209,6 +209,27 @@ describe('parseICalEvents', () => {
     });
   });
 
+  it('lists ROOM and RESOURCE attendees as resources, case-insensitively', () => {
+    const ics = buildVEvent([
+      'UID:abc',
+      'SUMMARY:Sync',
+      'DTSTART:20260601T100000Z',
+      'DTEND:20260601T110000Z',
+      'ATTENDEE;CUTYPE=INDIVIDUAL:mailto:person@example.com',
+      'ATTENDEE;CUTYPE=ROOM:mailto:Room@example.com',
+      'ATTENDEE;CUTYPE=resource:mailto:projector@example.com',
+      'ATTENDEE:mailto:default@example.com',
+    ]);
+
+    const [event] = parseICalEvents(ics, HREF);
+
+    expect(event.resourceHandles).toEqual([
+      'room@example.com',
+      'projector@example.com',
+    ]);
+    expect(event.participants).toHaveLength(4);
+  });
+
   it('extracts the organizer with mailto stripped and ACCEPTED status', () => {
     const ics = buildVEvent([
       'UID:abc',

@@ -10,7 +10,8 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
-import { findVerifiedOAuthClientLogoPath } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-logo-path.util';
+import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { findVerifiedOAuthClientForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-registration.util';
 import { isVerifiedOAuthClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-id-metadata-document-url.util';
 import { isVerifiedOAuthClientName } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-name.util';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
@@ -51,6 +52,8 @@ export class OAuthClientResolver {
     if (resolvedClient.kind === 'registeredClient') {
       const { registration } = resolvedClient;
       const isVerified = isVerifiedOAuthClientRegistration(registration);
+      const verifiedClient =
+        findVerifiedOAuthClientForRegistration(registration);
 
       return {
         id: registration.id,
@@ -59,8 +62,10 @@ export class OAuthClientResolver {
           this.applicationRegistrationAssetUrlService.buildLogoUrl(
             registration,
           ) ??
-          (isVerified
-            ? findVerifiedOAuthClientLogoPath(registration.universalIdentifier)
+          (isDefined(verifiedClient)
+            ? (findMarketplaceBuiltInApplication(
+                verifiedClient.marketplaceAppUniversalIdentifier,
+              )?.logoPath ?? null)
             : null),
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,

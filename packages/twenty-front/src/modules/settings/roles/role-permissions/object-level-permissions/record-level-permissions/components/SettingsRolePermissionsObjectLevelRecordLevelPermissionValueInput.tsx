@@ -7,7 +7,11 @@ import {
   RecordFilterOperand,
   StandardObjectNameSingular,
 } from 'twenty-shared/types';
-import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  getFieldOrSubFieldType,
+  isDefined,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 import { IconEraser } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type JsonValue } from 'type-fest';
@@ -20,7 +24,6 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
-import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldType';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
@@ -305,17 +308,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
     const isComposite = isCompositeFieldType(recordFilter.type);
 
     if (isComposite && isDefined(recordFilter.subFieldName)) {
-      const subFieldType = getCompositeSubFieldType(
-        fieldMetadataItem,
-        recordFilter.subFieldName,
-      );
-
-      if (isDefined(subFieldType)) {
-        fieldDefinition = {
-          ...fieldDefinition,
-          type: subFieldType,
-        };
-      }
+      fieldDefinition = {
+        ...fieldDefinition,
+        type: getFieldOrSubFieldType({
+          fieldType: fieldMetadataItem.type,
+          subFieldName: recordFilter.subFieldName,
+        }),
+      };
     }
 
     // "Is" on a date and time field compares a whole day, so its value is a plain date

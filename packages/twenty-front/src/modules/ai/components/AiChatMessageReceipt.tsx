@@ -6,13 +6,13 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
-import { agentChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
-import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
-import { getAgentChatMessageReaders } from '@/ai/utils/getAgentChatMessageReaders';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
+import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
+import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
+import { getAiChatMessageReaders } from '@/ai/utils/getAiChatMessageReaders';
+import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
@@ -52,20 +52,18 @@ export const AiChatMessageReceipt = ({
   messageId,
 }: AiChatMessageReceiptProps) => {
   const { t } = useLingui();
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatThreadReadPositions = useAtomFamilyStateValue(
+    aiChatThreadReadPositionsFamilyState,
+    { threadId: aiChatDisplayedThread },
   );
-  const agentChatThreadReadPositions = useAtomFamilyStateValue(
-    agentChatThreadReadPositionsFamilyState,
-    { threadId: agentChatDisplayedThread },
+  const aiChatIsSendingMessage = useAtomFamilyStateValue(
+    aiChatIsSendingMessageFamilyState,
+    { threadId: aiChatDisplayedThread ?? '' },
   );
-  const agentChatIsSendingMessage = useAtomFamilyStateValue(
-    agentChatIsSendingMessageFamilyState,
-    { threadId: agentChatDisplayedThread ?? '' },
-  );
-  const agentChatMessageIds = useAtomStateValue(agentChatMessageIdsSelector);
+  const aiChatMessageIds = useAtomStateValue(aiChatMessageIdsSelector);
   const agentChatMessage = useAtomFamilySelectorValue(
-    agentChatMessageFamilySelector,
+    aiChatMessageFamilySelector,
     { messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -74,19 +72,19 @@ export const AiChatMessageReceipt = ({
   );
 
   if (
-    !isDefined(agentChatThreadReadPositions) ||
+    !isDefined(aiChatThreadReadPositions) ||
     !isDefined(agentChatMessage?.metadata?.createdAt)
   ) {
     return null;
   }
 
-  if (agentChatIsSendingMessage && agentChatMessageIds.at(-1) === messageId) {
+  if (aiChatIsSendingMessage && aiChatMessageIds.at(-1) === messageId) {
     return <ChatMessageReceipt status="sending" />;
   }
 
   const { readerWorkspaceMemberIds, pendingWorkspaceMemberIds } =
-    getAgentChatMessageReaders({
-      readPositions: agentChatThreadReadPositions,
+    getAiChatMessageReaders({
+      readPositions: aiChatThreadReadPositions,
       createdAt: agentChatMessage.metadata.createdAt,
       senderWorkspaceMemberId:
         agentChatMessage.metadata.senderWorkspaceMemberId ?? undefined,
@@ -104,7 +102,7 @@ export const AiChatMessageReceipt = ({
     return {
       id: workspaceMemberId,
       avatarUrl: member?.avatarUrl,
-      name: getAgentChatSenderLabel({
+      name: getAiChatSenderLabel({
         sender: member,
         isCurrentWorkspaceMember:
           workspaceMemberId === currentWorkspaceMember?.id,

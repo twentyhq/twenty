@@ -1,4 +1,4 @@
-import { emailDocumentSchema, isValidUuid } from 'twenty-shared/utils';
+import { emailBodyInputSchema, isValidUuid } from 'twenty-shared/utils';
 import { workflowFileSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
@@ -24,11 +24,9 @@ export const EmailToolInputZodSchema = z.object({
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),
   subject: z.string().describe('The email subject line'),
-  body: z
-    .union([emailDocumentSchema, z.string()])
-    .describe(
-      'TipTap JSON (editor.getJSON() format). Example: {"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hi Alice,"}]},{"type":"paragraph"},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Point","marks":[{"type":"bold"}]}]}]}]},{"type":"paragraph","content":[{"type":"text","text":"Site","marks":[{"type":"link","attrs":{"href":"https://twenty.com"}}]}]}]}. Rules: doc.content holds only blocks: paragraph, heading (attrs.level 1, 2 or 3), bulletList, orderedList, image (attrs.src). Each listItem holds a paragraph. Text nodes go inside paragraph or heading and are never empty; a blank line is {"type":"paragraph"}, a line break is {"type":"hardBreak"}. Marks are objects: bold, italic, underline, strike, link (attrs.href). Not supported: blockquote, codeBlock, horizontalRule. Write real values: {{...}} placeholders are sent literally. A string is also accepted: HTML markup is sent as-is, anything else as plain text.',
-    ),
+  body: emailBodyInputSchema.describe(
+    'The email body, with its format stated by "type". Plain text: {"type":"text","text":"Hi Alice,\\n\\nThanks"} (line breaks are kept). HTML: {"type":"html","html":"<p>Hi Alice,</p>"} (sent as written). Rich text: TipTap JSON (editor.getJSON() format), e.g. {"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hi Alice,"}]},{"type":"paragraph"},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Point","marks":[{"type":"bold"}]}]}]}]}]}; its doc.content holds only paragraph, heading (attrs.level 1, 2 or 3), bulletList, orderedList and image (attrs.src) blocks, each listItem holds a paragraph, text nodes are never empty, a blank line is {"type":"paragraph"} and a line break is {"type":"hardBreak"}; marks are bold, italic, underline, strike and link (attrs.href). Write real values: {{...}} placeholders are sent literally. A bare string is rejected.',
+  ),
   connectedAccountId: z
     .string()
     .refine((val) => isValidUuid(val))

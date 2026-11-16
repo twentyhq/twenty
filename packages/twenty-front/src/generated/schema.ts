@@ -487,6 +487,7 @@ export type Mutation = {
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
+  /** @deprecated Use updateCoreWorkflow with a visibility instead */
   updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
 };
@@ -667,6 +668,7 @@ export type Query = {
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
+  getTimelineThreadChannelsFromObjectRecord: Array<TimelineThreadChannel>;
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
@@ -767,6 +769,12 @@ export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
 };
 
 
+export type QueryGetTimelineThreadChannelsFromObjectRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+};
+
+
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID']['input'];
   page: Scalars['Int']['input'];
@@ -775,6 +783,7 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
 
 
 export type QueryGetTimelineThreadsFromObjectRecordArgs = {
+  channel?: InputMaybe<TimelineThreadChannelFilterInput>;
   objectNameSingular: Scalars['String']['input'];
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
@@ -1009,6 +1018,12 @@ export type TimelineThreadChannel = {
   type: MessageChannelType;
 };
 
+export type TimelineThreadChannelFilterInput = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+  provider: Scalars['String']['input'];
+  type: MessageChannelType;
+};
+
 export type TimelineThreadParticipant = {
   __typename?: 'TimelineThreadParticipant';
   avatarUrl: Scalars['String']['output'];
@@ -1046,7 +1061,8 @@ export type UuidFilter = {
 
 export type UpdateCoreWorkflowInput = {
   coreWorkflowId: Scalars['UUID']['input'];
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visibility?: InputMaybe<WorkflowVisibility>;
 };
 
 export type UpdateCoreWorkflowVersionPositionsInput = {

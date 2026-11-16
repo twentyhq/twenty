@@ -154,7 +154,11 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         title:
           'should delete related view filter if all select field options got deleted',
         context: {
-          updateOptions: () => generateOptions(3),
+          // Options sent without ids keep the id of a same-value option, so these use new values.
+          updateOptions: () =>
+            generateOptions(ALL_OPTIONS.length + 3)
+              .slice(ALL_OPTIONS.length)
+              .map((option, position) => ({ ...option, position })),
           expected: null,
         },
       },

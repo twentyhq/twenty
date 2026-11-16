@@ -1121,9 +1121,10 @@ describe('OAuth (integration)', () => {
   });
 
   describe('Per-user authorizations', () => {
-    const exchangeForTokens = async (
+    const exchangeForTokens = async ({
       scope = 'read write',
-    ): Promise<{
+      userId = TEST_USER_ID,
+    }: { scope?: string; userId?: string } = {}): Promise<{
       accessToken: string;
       refreshToken: string;
     }> => {
@@ -1133,7 +1134,7 @@ describe('OAuth (integration)', () => {
       const tokenId = await insertAppToken(ds, {
         value: hashedCode,
         type: AppTokenType.AuthorizationCode,
-        userId: TEST_USER_ID,
+        userId,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
         context: {
@@ -1192,7 +1193,7 @@ describe('OAuth (integration)', () => {
 
     // 'read' alone, so the assertion fails if the declared scope is used instead of the granted one.
     it('should record the authorization with the scopes the user granted', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findAuthorization();
 
@@ -1251,7 +1252,7 @@ describe('OAuth (integration)', () => {
 
       await waitForNextSecond();
 
-      const { refreshToken } = await exchangeForTokens('read');
+      const { refreshToken } = await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findAuthorization();
 
@@ -1272,7 +1273,7 @@ describe('OAuth (integration)', () => {
 
     // Deleting the row recreates the state of tokens minted before this table existed.
     it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
-      const { refreshToken } = await exchangeForTokens('read write');
+      const { refreshToken } = await exchangeForTokens({ scope: 'read write' });
 
       await deleteAuthorization();
 
@@ -1362,7 +1363,7 @@ describe('OAuth (integration)', () => {
       );
 
     it('should list the authorization to the user who granted it', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findListedAuthorization();
 
@@ -1415,6 +1416,120 @@ describe('OAuth (integration)', () => {
       );
 
       expect(secondRevoke.body.data.revokeApplicationAuthorization).toBe(false);
+    });
+
+    const LIST_WORKSPACE_AUTHORIZATIONS_OPERATION = {
+      query: gql`
+        query WorkspaceApplicationAuthorizations {
+          workspaceApplicationAuthorizations {
+            id
+            applicationId
+            userId
+            marketplaceAppUniversalIdentifier
+          }
+        }
+      `,
+    };
+
+    const revokeWorkspaceAuthorizationOperation = (
+      applicationAuthorizationId: string,
+    ) => ({
+      query: gql`
+        mutation RevokeWorkspaceApplicationAuthorization(
+          $applicationAuthorizationId: UUID!
+        ) {
+          revokeWorkspaceApplicationAuthorization(
+            applicationAuthorizationId: $applicationAuthorizationId
+          )
+        }
+      `,
+      variables: { applicationAuthorizationId },
+    });
+
+    const OTHER_MEMBER_USER_ID = USER_DATA_SEED_IDS.JONY;
+
+    const findOtherMemberAuthorization = async () => {
+      const response = await makeMetadataApiRequest(
+        LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.workspaceApplicationAuthorizations.find(
+        (authorization: { applicationId: string; userId: string }) =>
+          authorization.applicationId === testApplication.id &&
+          authorization.userId === OTHER_MEMBER_USER_ID,
+      );
+    };
+
+    afterEach(() =>
+      ds.query(
+        `DELETE FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [OTHER_MEMBER_USER_ID, testApplication.id],
+      ),
+    );
+
+    it('should list another member authorization to a user who manages applications', async () => {
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+
+      expect(await findOtherMemberAuthorization()).toEqual({
+        id: expect.any(String),
+        applicationId: testApplication.id,
+        userId: OTHER_MEMBER_USER_ID,
+        marketplaceAppUniversalIdentifier: null,
+      });
+      expect(await findListedAuthorization()).toBeUndefined();
+    });
+
+    it('should let a user who manages applications revoke another member authorization', async () => {
+      const { refreshToken } = await exchangeForTokens({
+        userId: OTHER_MEMBER_USER_ID,
+      });
+
+      const { id } = await findOtherMemberAuthorization();
+
+      const revokeResponse = await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeUndefined();
+      expect(
+        revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
+      ).toBe(true);
+
+      const tokenResponse = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(tokenResponse.body.error).toBe('invalid_grant');
+      expect(await findOtherMemberAuthorization()).toBeUndefined();
+    });
+
+    it('should refuse the workspace list and revoke to a member who does not manage applications', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      const listResponse = await makeMetadataApiRequest(
+        LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(listResponse.body.errors).toBeDefined();
+
+      const revokeResponse = await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeDefined();
+      expect(await findListedAuthorization()).toBeDefined();
     });
 
     it('should not let another user see or revoke the authorization', async () => {

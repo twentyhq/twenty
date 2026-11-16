@@ -1,14 +1,15 @@
 /** @jest-environment node */
 
-import { mkdtemp, mkdir, rm, writeFile, readFile } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, rm, writeFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import ts from 'typescript';
 import { FRONT_COMPONENT_TYPE_REFERENCES_MAX_BYTES } from '../front-component-type-references-max-bytes';
-import { join, posix, resolve } from 'node:path';
+import { dirname, join, posix, resolve } from 'node:path';
 import { collectFrontComponentTypeReferences } from '../collect-front-component-type-references';
 import { decodeFrontComponentTypeReferences } from '../decode-front-component-type-references';
 import { encodeFrontComponentTypeReferencesOrThrow } from '../encode-front-component-type-references-or-throw';
 import { getFrontComponentTypeDiagnostics } from '../get-front-component-type-diagnostics';
+import { FRONT_COMPONENT_REACT_IMPORTS } from '../front-component-react-imports';
 
 let platform: Record<string, string>;
 let directory: string;
@@ -16,7 +17,7 @@ let directory: string;
 beforeAll(() => {
   platform = collectFrontComponentTypeReferences({
     directory: resolve(__dirname, '../../../..'),
-    dependencies: ['react', 'react/jsx-runtime'],
+    dependencies: FRONT_COMPONENT_REACT_IMPORTS,
     shouldIncludeLibraries: true,
   });
 });
@@ -112,6 +113,45 @@ it('checks generated SDK query fields using the supplied app types', () => {
   expect(getFrontComponentTypeDiagnostics({ files, source })).toEqual(
     expect.arrayContaining([expect.stringContaining('missingField')]),
   );
+});
+
+it('keeps React types when cached app references contain untyped React fallbacks', async () => {
+  for (const packageName of ['react', 'react-dom']) {
+    await cp(
+      dirname(require.resolve(`${packageName}/package.json`)),
+      join(directory, 'node_modules', packageName),
+      { recursive: true },
+    );
+  }
+  const appReferences = decodeFrontComponentTypeReferences(
+    encodeFrontComponentTypeReferencesOrThrow(
+      collectFrontComponentTypeReferences({
+        directory,
+        dependencies: FRONT_COMPONENT_REACT_IMPORTS,
+      }),
+    ),
+  );
+  await rm(directory, { recursive: true });
+  const files = { ...platform, ...appReferences };
+
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files,
+      source: 'export function Component() { return <div>Hello</div>; }',
+    }),
+  ).toEqual([]);
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files,
+      source: `import { createPortal } from 'react-dom'; export const Component = () => createPortal(<div>Portal</div>, document.body);`,
+    }),
+  ).toEqual([]);
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files,
+      source: `import { useState } from 'react'; export const Component = () => { const [count] = useState<number>('wrong'); return <div>{count}</div>; };`,
+    }),
+  ).toEqual(expect.arrayContaining([expect.stringContaining('TS2345')]));
 });
 
 it('rejects a Component requiring props that previews do not supply', () => {

@@ -86,6 +86,7 @@ export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
+export { APPLICATION_SOURCE_FILE_EXTENSIONS } from './constants/application-source-file-extensions';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_PACKAGE_YARN_LOCK_PATH } from './constants/ApplicationPackageYarnLockPath';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -98,10 +99,13 @@ export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constant
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
+export { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from './constants/MarketplaceAppMcpServerUrlPlaceholder';
+export { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from './constants/MaxAppMessageAttachmentsPerMessage';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { RESERVED_SETTINGS_MENU_ITEM_SLUGS } from './constants/ReservedSettingsMenuItemSlugs';
+export { SETTINGS_APPLICATION_CONNECTIONS_SECTION_ID } from './constants/SettingsApplicationConnectionsSectionId';
 export { SETTINGS_GENERAL_TAB_ID } from './constants/SettingsGeneralTabId';
 export { SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH } from './constants/SettingsMenuItemSlugMaxLength';
 export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
@@ -215,6 +219,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { MarkAppThreadAsReadPayload } from './markAppThreadAsReadType';
 export type { McpServerManifest } from './mcpServerManifestType';
 export type { MessagingProviderConversationStyle } from './messagingProviderConversationStyleType';
 export { MESSAGING_PROVIDER_CONVERSATION_STYLES } from './messagingProviderConversationStyleType';
@@ -255,12 +260,23 @@ export type { RecordEventTriggerManifestSettings } from './recordEventTriggerMan
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
-  ObjectPermissionManifest,
-  FieldPermissionManifest,
-  RowLevelPermissionPredicateGroupManifest,
-  RowLevelPermissionPredicateManifest,
+  LegacyObjectPermissionManifest,
+  LegacyFieldPermissionManifest,
+  LegacyRowLevelPermissionPredicateGroupManifest,
+  LegacyRowLevelPermissionPredicateManifest,
+  RowLevelPermissionRulePredicateManifest,
+  RowLevelPermissionRulePredicateGroupManifest,
+  FieldRestrictionsManifest,
+  RowLevelRecordsPermissionsManifest,
+  AllRecordsPermissionsManifest,
+  ObjectRecordsPermissionsManifest,
+  RoleRecordsPermissionsManifest,
+  RowLevelPermissionRuleManifest,
+  LegacyRoleRecordsPermissionsManifest,
   RoleManifest,
+  LegacyCompliantRoleManifest,
 } from './roleManifestType';
+export { LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS } from './roleManifestType';
 export type {
   ObjectPermissionGrant,
   FieldPermissionGrant,
@@ -281,6 +297,7 @@ export type {
 } from './runAgentType';
 export type {
   SendAppMessageRecipient,
+  SendAppMessageAttachment,
   SendAppMessageEmail,
   SendAppMessagePayload,
   SendAppMessageResult,
@@ -302,6 +319,7 @@ export {
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
+export type { SourceFileManifest } from './sourceFileManifestType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';
@@ -326,6 +344,12 @@ export {
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
+  RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionRuleManifests,
+} from './utils/flattenRowLevelPermissionRuleManifests';
+export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
+export type {
   EffectiveObjectPermissions,
   ObjectRecordsPermissionGrants,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
@@ -333,7 +357,10 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
+export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
+export { getRowLevelPermissionPredicatesFromRoleManifest } from './utils/getRowLevelPermissionPredicatesFromRoleManifest';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
@@ -346,6 +373,9 @@ export {
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
+export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
+export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

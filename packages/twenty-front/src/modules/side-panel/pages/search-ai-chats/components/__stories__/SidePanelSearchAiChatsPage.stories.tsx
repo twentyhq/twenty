@@ -18,13 +18,13 @@ import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -364,8 +364,8 @@ const meta = {
     }
 
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       ),
       {
         threadIds: RECENT_THREAD_IDS,
@@ -374,7 +374,7 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(agentChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,
@@ -414,7 +414,7 @@ const meta = {
       }),
     );
     jotaiStore.set(currentAiChatThreadState.atom, CURRENT_THREAD_ID);
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
     jotaiStore.set(sidePanelSearchState.atom, '');
@@ -632,7 +632,7 @@ export const OpenChatWithKeyboard: Story = {
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);
     await expect(
-      jotaiStore.get(agentChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
+      jotaiStore.get(aiChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
     ).toBe(PRESERVED_DRAFT);
   },
 };
@@ -681,7 +681,7 @@ export const LeaveWhileOpening: Story = {
     await waitFor(() =>
       expect(
         jotaiStore.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
+          aiChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
         ),
       ).toMatchObject({
         id: FIRST_THREAD_ID,
@@ -807,8 +807,8 @@ export const FailedSearch: Story = {
 export const NoChatsYet: Story = {
   beforeEach: () => {
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       ),
       null,
     );
@@ -821,8 +821,8 @@ export const NoChatsYet: Story = {
     ).toBeVisible();
 
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       ),
       {
         threadIds: [],

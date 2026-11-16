@@ -1,9 +1,6 @@
 import { type ViewSort } from '@/views/types/ViewSort';
+import { isViewSortOnSameField } from '@/views/utils/isViewSortOnSameField';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
-
-const isSameSortTarget = (sortA: ViewSort, sortB: ViewSort): boolean =>
-  sortA.fieldMetadataId === sortB.fieldMetadataId &&
-  sortA.direction === sortB.direction;
 
 export const getViewSortsToDelete = (
   currentViewSorts: ViewSort[],
@@ -16,7 +13,7 @@ export const getViewSortsToDelete = (
           compareStrictlyExceptForNullAndUndefined(
             currentViewSort.id,
             newViewSort.id,
-          ) || isSameSortTarget(currentViewSort, newViewSort),
+          ) || isViewSortOnSameField(currentViewSort, newViewSort),
       ),
   );
 };

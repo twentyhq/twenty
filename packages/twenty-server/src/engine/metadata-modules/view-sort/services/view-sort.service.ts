@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -9,6 +10,13 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
+import {
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
@@ -16,6 +24,7 @@ import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -242,34 +251,66 @@ export class ViewSortService {
     return fromFlatViewSortToViewSortDto(existingFlatViewSort);
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
-    return this.viewSortRepository.find(workspaceId, {
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }
+
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
+    return this.findManyVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
+    });
+  }
+
+  private async findManyVisibleToUser({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
+    const viewSorts = await this.viewSortRepository.find(workspaceId, {
       where: {
+        ...(isDefined(viewId) ? { viewId } : {}),
         deletedAt: IsNull(),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return viewSorts.filter(
+      (viewSort) =>
+        isDefined(viewSort.view) &&
+        isViewVisibleToUser(viewSort.view, userWorkspaceId),
+    );
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-  ): Promise<ViewSortEntity[]> {
-    return this.viewSortRepository.find(workspaceId, {
-      where: {
-        viewId,
-        deletedAt: IsNull(),
-      },
-      order: { createdAt: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
-    });
-  }
-
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewSortEntity | null> {
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity> {
     const viewSort = await this.viewSortRepository.findOne(workspaceId, {
       where: {
         id,
@@ -278,6 +319,25 @@ export class ViewSortService {
       relations: ['workspace', 'view'],
     });
 
-    return viewSort || null;
+    if (
+      !isDefined(viewSort) ||
+      !isDefined(viewSort.view) ||
+      !isViewVisibleToUser(viewSort.view, userWorkspaceId)
+    ) {
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          ),
+        },
+      );
+    }
+
+    return viewSort;
   }
 }

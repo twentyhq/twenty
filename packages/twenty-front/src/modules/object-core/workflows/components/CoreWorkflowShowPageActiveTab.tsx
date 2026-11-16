@@ -4,6 +4,7 @@ import { type ReactNode, useMemo } from 'react';
 import { CoreWorkflowOverviewTab } from '@/object-core/workflows/components/CoreWorkflowOverviewTab';
 import { CoreWorkflowRunsTab } from '@/object-core/workflows/components/CoreWorkflowRunsTab';
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { type CoreWorkflowRunInsights } from '@/object-core/workflows/types/CoreWorkflowRunInsights';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
 
@@ -18,6 +19,9 @@ type CoreWorkflowShowPageActiveTabProps = {
   coreWorkflowId: string;
   coreWorkflowVersions: GetCoreWorkflowVersionsQuery['coreWorkflowVersions'];
   flowTab: ReactNode;
+  runInsights: CoreWorkflowRunInsights | null;
+  isLoadingRunInsights: boolean;
+  hasRunInsightsError: boolean;
 };
 
 export const CoreWorkflowShowPageActiveTab = ({
@@ -25,6 +29,9 @@ export const CoreWorkflowShowPageActiveTab = ({
   coreWorkflowId,
   coreWorkflowVersions,
   flowTab,
+  runInsights,
+  isLoadingRunInsights,
+  hasRunInsightsError,
 }: CoreWorkflowShowPageActiveTabProps) => {
   const versionLabelById = useMemo(
     () => new Map(coreWorkflowVersions.map(({ id, label }) => [id, label])),
@@ -34,7 +41,12 @@ export const CoreWorkflowShowPageActiveTab = ({
   if (activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW) {
     return (
       <StyledTabContent>
-        <CoreWorkflowOverviewTab coreWorkflowId={coreWorkflowId} />
+        <CoreWorkflowOverviewTab
+          coreWorkflowId={coreWorkflowId}
+          insights={runInsights}
+          isLoading={isLoadingRunInsights}
+          hasError={hasRunInsightsError}
+        />
       </StyledTabContent>
     );
   }

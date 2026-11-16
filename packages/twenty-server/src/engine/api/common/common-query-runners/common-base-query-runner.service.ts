@@ -385,6 +385,7 @@ export abstract class CommonBaseQueryRunnerService<
       authContext: context.authContext,
       repository,
       featureFlagsMap: context.featureFlagsMap,
+      flatFieldMetadataOptionMaps: context.flatFieldMetadataOptionMaps,
       permissionsPrincipals: context.permissionsPrincipals,
       recordReadRestrictions: context.recordReadRestrictions,
     };

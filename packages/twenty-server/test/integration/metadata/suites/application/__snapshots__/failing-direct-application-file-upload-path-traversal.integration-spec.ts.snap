@@ -38,7 +38,7 @@ exports[`Application file upload reservation should fail when filePath has an in
 
 exports[`Application file upload reservation should fail when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock/.gz) 1`] = `"Invalid file extension. Allowed extensions: .json, .lock, .gz"`;
 
-exports[`Application file upload reservation should fail when filePath has an invalid extension for Source (.js instead of .ts) 1`] = `"Invalid file extension. Allowed extensions: .ts, .tsx, .json"`;
+exports[`Application file upload reservation should fail when filePath has an invalid extension for Source (.sh) 1`] = `"Invalid file extension. Allowed extensions: .ts, .tsx, .js, .jsx, .mjs, .cjs, .mts, .cts, .json, .css, .png, .jpg, .jpeg, .gif, .svg, .webp, .avif, .ico, .woff, .woff2, .ttf, .eot, .otf"`;
 
 exports[`Application file upload reservation should fail when filePath is a folder path without extension (bare UUID) 1`] = `"Filename must have an extension"`;
 

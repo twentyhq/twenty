@@ -36,8 +36,8 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 @Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(JwtAuthGuard)
 @UseFilters(
-  PermissionsRestApiExceptionFilter,
   RestApiExceptionFilter,
+  PermissionsRestApiExceptionFilter,
   AuthRestApiExceptionFilter,
 )
 export class ApiKeyController {

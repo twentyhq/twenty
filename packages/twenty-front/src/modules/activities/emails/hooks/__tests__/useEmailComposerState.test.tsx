@@ -7,12 +7,20 @@ import { type ReactNode } from 'react';
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import {
   type SendAppChannelMessageMutation,
   type SendAppChannelMessageMutationVariables,
 } from '~/generated-metadata/graphql';
 
 const mockEnqueueToast = jest.fn();
+let mockIsMessageAttachmentEnabled = false;
+
+const EMPTY_BODY = serializePlainTextAsAdvancedTextEditorDocument('');
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsMessageAttachmentEnabled,
+}));
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -40,7 +48,7 @@ const createSendEmailMock = (input: {
         cc: undefined,
         bcc: undefined,
         subject: 'Hello',
-        body: '',
+        body: EMPTY_BODY,
         inReplyTo: undefined,
         draftMessageId: undefined,
         files: undefined,
@@ -90,7 +98,7 @@ const APP_REPLY_EMAIL_INPUT = {
   cc: undefined,
   bcc: undefined,
   subject: 'Re: Hello',
-  body: '',
+  body: EMPTY_BODY,
   inReplyTo: '<inbound-1@app>',
 };
 
@@ -164,6 +172,7 @@ const renderAppComposerState = ({
 describe('useEmailComposerState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsMessageAttachmentEnabled = false;
   });
 
   it('sends from the connected account when no alias was picked', async () => {
@@ -380,6 +389,41 @@ describe('useEmailComposerState', () => {
     });
 
     expect(result.current.files).toEqual([{ id: 'file-1', name: 'deck.pdf' }]);
+  });
+
+  it('sends attachments through the app when message attachments are enabled', async () => {
+    mockIsMessageAttachmentEnabled = true;
+
+    const onSent = jest.fn();
+    const attachments = [{ id: 'file-1', name: 'deck.pdf' }];
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        {
+          ...createSendAppChannelMessageMock(() => true),
+          request: {
+            query: SEND_APP_CHANNEL_MESSAGE,
+            variables: ({ input }) =>
+              JSON.stringify(input.email) ===
+                JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
+              JSON.stringify(input.attachments) === JSON.stringify(attachments),
+          },
+        } satisfies SendAppChannelMessageMockedResponse,
+      ],
+      onSent,
+    });
+
+    expect(result.current.canAttachFiles).toBe(true);
+
+    act(() => {
+      result.current.setFiles(attachments);
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

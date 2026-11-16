@@ -34,7 +34,7 @@ export const actorCompositeType: CompositeType = {
             label: `${FieldActorSource[key].toLowerCase()}`,
             value: key,
             position: index,
-          }) satisfies Required<FieldMetadataDefaultOption>,
+          }) satisfies FieldMetadataDefaultOption & { id: string },
       ),
     },
     {
@@ -66,5 +66,6 @@ export type ActorMetadata = {
     provider?: ConnectedAccountProvider;
     applicationId?: string;
     agentId?: string;
+    workflowId?: string;
   };
 };

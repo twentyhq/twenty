@@ -1,0 +1,50 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
+import { type ApplicationHealthCheckResultFieldsFragment } from '~/generated-metadata/graphql';
+
+type ApplicationHealthBanner = {
+  status: ApplicationHealthCheckResultFieldsFragment['status'];
+  title: string;
+  description?: string;
+  action?: { label: string; to: string };
+};
+
+export const getApplicationHealthBanner = ({
+  healthCheckResult,
+  fallbackLocation,
+}: {
+  healthCheckResult?: ApplicationHealthCheckResultFieldsFragment | null;
+  fallbackLocation?: string;
+}): ApplicationHealthBanner | undefined => {
+  if (!isDefined(healthCheckResult)) {
+    return undefined;
+  }
+
+  const { status, title, description, action } = healthCheckResult;
+
+  if (!isNonEmptyString(title)) {
+    return undefined;
+  }
+
+  const banner = {
+    status,
+    title,
+    ...(isNonEmptyString(description) ? { description } : {}),
+  };
+
+  if (!isDefined(action)) {
+    return banner;
+  }
+
+  const to = isNonEmptyString(action.location)
+    ? action.location
+    : fallbackLocation;
+
+  // An app supplies this string, so anything that could leave the workspace
+  // loses its button rather than becoming a redirect to somewhere else.
+  if (!isDefined(to) || !isSafeInternalPath(to)) {
+    return banner;
+  }
+
+  return { ...banner, action: { label: action.label, to } };
+};

@@ -5,6 +5,8 @@ export type RemoteEntry = {
   twentyCLIRefreshToken?: string;
   twentyCLIRegistrationClientId?: string;
   workspaceName?: string;
+  proxyHeaders?: Record<string, string>;
+  proxyHeaderCommand?: string;
   [field: string]: unknown;
 };
 

@@ -58,7 +58,6 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
-import { getWorkflowUsageSpenderId } from 'src/modules/workflow/workflow-executor/utils/get-workflow-usage-spender-id.util';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -158,7 +157,7 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const billingSpenders = {
-      workflowId: getWorkflowUsageSpenderId(workflow),
+      workflowId: workflow.id,
       applicationId: workflow.applicationId,
     };
 

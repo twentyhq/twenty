@@ -127,12 +127,12 @@ export class McpProtocolService {
     };
   }
 
-  private async buildActorContext(
+  private async buildActorMetadata(
     workspaceId: string,
     userId?: string,
     apiKey?: FlatApiKey,
   ): Promise<ActorMetadata> {
-    let actorContext: ActorMetadata = {
+    let actorMetadata: ActorMetadata = {
       source: FieldActorSource.AGENT,
       workspaceMemberId: null,
       name: 'Agent',
@@ -140,7 +140,7 @@ export class McpProtocolService {
     };
 
     if (isDefined(apiKey)) {
-      actorContext = {
+      actorMetadata = {
         source: FieldActorSource.AGENT,
         workspaceMemberId: null,
         name: apiKey.name,
@@ -157,7 +157,7 @@ export class McpProtocolService {
         : undefined;
 
       if (isDefined(workspaceMember)) {
-        actorContext = {
+        actorMetadata = {
           source: FieldActorSource.AGENT,
           workspaceMemberId: workspaceMember.id,
           name:
@@ -168,7 +168,7 @@ export class McpProtocolService {
       }
     }
 
-    return actorContext;
+    return actorMetadata;
   }
 
   private async buildMcpToolSet(
@@ -182,7 +182,7 @@ export class McpProtocolService {
       agentId?: string;
     },
   ): Promise<{ toolSet: McpToolSet; toolContext: ToolProviderContext }> {
-    const actorContext = await this.buildActorContext(
+    const actorMetadata = await this.buildActorMetadata(
       workspace.id,
       options?.userId,
       options?.apiKey,
@@ -195,7 +195,7 @@ export class McpProtocolService {
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
       agentId: options?.agentId,
-      actorContext,
+      actorMetadata,
     };
 
     const preloadedTools = await this.toolRegistry.getToolsByName(

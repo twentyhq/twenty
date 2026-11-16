@@ -461,7 +461,7 @@ export class AgentRunTurnService {
   private async buildAgentRegistryAccess({
     persona,
     workspaceId,
-    executionContext: { authContext, actorContext },
+    executionContext: { authContext, actorMetadata },
     additionalExcludedToolNames,
     toolLoadingStrategy,
   }: Pick<
@@ -491,7 +491,7 @@ export class AgentRunTurnService {
       agentId: persona.agentId ?? undefined,
       authContext: runAuthContext,
       application: getAuthContextApplication(runAuthContext),
-      actorContext,
+      actorMetadata,
       ...(isDefined(authContext) && isUserAuthContext(authContext)
         ? {
             userId: authContext.user.id,

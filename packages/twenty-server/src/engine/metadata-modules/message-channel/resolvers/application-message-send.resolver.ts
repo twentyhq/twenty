@@ -66,6 +66,7 @@ export class ApplicationMessageSendResolver {
       text: input.text,
       email: input.email,
       idempotencyKey: input.idempotencyKey,
+      attachments: input.attachments ?? [],
     });
   }
 }
