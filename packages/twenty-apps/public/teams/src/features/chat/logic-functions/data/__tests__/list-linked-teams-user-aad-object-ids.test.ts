@@ -68,6 +68,6 @@ describe('listLinkedTeamsUserAadObjectIdsOrThrow', () => {
 
     await expect(
       listLinkedTeamsUserAadObjectIdsOrThrow({ client, teamsTenantId: 'tenant-1' }),
-    ).rejects.toThrow('cannot be listed');
+    ).rejects.toThrow('cannot all be read at once');
   });
 });
