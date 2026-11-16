@@ -15,6 +15,24 @@ type PostSelfSignedSamlAssertionArgs = {
   workspacePersonalInviteToken?: string;
 };
 
+const buildRelayState = ({
+  workspaceInviteHash,
+  workspacePersonalInviteToken,
+}: Pick<
+  PostSelfSignedSamlAssertionArgs,
+  'workspaceInviteHash' | 'workspacePersonalInviteToken'
+>) => {
+  if (isDefined(workspacePersonalInviteToken)) {
+    return JSON.stringify({ token: workspacePersonalInviteToken });
+  }
+
+  if (isDefined(workspaceInviteHash)) {
+    return JSON.stringify({ workspaceInviteHash });
+  }
+
+  return undefined;
+};
+
 // Posts a self-signed SAML assertion for the given email to the provider's
 // callback, returning the URL the server redirects to (login token on success,
 // errorMessage on refusal).
@@ -35,10 +53,9 @@ export const postSelfSignedSamlAssertion = async ({
   return completeSamlLogin({
     callbackUrl: new URL(buildSamlCallbackUrl(identityProviderId)),
     samlResponse,
-    relayState: isDefined(workspacePersonalInviteToken)
-      ? JSON.stringify({ token: workspacePersonalInviteToken })
-      : isDefined(workspaceInviteHash)
-        ? JSON.stringify({ workspaceInviteHash })
-        : undefined,
+    relayState: buildRelayState({
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    }),
   });
 };

@@ -230,11 +230,10 @@ export class SsoAuthController {
     {
       workspacePersonalInviteToken,
       ...payload
-    }: {
-      email: string;
-      workspaceInviteHash?: string;
-      workspacePersonalInviteToken?: string;
-    },
+    }: Pick<
+      SamlRequest['user'],
+      'email' | 'workspaceInviteHash' | 'workspacePersonalInviteToken'
+    >,
     currentWorkspace: WorkspaceEntity,
     ssoContext?: {
       oidcTokenClaims?: Record<string, unknown>;

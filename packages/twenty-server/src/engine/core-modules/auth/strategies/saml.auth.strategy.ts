@@ -57,6 +57,21 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     .pipe(RELAY_STATE_PAYLOAD_SCHEMA),
 });
 
+const buildRelayState = ({
+  workspaceInviteHash,
+  workspacePersonalInviteToken,
+}: z.infer<typeof WORKSPACE_INVITE_PAYLOAD_SCHEMA>) => {
+  if (isNonEmptyString(workspacePersonalInviteToken)) {
+    return { token: workspacePersonalInviteToken };
+  }
+
+  if (isDefined(workspaceInviteHash)) {
+    return { workspaceInviteHash };
+  }
+
+  return undefined;
+};
+
 const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
 
 const SAML_ASSERTION_SCHEMA = z
@@ -176,11 +191,10 @@ export class SamlAuthStrategy extends PassportStrategy(
     const { workspaceInviteHash, workspacePersonalInviteToken } =
       queryParseResult.success ? queryParseResult.data : {};
 
-    const relayState = isNonEmptyString(workspacePersonalInviteToken)
-      ? { token: workspacePersonalInviteToken }
-      : isDefined(workspaceInviteHash)
-        ? { workspaceInviteHash }
-        : undefined;
+    const relayState = buildRelayState({
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    });
 
     super.authenticate(req, {
       ...options,
