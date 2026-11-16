@@ -64,6 +64,7 @@ import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 import { useLingui } from '@lingui/react/macro';
 
@@ -338,7 +339,7 @@ export const SettingsApplicationDetails = () => {
 
   const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
     settingsMenuItems: workspaceSettingsMenuItems,
-    hashTabId: hash.replace('#', ''),
+    hashTabId: parseTabRouteHash(hash).tabId,
   });
 
   if (isDefined(legacyTabIdRedirect)) {

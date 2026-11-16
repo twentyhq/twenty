@@ -9,10 +9,12 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default function role`,
   description: `${APP_DISPLAY_NAME} default function role`,
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: true,
-  canSoftDeleteAllObjectRecords: true,
-  canDestroyAllObjectRecords: false,
+  recordsPermissions: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: false,
+  },
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
 });

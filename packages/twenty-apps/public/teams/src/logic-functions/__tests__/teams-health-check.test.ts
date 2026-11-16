@@ -52,7 +52,7 @@ describe('teamsHealthCheckHandler', () => {
       status: 'WARNING',
       title: 'Microsoft Teams is not connected',
       description: expect.stringContaining('No working Microsoft Teams'),
-      action: { label: 'Add connection', location: '#general' },
+      action: { label: 'Open connections', location: '#general/connections' },
     });
 
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
@@ -86,7 +86,7 @@ describe('teamsHealthCheckHandler', () => {
       status: 'ERROR',
       title: 'Microsoft Teams connection needs to be reconnected',
       description: expect.stringContaining('Microsoft rejected the stored'),
-      action: { label: 'Manage connection', location: '#general' },
+      action: { label: 'Manage connection', location: '#general/connections' },
     });
 
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
@@ -100,7 +100,7 @@ describe('teamsHealthCheckHandler', () => {
       status: 'WARNING',
       title: 'Microsoft Teams chat needs a workspace connection',
       description: expect.stringContaining('personal connections do not count'),
-      action: { label: 'Add connection', location: '#general' },
+      action: { label: 'Open connections', location: '#general/connections' },
     });
 
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
