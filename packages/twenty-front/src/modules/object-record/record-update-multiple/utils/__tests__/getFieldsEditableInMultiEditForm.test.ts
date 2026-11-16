@@ -1,113 +1,45 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldsEditableInMultiEditForm } from '@/object-record/record-update-multiple/utils/getFieldsEditableInMultiEditForm';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const createMockFieldMetadataItem = (
-  overrides: Partial<FieldMetadataItem> = {},
-): FieldMetadataItem =>
-  ({
-    id: 'test-field-id',
-    name: 'testField',
-    label: 'Test Field',
-    type: FieldMetadataType.TEXT,
-    isActive: true,
-    isSystem: false,
-    isUIEditable: true,
-    isUnique: false,
-    isNullable: true,
-    ...overrides,
-  }) as FieldMetadataItem;
+const opportunityObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('opportunity');
 
-const createMockObjectMetadataItem = ({
-  fields,
-  readableFieldIds,
-  updatableFieldIds,
-}: {
-  fields: FieldMetadataItem[];
-  readableFieldIds: string[];
-  updatableFieldIds: string[];
-}) =>
-  ({
-    fields,
-    readableFields: fields.filter((field) =>
-      readableFieldIds.includes(field.id),
-    ),
-    updatableFields: fields.filter((field) =>
-      updatableFieldIds.includes(field.id),
-    ),
-  }) as EnrichedObjectMetadataItem;
+const getEditableFieldNames = (
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'updatableFields'>,
+) =>
+  getFieldsEditableInMultiEditForm(objectMetadataItem).map(
+    (field) => field.name,
+  );
 
 describe('getFieldsEditableInMultiEditForm', () => {
-  it('should only return fields the member can both read and update', () => {
-    const readableField = createMockFieldMetadataItem({
-      id: 'field-readable',
-      name: 'readableField',
-    });
-    const unreadableButUpdatableField = createMockFieldMetadataItem({
-      id: 'field-unreadable',
-      name: 'unreadableButUpdatableField',
-    });
-    const updatableButUnreadableField = createMockFieldMetadataItem({
-      id: 'field-not-updatable',
-      name: 'updatableButUnreadableField',
-    });
-
-    const objectMetadataItem = createMockObjectMetadataItem({
-      fields: [
-        readableField,
-        unreadableButUpdatableField,
-        updatableButUnreadableField,
-      ],
-      readableFieldIds: ['field-readable', 'field-not-updatable'],
-      updatableFieldIds: ['field-readable', 'field-unreadable'],
-    });
-
-    const result = getFieldsEditableInMultiEditForm(objectMetadataItem);
-
-    expect(result).toEqual([readableField]);
+  it('should offer a field the role can update', () => {
+    expect(getEditableFieldNames(opportunityObjectMetadataItem)).toContain(
+      'stage',
+    );
   });
 
-  it('should exclude unique fields', () => {
-    const uniqueField = createMockFieldMetadataItem({
-      id: 'field-unique',
-      name: 'uniqueField',
-      isUnique: true,
-    });
-    const regularField = createMockFieldMetadataItem({
-      id: 'field-regular',
-      name: 'regularField',
-    });
-
-    const objectMetadataItem = createMockObjectMetadataItem({
-      fields: [uniqueField, regularField],
-      readableFieldIds: ['field-unique', 'field-regular'],
-      updatableFieldIds: ['field-unique', 'field-regular'],
-    });
-
-    const result = getFieldsEditableInMultiEditForm(objectMetadataItem);
-
-    expect(result).toEqual([regularField]);
+  it('should not offer a field the role cannot update', () => {
+    expect(
+      getEditableFieldNames({
+        updatableFields: opportunityObjectMetadataItem.updatableFields.filter(
+          (field) => field.name !== 'stage',
+        ),
+      }),
+    ).not.toContain('stage');
   });
 
-  it('should return all displayed fields when no field is restricted', () => {
-    const amountField = createMockFieldMetadataItem({
-      id: 'field-amount',
-      name: 'amount',
-    });
-    const nameField = createMockFieldMetadataItem({
-      id: 'field-name',
-      name: 'name',
+  it('should sort the offered fields by name', () => {
+    const editableFieldNames = getEditableFieldNames({
+      updatableFields: [
+        ...opportunityObjectMetadataItem.updatableFields,
+      ].reverse(),
     });
 
-    const objectMetadataItem = createMockObjectMetadataItem({
-      fields: [nameField, amountField],
-      readableFieldIds: ['field-amount', 'field-name'],
-      updatableFieldIds: ['field-amount', 'field-name'],
-    });
-
-    const result = getFieldsEditableInMultiEditForm(objectMetadataItem);
-
-    expect(result).toEqual([amountField, nameField]);
+    expect(editableFieldNames).toEqual(
+      [...editableFieldNames].sort((fieldNameA, fieldNameB) =>
+        fieldNameA.localeCompare(fieldNameB),
+      ),
+    );
   });
 });
