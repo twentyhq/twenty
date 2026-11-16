@@ -120,19 +120,39 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
       return resolveAccessors(value.slice(head.start, head.end), rest);
     }
     case 'wildcard': {
-      if (Array.isArray(value)) {
-        return value.map((child) => resolveAccessors(child, rest));
-      }
-
-      if (isObject(value)) {
-        return Object.values(value).map((child) =>
-          resolveAccessors(child, rest),
+      if (!Array.isArray(value) && (!isObject(value) || isNull(value))) {
+        throw new JsonPathError(
+          `Cannot apply wildcard to ${describeType(value)}`,
         );
       }
 
-      throw new JsonPathError(
-        `Cannot apply wildcard to ${describeType(value)}`,
-      );
+      const items = Array.isArray(value) ? value : Object.values(value);
+
+      if (!isNonEmptyArray(rest)) {
+        return items;
+      }
+
+      const results: unknown[] = [];
+      let lastError: JsonPathError | null = null;
+
+      for (const child of items) {
+        try {
+          results.push(resolveAccessors(child, rest));
+        } catch (error) {
+          if (error instanceof JsonPathError) {
+            lastError = error;
+            continue;
+          }
+
+          throw error;
+        }
+      }
+
+      if (results.length === 0 && lastError !== null) {
+        throw lastError;
+      }
+
+      return results;
     }
   }
 };

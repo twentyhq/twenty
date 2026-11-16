@@ -109,6 +109,46 @@ describe('extractJsonPath', () => {
     ).toEqual([{ code: 'BOOM' }]);
   });
 
+  it('skips wildcard items that do not match the rest of the path', () => {
+    const dataWithOptionalFields = {
+      workflowRun: {
+        steps: [
+          { id: 's1', status: 'SUCCESS' },
+          { id: 's2', status: 'FAILED', error: 'boom' },
+        ],
+      },
+    };
+
+    expect(
+      extractJsonPath({
+        data: dataWithOptionalFields,
+        path: '$.workflowRun.steps[*].error',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toEqual(['boom']);
+  });
+
+  it('throws when no wildcard item matches the rest of the path', () => {
+    const dataWithOptionalFields = {
+      workflowRun: {
+        steps: [
+          { id: 's1', status: 'SUCCESS' },
+          { id: 's2', status: 'FAILED' },
+        ],
+      },
+    };
+
+    expect(() =>
+      extractJsonPath({
+        data: dataWithOptionalFields,
+        path: '$.workflowRun.steps[*].error',
+        maxItems: 20,
+        maxDepth: 5,
+      }),
+    ).toThrow(JsonPathError);
+  });
+
   it('throws on missing key', () => {
     expect(() =>
       extractJsonPath({ data, path: '$.nope', maxItems: 20, maxDepth: 5 }),
