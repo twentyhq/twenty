@@ -11,6 +11,7 @@ import {
   type VerifyWithRequest,
 } from '@node-saml/passport-saml';
 import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,6 +29,16 @@ const WORKSPACE_INVITE_PAYLOAD_SCHEMA = z.object({
   workspacePersonalInviteToken: z.string().optional(),
 });
 
+const RELAY_STATE_PAYLOAD_SCHEMA = z
+  .object({
+    workspaceInviteHash: z.string().optional(),
+    token: z.string().optional(),
+  })
+  .transform(({ workspaceInviteHash, token }) => ({
+    workspaceInviteHash,
+    workspacePersonalInviteToken: token,
+  }));
+
 const RELAY_STATE_BODY_SCHEMA = z.object({
   RelayState: z
     .string()
@@ -43,7 +54,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
         return z.NEVER;
       }
     })
-    .pipe(WORKSPACE_INVITE_PAYLOAD_SCHEMA),
+    .pipe(RELAY_STATE_PAYLOAD_SCHEMA),
 });
 
 const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
@@ -165,25 +176,23 @@ export class SamlAuthStrategy extends PassportStrategy(
     const { workspaceInviteHash, workspacePersonalInviteToken } =
       queryParseResult.success ? queryParseResult.data : {};
 
+    const relayState = isNonEmptyString(workspacePersonalInviteToken)
+      ? { token: workspacePersonalInviteToken }
+      : isDefined(workspaceInviteHash)
+        ? { workspaceInviteHash }
+        : undefined;
+
     super.authenticate(req, {
       ...options,
-      ...(workspaceInviteHash !== undefined ||
-      workspacePersonalInviteToken !== undefined
-        ? {
-            additionalParams: {
-              RelayState: JSON.stringify({
-                workspaceInviteHash,
-                workspacePersonalInviteToken,
-              }),
-            },
-          }
+      ...(isDefined(relayState)
+        ? { additionalParams: { RelayState: JSON.stringify(relayState) } }
         : {}),
     });
   }
 
   private extractInvitePayload(
     req: Pick<Request, 'body'>,
-  ): z.infer<typeof WORKSPACE_INVITE_PAYLOAD_SCHEMA> {
+  ): Partial<z.infer<typeof RELAY_STATE_PAYLOAD_SCHEMA>> {
     const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
     return result.success ? result.data.RelayState : {};
