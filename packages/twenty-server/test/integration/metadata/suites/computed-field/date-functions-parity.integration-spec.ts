@@ -53,6 +53,7 @@ const PARITY_CASES: ParityCase[] = [
   ['dateDiff', ['2026-03-01', '2026-01-31', 'MONTH'], -1],
   ['dateDiff', ['2026-03-31', '2026-01-31', 'MONTH'], -2],
   ['dateDiff', ['2026-01-15', '2026-07-15', 'QUARTER'], 2],
+  ['dateDiff', ['2026-09-06', '2026-10-06', 'MONTH'], 1],
   ['dateDiff', ['2024-02-29', '2025-02-28', 'YEAR'], 0],
   ['dateDiff', ['2025-09-23', '2026-09-23T00:00:00.000Z', 'YEAR'], 1],
   ['dateAdd', ['2026-09-23', 3, 'DAY'], '2026-09-26'],
@@ -158,7 +159,13 @@ const toComparableSelect = ({
   }
 };
 
-const evaluateInPostgres = async (expression: string) => {
+const evaluateInPostgres = async ({
+  expression,
+  sessionTimeZone,
+}: {
+  expression: string;
+  sessionTimeZone: string;
+}) => {
   const { sql, type, parameters } = compileComputedFieldExpressionToSql({
     expression,
     resolveField: () => {
@@ -173,10 +180,25 @@ const evaluateInPostgres = async (expression: string) => {
       {},
     );
 
-  const [row] = await globalThis.testDataSource.query(query, values);
+  const queryRunner = globalThis.testDataSource.createQueryRunner();
 
-  return row.value;
+  await queryRunner.connect();
+
+  try {
+    await queryRunner.startTransaction();
+    await queryRunner.query(`SET LOCAL TIME ZONE '${sessionTimeZone}'`);
+
+    const [row] = await queryRunner.query(query, values);
+
+    return row.value;
+  } finally {
+    await queryRunner.rollbackTransaction();
+    await queryRunner.release();
+  }
 };
+
+// America/Santiago starts daylight saving at midnight (on 2026-09-06), so local midnights are skipped
+const SESSION_TIME_ZONES = ['UTC', 'America/Santiago'];
 
 describe('date functions: shared evaluator and Postgres agree', () => {
   it.each(PARITY_CASES)(
@@ -186,11 +208,14 @@ describe('date functions: shared evaluator and Postgres agree', () => {
         EVALUATOR_BY_FUNCTION_NAME[functionName](...functionArguments),
       ).toBe(expected);
 
-      expect(
-        await evaluateInPostgres(
-          `${functionName}(${functionArguments.map(toExpressionLiteral).join(', ')})`,
-        ),
-      ).toBe(expected);
+      for (const sessionTimeZone of SESSION_TIME_ZONES) {
+        expect(
+          await evaluateInPostgres({
+            expression: `${functionName}(${functionArguments.map(toExpressionLiteral).join(', ')})`,
+            sessionTimeZone,
+          }),
+        ).toBe(expected);
+      }
     },
   );
 });

@@ -84,7 +84,7 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     [
       "dateDiff(dueAt, today, 'QUARTER')",
-      `TRUNC((EXTRACT(YEAR FROM AGE((NOW() AT TIME ZONE 'UTC')::date, "record"."dueAt")) * 12 + EXTRACT(MONTH FROM AGE((NOW() AT TIME ZONE 'UTC')::date, "record"."dueAt"))) / 3.0)`,
+      `TRUNC((EXTRACT(YEAR FROM AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp)) * 12 + EXTRACT(MONTH FROM AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp))) / 3.0)`,
       NUMBER,
     ],
     [
@@ -204,7 +204,7 @@ describe('compileComputedFieldExpressionToSql', () => {
     expect(
       compile("dateDiff('2026-01-31', '2026-03-01T10:00:00Z', 'MONTH')"),
     ).toEqual({
-      sql: `(EXTRACT(YEAR FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)) * 12 + EXTRACT(MONTH FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date, :text0::date)))`,
+      sql: `(EXTRACT(YEAR FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp)) * 12 + EXTRACT(MONTH FROM AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp)))`,
       type: NUMBER,
       parameters: {
         text0: '2026-01-31',

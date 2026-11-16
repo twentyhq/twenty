@@ -396,7 +396,8 @@ const compileDateDiff = (
     case 'MONTH':
     case 'QUARTER':
     case 'YEAR': {
-      const age = `AGE(${toUtcDateSql(to)}, ${toUtcDateSql(from)})`;
+      // Without the cast AGE resolves to timestamptz, where a midnight DST change in the session time zone loses a month
+      const age = `AGE(${toUtcDateSql(to)}::timestamp, ${toUtcDateSql(from)}::timestamp)`;
       const months = `(EXTRACT(YEAR FROM ${age}) * 12 + EXTRACT(MONTH FROM ${age}))`;
 
       return value(
