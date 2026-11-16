@@ -43,7 +43,7 @@ import {
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { namespaceSqlParameters } from 'src/engine/twenty-orm/computed-column/utils/namespace-sql-parameters.util';
-import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
+import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-field-expression-sql.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';

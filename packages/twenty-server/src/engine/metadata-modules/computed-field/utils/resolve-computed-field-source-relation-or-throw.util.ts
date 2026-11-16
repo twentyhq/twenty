@@ -2,10 +2,8 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isComputedField, isDefined } from 'twenty-shared/utils';
 
 import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
-import {
-  type ComputedFieldSchemaField,
-  type ComputedFieldSchemaReader,
-} from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
+import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
+import { type ComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-reader.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 
 export const resolveComputedFieldSourceRelationOrThrow = <

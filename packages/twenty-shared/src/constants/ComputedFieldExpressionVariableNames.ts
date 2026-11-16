@@ -3,6 +3,3 @@ export const COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES = [
   'now',
   'today',
 ] as const;
-
-export type ComputedFieldExpressionVariableName =
-  (typeof COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES)[number];

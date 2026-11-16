@@ -1,10 +1,6 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-export type ComputedFieldToOneRelationHop<TObject, TField> = {
-  relationField: TField;
-  joinColumnName: string;
-  targetObject: TObject;
-};
+import { type ComputedFieldToOneRelationHop } from 'src/engine/metadata-modules/computed-field/types/computed-field-to-one-relation-hop.type';
 
 export type ComputedFieldPathResolution<TObject, TField> = {
   toOneRelationHops: ComputedFieldToOneRelationHop<TObject, TField>[];

@@ -17,10 +17,8 @@ export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapEleme
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
-export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionNames';
 export { COMPUTED_FIELD_EXPRESSION_FUNCTION_NAMES } from './ComputedFieldExpressionFunctionNames';
 export { COMPUTED_FIELD_EXPRESSION_MAX_LENGTH } from './ComputedFieldExpressionMaxLength';
-export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableNames';
 export { COMPUTED_FIELD_EXPRESSION_VARIABLE_NAMES } from './ComputedFieldExpressionVariableNames';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';
 export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';
@@ -53,6 +51,7 @@ export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldName
 export { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from './ExpressionParserDisabledMathOperators';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
+export { FIELD_METADATA_ROLLUP_OPERATIONS } from './FieldMetadataRollupOperations';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';
 export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperators';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';

@@ -1,12 +1,5 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
-
+import { type ComputedFieldSchemaField } from 'src/engine/metadata-modules/computed-field/types/computed-field-schema-field.type';
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-
-export type ComputedFieldSchemaField = {
-  name: string;
-  type: FieldMetadataType;
-  computation?: unknown;
-};
 
 // How an expression's field names are looked up: by id at query time, by universal identifier when metadata is validated
 export type ComputedFieldSchemaReader<

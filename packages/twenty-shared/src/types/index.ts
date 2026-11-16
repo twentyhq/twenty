@@ -73,6 +73,9 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionName';
+export type { ComputedFieldExpressionInstruction } from './ComputedFieldExpressionInstruction';
+export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableName';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
@@ -94,14 +97,7 @@ export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEnd
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
 export { FeatureFlagKey } from './FeatureFlagKey';
-export type {
-  FieldMetadataRollupOperation,
-  FieldMetadataFormulaComputation,
-  FieldMetadataRollupComputation,
-  FieldMetadataFilteredRelationComputation,
-  FieldMetadataComputation,
-} from './FieldMetadataComputation';
-export { FIELD_METADATA_ROLLUP_OPERATIONS } from './FieldMetadataComputation';
+export type { FieldMetadataComputation } from './FieldMetadataComputation';
 export type {
   FieldMetadataDefaultValueFunctionNames,
   FieldMetadataDefaultValueUuidFunction,
@@ -124,6 +120,8 @@ export {
   FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE,
   isFieldMetadataTypeWithDefaultValue,
 } from './FieldMetadataDefaultValue';
+export type { FieldMetadataFilteredRelationComputation } from './FieldMetadataFilteredRelationComputation';
+export type { FieldMetadataFormulaComputation } from './FieldMetadataFormulaComputation';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type {
@@ -134,6 +132,8 @@ export {
   FieldMetadataDefaultOption,
   FieldMetadataComplexOption,
 } from './FieldMetadataOptions';
+export type { FieldMetadataRollupComputation } from './FieldMetadataRollupComputation';
+export type { FieldMetadataRollupOperation } from './FieldMetadataRollupOperation';
 export type {
   FieldNumberVariant,
   FieldCurrencyFormat,

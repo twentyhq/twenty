@@ -281,10 +281,13 @@ export class FlatFieldMetadataValidatorService {
             flatObjectMetadataMaps,
             flatFieldMetadataMapsList: [finalFlatEntityMaps],
           }),
+          // Turning the flag off must not freeze the label or state of existing computed fields
           isComputedFieldsEnabled:
-            additionalCacheDataMaps.featureFlagsMap[
+            !isDefined(flatEntityUpdate.computation) ||
+            (additionalCacheDataMaps.featureFlagsMap[
               FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
-            ] ?? false,
+            ] ??
+              false),
         }),
       );
     }

@@ -21,7 +21,11 @@ export const mergeFilteredRelationQueryArguments = ({
 
   return {
     ...requestedArguments,
-    orderBy: requestedArguments.orderBy ?? orderBy,
+    // With a stored limit, the stored order decides which records are in the relation
+    orderBy:
+      isDefined(limit) && isDefined(orderBy)
+        ? orderBy
+        : (requestedArguments.orderBy ?? orderBy),
     first: limits.length > 0 ? Math.min(...limits) : undefined,
   };
 };
