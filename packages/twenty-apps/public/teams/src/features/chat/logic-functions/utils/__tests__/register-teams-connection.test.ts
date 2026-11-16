@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
+import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { registerTeamsConnection } from 'src/features/chat/logic-functions/utils/register-teams-connection';
 
@@ -9,6 +10,7 @@ const {
   releaseFlags,
   kvGetMock,
   kvSetMock,
+  kvDeleteMock,
   getConnectionMock,
   fetchGraphJsonMock,
   releaseMock,
@@ -16,6 +18,7 @@ const {
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
   kvSetMock: vi.fn(),
+  kvDeleteMock: vi.fn(),
   getConnectionMock: vi.fn(),
   fetchGraphJsonMock: vi.fn(),
   releaseMock: vi.fn(),
@@ -26,7 +29,7 @@ vi.mock('src/constants/release-flags', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  kv: { get: kvGetMock, set: kvSetMock },
+  kv: { get: kvGetMock, set: kvSetMock, delete: kvDeleteMock },
   getConnection: getConnectionMock,
 }));
 
@@ -42,10 +45,24 @@ vi.mock(
 
 const CONNECTED_ACCOUNT_ID = 'connected-account-id';
 const TENANT_ID = 'tenant-id';
+const CONNECTED_ACCOUNT_TENANT_KV_KEY =
+  buildTeamsConnectedAccountTenantKvKey(CONNECTED_ACCOUNT_ID);
+const CLAIM_CONFLICT_KV_KEY =
+  buildTeamsTenantClaimConflictKvKey(CONNECTED_ACCOUNT_ID);
+
+const rejectServerClaim = () => {
+  kvSetMock.mockImplementation(
+    async (_key: string, _value: unknown, options?: { scope: string }) => {
+      if (options?.scope === 'SERVER') {
+        throw new Error('kv.set() failed: already claimed');
+      }
+    },
+  );
+};
 
 describe('registerTeamsConnection', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     getConnectionMock.mockResolvedValue({
@@ -68,15 +85,59 @@ describe('registerTeamsConnection', () => {
     });
     expect(kvSetMock).toHaveBeenNthCalledWith(
       1,
-      buildTeamsConnectedAccountTenantKvKey(CONNECTED_ACCOUNT_ID),
-      TENANT_ID,
-    );
-    expect(kvSetMock).toHaveBeenNthCalledWith(
-      2,
       buildTeamsTenantKvKey(TENANT_ID),
       null,
       { scope: 'SERVER' },
     );
+    expect(kvSetMock).toHaveBeenNthCalledWith(
+      2,
+      CONNECTED_ACCOUNT_TENANT_KV_KEY,
+      TENANT_ID,
+    );
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
+  });
+
+  it('should record the conflict instead of failing when another workspace holds the tenant', async () => {
+    rejectServerClaim();
+    kvGetMock.mockImplementation(
+      async (_key: string, options?: { scope: string }) =>
+        options?.scope === 'SERVER' ? 'other-workspace-id' : null,
+    );
+
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+      }),
+    ).toEqual({ claimedTenantId: null, conflictingTenantId: TENANT_ID });
+    expect(kvSetMock).toHaveBeenCalledTimes(2);
+    expect(kvSetMock).toHaveBeenNthCalledWith(
+      1,
+      buildTeamsTenantKvKey(TENANT_ID),
+      null,
+      { scope: 'SERVER' },
+    );
+    expect(kvSetMock).toHaveBeenNthCalledWith(2, CLAIM_CONFLICT_KV_KEY, {
+      tenantId: TENANT_ID,
+      failedAt: expect.any(String),
+    });
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(
+      CONNECTED_ACCOUNT_TENANT_KV_KEY,
+    );
+    expect(releaseMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail for a retry when the claim fails while nobody holds the tenant', async () => {
+    rejectServerClaim();
+
+    await expect(
+      registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID }),
+    ).rejects.toThrow('already claimed');
+    expect(kvSetMock).toHaveBeenCalledExactlyOnceWith(
+      buildTeamsTenantKvKey(TENANT_ID),
+      null,
+      { scope: 'SERVER' },
+    );
+    expect(kvDeleteMock).not.toHaveBeenCalled();
   });
 
   it('should release the previous tenant when a reconnect signs in to another tenant', async () => {
@@ -111,6 +172,7 @@ describe('registerTeamsConnection', () => {
     });
     expect(fetchGraphJsonMock).not.toHaveBeenCalled();
     expect(kvSetMock).not.toHaveBeenCalled();
+    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
   });
 
   it('should release the claim instead of claiming while chat is disabled for the workspace', async () => {

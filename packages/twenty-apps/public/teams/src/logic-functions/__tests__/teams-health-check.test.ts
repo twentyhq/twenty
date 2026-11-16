@@ -1,12 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
+import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { teamsHealthCheckHandler } from 'src/logic-functions/teams-health-check';
 
-const { listTeamsConnectionsMock, releaseFlags } = vi.hoisted(() => ({
-  listTeamsConnectionsMock: vi.fn(),
-  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
+const { listTeamsConnectionsMock, kvGetMock, releaseFlags } = vi.hoisted(
+  () => ({
+    listTeamsConnectionsMock: vi.fn(),
+    kvGetMock: vi.fn(),
+    releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
+  }),
+);
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  kv: { get: kvGetMock },
 }));
 
 vi.mock('src/constants/release-flags', () => ({
@@ -41,6 +49,7 @@ describe('teamsHealthCheckHandler', () => {
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
     vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
     listTeamsConnectionsMock.mockResolvedValue([]);
+    kvGetMock.mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -116,6 +125,41 @@ describe('teamsHealthCheckHandler', () => {
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
 
     expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('should report chat as taken when the workspace connection lost its tenant claim', async () => {
+    enableChat();
+    listTeamsConnectionsMock.mockResolvedValue([
+      PERSONAL_CONNECTION,
+      WORKSPACE_CONNECTION,
+    ]);
+    kvGetMock.mockResolvedValue({
+      tenantId: 'tenant-id',
+      failedAt: '2026-11-16T00:00:00.000Z',
+    });
+
+    await expect(teamsHealthCheckHandler()).resolves.toEqual({
+      status: 'ERROR',
+      title: 'Microsoft Teams chat is taken by another workspace',
+      description: expect.stringContaining('Transcripts still import here'),
+      action: { label: 'Manage connection', location: '#general' },
+    });
+
+    expect(kvGetMock).toHaveBeenCalledExactlyOnceWith(
+      buildTeamsTenantClaimConflictKvKey(WORKSPACE_CONNECTION.id),
+    );
+  });
+
+  it('should not look for lost claims while chat is off', async () => {
+    listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
+    kvGetMock.mockResolvedValue({
+      tenantId: 'tenant-id',
+      failedAt: '2026-11-16T00:00:00.000Z',
+    });
+
+    await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+
+    expect(kvGetMock).not.toHaveBeenCalled();
   });
 
   it('should report nothing when no feature needs a connection', async () => {
