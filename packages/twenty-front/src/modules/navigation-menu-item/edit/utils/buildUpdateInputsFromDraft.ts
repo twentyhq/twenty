@@ -32,7 +32,7 @@ export const buildUpdateInputsFromDraft = ({
     }
 
     const positionChanged = original.position !== draftItem.position;
-    const folderIdChanged =
+    const parentIdChanged =
       (original.parentId ?? null) !== (draftItem.parentId ?? null);
     const nameChanged =
       (isNavigationMenuItemFolder(draftItem) ||
@@ -50,7 +50,7 @@ export const buildUpdateInputsFromDraft = ({
 
     if (
       !positionChanged &&
-      !folderIdChanged &&
+      !parentIdChanged &&
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
@@ -64,7 +64,7 @@ export const buildUpdateInputsFromDraft = ({
     if (positionChanged) {
       updatePayload.position = draftItem.position;
     }
-    if (folderIdChanged) {
+    if (parentIdChanged) {
       updatePayload.parentId = isDefined(draftItem.parentId)
         ? resolveFolderId(draftItem.parentId)
         : null;

@@ -21,10 +21,10 @@ export const resolveNavigationMenuItemParentIdAlias = <
     inputWithoutFolderId.parentId !== folderId
   ) {
     throw new NavigationMenuItemException(
-      'parentId and folderId must not differ',
+      'parentId and folderId must match',
       NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
       {
-        userFriendlyMessage: msg`Pass parentId only, folderId is deprecated.`,
+        userFriendlyMessage: msg`parentId and folderId must match. folderId is deprecated, use parentId.`,
       },
     );
   }

@@ -301,13 +301,13 @@ export class FlatNavigationMenuItemValidatorService {
       return validationResult;
     }
 
-    const newFolderUniversalIdentifier = parentUniversalIdentifierUpdate;
+    const newParentUniversalIdentifier = parentUniversalIdentifierUpdate;
 
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {
         navigationMenuItemUniversalIdentifier:
           fromFlatNavigationMenuItem.universalIdentifier,
-        parentUniversalIdentifier: newFolderUniversalIdentifier,
+        parentUniversalIdentifier: newParentUniversalIdentifier,
         flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       },
     );
@@ -318,7 +318,7 @@ export class FlatNavigationMenuItemValidatorService {
 
     const referencedParentNavigationMenuItem =
       findFlatEntityByUniversalIdentifier({
-        universalIdentifier: newFolderUniversalIdentifier,
+        universalIdentifier: newParentUniversalIdentifier,
         flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
       });
 
