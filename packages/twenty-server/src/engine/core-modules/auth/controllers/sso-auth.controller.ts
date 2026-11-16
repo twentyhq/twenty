@@ -251,10 +251,7 @@ export class SsoAuthController {
     let invitation: AppTokenEntity | undefined;
 
     if (isDefined(existingUser)) {
-      const hasInstancePrivileges =
-        existingUser.canAccessFullAdminPanel || existingUser.canImpersonate;
-
-      const personalInvitation = isNonEmptyString(workspacePersonalInviteToken)
+      invitation = isNonEmptyString(workspacePersonalInviteToken)
         ? await this.authService.findInvitationForSignInUp({
             currentWorkspace,
             workspacePersonalInviteToken,
@@ -262,31 +259,24 @@ export class SsoAuthController {
           })
         : undefined;
 
-      if (isDefined(personalInvitation) && !hasInstancePrivileges) {
-        invitation = personalInvitation;
-      } else {
-        try {
-          await this.userService.hasUserAccessToWorkspaceOrThrow(
-            existingUser.id,
-            currentWorkspace.id,
-          );
-        } catch (error) {
-          const isAccessDenied =
-            error instanceof AuthException &&
-            error.code === AuthExceptionCode.FORBIDDEN_EXCEPTION;
+      if (
+        isDefined(invitation) &&
+        (existingUser.canAccessFullAdminPanel || existingUser.canImpersonate)
+      ) {
+        throw new AuthException(
+          'Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.`,
+          },
+        );
+      }
 
-          if (!isAccessDenied || !isDefined(personalInvitation)) {
-            throw error;
-          }
-
-          throw new AuthException(
-            'Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-            {
-              userFriendlyMessage: msg`Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.`,
-            },
-          );
-        }
+      if (!isDefined(invitation)) {
+        await this.userService.hasUserAccessToWorkspaceOrThrow(
+          existingUser.id,
+          currentWorkspace.id,
+        );
       }
     } else {
       invitation = await this.authService.findInvitationForSignInUp({
