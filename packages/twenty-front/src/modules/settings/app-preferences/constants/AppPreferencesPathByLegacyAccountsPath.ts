@@ -1,6 +1,6 @@
 import { SettingsPath } from 'twenty-shared/types';
 
-// TODO: remove these legacy redirects after 2027-02-16, once the published apps and companion stop linking here.
+// TODO(@ehconitin): remove these legacy redirects after 2027-02-16, once the published apps and companion stop linking here.
 export const APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH = {
   accounts: SettingsPath.AppPreferences,
   'accounts/emails': SettingsPath.AppPreferences,
