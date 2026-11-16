@@ -2,14 +2,19 @@ import { type NavigationMenuItemManifest } from '@/application/navigationMenuIte
 import { isDefined } from '@/utils/validation/isDefined';
 
 // TODO: remove with folderUniversalIdentifier once published apps no longer send it
-export const normalizeNavigationMenuItemManifest = (
-  navigationMenuItemManifest: NavigationMenuItemManifest,
-): NavigationMenuItemManifest => {
+export const normalizeNavigationMenuItemManifest = <
+  TNavigationMenuItemManifest extends Pick<
+    NavigationMenuItemManifest,
+    'parentUniversalIdentifier' | 'folderUniversalIdentifier'
+  >,
+>(
+  navigationMenuItemManifest: TNavigationMenuItemManifest,
+): Omit<TNavigationMenuItemManifest, 'folderUniversalIdentifier'> => {
   const { folderUniversalIdentifier, ...manifestWithoutFolder } =
     navigationMenuItemManifest;
 
   const parentUniversalIdentifier =
-    manifestWithoutFolder.parentUniversalIdentifier ??
+    navigationMenuItemManifest.parentUniversalIdentifier ??
     folderUniversalIdentifier;
 
   return isDefined(parentUniversalIdentifier)
