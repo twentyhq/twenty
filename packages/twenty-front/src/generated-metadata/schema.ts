@@ -1855,6 +1855,7 @@ export type CreateEmailingDomainInput = {
 };
 
 export type CreateFieldInput = {
+  computation?: InputMaybe<Scalars['JSON']['input']>;
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -2663,6 +2664,7 @@ export enum FeatureFlagKey {
 export type Field = {
   __typename?: 'Field';
   applicationId: Scalars['UUID']['output'];
+  computation?: Maybe<Scalars['JSON']['output']>;
   createdAt: Scalars['DateTime']['output'];
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -7878,6 +7880,7 @@ export type UpdateEmailGroupChannelInput = {
 };
 
 export type UpdateFieldInput = {
+  computation?: InputMaybe<Scalars['JSON']['input']>;
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
