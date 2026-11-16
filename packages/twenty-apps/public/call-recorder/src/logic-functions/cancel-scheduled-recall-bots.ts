@@ -1,44 +1,73 @@
+import { isArray, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { type ScheduledRecallBotCancellation } from 'src/logic-functions/types/scheduled-recall-bot-cancellation.type';
 import {
   cancelScheduledRecallBots,
   type CancelScheduledRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
+import { type PlanScheduledRecallBotCancellationsResult } from 'src/logic-functions/flows/plan-scheduled-recall-bot-cancellations-result.type';
+import { planScheduledRecallBotCancellations } from 'src/logic-functions/flows/plan-scheduled-recall-bot-cancellations.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export const cancelScheduledRecallBotsHandler =
-  async (): Promise<CancelScheduledRecallBotsResult> => {
-    try {
-      const result = await cancelScheduledRecallBots({
-        client: new CoreApiClient(),
-      });
+export const cancelScheduledRecallBotsHandler = async (
+  payload: unknown,
+): Promise<
+  CancelScheduledRecallBotsResult | PlanScheduledRecallBotCancellationsResult
+> => {
+  const client = new CoreApiClient({
+    runAs: 'application',
+    fetch: fetchWithRateLimitRetry,
+  });
+  const scheduledRecallBotCancellations =
+    asRecord(payload)?.scheduledRecallBotCancellations;
 
-      if (result.hasMore) {
-        await enqueueLogicFunctionJobs({
-          logicFunctionUniversalIdentifier:
-            CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-          payloads: [{}],
-        });
-      }
+  if (isArray(scheduledRecallBotCancellations)) {
+    return cancelScheduledRecallBots({
+      client,
+      scheduledRecallBotCancellations: parseScheduledRecallBotCancellations(
+        scheduledRecallBotCancellations,
+      ),
+    });
+  }
 
-      return result;
-    } catch (error) {
-      throw buildRetryableStepFailure(
-        'scheduled Recall bot cancellation',
-        error,
-      );
-    }
-  };
+  try {
+    return await planScheduledRecallBotCancellations({
+      client,
+      now: new Date(),
+    });
+  } catch (error) {
+    throw buildRetryableStepFailure(
+      'scheduled Recall bot cancellation planning',
+      error,
+    );
+  }
+};
+
+const parseScheduledRecallBotCancellations = (
+  scheduledRecallBotCancellations: unknown[],
+): ScheduledRecallBotCancellation[] =>
+  scheduledRecallBotCancellations.flatMap((scheduledRecallBotCancellation) => {
+    const record = asRecord(scheduledRecallBotCancellation);
+    const callRecordingId = getString(record?.callRecordingId);
+    const externalBotId = getString(record?.externalBotId);
+
+    return isUndefined(callRecordingId) || isUndefined(externalBotId)
+      ? []
+      : [{ callRecordingId, externalBotId }];
+  });
 
 export default defineLogicFunction({
   universalIdentifier:
     CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cancel-scheduled-recall-bots',
   description:
-    'Deletes the Recall bots of canceled recording requests in bounded slices, re-enqueueing itself while more remain. The follow-up armed with each cancellation stays the backstop.',
+    'Cancels the Recall bots of canceled recording requests, soonest meeting first, paced per minute.',
   timeoutSeconds: 900,
   handler: cancelScheduledRecallBotsHandler,
 });
