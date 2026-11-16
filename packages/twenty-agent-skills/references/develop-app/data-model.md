@@ -115,6 +115,10 @@ universalSettings: { relationType: RelationType.ONE_TO_MANY },
 
 Export each field's identifier as a named constant and import it from the other file, so the two sides reference each other without a circular import.
 
+### Computed Fields
+
+A field's `computation` (a `FORMULA` or a `ROLLUP`) is reserved for computed fields, which are not available yet: a sync that declares one is rejected.
+
 ## Roles And Permissions
 
 Roles should match operational responsibility, not implementation convenience.
