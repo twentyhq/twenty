@@ -23,7 +23,7 @@ const amountField = getMockFieldMetadataItemOrThrow({
   fieldName: 'amount',
 });
 
-const getAggregateTarget = ({
+const getAggregateTargetOrThrow = ({
   fieldName,
   recordField,
 }: {
@@ -50,7 +50,7 @@ const getAggregateTarget = ({
 };
 
 const renderAggregateDisplay = (
-  aggregateTarget: ReturnType<typeof getAggregateTarget>,
+  aggregateTarget: ReturnType<typeof getAggregateTargetOrThrow>,
 ) => {
   const store = createStore();
 
@@ -85,7 +85,7 @@ const renderAggregateDisplay = (
 describe('RecordTableCellAggregateDisplay', () => {
   it('shows the number of related records', () => {
     renderAggregateDisplay(
-      getAggregateTarget({
+      getAggregateTargetOrThrow({
         fieldName: 'people',
         recordField: {
           relationAggregateOperation: AggregateOperations.COUNT,
@@ -98,7 +98,7 @@ describe('RecordTableCellAggregateDisplay', () => {
 
   it('shows a currency total from its micros', () => {
     renderAggregateDisplay(
-      getAggregateTarget({
+      getAggregateTargetOrThrow({
         fieldName: 'opportunities',
         recordField: {
           relationAggregateOperation: AggregateOperations.SUM,
@@ -112,7 +112,7 @@ describe('RecordTableCellAggregateDisplay', () => {
 
   it('stays empty when the aggregate has no value', () => {
     const { container } = renderAggregateDisplay(
-      getAggregateTarget({
+      getAggregateTargetOrThrow({
         fieldName: 'opportunities',
         recordField: {
           relationAggregateOperation: AggregateOperations.AVG,
@@ -126,7 +126,7 @@ describe('RecordTableCellAggregateDisplay', () => {
 
   it('hides the aggregate of a field the user cannot read', () => {
     renderAggregateDisplay({
-      ...getAggregateTarget({
+      ...getAggregateTargetOrThrow({
         fieldName: 'opportunities',
         recordField: {
           relationAggregateOperation: AggregateOperations.SUM,
