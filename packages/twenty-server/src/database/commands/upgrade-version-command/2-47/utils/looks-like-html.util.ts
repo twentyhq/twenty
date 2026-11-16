@@ -1,4 +1,4 @@
-import { HTML_ELEMENT_NAMES } from './html-element-names';
+import { HTML_ELEMENT_NAMES } from 'src/database/commands/upgrade-version-command/2-47/utils/html-element-names.constant';
 
 const ANGLE_BRACKET_TAG_PATTERN =
   /<(?<closingSlash>\/?)(?<tagName>[a-z][a-z0-9-]*)(?:\s[^<>]*)?(?<selfClosingSlash>\/?)>/gi;

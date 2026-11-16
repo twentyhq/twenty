@@ -1,5 +1,5 @@
 import { AiChatMemberPresence } from '@/ai/components/AiChatMemberPresence';
-import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -61,7 +61,7 @@ export const NavigationDrawerDirectMessageItem = ({
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
         isDefined(thread) ? (
-          <AiChatThreadActionsDropdown
+          <InboxThreadActionsDropdown
             thread={thread}
             instanceId={actionsInstanceId}
           />
