@@ -469,8 +469,9 @@ const { success, text, error } = await ai.generate({
 تطبيقك عندما لا يكون هناك أحد. لا تتجاوز مطلقًا دور تطبيقك، ولا
 يمكن لتطبيق من دون دور افتراضي استدعاؤها.
 
-من دون `scope`، لا تقرأ المكالمة أي سجلات ولا تكتبها. للسماح لها باستخدام
-قاعدة البيانات، مرر `scope`، مكتوبًا مثل أذونات الدور:
+من دون `scope`، لا تقرأ المكالمة أي سجلات ولا تكتبها. للسماح له باستخدام
+قاعدة البيانات، مرّر `scope`. يستخدم خصائصه الخاصة (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`)، وليس كتلة `recordsPermissions` الخاصة بالدور:
 
 ```ts
 const { object } = await ai.generate({

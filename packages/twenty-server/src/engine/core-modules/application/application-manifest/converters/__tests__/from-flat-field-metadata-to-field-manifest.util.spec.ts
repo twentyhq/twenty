@@ -181,7 +181,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
         computation: {
           kind: 'FILTERED_RELATION',
           relationFieldName: 'projects',
-          orderBy: [{ createdAt: 'DescNullsLast' }],
+          orderBy: [{ expression: 'createdAt', direction: 'DescNullsLast' }],
         },
         universalSettings: { relationType: RelationType.ONE_TO_MANY },
       };

@@ -2,6 +2,17 @@
 
 All notable changes to this application are documented in this file.
 
+## 1.2.0
+
+- Add personal Fathom connections: each member can connect their own account
+  from App preferences and import their own calls and history.
+- Fix imports that failed silently or looped, and retry Twenty and Fathom rate
+  limits.
+- Fix the daily media reconciliation, which failed in every workspace.
+- Return partial results from List Fathom Calls By Participant instead of
+  failing on long meeting histories.
+- Register new webhooks on the registration-scoped server route.
+
 ## 1.1.0
 
 - Title new impromptu Fathom recordings with their date and time in UTC, then

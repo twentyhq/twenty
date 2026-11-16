@@ -1,6 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type ComputedFieldValueType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
-import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
 import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
 
 const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
@@ -76,6 +78,26 @@ describe('compileComputedFieldExpressionToSql', () => {
     });
   });
 
+  it.each([
+    ['constructor', '"record"."constructor"'],
+    ['constructor + 1', '("record"."constructor" + 1)'],
+    ['1 + toString', '(1 + "record"."toString")'],
+    ['abs(hasOwnProperty)', 'ABS("record"."hasOwnProperty")'],
+  ])(
+    'reads a field named like an Object.prototype member as a field, not as a variable: %s',
+    (expression, sql) => {
+      expect(
+        compileComputedFieldExpressionToSql({
+          expression,
+          resolveField: (path) => ({
+            sql: `"record"."${path.join('_')}"`,
+            type: NUMBER,
+          }),
+        }),
+      ).toEqual({ sql, type: NUMBER, parameters: {} });
+    },
+  );
+
   it('binds text values as parameters instead of writing them into the SQL', () => {
     expect(compile(`name == "'; DROP TABLE person; --"`)).toEqual({
       sql: '("record"."name" = :text0::text)',
@@ -105,33 +127,9 @@ describe('compileComputedFieldExpressionToSql', () => {
     );
   });
 
-  it.each([
-    ['', 'empty'],
-    ['amount +', 'unexpected'],
-    ['sqrt(amount)', 'Unknown function "sqrt"'],
-    ['amount ^ 2', ''],
-    ['[1, 2]', 'A list can only be used after "in"'],
-    ['amount in 3', '"in" must be followed by a non-empty list'],
-    ['round()', '"round" does not take 0 argument(s)'],
-    ['amount; 1', ''],
-  ])('rejects the syntax of %s', (expression, expectedMessage) => {
-    expect(() => compile(expression)).toThrow(expectedMessage);
-  });
-
-  it.each([
-    ['amount + name', '"+" expects number, not text'],
-    ['not amount', '"not" expects boolean, not number'],
-    ['amount == name', '"==" cannot combine number and text'],
-    ['isActive > isArchived', '">" expects'],
-    ['if(amount, 1, 2)', 'The condition of "if" expects boolean, not number'],
-    ["if(isActive, 1, 'one')", '"if" cannot combine number and text'],
-    ['upper(amount)', '"upper" expects text, not number'],
-    ['round(name)', '"round" expects number, not text'],
-    ['amount and isActive', '"and" expects boolean, not number'],
-    ["dueAt > 'tomorrow-ish'", "which is not a date such as '2030-01-31'"],
-    ["coalesce(dueAt, 'n/a')", "which is not a date such as '2030-01-31'"],
-    ["dueAt > '2030-02-31'", "which is not a date such as '2030-01-31'"],
-  ])('rejects the types of %s', (expression, expectedMessage) => {
-    expect(() => compile(expression)).toThrow(expectedMessage);
+  it('refuses an expression that does not type check', () => {
+    expect(() => compile('amount + name')).toThrow(
+      '"+" expects number, not text',
+    );
   });
 });

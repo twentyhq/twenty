@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -14,7 +15,7 @@ export const buildComputedTableSource = ({
 }: {
   tableExpression: string;
   alias: string;
-  computedColumnSqlByColumnName: Record<string, string>;
+  computedColumnSqlByColumnName: Record<string, ComputedColumnSql>;
 }): string => {
   const columnNames = Object.keys(computedColumnSqlByColumnName);
   const quotedAlias = escapeIdentifier(alias);
@@ -38,17 +39,11 @@ export const buildComputedTableSource = ({
       1 +
       Math.max(
         0,
-        ...columnNames
-          .filter(
-            (otherColumnName) =>
-              otherColumnName !== columnName &&
-              computedColumnSqlByColumnName[columnName].includes(
-                `${quotedAlias}.${escapeIdentifier(otherColumnName)}`,
-              ),
-          )
-          .map((dependencyColumnName) =>
-            computeLevel(dependencyColumnName, [...path, columnName]),
-          ),
+        ...computedColumnSqlByColumnName[
+          columnName
+        ].readComputedColumnNames.map((readColumnName) =>
+          computeLevel(readColumnName, [...path, columnName]),
+        ),
       );
 
     levelByColumnName.set(columnName, level);
@@ -68,7 +63,7 @@ export const buildComputedTableSource = ({
       .filter((columnName) => levelByColumnName.get(columnName) === level)
       .map(
         (columnName) =>
-          `(${computedColumnSqlByColumnName[columnName]}) AS ${escapeIdentifier(columnName)}`,
+          `(${computedColumnSqlByColumnName[columnName].sql}) AS ${escapeIdentifier(columnName)}`,
       );
 
     tableSource = `(SELECT ${quotedAlias}.*, ${computedProjections.join(', ')} FROM ${tableSource} AS ${quotedAlias})`;

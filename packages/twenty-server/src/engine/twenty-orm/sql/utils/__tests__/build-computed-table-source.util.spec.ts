@@ -17,8 +17,14 @@ describe('buildComputedTableSource', () => {
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
-          peopleCount: 'SELECT COUNT(*) FROM people',
-          doubleEmployees: '"company"."employees" * 2',
+          peopleCount: {
+            sql: 'SELECT COUNT(*) FROM people',
+            readComputedColumnNames: [],
+          },
+          doubleEmployees: {
+            sql: '"company"."employees" * 2',
+            readComputedColumnNames: [],
+          },
         },
       }),
     ).toBe(
@@ -32,8 +38,14 @@ describe('buildComputedTableSource', () => {
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
-          employeesPerPerson: '"company"."employees" / "company"."peopleCount"',
-          peopleCount: 'SELECT COUNT(*) FROM people',
+          employeesPerPerson: {
+            sql: '"company"."employees" / "company"."peopleCount"',
+            readComputedColumnNames: ['peopleCount'],
+          },
+          peopleCount: {
+            sql: 'SELECT COUNT(*) FROM people',
+            readComputedColumnNames: [],
+          },
         },
       }),
     ).toBe(
@@ -47,8 +59,14 @@ describe('buildComputedTableSource', () => {
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
-          first: '"company"."second"',
-          second: '"company"."first"',
+          first: {
+            sql: '"company"."second"',
+            readComputedColumnNames: ['second'],
+          },
+          second: {
+            sql: '"company"."first"',
+            readComputedColumnNames: ['first'],
+          },
         },
       }),
     ).toThrow('depends on itself');

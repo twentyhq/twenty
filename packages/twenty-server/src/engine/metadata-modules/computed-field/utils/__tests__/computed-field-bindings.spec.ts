@@ -91,7 +91,10 @@ const FILTERED_RELATION: FieldMetadataComputation = {
   kind: 'FILTERED_RELATION',
   relationFieldName: 'tasks',
   filter: "status != 'DONE'",
-  orderBy: [{ points: 'DescNullsLast' }, { status: 'AscNullsLast' }],
+  orderBy: [
+    { expression: 'points * 2', direction: 'DescNullsLast' },
+    { expression: 'assignee.name', direction: 'AscNullsLast' },
+  ],
   limit: 3,
 };
 
@@ -127,12 +130,17 @@ describe('computeComputedFieldBindings', () => {
       tasks: 'project.tasks',
       'tasks.status': 'task.status',
       'tasks.points': 'task.points',
+      'tasks.assignee': 'task.assignee',
+      'tasks.assignee.name': 'company.name',
     });
   });
 
   it('returns nothing for a filtered relation sorted by an unknown field', () => {
     expect(
-      bind({ ...FILTERED_RELATION, orderBy: [{ unknown: 'AscNullsLast' }] }),
+      bind({
+        ...FILTERED_RELATION,
+        orderBy: [{ expression: 'unknown', direction: 'AscNullsLast' }],
+      }),
     ).toBeUndefined();
   });
 
@@ -207,18 +215,24 @@ describe('renameComputedFieldComputationFields', () => {
           ['project.tasks', 'todos'],
           ['task.points', 'effort'],
           ['task.status', 'stage'],
+          ['task.assignee', 'owner'],
         ]),
       }),
     ).toEqual({
       kind: 'FILTERED_RELATION',
       relationFieldName: 'todos',
       filter: "stage != 'DONE'",
-      orderBy: [{ effort: 'DescNullsLast' }, { stage: 'AscNullsLast' }],
+      orderBy: [
+        { expression: 'effort * 2', direction: 'DescNullsLast' },
+        { expression: 'owner.name', direction: 'AscNullsLast' },
+      ],
       limit: 3,
       bindings: {
         todos: 'project.tasks',
         'todos.effort': 'task.points',
         'todos.stage': 'task.status',
+        'todos.owner': 'task.assignee',
+        'todos.owner.name': 'company.name',
       },
     });
   });

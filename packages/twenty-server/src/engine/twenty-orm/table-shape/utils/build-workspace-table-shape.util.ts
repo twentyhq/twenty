@@ -127,7 +127,7 @@ export const buildWorkspaceTableShape = ({
     schemaName: getWorkspaceSchemaName(workspaceId),
     tableName: computeObjectTargetTable(flatObjectMetadata),
     columnShapeByColumnName,
-    columnNames: allColumnNames.filter(
+    storedColumnNames: allColumnNames.filter(
       (columnName) => !isComputedColumn(columnName),
     ),
     computedColumnNames: allColumnNames.filter(isComputedColumn),

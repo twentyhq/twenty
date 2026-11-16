@@ -4,6 +4,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
 import { buildComputedTableSource } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
@@ -68,7 +69,10 @@ export type OrderByClause = {
 
 export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
-export type ComputedColumnSqlByAlias = Record<string, Record<string, string>>;
+export type ComputedColumnSqlByAlias = Record<
+  string,
+  Record<string, ComputedColumnSql>
+>;
 
 export type SelectStatementState = {
   alias: string;
@@ -244,7 +248,7 @@ export const collectJoinedColumnProjections = (
       continue;
     }
 
-    for (const columnName of joinClause.targetTableShape.columnNames) {
+    for (const columnName of joinClause.targetTableShape.storedColumnNames) {
       addProjection(joinClause.alias, columnName);
     }
   }
@@ -280,7 +284,7 @@ export const buildProjection = (
     state.explicitSelection ??
     (selectedColumnNames.length > 0
       ? selectedColumnNames
-      : state.tableShape.columnNames);
+      : state.tableShape.storedColumnNames);
 
   const expressions = mainAliasColumnNames.map(
     (columnName) =>

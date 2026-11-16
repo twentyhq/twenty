@@ -15,7 +15,10 @@ export const mergeFilteredRelationQueryArguments = ({
     return requestedArguments;
   }
 
-  const { orderBy, limit } = filteredRelationComputation;
+  const { limit } = filteredRelationComputation;
+  const orderBy = filteredRelationComputation.orderBy?.map(
+    ({ expression, direction }) => ({ [expression]: direction }),
+  );
   const requestedFirst = requestedArguments.first;
   const limits = [requestedFirst, limit].filter(isNumber);
 

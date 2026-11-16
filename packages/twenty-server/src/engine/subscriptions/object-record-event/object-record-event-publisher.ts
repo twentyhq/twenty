@@ -11,6 +11,7 @@ import {
 import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { LoadComputedFieldsHelper } from 'src/engine/api/common/common-computed-fields-loader/load-computed-fields.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -54,6 +55,7 @@ export class ObjectRecordEventPublisher {
     private readonly eventStreamService: EventStreamService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
+    private readonly loadComputedFieldsHelper: LoadComputedFieldsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
@@ -326,23 +328,27 @@ export class ObjectRecordEventPublisher {
     // The ambient context is the writer's, so relations load as the subscriber
     const resolvedSubscriberAuthContext = await subscriberAuthContext;
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.processNestedRelationsHelper.processNestedRelations({
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          parentObjectMetadataItem: objectMetadata,
-          parentObjectRecords: allRecords,
-          authContext: resolvedSubscriberAuthContext,
-          limit: QUERY_MAX_RECORDS_FROM_RELATION,
-          relations: selectedFieldsResult.relations as Record<
-            string,
-            FindOptionsRelations<ObjectLiteral>
-          >,
-          selectedFields: selectedFieldsResult.select,
-        }),
-      resolvedSubscriberAuthContext,
-    );
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.loadComputedFieldsHelper.loadMissingComputedFields({
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        records: allRecords,
+        selectedFields: selectedFieldsResult.select,
+      });
+      await this.processNestedRelationsHelper.processNestedRelations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: objectMetadata,
+        parentObjectRecords: allRecords,
+        authContext: resolvedSubscriberAuthContext,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
+        relations: selectedFieldsResult.relations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        selectedFields: selectedFieldsResult.select,
+      });
+    }, resolvedSubscriberAuthContext);
   }
 
   // Streams of one member share their auth context within a batch; null keeps the writer's application out

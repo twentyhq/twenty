@@ -8,6 +8,10 @@ import {
   renameValidationRulePath,
 } from 'twenty-shared/utils';
 
+import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
+import { mapComputedFieldSlotExpressions } from 'src/engine/metadata-modules/computed-field/utils/map-computed-field-slot-expressions.util';
+import { getComputedFieldSourceRelationFieldName } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-source-relation-field-name.util';
+
 export const renameComputedFieldComputationFields = ({
   computation,
   fieldNameByUniversalIdentifier,
@@ -34,70 +38,45 @@ export const renameComputedFieldComputationFields = ({
     ]),
   );
 
-  if (computation.kind === 'FORMULA') {
-    return {
-      ...computation,
-      expression: renameValidationRuleExpressionFields({
-        expression: computation.expression,
-        bindings,
-        fieldNameByUniversalIdentifier,
-      }),
-      bindings: renamedBindings,
-    };
-  }
+  const { sourceRelationProperty } =
+    COMPUTED_FIELD_KIND_DESCRIPTIONS[computation.kind];
+  const sourceRelationFieldName =
+    getComputedFieldSourceRelationFieldName(computation);
 
-  // Expressions on related records are written from the related object, the bindings from the field's own object
-  const relationPathPrefix = `${computation.relationFieldName}.`;
-  const relatedObjectBindings: FieldMetadataComputationBindings =
-    Object.fromEntries(
-      Object.entries(bindings).flatMap(([path, boundUniversalIdentifier]) =>
-        path.startsWith(relationPathPrefix)
-          ? [[path.slice(relationPathPrefix.length), boundUniversalIdentifier]]
-          : [],
-      ),
-    );
-  const renameRelatedObjectExpression = (
-    expression: string | undefined,
-  ): string | undefined =>
-    isDefined(expression)
-      ? renameValidationRuleExpressionFields({
-          expression,
-          bindings: relatedObjectBindings,
-          fieldNameByUniversalIdentifier,
-        })
-      : undefined;
-
-  const relationFieldName = renamePath(computation.relationFieldName);
-  const filter = renameRelatedObjectExpression(computation.filter);
-
-  if (computation.kind === 'FILTERED_RELATION') {
-    const orderBy = computation.orderBy?.map((sort) =>
-      Object.fromEntries(
-        Object.entries(sort).map(([sortedFieldName, direction]) => [
-          renamePath(`${relationPathPrefix}${sortedFieldName}`).slice(
-            relationFieldName.length + 1,
-          ),
-          direction,
-        ]),
-      ),
-    );
-
-    return {
-      ...computation,
-      relationFieldName,
-      ...(isDefined(filter) ? { filter } : {}),
-      ...(isDefined(orderBy) ? { orderBy } : {}),
-      bindings: renamedBindings,
-    };
-  }
-
-  const expression = renameRelatedObjectExpression(computation.expression);
+  // A related record's expressions are written from the related object, the bindings from the field's own object
+  const relatedRecordBindings: FieldMetadataComputationBindings = isDefined(
+    sourceRelationFieldName,
+  )
+    ? Object.fromEntries(
+        Object.entries(bindings).flatMap(([path, boundUniversalIdentifier]) =>
+          path.startsWith(`${sourceRelationFieldName}.`)
+            ? [
+                [
+                  path.slice(sourceRelationFieldName.length + 1),
+                  boundUniversalIdentifier,
+                ],
+              ]
+            : [],
+        ),
+      )
+    : {};
 
   return {
-    ...computation,
-    relationFieldName,
-    ...(isDefined(expression) ? { expression } : {}),
-    ...(isDefined(filter) ? { filter } : {}),
+    ...mapComputedFieldSlotExpressions({
+      computation,
+      mapExpression: ({ slot, expression }) =>
+        renameValidationRuleExpressionFields({
+          expression,
+          bindings:
+            slot.evaluatedOn === 'RELATED_RECORD'
+              ? relatedRecordBindings
+              : bindings,
+          fieldNameByUniversalIdentifier,
+        }),
+    }),
+    ...(isDefined(sourceRelationProperty) && isDefined(sourceRelationFieldName)
+      ? { [sourceRelationProperty]: renamePath(sourceRelationFieldName) }
+      : {}),
     bindings: renamedBindings,
   };
 };

@@ -154,6 +154,15 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const recordsToMerge = fetchedRecords;
 
+    if (args.dryRun) {
+      await this.loadComputedFieldsHelper.loadMissingComputedFields({
+        flatObjectMetadata: context.flatObjectMetadata,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        records: recordsToMerge,
+        selectedFields: args.selectedFieldsResult.select,
+      });
+    }
+
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps: context.flatObjectMetadataMaps,
@@ -669,6 +678,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadata,
       authContext,
     } = queryRunnerContext;
+
+    await this.loadComputedFieldsHelper.loadMissingComputedFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      records: updatedRecords,
+      selectedFields: args.selectedFieldsResult.select,
+    });
 
     if (args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

@@ -8,13 +8,14 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { resolveMainGroupByFieldMetadataId } from '@/views/utils/resolveMainGroupByFieldMetadataId';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, findById, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -27,13 +28,28 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { loadRecordIndexStates } = useLoadRecordIndexStates();
+  const { loadRecordIndexStates, syncRecordIndexViewFields } =
+    useLoadRecordIndexStates();
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
   const contextStoreInstanceId = useContextStoreInstanceId();
 
   const store = useStore();
+
+  // Nothing else reloads the type-dependent fields here; the latest view keeps columns changed meanwhile
+  const syncViewFieldsForViewType = useCallback(
+    ({ view, viewType }: { view: ViewWithRelations; viewType: ViewType }) => {
+      const latestView =
+        store.get(viewsSelector.atom).find(findById(view.id)) ?? view;
+
+      syncRecordIndexViewFields(
+        { ...latestView, type: viewType },
+        objectMetadataItem,
+      );
+    },
+    [store, syncRecordIndexViewFields, objectMetadataItem],
+  );
 
   const setAndPersistViewType = useCallback(
     async (viewType: ViewType) => {
@@ -83,6 +99,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
           setRecordIndexViewType(viewType);
           await updateCurrentView(updateCurrentViewParams);
+          syncViewFieldsForViewType({ view: currentView, viewType });
           return;
         }
         case ViewType.TABLE:
@@ -93,6 +110,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
+          syncViewFieldsForViewType({ view: currentView, viewType });
           return;
         }
         case ViewType.CALENDAR: {
@@ -144,6 +162,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       updateCurrentView,
       availableFieldsForCalendar,
       loadRecordIndexStates,
+      syncViewFieldsForViewType,
       objectMetadataItem,
       contextStoreInstanceId,
     ],

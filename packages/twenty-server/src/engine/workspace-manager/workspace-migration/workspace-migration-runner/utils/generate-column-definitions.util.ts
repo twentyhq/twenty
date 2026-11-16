@@ -3,7 +3,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isComputedField, isMorphRelationHead } from 'twenty-shared/utils';
+import { hasStoredColumn } from 'twenty-shared/utils';
 
 import { type ColumnType } from 'typeorm';
 
@@ -186,10 +186,7 @@ export const generateColumnDefinitions = ({
   workspaceId: string;
   searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
-  if (
-    isMorphRelationHead(flatFieldMetadata) ||
-    isComputedField(flatFieldMetadata)
-  ) {
+  if (!hasStoredColumn(flatFieldMetadata)) {
     return [];
   }
 

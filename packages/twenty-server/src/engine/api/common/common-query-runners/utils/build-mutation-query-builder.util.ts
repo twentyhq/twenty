@@ -43,8 +43,10 @@ export const buildMutationQueryBuilder = async ({
     .select(`${alias}.id`)
     .withDeleted();
 
-  await repository.applyWriteRowLevelPermissions(idSubQueryBuilder, kind);
-  await repository.resolveComputedColumns(idSubQueryBuilder);
+  await repository.prepareForExecution({
+    queryBuilder: idSubQueryBuilder,
+    mutationKind: kind,
+  });
 
   const selectQueryBuilder = repository
     .createQueryBuilder(alias)

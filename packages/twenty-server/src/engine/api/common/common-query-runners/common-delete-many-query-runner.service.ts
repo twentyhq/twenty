@@ -60,6 +60,13 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       kind: 'soft-delete',
     });
 
+    await this.loadComputedFieldsHelper.loadMissingComputedFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      records: deletedRecords,
+      selectedFields: args.selectedFieldsResult.select,
+    });
+
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,

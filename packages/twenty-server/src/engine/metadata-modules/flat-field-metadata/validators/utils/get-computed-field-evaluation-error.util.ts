@@ -1,55 +1,20 @@
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
+import { type ComputedFieldValueType } from 'twenty-shared/types';
 import {
-  type FieldMetadataComputation,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
-import {
+  ComputedFieldExpressionError,
   getComputedFieldExpressionFieldPaths,
   isDefined,
+  parseComputedFieldExpressionOrThrow,
+  typeCheckComputedFieldExpressionOrThrow,
 } from 'twenty-shared/utils';
 
-import { COMPUTED_FIELD_SCALAR_TYPES } from 'src/engine/metadata-modules/computed-field/constants/computed-field-scalar-types.constant';
-import { ComputedFieldExpressionException } from 'src/engine/metadata-modules/computed-field/exceptions/computed-field.exception';
-import { type ComputedFieldValueType } from 'src/engine/metadata-modules/computed-field/types/computed-field-value-type.type';
+import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
 import { type UniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/types/universal-computed-field-schema-reader.type';
-import { compileComputedFieldExpressionToSql } from 'src/engine/metadata-modules/computed-field/utils/compile-computed-field-expression-to-sql.util';
+import { assertComputedFieldValueTypeOrThrow } from 'src/engine/metadata-modules/computed-field/utils/assert-computed-field-value-type-or-throw.util';
 import { getComputedFieldValueTypeOrThrow } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-value-type-or-throw.util';
 import { resolveComputedFieldPathOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-path-or-throw.util';
-import { resolveComputedFieldSourceRelationOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-source-relation-or-throw.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { resolveComputedFieldSlotExpressionsOrThrow } from 'src/engine/metadata-modules/computed-field/utils/resolve-computed-field-slot-expressions-or-throw.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-
-const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
-
-const assertValueFitsType = ({
-  valueType,
-  expectedTypes,
-  subject,
-}: {
-  valueType: ComputedFieldValueType | undefined;
-  expectedTypes: ComputedFieldValueType[];
-  subject: string;
-}): void => {
-  if (isDefined(valueType) && !expectedTypes.includes(valueType)) {
-    throw new ComputedFieldExpressionException(
-      `${subject} is ${valueType.toLowerCase()}, expected ${expectedTypes.join(' or ').toLowerCase()}`,
-    );
-  }
-};
-
-// Any value reads as text, and a date and a date and time convert into each other
-const ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE: Record<
-  ComputedFieldValueType,
-  ComputedFieldValueType[]
-> = {
-  [NUMBER]: [NUMBER],
-  [BOOLEAN]: [BOOLEAN],
-  [DATE]: [DATE, DATE_TIME],
-  [DATE_TIME]: [DATE, DATE_TIME],
-  [TEXT]: [...COMPUTED_FIELD_SCALAR_TYPES],
-};
 
 // Follows the computed fields the field reads, to refuse one that ends up reading itself
 const assertComputationCanBeEvaluated = ({
@@ -73,171 +38,68 @@ const assertComputationCanBeEvaluated = ({
   }
 
   if (readingFieldUniversalIdentifiers.includes(field.universalIdentifier)) {
-    throw new ComputedFieldExpressionException(
+    throw new ComputedFieldExpressionError(
       `"${field.name}" ends up reading itself`,
     );
   }
 
-  const assertReadFieldCanBeEvaluated = (
-    evaluatedObject: UniversalFlatObjectMetadata,
-    path: string[],
-  ): void => {
-    const { field: readField, columnType } = resolveComputedFieldPathOrThrow({
-      path,
-      object: evaluatedObject,
-      schemaReader,
-    });
+  const valueTypeBySlotProperty: Record<
+    string,
+    ComputedFieldValueType | undefined
+  > = {};
 
-    getComputedFieldValueTypeOrThrow({
-      columnType,
-      readablePath: path.join('.'),
-    });
-    assertComputationCanBeEvaluated({
-      field: readField,
-      schemaReader,
-      findObject,
-      readingFieldUniversalIdentifiers: [
-        ...readingFieldUniversalIdentifiers,
-        field.universalIdentifier,
-      ],
-    });
-  };
-
-  const compileOn = (
-    evaluatedObject: UniversalFlatObjectMetadata,
-    expression: string,
-  ): ComputedFieldValueType | undefined => {
-    const { type } = compileComputedFieldExpressionToSql({
-      expression,
-      resolveField: (path) => {
-        const { columnName, columnType } = resolveComputedFieldPathOrThrow({
-          path,
-          object: evaluatedObject,
-          schemaReader,
-        });
-
-        return {
-          sql: columnName,
-          type: getComputedFieldValueTypeOrThrow({
-            columnType,
-            readablePath: path.join('.'),
-          }),
-        };
-      },
-    });
-
-    for (const path of getComputedFieldExpressionFieldPaths(expression)) {
-      assertReadFieldCanBeEvaluated(evaluatedObject, path);
-    }
-
-    return type;
-  };
-
-  const compileFilterOnRelatedRecords = (
-    relationComputation: Exclude<FieldMetadataComputation, { kind: 'FORMULA' }>,
-  ): UniversalFlatObjectMetadata => {
-    const { relatedObject } = resolveComputedFieldSourceRelationOrThrow({
-      relationFieldName: relationComputation.relationFieldName,
+  const { sourceRelation, slotExpressions } =
+    resolveComputedFieldSlotExpressionsOrThrow({
+      computation,
       object,
       schemaReader,
     });
 
-    if (isDefined(relationComputation.filter)) {
-      assertValueFitsType({
-        valueType: compileOn(relatedObject, relationComputation.filter),
-        expectedTypes: [BOOLEAN],
-        subject: 'The filter',
+  for (const { slot, expression, evaluatedObject } of slotExpressions) {
+    const resolvePath = (path: string[]) =>
+      resolveComputedFieldPathOrThrow({
+        path,
+        object: evaluatedObject,
+        schemaReader,
+      });
+
+    const { type } = typeCheckComputedFieldExpressionOrThrow({
+      expression: parseComputedFieldExpressionOrThrow(expression),
+      getFieldType: (path) =>
+        getComputedFieldValueTypeOrThrow({
+          columnType: resolvePath(path).columnType,
+          readablePath: path.join('.'),
+        }),
+    });
+
+    for (const path of getComputedFieldExpressionFieldPaths(expression)) {
+      assertComputationCanBeEvaluated({
+        field: resolvePath(path).field,
+        schemaReader,
+        findObject,
+        readingFieldUniversalIdentifiers: [
+          ...readingFieldUniversalIdentifiers,
+          field.universalIdentifier,
+        ],
       });
     }
 
-    return relatedObject;
-  };
-
-  if (computation.kind === 'FILTERED_RELATION') {
-    const relatedObject = compileFilterOnRelatedRecords(computation);
-
-    if (
-      !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
-      field.universalSettings.relationType !== RelationType.ONE_TO_MANY ||
-      relatedObject.universalIdentifier !==
-        field.relationTargetObjectMetadataUniversalIdentifier
-    ) {
-      throw new ComputedFieldExpressionException(
-        `A filtered relation must be a one-to-many relation to the same object as "${computation.relationFieldName}"`,
-      );
+    if (isDefined(slot.valueTypes)) {
+      assertComputedFieldValueTypeOrThrow({
+        valueType: type,
+        expectedTypes: slot.valueTypes,
+        subject: `The ${slot.property}`,
+      });
     }
 
-    for (const sortedFieldName of (computation.orderBy ?? []).flatMap(
-      Object.keys,
-    )) {
-      assertReadFieldCanBeEvaluated(relatedObject, [sortedFieldName]);
-    }
-
-    if (
-      isDefined(computation.limit) &&
-      (!Number.isInteger(computation.limit) ||
-        computation.limit < 1 ||
-        computation.limit > QUERY_MAX_RECORDS_FROM_RELATION)
-    ) {
-      throw new ComputedFieldExpressionException(
-        `The limit of a filtered relation must be between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
-      );
-    }
-
-    return;
+    valueTypeBySlotProperty[slot.property] = type;
   }
 
-  const getValueType = (): ComputedFieldValueType | undefined => {
-    if (computation.kind === 'FORMULA') {
-      return compileOn(object, computation.expression);
-    }
-
-    const relatedObject = compileFilterOnRelatedRecords(computation);
-
-    if (computation.operation === 'COUNT') {
-      if (isDefined(computation.expression)) {
-        throw new ComputedFieldExpressionException(
-          'COUNT counts the related records and takes no expression; use the filter to count some of them',
-        );
-      }
-
-      return NUMBER;
-    }
-
-    if (!isDefined(computation.expression)) {
-      throw new ComputedFieldExpressionException(
-        `${computation.operation} needs the expression to aggregate`,
-      );
-    }
-
-    const aggregatedType = compileOn(relatedObject, computation.expression);
-
-    assertValueFitsType({
-      valueType: aggregatedType,
-      expectedTypes:
-        computation.operation === 'SUM' || computation.operation === 'AVG'
-          ? [NUMBER]
-          : [NUMBER, TEXT, DATE, DATE_TIME],
-      subject: `The expression of ${computation.operation}`,
-    });
-
-    return aggregatedType;
-  };
-
-  const fieldType = COMPUTED_FIELD_SCALAR_TYPES.find(
-    (scalarType) => scalarType === field.type,
-  );
-
-  if (!isDefined(fieldType)) {
-    throw new ComputedFieldExpressionException(
-      `A computed field must be of type ${COMPUTED_FIELD_SCALAR_TYPES.join(', ')}`,
-    );
-  }
-
-  assertValueFitsType({
-    valueType: getValueType(),
-    expectedTypes: ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE[fieldType],
-    subject: 'The computed value',
+  COMPUTED_FIELD_KIND_DESCRIPTIONS[computation.kind].assertIsValidOrThrow({
+    computation,
+    field,
+    sourceRelationField: sourceRelation?.relationField,
+    valueTypeBySlotProperty,
   });
 };
 
@@ -260,7 +122,7 @@ export const getComputedFieldEvaluationError = ({
       readingFieldUniversalIdentifiers: [],
     });
   } catch (error) {
-    if (error instanceof ComputedFieldExpressionException) {
+    if (error instanceof ComputedFieldExpressionError) {
       return error.message;
     }
 

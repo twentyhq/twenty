@@ -32,6 +32,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED]: {
+    label: msg`Import recurring meetings 90 days ahead`,
+    description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
+  },
   [FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED]: {
     label: msg`Computed fields`,
     description: msg`Create formula and rollup fields, whose value is calculated when read, through the API and app manifests.`,
@@ -91,9 +95,5 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED]: {
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
-  },
-  [FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED]: {
-    label: msg`HTTP requests in the logic function runtime`,
-    description: msg`Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda.`,
   },
 };

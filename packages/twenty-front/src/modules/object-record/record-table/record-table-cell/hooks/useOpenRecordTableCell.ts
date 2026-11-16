@@ -3,7 +3,7 @@ import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInit
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
-import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -74,6 +74,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       isReadOnly,
       fieldDefinition,
       recordId,
+      recordFieldId,
       isNavigating,
     }: OpenTableCellArgs) => {
       store.set(
@@ -125,7 +126,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       openFieldInput({
         fieldDefinition,
         recordId,
-        prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        prefix: getRecordTableCellInputIdPrefix(recordFieldId),
         onFileUploadClose: () => {
           setRecordTableCellEditModePosition(null);
           removeLastFocusItemFromFocusStackByComponentType({
@@ -143,7 +144,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         fieldComponentInstanceId: getRecordFieldInputInstanceId({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
-          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+          prefix: getRecordTableCellInputIdPrefix(recordFieldId),
         }),
       });
 

@@ -60,13 +60,8 @@ export class CoreWorkflowRunnerService {
     source: ActorMetadata;
     workflowRunId?: string;
   }) {
-    const {
-      workflow,
-      workflowVersion,
-      trigger,
-      steps,
-      workspaceWorkflowVersionId,
-    } = await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
+    const { workflow, workflowVersion, trigger, steps } =
+      await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
 
     const subscriptionInactiveReason =
       await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
@@ -92,7 +87,6 @@ export class CoreWorkflowRunnerService {
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({
         coreWorkflowId: workflow.id,
         coreWorkflowVersionId: workflowVersion.id,
-        workspaceWorkflowVersionId,
         workflowName: workflow.name,
         trigger,
         steps,
@@ -150,18 +144,12 @@ export class CoreWorkflowRunnerService {
     source: ActorMetadata;
     error: string;
   }): Promise<string> {
-    const {
-      workflow,
-      workflowVersion,
-      trigger,
-      steps,
-      workspaceWorkflowVersionId,
-    } = await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
+    const { workflow, workflowVersion, trigger, steps } =
+      await this.resolveRunDefinition({ workspaceId, coreWorkflowVersionId });
 
     return this.workflowRunWorkspaceService.createCoreWorkflowRun({
       coreWorkflowId: workflow.id,
       coreWorkflowVersionId: workflowVersion.id,
-      workspaceWorkflowVersionId,
       workflowName: workflow.name,
       trigger,
       steps,
@@ -207,15 +195,6 @@ export class CoreWorkflowRunnerService {
       workflowVersion.coreWorkflowId,
     );
 
-    const workspaceWorkflowVersionId =
-      workflowVersion.workspaceWorkflowVersionId ??
-      (isDefined(workflow?.workspaceWorkflowId)
-        ? await this.workflowVersionCoreSyncService.findWorkspaceVersionIdByCoreVersionId(
-            workspaceId,
-            workflowVersion.id,
-          )
-        : null);
-
     if (
       !isDefined(workflow) ||
       workflowVersion.workflowId !== workflow.workspaceWorkflowId
@@ -231,7 +210,6 @@ export class CoreWorkflowRunnerService {
       workflowVersion,
       trigger: workflowVersion.triggers[0],
       steps: workflowVersion.steps,
-      workspaceWorkflowVersionId,
     };
   }
 

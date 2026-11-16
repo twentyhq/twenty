@@ -1,57 +1,53 @@
-import {
-  isNonEmptyString,
-  isNumber,
-  isString,
-  isUndefined,
-} from '@sniptt/guards';
-import { FIELD_METADATA_ROLLUP_OPERATIONS } from 'twenty-shared/constants';
-import {
-  type FieldMetadataComputation,
-  OrderByDirection,
-} from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
+import { type FieldMetadataComputation } from 'twenty-shared/types';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const isOptionalString = (value: unknown): value is string | undefined =>
-  isUndefined(value) || isString(value);
+import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
+import { type ComputedFieldKindDescription } from 'src/engine/metadata-modules/computed-field/types/computed-field-kind-description.type';
 
 // The computation comes from an API input or a manifest: nothing about its shape is known yet
 export const isFieldMetadataComputation = (
   computation: unknown,
 ): computation is FieldMetadataComputation => {
-  if (!isPlainObject(computation)) {
+  if (!isPlainObject(computation) || !isString(computation.kind)) {
     return false;
   }
 
-  switch (computation.kind) {
-    case 'FORMULA':
-      return isString(computation.expression);
-    case 'ROLLUP':
-      return (
-        isNonEmptyString(computation.relationFieldName) &&
-        (FIELD_METADATA_ROLLUP_OPERATIONS as readonly unknown[]).includes(
-          computation.operation,
-        ) &&
-        isOptionalString(computation.expression) &&
-        isOptionalString(computation.filter)
-      );
-    case 'FILTERED_RELATION':
-      return (
-        isNonEmptyString(computation.relationFieldName) &&
-        isOptionalString(computation.filter) &&
-        (isUndefined(computation.orderBy) ||
-          (Array.isArray(computation.orderBy) &&
-            computation.orderBy.every(
-              (sort) =>
-                isPlainObject(sort) &&
-                Object.values(sort).every((direction) =>
-                  (Object.values(OrderByDirection) as unknown[]).includes(
-                    direction,
-                  ),
-                ),
-            ))) &&
-        (isUndefined(computation.limit) || isNumber(computation.limit))
-      );
-    default:
-      return false;
+  const description: ComputedFieldKindDescription | undefined = Object.entries(
+    COMPUTED_FIELD_KIND_DESCRIPTIONS,
+  ).find(([kind]) => kind === computation.kind)?.[1];
+
+  if (!isDefined(description)) {
+    return false;
   }
+
+  const {
+    sourceRelationProperty,
+    expressionSlots,
+    allowedValuesByProperty = {},
+  } = description;
+
+  return (
+    (!isDefined(sourceRelationProperty) ||
+      isNonEmptyString(computation[sourceRelationProperty])) &&
+    expressionSlots.every(({ property, listItemProperty, isRequired }) => {
+      const value = computation[property];
+
+      if (!isRequired && isUndefined(value)) {
+        return true;
+      }
+
+      return isDefined(listItemProperty)
+        ? Array.isArray(value) &&
+            value.every(
+              (item) => isPlainObject(item) && isString(item[listItemProperty]),
+            )
+        : isString(value);
+    }) &&
+    Object.entries(allowedValuesByProperty).every(([property, allowedValues]) =>
+      allowedValues.some(
+        (allowedValue) => allowedValue === computation[property],
+      ),
+    )
+  );
 };
