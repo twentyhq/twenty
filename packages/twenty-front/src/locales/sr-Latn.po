@@ -6080,7 +6080,7 @@ msgstr "Tip grafikona"
 #. js-lingui-id: A4tHrb
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Charts"
-msgstr ""
+msgstr "Dijagrami"
 
 #. js-lingui-id: rlwve5
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx

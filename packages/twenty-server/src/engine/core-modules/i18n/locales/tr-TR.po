@@ -727,7 +727,7 @@ msgstr "Şirketler İçin Hesap Sahibi"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Yönetici paneline veya başka bir kullanıcıyı taklit etme erişimine sahip hesaplar SSO aracılığıyla bir çalışma alanına katılamaz. Daveti başka bir oturum açma yöntemiyle kabul edin."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Bilinmeyen bir takvim hatası oluştu."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Bu e-posta için zaten doğrulanmamış bir hesap mevcut. SSO aracılığıyla daveti kabul etmeden önce e-postasını doğrulayın veya parolasını sıfırlayın."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

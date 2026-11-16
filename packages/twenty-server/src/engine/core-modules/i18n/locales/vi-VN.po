@@ -727,7 +727,7 @@ msgstr "Chủ Sở Hữu Tài Khoản Cho Các Công Ty"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Tài khoản có quyền truy cập bảng quản trị hoặc quyền mạo danh không thể tham gia không gian làm việc thông qua SSO. Hãy chấp nhận lời mời bằng một phương thức đăng nhập khác."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Đã xảy ra lỗi lịch không xác định."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Đã tồn tại một tài khoản chưa được xác minh cho email này. Hãy xác minh email hoặc đặt lại mật khẩu của tài khoản đó trước khi chấp nhận lời mời thông qua SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

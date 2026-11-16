@@ -727,7 +727,7 @@ msgstr "公司账户所有者"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "具有管理面板或模拟身份访问权限的账户无法通过 SSO 加入工作区。请使用其他登录方式接受邀请。"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "发生未知的日历错误。"
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "此电子邮件已存在一个未经验证的账户。请先验证其电子邮件或重置其密码，然后再通过 SSO 接受邀请。"
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

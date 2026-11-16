@@ -727,7 +727,7 @@ msgstr "Propietari del Compte Per a les Companyies"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Els comptes amb accés al tauler d'administració o a la suplantació d'identitat no poden unir-se a un espai de treball mitjançant l'SSO. Accepteu la invitació amb un altre mètode d'inici de sessió."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "S'ha produït un error desconegut del calendari."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Ja existeix un compte no verificat per a aquesta adreça electrònica. Verifiqueu-ne l'adreça electrònica o restabliu-ne la contrasenya abans d'acceptar la invitació mitjançant l'SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

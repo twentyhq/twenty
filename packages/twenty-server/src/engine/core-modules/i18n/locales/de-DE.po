@@ -727,7 +727,7 @@ msgstr "Kontoinhaber für Unternehmen"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Konten mit Zugriff auf das Admin-Panel oder zur Identitätsübernahme können einem Workspace nicht über SSO beitreten. Akzeptieren Sie die Einladung mit einer anderen Anmeldemethode."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Es ist ein unbekannter Kalenderfehler aufgetreten."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Für diese E-Mail-Adresse existiert bereits ein nicht verifiziertes Konto. Verifizieren Sie dessen E-Mail-Adresse oder setzen Sie dessen Passwort zurück, bevor Sie die Einladung über SSO akzeptieren."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

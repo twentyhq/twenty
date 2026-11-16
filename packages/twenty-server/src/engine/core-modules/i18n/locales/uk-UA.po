@@ -727,7 +727,7 @@ msgstr "Власник облікового запису для компаній
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Облікові записи з доступом до панелі адміністратора або можливістю видавати себе за іншого користувача не можуть приєднатися до робочого простору через SSO. Прийміть запрошення за допомогою іншого способу входу."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Сталася невідома помилка календаря."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Для цієї електронної адреси вже існує непідтверджений обліковий запис. Підтвердьте його електронну адресу або скиньте пароль, перш ніж прийняти запрошення через SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

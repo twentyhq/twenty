@@ -727,7 +727,7 @@ msgstr "בעלים של חשבון עבור חברות"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "חשבונות עם גישה ללוח הניהול או להתחזות אינם יכולים להצטרף לסביבת עבודה באמצעות SSO. קבלו את ההזמנה באמצעות שיטת כניסה אחרת."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "אירעה שגיאה לא ידועה בלוח השנה."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "כבר קיים חשבון לא מאומת עבור כתובת דוא\"ל זו. אמתו את כתובת הדוא\"ל שלו או אפסו את הסיסמה שלו לפני קבלת ההזמנה באמצעות SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -727,7 +727,7 @@ msgstr "Kontoejer for virksomheder"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Konti med adgang til administrationspanel eller brugerefterligning kan ikke tilslutte sig et arbejdsområde via SSO. Acceptér invitationen med en anden loginmetode."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Der opstod en ukendt kalenderfejl."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Der findes allerede en ubekræftet konto til denne e-mailadresse. Bekræft kontoens e-mailadresse, eller nulstil dens adgangskode, før du accepterer invitationen via SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

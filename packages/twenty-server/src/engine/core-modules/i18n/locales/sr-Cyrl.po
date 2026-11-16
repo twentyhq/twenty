@@ -727,7 +727,7 @@ msgstr "Власник налога за компаније"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Налози са приступом администраторској табли или могућношћу представљања другог корисника не могу да се придруже радном простору путем SSO-а. Прихватите позив помоћу другог начина пријављивања."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "Дошло је до непознате грешке календара.
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "За ову адресу е-поште већ постоји непотврђен налог. Потврдите његову адресу е-поште или ресетујте његову лозинку пре него што прихватите позив путем SSO-а."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

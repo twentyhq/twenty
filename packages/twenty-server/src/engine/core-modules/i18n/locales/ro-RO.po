@@ -727,7 +727,7 @@ msgstr "Proprietarul Contului Pentru Companii"
 #. js-lingui-id: 466gwO
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
-msgstr ""
+msgstr "Conturile cu acces la panoul de administrare sau cu acces de uzurpare a identității nu se pot alătura unui spațiu de lucru prin SSO. Acceptați invitația folosind o altă metodă de conectare."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -1342,7 +1342,7 @@ msgstr "A apărut o eroare necunoscută în calendar."
 #. js-lingui-id: 9C858c
 #: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
 msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
-msgstr ""
+msgstr "Există deja un cont neverificat pentru această adresă de e-mail. Verificați-i adresa de e-mail sau resetați-i parola înainte de a accepta invitația prin SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

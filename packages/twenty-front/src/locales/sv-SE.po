@@ -6080,7 +6080,7 @@ msgstr "Diagramtyp"
 #. js-lingui-id: A4tHrb
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Charts"
-msgstr ""
+msgstr "Diagram"
 
 #. js-lingui-id: rlwve5
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
