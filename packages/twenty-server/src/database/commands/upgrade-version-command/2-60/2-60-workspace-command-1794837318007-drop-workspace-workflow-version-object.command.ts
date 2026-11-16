@@ -11,7 +11,7 @@ import {
   LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER,
   LEGACY_WORKFLOW_VERSION_ID_INDEX_UNIVERSAL_IDENTIFIERS,
   LEGACY_WORKFLOW_VERSION_OBJECT_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/upgrade-version-command/2-61/constants/legacy-workspace-workflow-version-universal-identifiers.constant';
+} from 'src/database/commands/upgrade-version-command/2-60/constants/legacy-workspace-workflow-version-universal-identifiers.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -103,9 +103,9 @@ type LegacyDataSummary = {
   unresolvableRunCount: number;
 };
 
-@RegisteredWorkspaceCommand('2.61.0', 1794831881510)
+@RegisteredWorkspaceCommand('2.60.0', 1794837318007)
 @Command({
-  name: 'upgrade:2-61:drop-workspace-workflow-version-object',
+  name: 'upgrade:2-60:drop-workspace-workflow-version-object',
   description:
     'Drop the workspace workflowVersion object now that workflow versions live in core',
 })
