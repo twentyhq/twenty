@@ -6,6 +6,7 @@ import {
   type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
+  TenantIsolationMode,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { msg } from '@lingui/core/macro';
@@ -375,9 +376,12 @@ export class LambdaToolFunctionsService {
     return functionName;
   }
 
-  async runYarnInstallCreateLayer(
-    params: Omit<YarnInstallLambdaPayload, 'action'>,
-  ): Promise<YarnInstallLambdaResult> {
+  async runYarnInstallCreateLayer({
+    tenantId,
+    ...params
+  }: Omit<YarnInstallLambdaPayload, 'action'> & {
+    tenantId: string;
+  }): Promise<YarnInstallLambdaResult> {
     await this.ensureYarnInstallLambdaExists();
 
     const lambdaClient = await this.awsClient.getLambdaClient();
@@ -395,6 +399,7 @@ export class LambdaToolFunctionsService {
           FunctionName: yarnInstallFunctionName,
           Payload: JSON.stringify(payload),
           LogType: LogType.Tail,
+          TenantId: tenantId,
         }),
         {
           abortSignal: AbortSignal.timeout(
@@ -476,12 +481,14 @@ export class LambdaToolFunctionsService {
     timeoutSeconds,
     copyFiles,
     withCommonLayer = true,
+    isTenantIsolated = false,
   }: {
     functionName: string;
     memoryMb: number;
     timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
     withCommonLayer?: boolean;
+    isTenantIsolated?: boolean;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -534,6 +541,11 @@ export class LambdaToolFunctionsService {
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
             EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+            ...(isTenantIsolated && {
+              TenancyConfig: {
+                TenantIsolationMode: TenantIsolationMode.PER_TENANT,
+              },
+            }),
           };
 
           await lambdaClient.send(new CreateFunctionCommand(params));
@@ -558,6 +570,7 @@ export class LambdaToolFunctionsService {
       memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
       timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
       copyFiles: copyYarnInstall,
+      isTenantIsolated: true,
     });
   }
 
@@ -617,6 +630,8 @@ export class LambdaToolFunctionsService {
         String(YARN_INSTALL_LAMBDA_MEMORY_MB),
         String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
         String(LAMBDA_EPHEMERAL_STORAGE_MB),
+        // Tenant isolation cannot be turned on for an existing function.
+        TenantIsolationMode.PER_TENANT,
       ],
     });
 
