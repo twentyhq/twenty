@@ -3,12 +3,16 @@ import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayo
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
+import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutDefaultFields';
+import { getRecordTableWidgetViewSnapshotWithLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewSnapshotWithLayout';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
   type RecordTableConfiguration,
+  ViewType,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 
@@ -33,8 +37,17 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
   const store = useStore();
 
   const addDraftViewForRecordTableWidget = useCallback(
-    (widgetId: string, objectMetadataItem: EnrichedObjectMetadataItem) => {
-      const snapshot = buildRecordTableWidgetViewSnapshot(objectMetadataItem);
+    (
+      widgetId: string,
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      layoutViewType: RecordTableWidgetLayoutViewType = ViewType.TABLE_WIDGET,
+    ) => {
+      const snapshot = getRecordTableWidgetViewSnapshotWithLayout({
+        widgetViewSnapshot:
+          buildRecordTableWidgetViewSnapshot(objectMetadataItem),
+        targetViewType: layoutViewType,
+        ...getRecordTableWidgetLayoutDefaultFields(objectMetadataItem),
+      });
 
       store.set(recordTableWidgetViewDraftState, (prev) => ({
         ...prev,

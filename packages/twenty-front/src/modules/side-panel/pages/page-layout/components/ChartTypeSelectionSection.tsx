@@ -1,19 +1,12 @@
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
+import { GRAPH_TYPE_OPTIONS } from '@/side-panel/pages/page-layout/constants/GraphTypeOptions';
 import { styled } from '@linaria/react';
 
-import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { type GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
-
-const GRAPH_TYPE_OPTIONS = [
-  GraphType.VERTICAL_BAR,
-  GraphType.HORIZONTAL_BAR,
-  GraphType.LINE,
-  GraphType.PIE,
-  GraphType.AGGREGATE,
-];
 
 const StyledChartTypeSelectionContainer = styled.div`
   display: flex;
