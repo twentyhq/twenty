@@ -30,6 +30,7 @@ import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
@@ -277,7 +278,6 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataComputation({
           flatFieldMetadataToValidate,
-          // The final maps: a field renamed in the same migration may be validated after this one
           ...buildUniversalComputedFieldSchemaReader({
             flatObjectMetadataMaps,
             flatFieldMetadataMapsList: [finalFlatEntityMaps],
@@ -426,7 +426,8 @@ export class FlatFieldMetadataValidatorService {
     buildOptions,
     remainingFlatEntityMapsToValidate,
     additionalCacheDataMaps,
-  }: UniversalFlatEntityValidationArgs<
+    finalFlatEntityMaps,
+  }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -542,12 +543,10 @@ export class FlatFieldMetadataValidatorService {
           ]
         : validateFlatFieldMetadataComputation({
             flatFieldMetadataToValidate,
+            // The final maps: a field created or renamed in the same migration may be validated after this one
             ...buildUniversalComputedFieldSchemaReader({
               flatObjectMetadataMaps,
-              flatFieldMetadataMapsList: [
-                optimisticFlatFieldMetadataMaps,
-                remainingFlatEntityMapsToValidate,
-              ].filter(isDefined),
+              flatFieldMetadataMapsList: [finalFlatEntityMaps],
             }),
           })),
     );

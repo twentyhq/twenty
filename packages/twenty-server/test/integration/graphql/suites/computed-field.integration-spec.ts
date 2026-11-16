@@ -756,7 +756,7 @@ describe('Computed fields (e2e)', () => {
           kind: 'FORMULA',
           expression: 'invalidComputedField + 1',
         }),
-      ).toContain('is not a field of rollupProject');
+      ).toContain('ends up reading itself');
     });
 
     it('rejects turning a stored field into a computed one', async () => {
