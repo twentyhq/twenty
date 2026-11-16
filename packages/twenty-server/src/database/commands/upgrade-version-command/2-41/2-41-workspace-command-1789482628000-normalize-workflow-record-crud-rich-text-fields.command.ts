@@ -1,22 +1,33 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { upsertLegacyWorkflowVersionsToCore } from 'src/database/commands/upgrade-version-command/2-20/utils/upsert-legacy-workflow-versions-to-core.util';
+import { LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-22/constants/legacy-workflow-version-universal-identifiers.constant';
 import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-41/utils/normalize-record-crud-rich-text-fields.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-20/types/legacy-workflow-version-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.41.0', 1789482628000)
@@ -30,7 +41,13 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly applicationService: ApplicationService,
+    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
+    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {
     super(workspaceIteratorService);
   }
@@ -60,7 +77,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       });
 
     if (!isDefined(workflowVersionObject)) {
@@ -119,8 +136,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
 
     const hasCoreWorkflowVersionIdField = isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId
-          .universalIdentifier
+        LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER
       ],
     );
 
@@ -133,10 +149,21 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     }
 
     if (!isDryRun) {
-      await this.workflowVersionCoreSyncService.upsertToCore(
+      await upsertLegacyWorkflowVersionsToCore({
         workspaceId,
-        versionsToSyncToCore,
-      );
+        workflowVersions: versionsToSyncToCore,
+        dependencies: {
+          applicationService: this.applicationService,
+          coreWorkflowVersionRepository: this.coreWorkflowVersionRepository,
+          flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+          logger: this.logger,
+          workspaceCacheService: this.workspaceCacheService,
+          workspaceMigrationValidateBuildAndRunService:
+            this.workspaceMigrationValidateBuildAndRunService,
+          workspaceOrmManager: this.workspaceOrmManager,
+          workspaceRepository: this.workspaceRepository,
+        },
+      });
     }
 
     this.logger.log(
