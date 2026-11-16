@@ -1,7 +1,7 @@
 import { type NavigationMenuItemManifest } from '@/application/navigationMenuItemManifestType';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// TODO: remove with folderUniversalIdentifier once published apps no longer send it
+// TODO(@thomtrp): remove with folderUniversalIdentifier once published apps no longer send it
 export const normalizeNavigationMenuItemManifest = <
   TNavigationMenuItemManifest extends Pick<
     NavigationMenuItemManifest,
