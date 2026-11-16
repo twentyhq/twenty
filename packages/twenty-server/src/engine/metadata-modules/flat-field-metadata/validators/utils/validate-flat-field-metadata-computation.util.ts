@@ -151,7 +151,10 @@ const assertComputationCanBeEvaluated = ({
       schemaReader,
     });
 
-    getComputedFieldValueType({ columnType, readablePath: path.join('.') });
+    getComputedFieldValueTypeOrThrow({
+      columnType,
+      readablePath: path.join('.'),
+    });
     assertComputationCanBeEvaluated({
       field: readField,
       schemaReader,
