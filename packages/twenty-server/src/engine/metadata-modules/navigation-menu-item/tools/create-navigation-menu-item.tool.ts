@@ -21,7 +21,7 @@ const commonOptionalFields = {
     .number()
     .optional()
     .describe('Position among siblings; defaults to the end.'),
-  folderId: z
+  parentId: z
     .uuid()
     .optional()
     .describe('Parent folder id, if the item should live inside a folder.'),
@@ -118,7 +118,7 @@ const toServiceInput = (
     icon: params.icon,
     color: params.color,
     position: params.position,
-    folderId: params.folderId,
+    parentId: params.parentId,
   };
 
   switch (params.type) {
@@ -214,7 +214,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           type: created.type,
           name: created.name,
           scope: created.userWorkspaceId ? 'user' : 'workspace',
-          folderId: created.folderId,
+          parentId: created.parentId,
           position: created.position,
         },
       };
