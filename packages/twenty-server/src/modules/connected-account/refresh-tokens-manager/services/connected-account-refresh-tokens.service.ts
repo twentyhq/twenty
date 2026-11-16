@@ -8,6 +8,10 @@ import { Repository } from 'typeorm';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  CacheLockException,
+  CacheLockExceptionCode,
+} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -77,6 +81,32 @@ export class ConnectedAccountRefreshTokensService {
 
   // Refresh tokens rotate: a refresh that lost the race reuses the winner's tokens, while valid, instead of burning the consumed one.
   async refreshAndSaveTokens(
+    connectedAccount: ConnectedAccountEntity,
+    workspaceId: string,
+  ): Promise<ConnectedAccountTokens> {
+    try {
+      return await this.refreshAndSaveTokensWithLock(
+        connectedAccount,
+        workspaceId,
+      );
+    } catch (error) {
+      // Sync handlers only know this module's codes; an unknown error marks the channel as permanently failed.
+      if (
+        error instanceof CacheLockException &&
+        error.code === CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT
+      ) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          `Timed out waiting for another refresh of connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+          ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+          { cause: error },
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  private async refreshAndSaveTokensWithLock(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
