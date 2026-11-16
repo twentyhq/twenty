@@ -141,7 +141,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     vi.restoreAllMocks();
   });
 
-  it('leaves the bot alone when the workspace has credits', async () => {
+  it('leaves the bot alone when the workspace has credits and the join is too close for a settings update', async () => {
     getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
     const client = new FakeCoreApiClient();
 

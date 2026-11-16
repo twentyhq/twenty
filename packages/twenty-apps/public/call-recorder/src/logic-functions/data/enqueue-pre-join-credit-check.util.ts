@@ -26,7 +26,7 @@ export const enqueuePreJoinCreditCheck = async ({
       jobs: [
         {
           // A re-created or rescheduled bot gets its own check; the queue keeps a completed id for hours.
-          jobId: `credit-check.${callRecordingId}.${externalBotId}.${joinAtMilliseconds}`,
+          jobId: `credit-check.${callRecordingId}.${externalBotId}.${joinAtMilliseconds}.${checkAtMilliseconds}`,
           payload: { callRecordingId },
         },
       ],

@@ -9,6 +9,7 @@ import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-reco
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { applyCallRecorderSettingsToRecallBot } from 'src/logic-functions/flows/apply-call-recorder-settings-to-recall-bot.util';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 
 export type CheckCreditsBeforeRecallBotJoinResult =
@@ -51,10 +52,10 @@ export const checkCreditsBeforeRecallBotJoin = async ({
     return { status: 'skipped', reason: 'meeting has no start time' };
   }
 
+  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
+
   // A late job must never cut a call that is already being recorded.
-  if (
-    now.getTime() >= new Date(computeRecallBotJoinAt(meetingStartsAt)).getTime()
-  ) {
+  if (now.getTime() >= new Date(joinAt).getTime()) {
     console.warn(
       `[call-recorder] pre-join credit check for callRecording ${callRecordingId} ran after the bot join time; the recording proceeds unchecked`,
     );
@@ -65,6 +66,14 @@ export const checkCreditsBeforeRecallBotJoin = async ({
   const failureReason = await getCreditsUnavailableFailureReason();
 
   if (isUndefined(failureReason)) {
+    await applyCallRecorderSettingsToRecallBot({
+      callRecordingId,
+      externalBotId: callRecording.externalBotId,
+      meetingStartsAt,
+      joinAt,
+      now,
+    });
+
     return { status: 'allowed' };
   }
 
