@@ -1,8 +1,5 @@
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import {
-  isComputedField,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isComputedField, isDefined } from 'twenty-shared/utils';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
