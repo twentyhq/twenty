@@ -1,4 +1,4 @@
-// Recall recommends scheduling bots for a rolling near-term window rather than far in advance,
-// so bots carry fresh config and volatile far-future meetings are not scheduled speculatively.
-// 7 days matches Recall's "daily sync of the next 7 days" guidance for self-managed calendar integrations.
-export const UPCOMING_CALENDAR_EVENT_SCHEDULING_HORIZON_DAYS = 7;
+// Recall joins on time for any bot booked more than 10 minutes ahead, so booking far out
+// only adds bots to update or cancel when a workspace changes its settings.
+// Two days puts each meeting in two daily sweeps before it starts.
+export const UPCOMING_CALENDAR_EVENT_SCHEDULING_HORIZON_DAYS = 2;
