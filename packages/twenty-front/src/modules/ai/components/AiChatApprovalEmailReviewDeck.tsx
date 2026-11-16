@@ -16,7 +16,9 @@ type AiChatApprovalEmailReviewDeckProps = {
   onActiveIndexChange: (index: number) => void;
   onDraftChange: (change: {
     emailId: string;
-    draft: AiChatApprovalReviewEmailDraft;
+    update: (
+      draft: AiChatApprovalReviewEmailDraft,
+    ) => AiChatApprovalReviewEmailDraft;
   }) => void;
   onRequestApproval: (emailIds: string[]) => void;
   onSkip: (emailId: string) => void;
@@ -65,7 +67,9 @@ export const AiChatApprovalEmailReviewDeck = ({
           key={email.id}
           draft={email.draft}
           disabled={disabled || email.status !== 'pending'}
-          onDraftChange={(draft) => onDraftChange({ emailId: email.id, draft })}
+          onDraftChange={(update) =>
+            onDraftChange({ emailId: email.id, update })
+          }
         />
       ),
     };
