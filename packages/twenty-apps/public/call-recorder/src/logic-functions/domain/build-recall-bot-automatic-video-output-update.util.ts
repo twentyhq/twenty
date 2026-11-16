@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { fetchPrebuiltCameraTileFramesOrThrow } from 'src/logic-functions/data/fetch-prebuilt-camera-tile-frames-or-throw.util';
+import { buildRecallBotAutomaticVideoOutputFromFrames } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output-from-frames.util';
 import { buildWorkspaceCameraTileFrames } from 'src/logic-functions/domain/build-workspace-camera-tile-frames.util';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 import { type CameraTileFrames } from 'src/logic-functions/types/camera-tile-frames.type';
@@ -38,8 +39,5 @@ export const buildRecallBotAutomaticVideoOutputUpdate = async (): Promise<
     return undefined;
   }
 
-  return {
-    in_call_recording: { kind: 'jpeg', b64_data: frames.recording },
-    in_call_not_recording: { kind: 'jpeg', b64_data: frames.notRecording },
-  };
+  return buildRecallBotAutomaticVideoOutputFromFrames(frames);
 };

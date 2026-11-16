@@ -561,7 +561,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         jobs: [
           {
             jobId: `credit-check.${buildCustomerSyncCallRecordingId()}.recall-bot-1.${new Date(FUTURE_RECALL_BOT_JOIN_AT).getTime()}.${new Date('2026-01-01T12:44:00.000Z').getTime()}`,
-            payload: { callRecordingId: buildCustomerSyncCallRecordingId() },
+            payload: {
+              callRecordingId: buildCustomerSyncCallRecordingId(),
+              bookedJoinAt: FUTURE_RECALL_BOT_JOIN_AT,
+            },
           },
         ],
       }),

@@ -20,10 +20,12 @@ export type CheckCreditsBeforeRecallBotJoinResult =
 export const checkCreditsBeforeRecallBotJoin = async ({
   client,
   callRecordingId,
+  bookedJoinAt,
   now,
 }: {
   client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
+  bookedJoinAt: string | undefined;
   now: Date;
 }): Promise<CheckCreditsBeforeRecallBotJoinResult> => {
   const callRecording = (
@@ -71,6 +73,7 @@ export const checkCreditsBeforeRecallBotJoin = async ({
       externalBotId: callRecording.externalBotId,
       meetingStartsAt,
       joinAt,
+      bookedJoinAt,
       now,
     });
 

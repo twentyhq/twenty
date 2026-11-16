@@ -117,6 +117,7 @@ const checkCredits = ({
   checkCreditsBeforeRecallBotJoin({
     client,
     callRecordingId: 'call-recording-1',
+    bookedJoinAt: JOIN_AT,
     now,
   });
 

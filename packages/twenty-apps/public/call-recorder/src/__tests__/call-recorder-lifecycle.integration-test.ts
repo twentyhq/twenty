@@ -32,6 +32,7 @@ import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { startPostInstallBackfillsHandler } from 'src/logic-functions/start-post-install-backfills';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
+import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS } from 'src/logic-functions/constants/call-recording-request-follow-up-delay-ms';
@@ -1895,7 +1896,9 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.get(botId)?.metadata).toEqual(
         buildBotMetadata(callRecordingId, workspaceId),
       );
-      expect(recall.creditCheckRequests).toEqual([{ callRecordingId }]);
+      expect(recall.creditCheckRequests).toEqual([
+        { callRecordingId, bookedJoinAt: expect.any(String) },
+      ]);
     });
 
     it('creates nothing for a meeting without a conference link', async () => {
@@ -2102,6 +2105,24 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.botUpdateRequests[0].body.chat).toBeNull();
     });
 
+    it('sends no settings update once the join early setting changed after the bot was booked', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+      vi.stubEnv(CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME, '5');
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.botUpdateRequests).toEqual([]);
+      expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
     it('still allows the recording and keeps the bot when the settings update fails', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -2152,6 +2173,7 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecordingId,
         externalBotId: botId,
         joinAt,
+        bookedJoinAt: undefined,
       });
 
       await expect

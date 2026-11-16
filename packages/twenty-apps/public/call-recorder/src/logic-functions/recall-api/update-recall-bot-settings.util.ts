@@ -1,8 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
-import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
-import { computeRecallBotDetectionActivateAfterSeconds } from 'src/logic-functions/domain/compute-recall-bot-detection-activate-after-seconds.util';
+import { buildRecallBotCoreSettings } from 'src/logic-functions/recall-api/build-recall-bot-core-settings.util';
 import { type RecallBotResponse } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { getRecallBotChatConfig } from 'src/logic-functions/recall-api/get-recall-bot-chat-config.util';
@@ -27,27 +25,20 @@ export const updateRecallBotSettings = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
-  const automaticLeave = getRecallBotAutomaticLeave({
-    botDetectionActivateAfterSeconds:
-      computeRecallBotDetectionActivateAfterSeconds({
-        botJoinsAt: joinAt,
-        meetingStartsAt,
-      }),
-    botName: configResult.config.botName,
-  });
-
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
     path: `/bot/${externalBotId}/`,
     method: 'PATCH',
     body: {
-      bot_name: configResult.config.botName,
-      automatic_leave: automaticLeave,
+      ...buildRecallBotCoreSettings({
+        botName: configResult.config.botName,
+        botJoinsAt: joinAt,
+        meetingStartsAt,
+      }),
       chat: getRecallBotChatConfig() ?? null,
       ...(isUndefined(automaticVideoOutput)
         ? {}
         : { automatic_video_output: automaticVideoOutput }),
-      recording_config: getRecallBotRecordingConfig(),
     },
   });
 

@@ -162,7 +162,10 @@ describe('scheduleRecallBotForCallRecording', () => {
       jobs: [
         {
           jobId: `credit-check.call-recording-1.recall-bot-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}.${new Date('2026-01-01T12:44:00.000Z').getTime()}`,
-          payload: { callRecordingId: 'call-recording-1' },
+          payload: {
+            callRecordingId: 'call-recording-1',
+            bookedJoinAt: '2026-01-01T12:59:00.000Z',
+          },
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
