@@ -9,18 +9,20 @@ import { teamsHealthCheckHandler } from 'src/logic-functions/teams-health-check'
 const {
   listTeamsConnectionsMock,
   kvGetMock,
-  fetchCurrentWorkspaceIdMock,
+  fetchCurrentWorkspaceIdOrThrowMock,
   releaseFlags,
 } = vi.hoisted(() => ({
   listTeamsConnectionsMock: vi.fn(),
   kvGetMock: vi.fn(),
-  fetchCurrentWorkspaceIdMock: vi.fn(),
+  fetchCurrentWorkspaceIdOrThrowMock: vi.fn(),
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: false },
 }));
 
 vi.mock(
-  'src/features/chat/logic-functions/utils/fetch-current-workspace-id',
-  () => ({ fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock }),
+  'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw',
+  () => ({
+    fetchCurrentWorkspaceIdOrThrow: fetchCurrentWorkspaceIdOrThrowMock,
+  }),
 );
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -60,7 +62,7 @@ describe('teamsHealthCheckHandler', () => {
     vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
     listTeamsConnectionsMock.mockResolvedValue([]);
     kvGetMock.mockResolvedValue(null);
-    fetchCurrentWorkspaceIdMock.mockResolvedValue('this-workspace-id');
+    fetchCurrentWorkspaceIdOrThrowMock.mockResolvedValue('this-workspace-id');
   });
 
   afterEach(() => {

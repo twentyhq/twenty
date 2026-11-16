@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-export const fetchCurrentWorkspaceId = async (): Promise<string> => {
+export const fetchCurrentWorkspaceIdOrThrow = async (): Promise<string> => {
   const { currentWorkspace } = await new MetadataApiClient().query({
     currentWorkspace: { id: true },
   });

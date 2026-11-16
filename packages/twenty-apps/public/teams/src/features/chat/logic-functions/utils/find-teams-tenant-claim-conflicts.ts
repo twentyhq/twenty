@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type TeamsTenantClaimConflict } from 'src/features/chat/logic-functions/types/teams-tenant-claim-conflict.type';
 import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
-import { fetchCurrentWorkspaceId } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id';
+import { fetchCurrentWorkspaceIdOrThrow } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw';
 
 const isHeldByAnotherWorkspace = async ({
   tenantId,
@@ -45,7 +45,7 @@ export const findTeamsTenantClaimConflicts = async ({
     return [];
   }
 
-  const currentWorkspaceId = await fetchCurrentWorkspaceId();
+  const currentWorkspaceId = await fetchCurrentWorkspaceIdOrThrow();
   const liveConflicts = await Promise.all(
     recordedConflicts.map(async (conflict) =>
       (await isHeldByAnotherWorkspace({

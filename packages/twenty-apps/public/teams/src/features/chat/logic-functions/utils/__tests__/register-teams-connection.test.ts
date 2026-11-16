@@ -15,7 +15,7 @@ const {
   fetchGraphJsonMock,
   releaseMock,
   matchTeamsDirectoryByEmailMock,
-  fetchCurrentWorkspaceIdMock,
+  fetchCurrentWorkspaceIdOrThrowMock,
 } = vi.hoisted(() => ({
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
@@ -25,7 +25,7 @@ const {
   fetchGraphJsonMock: vi.fn(),
   releaseMock: vi.fn(),
   matchTeamsDirectoryByEmailMock: vi.fn(),
-  fetchCurrentWorkspaceIdMock: vi.fn(),
+  fetchCurrentWorkspaceIdOrThrowMock: vi.fn(),
 }));
 
 vi.mock('src/constants/release-flags', () => ({
@@ -53,8 +53,10 @@ vi.mock(
 );
 
 vi.mock(
-  'src/features/chat/logic-functions/utils/fetch-current-workspace-id',
-  () => ({ fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock }),
+  'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw',
+  () => ({
+    fetchCurrentWorkspaceIdOrThrow: fetchCurrentWorkspaceIdOrThrowMock,
+  }),
 );
 
 const CONNECTED_ACCOUNT_ID = 'connected-account-id';
@@ -88,7 +90,7 @@ describe('registerTeamsConnection', () => {
     fetchGraphJsonMock.mockResolvedValue({ value: [{ id: TENANT_ID }] });
     kvGetMock.mockResolvedValue(null);
     matchTeamsDirectoryByEmailMock.mockResolvedValue(undefined);
-    fetchCurrentWorkspaceIdMock.mockResolvedValue('this-workspace-id');
+    fetchCurrentWorkspaceIdOrThrowMock.mockResolvedValue('this-workspace-id');
   });
 
   it('should claim the tenant of a workspace-shared connection and remember it for release', async () => {

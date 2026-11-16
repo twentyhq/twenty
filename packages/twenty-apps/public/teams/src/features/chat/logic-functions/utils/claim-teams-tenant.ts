@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
-import { fetchCurrentWorkspaceId } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id';
+import { fetchCurrentWorkspaceIdOrThrow } from 'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw';
 
 export const claimTeamsTenant = async (
   tenantId: string,
@@ -21,7 +21,7 @@ export const claimTeamsTenant = async (
 
     if (
       isNonEmptyString(claimingWorkspaceId) &&
-      claimingWorkspaceId !== (await fetchCurrentWorkspaceId())
+      claimingWorkspaceId !== (await fetchCurrentWorkspaceIdOrThrow())
     ) {
       return { isClaimed: false };
     }

@@ -3,11 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { claimTeamsTenant } from 'src/features/chat/logic-functions/utils/claim-teams-tenant';
 
-const { kvGetMock, kvSetMock, fetchCurrentWorkspaceIdMock } = vi.hoisted(
+const { kvGetMock, kvSetMock, fetchCurrentWorkspaceIdOrThrowMock } = vi.hoisted(
   () => ({
     kvGetMock: vi.fn(),
     kvSetMock: vi.fn(),
-    fetchCurrentWorkspaceIdMock: vi.fn(),
+    fetchCurrentWorkspaceIdOrThrowMock: vi.fn(),
   }),
 );
 
@@ -16,8 +16,10 @@ vi.mock('twenty-sdk/logic-function', () => ({
 }));
 
 vi.mock(
-  'src/features/chat/logic-functions/utils/fetch-current-workspace-id',
-  () => ({ fetchCurrentWorkspaceId: fetchCurrentWorkspaceIdMock }),
+  'src/features/chat/logic-functions/utils/fetch-current-workspace-id-or-throw',
+  () => ({
+    fetchCurrentWorkspaceIdOrThrow: fetchCurrentWorkspaceIdOrThrowMock,
+  }),
 );
 
 const TENANT_ID = 'tenant-id';
@@ -25,7 +27,7 @@ const TENANT_ID = 'tenant-id';
 describe('claimTeamsTenant', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    fetchCurrentWorkspaceIdMock.mockResolvedValue('this-workspace-id');
+    fetchCurrentWorkspaceIdOrThrowMock.mockResolvedValue('this-workspace-id');
   });
 
   it('should claim the tenant for this workspace', async () => {
@@ -36,7 +38,7 @@ describe('claimTeamsTenant', () => {
       { scope: 'SERVER' },
     );
     expect(kvGetMock).not.toHaveBeenCalled();
-    expect(fetchCurrentWorkspaceIdMock).not.toHaveBeenCalled();
+    expect(fetchCurrentWorkspaceIdOrThrowMock).not.toHaveBeenCalled();
   });
 
   it('should report a lost claim when another workspace holds the tenant', async () => {
@@ -62,6 +64,6 @@ describe('claimTeamsTenant', () => {
     kvGetMock.mockResolvedValue(null);
 
     await expect(claimTeamsTenant(TENANT_ID)).rejects.toThrow('HTTP 503');
-    expect(fetchCurrentWorkspaceIdMock).not.toHaveBeenCalled();
+    expect(fetchCurrentWorkspaceIdOrThrowMock).not.toHaveBeenCalled();
   });
 });
