@@ -1,11 +1,11 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
-import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutDefaultFields';
 import { getRecordTableWidgetViewSnapshotWithLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewSnapshotWithLayout';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -37,16 +37,25 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
   const store = useStore();
 
   const addDraftViewForRecordTableWidget = useCallback(
-    (
-      widgetId: string,
-      objectMetadataItem: EnrichedObjectMetadataItem,
-      layoutViewType: RecordTableWidgetLayoutViewType = ViewType.TABLE_WIDGET,
-    ) => {
+    ({
+      widgetId,
+      objectMetadataItem,
+      targetViewType = ViewType.TABLE_WIDGET,
+      defaultGroupByFieldMetadataItem = null,
+      defaultCalendarFieldMetadataItem,
+    }: {
+      widgetId: string;
+      objectMetadataItem: EnrichedObjectMetadataItem;
+      targetViewType?: RecordTableWidgetLayoutViewType;
+      defaultGroupByFieldMetadataItem?: FieldMetadataItem | null;
+      defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
+    }) => {
       const snapshot = getRecordTableWidgetViewSnapshotWithLayout({
         widgetViewSnapshot:
           buildRecordTableWidgetViewSnapshot(objectMetadataItem),
-        targetViewType: layoutViewType,
-        ...getRecordTableWidgetLayoutDefaultFields(objectMetadataItem),
+        targetViewType,
+        defaultGroupByFieldMetadataItem,
+        defaultCalendarFieldMetadataItem,
       });
 
       store.set(recordTableWidgetViewDraftState, (prev) => ({

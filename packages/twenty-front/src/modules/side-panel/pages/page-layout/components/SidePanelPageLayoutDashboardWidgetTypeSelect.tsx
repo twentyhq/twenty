@@ -7,15 +7,10 @@ import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportu
 import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
-import {
-  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
-  RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES,
-  type RecordTableWidgetLayoutViewType,
-} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
-import { getRecordTableWidgetLayoutDefaultFields } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutDefaultFields';
+import { useRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutPickerOptions';
+import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -24,10 +19,8 @@ import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants
 import { GRAPH_TYPE_OPTIONS } from '@/side-panel/pages/page-layout/constants/GraphTypeOptions';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { type GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
-import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
-import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -44,22 +37,10 @@ import { IconAlignBoxLeftTop, IconApps, IconFrame } from 'twenty-ui/icon';
 import {
   type FrontComponent,
   PageLayoutType,
-  ViewType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-
-const PREFERRED_VIEW_OBJECT_NAMES: string[] = [
-  StandardObjectNameSingular.Company,
-  StandardObjectNameSingular.Opportunity,
-];
-
-const getGraphTypeSelectItemId = (graphType: GraphType) => `chart-${graphType}`;
-
-const getViewLayoutSelectItemId = (
-  layoutViewType: RecordTableWidgetLayoutViewType,
-) => `view-${layoutViewType}`;
 
 export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const { t } = useLingui();
@@ -100,52 +81,28 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     useAddDraftViewForRecordTableWidget(pageLayoutId);
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
 
-  const recordTableWidgetViewDraft = useAtomComponentStateValue(
-    recordTableWidgetViewDraftComponentState,
-    pageLayoutId,
-  );
-
-  const candidateObjectMetadataItems = [
-    ...PREFERRED_VIEW_OBJECT_NAMES.map((nameSingular) =>
-      readableObjectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === nameSingular,
-      ),
-    ).filter(isDefined),
-    ...readableObjectMetadataItems.toSorted((first, second) =>
+  // Opportunity first: unlike Company it has the select and date fields kanban and calendar need.
+  const firstAvailableObjectMetadataItem =
+    [StandardObjectNameSingular.Opportunity, StandardObjectNameSingular.Company]
+      .map((nameSingular) =>
+        readableObjectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular === nameSingular,
+        ),
+      )
+      .find(isDefined) ||
+    [...readableObjectMetadataItems].sort((first, second) =>
       first.labelPlural.localeCompare(second.labelPlural),
-    ),
-  ];
+    )[0];
 
-  // Kanban and calendar need a field Company may lack, so each layout defaults to the first object that supports it.
-  const viewLayoutItems = RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES.map(
-    (layoutViewType) => ({
-      layoutViewType,
-      objectMetadataItem: candidateObjectMetadataItems.find(
-        (objectMetadataItem) => {
-          const {
-            defaultGroupByFieldMetadataItem,
-            defaultCalendarFieldMetadataItem,
-          } = getRecordTableWidgetLayoutDefaultFields(objectMetadataItem);
+  const {
+    layoutOptions,
+    defaultGroupByFieldMetadataItem,
+    defaultCalendarFieldMetadataItem,
+  } = useRecordTableWidgetLayoutPickerOptions(firstAvailableObjectMetadataItem);
 
-          if (layoutViewType === ViewType.KANBAN_WIDGET) {
-            return isDefined(defaultGroupByFieldMetadataItem);
-          }
-
-          if (layoutViewType === ViewType.CALENDAR_WIDGET) {
-            return isDefined(defaultCalendarFieldMetadataItem);
-          }
-
-          return true;
-        },
-      ),
-    }),
-  ).filter(
-    (
-      viewLayoutItem,
-    ): viewLayoutItem is typeof viewLayoutItem & {
-      objectMetadataItem: (typeof candidateObjectMetadataItems)[number];
-    } => isDefined(viewLayoutItem.objectMetadataItem),
+  const availableLayoutOptions = layoutOptions.filter(
+    (layoutOption) => !layoutOption.isDisabled,
   );
 
   const { data: frontComponentsData } = useQuery<{
@@ -180,12 +137,12 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     : undefined;
 
   const handleCreateChartWidget = (graphType: GraphType) => {
-    const isExistingChartOfSameType =
-      isDefined(existingWidget) &&
-      isWidgetConfigurationOfTypeGraph(existingWidget.configuration) &&
-      getCurrentGraphTypeFromConfig(existingWidget.configuration) === graphType;
-
-    if (!isExistingChartOfSameType) {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.GRAPH,
+      )
+    ) {
       if (isDefined(pageLayoutEditingWidgetId)) {
         removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
@@ -257,38 +214,38 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleCreateViewWidget = ({
-    layoutViewType,
-    objectMetadataItem,
-  }: (typeof viewLayoutItems)[number]) => {
-    const isExistingViewOfSameLayout =
-      isDefined(existingWidget) &&
-      existingWidget.type === WidgetType.RECORD_TABLE &&
-      recordTableWidgetViewDraft[existingWidget.id]?.view.type ===
-        layoutViewType;
-
-    if (!isExistingViewOfSameLayout) {
+  const handleCreateViewWidget = (
+    targetViewType: RecordTableWidgetLayoutViewType,
+  ) => {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.RECORD_TABLE,
+      )
+    ) {
       if (isDefined(pageLayoutEditingWidgetId)) {
         removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
       const newRecordTableWidget = createPageLayoutWidget({
         type: WidgetType.RECORD_TABLE,
-        title: objectMetadataItem.labelPlural,
+        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
         },
-        objectMetadataId: objectMetadataItem.id,
+        objectMetadataId: firstAvailableObjectMetadataItem?.id,
       });
 
       setPageLayoutEditingWidgetId(newRecordTableWidget.id);
 
-      addDraftViewForRecordTableWidget(
-        newRecordTableWidget.id,
-        objectMetadataItem,
-        layoutViewType,
-      );
+      addDraftViewForRecordTableWidget({
+        widgetId: newRecordTableWidget.id,
+        objectMetadataItem: firstAvailableObjectMetadataItem,
+        targetViewType,
+        defaultGroupByFieldMetadataItem,
+        defaultCalendarFieldMetadataItem,
+      });
     }
 
     navigatePageLayoutSidePanel({
@@ -324,10 +281,8 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   };
 
   const selectableItemIds = [
-    ...GRAPH_TYPE_OPTIONS.map(getGraphTypeSelectItemId),
-    ...viewLayoutItems.map(({ layoutViewType }) =>
-      getViewLayoutSelectItemId(layoutViewType),
-    ),
+    ...GRAPH_TYPE_OPTIONS,
+    ...availableLayoutOptions.map(({ viewType }) => viewType),
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -336,51 +291,38 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Charts`}>
-        {GRAPH_TYPE_OPTIONS.map((graphType) => {
-          const selectItemId = getGraphTypeSelectItemId(graphType);
-
-          return (
-            <SelectableListItem
-              key={graphType}
-              itemId={selectItemId}
-              onEnter={() => handleCreateChartWidget(graphType)}
-            >
-              <CommandMenuItem
-                Icon={GRAPH_TYPE_INFORMATION[graphType].icon}
-                label={t(GRAPH_TYPE_INFORMATION[graphType].label)}
-                id={selectItemId}
-                onClick={() => handleCreateChartWidget(graphType)}
-              />
-            </SelectableListItem>
-          );
-        })}
+        {GRAPH_TYPE_OPTIONS.map((graphType) => (
+          <SelectableListItem
+            key={graphType}
+            itemId={graphType}
+            onEnter={() => handleCreateChartWidget(graphType)}
+          >
+            <CommandMenuItem
+              Icon={GRAPH_TYPE_INFORMATION[graphType].icon}
+              label={t(GRAPH_TYPE_INFORMATION[graphType].label)}
+              id={graphType}
+              onClick={() => handleCreateChartWidget(graphType)}
+            />
+          </SelectableListItem>
+        ))}
       </SidePanelGroup>
 
-      {viewLayoutItems.length > 0 && (
-        <SidePanelGroup heading={t`Views`}>
-          {viewLayoutItems.map((viewLayoutItem) => {
-            const { layoutViewType } = viewLayoutItem;
-            const selectItemId = getViewLayoutSelectItemId(layoutViewType);
-
-            return (
-              <SelectableListItem
-                key={layoutViewType}
-                itemId={selectItemId}
-                onEnter={() => handleCreateViewWidget(viewLayoutItem)}
-              >
-                <CommandMenuItem
-                  Icon={RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[layoutViewType].Icon}
-                  label={t(
-                    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[layoutViewType].label,
-                  )}
-                  id={selectItemId}
-                  onClick={() => handleCreateViewWidget(viewLayoutItem)}
-                />
-              </SelectableListItem>
-            );
-          })}
-        </SidePanelGroup>
-      )}
+      <SidePanelGroup heading={t`Views`}>
+        {availableLayoutOptions.map(({ viewType, Icon, label }) => (
+          <SelectableListItem
+            key={viewType}
+            itemId={viewType}
+            onEnter={() => handleCreateViewWidget(viewType)}
+          >
+            <CommandMenuItem
+              Icon={Icon}
+              label={t(label)}
+              id={viewType}
+              onClick={() => handleCreateViewWidget(viewType)}
+            />
+          </SelectableListItem>
+        ))}
+      </SidePanelGroup>
 
       <SidePanelGroup heading={t`Other`}>
         <SelectableListItem

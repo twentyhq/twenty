@@ -77,10 +77,10 @@ export const RecordTableDataSourceDropdownContent = () => {
     );
 
     if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
-      addDraftViewForRecordTableWidget(
-        widgetInEditMode.id,
-        selectedObjectMetadataItem,
-      );
+      addDraftViewForRecordTableWidget({
+        widgetId: widgetInEditMode.id,
+        objectMetadataItem: selectedObjectMetadataItem,
+      });
 
       updatePageLayoutWidget(widgetInEditMode.id, {
         title: selectedObjectMetadataItem.labelPlural,

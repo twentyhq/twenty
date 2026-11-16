@@ -4,9 +4,10 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { buildDefaultChartConfiguration } from '@/page-layout/utils/buildDefaultChartConfiguration';
+import { buildDefaultBarChartConfiguration } from '@/page-layout/utils/buildDefaultBarChartConfiguration';
 import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
+import { getChartConfigurationUpdateForGraphType } from '@/side-panel/pages/page-layout/utils/getChartConfigurationUpdateForGraphType';
 import { getConfigurationTypeFromGraphType } from '@/side-panel/pages/page-layout/utils/getConfigurationTypeFromGraphType';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
@@ -59,6 +60,12 @@ export const useCreatePageLayoutGraphWidget = ({
             getCurrentGraphTypeFromConfig(widget.configuration) === graphType,
         ).length;
 
+      const barChartConfiguration = buildDefaultBarChartConfiguration({
+        fieldSelection,
+        timezone: timeZone,
+        firstDayOfTheWeek: calendarStartDay,
+      });
+
       return createPageLayoutWidget({
         type: WidgetType.GRAPH,
         title: getWidgetTitle(
@@ -71,12 +78,13 @@ export const useCreatePageLayoutGraphWidget = ({
           },
           existingChartOfSameTypeCount,
         ),
-        configuration: buildDefaultChartConfiguration({
-          graphType,
-          fieldSelection,
-          timezone: timeZone,
-          firstDayOfTheWeek: calendarStartDay,
-        }),
+        configuration: {
+          ...barChartConfiguration,
+          ...getChartConfigurationUpdateForGraphType({
+            currentConfiguration: barChartConfiguration,
+            graphType,
+          }),
+        } as PageLayoutWidget['configuration'],
         objectMetadataId: fieldSelection?.objectMetadataId,
       });
     },
