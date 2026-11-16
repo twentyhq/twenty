@@ -12,15 +12,15 @@ type RuleGrantRow = {
   canSoftDeleteRecords: boolean;
 };
 
-const findRuleGrantByRootGroupId = async (
-  rootGroupId: string,
+const findRuleByPredicateGroupId = async (
+  predicateGroupId: string,
 ): Promise<RuleGrantRow> => {
   const [ruleGrant] = await global.testDataSource.query(
     `SELECT g."rowLevelPermissionRuleId", r."canReadRecords", r."canUpdateRecords", r."canSoftDeleteRecords"
      FROM core."rowLevelPermissionPredicateGroup" g
      JOIN core."rowLevelPermissionRule" r ON r.id = g."rowLevelPermissionRuleId"
      WHERE g.id = $1`,
-    [rootGroupId],
+    [predicateGroupId],
   );
 
   return ruleGrant;
@@ -48,14 +48,14 @@ describe('row level permission rule grants', () => {
     await deleteOneRole({ input: { idToDelete: roleId } });
   });
 
-  it('should give each rule the grants sent for its root group', async () => {
+  it('should give each rule the grants sent for its predicate group', async () => {
     const objectMetadataId = await findObjectMetadataIdByName('company');
-    const firstRootGroupId = v4();
-    const secondRootGroupId = v4();
+    const firstPredicateGroupId = v4();
+    const secondPredicateGroupId = v4();
 
     const upsertRules = (
       ruleGrants: {
-        rootPredicateGroupId: string;
+        rowLevelPermissionPredicateGroupId: string;
         canReadRecords: boolean;
         canUpdateRecords: boolean;
         canSoftDeleteRecords: boolean;
@@ -67,12 +67,14 @@ describe('row level permission rule grants', () => {
           roleId,
           objectMetadataId,
           predicates: [],
-          predicateGroups: [firstRootGroupId, secondRootGroupId].map((id) => ({
-            id,
-            objectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          })),
+          predicateGroups: [firstPredicateGroupId, secondPredicateGroupId].map(
+            (id) => ({
+              id,
+              objectMetadataId,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            }),
+          ),
           canReadRecords: true,
           canUpdateRecords: false,
           canSoftDeleteRecords: false,
@@ -82,15 +84,15 @@ describe('row level permission rule grants', () => {
 
     await upsertRules([
       {
-        rootPredicateGroupId: secondRootGroupId,
+        rowLevelPermissionPredicateGroupId: secondPredicateGroupId,
         canReadRecords: true,
         canUpdateRecords: true,
         canSoftDeleteRecords: true,
       },
     ]);
 
-    const firstRule = await findRuleGrantByRootGroupId(firstRootGroupId);
-    const secondRule = await findRuleGrantByRootGroupId(secondRootGroupId);
+    const firstRule = await findRuleByPredicateGroupId(firstPredicateGroupId);
+    const secondRule = await findRuleByPredicateGroupId(secondPredicateGroupId);
 
     expect(firstRule.rowLevelPermissionRuleId).not.toBe(
       secondRule.rowLevelPermissionRuleId,
@@ -108,37 +110,43 @@ describe('row level permission rule grants', () => {
 
     await upsertRules([
       {
-        rootPredicateGroupId: firstRootGroupId,
+        rowLevelPermissionPredicateGroupId: firstPredicateGroupId,
         canReadRecords: true,
         canUpdateRecords: true,
         canSoftDeleteRecords: false,
       },
       {
-        rootPredicateGroupId: secondRootGroupId,
+        rowLevelPermissionPredicateGroupId: secondPredicateGroupId,
         canReadRecords: false,
         canUpdateRecords: false,
         canSoftDeleteRecords: false,
       },
     ]);
 
-    expect(await findRuleGrantByRootGroupId(firstRootGroupId)).toMatchObject({
+    expect(
+      await findRuleByPredicateGroupId(firstPredicateGroupId),
+    ).toMatchObject({
       canReadRecords: true,
       canUpdateRecords: true,
       canSoftDeleteRecords: false,
     });
-    expect(await findRuleGrantByRootGroupId(secondRootGroupId)).toMatchObject({
+    expect(
+      await findRuleByPredicateGroupId(secondPredicateGroupId),
+    ).toMatchObject({
       canReadRecords: false,
       canUpdateRecords: false,
       canSoftDeleteRecords: false,
     });
   });
 
-  it('should refuse rule grants that do not target one root group each', async () => {
+  it('should refuse rule grants that do not target one parentless predicate group each', async () => {
     const objectMetadataId = await findObjectMetadataIdByName('company');
-    const rootGroupId = v4();
+    const predicateGroupId = v4();
     const childGroupId = v4();
 
-    const upsertWithRuleGrantTargets = (rootPredicateGroupIds: string[]) =>
+    const upsertWithRuleGrantTargets = (
+      rowLevelPermissionPredicateGroupIds: string[],
+    ) =>
       upsertRowLevelPermissionPredicates({
         expectToFail: true,
         input: {
@@ -147,7 +155,7 @@ describe('row level permission rule grants', () => {
           predicates: [],
           predicateGroups: [
             {
-              id: rootGroupId,
+              id: predicateGroupId,
               objectMetadataId,
               logicalOperator:
                 RowLevelPermissionPredicateGroupLogicalOperator.AND,
@@ -155,27 +163,29 @@ describe('row level permission rule grants', () => {
             {
               id: childGroupId,
               objectMetadataId,
-              parentRowLevelPermissionPredicateGroupId: rootGroupId,
+              parentRowLevelPermissionPredicateGroupId: predicateGroupId,
               logicalOperator:
                 RowLevelPermissionPredicateGroupLogicalOperator.AND,
             },
           ],
           canReadRecords: true,
-          ruleGrants: rootPredicateGroupIds.map((rootPredicateGroupId) => ({
-            rootPredicateGroupId,
-            canReadRecords: true,
-            canUpdateRecords: true,
-          })),
+          ruleGrants: rowLevelPermissionPredicateGroupIds.map(
+            (rowLevelPermissionPredicateGroupId) => ({
+              rowLevelPermissionPredicateGroupId,
+              canReadRecords: true,
+              canUpdateRecords: true,
+            }),
+          ),
         },
       });
 
-    for (const rootPredicateGroupIds of [
+    for (const rowLevelPermissionPredicateGroupIds of [
       [v4()],
       [childGroupId],
-      [rootGroupId, rootGroupId],
+      [predicateGroupId, predicateGroupId],
     ]) {
       const { errors } = await upsertWithRuleGrantTargets(
-        rootPredicateGroupIds,
+        rowLevelPermissionPredicateGroupIds,
       );
 
       expect(errors?.[0]?.message).toContain('Rule grants target');

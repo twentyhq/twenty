@@ -225,13 +225,17 @@ export class RowLevelPermissionPredicateService {
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    const ruleGrantRootGroupIds = (input.ruleGrants ?? []).map(
-      ({ rootPredicateGroupId }) => rootPredicateGroupId,
+    const ruleGrantPredicateGroupIds = (input.ruleGrants ?? []).map(
+      ({ rowLevelPermissionPredicateGroupId }) =>
+        rowLevelPermissionPredicateGroupId,
     );
 
-    if (new Set(ruleGrantRootGroupIds).size !== ruleGrantRootGroupIds.length) {
+    if (
+      new Set(ruleGrantPredicateGroupIds).size !==
+      ruleGrantPredicateGroupIds.length
+    ) {
       throw new RowLevelPermissionPredicateException(
-        'Rule grants target the same root predicate group more than once',
+        'Rule grants target the same predicate group more than once',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }
@@ -261,10 +265,10 @@ export class RowLevelPermissionPredicateService {
         },
         flatObjectMetadata,
       }),
-      ruleOperationsByRootPredicateGroupId: new Map(
+      ruleOperationsByRowLevelPermissionPredicateGroupId: new Map(
         (input.ruleGrants ?? []).map(
-          ({ rootPredicateGroupId, ...ruleGrant }) => [
-            rootPredicateGroupId,
+          ({ rowLevelPermissionPredicateGroupId, ...ruleGrant }) => [
+            rowLevelPermissionPredicateGroupId,
             removeDisabledOperationsFromRowLevelPermissionRule({
               ruleOperations: ruleGrant,
               flatObjectMetadata,
@@ -527,7 +531,7 @@ export class RowLevelPermissionPredicateService {
     flatRowLevelPermissionRuleMaps,
     flatFieldPermissionMaps,
     ruleOperations,
-    ruleOperationsByRootPredicateGroupId,
+    ruleOperationsByRowLevelPermissionPredicateGroupId,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     existingPredicates: FlatRowLevelPermissionPredicate[];
@@ -544,7 +548,7 @@ export class RowLevelPermissionPredicateService {
     flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
     flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
     ruleOperations: Partial<Pick<FlatRowLevelPermissionRule, RuleOperationKey>>;
-    ruleOperationsByRootPredicateGroupId: Map<
+    ruleOperationsByRowLevelPermissionPredicateGroupId: Map<
       string,
       Partial<Pick<FlatRowLevelPermissionRule, RuleOperationKey>>
     >;
@@ -589,7 +593,7 @@ export class RowLevelPermissionPredicateService {
       toDelete: groupsToDelete,
     });
 
-    const rootGroupIds = new Set(
+    const groupIdsWithoutParent = new Set(
       groups
         .filter(
           (group) => !isDefined(group.parentRowLevelPermissionPredicateGroupId),
@@ -597,10 +601,10 @@ export class RowLevelPermissionPredicateService {
         .map(({ id }) => id),
     );
 
-    for (const rootPredicateGroupId of ruleOperationsByRootPredicateGroupId.keys()) {
-      if (!rootGroupIds.has(rootPredicateGroupId)) {
+    for (const rowLevelPermissionPredicateGroupId of ruleOperationsByRowLevelPermissionPredicateGroupId.keys()) {
+      if (!groupIdsWithoutParent.has(rowLevelPermissionPredicateGroupId)) {
         throw new RowLevelPermissionPredicateException(
-          `Rule grants target ${rootPredicateGroupId}, which is not a root predicate group of this role and object`,
+          `Rule grants target ${rowLevelPermissionPredicateGroupId}, which is not a predicate group without a parent for this role and object`,
           RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         );
       }
@@ -636,9 +640,8 @@ export class RowLevelPermissionPredicateService {
 
     const ruleOperationsByRuleUniversalIdentifier = new Map(
       groups.flatMap((group) => {
-        const groupRuleOperations = ruleOperationsByRootPredicateGroupId.get(
-          group.id,
-        );
+        const groupRuleOperations =
+          ruleOperationsByRowLevelPermissionPredicateGroupId.get(group.id);
         const ruleUniversalIdentifier =
           ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
             group.universalIdentifier,

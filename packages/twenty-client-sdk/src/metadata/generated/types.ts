@@ -13184,7 +13184,7 @@ export default {
             "canUpdateRecords": [
                 1
             ],
-            "rootPredicateGroupId": [
+            "rowLevelPermissionPredicateGroupId": [
                 565
             ],
             "__typename": [

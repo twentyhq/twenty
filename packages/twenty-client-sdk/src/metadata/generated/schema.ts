@@ -8552,7 +8552,7 @@ export interface RowLevelPermissionRuleGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RowLevelPermissionRuleGrantInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),rootPredicateGroupId: Scalars['UUID']}
+export interface RowLevelPermissionRuleGrantInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),rowLevelPermissionPredicateGroupId: Scalars['UUID']}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number

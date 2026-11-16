@@ -138,7 +138,7 @@ export class RowLevelPermissionRuleGrantInput extends RowLevelPermissionRuleGran
   @IsUUID()
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
-  rootPredicateGroupId: string;
+  rowLevelPermissionPredicateGroupId: string;
 }
 
 @InputType()

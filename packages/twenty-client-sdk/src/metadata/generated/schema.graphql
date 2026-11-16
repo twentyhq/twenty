@@ -4842,7 +4842,7 @@ input RowLevelPermissionRuleGrantInput {
   canReadRecords: Boolean
   canSoftDeleteRecords: Boolean
   canUpdateRecords: Boolean
-  rootPredicateGroupId: UUID!
+  rowLevelPermissionPredicateGroupId: UUID!
 }
 
 type RowLevelRecordsPermissions {

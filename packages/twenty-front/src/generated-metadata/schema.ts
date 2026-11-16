@@ -7194,7 +7194,7 @@ export type RowLevelPermissionRuleGrantInput = {
   canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  rootPredicateGroupId: Scalars['UUID']['input'];
+  rowLevelPermissionPredicateGroupId: Scalars['UUID']['input'];
 };
 
 export type RowLevelRecordsPermissions = {
