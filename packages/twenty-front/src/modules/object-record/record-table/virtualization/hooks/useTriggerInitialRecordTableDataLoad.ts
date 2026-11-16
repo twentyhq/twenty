@@ -1,7 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -9,7 +8,7 @@ import {
   NO_RECORD_GROUP_FAMILY_KEY,
   recordIndexAllRecordIdsComponentSelector,
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordTableRecordsInStore } from '@/object-record/record-table/hooks/internal/useUpsertRecordTableRecordsInStore';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -36,8 +35,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { recordLimit, columnDescriptorByRecordFieldId } =
-    useRecordIndexContextOrThrow();
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { findManyRecordsLazy } =
     useRecordIndexTableLazyQuery(objectNameSingular);
@@ -85,7 +83,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { allocateRowSlots } = useAllocateRowSlots();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordTableRecordsInStore } =
+    useUpsertRecordTableRecordsInStore();
 
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
@@ -159,15 +158,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         if (isDefined(records)) {
-          upsertRecordsInStore({
-            partialRecords: [
-              ...records,
-              ...getLookupRelatedRecords({
-                records,
-                columnDescriptorByRecordFieldId,
-              }),
-            ],
-          });
+          upsertRecordTableRecordsInStore(records);
 
           loadRecordsAtRowIndexes({
             records,
@@ -212,12 +203,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       scrollTableToPosition,
       findManyRecordsLazy,
       totalNumberOfRowsCallbackState,
-      upsertRecordsInStore,
+      upsertRecordTableRecordsInStore,
       loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,
       recordLimit,
-      columnDescriptorByRecordFieldId,
     ],
   );
 

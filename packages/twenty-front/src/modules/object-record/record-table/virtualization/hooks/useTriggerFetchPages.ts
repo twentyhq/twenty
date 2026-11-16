@@ -4,11 +4,9 @@ import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
-import { getLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getLookupRelatedRecords';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordTableRecordsInStore } from '@/object-record/record-table/hooks/internal/useUpsertRecordTableRecordsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
@@ -28,11 +26,11 @@ const TIME_BETWEEN_TWO_REQUESTS = 25;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
-  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
   const store = useStore();
 
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordTableRecordsInStore } =
+    useUpsertRecordTableRecordsInStore();
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const { findManyRecordsLazyWithOffset } = useLazyFindManyRecordsWithOffset({
@@ -134,15 +132,7 @@ export const useTriggerFetchPages = () => {
             sliceStart + PAGING_FOR_UI_UPDATE,
           );
 
-          upsertRecordsInStore({
-            partialRecords: [
-              ...recordsSlice,
-              ...getLookupRelatedRecords({
-                records: recordsSlice,
-                columnDescriptorByRecordFieldId,
-              }),
-            ],
-          });
+          upsertRecordTableRecordsInStore(recordsSlice);
 
           loadRecordsAtRowIndexes({
             records: recordsSlice,
@@ -166,8 +156,7 @@ export const useTriggerFetchPages = () => {
       getScrollWrapperElement,
       store,
       totalNumberOfRowsCallbackState,
-      upsertRecordsInStore,
-      columnDescriptorByRecordFieldId,
+      upsertRecordTableRecordsInStore,
     ],
   );
 

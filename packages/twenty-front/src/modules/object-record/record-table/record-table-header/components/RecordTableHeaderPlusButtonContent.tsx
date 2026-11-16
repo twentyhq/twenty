@@ -113,14 +113,16 @@ export const RecordTableHeaderPlusButtonContent = () => {
         )}
         <Dropdown.Section scrollable>
           {isNonEmptyArray(filteredFieldMetadataItems) ? (
-            filteredFieldMetadataItems.map((fieldMetadataItem) =>
-              isLookupRelation(fieldMetadataItem) ? (
+            filteredFieldMetadataItems.map((fieldMetadataItem) => {
+              const startIcon = (
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              );
+
+              return isLookupRelation(fieldMetadataItem) ? (
                 <Dropdown.ActionItem
                   key={fieldMetadataItem.id}
                   page={fieldMetadataItem.id}
-                  startIcon={
-                    <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-                  }
+                  startIcon={startIcon}
                 >
                   {fieldMetadataItem.label}
                 </Dropdown.ActionItem>
@@ -130,14 +132,12 @@ export const RecordTableHeaderPlusButtonContent = () => {
                   onSelect={() =>
                     handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
                   }
-                  startIcon={
-                    <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-                  }
+                  startIcon={startIcon}
                 >
                   {fieldMetadataItem.label}
                 </Dropdown.OptionItem>
-              ),
-            )
+              );
+            })
           ) : (
             <Dropdown.Empty>
               {hasAvailableFields
