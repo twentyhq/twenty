@@ -125,6 +125,20 @@ describe('SidePanelAssignAiChatPage', () => {
     expect(screen.queryByText('Jane Austen')).not.toBeInTheDocument();
   });
 
+  it('closes on Escape from the search', async () => {
+    setThreads([{ id: 'thread-1', assigneeId: null }]);
+
+    render(<SidePanelAssignAiChatPage />, { wrapper: Wrapper });
+
+    await userEvent.type(
+      screen.getByPlaceholderText('Search members'),
+      '{Escape}',
+    );
+
+    expect(closeSidePanelMenu).toHaveBeenCalled();
+    expect(assignAiChatThreads).not.toHaveBeenCalled();
+  });
+
   it('offers to clear the assignee of an assigned chat', async () => {
     setThreads([{ id: 'thread-1', assigneeId: 'phil' }]);
 

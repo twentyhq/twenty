@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconUserOff } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -13,6 +14,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
@@ -46,6 +48,7 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const { assignAiChatThreads } = useAssignAiChatThreads();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const handleSidePanelEscape = useHandleSidePanelEscape();
   const [search, setSearch] = useState('');
 
   if (assignAiChatThreadIds.length === 0) {
@@ -68,9 +71,20 @@ export const SidePanelAssignAiChatPage = () => {
     });
   };
 
+  // The side panel Escape hotkey skips form fields, so the search input closes the panel itself
+  const handleSearchKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== Key.Escape || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    handleSidePanelEscape();
+  };
+
   return (
     <>
-      <StyledSearchContainer>
+      <StyledSearchContainer onKeyDown={handleSearchKeyDown}>
         <DropdownMenuSearchInput
           value={search}
           placeholder={t`Search members`}
