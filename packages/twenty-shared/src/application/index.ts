@@ -357,6 +357,7 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getNavigationMenuItemManifestParentUniversalIdentifier } from './utils/getNavigationMenuItemManifestParentUniversalIdentifier';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
