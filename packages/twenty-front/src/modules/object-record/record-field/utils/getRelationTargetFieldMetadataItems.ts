@@ -1,19 +1,22 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
-import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 
-export const getAggregatedFieldMetadataItems = (
+export const getRelationTargetFieldMetadataItems = ({
+  relationObjectMetadataItem,
+  isEligible,
+}: {
   relationObjectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'readableFields'
-  >,
-) =>
+  >;
+  isEligible: (fieldMetadataItem: FieldMetadataItem) => boolean;
+}) =>
   relationObjectMetadataItem.readableFields
     .filter(
       (fieldMetadataItem) =>
         isActiveFieldMetadataItem({ fieldMetadata: fieldMetadataItem }) &&
-        isNonEmptyArray(getRelationAggregateOperations(fieldMetadataItem)),
+        isEligible(fieldMetadataItem),
     )
     .toSorted(
       (fieldMetadataItemA, fieldMetadataItemB) =>

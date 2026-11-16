@@ -4,9 +4,8 @@ import { type RecordFieldLookupTarget } from '@/object-record/record-column-look
 
 export type RecordFieldColumnDescriptor = {
   lookupTarget: RecordFieldLookupTarget | undefined;
-  isLookupColumn: boolean;
   aggregateTarget: RecordFieldAggregateTarget | undefined;
-  isAggregateColumn: boolean;
+  isRelationTargetColumn: boolean;
   label: string;
   icon: FieldMetadataItem['icon'];
   description: FieldMetadataItem['description'];

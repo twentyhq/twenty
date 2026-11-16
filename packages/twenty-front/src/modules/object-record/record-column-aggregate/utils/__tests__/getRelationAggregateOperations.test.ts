@@ -12,14 +12,14 @@ const getOpportunityField = (fieldName: string) =>
   });
 
 describe('getRelationAggregateOperations', () => {
-  it('offers sum, average, min and max on a currency field', () => {
+  it('offers min, max, average and sum on a currency field', () => {
     expect(
       getRelationAggregateOperations(getOpportunityField('amount')),
     ).toEqual([
-      AggregateOperations.SUM,
-      AggregateOperations.AVG,
       AggregateOperations.MIN,
       AggregateOperations.MAX,
+      AggregateOperations.AVG,
+      AggregateOperations.SUM,
     ]);
   });
 
@@ -29,7 +29,7 @@ describe('getRelationAggregateOperations', () => {
     ).toEqual([AggregateOperations.MIN, AggregateOperations.MAX]);
   });
 
-  it('offers average, min and max on a rating field', () => {
+  it('offers min, max and average on a rating field', () => {
     expect(
       getRelationAggregateOperations({
         ...getOpportunityField('amount'),
@@ -37,9 +37,9 @@ describe('getRelationAggregateOperations', () => {
         type: FieldMetadataType.RATING,
       }),
     ).toEqual([
-      AggregateOperations.AVG,
       AggregateOperations.MIN,
       AggregateOperations.MAX,
+      AggregateOperations.AVG,
     ]);
   });
 

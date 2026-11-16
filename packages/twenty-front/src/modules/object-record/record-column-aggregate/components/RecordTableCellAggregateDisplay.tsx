@@ -33,7 +33,7 @@ export const RecordTableCellAggregateDisplay = ({
     { recordId, fieldName: RELATION_AGGREGATE_VALUES_RECORD_KEY },
   ) as RelationAggregateValues | undefined;
 
-  if (isForbidden === true) {
+  if (isForbidden === true || !aggregateTarget.isAggregatedFieldReadable) {
     return <ForbiddenFieldDisplay />;
   }
 

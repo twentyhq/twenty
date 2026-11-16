@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
@@ -61,19 +63,21 @@ const renderAggregateDisplay = (
   });
 
   return render(
-    <JotaiProvider store={store}>
-      <RecordTableRowContextProvider
-        value={{
-          recordId: RECORD_ID,
-          objectNameSingular: 'company',
-          pathToShowPage: '',
-          isSelected: false,
-          restrictedFieldNames: [],
-        }}
-      >
-        <RecordTableCellAggregateDisplay aggregateTarget={aggregateTarget} />
-      </RecordTableRowContextProvider>
-    </JotaiProvider>,
+    <I18nProvider i18n={i18n}>
+      <JotaiProvider store={store}>
+        <RecordTableRowContextProvider
+          value={{
+            recordId: RECORD_ID,
+            objectNameSingular: 'company',
+            pathToShowPage: '',
+            isSelected: false,
+            restrictedFieldNames: [],
+          }}
+        >
+          <RecordTableCellAggregateDisplay aggregateTarget={aggregateTarget} />
+        </RecordTableRowContextProvider>
+      </JotaiProvider>
+    </I18nProvider>,
   );
 };
 
@@ -117,5 +121,21 @@ describe('RecordTableCellAggregateDisplay', () => {
     );
 
     expect(container).toHaveTextContent(/^$/);
+  });
+
+  it('hides the aggregate of a field the user cannot read', () => {
+    renderAggregateDisplay({
+      ...getAggregateTarget({
+        fieldName: 'opportunities',
+        recordField: {
+          relationAggregateOperation: AggregateOperations.SUM,
+          relationTargetFieldMetadataId: amountField.id,
+        },
+      }),
+      isAggregatedFieldReadable: false,
+    });
+
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+    expect(screen.queryByText('1.5k')).not.toBeInTheDocument();
   });
 });

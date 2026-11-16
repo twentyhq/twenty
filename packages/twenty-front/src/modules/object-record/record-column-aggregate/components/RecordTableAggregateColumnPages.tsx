@@ -2,17 +2,22 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
-import { getAggregatedFieldMetadataItems } from '@/object-record/record-column-aggregate/utils/getAggregatedFieldMetadataItems';
+import { getRelationTargetFieldMetadataItems } from '@/object-record/record-field/utils/getRelationTargetFieldMetadataItems';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { RecordTableRelationTargetFieldSelectMenu } from '@/object-record/record-table/record-table-header/components/RecordTableRelationTargetFieldSelectMenu';
 import { type RecordTableRelationColumnTarget } from '@/object-record/record-table/utils/buildRecordTableRelationColumn';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
+
+const isAggregatableFieldMetadataItem = (
+  fieldMetadataItem: FieldMetadataItem,
+) => isNonEmptyArray(getRelationAggregateOperations(fieldMetadataItem));
 
 type RecordTableAggregateColumnPagesProps = {
   pageId: string;
@@ -29,7 +34,6 @@ export const RecordTableAggregateColumnPages = ({
 }: RecordTableAggregateColumnPagesProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
@@ -38,32 +42,25 @@ export const RecordTableAggregateColumnPages = ({
   });
 
   const aggregatedFieldMetadataItems = isDefined(relationObjectMetadataItem)
-    ? getAggregatedFieldMetadataItems(relationObjectMetadataItem)
+    ? getRelationTargetFieldMetadataItems({
+        relationObjectMetadataItem,
+        isEligible: isAggregatableFieldMetadataItem,
+      })
     : [];
-
-  const filteredAggregatedFieldMetadataItems =
-    aggregatedFieldMetadataItems.filter(({ label }) =>
-      label.toLowerCase().includes(searchInput.toLowerCase()),
-    );
 
   const getOperationPageId = (aggregatedFieldMetadataItem: FieldMetadataItem) =>
     `${pageId}-${aggregatedFieldMetadataItem.id}`;
 
   return (
     <>
-      <Dropdown.Page id={pageId}>
-        <Dropdown.Back
-          aria-label={t`${relationFieldMetadataItem.label}, back to fields`}
-        >
-          {relationFieldMetadataItem.label}
-        </Dropdown.Back>
-        <Dropdown.Search
-          value={searchInput}
-          placeholder={t`Search fields`}
-          aria-label={t`Search fields`}
-          onValueChange={setSearchInput}
-        />
-        <Dropdown.Separator />
+      <RecordTableRelationTargetFieldSelectMenu
+        pageId={pageId}
+        relationFieldMetadataItem={relationFieldMetadataItem}
+        fieldMetadataItems={aggregatedFieldMetadataItems}
+        getFieldItemProps={(aggregatedFieldMetadataItem) => ({
+          page: getOperationPageId(aggregatedFieldMetadataItem),
+        })}
+      >
         {children}
         <Dropdown.Section scrollable={false}>
           <Dropdown.ActionItem
@@ -80,28 +77,7 @@ export const RecordTableAggregateColumnPages = ({
           >{t`Count`}</Dropdown.ActionItem>
         </Dropdown.Section>
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
-          {isNonEmptyArray(filteredAggregatedFieldMetadataItems) ? (
-            filteredAggregatedFieldMetadataItems.map(
-              (aggregatedFieldMetadataItem) => (
-                <Dropdown.ActionItem
-                  key={aggregatedFieldMetadataItem.id}
-                  page={getOperationPageId(aggregatedFieldMetadataItem)}
-                  startIcon={
-                    <SelectOptionIcon
-                      Icon={getIcon(aggregatedFieldMetadataItem.icon)}
-                    />
-                  }
-                >
-                  {aggregatedFieldMetadataItem.label}
-                </Dropdown.ActionItem>
-              ),
-            )
-          ) : (
-            <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
-          )}
-        </Dropdown.Section>
-      </Dropdown.Page>
+      </RecordTableRelationTargetFieldSelectMenu>
       {aggregatedFieldMetadataItems.map((aggregatedFieldMetadataItem) => (
         <Dropdown.Page
           key={aggregatedFieldMetadataItem.id}

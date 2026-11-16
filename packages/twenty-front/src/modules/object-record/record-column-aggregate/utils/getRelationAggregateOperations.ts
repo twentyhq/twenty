@@ -1,17 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { isDefined } from 'twenty-shared/utils';
 
-// The server accepts only these on related records; Count takes no field
-const RELATION_AGGREGATE_OPERATIONS = [
-  AggregateOperations.SUM,
-  AggregateOperations.AVG,
-  AggregateOperations.MIN,
-  AggregateOperations.MAX,
-];
-
+// The server accepts only min, max, avg and sum on a related record field; Count takes no field
 export const getRelationAggregateOperations = (
   fieldMetadataItem: FieldMetadataItem,
 ) => {
@@ -20,7 +13,7 @@ export const getRelationAggregateOperations = (
       fieldMetadataItem.name
     ] ?? {};
 
-  return RELATION_AGGREGATE_OPERATIONS.filter((aggregateOperation) =>
+  return NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.filter((aggregateOperation) =>
     isDefined(
       availableAggregations[
         convertAggregateOperationToExtendedAggregateOperation(

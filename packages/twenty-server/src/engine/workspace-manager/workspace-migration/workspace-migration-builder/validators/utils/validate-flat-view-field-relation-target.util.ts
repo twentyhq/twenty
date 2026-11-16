@@ -248,14 +248,13 @@ export const validateFlatViewFieldRelationTarget = (
     relationAggregateOperation,
   } = args.flatViewField;
 
-  if (
-    !isDefined(relationTargetFieldMetadataUniversalIdentifier) &&
-    !isDefined(relationAggregateOperation)
-  ) {
-    return [];
+  if (isDefined(relationAggregateOperation)) {
+    return validateRelationAggregate(args);
   }
 
-  return isDefined(relationAggregateOperation)
-    ? validateRelationAggregate(args)
-    : validateRelationLookup(args);
+  if (isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
+    return validateRelationLookup(args);
+  }
+
+  return [];
 };

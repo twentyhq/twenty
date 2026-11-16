@@ -1,19 +1,17 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getRelationAggregateOperations } from '@/object-record/record-column-aggregate/utils/getRelationAggregateOperations';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
-import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
 
 export type RecordFieldAggregateTarget = {
   relationFieldName: string;
-  relationObjectMetadataItem: EnrichedObjectMetadataItem;
   aggregateOperation: ExtendedAggregateOperations;
   aggregatedFieldMetadataItem: FieldMetadataItem | undefined;
   isAggregatedFieldReadable: boolean;
@@ -51,7 +49,18 @@ export const getRecordFieldAggregateTarget = ({
     return undefined;
   }
 
-  const isCount = relationAggregateOperation === AggregateOperations.COUNT;
+  if (
+    relationAggregateOperation === AggregateOperations.COUNT &&
+    !isDefined(relationTargetFieldMetadataId)
+  ) {
+    return {
+      relationFieldName: fieldMetadataItem.name,
+      aggregateOperation: AggregateOperations.COUNT,
+      aggregatedFieldMetadataItem: undefined,
+      isAggregatedFieldReadable: true,
+      aggregateGqlFieldName: 'totalCount',
+    };
+  }
 
   // Resolved from all fields so an unreadable target stays an aggregate column, shown as forbidden
   const aggregatedFieldMetadataItem = isDefined(relationTargetFieldMetadataId)
@@ -60,29 +69,24 @@ export const getRecordFieldAggregateTarget = ({
       )
     : undefined;
 
-  const isValidTarget = isCount
-    ? !isDefined(relationTargetFieldMetadataId)
-    : isDefined(aggregatedFieldMetadataItem) &&
-      getRelationAggregateOperations(aggregatedFieldMetadataItem).includes(
-        relationAggregateOperation,
-      );
-
-  if (!isValidTarget) {
+  if (
+    !isDefined(aggregatedFieldMetadataItem) ||
+    !NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
+      relationAggregateOperation,
+    )
+  ) {
     return undefined;
   }
 
   const aggregateOperation =
     convertAggregateOperationToExtendedAggregateOperation(
       relationAggregateOperation,
-      aggregatedFieldMetadataItem?.type,
+      aggregatedFieldMetadataItem.type,
     );
 
-  const aggregateGqlFieldName = getAvailableAggregationsFromObjectFields(
-    isDefined(aggregatedFieldMetadataItem) ? [aggregatedFieldMetadataItem] : [],
-  )[
-    aggregatedFieldMetadataItem?.name ??
-      FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION
-  ]?.[aggregateOperation];
+  const aggregateGqlFieldName = getAvailableAggregationsFromObjectFields([
+    aggregatedFieldMetadataItem,
+  ])[aggregatedFieldMetadataItem.name]?.[aggregateOperation];
 
   if (!isDefined(aggregateGqlFieldName)) {
     return undefined;
@@ -90,14 +94,11 @@ export const getRecordFieldAggregateTarget = ({
 
   return {
     relationFieldName: fieldMetadataItem.name,
-    relationObjectMetadataItem,
     aggregateOperation,
     aggregatedFieldMetadataItem,
-    isAggregatedFieldReadable:
-      !isDefined(aggregatedFieldMetadataItem) ||
-      relationObjectMetadataItem.readableFields.some(
-        findById(aggregatedFieldMetadataItem.id),
-      ),
+    isAggregatedFieldReadable: relationObjectMetadataItem.readableFields.some(
+      findById(aggregatedFieldMetadataItem.id),
+    ),
     aggregateGqlFieldName,
   };
 };

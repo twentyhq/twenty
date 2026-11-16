@@ -1,5 +1,5 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
-import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
+import { RecordTableLookupColumnPage } from '@/object-record/record-column-lookup/components/RecordTableLookupColumnPage';
 import { RecordTableAggregateColumnPages } from '@/object-record/record-column-aggregate/components/RecordTableAggregateColumnPages';
 import { useAddRecordTableRelationColumn } from '@/object-record/record-table/hooks/useAddRecordTableRelationColumn';
 import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
@@ -191,8 +191,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
           </>
         );
 
-        return isPlainOneToManyRelationField(relationFieldMetadataItem) ? (
-          <RecordTableAggregateColumnPages
+        const RelationColumnPages = isPlainOneToManyRelationField(
+          relationFieldMetadataItem,
+        )
+          ? RecordTableAggregateColumnPages
+          : RecordTableLookupColumnPage;
+
+        return (
+          <RelationColumnPages
             key={relationFieldMetadataItem.id}
             pageId={relationFieldMetadataItem.id}
             relationFieldMetadataItem={relationFieldMetadataItem}
@@ -204,25 +210,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
             }
           >
             {showRelationItem}
-          </RecordTableAggregateColumnPages>
-        ) : (
-          <Dropdown.Page
-            key={relationFieldMetadataItem.id}
-            id={relationFieldMetadataItem.id}
-          >
-            <RecordTableLookupTargetFieldSelectMenu
-              relationFieldMetadataItem={relationFieldMetadataItem}
-              onSelect={(lookupTargetFieldMetadataItem) =>
-                addRecordTableRelationColumn({
-                  relationFieldMetadataItemId: relationFieldMetadataItem.id,
-                  relationTargetFieldMetadataId:
-                    lookupTargetFieldMetadataItem.id,
-                })
-              }
-            >
-              {showRelationItem}
-            </RecordTableLookupTargetFieldSelectMenu>
-          </Dropdown.Page>
+          </RelationColumnPages>
         );
       })}
     </>

@@ -37,8 +37,10 @@ export const useRelevantRecordsGqlFields = ({
     currentRecordFiltersComponentState,
   );
 
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    columnDescriptorByRecordFieldId,
+  } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const lookupColumns = useRecordIndexLookupColumns();
@@ -48,7 +50,12 @@ export const useRelevantRecordsGqlFields = ({
     CoreRecordReferenceFieldsContext,
   );
 
+  // An aggregate column reads only the aggregates of its relation, added below
   const visibleRecordFieldMetadataItems = visibleRecordFields
+    .filter(
+      ({ id }) =>
+        !isDefined(columnDescriptorByRecordFieldId[id]?.aggregateTarget),
+    )
     .map(
       (field) =>
         fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],

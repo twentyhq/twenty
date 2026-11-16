@@ -3,6 +3,7 @@ import { type AggregateColumn } from '@/object-record/record-column-aggregate/ut
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
+// A relation selected only for its aggregates fetches just the ids of its records
 export const addAggregatesToRecordGqlFields = ({
   recordGqlFields,
   aggregateColumns,
@@ -13,18 +14,19 @@ export const addAggregatesToRecordGqlFields = ({
   aggregateColumns.reduce<RecordGqlFields>(
     (gqlFields, { relationFieldName, aggregateGqlFieldName }) => {
       const relationGqlFields = gqlFields[relationFieldName];
-
-      if (!isPlainObject(relationGqlFields)) {
-        return gqlFields;
-      }
+      const selectedRelationGqlFields: RecordGqlFields = isPlainObject(
+        relationGqlFields,
+      )
+        ? relationGqlFields
+        : { id: true };
 
       const connectionAggregatesGqlFields =
-        relationGqlFields[CONNECTION_AGGREGATES_GQL_FIELDS_KEY];
+        selectedRelationGqlFields[CONNECTION_AGGREGATES_GQL_FIELDS_KEY];
 
       return {
         ...gqlFields,
         [relationFieldName]: {
-          ...relationGqlFields,
+          ...selectedRelationGqlFields,
           [CONNECTION_AGGREGATES_GQL_FIELDS_KEY]: {
             ...(isPlainObject(connectionAggregatesGqlFields)
               ? connectionAggregatesGqlFields

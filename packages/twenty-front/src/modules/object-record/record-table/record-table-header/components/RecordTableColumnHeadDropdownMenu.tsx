@@ -15,7 +15,7 @@ import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTa
 import { useAddRecordTableRelationColumn } from '@/object-record/record-table/hooks/useAddRecordTableRelationColumn';
 import { RecordTableAggregateColumnPages } from '@/object-record/record-column-aggregate/components/RecordTableAggregateColumnPages';
 import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
-import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
+import { RecordTableLookupColumnPage } from '@/object-record/record-column-lookup/components/RecordTableLookupColumnPage';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
@@ -208,17 +208,16 @@ export const RecordTableColumnHeadDropdownMenu = ({
         </Dropdown.Section>
       </Dropdown.Page>
       {canAddLookupColumn && (
-        <Dropdown.Page id={LOOKUP_TARGET_PAGE_ID}>
-          <RecordTableLookupTargetFieldSelectMenu
-            relationFieldMetadataItem={fieldMetadataItem}
-            onSelect={(lookupTargetFieldMetadataItem) =>
-              addRecordTableRelationColumn({
-                relationFieldMetadataItemId: fieldMetadataItem.id,
-                relationTargetFieldMetadataId: lookupTargetFieldMetadataItem.id,
-              })
-            }
-          />
-        </Dropdown.Page>
+        <RecordTableLookupColumnPage
+          pageId={LOOKUP_TARGET_PAGE_ID}
+          relationFieldMetadataItem={fieldMetadataItem}
+          onSelect={(relationColumnTarget) =>
+            addRecordTableRelationColumn({
+              relationFieldMetadataItemId: fieldMetadataItem.id,
+              ...relationColumnTarget,
+            })
+          }
+        />
       )}
       {canAddAggregateColumn && (
         <RecordTableAggregateColumnPages

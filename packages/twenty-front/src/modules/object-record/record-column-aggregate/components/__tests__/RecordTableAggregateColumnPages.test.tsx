@@ -20,6 +20,11 @@ const amountField = getMockFieldMetadataItemOrThrow({
   fieldName: 'amount',
 });
 
+const opportunityNameField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+  fieldName: 'name',
+});
+
 const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({});
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -80,5 +85,18 @@ describe('RecordTableAggregateColumnPages', () => {
       relationTargetFieldMetadataId: amountField.id,
       relationAggregateOperation: AggregateOperations.SUM,
     });
+  });
+
+  it('does not offer fields of the related records it cannot aggregate', async () => {
+    const user = userEvent.setup();
+
+    renderAggregateColumnPages(jest.fn());
+
+    await user.click(screen.getByText('Opportunities relation'));
+
+    expect(await screen.findByText(amountField.label)).toBeVisible();
+    expect(
+      screen.queryByText(opportunityNameField.label),
+    ).not.toBeInTheDocument();
   });
 });

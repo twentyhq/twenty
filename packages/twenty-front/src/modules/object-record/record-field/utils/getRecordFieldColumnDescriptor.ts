@@ -22,15 +22,13 @@ export const getRecordFieldColumnDescriptor = ({
   const targetFieldMetadataItem =
     lookupTarget?.lookupTargetFieldMetadataItem ??
     aggregateTarget?.aggregatedFieldMetadataItem;
-  const isLookupColumn = isDefined(lookupTarget);
-  const isAggregateColumn = isDefined(aggregateTarget);
-  const isRelationTargetColumn = isLookupColumn || isAggregateColumn;
+  const isRelationTargetColumn =
+    isDefined(lookupTarget) || isDefined(aggregateTarget);
 
   return {
     lookupTarget,
-    isLookupColumn,
     aggregateTarget,
-    isAggregateColumn,
+    isRelationTargetColumn,
     label: formatRelationColumnLabel({
       relationLabel: fieldMetadataItem.label,
       targetLabel: isDefined(aggregateTarget)

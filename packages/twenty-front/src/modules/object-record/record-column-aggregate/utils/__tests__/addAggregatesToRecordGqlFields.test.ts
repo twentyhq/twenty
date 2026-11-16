@@ -1,6 +1,5 @@
 import { CONNECTION_AGGREGATES_GQL_FIELDS_KEY } from '@/object-record/graphql/record-gql-fields/constants/ConnectionAggregatesGqlFieldsKey';
 import { addAggregatesToRecordGqlFields } from '@/object-record/record-column-aggregate/utils/addAggregatesToRecordGqlFields';
-import { type RecordGqlFields } from 'twenty-shared/types';
 
 describe('addAggregatesToRecordGqlFields', () => {
   it('adds the aggregates of each relation inside its connection selection', () => {
@@ -40,16 +39,27 @@ describe('addAggregatesToRecordGqlFields', () => {
     });
   });
 
-  it('leaves the selection unchanged when the relation is not selected', () => {
-    const recordGqlFields: RecordGqlFields = { id: true };
-
+  it('selects only the ids of related records when the relation is shown only through aggregates', () => {
     expect(
       addAggregatesToRecordGqlFields({
-        recordGqlFields,
+        recordGqlFields: { id: true },
         aggregateColumns: [
           { relationFieldName: 'people', aggregateGqlFieldName: 'totalCount' },
+          {
+            relationFieldName: 'people',
+            aggregateGqlFieldName: 'countNotEmptyEmails',
+          },
         ],
       }),
-    ).toEqual(recordGqlFields);
+    ).toEqual({
+      id: true,
+      people: {
+        id: true,
+        [CONNECTION_AGGREGATES_GQL_FIELDS_KEY]: {
+          totalCount: true,
+          countNotEmptyEmails: true,
+        },
+      },
+    });
   });
 });

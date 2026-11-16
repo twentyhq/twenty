@@ -49,9 +49,8 @@ describe('getRecordFieldColumnDescriptor', () => {
       }),
     ).toEqual({
       lookupTarget: undefined,
-      isLookupColumn: false,
       aggregateTarget: undefined,
-      isAggregateColumn: false,
+      isRelationTargetColumn: false,
       label: companyField.label,
       icon: companyField.icon,
       description: companyField.description,
@@ -70,7 +69,7 @@ describe('getRecordFieldColumnDescriptor', () => {
         isSortable: true,
       }),
     ).toMatchObject({
-      isLookupColumn: true,
+      isRelationTargetColumn: true,
       label: `${companyField.label} › ${employeesField.label}`,
       icon: employeesField.icon,
       description: employeesField.description,
@@ -95,7 +94,7 @@ describe('getRecordFieldColumnDescriptor', () => {
         isSortable: true,
       }),
     ).toMatchObject({
-      isAggregateColumn: true,
+      isRelationTargetColumn: true,
       label: `${peopleField.label} › Count`,
       icon: peopleField.icon,
       isFilterable: false,
