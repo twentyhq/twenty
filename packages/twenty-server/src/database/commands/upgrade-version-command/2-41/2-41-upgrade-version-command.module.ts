@@ -14,6 +14,7 @@ import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/c
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
 import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565000000-seed-object-initial-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/2-20/services/legacy-workflow-version-core-upsert.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -43,6 +44,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
   ],
   providers: [
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
+    LegacyWorkflowVersionCoreUpsertService,
     CorrectStandardFieldAcronymCasingCommand,
     BackfillWorkspaceWorkflowIdOnWorkflowsCommand,
     BackfillCoreVersionPointersCommand,
