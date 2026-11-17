@@ -10,5 +10,6 @@ export const buildPaceSlotKey = ({
   groupKey: string | undefined;
 }): string | undefined =>
   isDefined(scope.workspaceId) && isDefined(groupKey)
-    ? `${scope.workspaceId}:${groupKey}`
+    ? // Slots already reserved in Redis live under this prefix, so it must not change.
+      `${scope.workspaceId}:jobGroup:${groupKey}`
     : undefined;

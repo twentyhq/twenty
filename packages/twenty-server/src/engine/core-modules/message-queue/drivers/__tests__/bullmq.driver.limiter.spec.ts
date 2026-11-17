@@ -132,6 +132,28 @@ describe('BullMQDriver limiter', () => {
     ).toEqual([undefined, 500, undefined, 500]);
   });
 
+  it('continues the slots a previous producer reserved for the group', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
+    const harness = await createFairnessHarness({
+      isGroupLimiterEnabled: true,
+      groupRateLimit: GROUP_RATE_LIMIT,
+    });
+
+    await harness.reservePaceSlot({
+      slotKey: 'A:jobGroup:workflow',
+      delayMs: 2_000,
+    });
+    await harness.enqueueBulk({
+      labels: ['N1', 'N2'],
+      workspaceId: 'A',
+      groupKey: GROUP_KEY,
+    });
+
+    expect(harness.readDelay({ label: 'N1' })).toBe(2_000);
+    expect(harness.readDelay({ label: 'N2' })).toBe(2_500);
+  });
+
   it('does not pace a queue without a group rate limit', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,

@@ -548,6 +548,22 @@ export const createFairnessHarness = async ({
     }) => {
       await redis.hset(`${QUEUE_KEY_PREFIX}fair:weights`, groupKey, weight);
     },
+    reservePaceSlot: async ({
+      slotKey,
+      delayMs,
+    }: {
+      slotKey: string;
+      delayMs: number;
+    }) => {
+      const [seconds, microseconds] = await redis.time();
+
+      await redis.set(
+        `${QUEUE_KEY_PREFIX}fair:slot:${slotKey}`,
+        Number(seconds) * 1_000 +
+          Math.floor(Number(microseconds) / 1_000) +
+          delayMs,
+      );
+    },
     setVirtualTime: async ({ value }: { value: number }) => {
       await redis.set(VIRTUAL_TIME_KEY, value);
     },
