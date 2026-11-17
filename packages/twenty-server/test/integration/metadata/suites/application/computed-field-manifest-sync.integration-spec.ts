@@ -148,7 +148,7 @@ describe('Computed fields declared in an application manifest', () => {
       applicationUniversalIdentifier: TEST_APP_ID,
     });
 
-    const remainingFields: unknown[] = await globalThis.testDataSource.query(
+    const remainingFields: { id: string }[] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata" WHERE id = $1`,
       [budgetFieldMetadataId],
     );
