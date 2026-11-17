@@ -10,7 +10,8 @@ import {
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { getRecordsWithManyToOneRelatedRecords } from '@/object-record/record-store/utils/getRecordsWithManyToOneRelatedRecords';
+import { useGetLookupRelationFieldNames } from '@/object-record/record-column-lookup/hooks/useGetLookupRelationFieldNames';
+import { getRecordsWithLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getRecordsWithLookupRelatedRecords';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
@@ -70,6 +71,8 @@ export const useSetRecordTableData = ({
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const getLookupRelationFieldNames =
+    useGetLookupRelationFieldNames(recordTableId);
 
   return useCallback(
     <T extends ObjectRecord>({
@@ -80,7 +83,10 @@ export const useSetRecordTableData = ({
       currentRecordGroupId?: string;
     }) => {
       upsertRecordsInStore({
-        partialRecords: getRecordsWithManyToOneRelatedRecords(records),
+        partialRecords: getRecordsWithLookupRelatedRecords({
+          records: records,
+          lookupRelationFieldNames: getLookupRelationFieldNames(),
+        }),
       });
 
       const currentRowIds = currentRecordGroupId
@@ -135,6 +141,7 @@ export const useSetRecordTableData = ({
       isRowSelectedFamilyState,
       store,
       upsertRecordsInStore,
+      getLookupRelationFieldNames,
     ],
   );
 };
