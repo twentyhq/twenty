@@ -1,4 +1,4 @@
-export const createPageNotification = (
+export const createBrowserNotification = (
   title: string,
   options: NotificationOptions,
 ): Notification | null => {

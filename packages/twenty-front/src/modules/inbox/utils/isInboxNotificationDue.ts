@@ -6,7 +6,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { InboxNotificationLevel } from '~/generated-metadata/graphql';
+import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLevel';
+import { type InboxNotificationLevel } from '@/inbox/types/InboxNotificationLevel';
 
 export const isInboxNotificationDue = ({
   thread,
@@ -29,7 +30,7 @@ export const isInboxNotificationDue = ({
   inboxNotificationLevel: InboxNotificationLevel;
 }): boolean => {
   if (
-    inboxNotificationLevel === InboxNotificationLevel.NONE ||
+    inboxNotificationLevel === INBOX_NOTIFICATION_LEVEL.NONE ||
     isDefined(thread.deletedAt) ||
     !isDefined(thread.lastActivityAt) ||
     thread.lastMessageSenderWorkspaceMemberId === currentWorkspaceMemberId
@@ -58,6 +59,6 @@ export const isInboxNotificationDue = ({
   }
 
   return (
-    inboxNotificationLevel === InboxNotificationLevel.ALL && scope === 'INBOX'
+    inboxNotificationLevel === INBOX_NOTIFICATION_LEVEL.ALL && scope === 'INBOX'
   );
 };

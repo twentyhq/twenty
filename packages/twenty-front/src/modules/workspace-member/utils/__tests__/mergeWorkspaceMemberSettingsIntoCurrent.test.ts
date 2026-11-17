@@ -132,28 +132,6 @@ describe('mergeWorkspaceMemberSettingsIntoCurrent', () => {
     expect(result.numberFormat).toBe('COMMAS_AND_DOT');
   });
 
-  it('should merge inbox notification settings', () => {
-    const previous = createBaseWorkspaceMember();
-
-    const result = mergeWorkspaceMemberSettingsIntoCurrent(previous, {
-      inboxNotificationLevel: 'DIRECT_AND_MENTIONS',
-      isInboxNotificationPreviewEnabled: false,
-    } as Record<string, unknown>);
-
-    expect(result.inboxNotificationLevel).toBe('DIRECT_AND_MENTIONS');
-    expect(result.isInboxNotificationPreviewEnabled).toBe(false);
-  });
-
-  it('should ignore an unknown inbox notification level', () => {
-    const previous = createBaseWorkspaceMember();
-
-    const result = mergeWorkspaceMemberSettingsIntoCurrent(previous, {
-      inboxNotificationLevel: 'SOMETIMES',
-    } as Record<string, unknown>);
-
-    expect(result.inboxNotificationLevel).toBeUndefined();
-  });
-
   it('should ignore unknown keys in Record payload', () => {
     const previous = createBaseWorkspaceMember();
 

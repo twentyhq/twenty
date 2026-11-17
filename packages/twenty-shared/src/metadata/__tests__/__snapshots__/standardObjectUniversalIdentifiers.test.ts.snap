@@ -4045,12 +4045,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "d77dff76-dcfd-52a3-b352-832898b28b9d",
       },
-      "inboxNotificationLevel": {
-        "universalIdentifier": "20202020-efc1-4a79-bea5-b0a312c012ad",
-      },
-      "isInboxNotificationPreviewEnabled": {
-        "universalIdentifier": "20202020-0feb-49dd-8030-c58af0b0a5c9",
-      },
       "jobTitle": {
         "universalIdentifier": "20202020-4dd4-4619-826e-08f6c06b374d",
       },

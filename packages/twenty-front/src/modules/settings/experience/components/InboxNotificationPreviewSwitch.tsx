@@ -2,17 +2,20 @@ import { useLingui } from '@lingui/react/macro';
 import { IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
+import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLevel';
+import { inboxNotificationLevelState } from '@/inbox/states/inboxNotificationLevelState';
+import { isInboxNotificationPreviewEnabledState } from '@/inbox/states/isInboxNotificationPreviewEnabledState';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useInboxNotificationPreferences } from '@/settings/experience/hooks/useInboxNotificationPreferences';
-import { InboxNotificationLevel } from '~/generated-metadata/graphql';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const InboxNotificationPreviewSwitch = () => {
   const { t } = useLingui();
-  const {
-    inboxNotificationLevel,
+  const inboxNotificationLevel = useAtomStateValue(inboxNotificationLevelState);
+  const [
     isInboxNotificationPreviewEnabled,
     setIsInboxNotificationPreviewEnabled,
-  } = useInboxNotificationPreferences();
+  ] = useAtomState(isInboxNotificationPreviewEnabledState);
 
   return (
     <Card.Root fullWidth>
@@ -21,10 +24,8 @@ export const InboxNotificationPreviewSwitch = () => {
         title={t`Show message preview`}
         description={t`Show the message text in notifications. Turn it off when you share your screen`}
         checked={isInboxNotificationPreviewEnabled}
-        disabled={inboxNotificationLevel === InboxNotificationLevel.NONE}
-        onChange={(checked) =>
-          void setIsInboxNotificationPreviewEnabled(checked)
-        }
+        disabled={inboxNotificationLevel === INBOX_NOTIFICATION_LEVEL.NONE}
+        onChange={setIsInboxNotificationPreviewEnabled}
       />
     </Card.Root>
   );

@@ -12,27 +12,30 @@ import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAiChatThread
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
+import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLevel';
 import { useShowInboxNotification } from '@/inbox/hooks/useShowInboxNotification';
-import { inboxNotificationActivityByThreadIdState } from '@/inbox/states/inboxNotificationActivityByThreadIdState';
+import { inboxNotificationLevelState } from '@/inbox/states/inboxNotificationLevelState';
+import { inboxNotifiedLastActivityAtByThreadIdState } from '@/inbox/states/inboxNotifiedLastActivityAtByThreadIdState';
 import {
   answerFocusedTabRequestsFromOtherTabs,
   isAnotherTabFocused,
 } from '@/inbox/utils/inboxNotificationTabChannel';
-import { isBrowserNotificationAllowed } from '@/inbox/utils/isBrowserNotificationAllowed';
 import { isDocumentFocused } from '@/inbox/utils/isDocumentFocused';
 import { isInboxNotificationDue } from '@/inbox/utils/isInboxNotificationDue';
-import { isParticipantChangeFromInboxActivity } from '@/inbox/utils/isParticipantChangeFromInboxActivity';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useInboxNotificationPreferences } from '@/settings/experience/hooks/useInboxNotificationPreferences';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
-  InboxNotificationLevel,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { isPageNotificationSupported } from '~/utils/isPageNotificationSupported';
+import { getBrowserNotificationPermission } from '~/utils/getBrowserNotificationPermission';
+
+// A mention or new DM writes the participant row next to the message, so a
+// participant change this close to the last activity belongs to that message
+const PARTICIPANT_ACTIVITY_WINDOW_MS = 2_000;
 
 export const InboxNotificationEffect = () => {
   const store = useStore();
@@ -54,14 +57,14 @@ export const InboxNotificationEffect = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const { inboxNotificationLevel } = useInboxNotificationPreferences();
+  const inboxNotificationLevel = useAtomStateValue(inboxNotificationLevelState);
   const { showInboxNotification } = useShowInboxNotification();
 
   const isEnabled =
     isAiChatInboxEnabled &&
     hasAiPermission &&
-    inboxNotificationLevel !== InboxNotificationLevel.NONE &&
-    isPageNotificationSupported();
+    inboxNotificationLevel !== INBOX_NOTIFICATION_LEVEL.NONE &&
+    getBrowserNotificationPermission() !== 'unsupported';
 
   useEffect(() => {
     if (!isEnabled) {
@@ -83,16 +86,15 @@ export const InboxNotificationEffect = () => {
         currentWorkspaceMemberState.atom,
       )?.id;
       const { lastActivityAt } = thread;
-      const activity = store.get(inboxNotificationActivityByThreadIdState.atom)[
-        thread.id
-      ];
+
       if (
         isDocumentFocused() ||
-        !isBrowserNotificationAllowed() ||
+        getBrowserNotificationPermission() !== 'granted' ||
         !isDefined(currentWorkspaceMemberId) ||
         !isDefined(lastActivityAt) ||
-        (activity?.isNotified === true &&
-          activity.lastActivityAt === lastActivityAt) ||
+        store.get(inboxNotifiedLastActivityAtByThreadIdState.atom)[
+          thread.id
+        ] === lastActivityAt ||
         !isInboxNotificationDue({
           thread,
           participant,
@@ -104,10 +106,10 @@ export const InboxNotificationEffect = () => {
       }
 
       store.set(
-        inboxNotificationActivityByThreadIdState.atom,
-        (activities) => ({
-          ...activities,
-          [thread.id]: { lastActivityAt, isNotified: true },
+        inboxNotifiedLastActivityAtByThreadIdState.atom,
+        (notified) => ({
+          ...notified,
+          [thread.id]: lastActivityAt,
         }),
       );
 
@@ -118,13 +120,6 @@ export const InboxNotificationEffect = () => {
       showInboxNotification(thread);
     },
     [inboxNotificationLevel, showInboxNotification, store],
-  );
-
-  const getStoredParticipant = useCallback(
-    (threadId: string) =>
-      store.get(aiChatThreadParticipantsState.atom)?.[threadId] ??
-      store.get(aiChatThreadStreamedParticipantsState.atom)[threadId],
-    [store],
   );
 
   const handleThreadOperation = useCallback(
@@ -143,36 +138,22 @@ export const InboxNotificationEffect = () => {
           continue;
         }
 
-        const thread = {
-          ...store.get(
-            aiChatThreadRecordFamilySelector.selectorFamily(recordId),
-          ),
-          ...updatedRecord,
-          ...Object.assign({}, ...updatedFields),
-          id: recordId,
-        };
-
-        store.set(
-          inboxNotificationActivityByThreadIdState.atom,
-          (activities) =>
-            activities[recordId]?.lastActivityAt === thread.lastActivityAt
-              ? activities
-              : {
-                  ...activities,
-                  [recordId]: {
-                    lastActivityAt: thread.lastActivityAt,
-                    isNotified: false,
-                  },
-                },
-        );
-
         void showInboxNotificationWhenDue({
-          thread,
-          participant: getStoredParticipant(recordId),
+          thread: {
+            ...store.get(
+              aiChatThreadRecordFamilySelector.selectorFamily(recordId),
+            ),
+            ...updatedRecord,
+            ...Object.assign({}, ...updatedFields),
+            id: recordId,
+          },
+          participant:
+            store.get(aiChatThreadParticipantsState.atom)?.[recordId] ??
+            store.get(aiChatThreadStreamedParticipantsState.atom)[recordId],
         });
       }
     },
-    [getStoredParticipant, showInboxNotificationWhenDue, store],
+    [showInboxNotificationWhenDue, store],
   );
 
   const handleParticipantOperation = useCallback(
@@ -191,20 +172,16 @@ export const InboxNotificationEffect = () => {
       }
 
       const participant = getAiChatThreadParticipantFromRecord(record);
-      const activity = store.get(inboxNotificationActivityByThreadIdState.atom)[
-        participant.threadId
-      ];
       const thread = store.get(
         aiChatThreadRecordFamilySelector.selectorFamily(participant.threadId),
       );
 
       if (
-        !isDefined(activity) ||
-        !isDefined(thread) ||
-        !isParticipantChangeFromInboxActivity({
-          participantUpdatedAt: participant.updatedAt,
-          lastActivityAt: activity.lastActivityAt,
-        })
+        !isDefined(thread?.lastActivityAt) ||
+        Math.abs(
+          new Date(participant.updatedAt).getTime() -
+            new Date(thread.lastActivityAt).getTime(),
+        ) > PARTICIPANT_ACTIVITY_WINDOW_MS
       ) {
         return;
       }

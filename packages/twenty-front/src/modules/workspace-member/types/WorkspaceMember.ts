@@ -2,7 +2,6 @@ import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import {
-  type InboxNotificationLevel,
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
@@ -21,8 +20,6 @@ export type WorkspaceMember = {
   colorScheme: ColorScheme;
   uiScale?: UiScale | null;
   openRecordIn?: OpenRecordIn;
-  inboxNotificationLevel?: InboxNotificationLevel | null;
-  isInboxNotificationPreviewEnabled?: boolean | null;
   createdAt: string;
   updatedAt: string;
   userEmail: string;

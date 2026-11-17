@@ -9,63 +9,61 @@ import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { aiChatAssistantProfileSelector } from '@/ai/states/selectors/aiChatAssistantProfileSelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { getAiChatPreviewPlainText } from '@/ai/utils/getAiChatPreviewPlainText';
+import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { getAiChatThreadDisplayLabel } from '@/ai/utils/getAiChatThreadDisplayLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { INBOX_NOTIFICATION_FALLBACK_ICON_PATH } from '@/inbox/constants/InboxNotificationFallbackIconPath';
-import { getInboxNotificationTitle } from '@/inbox/utils/getInboxNotificationTitle';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
-import { createPageNotification } from '~/utils/createPageNotification';
+import { isInboxNotificationPreviewEnabledState } from '@/inbox/states/isInboxNotificationPreviewEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { createBrowserNotification } from '~/utils/createBrowserNotification';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const useShowInboxNotification = () => {
   const { t } = useLingui();
   const store = useStore();
   const { handleThreadClick } = useAiChatThreadClick();
+  const isInboxNotificationPreviewEnabled = useAtomStateValue(
+    isInboxNotificationPreviewEnabledState,
+  );
 
   const showInboxNotification = useCallback(
     (thread: AiChatThreadRecord) => {
-      const currentWorkspaceMember = store.get(
-        currentWorkspaceMemberState.atom,
-      );
       const workspaceMembers = store.get(currentWorkspaceMembersState.atom);
-      const { displayName: assistantDisplayName } = store.get(
-        aiChatAssistantProfileSelector.atom,
-      );
       const senderWorkspaceMemberId = thread.lastMessageSenderWorkspaceMemberId;
       const sender = workspaceMembers.find(
         ({ id }) => id === senderWorkspaceMemberId,
       );
-      const senderLabel = isDefined(sender)
-        ? getWorkspaceMemberNameOrEmail(sender)
-        : t`Former member`;
-      const previewText =
-        (currentWorkspaceMember?.isInboxNotificationPreviewEnabled ?? true)
-          ? getAiChatPreviewPlainText({
-              markdown: thread.lastMessageText ?? '',
-              assistantDisplayName,
-            })
-          : '';
+      const senderName = getAiChatSenderLabel({
+        sender,
+        isCurrentWorkspaceMember: false,
+      });
+      const threadLabel = getAiChatThreadDisplayLabel({
+        thread,
+        currentWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
+          ?.id,
+        workspaceMembers,
+        fallbackLabel: t`New chat`,
+        formerMemberLabel: t`Former member`,
+      });
+      const previewText = isInboxNotificationPreviewEnabled
+        ? getAiChatPreviewPlainText({
+            markdown: thread.lastMessageText ?? '',
+            assistantDisplayName: store.get(aiChatAssistantProfileSelector.atom)
+              .displayName,
+          })
+        : '';
 
-      const notification = createPageNotification(
-        getInboxNotificationTitle({
-          isDirectMessage:
-            thread.conversationType ===
-            AgentChatThreadConversationType.DIRECT_MESSAGE,
-          senderName: isDefined(senderWorkspaceMemberId) ? senderLabel : null,
-          threadLabel: getAiChatThreadDisplayLabel({
-            thread,
-            currentWorkspaceMemberId: currentWorkspaceMember?.id,
-            workspaceMembers,
-            fallbackLabel: t`New chat`,
-            formerMemberLabel: t`Former member`,
-          }),
-        }),
+      const notification = createBrowserNotification(
+        isDefined(senderWorkspaceMemberId) &&
+          thread.conversationType !==
+            AgentChatThreadConversationType.DIRECT_MESSAGE
+          ? t`${senderName} in ${threadLabel}`
+          : threadLabel,
         {
           body: isNonEmptyString(previewText) ? previewText : t`New message`,
           icon:
             getAbsoluteImageUrl(sender?.avatarUrl) ??
-            `${window.location.origin}${INBOX_NOTIFICATION_FALLBACK_ICON_PATH}`,
+            `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`,
           tag: `inbox-${thread.id}-${thread.lastActivityAt}`,
         },
       );
@@ -80,7 +78,7 @@ export const useShowInboxNotification = () => {
         notification.close();
       };
     },
-    [handleThreadClick, store, t],
+    [handleThreadClick, isInboxNotificationPreviewEnabled, store, t],
   );
 
   return { showInboxNotification };

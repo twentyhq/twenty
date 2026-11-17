@@ -1,11 +1,10 @@
-import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
+import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
-  InboxNotificationLevel,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -22,8 +21,6 @@ export type WorkspaceMemberSettingsUpdateInput = {
   jobTitle?: string | null;
   colorScheme?: string;
   openRecordIn?: OpenRecordIn;
-  inboxNotificationLevel?: InboxNotificationLevel;
-  isInboxNotificationPreviewEnabled?: boolean;
   avatarUrl?: string | null;
   locale?: string;
   calendarStartDay?: number;
@@ -36,15 +33,6 @@ export type WorkspaceMemberSettingsUpdateInput = {
 
 const isColorScheme = (value: unknown): value is ColorScheme =>
   value === 'Dark' || value === 'Light' || value === 'System';
-
-const INBOX_NOTIFICATION_LEVEL_VALUES: ReadonlySet<string> = new Set(
-  Object.values(InboxNotificationLevel),
-);
-
-const isInboxNotificationLevel = (
-  value: unknown,
-): value is InboxNotificationLevel =>
-  isString(value) && INBOX_NOTIFICATION_LEVEL_VALUES.has(value);
 
 const WORKSPACE_MEMBER_DATE_FORMAT_VALUES: ReadonlySet<string> = new Set(
   Object.values(WorkspaceMemberDateFormatEnum),
@@ -128,24 +116,6 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
 
   if ('openRecordIn' in payload && isOpenRecordIn(payload.openRecordIn)) {
     next = { ...next, openRecordIn: payload.openRecordIn };
-  }
-
-  if (
-    'inboxNotificationLevel' in payload &&
-    isInboxNotificationLevel(payload.inboxNotificationLevel)
-  ) {
-    next = { ...next, inboxNotificationLevel: payload.inboxNotificationLevel };
-  }
-
-  if (
-    'isInboxNotificationPreviewEnabled' in payload &&
-    isBoolean(payload.isInboxNotificationPreviewEnabled)
-  ) {
-    next = {
-      ...next,
-      isInboxNotificationPreviewEnabled:
-        payload.isInboxNotificationPreviewEnabled,
-    };
   }
 
   if ('avatarUrl' in payload) {

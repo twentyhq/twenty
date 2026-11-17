@@ -1,0 +1,5 @@
+export const INBOX_NOTIFICATION_LEVEL = {
+  ALL: 'ALL',
+  DIRECT_AND_MENTIONS: 'DIRECT_AND_MENTIONS',
+  NONE: 'NONE',
+} as const;

@@ -27,26 +27,4 @@ describe('assertWorkspaceMemberUpdateValuesAreValid', () => {
       ).toThrow(UserInputError);
     },
   );
-
-  it.each(['ALL', 'DIRECT_AND_MENTIONS', 'NONE'])(
-    'should accept inboxNotificationLevel %s',
-    (inboxNotificationLevel) => {
-      expect(() =>
-        assertWorkspaceMemberUpdateValuesAreValid({
-          update: { inboxNotificationLevel },
-        }),
-      ).not.toThrow();
-    },
-  );
-
-  it.each(['all', 'MENTIONS', '', null, true])(
-    'should reject inboxNotificationLevel %p',
-    (inboxNotificationLevel) => {
-      expect(() =>
-        assertWorkspaceMemberUpdateValuesAreValid({
-          update: { inboxNotificationLevel },
-        }),
-      ).toThrow(UserInputError);
-    },
-  );
 });

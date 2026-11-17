@@ -3,7 +3,6 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
-  InboxNotificationLevel,
   NumberDataType,
   RelationType,
   OpenRecordIn,
@@ -252,64 +251,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIEditable: false,
       defaultValue: `'${OpenRecordIn.SIDE_PANEL}'`,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  inboxNotificationLevel: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'inboxNotificationLevel',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({
-          message: `Inbox Notification Level`,
-          context: 'fieldMetadata.label',
-        }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Which new inbox messages notify the member`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconBell',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: `'${InboxNotificationLevel.ALL}'`,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isInboxNotificationPreviewEnabled: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isInboxNotificationPreviewEnabled',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({
-          message: `Inbox Notification Preview`,
-          context: 'fieldMetadata.label',
-        }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Whether inbox notifications show the message text`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconEye',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

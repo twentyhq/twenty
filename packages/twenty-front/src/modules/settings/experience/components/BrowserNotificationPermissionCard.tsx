@@ -1,16 +1,19 @@
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDeviceDesktop } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { useBrowserNotificationPermission } from '@/settings/experience/hooks/useBrowserNotificationPermission';
-import { createPageNotification } from '~/utils/createPageNotification';
+import { createBrowserNotification } from '~/utils/createBrowserNotification';
+import { getBrowserNotificationPermission } from '~/utils/getBrowserNotificationPermission';
 
 export const BrowserNotificationPermissionCard = () => {
   const { t } = useLingui();
-  const { permission, requestPermission } = useBrowserNotificationPermission();
+  const [permission, setPermission] = useState(
+    getBrowserNotificationPermission,
+  );
 
   const descriptionByPermission = {
     default: t`Allow this browser to show new messages on your desktop`,
@@ -20,7 +23,7 @@ export const BrowserNotificationPermissionCard = () => {
   };
 
   const sendTestNotification = () => {
-    const notification = createPageNotification(
+    const notification = createBrowserNotification(
       t`Desktop notifications are on`,
       { body: t`New messages will show up like this` },
     );
@@ -36,7 +39,9 @@ export const BrowserNotificationPermissionCard = () => {
         size="sm"
         variant="solid"
         color="accent"
-        onClick={() => void requestPermission()}
+        onClick={() =>
+          void Notification.requestPermission().then(setPermission)
+        }
       >
         {t`Allow`}
       </Button>

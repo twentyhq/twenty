@@ -1,10 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
-import { INBOX_NOTIFICATION_FOCUSED_TAB_TIMEOUT_MS } from '@/inbox/constants/InboxNotificationFocusedTabTimeoutMs';
-import { INBOX_NOTIFICATION_TAB_CHANNEL_NAME } from '@/inbox/constants/InboxNotificationTabChannelName';
-import { type InboxNotificationTabMessage } from '@/inbox/types/InboxNotificationTabMessage';
 import { isDocumentFocused } from '@/inbox/utils/isDocumentFocused';
+
+const INBOX_NOTIFICATION_TAB_CHANNEL_NAME = 'twenty-inbox-notification-tabs';
+const FOCUSED_TAB_RESPONSE_TIMEOUT_MS = 200;
 
 let sharedChannel: BroadcastChannel | null = null;
 
@@ -13,11 +12,11 @@ const getInboxNotificationTabChannel = (): BroadcastChannel | null => {
     return sharedChannel;
   }
 
-  if (typeof BroadcastChannel === 'undefined') {
+  try {
+    sharedChannel = new BroadcastChannel(INBOX_NOTIFICATION_TAB_CHANNEL_NAME);
+  } catch {
     return null;
   }
-
-  sharedChannel = new BroadcastChannel(INBOX_NOTIFICATION_TAB_CHANNEL_NAME);
 
   return sharedChannel;
 };
@@ -29,15 +28,10 @@ export const answerFocusedTabRequestsFromOtherTabs = (): (() => void) => {
     return () => {};
   }
 
-  const handleMessage = (event: MessageEvent<InboxNotificationTabMessage>) => {
-    if (event.data?.type !== 'focused-tab-request' || !isDocumentFocused()) {
-      return;
+  const handleMessage = (event: MessageEvent) => {
+    if (event.data?.type === 'focused-tab-request' && isDocumentFocused()) {
+      channel.postMessage({ type: 'focused-tab-response' });
     }
-
-    channel.postMessage({
-      type: 'focused-tab-response',
-      requestId: event.data.requestId,
-    } satisfies InboxNotificationTabMessage);
   };
 
   channel.addEventListener('message', handleMessage);
@@ -52,16 +46,9 @@ export const isAnotherTabFocused = (): Promise<boolean> => {
     return Promise.resolve(false);
   }
 
-  const requestId = v4();
-
   return new Promise((resolve) => {
-    const handleMessage = (
-      event: MessageEvent<InboxNotificationTabMessage>,
-    ) => {
-      if (
-        event.data?.type !== 'focused-tab-response' ||
-        event.data.requestId !== requestId
-      ) {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type !== 'focused-tab-response') {
         return;
       }
 
@@ -73,12 +60,9 @@ export const isAnotherTabFocused = (): Promise<boolean> => {
     const timeoutId = setTimeout(() => {
       channel.removeEventListener('message', handleMessage);
       resolve(false);
-    }, INBOX_NOTIFICATION_FOCUSED_TAB_TIMEOUT_MS);
+    }, FOCUSED_TAB_RESPONSE_TIMEOUT_MS);
 
     channel.addEventListener('message', handleMessage);
-    channel.postMessage({
-      type: 'focused-tab-request',
-      requestId,
-    } satisfies InboxNotificationTabMessage);
+    channel.postMessage({ type: 'focused-tab-request' });
   });
 };

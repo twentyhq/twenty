@@ -72,7 +72,7 @@ export const SettingsExperience = () => {
           <Section.Root>
             <Section.Header
               title={t`Notifications`}
-              description={t`Get desktop notifications for new messages while Twenty is open but isn't the window you're using`}
+              description={t`Get desktop notifications for new messages while Twenty is open but isn't the window you're using. These settings apply to this browser`}
             />
             <StyledInterfaceControls>
               <BrowserNotificationPermissionCard />

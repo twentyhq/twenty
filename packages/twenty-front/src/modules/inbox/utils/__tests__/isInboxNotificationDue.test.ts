@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { isInboxNotificationDue } from '@/inbox/utils/isInboxNotificationDue';
-import { InboxNotificationLevel } from '~/generated-metadata/graphql';
+import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLevel';
 
 const ME = 'member-me';
 const FELIX = 'member-felix';
@@ -44,7 +44,7 @@ const isDue = (
     thread: channelThread,
     participant: unreadFollowedParticipant,
     currentWorkspaceMemberId: ME,
-    inboxNotificationLevel: InboxNotificationLevel.ALL,
+    inboxNotificationLevel: INBOX_NOTIFICATION_LEVEL.ALL,
     ...overrides,
   });
 
@@ -113,7 +113,7 @@ describe('isInboxNotificationDue', () => {
   });
 
   it('should only notify for direct messages, mentions and assigned chats when the level asks for it', () => {
-    const inboxNotificationLevel = InboxNotificationLevel.DIRECT_AND_MENTIONS;
+    const inboxNotificationLevel = INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
 
     expect(isDue({ inboxNotificationLevel })).toBe(false);
     expect(isDue({ inboxNotificationLevel, thread: directMessageThread })).toBe(
@@ -130,7 +130,7 @@ describe('isInboxNotificationDue', () => {
   it('should never notify when notifications are off', () => {
     expect(
       isDue({
-        inboxNotificationLevel: InboxNotificationLevel.NONE,
+        inboxNotificationLevel: INBOX_NOTIFICATION_LEVEL.NONE,
         thread: directMessageThread,
       }),
     ).toBe(false);

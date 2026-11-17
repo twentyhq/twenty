@@ -105,8 +105,6 @@ const workspaceMember: FlatWorkspaceMember = {
   colorScheme: 'System',
   uiScale: 'Default',
   openRecordIn: 'SIDE_PANEL',
-  inboxNotificationLevel: 'ALL',
-  isInboxNotificationPreviewEnabled: true,
   locale: 'en',
   avatarUrl: null,
   userEmail: null,

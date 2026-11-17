@@ -1,7 +1,5 @@
 import { BroadcastChannel as NodeBroadcastChannel } from 'worker_threads';
 
-import { INBOX_NOTIFICATION_TAB_CHANNEL_NAME } from '@/inbox/constants/InboxNotificationTabChannelName';
-import { type InboxNotificationTabMessage } from '@/inbox/types/InboxNotificationTabMessage';
 import {
   answerFocusedTabRequestsFromOtherTabs,
   isAnotherTabFocused,
@@ -16,8 +14,10 @@ class UnrefBroadcastChannel extends NodeBroadcastChannel {
 
 const waitForDelivery = () => new Promise((resolve) => setTimeout(resolve, 50));
 
+const INBOX_NOTIFICATION_TAB_CHANNEL_NAME = 'twenty-inbox-notification-tabs';
+
 const getMessageData = (event: unknown) =>
-  (event as MessageEvent<InboxNotificationTabMessage>).data;
+  (event as MessageEvent<{ type: string }>).data;
 
 describe('inboxNotificationTabChannel', () => {
   let otherTabChannel: UnrefBroadcastChannel;
@@ -53,10 +53,7 @@ describe('inboxNotificationTabChannel', () => {
       const message = getMessageData(event);
 
       if (message.type === 'focused-tab-request') {
-        otherTabChannel.postMessage({
-          type: 'focused-tab-response',
-          requestId: message.requestId,
-        });
+        otherTabChannel.postMessage({ type: 'focused-tab-response' });
       }
     };
 
@@ -68,7 +65,7 @@ describe('inboxNotificationTabChannel', () => {
   });
 
   it('should answer only while this tab is focused', async () => {
-    const responses: InboxNotificationTabMessage[] = [];
+    const responses: { type: string }[] = [];
 
     otherTabChannel.onmessage = (event) => {
       responses.push(getMessageData(event));
@@ -77,23 +74,15 @@ describe('inboxNotificationTabChannel', () => {
     const stopAnswering = answerFocusedTabRequestsFromOtherTabs();
 
     jest.spyOn(document, 'hasFocus').mockReturnValue(false);
-    otherTabChannel.postMessage({
-      type: 'focused-tab-request',
-      requestId: 'request-while-blurred',
-    });
+    otherTabChannel.postMessage({ type: 'focused-tab-request' });
     await waitForDelivery();
 
     jest.spyOn(document, 'hasFocus').mockReturnValue(true);
-    otherTabChannel.postMessage({
-      type: 'focused-tab-request',
-      requestId: 'request-while-focused',
-    });
+    otherTabChannel.postMessage({ type: 'focused-tab-request' });
     await waitForDelivery();
 
     stopAnswering();
 
-    expect(responses).toEqual([
-      { type: 'focused-tab-response', requestId: 'request-while-focused' },
-    ]);
+    expect(responses).toEqual([{ type: 'focused-tab-response' }]);
   });
 });

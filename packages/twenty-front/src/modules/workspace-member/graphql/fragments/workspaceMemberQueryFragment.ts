@@ -10,8 +10,6 @@ export const WORKSPACE_MEMBER_QUERY_FRAGMENT = gql`
     colorScheme
     uiScale
     openRecordIn
-    inboxNotificationLevel
-    isInboxNotificationPreviewEnabled
     avatarUrl
     locale
     userEmail
