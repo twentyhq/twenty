@@ -7,5 +7,6 @@ export type CallRecordingSyncFields = {
   startedAt: string;
   endedAt?: string;
   transcript?: TranscriptEntry[];
+  summary?: { blocknote: null; markdown: string };
   calendarEventId?: string;
 };
