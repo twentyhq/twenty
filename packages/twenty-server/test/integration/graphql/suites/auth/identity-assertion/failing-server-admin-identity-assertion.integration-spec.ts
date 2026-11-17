@@ -1,26 +1,23 @@
+import { IDENTITY_ASSERTION_TEST_CONFIG } from 'test/integration/graphql/suites/auth/identity-assertion/utils/identity-assertion-test-config.constant';
+import { mockServerAdminIdentityAssertionConfig } from 'test/integration/graphql/suites/auth/identity-assertion/utils/mock-server-admin-identity-assertion-config.util';
 import {
-  type CloudflareAccessIssuer,
-  startCloudflareAccessIssuer,
-} from 'test/integration/graphql/suites/auth/cloudflare-access/utils/start-cloudflare-access-issuer.util';
+  type IdentityAssertionIssuer,
+  startIdentityAssertionIssuer,
+} from 'test/integration/graphql/suites/auth/identity-assertion/utils/start-identity-assertion-issuer.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
-import { mockConfigVariables } from 'test/integration/utils/mock-config-variables.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CLOUDFLARE_ACCESS_ASSERTION_HEADER } from 'src/engine/core-modules/auth/cloudflare-access/constants/cloudflare-access-assertion-header.constant';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
 /* global APPLE_JANE_ADMIN_ACCESS_TOKEN */
 
-const AUDIENCE = 'server-admin-audience';
 const JANE_EMAIL = 'jane.austen@apple.dev';
 
 type RefusedRequestTestContext = {
-  signAssertion: (issuer: CloudflareAccessIssuer) => string | undefined;
+  signAssertion: (issuer: IdentityAssertionIssuer) => string | undefined;
 };
 
 const refusedRequestTestCases: EachTestingContext<RefusedRequestTestContext>[] =
@@ -35,13 +32,13 @@ const refusedRequestTestCases: EachTestingContext<RefusedRequestTestContext>[] =
       title: 'with an assertion issued to another user',
       context: {
         signAssertion: (issuer) =>
-          issuer.signAssertion({ email: 'tim@apple.dev', audience: AUDIENCE }),
+          issuer.signAssertion({ email: 'tim@apple.dev' }),
       },
     },
     {
       title: 'with an assertion that carries no email',
       context: {
-        signAssertion: (issuer) => issuer.signAssertion({ audience: AUDIENCE }),
+        signAssertion: (issuer) => issuer.signAssertion({}),
       },
     },
     {
@@ -60,8 +57,7 @@ const refusedRequestTestCases: EachTestingContext<RefusedRequestTestContext>[] =
         signAssertion: (issuer) =>
           issuer.signAssertion({
             email: JANE_EMAIL,
-            audience: AUDIENCE,
-            issuer: 'https://another-team.cloudflareaccess.com',
+            issuer: 'https://another-identity-proxy.test',
           }),
       },
     },
@@ -69,11 +65,7 @@ const refusedRequestTestCases: EachTestingContext<RefusedRequestTestContext>[] =
       title: 'with an expired assertion',
       context: {
         signAssertion: (issuer) =>
-          issuer.signAssertion({
-            email: JANE_EMAIL,
-            audience: AUDIENCE,
-            expiresInSeconds: -60,
-          }),
+          issuer.signAssertion({ email: JANE_EMAIL, expiresInSeconds: -60 }),
       },
     },
     {
@@ -82,24 +74,20 @@ const refusedRequestTestCases: EachTestingContext<RefusedRequestTestContext>[] =
         signAssertion: (issuer) =>
           issuer.signAssertion({
             email: JANE_EMAIL,
-            audience: AUDIENCE,
             signingKeyId: 'unknown-key-id',
           }),
       },
     },
   ];
 
-describe('Requests into the server admin workspace behind Cloudflare Access', () => {
-  let issuer: CloudflareAccessIssuer;
+describe('Requests refused in the server admin workspace behind an identity-aware proxy', () => {
+  let issuer: IdentityAssertionIssuer;
 
   beforeAll(async () => {
-    issuer = await startCloudflareAccessIssuer();
+    issuer = await startIdentityAssertionIssuer();
 
-    mockConfigVariables({
-      SERVER_ADMIN_WORKSPACE_ID: SEED_APPLE_WORKSPACE_ID,
-      CLOUDFLARE_ACCESS_ISSUER_URL: issuer.issuerUrl,
-      CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE: AUDIENCE,
-      OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: ['127.0.0.1'],
+    mockServerAdminIdentityAssertionConfig({
+      signingKeysUrl: issuer.signingKeysUrl,
     });
   });
 
@@ -117,7 +105,7 @@ describe('Requests into the server admin workspace behind Cloudflare Access', ()
         accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
         expectToFail: true,
         headers: isDefined(assertion)
-          ? { [CLOUDFLARE_ACCESS_ASSERTION_HEADER]: assertion }
+          ? { [IDENTITY_ASSERTION_TEST_CONFIG.header]: assertion }
           : {},
       });
 

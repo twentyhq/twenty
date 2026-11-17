@@ -74,6 +74,14 @@ import {
   DEFAULT_MODELS_BY_TIER,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
+const isServerAdminIdentityAssertionConfigured = (
+  env: ConfigVariables,
+): boolean =>
+  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_HEADER) ||
+  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL) ||
+  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER) ||
+  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE);
+
 export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -623,10 +631,55 @@ export class ConfigVariables {
   @ValidateIf(
     (env) =>
       isDefined(env.SERVER_ADMIN_WORKSPACE_ID) ||
-      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL),
+      isServerAdminIdentityAssertionConfigured(env),
   )
   @IsUUID()
   SERVER_ADMIN_WORKSPACE_ID: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Request header carrying the signed identity assertion (a JWT) that an identity-aware proxy adds in front of the server admin workspace, for example Cf-Access-Jwt-Assertion. Setting it requires the three other SERVER_ADMIN_IDENTITY_ASSERTION variables and SERVER_ADMIN_WORKSPACE_ID: every request into that workspace must then carry an assertion issued to the email of its user.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_HEADER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'URL of the JSON Web Key Set the server admin identity assertions are signed with',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Issuer the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Audience the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -2159,37 +2212,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   CLOUDFLARE_DCV_DELEGATION_ID: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
-    description:
-      'Issuer of the Cloudflare Access assertions required on every request into the server admin workspace (https://<team>.cloudflareaccess.com). Requires CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE and SERVER_ADMIN_WORKSPACE_ID.',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @ValidateIf(
-    (env) =>
-      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL) ||
-      isDefined(env.CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE),
-  )
-  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
-  CLOUDFLARE_ACCESS_ISSUER_URL: string | undefined;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
-    description:
-      'Audience tag of the Cloudflare Access application in front of the server admin workspace. Requires CLOUDFLARE_ACCESS_ISSUER_URL.',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @ValidateIf(
-    (env) =>
-      isDefined(env.CLOUDFLARE_ACCESS_ISSUER_URL) ||
-      isDefined(env.CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE),
-  )
-  @IsString()
-  @IsNotEmpty()
-  CLOUDFLARE_ACCESS_SERVER_ADMIN_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,

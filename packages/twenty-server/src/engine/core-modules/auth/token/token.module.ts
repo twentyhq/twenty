@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { CloudflareAccessAssertionService } from 'src/engine/core-modules/auth/cloudflare-access/services/cloudflare-access-assertion.service';
+import { ServerAdminIdentityAssertionService } from 'src/engine/core-modules/auth/identity-assertion/services/server-admin-identity-assertion.service';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -43,7 +43,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     RenewTokenService,
     JwtAuthStrategy,
     AccessTokenService,
-    CloudflareAccessAssertionService,
+    ServerAdminIdentityAssertionService,
     LoginTokenService,
     RefreshTokenService,
     WorkspaceAgnosticTokenService,

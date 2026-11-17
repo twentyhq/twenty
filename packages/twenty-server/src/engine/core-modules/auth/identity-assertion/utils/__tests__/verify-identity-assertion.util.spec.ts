@@ -2,9 +2,9 @@ import { generateKeyPairSync } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
 
-import { verifyCloudflareAccessAssertion } from 'src/engine/core-modules/auth/cloudflare-access/utils/verify-cloudflare-access-assertion.util';
+import { verifyIdentityAssertion } from 'src/engine/core-modules/auth/identity-assertion/utils/verify-identity-assertion.util';
 
-const ISSUER = 'https://team.cloudflareaccess.com';
+const ISSUER = 'https://identity-proxy.test';
 const AUDIENCE = 'server-admin-audience';
 
 const { publicKey, privateKey } = generateKeyPairSync('rsa', {
@@ -29,19 +29,37 @@ const signAssertion = ({
   jwt.sign(payload, signingKey, { algorithm, issuer, audience, expiresIn });
 
 const verify = (assertion: string) =>
-  verifyCloudflareAccessAssertion({
+  verifyIdentityAssertion({
     assertion,
     signingKey: publicKey,
     issuer: ISSUER,
     audience: AUDIENCE,
   });
 
-describe('verifyCloudflareAccessAssertion', () => {
+describe('verifyIdentityAssertion', () => {
   it('should return the email of a valid assertion', () => {
     expect(verify(signAssertion())).toEqual({
       isValid: true,
       email: 'jane@twenty.com',
     });
+  });
+
+  it('should accept an assertion signed with an elliptic curve key', () => {
+    const ellipticCurveKeyPair = generateKeyPairSync('ec', {
+      namedCurve: 'P-256',
+    });
+
+    expect(
+      verifyIdentityAssertion({
+        assertion: signAssertion({
+          signingKey: ellipticCurveKeyPair.privateKey,
+          algorithm: 'ES256',
+        }),
+        signingKey: ellipticCurveKeyPair.publicKey,
+        issuer: ISSUER,
+        audience: AUDIENCE,
+      }),
+    ).toEqual({ isValid: true, email: 'jane@twenty.com' });
   });
 
   it('should return no email for a valid assertion without one', () => {
@@ -60,9 +78,7 @@ describe('verifyCloudflareAccessAssertion', () => {
 
   it('should refuse an assertion from another issuer', () => {
     expect(
-      verify(
-        signAssertion({ issuer: 'https://another-team.cloudflareaccess.com' }),
-      ),
+      verify(signAssertion({ issuer: 'https://another-identity-proxy.test' })),
     ).toEqual({
       isValid: false,
       error: `jwt issuer invalid. expected: ${ISSUER}`,

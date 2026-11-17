@@ -1,4 +1,4 @@
-export type CloudflareAccessAssertionRefusalReason =
+export type IdentityAssertionRefusalReason =
   | 'ASSERTION_MISSING'
   | 'SIGNING_KEY_UNKNOWN'
   | 'ASSERTION_INVALID'

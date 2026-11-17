@@ -3,11 +3,13 @@ import { type KeyObject } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import * as z from 'zod';
 
-const CLOUDFLARE_ACCESS_ASSERTION_PAYLOAD_SCHEMA = z.object({
+import { IDENTITY_ASSERTION_ALGORITHMS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-algorithms.constant';
+
+const IDENTITY_ASSERTION_PAYLOAD_SCHEMA = z.object({
   email: z.string().optional(),
 });
 
-export const verifyCloudflareAccessAssertion = ({
+export const verifyIdentityAssertion = ({
   assertion,
   signingKey,
   issuer,
@@ -21,9 +23,9 @@ export const verifyCloudflareAccessAssertion = ({
   | { isValid: true; email: string | undefined }
   | { isValid: false; error: string } => {
   try {
-    const { email } = CLOUDFLARE_ACCESS_ASSERTION_PAYLOAD_SCHEMA.parse(
+    const { email } = IDENTITY_ASSERTION_PAYLOAD_SCHEMA.parse(
       jwt.verify(assertion, signingKey, {
-        algorithms: ['RS256'],
+        algorithms: IDENTITY_ASSERTION_ALGORITHMS,
         issuer,
         audience,
       }),

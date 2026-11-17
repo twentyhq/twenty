@@ -13,7 +13,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { CloudflareAccessAssertionService } from 'src/engine/core-modules/auth/cloudflare-access/services/cloudflare-access-assertion.service';
+import { ServerAdminIdentityAssertionService } from 'src/engine/core-modules/auth/identity-assertion/services/server-admin-identity-assertion.service';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
@@ -50,7 +50,7 @@ export class AccessTokenService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
-    private readonly cloudflareAccessAssertionService: CloudflareAccessAssertionService,
+    private readonly serverAdminIdentityAssertionService: ServerAdminIdentityAssertionService,
   ) {}
 
   private async resolveTokenSubject(
@@ -196,7 +196,7 @@ export class AccessTokenService {
   async validateTokenByRequest(request: Request): Promise<RawAuthContext> {
     const authContext = await this.resolveAuthContextFromRequest(request);
 
-    await this.cloudflareAccessAssertionService.assertRequestAllowedInServerAdminWorkspaceOrThrow(
+    await this.serverAdminIdentityAssertionService.assertRequestAllowedInServerAdminWorkspaceOrThrow(
       { request, authContext },
     );
 
