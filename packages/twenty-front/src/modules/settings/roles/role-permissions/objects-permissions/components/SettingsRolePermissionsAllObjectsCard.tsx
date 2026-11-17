@@ -2,7 +2,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
+import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -31,17 +31,21 @@ export const SettingsRolePermissionsAllObjectsCard = ({
     roleId,
   );
 
-  const handleChange = (selectedKeys: SettingsRoleObjectPermissionKey[]) => {
+  const handleChange = (
+    selectedOperations: SettingsRoleObjectPermissionKey[],
+  ) => {
     setSettingsDraftRole((currentSettingsDraftRole) => ({
       ...currentSettingsDraftRole,
-      canReadAllObjectRecords: selectedKeys.includes('canReadObjectRecords'),
-      canUpdateAllObjectRecords: selectedKeys.includes(
+      canReadAllObjectRecords: selectedOperations.includes(
+        'canReadObjectRecords',
+      ),
+      canUpdateAllObjectRecords: selectedOperations.includes(
         'canUpdateObjectRecords',
       ),
-      canSoftDeleteAllObjectRecords: selectedKeys.includes(
+      canSoftDeleteAllObjectRecords: selectedOperations.includes(
         'canSoftDeleteObjectRecords',
       ),
-      canDestroyAllObjectRecords: selectedKeys.includes(
+      canDestroyAllObjectRecords: selectedOperations.includes(
         'canDestroyObjectRecords',
       ),
     }));
@@ -57,7 +61,7 @@ export const SettingsRolePermissionsAllObjectsCard = ({
         >
           <SettingsRolePermissionsObjectActionsSelect
             dropdownId={`settings-role-all-objects-actions-${roleId}`}
-            selectedKeys={getGrantedObjectPermissionKeys({
+            selectedOperations={getObjectOperations({
               role: settingsDraftRole,
             })}
             onChange={handleChange}

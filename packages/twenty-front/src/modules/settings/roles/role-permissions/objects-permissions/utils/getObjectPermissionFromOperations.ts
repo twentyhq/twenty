@@ -3,9 +3,9 @@ import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 // Without See, changes are denied explicitly: inheriting one later would fail server validation
-export const getObjectPermissionOverrideGrants = ({
+export const getObjectPermissionFromOperations = ({
   role,
-  grantedKeys,
+  operations,
 }: {
   role: Pick<
     RoleWithPartialMembers,
@@ -14,14 +14,14 @@ export const getObjectPermissionOverrideGrants = ({
     | 'canSoftDeleteAllObjectRecords'
     | 'canDestroyAllObjectRecords'
   >;
-  grantedKeys: SettingsRoleObjectPermissionKey[];
+  operations: SettingsRoleObjectPermissionKey[];
 }): Record<SettingsRoleObjectPermissionKey, boolean | null> => {
   const isReadDeniedByOverride =
-    !grantedKeys.includes('canReadObjectRecords') &&
+    !operations.includes('canReadObjectRecords') &&
     role.canReadAllObjectRecords;
 
-  const getGrant = (key: SettingsRoleObjectPermissionKey) => {
-    const isGranted = grantedKeys.includes(key);
+  const getObjectPermissionValue = (key: SettingsRoleObjectPermissionKey) => {
+    const hasOperation = operations.includes(key);
     const allObjectsGrant =
       role[
         SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING[
@@ -29,24 +29,29 @@ export const getObjectPermissionOverrideGrants = ({
         ]
       ];
 
-    return isGranted === allObjectsGrant && !isReadDeniedByOverride
+    return hasOperation === allObjectsGrant && !isReadDeniedByOverride
       ? null
-      : isGranted;
+      : hasOperation;
   };
 
-  const changeGrants = {
-    canUpdateObjectRecords: getGrant('canUpdateObjectRecords'),
-    canSoftDeleteObjectRecords: getGrant('canSoftDeleteObjectRecords'),
-    canDestroyObjectRecords: getGrant('canDestroyObjectRecords'),
+  const changeOperations = {
+    canUpdateObjectRecords: getObjectPermissionValue('canUpdateObjectRecords'),
+    canSoftDeleteObjectRecords: getObjectPermissionValue(
+      'canSoftDeleteObjectRecords',
+    ),
+    canDestroyObjectRecords: getObjectPermissionValue(
+      'canDestroyObjectRecords',
+    ),
   };
 
-  // A change granted by the override needs See granted by it too, or dropping See for all objects leaves a write without read
-  const hasChangeGrantedByOverride = Object.values(changeGrants).includes(true);
+  // A change set by the override needs See set by it too, or dropping See for all objects leaves a write without read
+  const hasChangeOperationSetByOverride =
+    Object.values(changeOperations).includes(true);
 
   return {
-    canReadObjectRecords: hasChangeGrantedByOverride
+    canReadObjectRecords: hasChangeOperationSetByOverride
       ? true
-      : getGrant('canReadObjectRecords'),
-    ...changeGrants,
+      : getObjectPermissionValue('canReadObjectRecords'),
+    ...changeOperations,
   };
 };

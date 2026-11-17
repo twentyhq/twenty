@@ -4,10 +4,10 @@ import { getObjectPermissionActionLabel } from '@/settings/roles/role-permission
 import { t } from '@lingui/core/macro';
 
 export const getObjectPermissionActionsLabel = (
-  objectPermissionKeys: SettingsRoleObjectPermissionKey[],
+  operations: SettingsRoleObjectPermissionKey[],
 ) => {
   const actionLabels = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((key) =>
-    objectPermissionKeys.includes(key),
+    operations.includes(key),
   ).map(getObjectPermissionActionLabel);
 
   if (actionLabels.length === 0) {

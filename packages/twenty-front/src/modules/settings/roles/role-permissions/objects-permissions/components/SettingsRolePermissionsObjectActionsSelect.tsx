@@ -6,7 +6,7 @@ import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-perm
 import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
 import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
-import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
+import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -17,14 +17,14 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 
 type SettingsRolePermissionsObjectActionsSelectProps = {
   dropdownId: string;
-  selectedKeys: SettingsRoleObjectPermissionKey[];
-  onChange: (selectedKeys: SettingsRoleObjectPermissionKey[]) => void;
+  selectedOperations: SettingsRoleObjectPermissionKey[];
+  onChange: (selectedOperations: SettingsRoleObjectPermissionKey[]) => void;
   disabled?: boolean;
 };
 
 export const SettingsRolePermissionsObjectActionsSelect = ({
   dropdownId,
-  selectedKeys,
+  selectedOperations,
   onChange,
   disabled = false,
 }: SettingsRolePermissionsObjectActionsSelectProps) => {
@@ -34,10 +34,10 @@ export const SettingsRolePermissionsObjectActionsSelect = ({
     <MultiSelectControl
       selectedOptions={[]}
       fixedIcon={getObjectPermissionAccessIcon({
-        grantedKeys: selectedKeys,
-        isAdvanced: selectedKeys.length > 1,
+        operations: selectedOperations,
+        isAdvanced: selectedOperations.length > 1,
       })}
-      fixedText={getObjectPermissionActionsLabel(selectedKeys)}
+      fixedText={getObjectPermissionActionsLabel(selectedOperations)}
       isDisabled={disabled}
       selectSizeVariant="small"
     />
@@ -60,13 +60,13 @@ export const SettingsRolePermissionsObjectActionsSelect = ({
         <Dropdown.SelectionGroup
           aria-label={t`Allowed actions`}
           multiple
-          value={selectedKeys}
+          value={selectedOperations}
           onValueChange={(nextSelectedValues) =>
             onChange(
-              getObjectPermissionKeysWithReadDependency({
-                previousKeys: selectedKeys,
-                nextKeys: SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((key) =>
-                  nextSelectedValues.includes(key),
+              getObjectOperationsWithReadDependency({
+                previousOperations: selectedOperations,
+                nextOperations: SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
+                  (key) => nextSelectedValues.includes(key),
                 ),
               }),
             )

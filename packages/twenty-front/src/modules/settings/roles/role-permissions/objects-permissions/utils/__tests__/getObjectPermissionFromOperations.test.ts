@@ -1,4 +1,4 @@
-import { getObjectPermissionOverrideGrants } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionOverrideGrants';
+import { getObjectPermissionFromOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionFromOperations';
 
 const SEE_ONLY_ROLE = {
   canReadAllObjectRecords: true,
@@ -7,12 +7,12 @@ const SEE_ONLY_ROLE = {
   canDestroyAllObjectRecords: false,
 };
 
-describe('getObjectPermissionOverrideGrants', () => {
-  it('should grant See explicitly next to a change the override grants', () => {
+describe('getObjectPermissionFromOperations', () => {
+  it('should set See explicitly next to a change the override sets', () => {
     expect(
-      getObjectPermissionOverrideGrants({
+      getObjectPermissionFromOperations({
         role: SEE_ONLY_ROLE,
-        grantedKeys: ['canReadObjectRecords', 'canUpdateObjectRecords'],
+        operations: ['canReadObjectRecords', 'canUpdateObjectRecords'],
       }),
     ).toEqual({
       canReadObjectRecords: true,
@@ -24,9 +24,9 @@ describe('getObjectPermissionOverrideGrants', () => {
 
   it('should deny every change explicitly when the override removes See', () => {
     expect(
-      getObjectPermissionOverrideGrants({
+      getObjectPermissionFromOperations({
         role: SEE_ONLY_ROLE,
-        grantedKeys: [],
+        operations: [],
       }),
     ).toEqual({
       canReadObjectRecords: false,
@@ -38,9 +38,9 @@ describe('getObjectPermissionOverrideGrants', () => {
 
   it('should inherit everything when all objects have no access either', () => {
     expect(
-      getObjectPermissionOverrideGrants({
+      getObjectPermissionFromOperations({
         role: { ...SEE_ONLY_ROLE, canReadAllObjectRecords: false },
-        grantedKeys: [],
+        operations: [],
       }),
     ).toEqual({
       canReadObjectRecords: null,
@@ -50,11 +50,11 @@ describe('getObjectPermissionOverrideGrants', () => {
     });
   });
 
-  it('should leave grants equal to the all-objects ones inherited', () => {
+  it('should leave operations equal to the all-objects ones inherited', () => {
     expect(
-      getObjectPermissionOverrideGrants({
+      getObjectPermissionFromOperations({
         role: SEE_ONLY_ROLE,
-        grantedKeys: ['canReadObjectRecords'],
+        operations: ['canReadObjectRecords'],
       }),
     ).toEqual({
       canReadObjectRecords: null,

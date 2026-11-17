@@ -11,23 +11,23 @@ import {
 } from 'twenty-ui/icon';
 
 export const getObjectPermissionAccessIcon = ({
-  grantedKeys,
+  operations,
   isAdvanced,
 }: {
-  grantedKeys: SettingsRoleObjectPermissionKey[];
+  operations: SettingsRoleObjectPermissionKey[];
   isAdvanced: boolean;
 }): IconComponent => {
   if (isAdvanced) {
     return IconAdjustments;
   }
 
-  const highestGrantedKey = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((key) =>
-    grantedKeys.includes(key),
+  const highestOperation = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((key) =>
+    operations.includes(key),
   ).at(-1);
 
-  if (!isDefined(highestGrantedKey)) {
+  if (!isDefined(highestOperation)) {
     return IconEyeOff;
   }
 
-  return SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestGrantedKey].Icon;
+  return SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestOperation].Icon;
 };

@@ -7,10 +7,10 @@ import {
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
-import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
+import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
-import { getObjectPermissionOverrideGrants } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionOverrideGrants';
-import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
+import { getObjectPermissionFromOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionFromOperations';
+import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -83,14 +83,12 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       objectMetadataId: objectMetadataItem.id,
     }).length > 0;
 
-  const grantedKeys = getGrantedObjectPermissionKeys({
+  const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setGrantedKeys = (
-    nextGrantedKeys: SettingsRoleObjectPermissionKey[],
-  ) => {
+  const setOperations = (nextOperations: SettingsRoleObjectPermissionKey[]) => {
     const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermission) =>
         objectPermission.objectMetadataId === objectMetadataItem.id,
@@ -99,22 +97,22 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     upsertObjectPermissionInDraftRole({
       ...existingObjectPermission,
       objectMetadataId: objectMetadataItem.id,
-      ...getObjectPermissionOverrideGrants({
+      ...getObjectPermissionFromOperations({
         role: settingsDraftRole,
-        grantedKeys: nextGrantedKeys,
+        operations: nextOperations,
       }),
     });
   };
 
-  const toggleKey = (key: SettingsRoleObjectPermissionKey) => {
-    const nextKeys = grantedKeys.includes(key)
-      ? grantedKeys.filter((grantedKey) => grantedKey !== key)
-      : [...grantedKeys, key];
+  const toggleOperation = (key: SettingsRoleObjectPermissionKey) => {
+    const nextOperations = operations.includes(key)
+      ? operations.filter((operation) => operation !== key)
+      : [...operations, key];
 
-    setGrantedKeys(
-      getObjectPermissionKeysWithReadDependency({
-        previousKeys: grantedKeys,
-        nextKeys,
+    setOperations(
+      getObjectOperationsWithReadDependency({
+        previousOperations: operations,
+        nextOperations,
       }),
     );
   };
@@ -143,7 +141,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           <TableRow
             key={key}
             gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
-            onClick={isEditable ? () => toggleKey(key) : undefined}
+            onClick={isEditable ? () => toggleOperation(key) : undefined}
           >
             <TableCell gap={themeCssVariables.spacing[2]}>
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
@@ -155,11 +153,11 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell align="right">
               <Checkbox
                 aria-label={getObjectPermissionActionLabel(key)}
-                checked={grantedKeys.includes(key)}
+                checked={operations.includes(key)}
                 disabled={!isEditable}
                 hoverable={false}
                 onClick={(event) => event.stopPropagation()}
-                onCheckedChange={() => toggleKey(key)}
+                onCheckedChange={() => toggleOperation(key)}
               />
             </TableCell>
           </TableRow>

@@ -22,7 +22,7 @@ describe('hasObjectPermissionOverride', () => {
     ],
   };
 
-  it('should list an object with its own grant', () => {
+  it('should list an object with its own operation', () => {
     expect(
       hasObjectPermissionOverride({ role, objectMetadataId: 'company' }),
     ).toBe(true);

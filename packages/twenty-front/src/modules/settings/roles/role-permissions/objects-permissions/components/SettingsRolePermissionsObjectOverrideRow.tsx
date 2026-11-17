@@ -4,7 +4,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
-import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
+import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
 import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
@@ -66,7 +66,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
       isFieldPermissionRestrictive(fieldPermission),
   );
 
-  const grantedKeys = getGrantedObjectPermissionKeys({
+  const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
   });
@@ -74,13 +74,13 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   const isAdvanced = rulePredicates.length > 0 || hasFieldRestriction;
 
   const AccessIcon = getObjectPermissionAccessIcon({
-    grantedKeys,
+    operations,
     isAdvanced,
   });
 
   const accessLabel = isAdvanced
     ? t`Advanced`
-    : getObjectPermissionActionsLabel(grantedKeys);
+    : getObjectPermissionActionsLabel(operations);
 
   const ChevronIcon = isExpanded ? IconChevronUp : IconChevronDown;
 

@@ -8,7 +8,7 @@ describe('getObjectPermissionActionsLabel', () => {
     dynamicActivate(SOURCE_LOCALE);
   });
 
-  it('should join granted actions in order', () => {
+  it('should join the allowed operations in order', () => {
     expect(
       getObjectPermissionActionsLabel([
         'canUpdateObjectRecords',
@@ -18,7 +18,7 @@ describe('getObjectPermissionActionsLabel', () => {
     expect(i18n.locale).toBe(SOURCE_LOCALE);
   });
 
-  it('should say no access when nothing is granted', () => {
+  it('should say no access when no operation is allowed', () => {
     expect(getObjectPermissionActionsLabel([])).toBe('No access');
   });
 });

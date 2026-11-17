@@ -19,7 +19,7 @@ export const hasObjectPermissionOverride = ({
     (permission) => permission.objectMetadataId === objectMetadataId,
   );
 
-  const hasObjectGrant = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
+  const hasObjectOperation = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
     isDefined(objectPermission?.[key]),
   );
 
@@ -30,7 +30,7 @@ export const hasObjectPermissionOverride = ({
   );
 
   return (
-    hasObjectGrant ||
+    hasObjectOperation ||
     hasFieldRestriction ||
     getObjectRowLevelPermissionPredicates({ role, objectMetadataId }).length > 0
   );
