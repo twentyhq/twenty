@@ -87,6 +87,25 @@ describe('DefineTool', () => {
       }
     }
 
+    // @ts-expect-error the application target must name a required string of the input
+    @DefineTool({
+      ...RENAME_WEBHOOK_OPTIONS,
+      applicationTarget: {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'webhook',
+        idKey: 'name',
+      },
+    })
+    class ToolWithUnknownTargetKey extends BaseTool<
+      typeof renameWebhookInputSchema
+    > {
+      readonly inputSchema = renameWebhookInputSchema;
+
+      async execute(): Promise<ToolOutput> {
+        return { success: true, message: 'Done' };
+      }
+    }
+
     // @ts-expect-error a tool must implement execute
     class ToolWithoutExecute extends BaseTool<typeof renameWebhookInputSchema> {
       readonly inputSchema = renameWebhookInputSchema;
@@ -137,11 +156,40 @@ describe('DefineTool', () => {
       NotATool,
       LookAlikeTool,
       ToolWithNarrowedInput,
+      ToolWithUnknownTargetKey,
       ToolWithoutExecute,
       ToolWithMismatchedInput,
       ToolWithScalarInput,
       ToolWithPlainUnionInput,
-    ]).toHaveLength(8);
+    ]).toHaveLength(9);
+  });
+
+  it('should record an application target naming a string of the input', () => {
+    @DefineTool({
+      ...RENAME_WEBHOOK_OPTIONS,
+      applicationTarget: {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'webhook',
+        idKey: 'id',
+      },
+    })
+    class RenameWebhookTool extends BaseTool<typeof renameWebhookInputSchema> {
+      readonly inputSchema = renameWebhookInputSchema;
+
+      async execute(): Promise<ToolOutput> {
+        return { success: true, message: 'Done' };
+      }
+    }
+
+    expect(
+      Reflect.getMetadata(DEFINE_TOOL_METADATA_KEY, RenameWebhookTool),
+    ).toMatchObject({
+      applicationTarget: {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'webhook',
+        idKey: 'id',
+      },
+    });
   });
 
   it('should accept a discriminated union of objects as input', () => {

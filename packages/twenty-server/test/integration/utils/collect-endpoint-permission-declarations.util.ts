@@ -17,6 +17,7 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
 import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
+import { type ToolApplicationTarget } from 'src/engine/core-modules/tool-provider/types/tool-application-target.type';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
@@ -45,7 +46,7 @@ type EndpointPermissionDeclarations = {
   acceptedAuthPrincipals: AcceptedAuthPrincipals | null;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags: FeatureFlagKey[];
-  applicationTarget: ApplicationTarget | null;
+  applicationTarget: ApplicationTarget | ToolApplicationTarget | null;
 };
 
 type EndpointClass = Type<object>;
@@ -181,16 +182,19 @@ const toAcceptedAuthPrincipals = (
 
 // Tools are checked by AccessPolicyService.isToolAccessPolicySatisfied, not the endpoint guards
 const toToolPermissionDeclarations = ({
-  authPrincipals,
-  requiredPermissionFlags,
-  requiredFeatureFlags = [],
-}: AccessPolicy): EndpointPermissionDeclarations => ({
+  accessPolicy: {
+    authPrincipals,
+    requiredPermissionFlags,
+    requiredFeatureFlags = [],
+  },
+  applicationTarget,
+}: DefineToolOptions): EndpointPermissionDeclarations => ({
   acceptedAuthPrincipals: toAcceptedAuthPrincipals([
     withAgentsAdmitted(authPrincipals),
   ]),
   requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
   requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
-  applicationTarget: null,
+  applicationTarget: applicationTarget ?? null,
 });
 
 const compareCodePoints = (left: string, right: string): number =>
@@ -240,7 +244,7 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
 
       declarationsByEndpoint.set(
         tool,
-        toToolPermissionDeclarations(defineToolOptions.accessPolicy),
+        toToolPermissionDeclarations(defineToolOptions),
       );
     }
 
