@@ -36,9 +36,10 @@ describe('useStableMediaUrl', () => {
   });
 
   it('uses a url that only arrives after mount', () => {
+    const initialProps: { url: string | undefined } = { url: undefined };
     const { result, rerender } = renderHook(
-      ({ url }: { url: string | undefined }) => useStableMediaUrl(url),
-      { initialProps: { url: undefined as string | undefined } },
+      ({ url }) => useStableMediaUrl(url),
+      { initialProps },
     );
 
     rerender({ url: FIRST_URL });
