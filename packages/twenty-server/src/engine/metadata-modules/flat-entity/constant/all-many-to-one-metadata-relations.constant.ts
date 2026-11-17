@@ -772,7 +772,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'workflow',
       foreignKey: 'coreWorkflowId',
       inverseOneToManyProperty: null,
-      isNullable: false,
+      isNullable: true,
       universalForeignKey: 'coreWorkflowUniversalIdentifier',
     },
   },
