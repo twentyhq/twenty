@@ -1,16 +1,19 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
-import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, fieldMetadataItemByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
     objectMetadataItem,
@@ -24,13 +27,23 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFields = useAtomComponentStateValue(
-    currentRecordFieldsComponentState,
+  const visibleRecordFields = useAtomComponentSelectorValue(
+    visibleRecordFieldsComponentSelector,
   );
 
-  const lookupRelationFieldMetadataItemIds = currentRecordFields
-    .filter(({ relationTargetFieldMetadataId }) =>
-      isDefined(relationTargetFieldMetadataId),
+  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
+
+  const lookupRelationFieldMetadataItemIds = visibleRecordFields
+    .filter((recordField) =>
+      isDefined(
+        getRecordFieldLookupTarget({
+          recordField,
+          fieldMetadataItem:
+            fieldMetadataItemByFieldMetadataItemId[
+              recordField.fieldMetadataItemId
+            ],
+        }),
+      ),
     )
     .map(({ fieldMetadataItemId }) => fieldMetadataItemId);
 
