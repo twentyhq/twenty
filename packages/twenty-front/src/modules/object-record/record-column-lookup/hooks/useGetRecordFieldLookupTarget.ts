@@ -12,10 +12,13 @@ export const useGetRecordFieldLookupTarget = () => {
   );
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  return (
-    recordField: Pick<RecordField, 'relationTargetFieldMetadataId'>,
-    fieldMetadataItem: FieldMetadataItem,
-  ) =>
+  return ({
+    recordField,
+    fieldMetadataItem,
+  }: {
+    recordField: Pick<RecordField, 'relationTargetFieldMetadataId'>;
+    fieldMetadataItem: FieldMetadataItem;
+  }) =>
     getRecordFieldLookupTarget({
       recordField,
       fieldMetadataItem,

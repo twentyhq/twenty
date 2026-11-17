@@ -123,10 +123,10 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget: getRecordFieldLookupTarget(
+                    lookupTarget: getRecordFieldLookupTarget({
                       recordField,
                       fieldMetadataItem,
-                    ),
+                    }),
                   });
 
                   return (

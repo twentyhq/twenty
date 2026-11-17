@@ -83,12 +83,13 @@ export const useRelevantRecordsGqlFields = ({
     }),
     lookupTargets: visibleRecordFields
       .map((recordField) =>
-        getRecordFieldLookupTarget(
+        getRecordFieldLookupTarget({
           recordField,
-          fieldMetadataItemByFieldMetadataItemId[
-            recordField.fieldMetadataItemId
-          ],
-        ),
+          fieldMetadataItem:
+            fieldMetadataItemByFieldMetadataItemId[
+              recordField.fieldMetadataItemId
+            ],
+        }),
       )
       .filter(isDefined),
   });
