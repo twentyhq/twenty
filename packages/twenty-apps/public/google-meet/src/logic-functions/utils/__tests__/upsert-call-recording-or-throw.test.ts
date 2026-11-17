@@ -71,6 +71,46 @@ describe('upsertCallRecordingOrThrow', () => {
     });
   });
 
+  it('should update the recording another run created at the same moment', async () => {
+    const coreApiClient = buildCoreApiClient({
+      isDeleted: false,
+      isExisting: false,
+    });
+
+    coreApiClient.query.mockResolvedValueOnce({
+      callRecordings: { edges: [{ node: { id: CALL_RECORDING_ID } }] },
+    });
+    coreApiClient.mutation
+      .mockRejectedValueOnce(new Error('Duplicate id'))
+      .mockResolvedValueOnce({});
+
+    await expect(upsert(coreApiClient)).resolves.toBe('UPDATED');
+    expect(coreApiClient.query).toHaveBeenCalledTimes(3);
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(2);
+    expect(coreApiClient.mutation).toHaveBeenLastCalledWith({
+      updateCallRecording: {
+        __args: { id: CALL_RECORDING_ID, data: FIELDS },
+        id: true,
+      },
+    });
+  });
+
+  it('should rethrow a create failure when the recording still does not exist', async () => {
+    const coreApiClient = buildCoreApiClient({
+      isDeleted: false,
+      isExisting: false,
+    });
+
+    coreApiClient.query.mockResolvedValueOnce({
+      callRecordings: { edges: [] },
+    });
+    coreApiClient.mutation.mockRejectedValueOnce(new Error('Not allowed'));
+
+    await expect(upsert(coreApiClient)).rejects.toThrow('Not allowed');
+    expect(coreApiClient.query).toHaveBeenCalledTimes(3);
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
+  });
+
   it('should leave a recording the user deleted untouched', async () => {
     const coreApiClient = buildCoreApiClient({
       isDeleted: true,

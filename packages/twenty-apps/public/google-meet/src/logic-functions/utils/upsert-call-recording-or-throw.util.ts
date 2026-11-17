@@ -73,12 +73,31 @@ export const upsertCallRecordingOrThrow = async ({
     return 'UPDATED';
   }
 
-  await coreApiClient.mutation({
-    createCallRecording: {
-      __args: { data: { id: callRecordingId, ...fields } },
-      id: true,
-    },
-  });
+  try {
+    await coreApiClient.mutation({
+      createCallRecording: {
+        __args: { data: { id: callRecordingId, ...fields } },
+        id: true,
+      },
+    });
 
-  return 'CREATED';
+    return 'CREATED';
+  } catch (error) {
+    const wasCreatedConcurrently = await doesCallRecordingMatchOrThrow({
+      coreApiClient,
+      filter: { id: { eq: callRecordingId } },
+    });
+
+    if (!wasCreatedConcurrently) {
+      throw error;
+    }
+
+    await updateCallRecordingOrThrow({
+      coreApiClient,
+      callRecordingId,
+      fields,
+    });
+
+    return 'UPDATED';
+  }
 };
