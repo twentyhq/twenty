@@ -22,6 +22,7 @@ export const NavigationMenuItemDisplay = ({
   onActiveObjectMetadataItemClick,
   readOnly,
   orphanIndex,
+  listDroppableId,
 }: NavigationMenuItemDisplayProps) => {
   switch (item.type) {
     case NavigationMenuItemType.FOLDER:
@@ -36,6 +37,7 @@ export const NavigationMenuItemDisplay = ({
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           readOnly={readOnly}
           orphanIndex={orphanIndex}
+          listDroppableId={listDroppableId}
         />
       );
     case NavigationMenuItemType.LINK:

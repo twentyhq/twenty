@@ -154,15 +154,11 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       section,
     );
 
-    const destinationParent = allItems.find(
-      (item) => item.id === destinationFolderId,
-    );
+    const isDestinationFolder =
+      destination.droppableId.startsWith(config.folderPrefix) ||
+      destination.droppableId.startsWith(config.folderHeaderPrefix);
 
-    if (
-      isNavigationMenuItemFolder(draggedItem) &&
-      isDefined(destinationParent) &&
-      isNavigationMenuItemFolder(destinationParent)
-    ) {
+    if (isNavigationMenuItemFolder(draggedItem) && isDestinationFolder) {
       return;
     }
 

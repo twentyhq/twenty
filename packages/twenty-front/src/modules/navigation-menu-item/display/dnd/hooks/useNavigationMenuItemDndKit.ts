@@ -1,3 +1,4 @@
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -101,17 +102,18 @@ export const useNavigationMenuItemDndKit = (
         resolved.destination.droppableId,
         sectionType,
       );
-      const destinationParent = getNavItemById(destFolderId ?? undefined);
       if (
-        isDefined(destinationParent) &&
-        isNavigationMenuItemFolder(destinationParent)
+        isDefined(destFolderId) &&
+        !resolved.destination.droppableId.startsWith(
+          NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX,
+        )
       ) {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag, getNavItemById],
+    [sectionType, isSourceFolderDrag],
   );
 
   const applyWorkspaceReorder = useCallback(
