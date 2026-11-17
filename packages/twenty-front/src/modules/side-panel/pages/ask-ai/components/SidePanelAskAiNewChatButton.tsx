@@ -3,17 +3,14 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
 import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 export const SidePanelAskAiNewChatButton = () => {
   const { t } = useLingui();
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const setAskAiSidePanelThreadId = useSetAtomComponentState(
     askAiSidePanelThreadIdComponentState,
   );
@@ -27,7 +24,7 @@ export const SidePanelAskAiNewChatButton = () => {
       setAiChatNewThreadChannelId(null);
     }
 
-    setAskAiSidePanelThreadId(newAiChatThreadId);
+    setAskAiSidePanelThreadId(null);
     setShouldFocusChatEditor(true);
   };
 
