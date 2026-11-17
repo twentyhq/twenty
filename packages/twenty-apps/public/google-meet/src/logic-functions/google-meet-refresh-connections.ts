@@ -10,6 +10,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { GOOGLE_MEET_DAILY_JOB_SPREAD_MILLISECONDS } from 'src/logic-functions/constants/google-meet-import.constant';
 import { enqueueGoogleMeetDailyJobsOrThrow } from 'src/logic-functions/utils/enqueue-google-meet-daily-jobs-or-throw.util';
+import { getRandomDelayMilliseconds } from 'src/logic-functions/utils/get-random-delay-milliseconds.util';
 
 export const googleMeetRefreshConnectionsHandler = async (): Promise<{
   success: true;
@@ -24,8 +25,8 @@ export const googleMeetRefreshConnectionsHandler = async (): Promise<{
     .map(({ id }) => id);
   const now = new Date();
   // Every workspace runs this cron at the same minute, so the work is spread over the hour.
-  const delayMilliseconds = Math.floor(
-    Math.random() * GOOGLE_MEET_DAILY_JOB_SPREAD_MILLISECONDS,
+  const delayMilliseconds = getRandomDelayMilliseconds(
+    GOOGLE_MEET_DAILY_JOB_SPREAD_MILLISECONDS,
   );
 
   await enqueueGoogleMeetDailyJobsOrThrow({

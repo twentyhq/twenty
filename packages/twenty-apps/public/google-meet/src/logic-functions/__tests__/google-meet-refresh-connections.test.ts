@@ -7,6 +7,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { googleMeetRefreshConnectionsHandler } from 'src/logic-functions/google-meet-refresh-connections';
 import { enqueueGoogleMeetDailyJobsOrThrow } from 'src/logic-functions/utils/enqueue-google-meet-daily-jobs-or-throw.util';
+import { getRandomDelayMilliseconds } from 'src/logic-functions/utils/get-random-delay-milliseconds.util';
 
 vi.mock('twenty-sdk/logic-function', () => ({ listConnections: vi.fn() }));
 
@@ -14,6 +15,10 @@ vi.mock(
   'src/logic-functions/utils/enqueue-google-meet-daily-jobs-or-throw.util',
   () => ({ enqueueGoogleMeetDailyJobsOrThrow: vi.fn() }),
 );
+
+vi.mock('src/logic-functions/utils/get-random-delay-milliseconds.util', () => ({
+  getRandomDelayMilliseconds: vi.fn(),
+}));
 
 const NOW = new Date('2026-11-17T03:23:00Z');
 const HALF_AN_HOUR_IN_MILLISECONDS = 30 * 60 * 1_000;
@@ -43,12 +48,13 @@ describe('googleMeetRefreshConnectionsHandler', () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(NOW);
-    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    vi.mocked(getRandomDelayMilliseconds).mockReturnValue(
+      HALF_AN_HOUR_IN_MILLISECONDS,
+    );
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.restoreAllMocks();
   });
 
   it('should queue a renewal and a catch-up for each connection that can still sign in', async () => {
@@ -67,6 +73,9 @@ describe('googleMeetRefreshConnectionsHandler', () => {
     expect(listConnections).toHaveBeenCalledExactlyOnceWith({
       providerName: 'google-meet-user',
     });
+    expect(getRandomDelayMilliseconds).toHaveBeenCalledExactlyOnceWith(
+      60 * 60 * 1_000,
+    );
     expect(vi.mocked(enqueueGoogleMeetDailyJobsOrThrow).mock.calls).toEqual([
       [
         {
