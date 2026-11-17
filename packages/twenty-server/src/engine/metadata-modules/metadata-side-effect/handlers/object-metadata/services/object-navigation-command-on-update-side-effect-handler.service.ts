@@ -99,8 +99,6 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
         ? {
             conditionalAvailabilityExpression:
               buildNavigationConditionalAvailabilityExpression({
-                universalIdentifier:
-                  updatedFlatObjectMetadata.universalIdentifier,
                 nameSingular: updatedFlatObjectMetadata.nameSingular,
               }),
           }

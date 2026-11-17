@@ -88,8 +88,6 @@ export const buildNavigationCommandMenuItemOperationsOrThrow = ({
         ...staleNavigationCommandMenuItem,
         conditionalAvailabilityExpression:
           buildNavigationConditionalAvailabilityExpression({
-            universalIdentifier:
-              renamedCollisionObjectMetadata.universalIdentifier,
             nameSingular: renamedCollisionObjectMetadata.nameSingular,
           }),
         updatedAt: now,

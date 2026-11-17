@@ -42,7 +42,6 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
 
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({
-      universalIdentifier: objectMetadata.universalIdentifier,
       nameSingular: objectMetadata.nameSingular,
     });
 
