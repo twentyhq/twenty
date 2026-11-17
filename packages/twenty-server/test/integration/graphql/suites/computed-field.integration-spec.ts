@@ -149,6 +149,19 @@ describe('Computed fields (e2e)', () => {
       ]),
     );
 
+  const deactivateAndDeleteFields = async (fieldIds: string[]) => {
+    for (const fieldId of fieldIds) {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: fieldId, updatePayload: { isActive: false } },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldId },
+      });
+    }
+  };
+
   beforeAll(async () => {
     const createObject = async (nameSingular: string) => {
       const { data } = await createOneObjectMetadata({
@@ -332,17 +345,7 @@ describe('Computed fields (e2e)', () => {
   afterAll(async () => {
     // Each object has a computed field reading the other, and a field read by a computed field cannot be deleted
     if (isNonEmptyString(projectBudgetFieldMetadataId)) {
-      await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: projectBudgetFieldMetadataId,
-          updatePayload: { isActive: false },
-        },
-      });
-      await deleteOneFieldMetadata({
-        expectToFail: false,
-        input: { idToDelete: projectBudgetFieldMetadataId },
-      });
+      await deactivateAndDeleteFields([projectBudgetFieldMetadataId]);
     }
 
     for (const idToUpdate of [
@@ -948,17 +951,7 @@ describe('Computed fields (e2e)', () => {
       } finally {
         // The rollup reads the deliverables, and a field read by a computed field cannot be deleted
         if (isNonEmptyString(deliverablePointsFieldMetadataId)) {
-          await updateOneFieldMetadata({
-            expectToFail: false,
-            input: {
-              idToUpdate: deliverablePointsFieldMetadataId,
-              updatePayload: { isActive: false },
-            },
-          });
-          await deleteOneFieldMetadata({
-            expectToFail: false,
-            input: { idToDelete: deliverablePointsFieldMetadataId },
-          });
+          await deactivateAndDeleteFields([deliverablePointsFieldMetadataId]);
         }
 
         await updateOneObjectMetadata({
@@ -1069,17 +1062,7 @@ describe('Computed fields (e2e)', () => {
 
       expect(JSON.stringify(errors)).toContain('cannot become computed');
 
-      await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: data.createOneField.id,
-          updatePayload: { isActive: false },
-        },
-      });
-      await deleteOneFieldMetadata({
-        expectToFail: false,
-        input: { idToDelete: data.createOneField.id },
-      });
+      await deactivateAndDeleteFields([data.createOneField.id]);
     });
 
     it('rewrites a computed field when a field it reads is renamed, and refuses to delete that field', async () => {
@@ -1152,16 +1135,7 @@ describe('Computed fields (e2e)', () => {
 
       expect(JSON.stringify(deleteErrors)).toContain('would stop working');
 
-      for (const idToDelete of [budgetWithBonusFieldId, bonusFieldId]) {
-        await updateOneFieldMetadata({
-          expectToFail: false,
-          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
-        });
-        await deleteOneFieldMetadata({
-          expectToFail: false,
-          input: { idToDelete },
-        });
-      }
+      await deactivateAndDeleteFields([budgetWithBonusFieldId, bonusFieldId]);
     });
 
     it('rewrites a computed field created before the field it now reads', async () => {
@@ -1209,16 +1183,7 @@ describe('Computed fields (e2e)', () => {
         (await findProjectValuesById('paddedBudget'))[ALPHA_PROJECT_ID],
       ).toBe(101);
 
-      for (const idToDelete of [paddedBudgetFieldId, paddingFieldId]) {
-        await updateOneFieldMetadata({
-          expectToFail: false,
-          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
-        });
-        await deleteOneFieldMetadata({
-          expectToFail: false,
-          input: { idToDelete },
-        });
-      }
+      await deactivateAndDeleteFields([paddedBudgetFieldId, paddingFieldId]);
     });
 
     it('rewrites the id of a relation when the relation is renamed', async () => {
@@ -1292,17 +1257,7 @@ describe('Computed fields (e2e)', () => {
         bindings,
       });
 
-      await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: isOnAlphaFieldId,
-          updatePayload: { isActive: false },
-        },
-      });
-      await deleteOneFieldMetadata({
-        expectToFail: false,
-        input: { idToDelete: isOnAlphaFieldId },
-      });
+      await deactivateAndDeleteFields([isOnAlphaFieldId]);
     });
 
     it('rejects a relation read through its id column', async () => {
@@ -1470,16 +1425,10 @@ describe('Computed fields (e2e)', () => {
         });
       }
 
-      for (const idToDelete of [discountedBudgetFieldId, discountFieldId]) {
-        await updateOneFieldMetadata({
-          expectToFail: false,
-          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
-        });
-        await deleteOneFieldMetadata({
-          expectToFail: false,
-          input: { idToDelete },
-        });
-      }
+      await deactivateAndDeleteFields([
+        discountedBudgetFieldId,
+        discountFieldId,
+      ]);
     });
 
     it('rejects a computation whose value does not fit the type of its field', async () => {

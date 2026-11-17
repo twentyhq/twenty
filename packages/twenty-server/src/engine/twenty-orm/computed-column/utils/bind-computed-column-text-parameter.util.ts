@@ -4,7 +4,7 @@ export const bindComputedColumnTextParameter = ({
   context,
   text,
 }: {
-  context: ComputedColumnSqlContext;
+  context: Pick<ComputedColumnSqlContext, 'parameters'>;
   text: string;
 }): string => {
   const parameterName = `computedColumnText${Object.keys(context.parameters).length}`;

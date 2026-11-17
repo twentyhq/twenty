@@ -9,7 +9,6 @@ import { assertComputedFieldValueTypeOrThrow } from 'src/engine/metadata-modules
 
 const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 
-// Any value reads as text, and a date and a date and time convert into each other
 const ASSIGNABLE_VALUE_TYPES_BY_FIELD_TYPE: Record<
   ComputedFieldValueType,
   ComputedFieldValueType[]

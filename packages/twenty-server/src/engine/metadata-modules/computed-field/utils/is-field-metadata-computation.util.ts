@@ -5,7 +5,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
 import { type ComputedFieldKindDescription } from 'src/engine/metadata-modules/computed-field/types/computed-field-kind-description.type';
 
-// The computation comes from an API input or a manifest: nothing about its shape is known yet
 export const isFieldMetadataComputation = (
   computation: unknown,
 ): computation is FieldMetadataComputation => {

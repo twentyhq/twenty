@@ -48,8 +48,11 @@ export const buildMutationQueryBuilder = async ({
     mutationKind: kind,
   });
 
+  // Parameter names are numbered per context: a fresh one would reuse the subquery's names
   const selectQueryBuilder = repository
-    .createQueryBuilder(alias)
+    .createQueryBuilder(alias, {
+      computedColumnSqlContext: idSubQueryBuilder.computedColumnSqlContext,
+    })
     .where(`"${alias}"."id" IN (${idSubQueryBuilder.getQuery()})`)
     .setParameters(idSubQueryBuilder.getParameters());
 

@@ -81,18 +81,20 @@ export const buildUniversalComputedFieldSchemaReader = ({
         : undefined,
     findRelationInverseField: ({
       relationTargetFieldMetadataUniversalIdentifier,
-    }) =>
-      isDefined(relationTargetFieldMetadataUniversalIdentifier)
-        ? flatFieldMetadataMapsList
-            .map((flatFieldMetadataMaps) =>
-              findFlatEntityByUniversalIdentifier({
-                universalIdentifier:
-                  relationTargetFieldMetadataUniversalIdentifier,
-                flatEntityMaps: flatFieldMetadataMaps,
-              }),
-            )
-            .find(isDefined)
-        : undefined,
+    }) => {
+      if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
+        return undefined;
+      }
+
+      return flatFieldMetadataMapsList
+        .map((flatFieldMetadataMaps) =>
+          findFlatEntityByUniversalIdentifier({
+            universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
+            flatEntityMaps: flatFieldMetadataMaps,
+          }),
+        )
+        .find(isDefined);
+    },
   };
 
   return {

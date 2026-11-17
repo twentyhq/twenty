@@ -44,22 +44,20 @@ export const renameComputedFieldComputationFields = ({
     getComputedFieldSourceRelationFieldName(computation);
 
   // A related record's expressions are written from the related object, the bindings from the field's own object
-  const relatedRecordBindings: FieldMetadataComputationBindings = isDefined(
-    sourceRelationFieldName,
-  )
-    ? Object.fromEntries(
-        Object.entries(bindings).flatMap(([path, boundUniversalIdentifier]) =>
-          path.startsWith(`${sourceRelationFieldName}.`)
-            ? [
-                [
-                  path.slice(sourceRelationFieldName.length + 1),
-                  boundUniversalIdentifier,
-                ],
-              ]
-            : [],
-        ),
-      )
-    : {};
+  let relatedRecordBindings: FieldMetadataComputationBindings = {};
+
+  if (isDefined(sourceRelationFieldName)) {
+    const prefix = `${sourceRelationFieldName}.`;
+
+    relatedRecordBindings = Object.fromEntries(
+      Object.entries(bindings)
+        .filter(([path]) => path.startsWith(prefix))
+        .map(([path, boundUniversalIdentifier]) => [
+          path.slice(prefix.length),
+          boundUniversalIdentifier,
+        ]),
+    );
+  }
 
   return {
     ...mapComputedFieldSlotExpressions({

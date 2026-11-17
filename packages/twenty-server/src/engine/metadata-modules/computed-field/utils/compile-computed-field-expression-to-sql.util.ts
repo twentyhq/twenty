@@ -21,7 +21,7 @@ export const compileComputedFieldExpressionToSql = ({
     expression: parseComputedFieldExpressionOrThrow(expression),
     getFieldType: (path) => resolveField(path).type,
   });
-  const parameters: Record<string, unknown> = {};
+  const parameters: Record<string, string> = {};
 
   const sql = emitComputedFieldExpressionSql({
     expression: typedExpression,
