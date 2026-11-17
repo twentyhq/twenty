@@ -1,7 +1,4 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
@@ -25,7 +22,6 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, 'thread');
     jotaiStore.set(currentAiChatThreadState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',

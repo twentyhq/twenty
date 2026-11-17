@@ -1,15 +1,11 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { aiChatLastMessageIdComponentSelector } from '@/ai/states/selectors/aiChatLastMessageIdComponentSelector';
-import { aiChatNonLastMessageIdsComponentSelector } from '@/ai/states/selectors/aiChatNonLastMessageIdsComponentSelector';
+import { aiChatLastMessageIdFamilySelector } from '@/ai/states/selectors/aiChatLastMessageIdFamilySelector';
+import { aiChatNonLastMessageIdsFamilySelector } from '@/ai/states/selectors/aiChatNonLastMessageIdsFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -25,15 +21,12 @@ const ASSISTANT_MESSAGE = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('aiChatLastMessageIdComponentSelector', () => {
+describe('aiChatLastMessageIdFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
   });
 
   it.each([
@@ -60,11 +53,13 @@ describe('aiChatLastMessageIdComponentSelector', () => {
 
       const { result } = renderHook(
         () => ({
-          nonLastMessageIds: useAtomComponentSelectorValue(
-            aiChatNonLastMessageIdsComponentSelector,
+          nonLastMessageIds: useAtomFamilySelectorValue(
+            aiChatNonLastMessageIdsFamilySelector,
+            THREAD_ID,
           ),
-          lastMessageId: useAtomComponentSelectorValue(
-            aiChatLastMessageIdComponentSelector,
+          lastMessageId: useAtomFamilySelectorValue(
+            aiChatLastMessageIdFamilySelector,
+            THREAD_ID,
           ),
         }),
         { wrapper: Wrapper },

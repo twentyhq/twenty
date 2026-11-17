@@ -1,31 +1,21 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
-import { AiChatInstanceContext } from '@/ai/states/contexts/AiChatInstanceContext';
-import { aiChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/aiChatDisplayedThreadMessagesComponentSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatMessageOwn } from '@/ai/utils/isAiChatMessageOwn';
 import { isSilentAiChatMessage } from '@/ai/utils/isSilentAiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 // A senderless user message predates multiplayer chats, when every user message was the owner's
-export const aiChatFirstUnreadMessageIdComponentSelector =
-  createAtomComponentSelector<string | null>({
-    key: 'aiChatFirstUnreadMessageIdComponentSelector',
-    componentInstanceContext: AiChatInstanceContext,
+export const aiChatFirstUnreadMessageIdFamilySelector =
+  createAtomFamilySelector<string | null, string>({
+    key: 'aiChatFirstUnreadMessageIdFamilySelector',
     get:
-      ({ instanceId }) =>
+      (threadId) =>
       ({ get }) => {
-        const threadId = get(aiChatDisplayedThreadComponentState, {
-          instanceId,
-        });
-        if (!isDefined(threadId)) {
-          return null;
-        }
-
         const visit = get(aiChatThreadVisitFamilyState, { threadId });
 
         if (!visit?.isUnread) {
@@ -44,9 +34,9 @@ export const aiChatFirstUnreadMessageIdComponentSelector =
           ? new Date(visit.lastReadAt).getTime()
           : null;
 
-        const messages = get(aiChatDisplayedThreadMessagesComponentSelector, {
-          instanceId,
-        }).filter((message) => !isSilentAiChatMessage(message));
+        const messages = get(aiChatMessagesFamilyState, { threadId }).filter(
+          (message) => !isSilentAiChatMessage(message),
+        );
 
         const firstUnreadMessageIndex = messages.findIndex((message) => {
           const createdAt = message.metadata?.createdAt;

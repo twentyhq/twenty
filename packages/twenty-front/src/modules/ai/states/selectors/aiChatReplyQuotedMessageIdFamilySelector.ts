@@ -2,25 +2,21 @@ import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/aiChatMessageAuthorLookupSelector';
-import { AiChatInstanceContext } from '@/ai/states/contexts/AiChatInstanceContext';
-import { aiChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/aiChatDisplayedThreadMessagesComponentSelector';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { findAiChatQuotedMessage } from '@/ai/utils/findAiChatQuotedMessage';
 import { parseAiChatMessageQuote } from '@/ai/utils/parseAiChatMessageQuote';
-import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const aiChatReplyQuotedMessageIdComponentFamilySelector =
-  createAtomComponentFamilySelector<
+export const aiChatReplyQuotedMessageIdFamilySelector =
+  createAtomFamilySelector<
     Nullable<string>,
-    { replyMessageId: string }
+    { threadId: string; replyMessageId: string }
   >({
-    key: 'aiChatReplyQuotedMessageIdComponentFamilySelector',
-    componentInstanceContext: AiChatInstanceContext,
+    key: 'aiChatReplyQuotedMessageIdFamilySelector',
     get:
-      ({ instanceId, familyKey: { replyMessageId } }) =>
+      ({ threadId, replyMessageId }) =>
       ({ get }) => {
-        const messages = get(aiChatDisplayedThreadMessagesComponentSelector, {
-          instanceId,
-        });
+        const messages = get(aiChatMessagesFamilyState, { threadId });
         const replyText =
           messages
             .find(({ id }) => id === replyMessageId)

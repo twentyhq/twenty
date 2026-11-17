@@ -1,8 +1,4 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -13,7 +9,7 @@ import {
   type AiChatThreadVisit,
   aiChatThreadVisitFamilyState,
 } from '@/ai/states/aiChatThreadVisitFamilyState';
-import { aiChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdComponentSelector';
+import { aiChatFirstUnreadMessageIdFamilySelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -45,9 +41,7 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 const getFirstUnreadMessageId = (
@@ -68,17 +62,17 @@ const getFirstUnreadMessageId = (
 
   return renderHook(
     () =>
-      useAtomComponentSelectorValue(
-        aiChatFirstUnreadMessageIdComponentSelector,
+      useAtomFamilySelectorValue(
+        aiChatFirstUnreadMessageIdFamilySelector,
+        THREAD_ID,
       ),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('aiChatFirstUnreadMessageIdComponentSelector', () => {
+describe('aiChatFirstUnreadMessageIdFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: ME,
     } as never);

@@ -1,11 +1,10 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { dispatchAiChatRefetchMessagesEvent } from '@/ai/utils/dispatchAiChatRefetchMessagesEvent';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
@@ -27,9 +26,7 @@ export const useAnswerAiChatToolCall = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAiChatModelId();
-  const aiChatDisplayedThreadAtom = useAtomComponentStateCallbackState(
-    aiChatDisplayedThreadComponentState,
-  );
+  const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
 
   // Returns whether answered, so a card stays disabled until the call closes.
   const answerAiChatToolCall = useCallback(
@@ -37,7 +34,7 @@ export const useAnswerAiChatToolCall = () => {
       toolCallId,
       response,
       optimisticToolOutput,
-      threadId = store.get(aiChatDisplayedThreadAtom),
+      threadId = aiChatThreadId,
     }: {
       toolCallId: string;
       response: Record<string, unknown>;
@@ -122,13 +119,7 @@ export const useAnswerAiChatToolCall = () => {
         return false;
       }
     },
-    [
-      apolloCoreClient,
-      store,
-      enqueueToast,
-      modelIdForRequest,
-      aiChatDisplayedThreadAtom,
-    ],
+    [apolloCoreClient, store, enqueueToast, modelIdForRequest, aiChatThreadId],
   );
 
   return { answerAiChatToolCall };

@@ -10,7 +10,6 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { aiChatTestDisplayedThreadIdAtom } from '@/ai/testing/AiChatTestInstance';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -67,15 +66,13 @@ const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
 );
 
 const seedPendingProposals = (proposals: ProposedToolCall[]) => {
-  const previousThread = jotaiStore.get(aiChatTestDisplayedThreadIdAtom);
-  const previousCurrentThread = jotaiStore.get(currentAiChatThreadState.atom);
+  const previousThread = jotaiStore.get(currentAiChatThreadState.atom);
   const messagesAtom = aiChatMessagesFamilyState.atomFamily({
     threadId: THREAD_ID,
   });
   const previousMessages = jotaiStore.get(messagesAtom);
 
   jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-  jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
   jotaiStore.set(messagesAtom, [
     {
       id: 'pending-record-approvals',
@@ -91,8 +88,7 @@ const seedPendingProposals = (proposals: ProposedToolCall[]) => {
   ]);
 
   return () => {
-    jotaiStore.set(currentAiChatThreadState.atom, previousCurrentThread);
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, previousThread);
+    jotaiStore.set(currentAiChatThreadState.atom, previousThread);
     jotaiStore.set(messagesAtom, previousMessages);
   };
 };

@@ -1,7 +1,4 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -35,7 +32,6 @@ describe('AiChatEmptyState', () => {
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   });
 

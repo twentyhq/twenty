@@ -18,8 +18,6 @@ import { v4 } from 'uuid';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
-import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
 import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
@@ -53,7 +51,6 @@ import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThrea
 import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
@@ -65,7 +62,6 @@ import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAiC
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -599,20 +595,6 @@ export const useAiChat = () => {
     sendToThread,
   ]);
 
-  const handleSendMessageEvent = useCallback(
-    (detail?: AiChatInstanceEventDetail) => {
-      if (detail?.instanceId === instanceId) {
-        void handleSendMessage();
-      }
-    },
-    [instanceId, handleSendMessage],
-  );
-
-  useListenToBrowserEvent<AiChatInstanceEventDetail>({
-    eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
-    onBrowserEvent: handleSendMessageEvent,
-  });
-
   const handleStop = useCallback(async () => {
     const threadId = aiChatThreadId;
 
@@ -630,20 +612,6 @@ export const useAiChat = () => {
       enqueueToast(getToastOptionsFromError({ error }));
     }
   }, [store, apolloClient, enqueueToast, aiChatThreadId]);
-
-  const handleStopEvent = useCallback(
-    (detail?: AiChatInstanceEventDetail) => {
-      if (detail?.instanceId === instanceId) {
-        void handleStop();
-      }
-    },
-    [instanceId, handleStop],
-  );
-
-  useListenToBrowserEvent<AiChatInstanceEventDetail>({
-    eventName: AI_CHAT_STOP_EVENT_NAME,
-    onBrowserEvent: handleStopEvent,
-  });
 
   return {
     handleSendMessage,

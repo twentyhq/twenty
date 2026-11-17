@@ -1,11 +1,9 @@
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AiChatThreadMarkAsReadEffect';
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
@@ -85,7 +83,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: PARTICIPANT,
     });
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   });
 
   it('marks the thread on screen as read and keeps where the member left off', () => {

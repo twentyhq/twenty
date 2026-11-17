@@ -1,5 +1,3 @@
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +7,7 @@ import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthor
 import { useAiChatMessageAuthor } from '@/ai/hooks/useAiChatMessageAuthor';
 import { useIsOwnAiChatMessage } from '@/ai/hooks/useIsOwnAiChatMessage';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageQuoteExcerpt } from '@/ai/utils/getAiChatMessageQuoteExcerpt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -17,9 +16,6 @@ import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFami
 export const AiChatComposerQuote = () => {
   const { t } = useLingui();
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatDisplayedThread = useAtomComponentStateValue(
-    aiChatDisplayedThreadComponentState,
-  );
   const [aiChatQuotedMessageId, setAiChatQuotedMessageId] = useAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
     {
@@ -28,13 +24,16 @@ export const AiChatComposerQuote = () => {
   );
   const quotedMessage = useAtomFamilySelectorValue(
     aiChatThreadMessageFamilySelector,
-    { threadId: aiChatDisplayedThread, messageId: aiChatQuotedMessageId },
+    { threadId, messageId: aiChatQuotedMessageId },
+  );
+  const aiChatHasMessage = useAtomFamilySelectorValue(
+    aiChatHasMessageFamilySelector,
+    threadId,
   );
   const quotedMessageAuthor = useAiChatMessageAuthor(quotedMessage);
   const isOwnQuotedMessage = useIsOwnAiChatMessage(quotedMessage);
 
-  // the displayed thread lags a switch until its messages load
-  if (!isDefined(aiChatQuotedMessageId) || aiChatDisplayedThread !== threadId) {
+  if (!isDefined(aiChatQuotedMessageId) || !aiChatHasMessage) {
     return null;
   }
 

@@ -1,5 +1,4 @@
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,19 +16,17 @@ const StyledPendingResponseWrapper = styled.div`
 `;
 
 export const AiChatPendingResponseIndicator = () => {
-  const aiChatDisplayedThread = useAtomComponentStateValue(
-    aiChatDisplayedThreadComponentState,
-  );
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
-    aiChatDisplayedThread,
+    threadId,
   );
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
-    { threadId: aiChatDisplayedThread },
+    { threadId },
   );
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId: aiChatDisplayedThread,
+    threadId,
   });
 
   const shouldRender =

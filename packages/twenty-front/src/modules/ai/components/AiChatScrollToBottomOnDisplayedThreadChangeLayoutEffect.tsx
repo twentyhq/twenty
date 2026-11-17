@@ -1,5 +1,4 @@
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,9 +9,7 @@ import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottom
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
-  const aiChatDisplayedThread = useAtomComponentStateValue(
-    aiChatDisplayedThreadComponentState,
-  );
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
@@ -32,11 +29,7 @@ export const AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
       onPinningStopped: () =>
         setScrollWrapperScrollBottom(getScrollBottomInPx(scrollWrapperElement)),
     });
-  }, [
-    aiChatDisplayedThread,
-    getScrollWrapperElement,
-    setScrollWrapperScrollBottom,
-  ]);
+  }, [threadId, getScrollWrapperElement, setScrollWrapperScrollBottom]);
 
   return null;
 };

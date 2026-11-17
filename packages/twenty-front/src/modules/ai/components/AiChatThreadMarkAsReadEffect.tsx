@@ -1,5 +1,4 @@
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -24,15 +23,8 @@ const isDocumentVisible = () => document.visibilityState === 'visible';
 
 export const AiChatThreadMarkAsReadEffect = () => {
   const store = useStore();
-  // The displayed thread rather than the selected one, which can still be
-  // loading or fail to load
-  const aiChatDisplayedThread = useAtomComponentStateValue(
-    aiChatDisplayedThreadComponentState,
-  );
-  const threadId =
-    isDefined(aiChatDisplayedThread) && isValidUuid(aiChatDisplayedThread)
-      ? aiChatDisplayedThread
-      : null;
+  const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
+  const threadId = isValidUuid(aiChatThreadId) ? aiChatThreadId : null;
   const lastActivityAt = useAtomFamilySelectorValue(
     aiChatThreadRecordFamilySelector,
     threadId ?? '',

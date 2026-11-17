@@ -1,7 +1,5 @@
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -12,8 +10,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
-import { aiChatMessageIdsComponentSelector } from '@/ai/states/selectors/aiChatMessageIdsComponentSelector';
-import { aiChatMessageComponentFamilySelector } from '@/ai/states/selectors/aiChatMessageComponentFamilySelector';
+import { aiChatMessageIdsFamilySelector } from '@/ai/states/selectors/aiChatMessageIdsFamilySelector';
+import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageReaders } from '@/ai/utils/getAiChatMessageReaders';
 import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -54,23 +52,22 @@ export const AiChatMessageReceipt = ({
   messageId,
 }: AiChatMessageReceiptProps) => {
   const { t } = useLingui();
-  const aiChatDisplayedThread = useAtomComponentStateValue(
-    aiChatDisplayedThreadComponentState,
-  );
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatThreadReadPositions = useAtomFamilyStateValue(
     aiChatThreadReadPositionsFamilyState,
-    { threadId: aiChatDisplayedThread },
+    { threadId },
   );
   const aiChatIsSendingMessage = useAtomFamilyStateValue(
     aiChatIsSendingMessageFamilyState,
-    { threadId: aiChatDisplayedThread ?? '' },
+    { threadId },
   );
-  const aiChatMessageIds = useAtomComponentSelectorValue(
-    aiChatMessageIdsComponentSelector,
+  const aiChatMessageIds = useAtomFamilySelectorValue(
+    aiChatMessageIdsFamilySelector,
+    threadId,
   );
-  const agentChatMessage = useAtomComponentFamilySelectorValue(
-    aiChatMessageComponentFamilySelector,
-    { messageId },
+  const agentChatMessage = useAtomFamilySelectorValue(
+    aiChatThreadMessageFamilySelector,
+    { threadId, messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(

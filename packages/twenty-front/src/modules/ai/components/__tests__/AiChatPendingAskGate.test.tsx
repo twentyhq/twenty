@@ -13,12 +13,13 @@ import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 const useAiChatPendingToolCalls = jest.fn();
 let displayedThreadId = 'thread-1';
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
-  () => ({
-    useAtomComponentStateValue: () => displayedThreadId,
+jest.mock('@/ai/hooks/useAiChatInstanceOrThrow', () => ({
+  useAiChatInstanceOrThrow: () => ({
+    instanceId: 'chat',
+    threadId: displayedThreadId,
+    onThreadChange: () => {},
   }),
-);
+}));
 jest.mock('@/ai/hooks/useAiChatPendingToolCalls', () => ({
   useAiChatPendingToolCalls: () => useAiChatPendingToolCalls(),
 }));

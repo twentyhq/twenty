@@ -1,5 +1,5 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
 import { useState } from 'react';
 import { type ToolCallApprovalResponse } from 'twenty-shared/ai';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -8,8 +8,6 @@ import { useTheme } from 'twenty-ui/theme';
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
 import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
-import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
 import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAiChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
@@ -30,11 +28,8 @@ export const AiChatRecordApprovalDeck = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const store = useStore();
   const { answerAiChatToolCall } = useAnswerAiChatToolCall();
-  const aiChatDisplayedThreadAtom = useAtomComponentStateCallbackState(
-    aiChatDisplayedThreadComponentState,
-  );
+  const { threadId } = useAiChatInstanceOrThrow();
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
@@ -65,9 +60,6 @@ export const AiChatRecordApprovalDeck = ({
     onAnsweringToolCallIdsChange(
       recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
-
-    // answers go to the conversation the batch started in, even if the person opens another one
-    const threadId = store.get(aiChatDisplayedThreadAtom);
 
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);

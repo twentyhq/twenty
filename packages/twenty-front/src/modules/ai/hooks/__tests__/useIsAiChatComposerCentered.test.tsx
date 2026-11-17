@@ -1,7 +1,4 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -46,7 +43,6 @@ describe('useIsAiChatComposerCentered', () => {
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   });
 
@@ -70,7 +66,6 @@ describe('useIsAiChatComposerCentered', () => {
 
   it('keeps an existing conversation bottom-aligned before, during and after fetching messages', () => {
     jotaiStore.set(currentAiChatThreadState.atom, 'existing-thread');
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, 'existing-thread');
     const { result } = renderForSurface();
 
     expect(result.current).toBe(false);

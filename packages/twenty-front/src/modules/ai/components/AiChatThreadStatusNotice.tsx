@@ -28,7 +28,7 @@ export const AiChatThreadStatusNotice = () => {
   const { threadId } = useAiChatInstanceOrThrow();
   const { event } = useAtomFamilySelectorValue(
     aiChatThreadMemberStateFamilySelector,
-    threadId ?? '',
+    threadId,
   );
 
   const isAiChatInboxEnabled = useIsFeatureEnabled(

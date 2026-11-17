@@ -6,7 +6,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
-import { aiChatTestDisplayedThreadIdAtom } from '@/ai/testing/AiChatTestInstance';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
@@ -24,7 +23,6 @@ const StoreSeederEffect = () => {
 
   useEffect(() => {
     store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(aiChatTestDisplayedThreadIdAtom, 'thread-1');
   }, [store]);
 
   return null;

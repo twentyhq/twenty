@@ -1,4 +1,5 @@
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
@@ -10,7 +11,7 @@ import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottom
 import { AiChatThreadStatusNotice } from '@/ai/components/AiChatThreadStatusNotice';
 import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
 import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AiChatStreamingAutoScrollEffect';
-import { aiChatHasMessageComponentSelector } from '@/ai/states/selectors/aiChatHasMessageComponentSelector';
+import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
@@ -54,11 +55,13 @@ const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
 `;
 
 export const AiChatTabMessageList = () => {
+  const { threadId } = useAiChatInstanceOrThrow();
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const aiChatHasMessage = useAtomComponentSelectorValue(
-    aiChatHasMessageComponentSelector,
+  const aiChatHasMessage = useAtomFamilySelectorValue(
+    aiChatHasMessageFamilySelector,
+    threadId,
   );
 
   const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(

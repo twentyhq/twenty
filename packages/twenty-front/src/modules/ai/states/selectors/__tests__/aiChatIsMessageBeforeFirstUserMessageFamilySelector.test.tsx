@@ -1,14 +1,10 @@
-import {
-  AiChatTestInstance,
-  aiChatTestDisplayedThreadIdAtom,
-} from '@/ai/testing/AiChatTestInstance';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
+import { aiChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/aiChatIsMessageBeforeFirstUserMessageFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -24,15 +20,12 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector', () => {
+describe('aiChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(
       aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       MESSAGES,
@@ -47,9 +40,9 @@ describe('aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector', () => {
   ])('returns $expected for $messageId', ({ messageId, expected }) => {
     const { result } = renderHook(
       () =>
-        useAtomComponentFamilySelectorValue(
-          aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
-          { messageId },
+        useAtomFamilySelectorValue(
+          aiChatIsMessageBeforeFirstUserMessageFamilySelector,
+          { threadId: THREAD_ID, messageId },
         ),
       { wrapper: Wrapper },
     );
