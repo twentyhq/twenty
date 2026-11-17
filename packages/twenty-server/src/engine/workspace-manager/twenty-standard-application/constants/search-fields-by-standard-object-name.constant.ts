@@ -65,7 +65,6 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'linkedRecordCachedName', type: FieldMetadataType.TEXT },
   ],
   workflowRun: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  workflowVersion: [{ name: 'name', type: FieldMetadataType.TEXT }],
   workspaceMember: [
     { name: 'name', type: FieldMetadataType.FULL_NAME },
     { name: 'userEmail', type: FieldMetadataType.TEXT },

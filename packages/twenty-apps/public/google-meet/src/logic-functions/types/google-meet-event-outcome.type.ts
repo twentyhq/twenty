@@ -1,0 +1,4 @@
+export type GoogleMeetEventOutcome =
+  | 'IMPORT_QUEUED'
+  | 'EVENT_TYPE_IGNORED'
+  | 'SUBSCRIPTION_WITHOUT_CONNECTION';

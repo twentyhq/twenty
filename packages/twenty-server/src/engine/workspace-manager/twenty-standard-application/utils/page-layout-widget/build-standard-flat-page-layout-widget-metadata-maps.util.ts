@@ -103,7 +103,6 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   person: 'personRecordPageFields',
   task: 'taskRecordPageFields',
   workflowRun: 'workflowRunRecordPageFields',
-  workflowVersion: 'workflowVersionRecordPageFields',
   workspaceMember: 'workspaceMemberRecordPageFields',
 };
 
