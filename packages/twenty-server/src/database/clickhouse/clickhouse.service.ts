@@ -31,7 +31,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private mainClient: ClickHouseClient | undefined;
   private clients: Map<string, ClickHouseClient> = new Map();
   private isClientInitializing: Map<string, boolean> = new Map();
-  private isDestroyed = false;
   private readonly logger = new Logger(ClickHouseService.name);
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {
@@ -56,7 +55,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     clientId: string,
     url?: string,
   ): Promise<ClickHouseClient | undefined> {
-    if (!this.twentyConfigService.get('CLICKHOUSE_URL') || this.isDestroyed) {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return undefined;
     }
 
@@ -72,12 +71,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
     try {
       const clientInstance = await this.createAndInitializeClient(url);
-
-      if (this.isDestroyed) {
-        await clientInstance.close();
-
-        return undefined;
-      }
 
       this.clients.set(clientId, clientInstance);
 
@@ -137,15 +130,12 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    this.isDestroyed = true;
+    if (this.mainClient) {
+      await this.mainClient.close();
+    }
 
-    const clients = [this.mainClient, ...this.clients.values()];
-
-    this.mainClient = undefined;
-    this.clients.clear();
-
-    for (const client of clients) {
-      await client?.close();
+    for (const [, client] of this.clients) {
+      await client.close();
     }
   }
 
