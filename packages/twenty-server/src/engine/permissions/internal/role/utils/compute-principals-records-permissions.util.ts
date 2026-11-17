@@ -10,6 +10,7 @@ import { getPermissionsPrincipalsActingApplication } from 'src/engine/permission
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
+import { computePermissionUnion } from 'src/engine/permissions/internal/role/utils/compute-permission-union.util';
 import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-disabled-actions.util';
 import { toLimitingRoleRecordsPermissions } from 'src/engine/permissions/internal/role/utils/to-limiting-role-records-permissions.util';
 import { restrictRecordsPermissionsToRuntimeLimitingRole } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-runtime-limiting-role.util';
@@ -55,26 +56,31 @@ export const computePrincipalsRecordsPermissions = ({
         : roleRecordsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      actingApplicationId:
-        roleId === actingApplication?.roleId
-          ? actingApplication.applicationId
-          : undefined,
+      actingApplicationId: actingApplication?.roleIds.includes(roleId)
+        ? actingApplication.applicationId
+        : undefined,
     });
   };
 
-  const recordsPermissionsPerRole = [
-    restrictToDisabledActions({
-      roleId: principals.mainPrincipal.roleId,
-      isLimitingRole: false,
-    }),
-    ...getPermissionsPrincipalsLimitingRoleIds(principals).map((roleId) =>
+  const mainRecordsPermissionsPerRole = principals.mainPrincipal.roleIds.map(
+    (roleId) => restrictToDisabledActions({ roleId, isLimitingRole: false }),
+  );
+  const limitingRecordsPermissionsPerRole =
+    getPermissionsPrincipalsLimitingRoleIds(principals).map((roleId) =>
       restrictToDisabledActions({ roleId, isLimitingRole: true }),
-    ),
-  ];
+    );
 
-  if (!recordsPermissionsPerRole.every(isDefined)) {
+  if (
+    !mainRecordsPermissionsPerRole.every(isDefined) ||
+    !limitingRecordsPermissionsPerRole.every(isDefined)
+  ) {
     return NO_ROLE_RECORDS_PERMISSIONS;
   }
+
+  const recordsPermissionsPerRole = [
+    computePermissionUnion(mainRecordsPermissionsPerRole),
+    ...limitingRecordsPermissionsPerRole,
+  ];
 
   const recordsPermissions = computePermissionIntersection(
     recordsPermissionsPerRole,

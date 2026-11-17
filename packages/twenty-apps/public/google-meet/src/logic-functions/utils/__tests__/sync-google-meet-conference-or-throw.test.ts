@@ -21,6 +21,14 @@ const GOOGLE_RESPONSES: Record<string, object> = {
       },
     ],
   },
+  [`${MEET_API_URL}/conferenceRecords/first/smartNotes?pageSize=100`]: {
+    smartNotes: [
+      {
+        name: 'conferenceRecords/first/smartNotes/third',
+        docsDestination: { document: 'notes-document' },
+      },
+    ],
+  },
   [`${MEET_API_URL}/conferenceRecords/first/participants?pageSize=100`]: {
     participants: [
       {
@@ -46,6 +54,45 @@ const GOOGLE_RESPONSES: Record<string, object> = {
   'https://docs.googleapis.com/v1/documents/transcript-document?fields=title': {
     title: 'Meeting started 2026/11/17 18:10 IST - Notes by Gemini',
   },
+  'https://docs.googleapis.com/v1/documents/notes-document?includeTabsContent=true':
+    {
+      tabs: [
+        {
+          documentTab: {
+            body: {
+              content: [
+                {
+                  paragraph: {
+                    elements: [{ textRun: { content: 'Summary\n' } }],
+                    paragraphStyle: { namedStyleType: 'HEADING_2' },
+                  },
+                },
+                {
+                  paragraph: {
+                    elements: [
+                      { textRun: { content: 'Alice shared the plan.\n' } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+        {
+          documentTab: {
+            body: {
+              content: [
+                {
+                  paragraph: {
+                    elements: [{ textRun: { content: 'Alice: Hello.\n' } }],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
 };
 
 const fetchMock = vi.fn<(url: string) => Promise<Response>>();
@@ -88,7 +135,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
     vi.unstubAllGlobals();
   });
 
-  it('should create a call recording with the transcript and its calendar event', async () => {
+  it('should create a call recording with the transcript, Gemini notes and calendar event', async () => {
     const coreApiClient = buildCoreApiClient();
 
     await expect(
@@ -117,16 +164,20 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
                 words: [{ text: 'Hello.', start_timestamp: { relative: 5 } }],
               },
             ],
+            summary: {
+              blocknote: null,
+              markdown: '## Summary\n\nAlice shared the plan.',
+            },
             calendarEventId: 'calendar-event-id',
           },
         },
         id: true,
       },
     });
-    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(6);
   });
 
-  it('should not write a call recording for a conference without transcript', async () => {
+  it('should not write a call recording for a conference without transcript or notes', async () => {
     fetchMock.mockImplementation(async () => new Response('{}'));
 
     const coreApiClient = buildCoreApiClient();
@@ -137,9 +188,9 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toBe('NO_TRANSCRIPT');
+    ).resolves.toBe('NO_ARTIFACT');
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(coreApiClient.query).not.toHaveBeenCalled();
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
   });
@@ -158,7 +209,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       }),
     ).resolves.toBe('CREATED');
 
-    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(6);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
 
     const recordingData =
@@ -168,7 +219,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
     expect(recordingData).not.toHaveProperty('calendarEventId');
   });
 
-  it('should import a conference whose transcript document cannot be read, without title', async () => {
+  it('should import the transcript of a conference whose documents cannot be read', async () => {
     fetchMock.mockImplementation(async (url) => {
       if (url.startsWith('https://docs.googleapis.com/')) {
         return new Response(
@@ -193,8 +244,11 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       }),
     ).resolves.toBe('CREATED');
 
-    expect(
-      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data,
-    ).not.toHaveProperty('title');
+    const recordingData =
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
+
+    expect(recordingData.status).toBe('COMPLETED');
+    expect(recordingData).not.toHaveProperty('title');
+    expect(recordingData).not.toHaveProperty('summary');
   });
 });

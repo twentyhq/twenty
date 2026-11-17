@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { googleMeetHandleEventHandler } from 'src/logic-functions/google-meet-handle-event';
-import { buildGoogleMeetTranscriptImportJob } from 'src/logic-functions/utils/build-google-meet-transcript-import-job.util';
+import { buildGoogleMeetArtifactImportJob } from 'src/logic-functions/utils/build-google-meet-artifact-import-job.util';
 import { getGoogleMeetConferenceRecord } from 'src/logic-functions/utils/get-google-meet-conference-record.util';
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -20,7 +20,7 @@ vi.mock(
 const TRANSCRIPT_EVENT = {
   subscriptionName: 'subscriptions/first',
   eventType: 'google.workspace.meet.transcript.v2.fileGenerated',
-  transcriptName: 'conferenceRecords/first/transcripts/first',
+  artifactName: 'conferenceRecords/first/transcripts/first',
 };
 
 const CONFERENCE_RECORD = {
@@ -62,10 +62,10 @@ describe('googleMeetHandleEventHandler', () => {
       logicFunctionUniversalIdentifier:
         GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER,
       jobs: [
-        buildGoogleMeetTranscriptImportJob({
+        buildGoogleMeetArtifactImportJob({
           connectedAccountId: 'connected-account-id',
           conferenceRecord: CONFERENCE_RECORD,
-          transcriptName: 'conferenceRecords/first/transcripts/first',
+          artifactName: 'conferenceRecords/first/transcripts/first',
         }),
       ],
     });
@@ -97,15 +97,15 @@ describe('googleMeetHandleEventHandler', () => {
     expect(enqueueJobs).not.toHaveBeenCalled();
   });
 
-  it('should refuse a transcript event without a valid transcript name', async () => {
+  it('should refuse an event without a valid transcript or smart note name', async () => {
     await expect(
       googleMeetHandleEventHandler({
         ...TRANSCRIPT_EVENT,
-        transcriptName: 'conferenceRecords/first',
+        artifactName: 'conferenceRecords/first',
       }),
     ).resolves.toEqual({
       success: false,
-      error: 'Invalid Google Meet transcript event',
+      error: 'Invalid Google Meet artifact event',
     });
 
     expect(kv.get).not.toHaveBeenCalled();

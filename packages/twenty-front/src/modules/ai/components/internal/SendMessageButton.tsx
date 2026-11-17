@@ -1,12 +1,12 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
+import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
-import { aiChatIsLoadingSelector } from '@/ai/states/selectors/aiChatIsLoadingSelector';
+import { aiChatIsLoadingFamilySelector } from '@/ai/states/selectors/aiChatIsLoadingFamilySelector';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
+import { aiChatInputIsEmptyFamilySelector } from '@/ai/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -21,26 +21,35 @@ export const SendMessageButton = ({
   isDisabled = false,
 }: SendMessageButtonProps) => {
   const { t } = useLingui();
-  const aiChatInputIsEmpty = useAtomStateValue(aiChatInputIsEmptySelector);
-
-  const aiChatIsLoading = useAtomStateValue(aiChatIsLoadingSelector);
-
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { instanceId, threadId } = useAiChatInstanceOrThrow();
+  const aiChatInputIsEmpty = useAtomFamilySelectorValue(
+    aiChatInputIsEmptyFamilySelector,
+    threadId,
+  );
+  const aiChatIsLoading = useAtomFamilySelectorValue(
+    aiChatIsLoadingFamilySelector,
+    threadId,
+  );
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const handleSendClick = () => {
-    dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+    dispatchBrowserEvent<AiChatInstanceEventDetail>(
+      AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+      { instanceId },
+    );
   };
 
   const handleStopClick = () => {
-    dispatchBrowserEvent(AI_CHAT_STOP_EVENT_NAME);
+    dispatchBrowserEvent<AiChatInstanceEventDetail>(AI_CHAT_STOP_EVENT_NAME, {
+      instanceId,
+    });
   };
 
   if (aiChatIsStreaming || aiChatIsAssistantReplyPending) {

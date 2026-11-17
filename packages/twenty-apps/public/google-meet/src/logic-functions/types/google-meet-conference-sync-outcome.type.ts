@@ -2,4 +2,4 @@ import { type CallRecordingUpsertOutcome } from 'src/logic-functions/types/call-
 
 export type GoogleMeetConferenceSyncOutcome =
   | CallRecordingUpsertOutcome
-  | 'NO_TRANSCRIPT';
+  | 'NO_ARTIFACT';

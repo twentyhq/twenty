@@ -23,8 +23,8 @@ export const CommandMenuAskAiFallbackItem = ({
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
   const handleClick = () => {
-    switchToNewChat();
     stageAiChatPreprompt({
+      threadId: switchToNewChat(),
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(prompt),
       mode: 'SEND',

@@ -83,6 +83,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       id: v4(),
       roleId,
       roleUniversalIdentifier,
+      isSystemSideEffect: false,
       userWorkspaceId: null,
       agentId,
       agentUniversalIdentifier: flatAgentToCreate.universalIdentifier,

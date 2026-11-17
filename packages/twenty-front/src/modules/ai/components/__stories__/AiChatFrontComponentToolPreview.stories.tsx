@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
@@ -16,6 +17,7 @@ const meta: Meta<typeof AiChatFrontComponentToolPreview> = {
   title: 'Modules/AI/AiChatFrontComponentToolPreview',
   component: AiChatFrontComponentToolPreview,
   decorators: [
+    AiChatInstanceDecorator,
     RootDecorator,
     ToastDecorator,
     MemoryRouterDecorator,
