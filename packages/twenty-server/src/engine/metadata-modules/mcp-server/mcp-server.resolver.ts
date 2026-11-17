@@ -35,9 +35,10 @@ const MCP_SERVER_AUTH_PRINCIPALS: AccessPolicy['authPrincipals'] = {
   application: true,
 };
 
+// Workflow editors pick tools from this catalog, which exposes no secrets.
 const MCP_SERVER_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
-  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+  requiredPermissionFlags: [],
   requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 };
 
