@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RunWorkflowJobTarget } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-target.type';
-import { buildWorkflowJobLimiter } from 'src/modules/workflow/workflow-runner/utils/build-workflow-job-limiter.util';
+import { buildJobGroupLimiters } from 'src/engine/core-modules/job-group/utils/build-job-group-limiters.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
@@ -19,10 +19,11 @@ export class WorkflowRunJobScopeWorkspaceService {
   async getCoreWorkflowJobScopeResolver(
     workspaceId: string,
   ): Promise<(coreWorkflowId: string | null) => RunWorkflowJobTarget> {
-    const { flatWorkflowMaps, flatApplicationMaps } =
+    const { flatWorkflowMaps, flatApplicationMaps, jobGroupConfigByKey } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
         'flatApplicationMaps',
+        'jobGroupConfigByKey',
       ]);
 
     return (coreWorkflowId) => {
@@ -44,9 +45,10 @@ export class WorkflowRunJobScopeWorkspaceService {
 
       return {
         ...scope,
-        limiter: buildWorkflowJobLimiter({
-          coreWorkflowId: flatWorkflow.id,
-          limiter: flatWorkflow.jobConfig?.limiter,
+        // jobGroupKeys is undefined until its 2.60 instance command has run.
+        limiters: buildJobGroupLimiters({
+          jobGroupKeys: flatWorkflow.jobGroupKeys ?? [],
+          jobGroupConfigByKey,
         }),
       };
     };

@@ -4,10 +4,10 @@ import {
   silenceDriverLogs,
 } from 'src/engine/core-modules/message-queue/drivers/__tests__/fairness-harness.test-util';
 import { URGENT_FAIR_PRIORITY } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
-import { buildQueueJobLimiter } from 'src/engine/core-modules/message-queue/utils/build-queue-job-limiter.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
-const LIMITER = { key: 'workflow:W1', max: 2, durationMs: 1_000 };
+const LIMITER = { key: 'jobGroup:workflow', max: 2, durationMs: 1_000 };
+const SLOW_LIMITER = { key: 'jobGroup:imports', max: 1, durationMs: 2_000 };
 
 describe('BullMQDriver limiter', () => {
   beforeAll(silenceDriverLogs);
@@ -26,7 +26,7 @@ describe('BullMQDriver limiter', () => {
       labels,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
@@ -63,7 +63,7 @@ describe('BullMQDriver limiter', () => {
       labels,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
@@ -73,7 +73,9 @@ describe('BullMQDriver limiter', () => {
     ]);
   });
 
-  it('gives each workspace and each application its own slots for the same key', async () => {
+  it('gives each workspace its own slots and shares them between its applications', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
     });
@@ -92,7 +94,7 @@ describe('BullMQDriver limiter', () => {
         labels: buildLabels({ prefix, count: 2 }),
         workspaceId,
         applicationUniversalIdentifier,
-        limiter: LIMITER,
+        limiters: [LIMITER],
       });
     }
 
@@ -100,7 +102,36 @@ describe('BullMQDriver limiter', () => {
       ['A1', 'A2', 'B1', 'B2', 'Q1', 'Q2'].map((label) =>
         harness.readDelay({ label }),
       ),
-    ).toEqual([undefined, 500, undefined, 500, undefined, 500]);
+    ).toEqual([undefined, 500, undefined, 500, 1_000, 1_500]);
+  });
+
+  it('delays a job to the slowest of its limiters', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
+    const harness = await createFairnessHarness({
+      isGroupLimiterEnabled: true,
+    });
+    const labels = buildLabels({ prefix: 'H', count: 3 });
+
+    await harness.enqueueBulk({
+      labels,
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      limiters: [LIMITER, SLOW_LIMITER],
+    });
+    await harness.enqueueBulk({
+      labels: ['F1'],
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      limiters: [LIMITER],
+    });
+
+    expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
+      undefined,
+      2_000,
+      4_000,
+    ]);
+    expect(harness.readDelay({ label: 'F1' })).toBe(1_500);
   });
 
   it('starts pacing at the caller delay', async () => {
@@ -113,7 +144,7 @@ describe('BullMQDriver limiter', () => {
       labels,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
       delay: 700,
     });
 
@@ -133,16 +164,16 @@ describe('BullMQDriver limiter', () => {
     await harness.enqueue({
       label: 'R1',
       delay: 15_000,
-      limiter: LIMITER,
+      limiters: [LIMITER],
       ...scope,
     });
-    await harness.enqueue({ label: 'N1', limiter: LIMITER, ...scope });
+    await harness.enqueue({ label: 'N1', limiters: [LIMITER], ...scope });
 
     expect(harness.readDelay({ label: 'R1' })).toBe(15_000);
     expect(harness.readDelay({ label: 'N1' })).toBe(500);
   });
 
-  it('does not delay jobs without a limiter', async () => {
+  it('does not delay jobs without any limiter', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
     });
@@ -152,7 +183,7 @@ describe('BullMQDriver limiter', () => {
       labels,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: buildQueueJobLimiter({ key: LIMITER.key, limiter: null }),
+      limiters: [],
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
@@ -176,21 +207,21 @@ describe('BullMQDriver limiter', () => {
       jobIds,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'R', count: 3 }),
       jobIds,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
     await harness.enqueueBulk({
       labels: ['F1'],
       jobIds: ['job-4'],
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
 
     expect(harness.readDelay({ label: 'H3' })).toBe(1_000);
@@ -209,7 +240,7 @@ describe('BullMQDriver limiter', () => {
       label: 'P1',
       id: 'job',
       delay: 5_000,
-      limiter: LIMITER,
+      limiters: [LIMITER],
       ...scope,
     });
 
@@ -227,7 +258,7 @@ describe('BullMQDriver limiter', () => {
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
       priority: URGENT_FAIR_PRIORITY,
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
 
     expect(await harness.processAll()).toEqual(['U1', 'U2', 'U3', 'U4']);
@@ -241,7 +272,7 @@ describe('BullMQDriver limiter', () => {
       labels,
       workspaceId: 'A',
       applicationUniversalIdentifier: 'H',
-      limiter: LIMITER,
+      limiters: [LIMITER],
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
+import { buildJobGroupLimiters } from 'src/engine/core-modules/job-group/utils/build-job-group-limiters.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -50,10 +50,10 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps, jobGroupConfigByKey } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        ['flatLogicFunctionMaps', 'flatApplicationMaps', 'jobGroupConfigByKey'],
       );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
@@ -174,11 +174,11 @@ export class CallDatabaseEventTriggerJobsJob {
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
-            limiter: buildLogicFunctionJobLimiter({
-              logicFunctionId: logicFunctionPayload.logicFunctionId,
-              limiter: logicFunctionsById.get(
-                logicFunctionPayload.logicFunctionId,
-              )?.jobConfig?.limiter,
+            limiters: buildJobGroupLimiters({
+              jobGroupKeys:
+                logicFunctionsById.get(logicFunctionPayload.logicFunctionId)
+                  ?.jobGroupKeys ?? [],
+              jobGroupConfigByKey,
             }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,

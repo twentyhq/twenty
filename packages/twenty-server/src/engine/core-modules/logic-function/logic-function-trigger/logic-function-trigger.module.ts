@@ -20,9 +20,11 @@ import { RecordShareModule } from 'src/engine/permissions/record-share/record-sh
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DatabaseEventTriggerConditionModule } from 'src/engine/workspace-event-emitter/database-event-trigger-condition.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { JobGroupModule } from 'src/engine/core-modules/job-group/job-group.module';
 
 @Module({
   imports: [
+    JobGroupModule,
     TypeOrmModule.forFeature([LogicFunctionEntity, WorkspaceEntity]),
     TokenModule,
     WorkspaceDomainsModule,

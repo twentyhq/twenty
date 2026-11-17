@@ -54,7 +54,7 @@ export type QueueJobSettings = {
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
   groupKeys?: string[];
-  limiter?: QueueJobLimiter;
+  limiters?: QueueJobLimiter[];
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

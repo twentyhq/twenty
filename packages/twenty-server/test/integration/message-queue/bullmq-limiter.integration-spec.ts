@@ -14,7 +14,7 @@ type LimiterTestJobData = { label: string };
 const QUEUE = MessageQueue.workflowQueue;
 const JOB_NAME = 'LimiterTestJob';
 const LIMITER: QueueJobLimiter = {
-  key: 'workflow:limiter-test',
+  key: 'jobGroup:limiter-test',
   max: 2,
   durationMs: 2_000,
 };
@@ -58,7 +58,7 @@ describe('BullMQDriver limiter (integration)', () => {
       labels.map((label, index) => ({
         data: { label },
         jobId: jobIds?.[index],
-        limiter: LIMITER,
+        limiters: [LIMITER],
         workspaceId,
         applicationUniversalIdentifier,
       })),
@@ -179,7 +179,7 @@ describe('BullMQDriver limiter (integration)', () => {
     });
   });
 
-  it('gives each workspace and each application its own slots for the same key', async () => {
+  it('gives each workspace its own slots and shares them between its applications', async () => {
     for (const [prefix, workspaceId, applicationUniversalIdentifier] of [
       ['A', 'A', 'H'],
       ['B', 'B', 'H'],
@@ -192,7 +192,11 @@ describe('BullMQDriver limiter (integration)', () => {
       });
     }
 
-    expect(Object.values(await readDelayByLabel())).toEqual([0, 0, 0]);
+    const delayByLabel = await readDelayByLabel();
+
+    expect(delayByLabel.A1).toBe(0);
+    expect(delayByLabel.B1).toBe(0);
+    expectDelayNear({ delayMs: delayByLabel.Q1, expectedDelayMs: INTERVAL_MS });
   });
 
   it('does not let an idle period build up a burst', async () => {

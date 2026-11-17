@@ -321,7 +321,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'limiter'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'limiters'
   >;
 
 const buildScenarioJobScope = ({
@@ -457,7 +457,7 @@ export const createFairnessHarness = async ({
       labels,
       workspaceId,
       applicationUniversalIdentifier,
-      limiter,
+      limiters,
       delay,
       jobIds,
     }: {
@@ -465,7 +465,7 @@ export const createFairnessHarness = async ({
       jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
-      limiter?: QueueJobLimiter;
+      limiters?: QueueJobLimiter[];
       delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
@@ -474,7 +474,7 @@ export const createFairnessHarness = async ({
         labels.map((label, index) => ({
           data: { label, workspaceId },
           jobId: jobIds?.[index],
-          limiter,
+          limiters,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,

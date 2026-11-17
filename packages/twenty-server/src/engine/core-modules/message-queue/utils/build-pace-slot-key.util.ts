@@ -9,9 +9,9 @@ export const buildPaceSlotKey = ({
   scope,
   limiter,
 }: {
-  scope: Pick<QueueJobScope, 'workspaceId' | 'applicationUniversalIdentifier'>;
+  scope: Pick<QueueJobScope, 'workspaceId'>;
   limiter: Pick<QueueJobLimiter, 'key'>;
 }): string | undefined =>
   isDefined(scope.workspaceId)
-    ? `${scope.workspaceId}:${scope.applicationUniversalIdentifier ?? '-'}:${limiter.key}`
+    ? `${scope.workspaceId}:${limiter.key}`
     : undefined;

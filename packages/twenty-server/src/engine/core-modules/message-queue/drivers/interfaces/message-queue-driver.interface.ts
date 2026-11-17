@@ -74,7 +74,7 @@ export interface MessageQueueDriver {
 export type QueueJobToAdd<T extends MessageQueueJobData> = {
   data: T;
   jobId?: string;
-  limiter?: QueueJobLimiter;
+  limiters?: QueueJobLimiter[];
 } & QueueJobScope;
 
 export type BulkAddResult = {

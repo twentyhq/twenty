@@ -59,6 +59,7 @@ describe('WorkflowRunJobScopeWorkspaceService', () => {
     ).resolves.toEqual({
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: 'application-a-universal-id',
+      limiters: [],
     });
   });
 
@@ -77,7 +78,10 @@ describe('WorkflowRunJobScopeWorkspaceService', () => {
           workspaceId: WORKSPACE_ID,
           coreWorkflowId,
         }),
-      ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
+      ).resolves.toMatchObject({
+        workspaceId: WORKSPACE_ID,
+        isWorkspaceJob: true,
+      });
     },
   );
 });

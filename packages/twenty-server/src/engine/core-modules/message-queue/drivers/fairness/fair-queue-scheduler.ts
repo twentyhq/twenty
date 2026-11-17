@@ -6,7 +6,10 @@ import {
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
-import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
+import {
+  type GroupLimiter,
+  GroupRatePacer,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import {
   type QueueJobLimiter,
   type QueueJobScope,
@@ -24,8 +27,7 @@ export type FairJobOptions = {
 };
 
 type PacedJobsRequest = {
-  slotKey: string;
-  limiter: QueueJobLimiter;
+  limiters: GroupLimiter[];
   jobIndexes: number[];
 };
 
@@ -64,7 +66,7 @@ export class FairQueueScheduler {
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    limiters?: (QueueJobLimiter | undefined)[];
+    limiters?: (QueueJobLimiter[] | undefined)[];
     additionalGroupKeys?: string[];
     delay: number | undefined;
     staticPriority: number | undefined;
@@ -109,36 +111,48 @@ export class FairQueueScheduler {
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    limiters: (QueueJobLimiter | undefined)[] | undefined;
+    limiters: (QueueJobLimiter[] | undefined)[] | undefined;
     callerDelayMs: number;
   }): Promise<number[] | undefined> {
     if (!isDefined(limiters) || !this.options.isGroupLimiterEnabled()) {
       return undefined;
     }
 
-    const requestBySlotKey = new Map<string, PacedJobsRequest>();
+    const requestBySlotKeys = new Map<string, PacedJobsRequest>();
 
     scopes.forEach((scope, jobIndex) => {
-      const limiter = limiters[jobIndex];
-      const slotKey = isDefined(limiter)
-        ? buildPaceSlotKey({ scope, limiter })
-        : undefined;
+      const groupLimiters = (limiters[jobIndex] ?? []).flatMap(
+        (limiter): GroupLimiter[] => {
+          const slotKey = buildPaceSlotKey({ scope, limiter });
 
-      if (!isDefined(limiter) || !isDefined(slotKey)) {
+          return isDefined(slotKey)
+            ? [
+                {
+                  groupKey: slotKey,
+                  limiter: { max: limiter.max, durationMs: limiter.durationMs },
+                },
+              ]
+            : [];
+        },
+      );
+
+      if (groupLimiters.length === 0) {
         return;
       }
 
-      const request = requestBySlotKey.get(slotKey) ?? {
-        slotKey,
-        limiter,
+      const signature = JSON.stringify(
+        groupLimiters.map(({ groupKey }) => groupKey),
+      );
+      const request = requestBySlotKeys.get(signature) ?? {
+        limiters: groupLimiters,
         jobIndexes: [],
       };
 
       request.jobIndexes.push(jobIndex);
-      requestBySlotKey.set(slotKey, request);
+      requestBySlotKeys.set(signature, request);
     });
 
-    const requests = [...requestBySlotKey.values()];
+    const requests = [...requestBySlotKeys.values()];
 
     if (requests.length === 0) {
       return undefined;
@@ -147,13 +161,8 @@ export class FairQueueScheduler {
     const delaysByRequest = await this.groupRatePacer.computeDelays({
       queueName,
       notBeforeDelayMs: callerDelayMs,
-      requests: requests.map(({ slotKey, limiter, jobIndexes }) => ({
-        limiters: [
-          {
-            groupKey: slotKey,
-            limiter: { max: limiter.max, durationMs: limiter.durationMs },
-          },
-        ],
+      requests: requests.map(({ limiters: groupLimiters, jobIndexes }) => ({
+        limiters: groupLimiters,
         jobCount: jobIndexes.length,
       })),
     });

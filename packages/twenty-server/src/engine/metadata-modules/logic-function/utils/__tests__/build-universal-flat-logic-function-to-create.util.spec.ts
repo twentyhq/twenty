@@ -10,18 +10,18 @@ const REQUIRED_INPUT = {
 };
 
 describe('buildUniversalFlatLogicFunctionToCreate', () => {
-  it('keeps the jobConfig it is given', () => {
+  it('keeps the job group keys it is given', () => {
     expect(
       buildUniversalFlatLogicFunctionToCreate({
         ...REQUIRED_INPUT,
-        jobConfig: { limiter: { max: 10, durationMs: 1_000 } },
-      }).jobConfig,
-    ).toEqual({ limiter: { max: 10, durationMs: 1_000 } });
+        jobGroupKeys: ['imports'],
+      }).jobGroupKeys,
+    ).toEqual(['imports']);
   });
 
-  it('leaves the jobConfig empty by default', () => {
+  it('puts the logic function in no job group by default', () => {
     expect(
-      buildUniversalFlatLogicFunctionToCreate(REQUIRED_INPUT).jobConfig,
-    ).toBeNull();
+      buildUniversalFlatLogicFunctionToCreate(REQUIRED_INPUT).jobGroupKeys,
+    ).toEqual([]);
   });
 });

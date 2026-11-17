@@ -97,6 +97,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-a-universal-id',
+        limiters: [],
       },
     );
     expect(messageQueueService.add).toHaveBeenCalledWith(
@@ -107,6 +108,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-b-universal-id',
+        limiters: [],
       },
     );
   });

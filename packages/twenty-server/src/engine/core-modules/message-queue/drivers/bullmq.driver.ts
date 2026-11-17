@@ -659,7 +659,7 @@ export class BullMQDriver
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds({
         queueName,
-        includeDelayed: this.isPacedJob(options.limiter),
+        includeDelayed: this.isPacedJob(options.limiters),
       });
 
       if (
@@ -682,7 +682,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
-      limiters: [options.limiter],
+      limiters: [options.limiters],
       additionalGroupKeys: options.groupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -948,9 +948,10 @@ export class BullMQDriver
   }
 
   // A paced job waits in the delayed set, so only paced jobs dedupe against it.
-  private isPacedJob(limiter: QueueJobLimiter | undefined): boolean {
+  private isPacedJob(limiters: QueueJobLimiter[] | undefined): boolean {
     return (
-      isDefined(limiter) && this.fairQueueScheduler.isGroupLimiterEnabled()
+      isNonEmptyArray(limiters) &&
+      this.fairQueueScheduler.isGroupLimiterEnabled()
     );
   }
 
@@ -975,18 +976,18 @@ export class BullMQDriver
   >({
     queueName,
     jobs,
-    defaultLimiter,
+    defaultLimiters,
   }: {
     queueName: MessageQueue;
     jobs: TJob[];
-    defaultLimiter: QueueJobLimiter | undefined;
+    defaultLimiters: QueueJobLimiter[] | undefined;
   }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
 
     const isPacedJobById = (job: TJob) =>
-      isDefined(job.jobId) && this.isPacedJob(job.limiter ?? defaultLimiter);
+      isDefined(job.jobId) && this.isPacedJob(job.limiters ?? defaultLimiters);
     const waitingJobIds = await this.getWaitingJobIds({
       queueName,
       includeDelayed: false,
@@ -1028,7 +1029,7 @@ export class BullMQDriver
       : await this.filterOutAlreadyWaitingJobs({
           queueName,
           jobs: indexedJobs,
-          defaultLimiter: options?.limiter,
+          defaultLimiters: options?.limiters,
         });
 
     if (jobsToAdd.length === 0) {
@@ -1061,7 +1062,8 @@ export class BullMQDriver
       ? await this.findExistingJobIds({
           queueName,
           jobIds: jobsToAdd.flatMap((job) =>
-            isDefined(job.jobId) && isDefined(job.limiter ?? options?.limiter)
+            isDefined(job.jobId) &&
+            isNonEmptyArray(job.limiters ?? options?.limiters)
               ? [job.jobId]
               : [],
           ),
@@ -1074,7 +1076,7 @@ export class BullMQDriver
       limiters: jobsToAdd.map((job) =>
         isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
           ? undefined
-          : (job.limiter ?? options?.limiter),
+          : (job.limiters ?? options?.limiters),
       ),
       additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,
