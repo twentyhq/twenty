@@ -335,6 +335,18 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
+  const applicationRoleId =
+    applicationPrincipal.type === 'application'
+      ? applicationPrincipal.roleId
+      : undefined;
+
+  // A limiting role drops its row-level rules, so an application acting with
+  // one of the main roles narrows them to that role rather than limiting them
+  const actingMainPrincipal: PermissionsMainPrincipalWithRole =
+    isDefined(applicationRoleId) && roleIds.includes(applicationRoleId)
+      ? { ...mainPrincipal, roleIds: [applicationRoleId] }
+      : mainPrincipal;
+
   const { limitingPrincipal } = identities;
   const limitingPrincipalWithRole = isDefined(limitingPrincipal)
     ? resolveLimitingPrincipal({ limitingPrincipal, roleMaps })
@@ -347,7 +359,7 @@ export const resolvePermissionsPrincipalsWithRoles = ({
 
   return {
     workspaceId,
-    mainPrincipal,
+    mainPrincipal: actingMainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
     ...(isDefined(identities.runtimeLimitingRole)
