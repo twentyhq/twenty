@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildGoogleMeetUrlOrThrow } from 'src/logic-functions/utils/build-google-meet-url-or-throw.util';
+import { buildGoogleApiUrlOrThrow } from 'src/logic-functions/utils/build-google-api-url-or-throw.util';
 
-describe('buildGoogleMeetUrlOrThrow', () => {
+const BASE_URL = 'https://meet.googleapis.com/v2';
+
+describe('buildGoogleApiUrlOrThrow', () => {
   it('should build the resource URL with the defined query parameters', () => {
     expect(
-      buildGoogleMeetUrlOrThrow({
+      buildGoogleApiUrlOrThrow({
+        baseUrl: BASE_URL,
         path: 'conferenceRecords/first/transcripts',
         queryParameters: { pageSize: '100', pageToken: undefined },
       }),
@@ -14,9 +17,13 @@ describe('buildGoogleMeetUrlOrThrow', () => {
     );
   });
 
-  it('should refuse a path that leaves the Meet API', () => {
+  it('should refuse a path that leaves the API', () => {
     expect(() =>
-      buildGoogleMeetUrlOrThrow({ path: '../../other', queryParameters: {} }),
+      buildGoogleApiUrlOrThrow({
+        baseUrl: BASE_URL,
+        path: '../../other',
+        queryParameters: {},
+      }),
     ).toThrow(expect.objectContaining({ code: 'INVALID_RESOURCE_PATH' }));
   });
 });
