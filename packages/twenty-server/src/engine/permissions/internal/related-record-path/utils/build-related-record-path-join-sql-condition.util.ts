@@ -61,7 +61,11 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     targetTableAlias: string;
     visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
-    if (unreadableFieldMetadataIds.has(resolvedPath.hops[0].relationFieldMetadataId)) {
+    if (
+      unreadableFieldMetadataIds.has(
+        resolvedPath.hops[0].relationFieldMetadataId,
+      )
+    ) {
       return false;
     }
 
