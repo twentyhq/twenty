@@ -32,16 +32,14 @@ describe.each([
         isStepApplied: (stepName) => appliedSteps.includes(stepName),
       }).hiddenPropertyNames;
 
-    it('reads jobConfig until the job groups command has run', () => {
+    it('hides jobGroupKeys until the job groups command has run', () => {
       expect([...resolveHiddenPropertyNames(BEFORE_JOB_GROUPS)]).toEqual([
         'jobGroupKeys',
       ]);
     });
 
-    it('reads jobGroupKeys once the job groups command has run', () => {
-      expect([...resolveHiddenPropertyNames(AFTER_JOB_GROUPS)]).toEqual([
-        'jobConfig',
-      ]);
+    it('keeps jobConfig readable once the job groups command has run', () => {
+      expect([...resolveHiddenPropertyNames(AFTER_JOB_GROUPS)]).toEqual([]);
     });
   },
 );

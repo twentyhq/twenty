@@ -25,7 +25,7 @@ import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queu
 import { WORKFLOW_JOB_GROUP_KEY } from 'src/engine/core-modules/job-group/constants/workflow-job-group-key.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -93,10 +93,12 @@ export class WorkflowEntity extends SyncableEntity {
     upgradeCommandName:
       ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
   })
-  @WasRemovedInUpgrade({
-    upgradeCommandName: ADD_JOB_GROUPS_UPGRADE_COMMAND_NAME,
+  // Unused since 2.60. Kept because servers started before the 2.60 command still select it; drop it in a later release.
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: { limiter: { max: 100, durationMs: 60_000 } },
   })
-  @Column({ type: 'jsonb', nullable: false })
   jobConfig: WasRemovedInUpgrade<JsonbProperty<MessageQueueJobConfig>>;
 
   @WasIntroducedInUpgrade({

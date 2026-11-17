@@ -18,21 +18,9 @@ export class AddJobGroupsFastInstanceCommand implements FastInstanceCommand {
     await queryRunner.query(
       'ALTER TABLE "core"."logicFunction" ADD "jobGroupKeys" text array NOT NULL DEFAULT \'{}\'',
     );
-    await queryRunner.query(
-      'ALTER TABLE "core"."workflow" DROP COLUMN "jobConfig"',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."logicFunction" DROP COLUMN "jobConfig"',
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."logicFunction" ADD "jobConfig" jsonb',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."workflow" ADD "jobConfig" jsonb NOT NULL DEFAULT \'{"limiter":{"max":100,"durationMs":60000}}\'',
-    );
     await queryRunner.query(
       'ALTER TABLE "core"."logicFunction" DROP COLUMN "jobGroupKeys"',
     );

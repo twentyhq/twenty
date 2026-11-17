@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RunWorkflowJobTarget } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-target.type';
+import { WORKFLOW_JOB_GROUP_KEY } from 'src/engine/core-modules/job-group/constants/workflow-job-group-key.constant';
 import { buildJobGroupLimiters } from 'src/engine/core-modules/job-group/utils/build-job-group-limiters.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -45,9 +46,9 @@ export class WorkflowRunJobScopeWorkspaceService {
 
       return {
         ...scope,
-        // jobGroupKeys is undefined until its 2.60 instance command has run.
+        // jobGroupKeys is missing before the 2.60 command and in flat maps cached before it.
         limiters: buildJobGroupLimiters({
-          jobGroupKeys: flatWorkflow.jobGroupKeys ?? [],
+          jobGroupKeys: flatWorkflow.jobGroupKeys ?? [WORKFLOW_JOB_GROUP_KEY],
           jobGroupConfigByKey,
         }),
       };

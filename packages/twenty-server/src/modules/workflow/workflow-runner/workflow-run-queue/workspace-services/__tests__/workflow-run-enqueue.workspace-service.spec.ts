@@ -5,7 +5,7 @@ import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workfl
 const WORKSPACE_ID = 'workspace-id';
 
 const buildFlatWorkflowMaps = (
-  workflows: { id: string; applicationId: string }[],
+  workflows: { id: string; applicationId: string; jobGroupKeys: string[] }[],
 ) => ({
   byUniversalIdentifier: Object.fromEntries(
     workflows.map((workflow) => [`${workflow.id}-universal-id`, workflow]),
@@ -22,8 +22,8 @@ const buildService = (
   const workspaceCacheService = {
     getOrRecompute: jest.fn().mockResolvedValue({
       flatWorkflowMaps: buildFlatWorkflowMaps([
-        { id: 'workflow-a', applicationId: 'application-a' },
-        { id: 'workflow-b', applicationId: 'application-b' },
+        { id: 'workflow-a', applicationId: 'application-a', jobGroupKeys: [] },
+        { id: 'workflow-b', applicationId: 'application-b', jobGroupKeys: [] },
       ]),
       flatApplicationMaps: {
         byId: {
