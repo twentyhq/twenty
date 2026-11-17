@@ -153,6 +153,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell />
             <TableCell align="right">
               <Checkbox
+                aria-label={getObjectPermissionActionLabel(key)}
                 checked={grantedKeys.includes(key)}
                 disabled={!isEditable}
                 onCheckedChange={() => toggleKey(key)}
