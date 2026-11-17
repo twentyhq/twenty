@@ -1,29 +1,17 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import {
-  FieldContext,
-  type RecordUpdateHookParams,
-} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
+import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
-import { type ReactNode, useContext } from 'react';
-import {
-  canAccessThroughAllRecordsOrRlsPermission,
-  findById,
-  isDefined,
-} from 'twenty-shared/utils';
+import { type ReactNode } from 'react';
+import { findById, isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellLookupFieldContextProps = {
   recordFieldId: string;
@@ -32,22 +20,21 @@ type RecordTableCellLookupFieldContextProps = {
   children: ReactNode;
 };
 
+// A lookup cell is a plain cell of the related record, so it only resolves which record and field to show
 export const RecordTableCellLookupFieldContext = ({
   recordFieldId,
   fieldMetadataItem,
   lookupTarget: {
     relationObjectMetadataItem,
     lookupTargetFieldMetadataItem,
-    lookupTargetFieldDefinition: fieldDefinition,
+    lookupTargetFieldDefinition,
   },
   children,
 }: RecordTableCellLookupFieldContextProps) => {
   const { recordId, isRecordReadOnly: isRowReadOnly } =
     useRecordTableRowContextOrThrow();
-  const {
-    objectPermissionsByObjectMetadataId,
-    fieldDefinitionByFieldMetadataItemId,
-  } = useRecordIndexContextOrThrow();
+  const { fieldDefinitionByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
 
   const relatedRecord = useRecordFieldValue<ObjectRecord | null>(
     recordId,
@@ -59,35 +46,15 @@ export const RecordTableCellLookupFieldContext = ({
 
   const restrictedFieldNames = useRecordRestrictedFieldNames(relatedRecordId);
 
-  const updateRecord = useContext(RecordTableUpdateContext);
-
   const isRelatedRecordReadOnly = useIsRecordReadOnly({
     recordId: relatedRecordId,
     objectMetadataId: relationObjectMetadataItem.id,
   });
 
-  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
-    isRecordTableCellsNonEditableComponentState,
-  );
-
-  const canReadRelatedRecord = canAccessThroughAllRecordsOrRlsPermission({
-    objectRecordsPermissions: getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      relationObjectMetadataItem.id,
-    ),
-    operationType: 'read',
-  });
-
-  const isLookupTargetRestricted =
-    !relationObjectMetadataItem.readableFields.some(
+  const isLookupTargetFieldReadable =
+    relationObjectMetadataItem.readableFields.some(
       findById(lookupTargetFieldMetadataItem.id),
-    ) || restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name);
-
-  const updateRelatedRecord = (params: RecordUpdateHookParams) =>
-    updateRecord?.({
-      ...params,
-      objectNameSingular: relationObjectMetadataItem.nameSingular,
-    });
+    );
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -99,31 +66,23 @@ export const RecordTableCellLookupFieldContext = ({
         }),
       }}
     >
-      <FieldContext.Provider
-        value={{
-          fieldMetadataItemId: lookupTargetFieldMetadataItem.id,
+      <RecordTableCellFieldContextGeneric
+        target={{
           recordId: relatedRecordId,
-          fieldDefinition,
-          useUpdateRecord: () => [updateRelatedRecord, {}],
-          isLabelIdentifier: false,
-          displayedMaxRows: 1,
-          isRecordFieldReadOnly:
+          objectMetadataItem: relationObjectMetadataItem,
+          fieldMetadataItem: lookupTargetFieldMetadataItem,
+          fieldDefinition: lookupTargetFieldDefinition,
+          isRecordReadOnly:
             !isDefined(relatedRecord) ||
-            isRowReadOnly ||
-            isRecordTableCellsNonEditable ||
-            isLookupTargetRestricted ||
-            isRecordFieldReadOnly({
-              isRecordReadOnly: isRelatedRecordReadOnly,
-              objectMetadataId: relationObjectMetadataItem.id,
-              fieldMetadataItem: lookupTargetFieldMetadataItem,
-              fieldDefinition,
-              objectPermissionsByObjectMetadataId,
-            }),
-          isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
+            isRowReadOnly === true ||
+            isRelatedRecordReadOnly,
+          restrictedFieldNames: isLookupTargetFieldReadable
+            ? restrictedFieldNames
+            : [...restrictedFieldNames, lookupTargetFieldMetadataItem.name],
         }}
       >
         {children}
-      </FieldContext.Provider>
+      </RecordTableCellFieldContextGeneric>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };

@@ -2,6 +2,7 @@ import { RecordTableCellLookupFieldContext } from '@/object-record/record-column
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
@@ -19,10 +20,14 @@ export const RecordTableCellFieldContextWrapper = ({
   recordField,
   children,
 }: RecordTableCellFieldContextWrapperProps) => {
-  const { recordId } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly, restrictedFieldNames } =
+    useRecordTableRowContextOrThrow();
+
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const {
     fieldMetadataItemByFieldMetadataItemId,
+    fieldDefinitionByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     columnDescriptorByRecordFieldId,
   } = useRecordIndexContextOrThrow();
@@ -64,7 +69,17 @@ export const RecordTableCellFieldContextWrapper = ({
       ) : (
         <RecordTableCellFieldContextGeneric
           key={instanceId}
-          recordField={recordField}
+          target={{
+            recordId,
+            objectMetadataItem,
+            fieldMetadataItem,
+            fieldDefinition:
+              fieldDefinitionByFieldMetadataItemId[
+                recordField.fieldMetadataItemId
+              ],
+            isRecordReadOnly: isRecordReadOnly ?? false,
+            restrictedFieldNames,
+          }}
         >
           {children}
         </RecordTableCellFieldContextGeneric>

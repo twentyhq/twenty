@@ -8,7 +8,8 @@ import {
   NO_RECORD_GROUP_FAMILY_KEY,
   recordIndexAllRecordIdsComponentSelector,
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useUpsertRecordTableRecordsInStore } from '@/object-record/record-table/hooks/internal/useUpsertRecordTableRecordsInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { getRecordsWithManyToOneRelatedRecords } from '@/object-record/record-store/utils/getRecordsWithManyToOneRelatedRecords';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -83,8 +84,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { allocateRowSlots } = useAllocateRowSlots();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
-  const { upsertRecordTableRecordsInStore } =
-    useUpsertRecordTableRecordsInStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
@@ -158,7 +158,9 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         if (isDefined(records)) {
-          upsertRecordTableRecordsInStore(records);
+          upsertRecordsInStore({
+            partialRecords: getRecordsWithManyToOneRelatedRecords(records),
+          });
 
           loadRecordsAtRowIndexes({
             records,
@@ -203,7 +205,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       scrollTableToPosition,
       findManyRecordsLazy,
       totalNumberOfRowsCallbackState,
-      upsertRecordTableRecordsInStore,
+      upsertRecordsInStore,
       loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,
