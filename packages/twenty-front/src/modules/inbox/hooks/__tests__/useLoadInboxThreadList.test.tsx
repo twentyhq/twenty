@@ -422,7 +422,7 @@ describe('useLoadInboxThreadList', () => {
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
   });
 
-  it('adds a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
+  it('stores a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
     const store = buildStore();
     store.set(RECENT_THREAD_LIST_ATOM, {
       threadIds: ['thread-1'],
@@ -449,10 +449,9 @@ describe('useLoadInboxThreadList', () => {
         }),
       }),
     );
-    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual([
-      'old-thread',
-      'thread-1',
-    ]);
+    expect(
+      store.get(aiChatThreadRecordFamilySelector.selectorFamily('old-thread')),
+    ).toMatchObject({ id: 'old-thread', title: 'Old chat' });
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {

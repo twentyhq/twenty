@@ -1,42 +1,53 @@
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatPrepromptState } from '@/ai/states/aiChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
+import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatPrepromptEffect = () => {
-  const [aiChatPreprompt, setAiChatPreprompt] =
-    useAtomState(aiChatPrepromptState);
-  const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+  const store = useStore();
+  const { instanceId, threadId } = useAiChatInstanceOrThrow();
+  const aiChatPreprompt = useAtomStateValue(aiChatPrepromptState);
 
   useEffect(() => {
-    if (!isDefined(aiChatPreprompt)) {
+    if (aiChatPreprompt?.threadId !== threadId) {
       return;
     }
 
-    const { serializedDocument, mode } = aiChatPreprompt;
-
     const timeoutId = setTimeout(() => {
-      dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-        content: serializedDocument,
-      });
+      const preprompt = store.get(aiChatPrepromptState.atom);
 
-      if (mode === 'SEND') {
-        dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
-      } else {
-        setShouldFocusChatEditor(true);
+      if (!isDefined(preprompt) || preprompt.threadId !== threadId) {
+        return;
       }
 
-      setAiChatPreprompt(null);
+      store.set(aiChatPrepromptState.atom, null);
+
+      dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+        AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+        { threadId, content: preprompt.serializedDocument },
+      );
+
+      if (preprompt.mode === 'SEND') {
+        dispatchBrowserEvent<AiChatInstanceEventDetail>(
+          AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+          { instanceId },
+        );
+      } else {
+        store.set(shouldFocusChatEditorState.atom, true);
+      }
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [aiChatPreprompt, setAiChatPreprompt, setShouldFocusChatEditor]);
+  }, [aiChatPreprompt, instanceId, threadId, store]);
 
   return null;
 };

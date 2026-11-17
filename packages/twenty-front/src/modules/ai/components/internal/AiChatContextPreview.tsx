@@ -1,7 +1,8 @@
 import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -13,11 +14,14 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AiChatContextPreview = () => {
-  const [aiChatSelectedFiles, setAiChatSelectedFiles] = useAtomState(
-    aiChatSelectedFilesState,
+  const { threadId } = useAiChatInstanceOrThrow();
+  const [aiChatSelectedFiles, setAiChatSelectedFiles] = useAtomFamilyState(
+    aiChatSelectedFilesFamilyState,
+    { threadId },
   );
-  const [aiChatUploadedFiles, setAiChatUploadedFiles] = useAtomState(
-    aiChatUploadedFilesState,
+  const [aiChatUploadedFiles, setAiChatUploadedFiles] = useAtomFamilyState(
+    aiChatUploadedFilesFamilyState,
+    { threadId },
   );
 
   const handleRemoveUploadedFile = (fileIndex: number) => {

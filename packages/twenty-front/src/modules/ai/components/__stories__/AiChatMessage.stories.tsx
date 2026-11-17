@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import {
@@ -25,7 +26,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
 import { type AiChatThreadReadPosition } from '@/ai/types/AiChatThreadReadPosition';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
@@ -42,7 +43,6 @@ import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -504,12 +504,14 @@ const AiChatMessagesSetterEffect = ({
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
     const previousCurrentThread = store.get(currentAiChatThreadState.atom);
-    const previousDisplayedThread = store.get(aiChatDisplayedThreadState.atom);
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+      threadId: currentThreadId,
+    });
+    const previousVisit = store.get(visitAtom);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
@@ -518,7 +520,6 @@ const AiChatMessagesSetterEffect = ({
     });
 
     store.set(currentAiChatThreadState.atom, currentThreadId);
-    store.set(aiChatDisplayedThreadState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -535,7 +536,7 @@ const AiChatMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(aiChatThreadVisitState.atom, {
+    store.set(visitAtom, {
       threadId: currentThreadId,
       isUnread: true,
       isKeptUnread: false,
@@ -553,12 +554,11 @@ const AiChatMessagesSetterEffect = ({
 
     return () => {
       store.set(currentAiChatThreadState.atom, previousCurrentThread);
-      store.set(aiChatDisplayedThreadState.atom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(aiChatThreadVisitState.atom, previousVisit);
+      store.set(visitAtom, previousVisit);
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };
@@ -586,6 +586,7 @@ const meta: Meta<typeof AiChatMessage> = {
   title: 'Modules/AI/AiChatMessage',
   component: AiChatMessage,
   decorators: [
+    AiChatInstanceDecorator,
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,

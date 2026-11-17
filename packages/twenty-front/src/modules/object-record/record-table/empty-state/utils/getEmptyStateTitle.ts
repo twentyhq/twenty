@@ -5,10 +5,6 @@ export const getEmptyStateTitle = (
   objectNameSingular: string,
   objectLabel: string,
 ) => {
-  if (objectNameSingular === StandardObjectNameSingular.WorkflowVersion) {
-    return t`No workflow versions yet`;
-  }
-
   if (objectNameSingular === StandardObjectNameSingular.WorkflowRun) {
     return t`No workflow runs yet`;
   }

@@ -1,4 +1,4 @@
-# Microsoft Teams setup
+# Teams setup
 
 ## Microsoft application
 
@@ -8,7 +8,7 @@
 2. Add a **Web** redirect URI:
    `https://<your-twenty-host>/auth/apps/callback`.
 3. Create a client secret. Set `MICROSOFT_CLIENT_ID` and
-   `MICROSOFT_CLIENT_SECRET` on the Microsoft Teams application registration in
+   `MICROSOFT_CLIENT_SECRET` on the Teams application registration in
    Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
@@ -130,7 +130,7 @@ setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#sett
 
 ## Connect
 
-Open **Settings > Applications > Microsoft Teams > Settings**, select
+Open **Settings > Applications > Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 This adds a workspace-shared connection.
 
@@ -162,7 +162,7 @@ Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
 AI summaries are off by default. Turn on **Enable transcript summaries** in
-**Settings > Applications > Microsoft Teams > Settings** to summarize each Call
+**Settings > Applications > Teams > Settings** to summarize each Call
 Recording that Microsoft Teams imports, including the 31-day import on connect.
 Each summary uses AI credits. Run **Generate call summary** on selected Call
 Recordings, or on calendar events for the latest Teams recording of each, to
@@ -202,7 +202,7 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   `src/features/transcripts` respectively.
 - **Settings** are workspace choices. `TEAMS_CHAT_ENABLED`,
   `TEAMS_TRANSCRIPTS_ENABLED` and `TEAMS_TRANSCRIPT_SUMMARY_ENABLED` are Boolean
-  application variables. **Settings → Applications → Microsoft Teams →
+  application variables. **Settings → Applications → Teams →
   Settings** manages chat and transcript summaries; transcripts are on by
   default and have no switch, and summaries are off by default. Updates use the
   metadata API, which requires permission to manage applications.

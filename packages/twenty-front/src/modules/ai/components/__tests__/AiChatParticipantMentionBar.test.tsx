@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen } from '@testing-library/react';
@@ -36,7 +37,9 @@ const renderBar = (editor: Editor) => {
   return render(
     <Wrapper>
       <I18nProvider i18n={i18n}>
-        <AiChatParticipantMentionBar editor={editor as ReactEditor} />
+        <AiChatTestInstance>
+          <AiChatParticipantMentionBar editor={editor as ReactEditor} />
+        </AiChatTestInstance>
       </I18nProvider>
     </Wrapper>,
   );

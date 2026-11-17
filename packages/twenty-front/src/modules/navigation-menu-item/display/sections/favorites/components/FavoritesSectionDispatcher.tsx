@@ -11,7 +11,7 @@ export const FavoritesSectionDispatcher = () => {
   );
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
 
-  const hasFavorites = navigationMenuItemsSorted.some((item) => !item.folderId);
+  const hasFavorites = navigationMenuItemsSorted.some((item) => !item.parentId);
 
   if (!hasFavorites || isLayoutCustomizationModeEnabled) {
     return null;

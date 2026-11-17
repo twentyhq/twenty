@@ -89,4 +89,24 @@ describe('graphQLFormatResultFromSelectedFields', () => {
       },
     });
   });
+
+  it('leaves the arguments of a selected connection out of the response', () => {
+    expect(
+      graphQLFormatResultFromSelectedFields(
+        {
+          edges: [],
+          pageInfo: { hasNextPage: false, hasPreviousPage: false },
+          totalCount: 3,
+        },
+        { __arguments: { first: 1 }, totalCount: {} },
+        'person',
+        {
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular: { person: PERSON_ID },
+          method: 'findMany',
+        },
+      ),
+    ).toStrictEqual({ totalCount: 3 });
+  });
 });

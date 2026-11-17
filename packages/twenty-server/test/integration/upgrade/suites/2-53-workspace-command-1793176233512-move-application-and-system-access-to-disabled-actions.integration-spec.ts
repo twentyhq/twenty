@@ -16,7 +16,7 @@ const RUN_ON_WORKSPACE_ARGS = {
 const APPLICATION_WRITABLE_OBJECT = 'rocket';
 const APPLICATION_READABLE_OBJECT = 'pet';
 const SYSTEM_OBJECT = 'shortLink';
-const SYSTEM_WRITABLE_OBJECT = 'workflowVersion';
+const SYSTEM_WRITABLE_OBJECT = 'workflowRun';
 
 const ALL_ACTIONS = [
   'canDestroyObjectRecords',

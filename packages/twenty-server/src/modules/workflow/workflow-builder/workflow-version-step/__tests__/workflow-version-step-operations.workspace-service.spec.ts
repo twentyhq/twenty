@@ -4,7 +4,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -102,7 +102,7 @@ const buildService = async ({
         provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
         useValue: flatEntityMapsCacheService,
       },
-      { provide: WorkflowVersionCoreSyncService, useValue: {} },
+      { provide: CoreWorkflowTriggerService, useValue: {} },
       { provide: FindRecordsService, useValue: {} },
       { provide: FeatureFlagService, useValue: featureFlagService },
       { provide: WorkflowAiAgentStepAgentService, useValue: {} },
