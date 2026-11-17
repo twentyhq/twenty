@@ -36,7 +36,13 @@ describe('isGoogleMeetAiSummaryEnabledForMember', () => {
     ).toBe(true);
   });
 
-  it('should summarize when the owner has no value for the setting', () => {
+  it('should not summarize when the owner or their setting cannot be found', () => {
+    expect(
+      isGoogleMeetAiSummaryEnabledForMember({
+        memberApplicationVariables: [],
+        userWorkspaceId: 'alice',
+      }),
+    ).toBe(false);
     expect(
       isGoogleMeetAiSummaryEnabledForMember({
         memberApplicationVariables: [
@@ -44,12 +50,6 @@ describe('isGoogleMeetAiSummaryEnabledForMember', () => {
         ],
         userWorkspaceId: 'alice',
       }),
-    ).toBe(true);
-    expect(
-      isGoogleMeetAiSummaryEnabledForMember({
-        memberApplicationVariables: [],
-        userWorkspaceId: 'alice',
-      }),
-    ).toBe(true);
+    ).toBe(false);
   });
 });

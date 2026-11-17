@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 import { GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_NAME } from 'src/constants/google-meet.constant';
 
 export const isGoogleMeetAiSummaryEnabledForMember = ({
@@ -9,9 +11,12 @@ export const isGoogleMeetAiSummaryEnabledForMember = ({
     variables: { key: string; value: string }[];
   }[];
   userWorkspaceId: string;
-}): boolean =>
-  memberApplicationVariables
+}): boolean => {
+  const aiSummaryEnabledValue = memberApplicationVariables
     .find((member) => member.userWorkspaceId === userWorkspaceId)
     ?.variables.find(
       ({ key }) => key === GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_NAME,
-    )?.value !== 'false';
+    )?.value;
+
+  return isDefined(aiSummaryEnabledValue) && aiSummaryEnabledValue !== 'false';
+};
