@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MAX_GOOGLE_MEET_LIST_PAGES } from 'src/logic-functions/constants/google-meet-api.constant';
 import { listGoogleMeetCollection } from 'src/logic-functions/utils/list-google-meet-collection.util';
 
-const fetchMock = vi.fn<(url: string) => Promise<Response>>();
+const fetchMock = vi.fn<(url: string, init: object) => Promise<Response>>();
 
 const buildPageResponse = (page: {
   transcripts?: { name: string }[];
@@ -48,6 +48,7 @@ describe('listGoogleMeetCollection', () => {
       { name: 'first' },
       { name: 'second' },
     ]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(getRequestedQueryParameters()).toEqual([
       { pageSize: '100' },
       { pageSize: '100', pageToken: 'next-page' },
@@ -58,6 +59,13 @@ describe('listGoogleMeetCollection', () => {
     fetchMock.mockResolvedValue(buildPageResponse({}));
 
     await expect(listTranscripts()).resolves.toEqual([]);
+    expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+      'https://meet.googleapis.com/v2/conferenceRecords/first/transcripts?pageSize=100',
+      {
+        redirect: 'error',
+        headers: { Authorization: 'Bearer token', Accept: 'application/json' },
+      },
+    );
   });
 
   it('should stop when Google keeps returning more pages than the limit', async () => {

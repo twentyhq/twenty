@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
 
-const fetchMock = vi.fn<(url: string) => Promise<Response>>();
+const fetchMock = vi.fn<(url: string, init: object) => Promise<Response>>();
 
 describe('listGoogleMeetTranscriptEntries', () => {
   beforeEach(() => {
@@ -31,8 +31,12 @@ describe('listGoogleMeetTranscriptEntries', () => {
         transcriptName: 'conferenceRecords/first/transcripts/second',
       }),
     ).resolves.toEqual([transcriptEntry]);
-    expect(new URL(fetchMock.mock.calls[0][0]).pathname).toBe(
-      '/v2/conferenceRecords/first/transcripts/second/entries',
+    expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+      'https://meet.googleapis.com/v2/conferenceRecords/first/transcripts/second/entries?pageSize=100',
+      {
+        redirect: 'error',
+        headers: { Authorization: 'Bearer token', Accept: 'application/json' },
+      },
     );
   });
 });
