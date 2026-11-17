@@ -31,13 +31,15 @@ describe('releaseGoogleMeetEventSubscription', () => {
     });
   });
 
-  it('should forget who owns the subscription and delete it at Google', async () => {
+  it('should delete the subscription at Google, then forget who owns it', async () => {
+    vi.mocked(deleteGoogleMeetEventSubscription).mockImplementationOnce(
+      async () => {
+        expect(kv.delete).not.toHaveBeenCalled();
+      },
+    );
+
     await releaseGoogleMeetEventSubscription(SUBSCRIPTION_TO_RELEASE);
 
-    expect(vi.mocked(kv.delete).mock.calls).toEqual([
-      [EVENT_SUBSCRIPTION_KEY],
-      [EVENT_SUBSCRIPTION_KEY, { scope: 'SERVER' }],
-    ]);
     expect(getConnection).toHaveBeenCalledExactlyOnceWith(
       'connected-account-id',
     );
@@ -45,6 +47,10 @@ describe('releaseGoogleMeetEventSubscription', () => {
       accessToken: 'token',
       subscriptionName: 'subscriptions/first',
     });
+    expect(vi.mocked(kv.delete).mock.calls).toEqual([
+      [EVENT_SUBSCRIPTION_KEY],
+      [EVENT_SUBSCRIPTION_KEY, { scope: 'SERVER' }],
+    ]);
   });
 
   it('should release the claim even when the connection can no longer sign in', async () => {

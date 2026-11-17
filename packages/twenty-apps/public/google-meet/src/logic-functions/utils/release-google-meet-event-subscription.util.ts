@@ -14,13 +14,17 @@ export const releaseGoogleMeetEventSubscription = async ({
   const eventSubscriptionKey =
     getGoogleMeetEventSubscriptionKey(subscriptionName);
 
-  // The claim goes first: when the token or Google fails, another workspace can still connect the account.
-  await kv.delete(eventSubscriptionKey);
-  await kv.delete(eventSubscriptionKey, { scope: 'SERVER' });
-  await deleteGoogleMeetEventSubscription({
-    accessToken: getConnectionAccessTokenOrThrow(
-      await getConnection(connectedAccountId),
-    ),
-    subscriptionName,
-  });
+  try {
+    await deleteGoogleMeetEventSubscription({
+      accessToken: getConnectionAccessTokenOrThrow(
+        await getConnection(connectedAccountId),
+      ),
+      subscriptionName,
+    });
+  } finally {
+    // Held until Google answered, so no other workspace claims a subscription that is about to be deleted,
+    // and released even on failure, so the account can be connected elsewhere.
+    await kv.delete(eventSubscriptionKey);
+    await kv.delete(eventSubscriptionKey, { scope: 'SERVER' });
+  }
 };
