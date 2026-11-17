@@ -26,9 +26,13 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
@@ -47,6 +51,9 @@ export const WorkspaceSection = () => {
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -118,7 +125,8 @@ export const WorkspaceSection = () => {
                 </LightIconButton>
               </NavigationMenuItemAddDropdown>
             ) : (
-              hasLayoutsPermission && (
+              hasLayoutsPermission &&
+              !isCustomizableSidebarEnabled && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
                     emphasis="subtle"
