@@ -206,8 +206,18 @@ export class ServerAdminIdentityAssertionService {
       );
     }
 
+    const cachedSigningKey = this.findFreshSigningKey(keyId);
+
+    if (isDefined(cachedSigningKey)) {
+      return cachedSigningKey;
+    }
+
     await this.signingKeysFetch;
 
+    return this.findFreshSigningKey(keyId);
+  }
+
+  private findFreshSigningKey(keyId: string): KeyObject | undefined {
     if (
       !areIdentityAssertionSigningKeysFresh({
         fetchedAt: this.signingKeysFetchedAt,
