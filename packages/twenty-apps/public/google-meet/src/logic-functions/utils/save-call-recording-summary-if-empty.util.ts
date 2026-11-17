@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export const saveCallRecordingSummaryIfEmptyOrThrow = async ({
+export const saveCallRecordingSummaryIfEmpty = async ({
   coreApiClient,
   callRecordingId,
   summaryMarkdown,

@@ -12,7 +12,7 @@ import { isGoogleMeetAiSummaryEnabledForMember } from 'src/logic-functions/utils
 import { isTranscriptEntryList } from 'src/logic-functions/utils/is-transcript-entry-list.util';
 import { parseGoogleMeetCallSummaryResponse } from 'src/logic-functions/utils/parse-google-meet-call-summary-response.util';
 import { runGoogleMeetCallSummarizerOrThrow } from 'src/logic-functions/utils/run-google-meet-call-summarizer-or-throw.util';
-import { saveCallRecordingSummaryIfEmptyOrThrow } from 'src/logic-functions/utils/save-call-recording-summary-if-empty-or-throw.util';
+import { saveCallRecordingSummaryIfEmpty } from 'src/logic-functions/utils/save-call-recording-summary-if-empty.util';
 
 type GoogleMeetSummarizeCallRecordingResult =
   | { success: true; outcome: GoogleMeetCallSummaryOutcome }
@@ -88,7 +88,7 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
     };
   }
 
-  const isSaved = await saveCallRecordingSummaryIfEmptyOrThrow({
+  const isSaved = await saveCallRecordingSummaryIfEmpty({
     coreApiClient,
     callRecordingId,
     summaryMarkdown,
