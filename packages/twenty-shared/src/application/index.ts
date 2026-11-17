@@ -370,12 +370,15 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableApplicationSourcePath } from './utils/isRestorableApplicationSourcePath';
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
+export { isSourceFileManifestList } from './utils/isSourceFileManifestList';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
 export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
+export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

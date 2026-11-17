@@ -96,19 +96,6 @@ export const computeStandardTimelineActivityViewFields = (
         size: 150,
       },
     }),
-    allTimelineActivitiesTargetWorkflowVersion:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'timelineActivity',
-        context: {
-          viewName: 'allTimelineActivities',
-          viewFieldName: 'targetWorkflowVersion',
-          fieldName: 'targetWorkflowVersion',
-          position: 8,
-          isVisible: true,
-          size: 150,
-        },
-      }),
     allTimelineActivitiesTargetWorkflowRun: createStandardViewFieldFlatMetadata(
       {
         ...args,

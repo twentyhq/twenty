@@ -50,6 +50,16 @@ export const planFrontComponentWrites = async ({
         file.universalIdentifier?.toLowerCase() ===
           universalIdentifier.toLowerCase(),
     );
+    if (
+      isDefined(component.sourceFiles) &&
+      isDefined(existing) &&
+      existing.relativePath.split('\\').join('/') !== sourceComponentPath
+    ) {
+      throw new CliError({
+        code: 'CONFLICT',
+        message: `Front component ${universalIdentifier} moved locally. Restore it to ${sourceComponentPath} before pulling its imported files.`,
+      });
+    }
     const relativePath = (existing?.relativePath ?? sourceComponentPath)
       .split('\\')
       .join('/');
@@ -70,9 +80,13 @@ export const planFrontComponentWrites = async ({
       });
     }
     usedPaths.add(pathKey);
-    const fingerprint = hashContent(file.content);
+    const content = Buffer.from(
+      file.content,
+      file.encoding === 'base64' ? 'base64' : 'utf8',
+    ).toString('utf8');
+    const fingerprint = hashContent(content);
     fingerprints[sourceComponentPath] = fingerprint;
-    if (existingContent === file.content) {
+    if (existingContent === content) {
       unchangedSourceFingerprints[relativePath] = fingerprint;
     }
     const previous = baseManifest?.frontComponents?.find(
@@ -85,7 +99,7 @@ export const planFrontComponentWrites = async ({
         ? remoteSourceFingerprints[previous.sourceComponentPath]
         : undefined) ?? sourceFingerprints[relativePath];
     if (
-      existingContent === file.content ||
+      existingContent === content ||
       (isDefined(existingContent) &&
         isDefined(previous) &&
         (isDefined(previousFingerprint)
@@ -99,7 +113,7 @@ export const planFrontComponentWrites = async ({
       kind: 'frontComponent',
       universalIdentifier,
       relativePath,
-      content: file.content,
+      content,
       requiredSdkExports: ['defineFrontComponent'],
       isRegeneration: isDefined(existingContent),
     });

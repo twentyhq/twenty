@@ -142,7 +142,7 @@ otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
 ## Exported files and compatibility
 
 Pull requests
-`exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true, shouldIncludePublicAssets: true)`.
+`exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true, shouldIncludeSourceDependencies: true, shouldIncludePublicAssets: true)`.
 Existing clients that do not request source files continue to receive coverage
 gaps for frontend components and their widgets, without reading component source
 from storage.
@@ -153,7 +153,7 @@ the same supported components. Pull restores `dependencies/package.json` and
 metadata and the baseline.
 
 Exact folder and filename checks accept only that dependency pair, declared
-frontend component sources, and `public-asset` files under `public/`. Public
+frontend component entries and their inventoried sources, and `public-asset` files under `public/`. Public
 assets travel as base64 and are restored as bytes, preserving images and fonts.
 Record attachments and unrelated files are refused.
 
@@ -177,18 +177,34 @@ workspace custom application only deletes entities missing from source with
 ## Front component source
 
 Front component entry files are restored from their stored original TSX, at
-their original path or the existing local definition's path. No JSX is
+their original path. Legacy entry-only exports can use the existing local
+definition's path. No JSX is
 regenerated. Export reports missing source, computed identifiers, and
 unsupported widget availability as coverage gaps; widgets referencing those
 components remain unexported.
 
-Imports are preserved without checking whether they can be resolved. Imported
-local files are not pulled yet; missing dependencies must be restored before
-building or applying. Support for imported local files is tracked separately in
-[#29462](https://github.com/twentyhq/twenty/issues/29462).
+New builds attach a source inventory to each frontend component. Export reads
+that deployed inventory, verifies checksums, and includes its local imports,
+type declarations, TypeScript configs, nested CSS and imported images/fonts.
+Paths and bytes are preserved; shared files are restored once. Imported binary
+files use base64 with an explicit encoding. Source files remain private Source
+artifacts, even when their extensions match public assets.
 
-An explicit GraphQL rejection of the source-export argument retries once without
-it, preserving older servers' metadata pull.
+Only files in an exported component's inventory are read. Logic-function-only
+files, stale storage files and record attachments are not exported. Inventory
+files missing from storage or with mismatched checksums make the component a
+coverage gap. Files no longer inventoried remain untouched locally.
+
+Applications deployed without a per-component inventory still export only their
+entry files. Apply or publish them again to retain imported files. Imports
+outside the app and installed packages are not copied; reinstall package
+dependencies before building. Pull refuses a locally moved entry with an
+inventory, since restoring its helpers at their original paths would break
+relative imports.
+
+Explicit GraphQL rejection of a file-export option retries without that option.
+Older clients receive entry-only source exports unless they opt into source
+dependencies. Older servers retain their existing pull behavior.
 
 Pull records remote source hashes separately from local fingerprints. Unchanged
 remote source preserves local edits, including after repeated pulls; changed

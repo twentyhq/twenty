@@ -17,7 +17,7 @@ export const buildOptimisticNavigationMenuItem = (
   agentChatChannelId: input.agentChatChannelId ?? null,
   workflowId: input.workflowId ?? null,
   agentId: input.agentId ?? null,
-  folderId: input.folderId ?? null,
+  parentId: input.parentId ?? null,
   name: input.name ?? null,
   link: input.link ?? null,
   nativePageKey: input.nativePageKey ?? null,

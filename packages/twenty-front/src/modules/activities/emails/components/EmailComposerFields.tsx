@@ -137,7 +137,7 @@ export const EmailComposerFields = ({
             variant="plain"
             type="text"
             aria-label={t`Subject`}
-            defaultValue={composerState.initialSubject}
+            value={composerState.subject}
             onChange={(event) => composerState.setSubject(event.target.value)}
           />
         </ComposerFieldRow>
@@ -149,7 +149,7 @@ export const EmailComposerFields = ({
       )}
       <StyledBody>
         <FormAdvancedTextFieldInput
-          defaultValue={composerState.initialBody}
+          value={composerState.body}
           onChange={composerState.setBody}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
           onImageUpload={uploadEmailImage}

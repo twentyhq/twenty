@@ -8,10 +8,10 @@ describe('getNextUserFavoritePosition', () => {
   it('places the next favorite after the last root-level user favorite', () => {
     expect(
       getNextUserFavoritePosition([
-        { folderId: null, userWorkspaceId: 'user-1', position: 2 },
-        { folderId: null, userWorkspaceId: 'user-1', position: 5 },
-        { folderId: 'folder-1', userWorkspaceId: 'user-1', position: 9 },
-        { folderId: null, userWorkspaceId: null, position: 12 },
+        { parentId: null, userWorkspaceId: 'user-1', position: 2 },
+        { parentId: null, userWorkspaceId: 'user-1', position: 5 },
+        { parentId: 'folder-1', userWorkspaceId: 'user-1', position: 9 },
+        { parentId: null, userWorkspaceId: null, position: 12 },
       ]),
     ).toBe(6);
   });

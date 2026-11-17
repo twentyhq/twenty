@@ -39,8 +39,8 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       targetObjectMetadataUniversalIdentifier: null,
       viewId: null,
       viewUniversalIdentifier: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
+      parentId: null,
+      parentUniversalIdentifier: null,
       pageLayoutId: generateSeedId(
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,

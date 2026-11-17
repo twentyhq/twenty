@@ -2,17 +2,12 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 type RecordStep = {
   id: string;
@@ -35,7 +30,6 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
   let command: DropUndeclaredKeysFromCreateAndUpsertRecordsCommand;
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowVersionId: string;
   let legacySteps: RecordStep[];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -134,13 +128,6 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
       [coreWorkflowVersionId, JSON.stringify(legacySteps)],
     );
 
-    ({
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    } = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    }));
-
     legacySteps = await readSteps({
       schema: 'core',
       workflowVersionId: coreWorkflowVersionId,
@@ -149,12 +136,9 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    });
   });
 
-  it('drops undeclared keys from create and upsert record steps only, the same in core and the workspace', async () => {
+  it('drops undeclared keys from create and upsert record steps only', async () => {
     await runCommand();
 
     const [upsertRecordStep, createRecordStep, updateRecordStep] = legacySteps;
@@ -177,12 +161,6 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
       await readSteps({
         schema: 'core',
         workflowVersionId: coreWorkflowVersionId,
-      }),
-    ).toEqual(expectedSteps);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: workspaceWorkflowVersionId,
       }),
     ).toEqual(expectedSteps);
   });

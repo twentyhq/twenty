@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   getConnection,
+  type SendAppMessageAttachment,
   type SendAppMessagePayload,
   type SendAppMessageResult,
 } from 'twenty-sdk/logic-function';
@@ -12,13 +13,8 @@ import { LINKEDIN_SEND_MESSAGE_ATTACHMENTS_MAX_TOTAL_SIZE_BYTES } from 'src/cons
 import { LINKEDIN_SEND_MESSAGE_TIMEOUT_SECONDS } from 'src/constants/linkedin-send-message-timeout-seconds.constant';
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { downloadSendMessageAttachmentOrThrow } from 'src/logic-functions/utils/download-send-message-attachment.util';
-import { type SendAppMessageAttachment } from 'src/types/send-app-message-attachment.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
-
-type SendAppMessagePayloadWithAttachments = SendAppMessagePayload & {
-  attachments?: SendAppMessageAttachment[];
-};
 
 const downloadAttachmentsWithinTotalSizeLimitOrThrow = async ({
   attachments,
@@ -55,10 +51,7 @@ const downloadAttachmentsWithinTotalSizeLimitOrThrow = async ({
       deadlineAtMs,
     });
 
-    remainingSizeBytes -= Buffer.byteLength(
-      unipileAttachment.content,
-      'base64',
-    );
+    remainingSizeBytes -= unipileAttachment.content.byteLength;
     unipileAttachments.push(unipileAttachment);
   }
 
@@ -69,8 +62,8 @@ export const linkedinSendMessageHandler = async ({
   connectedAccountId,
   threadExternalId,
   text,
-  attachments = [],
-}: SendAppMessagePayloadWithAttachments): Promise<SendAppMessageResult> => {
+  attachments,
+}: SendAppMessagePayload): Promise<SendAppMessageResult> => {
   const connection = await getConnection(connectedAccountId);
   const unipileAccountId = connection.externalAccountId;
 

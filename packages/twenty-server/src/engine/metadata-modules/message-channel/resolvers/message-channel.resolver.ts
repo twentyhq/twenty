@@ -30,7 +30,6 @@ import { UpdateEmailGroupChannelInput } from 'src/engine/metadata-modules/messag
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
@@ -246,7 +245,7 @@ export class MessageChannelResolver {
       input.update.excludeGroupEmails !== messageChannel.excludeGroupEmails
     ) {
       await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
-        messageChannel as unknown as MessageChannelEntity,
+        messageChannel,
         workspace.id,
         input.update.excludeGroupEmails
           ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION

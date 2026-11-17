@@ -957,7 +957,7 @@ dependencies automatically.
 | Supported metadata and translations | App definitions and locale catalogs                                    | Unsupported metadata is reported, not regenerated                              |
 | Workflows                           | `defineWorkflow` files in `src/workflows`                              | Unsupported steps or references leave the local file intact                    |
 | Skills and agents                   | `defineSkill` and `defineAgent` files in `src/skills` and `src/agents` | Definitions the server cannot reproduce become coverage gaps                   |
-| Front component entry source        | Original TSX, preserving identifiers and supported widget references   | Missing source becomes a coverage gap; imported local files are not pulled yet |
+| Front component source        | Original TSX, preserving identifiers and supported widget references   | Inventoried local imports, configs and assets are restored; missing source becomes a coverage gap |
 | Dependencies                        | `package.json` and `yarn.lock` at the project root                     | Only the stored `dependencies` pair is restored                                |
 | Public assets                       | Exact image, font and other asset bytes under `public/`                | Only `public-asset` files with safe paths are accepted                         |
 
@@ -971,8 +971,11 @@ their active version, and apply publishes changed definitions as new versions.
 An agent on more than one role is another example of a coverage gap. These gaps
 preserve the corresponding local files.
 
-Front component imports are preserved. Restore missing imported files and
-install dependencies before building or applying. If exported `package.json`
+Front component imports keep their original paths. New deployments include
+local helpers, type declarations, TypeScript configs, CSS and imported assets;
+shared files are restored once. Older deployments without an inventory still
+export only the entry file. Files no longer inventoried stay untouched locally.
+Install dependencies before building or applying. If exported `package.json`
 omits `twenty-sdk`, as the workspace custom application does, pull keeps the
 local SDK dependency. The installed generated client is left alone.
 
