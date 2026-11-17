@@ -61,7 +61,11 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 * تقارن `eq` و`notEq` و`gt` و`gte` و`lt` و`lte` القيم.
 * تحسب `add` و`subtract` و`multiply` و`divide` القيم.
 * تتحقق `isIn(field('stage'), ['NEW', 'WON'])` من قيمة مقابل قائمة.
-* دوال مثل `isNonEmptyString` و`isDefined`، ودوال التاريخ `daysSince(date)` (الأيام الكاملة منذ التاريخ، وتكون سالبة لتاريخ مستقبلي) و`isInRelativeDateRange(date, direction, amount, unit)`، مع الاتجاه `'PAST'` أو `'NEXT'` أو `'THIS'` والوحدة `'DAY'` أو `'WEEK'` أو `'MONTH'` أو `'QUARTER'` أو `'YEAR'`، مثل `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+* دوال مثل `isNonEmptyString` و`isDefined`، ودوال التاريخ `dateDiff(from, to, unit)` (الوحدات الكاملة من تاريخ إلى آخر، مثل `dateDiff(createdAt, now, 'HOUR')`)، و`dateAdd(date, amount, unit)`، و`dateTrunc(date, unit)`، و`datePart(date, part)`، و`isInRelativeDateRange(date, direction, amount, unit)`، حيث يكون الاتجاه `'PAST'` أو `'NEXT'` أو `'THIS'` والوحدة `'DAY'` أو `'WEEK'` أو `'MONTH'` أو `'QUARTER'` أو `'YEAR'`، مثل `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+
+تمت إزالة `daysSince(date)`. استبدلها في القواعد الحالية بـ `dateDiff(date, now, 'DAY')`. وحدات `dateDiff` و`dateAdd` و`dateTrunc` هي `'MINUTE'` أو `'HOUR'` أو `'DAY'` أو `'WEEK'` أو `'MONTH'` أو `'QUARTER'` أو `'YEAR'`؛ وأجزاء `datePart` هي `'YEAR'` أو `'QUARTER'` أو `'MONTH'` أو `'WEEK'` أو `'DAY'` أو `'DAY_OF_WEEK'` أو `'HOUR'` أو `'MINUTE'`. تُقرأ التواريخ بتوقيت UTC، ولا تُرجع `dateAdd` قيمة عندما يقع التاريخ أو النتيجة خارج السنوات من 1 إلى 9999. تؤدي مقارنة تاريخ بتاريخ ووقت إلى مقارنة يوميهما وفق UTC، وينطبق ذلك أيضًا على `eq` و`notEq`.
+
+تستخدم مقارنات التاريخ اليوم التقويمي وفق UTC عندما لا يحتوي التاريخ على وقت. تُقارن قيمتا التاريخ والوقت كنقطتين زمنيتين، لذلك تُعد الإزاحات المتكافئة وصيغ أجزاء الثانية المتكافئة متساوية. يغيّر هذا أيضًا التعبيرات الحالية التي قارنت تلك القيم كنص.
 
 ينتج المُنشئ سلسلة نصية عادية، وهي ما يكتبه [`twenty app pull`](/ar/developers/extend/apps/operations/cli) مجددًا. يمكنك كتابة تلك السلسلة النصية مباشرةً:
 

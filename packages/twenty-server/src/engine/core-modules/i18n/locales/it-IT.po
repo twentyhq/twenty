@@ -132,7 +132,7 @@ msgstr "24 ORE"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
-msgstr ""
+msgstr "Una voce di menu di navigazione {type} non può essere inserita all'interno di un elemento {parentType}"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -324,13 +324,13 @@ msgstr "Il nome è obbligatorio per il tipo FOLDER"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for SECTION type"
-msgstr ""
+msgstr "Il nome è obbligatorio per il tipo SECTION"
 
 #. js-lingui-id: yA/goz
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for TAB type"
-msgstr ""
+msgstr "Il nome è obbligatorio per il tipo TAB"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1577,7 +1577,7 @@ msgstr "Le applicazioni non possono aggiornare questi campi: {fieldsList}."
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr ""
+msgstr "Applica o pubblica nuovamente l'applicazione per ripristinare le fonti dei relativi componenti frontend."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1958,7 +1958,7 @@ msgstr "Fatturazione"
 #. js-lingui-id: HhE4nB
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing arrangement not found."
-msgstr ""
+msgstr "Configurazione di fatturazione non trovata."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11937,7 +11937,7 @@ msgstr "Ruolo"
 #. js-lingui-id: hYcnrj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" cannot be assigned"
-msgstr ""
+msgstr "Il ruolo \"{roleLabel}\" non può essere assegnato"
 
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11983,7 +11983,7 @@ msgstr "Impossibile assegnare il ruolo \"{roleLabel}\": i ruoli personalizzati r
 #. js-lingui-id: aMDMRk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
-msgstr ""
+msgstr "Il ruolo \"{roleLabel}\" è detenuto dal sistema e non può essere assegnato"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14733,7 +14733,7 @@ msgstr "Questo ambito della variabile dell'applicazione non è supportato."
 #. js-lingui-id: akCeIt
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
-msgstr ""
+msgstr "Questa configurazione di fatturazione ha impostazioni non valide."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14779,7 +14779,7 @@ msgstr "L'elenco di questa campagna si trova nel cestino. Ripristinalo o selezio
 #. js-lingui-id: wicYT+
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This change would bill more members than the hard seat cap allows."
-msgstr ""
+msgstr "Questa modifica addebiterebbe costi a più membri di quanto consentito dal limite massimo fisso di posti."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -15032,7 +15032,7 @@ msgstr "Questo processo è troppo grande per essere accodato."
 #. js-lingui-id: wU/+Ok
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of billing arrangement cannot be created or ended by hand."
-msgstr ""
+msgstr "Questo tipo di configurazione di fatturazione non può essere creato o terminato manualmente."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15483,7 +15483,7 @@ msgstr "Questo spazio di lavoro ha già un abbonamento."
 #. js-lingui-id: tLPjQC
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has an arrangement of this type over that period."
-msgstr ""
+msgstr "Questo spazio di lavoro dispone già di una configurazione di questo tipo per quel periodo."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts

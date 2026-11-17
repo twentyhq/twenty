@@ -352,7 +352,7 @@ msgstr "{0, plural, one {ارسال دعوت‌نامه} other {ارسال # د�
 #. placeholder {0}: tools.length
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
-msgstr ""
+msgstr "{0, plural, one {# ابزار همگام‌سازی شد} other {# ابزار همگام‌سازی شد}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
@@ -560,10 +560,11 @@ msgstr "{0} عضو فضای کاری"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: relationFieldMetadataItem.label
 #. placeholder {0}: selectedField.label
-#. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -713,7 +714,7 @@ msgstr "{countNonRelation, plural, one {# فیلد} other {# فیلد}}"
 #. js-lingui-id: 0Iz7tg
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{credits} credits/month"
-msgstr ""
+msgstr "{credits} اعتبار/ماه"
 
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
@@ -1167,7 +1168,7 @@ msgstr "{seatCreditsDisplay} از صندلی‌ها، هر سال بازنشان
 #. js-lingui-id: X/yTAr
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
-msgstr ""
+msgstr "{seats, plural, one {{formattedSeats} جایگاه} other {{formattedSeats} جایگاه}}"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1257,7 +1258,7 @@ msgstr "{storedToolName} (برای شما در دسترس نیست)"
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "{toolCount, plural, one {# tool} other {# tools}}"
-msgstr ""
+msgstr "{toolCount, plural, one {# ابزار} other {# ابزار}}"
 
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -1820,7 +1821,7 @@ msgstr "درباره برنامه شما"
 #. js-lingui-id: g/S81Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Above the commitment"
-msgstr ""
+msgstr "بالاتر از تعهد"
 
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -2235,7 +2236,7 @@ msgstr "افزودن دامنه دسترسی تأییدشده"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Add arrangement"
-msgstr ""
+msgstr "افزودن توافق"
 
 #. js-lingui-id: U76pXW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -2433,7 +2434,7 @@ msgstr "افزودن پیوند"
 #. js-lingui-id: LGXpWE
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
-msgstr ""
+msgstr "افزودن سرور MCP"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
@@ -2613,6 +2614,11 @@ msgstr "افزودن مرتب‌سازی"
 msgid "Add SSO Identity Provider"
 msgstr "افزودن ارائه‌دهنده هویت SSO"
 
+#. js-lingui-id: O6B1gJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes."
+msgstr "ستون‌های جدولی اضافه کنید که فیلدی از یک رکورد مرتبط را نشان می‌دهند، مانند صنعت شرکت یک شخص. پس از تکمیل ارتقای نمونه، فعال کنید."
+
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
@@ -2778,12 +2784,12 @@ msgstr "<0>تاریخ تمدید</0> به <1>{companiesLabel}</1> اضافه ش�
 #. js-lingui-id: NxahIk
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added by"
-msgstr ""
+msgstr "افزوده‌شده توسط"
 
 #. js-lingui-id: z1dTLo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added on"
-msgstr ""
+msgstr "افزوده‌شده در"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -4265,7 +4271,7 @@ msgstr "آیا مطمئنید که می‌خواهید {topicName} را حذف �
 #. js-lingui-id: njO+Zl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
-msgstr ""
+msgstr "آیا مطمئن هستید که می‌خواهید این سرور MCP را حذف کنید؟ این اقدام قابل بازگردانی نیست."
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -4341,17 +4347,17 @@ msgstr "ارمنی"
 #. js-lingui-id: T1TSIx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Arrangement added."
-msgstr ""
+msgstr "توافق افزوده شد."
 
 #. js-lingui-id: EboPKL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangement ended."
-msgstr ""
+msgstr "توافق پایان یافت."
 
 #. js-lingui-id: We0TcM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangements"
-msgstr ""
+msgstr "توافق‌ها"
 
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -4634,7 +4640,7 @@ msgstr "حداقل یک پروتکل باید پیکربندی شود"
 #. js-lingui-id: QAlSoU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
-msgstr ""
+msgstr "حداقل این تعداد جایگاه تا تاریخ پایان صورتحساب می‌شود. سقف سخت همچنین از افزودن اعضای جدید بیش از آن جلوگیری می‌کند."
 
 #. js-lingui-id: tqMllA
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -7085,12 +7091,12 @@ msgstr "نظر"
 #. js-lingui-id: As9mhp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Commercial exceptions to the plan, with why and until when."
-msgstr ""
+msgstr "استثناهای تجاری برای طرح، همراه با دلیل و زمان پایان آن‌ها."
 
 #. js-lingui-id: 1JmJ2B
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Committed seats"
-msgstr ""
+msgstr "جایگاه‌های متعهدشده"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7529,7 +7535,7 @@ msgstr "پیش از ایجاد رویداد، Google، Microsoft یا CalDAV ر�
 #. js-lingui-id: +RyxXW
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Connect remote MCP servers so agents can use their tools"
-msgstr ""
+msgstr "سرورهای MCP راه‌دور را متصل کنید تا عامل‌ها بتوانند از ابزارهایشان استفاده کنند"
 
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -8703,7 +8709,7 @@ msgstr "اعتبارنامه‌ها و دامنه‌ها برای جریان‌�
 #. js-lingui-id: x8lB6y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit allowance"
-msgstr ""
+msgstr "سهمیه اعتبار"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8723,7 +8729,7 @@ msgstr "مصرف اعتبار در طول زمان."
 #. js-lingui-id: OeJw5Y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit grant"
-msgstr ""
+msgstr "اعطای اعتبار"
 
 #. js-lingui-id: zH6NZT
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -8844,7 +8850,7 @@ msgstr "اعتبار در روز"
 #. js-lingui-id: 30XINA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Credits per month"
-msgstr ""
+msgstr "اعتبار در ماه"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9196,7 +9202,7 @@ msgstr "فیلدهای موجود در نماهای {objectLabelSingular} و ت�
 #. js-lingui-id: 5GgtFa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Customizable sidebar"
-msgstr ""
+msgstr "نوار کناری قابل سفارشی‌سازی"
 
 #. js-lingui-id: qqLY+j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9601,7 +9607,7 @@ msgstr "غیرفعال‌سازی شیء"
 #. js-lingui-id: ujOIgb
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Deactivate or delete this MCP server"
-msgstr ""
+msgstr "این سرور MCP را غیرفعال یا حذف کنید"
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10015,7 +10021,7 @@ msgstr "حذف سقف"
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
-msgstr ""
+msgstr "حذف سرور MCP"
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10539,7 +10545,7 @@ msgstr "{successfulCount} از {totalCount} اتصال قطع شد. قطع نش�
 #. js-lingui-id: H6Ma8Z
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Discount"
-msgstr ""
+msgstr "تخفیف"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11720,12 +11726,12 @@ msgstr "چرخش کلید رمزنگاری"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End"
-msgstr ""
+msgstr "پایان"
 
 #. js-lingui-id: VhdLE7
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End arrangement"
-msgstr ""
+msgstr "پایان دادن به توافق"
 
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -11757,12 +11763,12 @@ msgstr "برای ادامه استفاده از ویژگی‌های Workflow ی�
 #. js-lingui-id: 237hSL
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "Ended"
-msgstr ""
+msgstr "پایان‌یافته"
 
 #. js-lingui-id: eNtnOy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Ended by"
-msgstr ""
+msgstr "پایان‌یافته توسط"
 
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -13093,7 +13099,7 @@ msgstr "ایجاد رویداد تقویم ناموفق بود"
 #. js-lingui-id: 8qnNWI
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "Failed to create MCP server"
-msgstr ""
+msgstr "ایجاد سرور MCP ناموفق بود"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
@@ -13262,7 +13268,7 @@ msgstr "بارگیری جزئیات عامل ناموفق بود."
 #. js-lingui-id: dQLWeE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Failed to load billing arrangements."
-msgstr ""
+msgstr "بارگیری توافق‌های صورتحساب انجام نشد."
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13284,12 +13290,12 @@ msgstr "بارگذاری کامپوننت فرانت ناموفق بود: {error
 #. js-lingui-id: wEebE8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
 msgid "Failed to load MCP server"
-msgstr ""
+msgstr "بارگذاری سرور MCP ناموفق بود"
 
 #. js-lingui-id: rte0QY
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "Failed to load MCP servers"
-msgstr ""
+msgstr "بارگذاری سرورهای MCP ناموفق بود"
 
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13437,7 +13443,7 @@ msgstr "شروع صادرات ناموفق بود. {0}"
 #. js-lingui-id: 22o02r
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "Failed to sync tools"
-msgstr ""
+msgstr "همگام‌سازی ابزارها ناموفق بود"
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -13468,7 +13474,7 @@ msgstr "به‌روزرسانی feature flag ناموفق بود. {0}"
 #. js-lingui-id: mwx+OD
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "Failed to update MCP server"
-msgstr ""
+msgstr "به‌روزرسانی سرور MCP ناموفق بود"
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13936,7 +13942,7 @@ msgstr "پر کردن با ورودی نمونه از"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -14068,7 +14074,7 @@ msgstr "برای باز کردن تنظیمات، ویرایش چیدمان را
 #. js-lingui-id: 1yKuEJ
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open this tab"
-msgstr ""
+msgstr "برای باز کردن این زبانه، ویرایش چیدمان را تمام کنید"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14372,7 +14378,7 @@ msgstr "اعتبار رایگان کسب‌شده"
 #. js-lingui-id: x2qGE3
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Free seats"
-msgstr ""
+msgstr "جایگاه‌های رایگان"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -15069,7 +15075,7 @@ msgstr "شاد"
 #. js-lingui-id: 4OOUC8
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Hard cap"
-msgstr ""
+msgstr "سقف سخت"
 
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
@@ -15439,7 +15445,7 @@ msgstr "نحوه نمایش این قانون در تنظیمات."
 #. js-lingui-id: HuGZWl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "How this server is named for your team and for agents"
-msgstr ""
+msgstr "نام این سرور برای تیم شما و عامل‌ها"
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15539,7 +15545,7 @@ msgstr "https://example.com/webhook"
 #. js-lingui-id: U0G31R
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "https://mcp.example.com/mcp"
-msgstr ""
+msgstr "https://mcp.example.com/mcp"
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -16384,6 +16390,16 @@ msgstr "عبارت cron نامعتبر است. ۴ تا ۶ فیلد انتظار 
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "الگوی cron نامعتبر است: {errorMessage}"
+
+#. js-lingui-id: DQm/44
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE."
+msgstr "بخش تاریخ نامعتبر است. از YEAR، QUARTER، MONTH، WEEK، DAY، DAY_OF_WEEK، HOUR یا MINUTE استفاده کنید."
+
+#. js-lingui-id: UAtSd1
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR."
+msgstr "واحد تاریخ نامعتبر است. از MINUTE، HOUR، DAY، WEEK، MONTH، QUARTER یا YEAR استفاده کنید."
 
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -17233,12 +17249,12 @@ msgstr "آخرین ورود"
 #. placeholder {0}: mcpServer.toolsSyncError
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last sync failed: {0}"
-msgstr ""
+msgstr "آخرین همگام‌سازی ناموفق بود: {0}"
 
 #. js-lingui-id: Ip8UbZ
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last synced {lastSynced}"
-msgstr ""
+msgstr "آخرین همگام‌سازی {lastSynced}"
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17598,12 +17614,12 @@ msgstr "محدودیت باید بزرگ‌تر از 0 باشد."
 #. js-lingui-id: cF6iqz
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Limit override"
-msgstr ""
+msgstr "نادیده‌گرفتن محدودیت"
 
 #. js-lingui-id: BDi/z7
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "Limit removed"
-msgstr ""
+msgstr "محدودیت برداشته شد"
 
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -17661,12 +17677,12 @@ msgstr "ارتفاع خط"
 #. js-lingui-id: vQ2Ad9
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "linear"
-msgstr ""
+msgstr "خطی"
 
 #. js-lingui-id: ih+n6S
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
 msgid "Linear"
-msgstr ""
+msgstr "لینیر"
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -18182,6 +18198,11 @@ msgstr "طول جغرافیایی"
 msgid "Look up"
 msgstr "جست‌وجو"
 
+#. js-lingui-id: PJeBuo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Lookup columns"
+msgstr "ستون‌های جستجو"
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -18581,17 +18602,17 @@ msgstr "سرور MCP"
 #. js-lingui-id: 8uHtaz
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "MCP server {label} created successfully"
-msgstr ""
+msgstr "سرور MCP ‏{label} با موفقیت ایجاد شد"
 
 #. js-lingui-id: IbSocu
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "MCP server {label} updated successfully"
-msgstr ""
+msgstr "سرور MCP ‏{label} با موفقیت به‌روزرسانی شد"
 
 #. js-lingui-id: bbaHGM
 #: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
 msgid "MCP server deleted successfully"
-msgstr ""
+msgstr "سرور MCP با موفقیت حذف شد"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19505,12 +19526,12 @@ msgstr "نام در هر دو شکل مفرد (برای مثال، «فاکتو�
 #. js-lingui-id: 8/brI5
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name is required"
-msgstr ""
+msgstr "نام الزامی است"
 
 #. js-lingui-id: Kq5f+c
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
-msgstr ""
+msgstr "نام باید حداکثر {MCP_SERVER_NAME_MAX_LENGTH} نویسه باشد"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19677,6 +19698,7 @@ msgid "New Agent"
 msgstr "عامل جدید"
 
 #. js-lingui-id: JLx7YM
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "گفت‌وگوی جدید هوش مصنوعی"
@@ -19803,7 +19825,7 @@ msgstr "محدودیت جدید"
 #. js-lingui-id: p/TT/2
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 msgid "New MCP server"
-msgstr ""
+msgstr "سرور MCP جدید"
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20568,7 +20590,7 @@ msgstr "هیچ فرد یا نقش منطبقی یافت نشد"
 #. js-lingui-id: c/bX1U
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "No MCP servers yet"
-msgstr ""
+msgstr "هنوز سرور MCP وجود ندارد"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -20795,6 +20817,7 @@ msgstr "پاسخی از سرور دریافت نشد"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
@@ -20925,7 +20948,7 @@ msgstr "هیچ ابزاری با جستجوی شما مطابقت ندارد"
 #. js-lingui-id: SCvh4h
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 msgid "No tools synced yet"
-msgstr ""
+msgstr "هنوز ابزاری همگام‌سازی نشده است"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21712,6 +21735,11 @@ msgstr "پس از ادعا شدن، این برنامه را در فضای کا�
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "یک یا چند فیلتر به فیلدهای غیرفعال یا حذف‌شده ارجاع دارند و هنگام ذخیره به‌طور خودکار حذف خواهند شد."
 
+#. js-lingui-id: zTzoj2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE."
+msgstr "یک بخش از تاریخ به صورت عدد، در UTC: YEAR، QUARTER، MONTH، WEEK، DAY، DAY_OF_WEEK (1 دوشنبه است)، HOUR یا MINUTE."
+
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
@@ -21725,7 +21753,7 @@ msgstr "یک اشتراک، یک کلید سازمان ارائه می‌کند 
 #. js-lingui-id: YO4da4
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "One-time"
-msgstr ""
+msgstr "یک‌باره"
 
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -23019,7 +23047,7 @@ msgstr "انتخاب رکورد"
 #. js-lingui-id: 48B257
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Pick the end date"
-msgstr ""
+msgstr "تاریخ پایان را انتخاب کنید"
 
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -23147,7 +23175,7 @@ msgstr "لطفاً ایمیل خود را برای پیوند تأیید برر�
 #. js-lingui-id: vYumai
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Please enter a valid http(s) URL"
-msgstr ""
+msgstr "لطفاً یک نشانی اینترنتی http(s) معتبر وارد کنید"
 
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
@@ -23300,7 +23328,7 @@ msgstr "پیشوند"
 #. js-lingui-id: HR5Lti
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Prefix of the tool names agents see. Cannot be changed later."
-msgstr ""
+msgstr "پیشوند نام ابزارهایی که عامل‌ها می‌بینند. بعداً قابل تغییر نیست."
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -24026,6 +24054,7 @@ msgstr "ایمیلی حاوی پیوند به‌روزرسانی گذرواژه 
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "اخیر"
 
@@ -24426,7 +24455,7 @@ msgstr "تازه‌سازی وضعیت"
 #. js-lingui-id: J0LAHU
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Refund"
-msgstr ""
+msgstr "بازپرداخت"
 
 #. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -24936,7 +24965,7 @@ msgstr "جایگزینی ویجت"
 #. js-lingui-id: JsTqK9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
-msgstr ""
+msgstr "اعتبارهای فضای کاریِ شامل طرح را از هم‌اکنون با مقدار ثابتی در ماه جایگزین می‌کند. اعتبارهای پرداخت‌شده و اعطاشده همچنان به آن افزوده می‌شوند."
 
 #. js-lingui-id: uFEgGd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25920,6 +25949,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26168,6 +26198,8 @@ msgstr "فراداده فیلد جست‌وجو"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -26525,7 +26557,7 @@ msgstr "مشاهده برنامه‌های نصب‌شده"
 #. js-lingui-id: uPo3PQ
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
-msgstr ""
+msgstr "نمایش کمتر"
 
 #. js-lingui-id: V1fa9u
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
@@ -27648,7 +27680,7 @@ msgstr "فقط ردیف‌های دارای خطا را نمایش بده"
 #. js-lingui-id: KefbEP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show sidebar tabs and sections."
-msgstr ""
+msgstr "زبانه‌ها و بخش‌های نوار کناری را نمایش دهید."
 
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27736,7 +27768,7 @@ msgstr "عنوان امضاکننده"
 #. js-lingui-id: +Ou1Pl
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Signed a 2-year deal for 25 seats"
-msgstr ""
+msgstr "قرارداد ۲ ساله برای ۲۵ جایگاه امضا شد"
 
 #. js-lingui-id: Lz4j8Q
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
@@ -28041,7 +28073,7 @@ msgstr "SOC 2"
 #. js-lingui-id: mbsiG9
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
-msgstr ""
+msgstr "سقف نرم"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -28146,7 +28178,7 @@ msgstr "متأسفیم، نتوانستیم نوع شیء درست را برای
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Sort"
@@ -29038,7 +29070,7 @@ msgstr "همگام‌سازی متوقف شده است"
 #. js-lingui-id: cxRmVd
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Sync tools"
-msgstr ""
+msgstr "همگام‌سازی ابزارها"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29394,7 +29426,7 @@ msgstr "این مقدار تقریباً برابر با {formattedNewlyEarnedAi
 #. js-lingui-id: XOno1Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
-msgstr ""
+msgstr "توافق {pendingEndTypeLabel} اکنون دیگر اعمال نمی‌شود و در سابقه باقی می‌ماند. نمی‌توان آن را دوباره شروع کرد: به‌جای آن یک مورد جدید اضافه کنید."
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -29475,6 +29507,11 @@ msgstr "توافق‌نامه پردازش داده بارگیری نشد. لط�
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
 msgstr "تاریخ و زمان نوشتاری که در حال بررسی است."
+
+#. js-lingui-id: ny+Evg
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month."
+msgstr "تاریخ به تعداد کاملی از واحدها، در UTC، جابه‌جا شد. افزودن یک ماه به روز ۳۱، به آخرین روز ماه می‌رسد."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -29618,15 +29655,15 @@ msgstr "نامی که گیرندگان در صندوق ورودی خود به‌
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "نامی که گیرندگان در کنار نشانی شما می‌بینند. هنگام ایجاد کانال تنظیم می‌شود."
 
-#. js-lingui-id: op7R9r
-#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
-msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr "تعداد روزها از تاریخ تا امروز، بر حسب UTC. برای تاریخی در آینده منفی است."
-
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "تعداد موارد در فهرست، یا در صورتی که فهرست نباشد 0."
+
+#. js-lingui-id: SpoTRx
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
+msgstr "تعداد واحدهای کامل از تاریخ اول تا تاریخ دوم؛ اگر تاریخ دوم زودتر باشد، منفی است. دقیقه‌ها و ساعت‌ها زمان سپری‌شده هستند؛ واحدهای طولانی‌تر روزها و ماه‌های تقویمی را در UTC شمارش می‌کنند."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -29682,6 +29719,11 @@ msgstr "رکوردهای انتخاب‌شده (تا {maxRecordsFormatted}) به
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "ایمیل مشترکی که می‌خواهید استفاده کنید."
+
+#. js-lingui-id: XWiOdK
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr "ابتدای واحدی که تاریخ در آن قرار دارد، در UTC. هفته‌ها از دوشنبه شروع می‌شوند."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30147,7 +30189,7 @@ msgstr "این کلید باید از طریق ورودی بدنه تنظیم ش
 #. js-lingui-id: 3Xb+Zj
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "This many members are not billed. Seats are synced right away."
-msgstr ""
+msgstr "برای این تعداد عضو صورتحساب صادر نمی‌شود. جایگاه‌ها بلافاصله همگام‌سازی می‌شوند."
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30765,7 +30807,7 @@ msgstr "ابزارها"
 #. js-lingui-id: OGOaH+
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Tools have not been synced yet"
-msgstr ""
+msgstr "ابزارها هنوز همگام‌سازی نشده‌اند"
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -30954,7 +30996,7 @@ msgstr "دوره آزمایشی منقضی شده است. لطفاً جزئیا�
 #. js-lingui-id: SyzXYh
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Trial extension"
-msgstr ""
+msgstr "تمدید دوره آزمایشی"
 
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -32447,7 +32489,7 @@ msgstr "فقط از حرف، عدد و خط تیره استفاده کنید. ب
 #. js-lingui-id: cW4z4t
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Use lowercase letters, digits and underscores, starting with a letter"
-msgstr ""
+msgstr "از حروف کوچک، ارقام و زیرخط استفاده کنید و با یک حرف شروع کنید"
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33587,7 +33629,7 @@ msgstr "محل باز شدن رکوردهای این شی"
 #. js-lingui-id: jQ8/hg
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Where the server lives"
-msgstr ""
+msgstr "محل استقرار سرور"
 
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
