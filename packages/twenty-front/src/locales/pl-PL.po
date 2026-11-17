@@ -8326,11 +8326,6 @@ msgstr "Utwórz zadanie dla tego rekordu: "
 msgid "Create a workflow"
 msgstr "Utwórz przepływ pracy"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Stwórz przepływ pracy i wróć tutaj, aby zobaczyć jego wersje"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "W tym okresie nie zgłoszono żadnej wersji"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Brak uruchomień workflow"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Brak wersji workflow"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

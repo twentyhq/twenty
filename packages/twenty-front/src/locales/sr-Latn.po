@@ -8326,11 +8326,6 @@ msgstr "Kreiraj zadatak za ovaj zapis: "
 msgid "Create a workflow"
 msgstr "Kreirajte tok rada"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Kreirajte radni tok i vratite se ovde da biste videli njegove verzije"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "U ovom periodu nije prijavljena nijedna verzija"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Još nema pokretanja radnog procesa"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Još nema verzija radnog procesa"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

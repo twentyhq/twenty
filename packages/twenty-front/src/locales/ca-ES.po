@@ -8326,11 +8326,6 @@ msgstr "Crea una tasca per a aquest registre: "
 msgid "Create a workflow"
 msgstr "Crea un flux de treball"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Crea un flux de treball i torna aquí per veure les seves versions"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "No s'ha informat de cap versió durant aquest període"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Encara no hi ha execucions de workflows"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Encara no hi ha versions de workflows"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

@@ -8326,11 +8326,6 @@ msgstr "Δημιουργία εργασίας για αυτήν την εγγρ�
 msgid "Create a workflow"
 msgstr "Δημιουργήστε μια ροή εργασιών"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Δημιουργήστε ένα workflow και επιστρέψτε εδώ για να δείτε τις εκδόσεις του"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "Δεν αναφέρθηκε καμία έκδοση σε αυτήν τη
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Δεν υπάρχουν ακόμα runs του workflow"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Δεν υπάρχουν ακόμα έκδοσεις του workflow"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
