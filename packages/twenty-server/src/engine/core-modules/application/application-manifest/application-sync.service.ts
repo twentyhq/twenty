@@ -81,7 +81,7 @@ export class ApplicationSyncService {
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
   }): Promise<ApplicationManifestSyncResult> {
-    this.applicationFrontComponentSourceService.validate(manifest);
+    this.applicationFrontComponentSourceService.validateOrThrow(manifest);
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);

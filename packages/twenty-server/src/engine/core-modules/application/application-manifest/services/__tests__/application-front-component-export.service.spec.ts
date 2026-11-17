@@ -152,7 +152,7 @@ describe('ApplicationFrontComponentExportService', () => {
         stored.set(`${fileFolder}/${resourcePath}`, Buffer.from(sourceFile));
       },
     );
-    sourceService.validate(inventoryManifest);
+    sourceService.validateOrThrow(inventoryManifest);
     await sourceService.store({
       workspaceId: identifier,
       manifest: inventoryManifest,
@@ -358,7 +358,7 @@ describe('ApplicationFrontComponentExportService', () => {
   });
   it('rejects unsafe inventories before sync', () => {
     expect(() =>
-      sourceService.validate({
+      sourceService.validateOrThrow({
         ...inventoryManifest,
         frontComponents: [
           {

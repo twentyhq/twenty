@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import { parsePullFiles } from '@/app/pull/parse-pull-files';
 
+const getSourceChecksum = (content: string | Buffer) =>
+  createHash('md5').update(content).digest('hex');
+
 const packageFile = {
   folder: 'dependencies',
   path: 'package.json',
@@ -112,7 +115,7 @@ describe('parsePullFiles', () => {
       ...component,
       sourceFiles: files.map((file) => ({
         filePath: file.path,
-        checksum: createHash('md5').update(file.content).digest('hex'),
+        checksum: getSourceChecksum(file.content),
       })),
     },
   ];
@@ -126,9 +129,7 @@ describe('parsePullFiles', () => {
     const frontComponents = withInventory();
     frontComponents[0].sourceFiles.push({
       filePath: binary.path,
-      checksum: createHash('md5')
-        .update(Buffer.from(binary.content, 'base64'))
-        .digest('hex'),
+      checksum: getSourceChecksum(Buffer.from(binary.content, 'base64')),
     });
     expect(
       parsePullFiles({ value: [sourceFile, helper, binary], frontComponents }),
@@ -171,9 +172,7 @@ describe('parsePullFiles', () => {
     const frontComponents = withInventory([sourceFile]);
     frontComponents[0].sourceFiles.push({
       filePath: asset.path,
-      checksum: createHash('md5')
-        .update(Buffer.from(asset.content, 'base64'))
-        .digest('hex'),
+      checksum: getSourceChecksum(Buffer.from(asset.content, 'base64')),
     });
     expect(
       parsePullFiles({ value: [sourceFile, asset], frontComponents }),

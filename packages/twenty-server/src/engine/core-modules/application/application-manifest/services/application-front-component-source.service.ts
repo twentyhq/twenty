@@ -1,5 +1,7 @@
 import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { Injectable } from '@nestjs/common';
+import { msg } from '@lingui/core/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { createHash } from 'node:crypto';
 import {
   isSourceFileManifestList,
@@ -21,7 +23,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class ApplicationFrontComponentSourceService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
-  validate(manifest: Pick<Manifest, 'frontComponents'>): void {
+  validateOrThrow(manifest: Pick<Manifest, 'frontComponents'>): void {
     for (const component of manifest.frontComponents ?? []) {
       if (
         isDefined(component.sourceFiles) &&
@@ -31,7 +33,9 @@ export class ApplicationFrontComponentSourceService {
           ))
       ) {
         throw new ApplicationException(
-          `Invalid source inventory for front component ${component.universalIdentifier}`,
+          doNotTranslate(
+            `Invalid source inventory for front component ${component.universalIdentifier}`,
+          ),
           ApplicationExceptionCode.INVALID_INPUT,
         );
       }
@@ -114,7 +118,7 @@ export class ApplicationFrontComponentSourceService {
     );
     if (!isPlainObject(inventory)) {
       throw new ApplicationException(
-        'Stored front component source inventory is invalid',
+        doNotTranslate('Stored front component source inventory is invalid'),
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }
@@ -130,8 +134,13 @@ export class ApplicationFrontComponentSourceService {
       )
     ) {
       throw new ApplicationException(
-        'Source inventory does not match the deployed front component; apply or publish again',
+        doNotTranslate(
+          'Source inventory does not match the deployed front component; apply or publish again',
+        ),
         ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+        },
       );
     }
     const files: ApplicationExportFile[] = [];
@@ -144,8 +153,13 @@ export class ApplicationFrontComponentSourceService {
         );
         if (createHash('md5').update(content).digest('hex') !== checksum) {
           throw new ApplicationException(
-            `Conflicting source checksums for ${filePath}; apply or publish again`,
+            doNotTranslate(
+              `Conflicting source checksums for ${filePath}; apply or publish again`,
+            ),
             ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+            },
           );
         }
         files.push(
@@ -166,8 +180,13 @@ export class ApplicationFrontComponentSourceService {
       };
       if (!(await this.fileStorageService.checkFileExists(sourceLocation))) {
         throw new ApplicationException(
-          `Source file ${filePath} is missing; apply or publish again`,
+          doNotTranslate(
+            `Source file ${filePath} is missing; apply or publish again`,
+          ),
           ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+          },
         );
       }
       const content = await streamToBuffer(
@@ -177,8 +196,13 @@ export class ApplicationFrontComponentSourceService {
       remainingBytes -= content.length;
       if (createHash('md5').update(content).digest('hex') !== checksum) {
         throw new ApplicationException(
-          `Source file ${filePath} changed since the deployed inventory; apply or publish again`,
+          doNotTranslate(
+            `Source file ${filePath} changed since the deployed inventory; apply or publish again`,
+          ),
           ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+          },
         );
       }
       files.push({

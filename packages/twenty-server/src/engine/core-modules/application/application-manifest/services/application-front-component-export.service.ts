@@ -77,12 +77,8 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
-      let content: string;
-      let inventory: Awaited<
-        ReturnType<ApplicationFrontComponentSourceService['read']>
-      >;
       try {
-        inventory = shouldIncludeSourceDependencies
+        const inventory = shouldIncludeSourceDependencies
           ? await this.applicationFrontComponentSourceService.read({
               workspaceId,
               applicationUniversalIdentifier,
@@ -105,7 +101,7 @@ export class ApplicationFrontComponentExportService {
           });
           continue;
         }
-        content =
+        const content =
           inventory?.files.find((file) => file.path === path)?.content ??
           (
             await streamToBuffer(
@@ -113,6 +109,43 @@ export class ApplicationFrontComponentExportService {
               fileBudget.remainingBytes,
             )
           ).toString('utf8');
+        const reason = getUnsupportedFrontComponentSourceReason({
+          source: content,
+          universalIdentifier: component.universalIdentifier,
+          name: component.name,
+          description: component.description,
+          componentName: component.componentName,
+        });
+        if (isDefined(reason)) {
+          coverage.push({ ...unsupportedCoverage, reason });
+          continue;
+        }
+        const componentFiles = inventory?.files ?? [
+          { folder: FileFolder.Source, path, content },
+        ];
+        const newFiles = componentFiles.filter(
+          (file) => !files.some((existing) => existing.path === file.path),
+        );
+        const encodedBytes = Buffer.byteLength(JSON.stringify(newFiles));
+        if (encodedBytes > fileBudget.remainingBytes) {
+          coverage.push({
+            ...unsupportedCoverage,
+            reason:
+              'Front component sources exceed the remaining shared file export budget.',
+          });
+          continue;
+        }
+        fileBudget.remainingBytes -= encodedBytes;
+        frontComponents.push(
+          isDefined(inventory)
+            ? { ...manifest, sourceFiles: inventory.sourceFiles }
+            : manifest,
+        );
+        coverage.push({
+          ...unsupportedCoverage,
+          status: ApplicationExportCoverageStatus.EXPORTED,
+        });
+        files.push(...newFiles);
       } catch (error) {
         if (
           !(error instanceof StreamSizeExceededError) &&
@@ -129,43 +162,6 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
-      const reason = getUnsupportedFrontComponentSourceReason({
-        source: content,
-        universalIdentifier: component.universalIdentifier,
-        name: component.name,
-        description: component.description,
-        componentName: component.componentName,
-      });
-      if (isDefined(reason)) {
-        coverage.push({ ...unsupportedCoverage, reason });
-        continue;
-      }
-      const componentFiles = inventory?.files ?? [
-        { folder: FileFolder.Source, path, content },
-      ];
-      const newFiles = componentFiles.filter(
-        (file) => !files.some((existing) => existing.path === file.path),
-      );
-      const encodedBytes = Buffer.byteLength(JSON.stringify(newFiles));
-      if (encodedBytes > fileBudget.remainingBytes) {
-        coverage.push({
-          ...unsupportedCoverage,
-          reason:
-            'Front component sources exceed the remaining shared file export budget.',
-        });
-        continue;
-      }
-      fileBudget.remainingBytes -= encodedBytes;
-      frontComponents.push(
-        isDefined(inventory)
-          ? { ...manifest, sourceFiles: inventory.sourceFiles }
-          : manifest,
-      );
-      coverage.push({
-        ...unsupportedCoverage,
-        status: ApplicationExportCoverageStatus.EXPORTED,
-      });
-      files.push(...newFiles);
     }
     return { frontComponents, files, coverage };
   }
