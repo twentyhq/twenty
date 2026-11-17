@@ -46,29 +46,44 @@ describe('sendUnipileChatMessage', () => {
     });
   });
 
-  it('sends the attachments along with the text', async () => {
+  it('sends the attachments as multipart files along with the text', async () => {
     mocks.sendMessage.mockResolvedValue({
       data: { object: 'MessageSent', message_id: 'message-1' },
     });
 
-    const attachment = {
-      content: 'cmVwb3J0',
-      content_type: 'application/pdf',
-      filename: 'deck.pdf',
-    };
-
     await sendUnipileChatMessage({
       accountId: 'acc_1',
       chatId: 'chat-1',
-      text: '',
-      attachments: [attachment],
+      text: 'See attached',
+      attachments: [
+        {
+          content: Buffer.from('report'),
+          contentType: 'application/pdf',
+          filename: 'deck.pdf',
+        },
+        {
+          content: Buffer.from('photo'),
+          contentType: 'image/jpeg',
+          filename: 'photo.jpg',
+        },
+      ],
     });
 
-    expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        body: { text: '', attachments: [attachment] },
-      }),
-    );
+    const [{ bodySerializer, headers }] = mocks.sendMessage.mock.calls[0];
+    const formData: FormData = bodySerializer();
+    const [deck, photo] = [
+      formData.get('attachments[0]'),
+      formData.get('attachments[1]'),
+    ] as File[];
+
+    expect(headers).toEqual({ 'Content-Type': null });
+    expect(formData.get('text')).toBe('See attached');
+    expect(deck.name).toBe('deck.pdf');
+    expect(deck.type).toBe('application/pdf');
+    await expect(deck.text()).resolves.toBe('report');
+    expect(photo.name).toBe('photo.jpg');
+    expect(photo.type).toBe('image/jpeg');
+    await expect(photo.text()).resolves.toBe('photo');
   });
 
   it('returns the first id when Unipile reports several', async () => {
