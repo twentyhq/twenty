@@ -88,8 +88,8 @@ export default {
         465,
         466,
         474,
+        485,
         486,
-        488,
         495,
         500,
         522,
@@ -10260,12 +10260,12 @@ export default {
                     ]
                 }
             ],
-            "upsertRowLevelPermissionPredicates": [
+            "upsertRowLevelPermissionRules": [
                 642,
                 {
                     "input": [
                         641,
-                        "UpsertRowLevelPermissionPredicatesInput!"
+                        "UpsertRowLevelPermissionRulesInput!"
                     ]
                 }
             ],
@@ -12957,7 +12957,7 @@ export default {
                 483
             ],
             "rowLevelPermissionRules": [
-                489
+                487
             ],
             "universalIdentifier": [
                 565
@@ -13002,7 +13002,7 @@ export default {
                 4
             ],
             "operand": [
-                488
+                486
             ],
             "positionInRowLevelPermissionPredicateGroup": [
                 8
@@ -13052,7 +13052,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                486
+                485
             ],
             "objectMetadataId": [
                 4
@@ -13073,74 +13073,7 @@ export default {
                 4
             ]
         },
-        "RowLevelPermissionPredicateGroupInput": {
-            "canDestroyRecords": [
-                1
-            ],
-            "canReadRecords": [
-                1
-            ],
-            "canSoftDeleteRecords": [
-                1
-            ],
-            "canUpdateRecords": [
-                1
-            ],
-            "id": [
-                565
-            ],
-            "logicalOperator": [
-                486
-            ],
-            "objectMetadataId": [
-                565
-            ],
-            "parentRowLevelPermissionPredicateGroupId": [
-                565
-            ],
-            "positionInRowLevelPermissionPredicateGroup": [
-                8
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "RowLevelPermissionPredicateGroupLogicalOperator": {},
-        "RowLevelPermissionPredicateInput": {
-            "fieldMetadataId": [
-                565
-            ],
-            "id": [
-                565
-            ],
-            "operand": [
-                488
-            ],
-            "positionInRowLevelPermissionPredicateGroup": [
-                8
-            ],
-            "relationFieldMetadataId": [
-                565
-            ],
-            "rowLevelPermissionPredicateGroupId": [
-                565
-            ],
-            "subFieldName": [
-                4
-            ],
-            "value": [
-                344
-            ],
-            "workspaceMemberFieldMetadataId": [
-                4
-            ],
-            "workspaceMemberSubFieldName": [
-                4
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "RowLevelPermissionPredicateOperand": {},
         "RowLevelPermissionRule": {
             "canCreateRecords": [
@@ -13168,7 +13101,7 @@ export default {
                 4
             ]
         },
-        "RowLevelPermissionRuleGrantInput": {
+        "RowLevelPermissionRuleInput": {
             "canCreateRecords": [
                 1
             ],
@@ -13184,8 +13117,66 @@ export default {
             "canUpdateRecords": [
                 1
             ],
-            "rowLevelPermissionPredicateGroupId": [
+            "id": [
                 565
+            ],
+            "predicateGroups": [
+                489
+            ],
+            "predicates": [
+                490
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "RowLevelPermissionRulePredicateGroupInput": {
+            "id": [
+                565
+            ],
+            "logicalOperator": [
+                485
+            ],
+            "position": [
+                8
+            ],
+            "predicateGroups": [
+                489
+            ],
+            "predicates": [
+                490
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "RowLevelPermissionRulePredicateInput": {
+            "fieldMetadataId": [
+                565
+            ],
+            "id": [
+                565
+            ],
+            "operand": [
+                486
+            ],
+            "position": [
+                8
+            ],
+            "relationFieldMetadataId": [
+                565
+            ],
+            "subFieldName": [
+                4
+            ],
+            "value": [
+                344
+            ],
+            "workspaceMemberFieldMetadataId": [
+                4
+            ],
+            "workspaceMemberSubFieldName": [
+                4
             ],
             "__typename": [
                 4
@@ -15782,47 +15773,29 @@ export default {
                 4
             ]
         },
-        "UpsertRowLevelPermissionPredicatesInput": {
-            "canCreateRecords": [
-                1
-            ],
-            "canDestroyRecords": [
-                1
-            ],
-            "canReadRecords": [
-                1
-            ],
-            "canSoftDeleteRecords": [
-                1
-            ],
-            "canUpdateRecords": [
-                1
-            ],
+        "UpsertRowLevelPermissionRulesInput": {
             "objectMetadataId": [
                 565
-            ],
-            "predicateGroups": [
-                485
-            ],
-            "predicates": [
-                487
             ],
             "roleId": [
                 565
             ],
-            "ruleGrants": [
-                490
+            "rules": [
+                488
             ],
             "__typename": [
                 4
             ]
         },
-        "UpsertRowLevelPermissionPredicatesResult": {
+        "UpsertRowLevelPermissionRulesResult": {
             "predicateGroups": [
                 484
             ],
             "predicates": [
                 483
+            ],
+            "rules": [
+                487
             ],
             "__typename": [
                 4

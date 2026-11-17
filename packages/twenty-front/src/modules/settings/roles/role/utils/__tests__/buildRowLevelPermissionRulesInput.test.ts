@@ -1,0 +1,139 @@
+import { buildRowLevelPermissionRulesInput } from '@/settings/roles/role/utils/buildRowLevelPermissionRulesInput';
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from '~/generated-metadata/graphql';
+
+const RULE_OPERATIONS = {
+  canReadRecords: true,
+  canCreateRecords: false,
+  canUpdateRecords: false,
+  canSoftDeleteRecords: false,
+  canDestroyRecords: false,
+};
+
+const buildPredicateGroup = (
+  predicateGroup: Pick<
+    RowLevelPermissionPredicateGroup,
+    'id' | 'parentRowLevelPermissionPredicateGroupId'
+  > &
+    Partial<RowLevelPermissionPredicateGroup>,
+): RowLevelPermissionPredicateGroup => ({
+  roleId: 'role-id',
+  objectMetadataId: 'object-id',
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  positionInRowLevelPermissionPredicateGroup: 0,
+  canReadRecords: false,
+  canUpdateRecords: false,
+  canSoftDeleteRecords: false,
+  canDestroyRecords: false,
+  ...predicateGroup,
+});
+
+const buildPredicate = (
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    'id' | 'rowLevelPermissionPredicateGroupId'
+  > &
+    Partial<RowLevelPermissionPredicate>,
+): RowLevelPermissionPredicate => ({
+  roleId: 'role-id',
+  objectMetadataId: 'object-id',
+  fieldMetadataId: 'owner-field-id',
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  positionInRowLevelPermissionPredicateGroup: 0,
+  ...predicate,
+});
+
+describe('buildRowLevelPermissionRulesInput', () => {
+  it('nests each group under the rule of its group without a parent', () => {
+    const rules = buildRowLevelPermissionRulesInput({
+      predicateGroups: [
+        buildPredicateGroup({
+          id: 'owner-group',
+          parentRowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'owner-rule',
+        }),
+        buildPredicateGroup({
+          id: 'nested-group',
+          parentRowLevelPermissionPredicateGroupId: 'owner-group',
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+        }),
+        buildPredicateGroup({
+          id: 'team-group',
+          parentRowLevelPermissionPredicateGroupId: null,
+        }),
+      ],
+      predicates: [
+        buildPredicate({
+          id: 'owner-predicate',
+          rowLevelPermissionPredicateGroupId: 'owner-group',
+        }),
+        buildPredicate({
+          id: 'nested-predicate',
+          rowLevelPermissionPredicateGroupId: 'nested-group',
+        }),
+        buildPredicate({
+          id: 'team-predicate',
+          rowLevelPermissionPredicateGroupId: 'team-group',
+        }),
+      ],
+      ruleOperations: RULE_OPERATIONS,
+    });
+
+    expect(rules).toHaveLength(2);
+    expect(rules[0]).toMatchObject({
+      id: 'owner-rule',
+      ...RULE_OPERATIONS,
+      predicateGroups: [
+        {
+          id: 'owner-group',
+          predicates: [{ id: 'owner-predicate' }],
+          predicateGroups: [
+            {
+              id: 'nested-group',
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.OR,
+              predicates: [{ id: 'nested-predicate' }],
+              predicateGroups: [],
+            },
+          ],
+        },
+      ],
+    });
+    expect(rules[1]).toMatchObject({
+      id: undefined,
+      predicateGroups: [
+        { id: 'team-group', predicates: [{ id: 'team-predicate' }] },
+      ],
+    });
+  });
+
+  it('puts predicates in no group in a rule of their own', () => {
+    const rules = buildRowLevelPermissionRulesInput({
+      predicateGroups: [],
+      predicates: [
+        buildPredicate({
+          id: 'ungrouped-predicate',
+          rowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'ungrouped-rule',
+          positionInRowLevelPermissionPredicateGroup: 2,
+        }),
+      ],
+      ruleOperations: RULE_OPERATIONS,
+    });
+
+    expect(rules).toEqual([
+      {
+        id: 'ungrouped-rule',
+        ...RULE_OPERATIONS,
+        predicates: [
+          expect.objectContaining({ id: 'ungrouped-predicate', position: 2 }),
+        ],
+      },
+    ]);
+  });
+});

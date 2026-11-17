@@ -20,7 +20,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import {
@@ -604,19 +604,22 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
         ],
       );
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: rowLevelRoleId,
         objectMetadataId,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Acme',
+            predicates: [
+              {
+                fieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'Acme',
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
 

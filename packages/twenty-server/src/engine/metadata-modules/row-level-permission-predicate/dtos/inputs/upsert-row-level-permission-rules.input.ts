@@ -21,7 +21,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class RowLevelPermissionPredicateInput {
+export class RowLevelPermissionRulePredicateInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
@@ -52,61 +52,50 @@ export class RowLevelPermissionPredicateInput {
   @Field(() => String, { nullable: true })
   workspaceMemberSubFieldName?: string | null;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  rowLevelPermissionPredicateGroupId?: string | null;
-
   @Field(() => Number, { nullable: true })
-  positionInRowLevelPermissionPredicateGroup?: number | null;
+  position?: number | null;
 }
 
 @InputType()
-export class RowLevelPermissionPredicateGroupInput {
+export class RowLevelPermissionRulePredicateGroupInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   id?: string;
 
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  objectMetadataId: string;
-
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  parentRowLevelPermissionPredicateGroupId?: string | null;
-
   @Field(() => RowLevelPermissionPredicateGroupLogicalOperator)
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
 
   @Field(() => Number, { nullable: true })
-  positionInRowLevelPermissionPredicateGroup?: number | null;
+  position?: number | null;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRulePredicateInput)
+  @Field(() => [RowLevelPermissionRulePredicateInput], { nullable: true })
+  predicates?: RowLevelPermissionRulePredicateInput[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRulePredicateGroupInput)
+  @Field(() => [RowLevelPermissionRulePredicateGroupInput], { nullable: true })
+  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[];
+}
+
+@InputType()
+export class RowLevelPermissionRuleInput {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
 
   @IsBoolean()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   canReadRecords?: boolean;
 
-  @IsBoolean()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  canUpdateRecords?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  canSoftDeleteRecords?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  canDestroyRecords?: boolean;
-}
-
-@InputType({ isAbstract: true })
-export class RowLevelPermissionRuleGrantsInput {
   @IsBoolean()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
@@ -115,11 +104,6 @@ export class RowLevelPermissionRuleGrantsInput {
   @IsBoolean()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  canReadRecords?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
   canUpdateRecords?: boolean;
 
   @IsBoolean()
@@ -131,18 +115,24 @@ export class RowLevelPermissionRuleGrantsInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   canDestroyRecords?: boolean;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRulePredicateInput)
+  @Field(() => [RowLevelPermissionRulePredicateInput], { nullable: true })
+  predicates?: RowLevelPermissionRulePredicateInput[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRulePredicateGroupInput)
+  @Field(() => [RowLevelPermissionRulePredicateGroupInput], { nullable: true })
+  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[];
 }
 
 @InputType()
-export class RowLevelPermissionRuleGrantInput extends RowLevelPermissionRuleGrantsInput {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  rowLevelPermissionPredicateGroupId: string;
-}
-
-@InputType()
-export class UpsertRowLevelPermissionPredicatesInput extends RowLevelPermissionRuleGrantsInput {
+export class UpsertRowLevelPermissionRulesInput {
   @IsUUID()
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
@@ -155,20 +145,7 @@ export class UpsertRowLevelPermissionPredicatesInput extends RowLevelPermissionR
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RowLevelPermissionPredicateInput)
-  @Field(() => [RowLevelPermissionPredicateInput])
-  predicates: RowLevelPermissionPredicateInput[];
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => RowLevelPermissionPredicateGroupInput)
-  @Field(() => [RowLevelPermissionPredicateGroupInput])
-  predicateGroups: RowLevelPermissionPredicateGroupInput[];
-
-  @IsArray()
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => RowLevelPermissionRuleGrantInput)
-  @Field(() => [RowLevelPermissionRuleGrantInput], { nullable: true })
-  ruleGrants?: RowLevelPermissionRuleGrantInput[];
+  @Type(() => RowLevelPermissionRuleInput)
+  @Field(() => [RowLevelPermissionRuleInput])
+  rules: RowLevelPermissionRuleInput[];
 }

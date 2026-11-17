@@ -4033,7 +4033,7 @@ export type Mutation = {
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
-  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -5568,8 +5568,8 @@ export type MutationUpsertPermissionFlagsArgs = {
 };
 
 
-export type MutationUpsertRowLevelPermissionPredicatesArgs = {
-  input: UpsertRowLevelPermissionPredicatesInput;
+export type MutationUpsertRowLevelPermissionRulesArgs = {
+  input: UpsertRowLevelPermissionRulesInput;
 };
 
 
@@ -7127,35 +7127,10 @@ export type RowLevelPermissionPredicateGroup = {
   rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
 };
 
-export type RowLevelPermissionPredicateGroupInput = {
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['UUID']['input'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
-};
-
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND = 'AND',
   OR = 'OR'
 }
-
-export type RowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['JSON']['input']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
-};
 
 export enum RowLevelPermissionPredicateOperand {
   CONTAINS = 'CONTAINS',
@@ -7187,13 +7162,35 @@ export type RowLevelPermissionRule = {
   objectMetadataId: Scalars['UUID']['output'];
 };
 
-export type RowLevelPermissionRuleGrantInput = {
+export type RowLevelPermissionRuleInput = {
   canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
   canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  rowLevelPermissionPredicateGroupId: Scalars['UUID']['input'];
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateGroupInput = {
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateInput = {
+  fieldMetadataId: Scalars['UUID']['input'];
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  operand: RowLevelPermissionPredicateOperand;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['JSON']['input']>;
+  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RowLevelRecordsPermissions = {
@@ -8379,23 +8376,17 @@ export type UpsertPermissionFlagsInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type UpsertRowLevelPermissionPredicatesInput = {
-  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+export type UpsertRowLevelPermissionRulesInput = {
   objectMetadataId: Scalars['UUID']['input'];
-  predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
-  predicates: Array<RowLevelPermissionPredicateInput>;
   roleId: Scalars['UUID']['input'];
-  ruleGrants?: InputMaybe<Array<RowLevelPermissionRuleGrantInput>>;
+  rules: Array<RowLevelPermissionRuleInput>;
 };
 
-export type UpsertRowLevelPermissionPredicatesResult = {
-  __typename?: 'UpsertRowLevelPermissionPredicatesResult';
+export type UpsertRowLevelPermissionRulesResult = {
+  __typename?: 'UpsertRowLevelPermissionRulesResult';
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+  rules: Array<RowLevelPermissionRule>;
 };
 
 export type UpsertViewWidgetInput = {
