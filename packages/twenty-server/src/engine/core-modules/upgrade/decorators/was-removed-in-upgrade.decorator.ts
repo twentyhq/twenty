@@ -1,10 +1,7 @@
 import 'reflect-metadata';
 
 import { type Equal, type Expect } from 'twenty-shared/testing';
-import {
-  type BrandedType,
-  type HasBrandedType,
-} from 'twenty-shared/types';
+import { type BrandedType, type HasBrandedType } from 'twenty-shared/types';
 
 import { defineUpgradeMetadataOnClassOrProperty } from 'src/engine/core-modules/upgrade/decorators/upgrade-decorator-metadata.util';
 
@@ -14,11 +11,9 @@ export type WasRemovedInUpgradeOptions = {
 
 export type WasRemovedInUpgrade<T> = BrandedType<T, 'wasRemovedInUpgrade'>;
 
-export type UnwrapWasRemovedInUpgrade<T> = [NonNullable<T>] extends [
-  WasRemovedInUpgrade<infer TUnwrapped>,
-]
-  ? TUnwrapped | Extract<T, null | undefined>
-  : T;
+// Distributive: a brand intersects each union member, so stripping it is per member
+export type UnwrapWasRemovedInUpgrade<T> =
+  T extends WasRemovedInUpgrade<infer TUnwrapped> ? TUnwrapped : T;
 
 // NonNullable first: a brand is intersected with the non-null type, so a nullable property carries it on that member only
 type WasRemovedInUpgradeKeys<TEntity> = {
