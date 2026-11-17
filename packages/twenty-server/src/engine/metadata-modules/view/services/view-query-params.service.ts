@@ -131,12 +131,23 @@ export class ViewQueryParamsService {
           return null;
         }
 
-        return {
-          [field.name]:
-            sort.direction === ViewSortDirection.DESC
-              ? OrderByDirection.DescNullsLast
-              : OrderByDirection.AscNullsFirst,
-        };
+        const direction =
+          sort.direction === ViewSortDirection.DESC
+            ? OrderByDirection.DescNullsLast
+            : OrderByDirection.AscNullsFirst;
+
+        const relationTargetField = isDefined(
+          sort.relationTargetFieldMetadataId,
+        )
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: sort.relationTargetFieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : undefined;
+
+        return isDefined(relationTargetField)
+          ? { [field.name]: { [relationTargetField.name]: direction } }
+          : { [field.name]: direction };
       })
       .filter(isDefined);
 
