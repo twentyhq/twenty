@@ -2,17 +2,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const groupNavigationMenuItemsByContainer = ({
+export const groupNavigationMenuItemsByContainer = <
+  TItem extends Pick<NavigationMenuItem, 'parentId'>,
+>({
   items,
   containerId,
 }: {
-  items: NavigationMenuItem[];
+  items: TItem[];
   containerId: string | null;
 }) => {
-  const isTopLevelItem = (item: NavigationMenuItem) =>
+  const isTopLevelItem = (item: TItem) =>
     (item.parentId ?? null) === containerId;
 
-  const folderChildrenById = new Map<string, NavigationMenuItem[]>();
+  const folderChildrenById = new Map<string, TItem[]>();
 
   for (const item of items) {
     if (isDefined(item.parentId) && !isTopLevelItem(item)) {

@@ -1,4 +1,5 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { getActiveNavigationMenuTab } from '@/navigation-menu-item/common/utils/getActiveNavigationMenuTab';
@@ -19,4 +20,5 @@ export const useActiveNavigationMenuTab = () =>
     isLayoutCustomizationModeEnabled: useAtomStateValue(
       isLayoutCustomizationModeEnabledState,
     ),
+    isMobile: useIsMobile(),
   });

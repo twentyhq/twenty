@@ -1,8 +1,6 @@
 import { groupNavigationMenuItemsByContainer } from '@/navigation-menu-item/common/utils/groupNavigationMenuItemsByContainer';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-const buildItem = (id: string, parentId: string | null) =>
-  ({ id, parentId }) as NavigationMenuItem;
+const buildItem = (id: string, parentId: string | null) => ({ id, parentId });
 
 describe('groupNavigationMenuItemsByContainer', () => {
   it('should split root items from folder children', () => {
