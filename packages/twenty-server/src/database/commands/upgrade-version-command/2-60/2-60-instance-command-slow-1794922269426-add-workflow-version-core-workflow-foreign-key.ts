@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredInstanceCommand('2.60.0', 1794912567507, { type: 'slow' })
+@RegisteredInstanceCommand('2.60.0', 1794922269426, { type: 'slow' })
 export class AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand
   implements SlowInstanceCommand
 {
