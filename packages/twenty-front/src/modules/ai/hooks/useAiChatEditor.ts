@@ -6,7 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
-import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { serializeAiChatEditorDraft } from '@/ai/utils/serializeAiChatEditorDraft';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
@@ -32,7 +32,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { useLingui } from '@lingui/react/macro';
 
 export const useAiChatEditor = () => {
@@ -104,16 +103,12 @@ export const useAiChatEditor = () => {
           return false;
         }
 
-        uploadFiles(pastedFiles);
+        uploadFiles(pastedFiles, draftKey);
         return true;
       },
     },
     onUpdate: (currentEditor) => {
-      const text = turnIntoEmptyStringIfWhitespacesOnly(
-        currentEditor.getText({ blockSeparator: '\n' }),
-      );
-      const serializedDraft =
-        text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
+      const serializedDraft = serializeAiChatEditorDraft(currentEditor);
 
       setAiChatDraftsByThreadId((prev) => ({
         ...prev,

@@ -69,10 +69,6 @@ const chatObjectMetadataItemAtom = atom<Pick<EnrichedObjectMetadataItem, 'id'>>(
   { id: 'chat-object' },
 );
 
-jest.mock('@/ai/components/AiChatInstanceSendEffect', () => ({
-  AiChatInstanceSendEffect: () => null,
-}));
-
 jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   objectMetadataItemFamilySelector: {
     selectorFamily: () => chatObjectMetadataItemAtom,

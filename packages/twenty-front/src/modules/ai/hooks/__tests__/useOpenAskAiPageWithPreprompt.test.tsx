@@ -8,7 +8,7 @@ import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdS
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai/states/aiChatPrepromptState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -43,7 +43,12 @@ jest.mock('@/ai/hooks/useAiChatFileUpload', () => ({
     uploadFiles: () =>
       new Promise<AiChatFileUIPart[]>((resolve) => {
         finishUpload = () => {
-          jotaiStore.set(aiChatUploadedFilesState.atom, [uploadedFile]);
+          jotaiStore.set(
+            aiChatUploadedFilesFamilyState.atomFamily({
+              threadId: NEW_CHAT_THREAD_ID,
+            }),
+            [uploadedFile],
+          );
           resolve([uploadedFile]);
         };
       }),
@@ -62,7 +67,12 @@ describe('useOpenAskAiPageWithPreprompt', () => {
   beforeEach(() => {
     jotaiStore.set(aiChatDraftsByThreadIdState.atom, {});
     jotaiStore.set(aiChatPrepromptState.atom, null);
-    jotaiStore.set(aiChatUploadedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({
+        threadId: NEW_CHAT_THREAD_ID,
+      }),
+      [],
+    );
   });
 
   it('sends the prompt in the new chat once the files have uploaded', async () => {
@@ -89,9 +99,13 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       serializedDocument: 'Import these contacts',
       mode: 'SEND',
     });
-    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([
-      uploadedFile,
-    ]);
+    expect(
+      jotaiStore.get(
+        aiChatUploadedFilesFamilyState.atomFamily({
+          threadId: NEW_CHAT_THREAD_ID,
+        }),
+      ),
+    ).toEqual([uploadedFile]);
   });
 
   it('drops the prompt and its files when the user switches chats during the upload', async () => {
@@ -115,7 +129,13 @@ describe('useOpenAskAiPageWithPreprompt', () => {
 
     expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({});
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toBeNull();
-    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([]);
+    expect(
+      jotaiStore.get(
+        aiChatUploadedFilesFamilyState.atomFamily({
+          threadId: NEW_CHAT_THREAD_ID,
+        }),
+      ),
+    ).toEqual([]);
   });
 
   it('addresses the prompt to the default recipients instead of a leftover draft', async () => {

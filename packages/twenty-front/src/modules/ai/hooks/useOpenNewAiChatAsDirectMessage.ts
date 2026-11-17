@@ -10,8 +10,8 @@ import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 
@@ -32,8 +32,20 @@ export const useOpenNewAiChatAsDirectMessage = () => {
       serializedDraft: string;
     }) => {
       if (
-        isNonEmptyArray(store.get(aiChatSelectedFilesState.atom)) ||
-        isNonEmptyArray(store.get(aiChatUploadedFilesState.atom))
+        isNonEmptyArray(
+          store.get(
+            aiChatSelectedFilesFamilyState.atomFamily({
+              threadId: newChatThreadId,
+            }),
+          ),
+        ) ||
+        isNonEmptyArray(
+          store.get(
+            aiChatUploadedFilesFamilyState.atomFamily({
+              threadId: newChatThreadId,
+            }),
+          ),
+        )
       ) {
         enqueueToast({
           status: 'error',

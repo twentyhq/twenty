@@ -27,6 +27,7 @@ import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHi
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { AiChatEditorDraftSyncEffect } from '@/ai/components/internal/AiChatEditorDraftSyncEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
@@ -196,6 +197,7 @@ const EditableAiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatEditorDraftSyncEffect editor={editor} />
       <AiChatSentMessageHandOffEffect
         editor={editor}
         isComposerCentered={isComposerCentered}

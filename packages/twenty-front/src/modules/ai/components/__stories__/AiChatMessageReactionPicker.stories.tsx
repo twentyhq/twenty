@@ -53,7 +53,6 @@ const meta: Meta<typeof AiChatMessageReactionPicker> = {
   title: 'Modules/AI/AiChatMessageReactionPicker',
   component: AiChatMessageReactionPicker,
   decorators: [
-    AiChatInstanceDecorator,
     (Story) => (
       <>
         <ReactionStateEffect />
@@ -63,6 +62,7 @@ const meta: Meta<typeof AiChatMessageReactionPicker> = {
         </StyledReactions>
       </>
     ),
+    AiChatInstanceDecorator,
     ToastDecorator,
     RootDecorator,
     ComponentDecorator,

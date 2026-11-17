@@ -38,9 +38,9 @@ import { getAiChatMessageAuthor } from '@/ai/utils/getAiChatMessageAuthor';
 import { getAiChatMessageQuoteSource } from '@/ai/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai/utils/prependAiChatQuoteToText';
 import { aiChatLastSentBrowsingContextFamilyState } from '@/ai/states/aiChatLastSentBrowsingContextFamilyState';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
 import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
@@ -128,8 +128,6 @@ export const useAiChat = () => {
     useRefreshAiChatThreadPermissions();
   const store = useStore();
 
-  const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
-
   const setAiChatDraftsByThreadId = useSetAtomState(
     aiChatDraftsByThreadIdState,
   );
@@ -151,9 +149,12 @@ export const useAiChat = () => {
       const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily(
         { threadId },
       );
+      const uploadedFilesAtom = aiChatUploadedFilesFamilyState.atomFamily({
+        threadId,
+      });
       const aiChatUploadedFiles = isDirectMessage
         ? []
-        : store.get(aiChatUploadedFilesState.atom);
+        : store.get(uploadedFilesAtom);
       const browsingContext = getBrowsingContext();
       const lastSentBrowsingContextAtom =
         aiChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
@@ -228,7 +229,7 @@ export const useAiChat = () => {
       }));
 
       if (!isDirectMessage) {
-        setAiChatUploadedFiles([]);
+        store.set(uploadedFilesAtom, []);
       }
 
       store.set(isSendingMessageAtom, true);
@@ -345,7 +346,7 @@ export const useAiChat = () => {
           ...prev,
           [threadId]: serializedContentToSend,
         }));
-        setAiChatUploadedFiles((currentUploadedFiles) => [
+        store.set(uploadedFilesAtom, (currentUploadedFiles) => [
           ...aiChatUploadedFiles,
           ...currentUploadedFiles,
         ]);
@@ -376,7 +377,6 @@ export const useAiChat = () => {
     [
       store,
       getBrowsingContext,
-      setAiChatUploadedFiles,
       setAiChatDraftsByThreadId,
       modelIdForRequest,
       aiModels,
@@ -543,7 +543,9 @@ export const useAiChat = () => {
       return;
     }
 
-    const aiChatSelectedFiles = store.get(aiChatSelectedFilesState.atom);
+    const aiChatSelectedFiles = store.get(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
+    );
 
     if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
       enqueueToast({

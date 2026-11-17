@@ -7,7 +7,7 @@ import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { type AiChatPrepromptMode } from '@/ai/states/aiChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatUserSelectedModelTierState } from '@/ai/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -29,7 +29,6 @@ export const useOpenAskAiPageWithPreprompt = () => {
   );
   const { chatTier } = useWorkspaceAiModelTiers();
   const { uploadFiles } = useAiChatFileUpload();
-  const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
 
   const openAskAiPageWithPreprompt = async ({
     serializedDocument,
@@ -61,17 +60,21 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return newAiChatThreadId;
     }
 
-    const uploadedFiles = await uploadFiles(files);
+    const uploadedFiles = await uploadFiles(files, newAiChatThreadId);
 
     const isNewChatStillOpen = Object.values(
       store.get(aiChatOpenThreadIdByInstanceIdState.atom),
     ).includes(newAiChatThreadId);
 
     if (!isNewChatStillOpen) {
-      setAiChatUploadedFiles((previousUploadedFiles) =>
-        previousUploadedFiles.filter(
-          (uploadedFile) => !uploadedFiles.includes(uploadedFile),
-        ),
+      store.set(
+        aiChatUploadedFilesFamilyState.atomFamily({
+          threadId: newAiChatThreadId,
+        }),
+        (previousUploadedFiles) =>
+          previousUploadedFiles.filter(
+            (uploadedFile) => !uploadedFiles.includes(uploadedFile),
+          ),
       );
 
       return null;

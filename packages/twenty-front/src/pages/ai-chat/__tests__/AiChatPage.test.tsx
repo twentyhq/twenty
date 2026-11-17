@@ -20,10 +20,6 @@ import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock('@/ai/components/AiChatInstanceSendEffect', () => ({
-  AiChatInstanceSendEffect: () => null,
-}));
-
 jest.mock('@/ai/components/AiChatTab', () => {
   const { useContext } = jest.requireActual('react');
   const { AiChatSurfaceContext } = jest.requireActual(

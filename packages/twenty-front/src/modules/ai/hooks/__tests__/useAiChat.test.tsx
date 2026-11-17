@@ -27,8 +27,8 @@ import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMe
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -449,15 +449,19 @@ describe('useAiChat', () => {
       AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
-    jotaiStore.set(aiChatSelectedFilesState.atom, [
-      new File(['brief'], 'brief.pdf'),
-    ]);
+    jotaiStore.set(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [new File(['brief'], 'brief.pdf')],
+    );
 
     await send(result);
 
     expect(restoreEditorContent).not.toHaveBeenCalled();
 
-    jotaiStore.set(aiChatSelectedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [],
+    );
 
     await send(result);
 
@@ -790,19 +794,25 @@ describe('useAiChat', () => {
     });
     const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
 
-    jotaiStore.set(aiChatUploadedFilesState.atom, [
-      {
-        type: 'file',
-        fileId: 'file-id',
-        filename: 'brief.pdf',
-        mediaType: 'application/pdf',
-        url: 'https://example.com/brief.pdf',
-      },
-    ]);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [
+        {
+          type: 'file',
+          fileId: 'file-id',
+          filename: 'brief.pdf',
+          mediaType: 'application/pdf',
+          url: 'https://example.com/brief.pdf',
+        },
+      ],
+    );
 
     await send(result);
 
-    jotaiStore.set(aiChatUploadedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [],
+    );
 
     expect(mutate).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });

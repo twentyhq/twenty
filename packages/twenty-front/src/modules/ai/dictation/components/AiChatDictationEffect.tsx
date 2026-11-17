@@ -7,15 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
-import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';
+import { dictationEngineComponentState } from '@/ai/dictation/states/dictationEngineComponentState';
 import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
-import { isDictationRecordingState } from '@/ai/dictation/states/isDictationRecordingState';
+import { isDictationRecordingComponentState } from '@/ai/dictation/states/isDictationRecordingComponentState';
 import { getDictationFailureMessage } from '@/ai/dictation/utils/getDictationFailureMessage';
 import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage';
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -32,9 +33,12 @@ export const AiChatDictationEffect = ({
   const store = useStore();
   const { instanceId } = useAiChatInstance();
 
-  const [dictationEngine, setDictationEngine] =
-    useAtomState(dictationEngineState);
-  const setIsDictationRecording = useSetAtomState(isDictationRecordingState);
+  const [dictationEngine, setDictationEngine] = useAtomComponentState(
+    dictationEngineComponentState,
+  );
+  const setIsDictationRecording = useSetAtomComponentState(
+    isDictationRecordingComponentState,
+  );
   const setHasWebSpeechProvenSilent = useSetAtomState(
     hasWebSpeechProvenSilentState,
   );

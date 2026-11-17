@@ -1,27 +1,18 @@
 import { Fragment } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AiChatMessagesFetchEffect } from '@/ai/components/AiChatMessagesFetchEffect';
 import { AiChatStreamSubscriptionEffect } from '@/ai/components/AiChatStreamSubscriptionEffect';
-import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
+import { useIsAiChatRuntimeEnabled } from '@/ai/hooks/useIsAiChatRuntimeEnabled';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 
 export const AiChatRuntimeEffects = () => {
-  // The session starts the first time the chat is opened
-  const aiChatUISessionStartTime = useAtomStateValue(
-    aiChatUISessionStartTimeState,
-  );
+  const isAiChatRuntimeEnabled = useIsAiChatRuntimeEnabled();
   const aiChatOpenThreadIdByInstanceId = useAtomStateValue(
     aiChatOpenThreadIdByInstanceIdState,
   );
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
 
-  if (!isDefined(aiChatUISessionStartTime) || isWorkspaceSuspended) {
+  if (!isAiChatRuntimeEnabled) {
     return null;
   }
 

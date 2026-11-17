@@ -5,7 +5,8 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -550,11 +551,19 @@ export const DoneSteps: Story = {
       within(followUpStepCard).getByRole('button', { name: 'Continue thread' }),
     );
 
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        FOLLOW_UP_DEALS_CHAT_THREAD_ID,
-      ),
-    );
+    await waitFor(() => {
+      const askAiPageId = jotaiStore
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.pageId;
+
+      expect(
+        jotaiStore.get(
+          askAiSidePanelThreadIdComponentState.atomFamily({
+            instanceId: askAiPageId ?? '',
+          }),
+        ),
+      ).toBe(FOLLOW_UP_DEALS_CHAT_THREAD_ID);
+    });
   },
 };
 

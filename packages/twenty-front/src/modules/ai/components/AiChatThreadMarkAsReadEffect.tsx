@@ -7,7 +7,7 @@ import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
-import { aiChatThreadOpenViewCountState } from '@/ai/states/aiChatThreadOpenViewCountState';
+import { aiChatThreadOpenViewCountFamilyState } from '@/ai/states/aiChatThreadOpenViewCountFamilyState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
@@ -57,12 +57,16 @@ export const AiChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(aiChatThreadOpenViewCountState.atom, (count) => count + 1);
+    const openViewCountAtom = aiChatThreadOpenViewCountFamilyState.atomFamily({
+      threadId,
+    });
+
+    store.set(openViewCountAtom, (count) => count + 1);
 
     return () => {
-      store.set(aiChatThreadOpenViewCountState.atom, (count) => count - 1);
+      store.set(openViewCountAtom, (count) => count - 1);
 
-      if (store.get(aiChatThreadOpenViewCountState.atom) !== 0) {
+      if (store.get(openViewCountAtom) !== 0) {
         return;
       }
 
