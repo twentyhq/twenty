@@ -69,10 +69,10 @@ const buildReadableColumnSql = async ({
     ...hidingConditions.map(({ parameters }) => parameters),
   );
 
-  return renderNullifiedColumn(
+  return renderNullifiedColumn({
     quotedColumn,
-    hidingConditions.map(({ sql }) => sql),
-  );
+    nullifyConditions: hidingConditions.map(({ sql }) => sql),
+  });
 };
 
 const buildFieldPathSql = async ({

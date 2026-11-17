@@ -528,28 +528,36 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
-      // Creation only: a stored field cannot become computed, so an update never makes a new computed field
-      ...(isComputedField(flatFieldMetadataToValidate) &&
+    );
+
+    // Creation only: a stored field cannot become computed, so an update never makes a new computed field
+    const isComputedFieldWithoutFeatureFlag =
+      isComputedField(flatFieldMetadataToValidate) &&
       !(
         additionalCacheDataMaps.featureFlagsMap[
           FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
         ] ?? false
-      )
-        ? [
-            buildFlatFieldMetadataComputationValidationError({
-              flatFieldMetadata: flatFieldMetadataToValidate,
-              message: 'computed fields are not enabled for this workspace',
-            }),
-          ]
-        : validateFlatFieldMetadataComputation({
-            flatFieldMetadataToValidate,
-            // The final maps: a field created or renamed in the same migration may be validated after this one
-            ...buildUniversalComputedFieldSchemaReader({
-              flatObjectMetadataMaps,
-              flatFieldMetadataMapsList: [finalFlatEntityMaps],
-            }),
-          })),
-    );
+      );
+
+    if (isComputedFieldWithoutFeatureFlag) {
+      validationResult.errors.push(
+        buildFlatFieldMetadataComputationValidationError({
+          flatFieldMetadata: flatFieldMetadataToValidate,
+          message: 'computed fields are not enabled for this workspace',
+        }),
+      );
+    } else {
+      validationResult.errors.push(
+        ...validateFlatFieldMetadataComputation({
+          flatFieldMetadataToValidate,
+          // The final maps: a field created or renamed in the same migration may be validated after this one
+          ...buildUniversalComputedFieldSchemaReader({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMapsList: [finalFlatEntityMaps],
+          }),
+        }),
+      );
+    }
 
     validationResult.errors.push(
       ...this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(

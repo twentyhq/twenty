@@ -8,7 +8,7 @@ import {
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // A derived table keeping the table's alias exposes computed columns like stored ones; one reading another sits a level above
-export const buildComputedTableSource = ({
+export const buildComputedTableSourceOrThrow = ({
   tableExpression,
   alias,
   computedColumnSqlByColumnName,

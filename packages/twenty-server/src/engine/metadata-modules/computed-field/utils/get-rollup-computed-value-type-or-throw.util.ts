@@ -13,7 +13,7 @@ export const getRollupComputedValueTypeOrThrow = ({
   computation: { operation, expression },
   expressionValueType,
 }: {
-  computation: FieldMetadataRollupComputation;
+  computation: Pick<FieldMetadataRollupComputation, 'operation' | 'expression'>;
   expressionValueType: ComputedFieldValueType | undefined;
 }): ComputedFieldValueType | undefined => {
   if (operation === 'COUNT') {

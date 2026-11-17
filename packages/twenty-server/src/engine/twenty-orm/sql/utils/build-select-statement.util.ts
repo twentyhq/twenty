@@ -6,7 +6,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
 import { type WrittenRows } from 'src/engine/twenty-orm/sql/types/written-rows.type';
-import { buildComputedTableSource } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
+import { buildComputedTableSourceOrThrow } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source-or-throw.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
   TwentyOrmException,
@@ -103,10 +103,13 @@ export type SelectStatementState = {
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
-export const renderNullifiedColumn = (
-  quotedColumn: string,
-  nullifyConditions: string[],
-): string =>
+export const renderNullifiedColumn = ({
+  quotedColumn,
+  nullifyConditions,
+}: {
+  quotedColumn: string;
+  nullifyConditions: string[];
+}): string =>
   `CASE WHEN ${nullifyConditions
     .map((nullifyCondition) => `(${nullifyCondition})`)
     .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
@@ -133,7 +136,7 @@ const renderProjectedColumn = ({
     return quotedColumn;
   }
 
-  return renderNullifiedColumn(quotedColumn, nullifyConditions);
+  return renderNullifiedColumn({ quotedColumn, nullifyConditions });
 };
 
 export const normaliseColumnExpression = (
@@ -495,7 +498,7 @@ const buildTableSource = ({
   tableExpression: string;
   alias: string;
 }): string =>
-  buildComputedTableSource({
+  buildComputedTableSourceOrThrow({
     tableExpression,
     alias,
     computedColumnSqlByColumnName: state.computedColumnSqlByAlias[alias] ?? {},

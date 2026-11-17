@@ -67,7 +67,6 @@ export type RelationFieldManifest<
         computation?: undefined;
         relationTargetFieldMetadataUniversalIdentifier: string;
       }
-    // A filtered relation has no inverse field
     | {
         computation: FieldMetadataFilteredRelationComputation;
         relationTargetFieldMetadataUniversalIdentifier?: undefined;

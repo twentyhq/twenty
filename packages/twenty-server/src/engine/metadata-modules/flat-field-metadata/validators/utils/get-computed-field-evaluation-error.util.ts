@@ -16,7 +16,6 @@ import { resolveComputedFieldSlotExpressionsOrThrow } from 'src/engine/metadata-
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-// Follows the computed fields the field reads, to refuse one that ends up reading itself
 const assertComputationCanBeEvaluatedOrThrow = ({
   field,
   schemaReader,
