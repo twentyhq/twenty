@@ -5,10 +5,15 @@ import {
   BillingArrangementSeatCapMode,
   BillingArrangementStatus,
   BillingArrangementType,
+  UsageOperationType,
+  UsageResourceType,
+  UsageUnit,
 } from '~/generated-admin/graphql';
 
 const formatNumber = (value: number, options?: { decimals?: number }) =>
   value.toFixed(options?.decimals ?? 0);
+
+const formatLimitValue = ({ value }: { value: number }) => `${value} credits`;
 
 const arrangement = (
   overrides: Partial<AdminBillingArrangement>,
@@ -24,7 +29,7 @@ const arrangement = (
   creditAllowance: null,
   stripeCreditNoteId: null,
   creditGrantId: null,
-  usageLimitId: null,
+  usageLimit: null,
   startsAt: '2026-11-01T00:00:00.000Z',
   endDate: null,
   status: BillingArrangementStatus.ACTIVE,
@@ -38,6 +43,7 @@ const format = (overrides: Partial<AdminBillingArrangement>) =>
   formatAdminBillingArrangementDetails({
     arrangement: arrangement(overrides),
     formatNumber,
+    formatLimitValue,
   });
 
 describe('formatAdminBillingArrangementDetails', () => {
@@ -82,5 +88,29 @@ describe('formatAdminBillingArrangementDetails', () => {
         stripeDiscountId: 'di_123',
       }),
     ).toBe('di_123');
+  });
+
+  it('shows the scope, value and period of a limit override', () => {
+    expect(
+      format({
+        type: BillingArrangementType.LIMIT_OVERRIDE,
+        usageLimit: {
+          __typename: 'UsageLimit',
+          id: '20202020-0000-4000-8000-000000000002',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          periodCount: 1,
+          periodUnit: 'week',
+          unit: UsageUnit.CREDIT,
+          limitValue: '500',
+        },
+      }),
+    ).toBe('AI · Chats · 500 credits · Week');
+  });
+
+  it('says the limit was removed once the override ended', () => {
+    expect(
+      format({ type: BillingArrangementType.LIMIT_OVERRIDE, usageLimit: null }),
+    ).toBe('Limit removed');
   });
 });

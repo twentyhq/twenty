@@ -207,7 +207,7 @@ export type AdminPanelWorkspaceBillingArrangement = {
   stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
   stripeDiscountId?: Maybe<Scalars['String']['output']>;
   type: BillingArrangementType;
-  usageLimitId?: Maybe<Scalars['UUID']['output']>;
+  usageLimit?: Maybe<UsageLimit>;
 };
 
 export type AdminPanelWorkspaceCreditGrant = {
@@ -1234,6 +1234,23 @@ export type UsageBreakdownItem = {
   label?: Maybe<Scalars['String']['output']>;
   userCreditsUsed: Scalars['Float']['output'];
   workspaceCreditsUsed: Scalars['Float']['output'];
+};
+
+export type UsageLimit = {
+  __typename?: 'UsageLimit';
+  burstValue?: Maybe<Scalars['BigInt']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  limitKind: Scalars['String']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['output'];
+  periodUnit: Scalars['String']['output'];
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+  unit: UsageUnit;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export enum UsageOperationType {

@@ -16,6 +16,7 @@ import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/q
 import { type AdminBillingArrangement } from '@/settings/admin-panel/types/AdminBillingArrangement';
 import { formatAdminBillingArrangementDetails } from '@/settings/admin-panel/utils/formatAdminBillingArrangementDetails';
 import { formatAdminBillingArrangementEndDate } from '@/settings/admin-panel/utils/formatAdminBillingArrangementEndDate';
+import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
@@ -36,6 +37,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
 }: SettingsAdminWorkspaceBillingArrangementsSectionProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
+  const { formatLimitValue } = useUsageLimitFormatter();
   const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
@@ -92,6 +94,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
                 text={formatAdminBillingArrangementDetails({
                   arrangement: item,
                   formatNumber,
+                  formatLimitValue,
                 })}
               />
             ),

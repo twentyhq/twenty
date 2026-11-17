@@ -9,12 +9,16 @@ import { type UserInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/user-
 import { fromBillingArrangementEntityToDto } from 'src/engine/core-modules/admin-panel/utils/from-billing-arrangement-entity-to-dto.util';
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
+import { type UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
+import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
+import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class AdminPanelBillingArrangementService {
   constructor(
     private readonly billingArrangementService: BillingArrangementService,
+    private readonly usageLimitService: UsageLimitService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -24,11 +28,19 @@ export class AdminPanelBillingArrangementService {
   ): Promise<AdminPanelWorkspaceBillingArrangementDTO[]> {
     const arrangements =
       await this.billingArrangementService.findArrangements(workspaceId);
-    const operatorsById = await this.findOperatorsById(arrangements);
+    const [operatorsById, usageLimitsById] = await Promise.all([
+      this.findOperatorsById(arrangements),
+      this.findUsageLimitsById({ workspaceId, arrangements }),
+    ]);
     const now = new Date();
 
     return arrangements.map((arrangement) =>
-      fromBillingArrangementEntityToDto({ arrangement, now, operatorsById }),
+      fromBillingArrangementEntityToDto({
+        arrangement,
+        now,
+        operatorsById,
+        usageLimitsById,
+      }),
     );
   }
 
@@ -59,6 +71,36 @@ export class AdminPanelBillingArrangementService {
       users.map(({ id, email, firstName, lastName, createdAt }) => [
         id,
         { id, email, firstName, lastName, createdAt },
+      ]),
+    );
+  }
+
+  private async findUsageLimitsById({
+    workspaceId,
+    arrangements,
+  }: {
+    workspaceId: string;
+    arrangements: BillingArrangementEntity[];
+  }): Promise<Map<string, UsageLimitDTO>> {
+    const usageLimitIds = [
+      ...new Set(
+        arrangements.map(({ usageLimitId }) => usageLimitId).filter(isDefined),
+      ),
+    ];
+
+    if (usageLimitIds.length === 0) {
+      return new Map();
+    }
+
+    const usageLimits = await this.usageLimitService.findByIds({
+      workspaceId,
+      usageLimitIds,
+    });
+
+    return new Map(
+      usageLimits.map((usageLimit) => [
+        usageLimit.id,
+        fromUsageLimitEntityToDto(usageLimit),
       ]),
     );
   }

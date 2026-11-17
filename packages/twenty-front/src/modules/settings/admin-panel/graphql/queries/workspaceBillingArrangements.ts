@@ -16,7 +16,15 @@ export const WORKSPACE_BILLING_ARRANGEMENTS = gql`
       creditAllowance
       stripeCreditNoteId
       creditGrantId
-      usageLimitId
+      usageLimit {
+        id
+        resourceType
+        operationType
+        periodCount
+        periodUnit
+        unit
+        limitValue
+      }
       startsAt
       endDate
       status

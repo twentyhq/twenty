@@ -6,6 +6,7 @@ import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/b
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import { BillingArrangementStatus } from 'src/engine/core-modules/billing/enums/billing-arrangement-status.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
 
 @ObjectType('AdminPanelWorkspaceBillingArrangement')
 export class AdminPanelWorkspaceBillingArrangementDTO {
@@ -39,8 +40,8 @@ export class AdminPanelWorkspaceBillingArrangementDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   creditGrantId: string | null;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  usageLimitId: string | null;
+  @Field(() => UsageLimitDTO, { nullable: true })
+  usageLimit: UsageLimitDTO | null;
 
   @Field(() => Date)
   startsAt: Date;

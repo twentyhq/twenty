@@ -5,16 +5,19 @@ import { type UserInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/user-
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 import { getBillingArrangementStatus } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-status.util';
+import { type UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 export const fromBillingArrangementEntityToDto = ({
   arrangement,
   now,
   operatorsById,
+  usageLimitsById,
 }: {
   arrangement: BillingArrangementEntity;
   now: Date;
   operatorsById: Map<string, UserInfoDTO>;
+  usageLimitsById: Map<string, UsageLimitDTO>;
 }): AdminPanelWorkspaceBillingArrangementDTO => ({
   id: arrangement.id,
   type: arrangement.type,
@@ -28,7 +31,9 @@ export const fromBillingArrangementEntityToDto = ({
     : null,
   stripeCreditNoteId: arrangement.stripeCreditNoteId,
   creditGrantId: arrangement.creditGrantId,
-  usageLimitId: arrangement.usageLimitId,
+  usageLimit: isDefined(arrangement.usageLimitId)
+    ? (usageLimitsById.get(arrangement.usageLimitId) ?? null)
+    : null,
   startsAt: arrangement.startsAt,
   endDate: getBillingArrangementEndDate(arrangement),
   status: getBillingArrangementStatus({ arrangement, now }),

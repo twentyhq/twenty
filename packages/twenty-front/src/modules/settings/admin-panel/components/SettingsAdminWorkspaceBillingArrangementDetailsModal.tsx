@@ -24,6 +24,7 @@ import { type AdminBillingArrangement } from '@/settings/admin-panel/types/Admin
 import { formatAdminBillingArrangementDetails } from '@/settings/admin-panel/utils/formatAdminBillingArrangementDetails';
 import { formatAdminBillingArrangementEndDate } from '@/settings/admin-panel/utils/formatAdminBillingArrangementEndDate';
 import { formatAdminBillingArrangementOperator } from '@/settings/admin-panel/utils/formatAdminBillingArrangementOperator';
+import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -56,6 +57,7 @@ export const SettingsAdminWorkspaceBillingArrangementDetailsModal = ({
 }: SettingsAdminWorkspaceBillingArrangementDetailsModalProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
+  const { formatLimitValue } = useUsageLimitFormatter();
 
   const status = BILLING_ARRANGEMENT_STATUS_TAGS[arrangement.status];
   const typeLabel = t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangement.type]);
@@ -72,6 +74,7 @@ export const SettingsAdminWorkspaceBillingArrangementDetailsModal = ({
       value: formatAdminBillingArrangementDetails({
         arrangement,
         formatNumber,
+        formatLimitValue,
       }),
     },
     {
