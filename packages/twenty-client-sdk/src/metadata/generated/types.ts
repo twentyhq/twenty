@@ -11509,6 +11509,9 @@ export default {
             "apiKeys": [
                 48
             ],
+            "appCalendarChannels": [
+                450
+            ],
             "appConnection": [
                 51,
                 {
@@ -11624,9 +11627,6 @@ export default {
                         4
                     ]
                 }
-            ],
-            "calendarChannels": [
-                450
             ],
             "callRecordingIdForCalendarEvent": [
                 565,

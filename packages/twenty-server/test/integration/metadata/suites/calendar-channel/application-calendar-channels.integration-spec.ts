@@ -28,8 +28,8 @@ type PublicCalendarChannel = {
 
 const CALENDAR_CHANNELS_QUERY = {
   query: gql`
-    query CalendarChannels {
-      calendarChannels {
+    query AppCalendarChannels {
+      appCalendarChannels {
         id
         handle
         visibility
@@ -57,7 +57,7 @@ const expectRefused = (response: {
   expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
 };
 
-describe('calendarChannels', () => {
+describe('appCalendarChannels', () => {
   let applicationWithFlag: ApplicationWithVariable;
   let applicationWithoutFlag: ApplicationWithVariable;
   let isTwentyCliInstalled = false;
@@ -111,7 +111,7 @@ describe('calendarChannels', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.calendarChannels).toEqual(
+    expect(response.body.data.appCalendarChannels).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
@@ -155,7 +155,7 @@ describe('calendarChannels', () => {
       applicationAccessToken.token,
     );
 
-    const ownerUserWorkspaceIds = response.body.data.calendarChannels.map(
+    const ownerUserWorkspaceIds = response.body.data.appCalendarChannels.map(
       ({ connectedAccount }: PublicCalendarChannel) =>
         connectedAccount.userWorkspaceId,
     );
@@ -177,8 +177,8 @@ describe('calendarChannels', () => {
     const response = await makeMetadataApiRequest(
       {
         query: gql`
-          query CalendarChannels {
-            calendarChannels {
+          query AppCalendarChannels {
+            appCalendarChannels {
               id
               syncStatus
               excludePrivateEvents
