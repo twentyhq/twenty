@@ -177,13 +177,14 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
               shouldShowTooltip={shouldShowTooltips}
-              iconAccessory={
+              unreadCount={
                 isAiChatInboxEnabled &&
-                unreadOpenThreadCount > 0 &&
                 activeNavigationMenuTab?.id !== tab.id &&
-                tabIdsWithAiChatSection.has(tab.id) &&
-                unreadBadge
+                tabIdsWithAiChatSection.has(tab.id)
+                  ? unreadOpenThreadCount
+                  : 0
               }
+              unreadBadge={unreadBadge}
             />
           )),
           ...(isLayoutCustomizationModeEnabled &&

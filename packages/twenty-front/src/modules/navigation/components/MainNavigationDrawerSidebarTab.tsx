@@ -29,7 +29,8 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
-  iconAccessory?: ReactNode;
+  unreadCount: number;
+  unreadBadge: ReactNode;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -37,7 +38,8 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
-  iconAccessory,
+  unreadCount,
+  unreadBadge,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -72,7 +74,10 @@ export const MainNavigationDrawerSidebarTab = ({
         tooltip={tab.name}
         shouldShowTooltip={shouldShowTooltip}
         onClick={handleClick}
-        iconAccessory={iconAccessory}
+        ariaLabel={
+          unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
+        }
+        iconAccessory={unreadCount > 0 && unreadBadge}
       />
       {isLayoutCustomizationModeEnabled && (
         <DropdownRoot dropdownId={dropdownId} type="menu">
