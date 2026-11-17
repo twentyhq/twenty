@@ -8,7 +8,8 @@ import {
   GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/google-meet-conference-sync-outcome.type';
-import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
+import { GOOGLE_MEET_CALL_SUMMARY_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/google-meet-call-summary.constant';
+import { buildGoogleMeetCallSummaryJob } from 'src/logic-functions/utils/build-google-meet-call-summary-job.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { syncGoogleMeetConferenceOrThrow } from 'src/logic-functions/utils/sync-google-meet-conference-or-throw.util';
 
@@ -55,20 +56,15 @@ export const googleMeetImportConferenceHandler = async ({
     });
 
   if (shouldGenerateAiSummary) {
-    const callRecordingId =
-      computeCallRecordingIdForGoogleMeetConference(conferenceRecordName);
-
     await enqueueJobs({
       logicFunctionUniversalIdentifier:
         GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER,
+      retryLimit: GOOGLE_MEET_CALL_SUMMARY_JOB_RETRY_LIMIT,
       jobs: [
-        {
-          jobId: `google-meet-summary-${callRecordingId}`,
-          payload: {
-            callRecordingId,
-            userWorkspaceId: connection.userWorkspaceId,
-          },
-        },
+        buildGoogleMeetCallSummaryJob({
+          conferenceRecordName,
+          userWorkspaceId: connection.userWorkspaceId,
+        }),
       ],
     });
   }
