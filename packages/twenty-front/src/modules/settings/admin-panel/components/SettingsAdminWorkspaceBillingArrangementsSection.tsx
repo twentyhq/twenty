@@ -39,8 +39,9 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
   const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
-  const [selectedArrangement, setSelectedArrangement] =
-    useState<AdminBillingArrangement | null>(null);
+  const [selectedArrangementId, setSelectedArrangementId] = useState<
+    string | null
+  >(null);
 
   const { data, loading, error } = useQuery<WorkspaceBillingArrangementsQuery>(
     WORKSPACE_BILLING_ARRANGEMENTS,
@@ -57,8 +58,12 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
 
   const billingArrangements = data?.workspaceBillingArrangements ?? [];
 
+  const selectedArrangement = billingArrangements.find(
+    (arrangement) => arrangement.id === selectedArrangementId,
+  );
+
   const handleRowClick = (arrangement: AdminBillingArrangement) => {
-    setSelectedArrangement(arrangement);
+    setSelectedArrangementId(arrangement.id);
     openDialog(BILLING_ARRANGEMENT_DETAILS_MODAL_ID);
   };
 
@@ -126,10 +131,12 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
         <SettingsEmptyPlaceholder>{t`Failed to load billing arrangements.`}</SettingsEmptyPlaceholder>
       )}
 
-      <SettingsAdminWorkspaceBillingArrangementDetailsModal
-        modalInstanceId={BILLING_ARRANGEMENT_DETAILS_MODAL_ID}
-        arrangement={selectedArrangement}
-      />
+      {isDefined(selectedArrangement) && (
+        <SettingsAdminWorkspaceBillingArrangementDetailsModal
+          modalInstanceId={BILLING_ARRANGEMENT_DETAILS_MODAL_ID}
+          arrangement={selectedArrangement}
+        />
+      )}
     </Section.Root>
   );
 };

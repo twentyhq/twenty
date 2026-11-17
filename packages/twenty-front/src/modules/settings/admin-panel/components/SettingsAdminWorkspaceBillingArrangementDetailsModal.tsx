@@ -30,7 +30,7 @@ import { beautifyExactDate } from '~/utils/date-utils';
 
 type SettingsAdminWorkspaceBillingArrangementDetailsModalProps = {
   modalInstanceId: string;
-  arrangement: AdminBillingArrangement | null;
+  arrangement: AdminBillingArrangement;
 };
 
 const EM_DASH = '—';
@@ -57,68 +57,65 @@ export const SettingsAdminWorkspaceBillingArrangementDetailsModal = ({
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
-  const buildItems = (selectedArrangement: AdminBillingArrangement) => {
-    const status = BILLING_ARRANGEMENT_STATUS_TAGS[selectedArrangement.status];
+  const status = BILLING_ARRANGEMENT_STATUS_TAGS[arrangement.status];
+  const typeLabel = t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangement.type]);
 
-    return [
-      {
-        Icon: IconTag,
-        label: t`Type`,
-        value: t(BILLING_ARRANGEMENT_TYPE_LABELS[selectedArrangement.type]),
-      },
-      {
-        Icon: IconBox,
-        label: t`Details`,
-        value: formatAdminBillingArrangementDetails({
-          arrangement: selectedArrangement,
-          formatNumber,
-        }),
-      },
-      {
-        Icon: IconHelpCircle,
-        label: t`Reason`,
-        value: t(BILLING_ARRANGEMENT_REASON_LABELS[selectedArrangement.label]),
-      },
-      {
-        Icon: IconStatusChange,
-        label: t`Status`,
-        value: <Tag color={status.color}>{t(status.label)}</Tag>,
-      },
-      {
-        Icon: IconCalendarEvent,
-        label: t`Starts`,
-        value: beautifyExactDate(selectedArrangement.startsAt),
-      },
-      {
-        Icon: IconCalendarX,
-        label: t`Ends`,
-        value: formatAdminBillingArrangementEndDate(selectedArrangement),
-      },
-      {
-        Icon: IconUserPlus,
-        label: t`Added by`,
-        value: isDefined(selectedArrangement.grantedBy)
-          ? formatAdminBillingArrangementOperator(selectedArrangement.grantedBy)
-          : EM_DASH,
-      },
-      {
-        Icon: IconCalendar,
-        label: t`Added on`,
-        value: beautifyExactDate(selectedArrangement.createdAt),
-      },
-      ...(isDefined(selectedArrangement.revokedBy)
-        ? [
-            {
-              Icon: IconUserOff,
-              label: t`Ended by`,
-              value: formatAdminBillingArrangementOperator(
-                selectedArrangement.revokedBy,
-              ),
-            },
-          ]
-        : []),
-    ];
-  };
+  const items = [
+    {
+      Icon: IconTag,
+      label: t`Type`,
+      value: typeLabel,
+    },
+    {
+      Icon: IconBox,
+      label: t`Details`,
+      value: formatAdminBillingArrangementDetails({
+        arrangement,
+        formatNumber,
+      }),
+    },
+    {
+      Icon: IconHelpCircle,
+      label: t`Reason`,
+      value: t(BILLING_ARRANGEMENT_REASON_LABELS[arrangement.label]),
+    },
+    {
+      Icon: IconStatusChange,
+      label: t`Status`,
+      value: <Tag color={status.color}>{t(status.label)}</Tag>,
+    },
+    {
+      Icon: IconCalendarEvent,
+      label: t`Starts`,
+      value: beautifyExactDate(arrangement.startsAt),
+    },
+    {
+      Icon: IconCalendarX,
+      label: t`Ends`,
+      value: formatAdminBillingArrangementEndDate(arrangement),
+    },
+    {
+      Icon: IconUserPlus,
+      label: t`Added by`,
+      value: isDefined(arrangement.grantedBy)
+        ? formatAdminBillingArrangementOperator(arrangement.grantedBy)
+        : EM_DASH,
+    },
+    {
+      Icon: IconCalendar,
+      label: t`Added on`,
+      value: beautifyExactDate(arrangement.createdAt),
+    },
+    ...(isDefined(arrangement.revokedBy)
+      ? [
+          {
+            Icon: IconUserOff,
+            label: t`Ended by`,
+            value: formatAdminBillingArrangementOperator(arrangement.revokedBy),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <DialogInstance dialogId={modalInstanceId} dismissible renderInDocumentBody>
@@ -129,25 +126,14 @@ export const SettingsAdminWorkspaceBillingArrangementDetailsModal = ({
           data-globally-prevent-click-outside
         >
           <Dialog.Header>
-            <Dialog.Title>
-              {isDefined(arrangement)
-                ? t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangement.type])
-                : t`Arrangement`}
-            </Dialog.Title>
+            <Dialog.Title>{typeLabel}</Dialog.Title>
           </Dialog.Header>
           <Dialog.Body>
-            {isDefined(arrangement) && (
+            <SettingsTableCard items={items} gridAutoColumns="1fr 2fr" />
+            {isDefined(arrangement.comment) && (
               <>
-                <SettingsTableCard
-                  items={buildItems(arrangement)}
-                  gridAutoColumns="1fr 2fr"
-                />
-                {isDefined(arrangement.comment) && (
-                  <>
-                    <StyledCommentLabel>{t`Comment`}</StyledCommentLabel>
-                    <StyledComment>{arrangement.comment}</StyledComment>
-                  </>
-                )}
+                <StyledCommentLabel>{t`Comment`}</StyledCommentLabel>
+                <StyledComment>{arrangement.comment}</StyledComment>
               </>
             )}
           </Dialog.Body>

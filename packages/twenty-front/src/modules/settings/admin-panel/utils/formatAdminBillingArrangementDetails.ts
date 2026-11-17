@@ -14,8 +14,14 @@ const formatSeats = ({
 }: {
   seats: number;
   formatNumber: (value: number) => string;
-}): string =>
-  `${formatNumber(seats)} ${plural(seats, { one: 'seat', other: 'seats' })}`;
+}): string => {
+  const formattedSeats = formatNumber(seats);
+
+  return plural(seats, {
+    one: `${formattedSeats} seat`,
+    other: `${formattedSeats} seats`,
+  });
+};
 
 export const formatAdminBillingArrangementDetails = ({
   arrangement,
