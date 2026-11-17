@@ -96,4 +96,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
+  [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
+    label: msg`Lookup columns`,
+    description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
+  },
 };

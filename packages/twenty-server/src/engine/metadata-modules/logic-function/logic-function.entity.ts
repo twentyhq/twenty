@@ -20,6 +20,7 @@ import {
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -103,8 +104,9 @@ export class LogicFunctionEntity
     upgradeCommandName:
       ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
   })
+  // Unused since 2.60. Servers still on 2.59 select it during an upgrade, so the drop waits for 2.61.
   @Column({ nullable: true, type: 'jsonb' })
-  jobConfig: JsonbProperty<MessageQueueJobConfig> | null;
+  jobConfig: WasRemovedInUpgrade<JsonbProperty<MessageQueueJobConfig> | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -313,6 +313,7 @@ import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src
 import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
 import { AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794926980299-add-workflow-version-core-workflow-foreign-key';
 import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794927394074-add-view-sort-relation-target-field-metadata-id';
+import { DropJobConfigFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1794932308059-drop-job-config';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -628,4 +629,5 @@ export const INSTANCE_COMMANDS = [
   AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
   AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand,
   AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
+  DropJobConfigFastInstanceCommand,
 ];

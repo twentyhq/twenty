@@ -348,6 +348,12 @@ msgstr "{0, plural, one {loc} few {locuri} other {locuri}}"
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
 msgstr "{0, plural, one {Trimite invitația} few {Trimite # invitații} other {Trimite # de invitații}}"
 
+#. js-lingui-id: xpxT5R
+#. placeholder {0}: tools.length
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
+msgstr ""
+
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
@@ -554,10 +560,11 @@ msgstr "{0} membri ai spațiului de lucru"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: relationFieldMetadataItem.label
 #. placeholder {0}: selectedField.label
-#. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -1248,6 +1255,11 @@ msgstr "{stepNumber}. Calendar"
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (nu este disponibil pentru tine)"
 
+#. js-lingui-id: RIjnws
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
+msgid "{toolCount, plural, one {# tool} other {# tools}}"
+msgstr ""
+
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 msgid "{totalFieldsCount} visible fields"
@@ -1778,6 +1790,7 @@ msgstr "Anulează"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -1973,6 +1986,7 @@ msgstr "Acțiuni pe care utilizatorii le pot efectua asupra acestui obiect"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
@@ -2417,6 +2431,11 @@ msgstr "Adaugă element"
 msgid "Add link"
 msgstr "Adaugă link"
 
+#. js-lingui-id: LGXpWE
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Add MCP server"
+msgstr ""
+
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
@@ -2594,6 +2613,11 @@ msgstr "Adăugați sortare"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Adaugă Furnizor de Identitate SSO"
+
+#. js-lingui-id: O6B1gJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes."
+msgstr ""
 
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -3050,6 +3074,7 @@ msgstr ""
 #. js-lingui-id: jsQZMk
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3062,7 +3087,6 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "AI"
 msgstr "AI"
@@ -4243,6 +4267,11 @@ msgstr "Sigur vrei să ștergi {sourceHandle}? Redirecționarea e-mailurilor pri
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Are you sure you want to delete {topicName}? Recipients will no longer be able to opt out of this category."
 msgstr "Sigur doriți să ștergeți {topicName}? Destinatarii nu se vor mai putea dezabona de la această categorie."
+
+#. js-lingui-id: njO+Zl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -7503,6 +7532,11 @@ msgstr "Conectează e-mailul, WhatsApp sau LinkedIn pentru a vedea conversațiil
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Conectați Google, Microsoft sau CalDAV și activați sincronizarea calendarului înainte de a crea un eveniment."
 
+#. js-lingui-id: +RyxXW
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Connect remote MCP servers so agents can use their tools"
+msgstr ""
+
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
@@ -7556,6 +7590,7 @@ msgstr "Conectat"
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -9279,6 +9314,7 @@ msgstr "Zilnic, păstrat 30 de zile"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9545,6 +9581,7 @@ msgstr "Zile între acțiuni"
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9566,6 +9603,11 @@ msgstr "Dezactivează câmpul"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Deactivate object"
 msgstr "Dezactivează obiectul"
+
+#. js-lingui-id: ujOIgb
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Deactivate or delete this MCP server"
+msgstr ""
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9747,6 +9789,8 @@ msgstr "șterge"
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9973,6 +10017,11 @@ msgstr "Șterge nivelul"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Șterge limita"
+
+#. js-lingui-id: u+Hoy8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Delete MCP server"
+msgstr ""
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10240,6 +10289,7 @@ msgstr "Descrie ce dorești ca AI să facă..."
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
@@ -13046,6 +13096,11 @@ msgstr "Crearea agentului a eșuat"
 msgid "Failed to create calendar event"
 msgstr "Nu s-a reușit crearea evenimentului de calendar"
 
+#. js-lingui-id: 8qnNWI
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "Failed to create MCP server"
+msgstr ""
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -13232,6 +13287,16 @@ msgstr "Nu s-a putut încărca componenta Front: {0}"
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Nu s-a putut încărca componenta Front: {errorMessage}"
 
+#. js-lingui-id: wEebE8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
+msgid "Failed to load MCP server"
+msgstr ""
+
+#. js-lingui-id: rte0QY
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "Failed to load MCP servers"
+msgstr ""
+
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "Failed to load server administrators."
@@ -13375,6 +13440,11 @@ msgstr "Nu s-a putut seta modul de mentenanță."
 msgid "Failed to start the export. {0}"
 msgstr "Nu s-a reușit inițierea exportului. {0}"
 
+#. js-lingui-id: 22o02r
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "Failed to sync tools"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -13400,6 +13470,11 @@ msgstr "Eroare la actualizarea modelului implicit"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Failed to update feature flag. {0}"
 msgstr "Nu s-a reușit actualizarea feature flag-ului. {0}"
+
+#. js-lingui-id: mwx+OD
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "Failed to update MCP server"
+msgstr ""
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -15367,6 +15442,11 @@ msgstr "Modul în care înregistrările sunt afișate și parcurse."
 msgid "How this rule appears in settings."
 msgstr "Modul în care această regulă apare în setări."
 
+#. js-lingui-id: HuGZWl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "How this server is named for your team and for agents"
+msgstr ""
+
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
@@ -15461,6 +15541,11 @@ msgstr "https://example.com/embed"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
+
+#. js-lingui-id: U0G31R
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "https://mcp.example.com/mcp"
+msgstr ""
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15872,6 +15957,7 @@ msgstr "In-Reply-To"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Inactive"
 msgstr "Inactiv"
 
@@ -16858,6 +16944,8 @@ msgstr "Coreeană"
 
 #. js-lingui-id: 87a/t/
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -16877,6 +16965,7 @@ msgid "Label is not transliterable"
 msgstr "Eticheta nu poate fi transliterată"
 
 #. js-lingui-id: w8Rv8T
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Label is required"
@@ -17145,6 +17234,17 @@ msgstr "Văzut ultima dată"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Last signed in"
 msgstr "Ultima autentificare"
+
+#. js-lingui-id: ElUyt8
+#. placeholder {0}: mcpServer.toolsSyncError
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last sync failed: {0}"
+msgstr ""
+
+#. js-lingui-id: Ip8UbZ
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last synced {lastSynced}"
+msgstr ""
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17563,6 +17663,16 @@ msgstr "Grafic liniar"
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr "Înălțimea liniei"
+
+#. js-lingui-id: vQ2Ad9
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "linear"
+msgstr ""
+
+#. js-lingui-id: ih+n6S
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+msgid "Linear"
+msgstr ""
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -18078,6 +18188,11 @@ msgstr "Longitudine"
 msgid "Look up"
 msgstr "Căutați"
 
+#. js-lingui-id: PJeBuo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Lookup columns"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -18474,8 +18589,24 @@ msgstr "Server MCP"
 msgid "MCP Server"
 msgstr "Server MCP"
 
+#. js-lingui-id: 8uHtaz
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "MCP server {label} created successfully"
+msgstr ""
+
+#. js-lingui-id: IbSocu
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "MCP server {label} updated successfully"
+msgstr ""
+
+#. js-lingui-id: bbaHGM
+#: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
+msgid "MCP server deleted successfully"
+msgstr ""
+
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "Servere MCP"
 
@@ -19318,6 +19449,8 @@ msgstr "N/A"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -19379,6 +19512,16 @@ msgstr "Detalii despre nume"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Numele în ambele forme, singular (de exemplu, 'Factură') și plural (de exemplu, 'Facturi')."
+
+#. js-lingui-id: 8/brI5
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name is required"
+msgstr ""
+
+#. js-lingui-id: Kq5f+c
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
+msgstr ""
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19514,6 +19657,7 @@ msgstr "Niciodată, de către Twenty sau furnizori"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -19666,6 +19810,11 @@ msgstr "Cheie nouă"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
 msgstr "Limită nouă"
+
+#. js-lingui-id: p/TT/2
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
+msgid "New MCP server"
+msgstr ""
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20427,6 +20576,11 @@ msgstr "Nicio conversație corespunzătoare"
 msgid "No matching people or roles"
 msgstr "Nicio persoană sau rol corespunzător"
 
+#. js-lingui-id: c/bX1U
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "No MCP servers yet"
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members"
@@ -20652,6 +20806,7 @@ msgstr "Niciun răspuns de la server"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
@@ -20778,6 +20933,11 @@ msgstr "Fără conținut text"
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
 msgstr "Niciun instrument nu corespunde căutării"
+
+#. js-lingui-id: SCvh4h
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
+msgid "No tools synced yet"
+msgstr ""
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -22996,6 +23156,11 @@ msgstr "Vă rugăm să verificați sintaxa expresiei cron."
 msgid "Please check your email for a verification link."
 msgstr "Vă rugăm să verificați e-mailul pentru un link de verificare."
 
+#. js-lingui-id: vYumai
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Please enter a valid http(s) URL"
+msgstr ""
+
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
@@ -23143,6 +23308,11 @@ msgstr "Se precompletează <0>datele spațiului tău de lucru</0>..."
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
 msgstr "Prefix"
+
+#. js-lingui-id: HR5Lti
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Prefix of the tool names agents see. Cannot be changed later."
+msgstr ""
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -26010,6 +26180,8 @@ msgstr "metadate ale câmpului de căutare"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -28291,6 +28463,7 @@ msgstr "Statistici"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -28857,6 +29030,7 @@ msgstr "Sincronizați fiecare mesaj"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Sync failed"
 msgstr "Sincronizare eșuată"
 
@@ -28874,6 +29048,11 @@ msgstr "Sincronizarea cu căsuța poștală {mailboxHandle} s-a pierdut. Vă rug
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sincronizare întreruptă"
+
+#. js-lingui-id: cxRmVd
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Sync tools"
+msgstr ""
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30592,9 +30771,15 @@ msgstr "Instrumentul nu a fost găsit"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
 msgstr "Instrumente"
+
+#. js-lingui-id: OGOaH+
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Tools have not been synced yet"
+msgstr ""
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -32124,6 +32309,8 @@ msgstr "URI este necesar"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "URL"
 msgstr "URL"
@@ -32136,6 +32323,7 @@ msgstr "URL copiat în clipboard"
 
 #. js-lingui-id: HtrFfw
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "URL is required"
 msgstr "URL este necesar"
 
@@ -32269,6 +32457,11 @@ msgstr "Folosește indexurile cu moderație"
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Utilizați litere, numere și liniuțe doar. Începeți și terminați cu o literă sau un număr"
+
+#. js-lingui-id: cW4z4t
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr ""
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33405,6 +33598,11 @@ msgstr "Unde furnizorii de IA vă procesează solicitările"
 msgid "Where records of this object open"
 msgstr "Unde se deschid înregistrările acestui obiect"
 
+#. js-lingui-id: jQ8/hg
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Where the server lives"
+msgstr ""
+
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
@@ -33646,6 +33844,7 @@ msgstr "Începutul programului de lucru"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
@@ -33672,7 +33871,6 @@ msgstr "Începutul programului de lucru"
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
