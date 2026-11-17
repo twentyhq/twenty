@@ -36,5 +36,8 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.12"
+  },
+  "dependencies": {
+    "@sniptt/guards": "^0.2.0"
   }
 }
