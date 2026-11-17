@@ -28,11 +28,20 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
-  workspaceId: _workspaceId,
-  applicationId: _applicationId,
-  ...universalFlatWorkflowVersion
-}: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
-  universalFlatWorkflowVersion;
+  flatWorkflowVersion: {
+    workspaceId: _workspaceId,
+    applicationId: _applicationId,
+    coreWorkflowId: _coreWorkflowId,
+    ...universalFlatWorkflowVersion
+  },
+  coreWorkflowUniversalIdentifier,
+}: {
+  flatWorkflowVersion: FlatWorkflowVersion;
+  coreWorkflowUniversalIdentifier: string;
+}): UniversalFlatWorkflowVersion & { id: string } => ({
+  ...universalFlatWorkflowVersion,
+  coreWorkflowUniversalIdentifier,
+});
 
 const buildPublishedFlatUniversalWorkflowVersion = ({
   trigger,
@@ -41,7 +50,7 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   UniversalFlatWorkflowVersion,
   | 'universalIdentifier'
   | 'applicationUniversalIdentifier'
-  | 'coreWorkflowId'
+  | 'coreWorkflowUniversalIdentifier'
   | 'workflowId'
   | 'steps'
   | 'createdAt'
@@ -107,7 +116,10 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
       : undefined;
   // Each changed definition of a builder-published workflow is a new version, so runs keep what they ran
   const flatUniversalWorkflowVersion = isDefined(keptActiveVersion)
-    ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion(keptActiveVersion)
+    ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion({
+        flatWorkflowVersion: keptActiveVersion,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
+      })
     : buildPublishedFlatUniversalWorkflowVersion({
         id: existingVersion?.id ?? v4(),
         universalIdentifier: isWorkspaceCustomApplication
@@ -117,7 +129,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
               workflowUniversalIdentifier: definition.universalIdentifier,
             }),
         applicationUniversalIdentifier,
-        coreWorkflowId: workflowId,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
         workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
         trigger,
         steps,
