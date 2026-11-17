@@ -190,7 +190,13 @@ export class FlatViewSortValidatorService {
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (isDefined(flatFieldMetadata)) {
+    if (!isDefined(flatFieldMetadata)) {
+      validationResult.errors.push({
+        code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+        message: t`Field metadata not found`,
+        userFriendlyMessage: msg`Field metadata not found`,
+      });
+    } else {
       validationResult.errors.push(
         ...validateFlatViewSortRelationTarget({
           flatViewSort: updatedFlatViewSort,
