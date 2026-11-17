@@ -954,6 +954,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'API key role assignments are reported as excluded, only agent roles are exported',
       webhookUniversalIdentifier:
         'webhook role assignments are reported as excluded, only agent roles are exported',
+      isSystemSideEffect:
+        'only the system holds a role for a member this way, and member role assignments are reported as excluded',
     },
   },
   {

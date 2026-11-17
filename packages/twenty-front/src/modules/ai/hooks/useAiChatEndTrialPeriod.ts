@@ -1,4 +1,4 @@
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { buildAskAiThreadRedirectPath } from '@/ai/utils/buildAskAiThreadRedirectPath';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 export const useAiChatEndTrialPeriod = () => {
   const location = useLocation();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const { openAskAiThread } = useOpenAskAiThread();
 
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();
@@ -20,7 +20,7 @@ export const useAiChatEndTrialPeriod = () => {
   const finalRedirectPath = buildAskAiThreadRedirectPath({
     pathname: location.pathname,
     search: location.search,
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const endTrialPeriodFromAiChat = async () => {
@@ -32,8 +32,8 @@ export const useAiChatEndTrialPeriod = () => {
       skipPaymentMethodRedirect: true,
     });
 
-    if (success && isNonEmptyString(currentAiChatThread)) {
-      openAskAiThread(currentAiChatThread);
+    if (success && isNonEmptyString(threadId)) {
+      openAskAiThread(threadId);
     }
   };
 

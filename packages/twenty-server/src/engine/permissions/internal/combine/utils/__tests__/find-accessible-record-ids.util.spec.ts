@@ -122,7 +122,7 @@ const accessThroughRlsRule: ObjectRecordsPermissions = {
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { type: 'role', roleId: MEMBER_ROLE_ID },
+  mainPrincipal: { type: 'role', roleIds: [MEMBER_ROLE_ID] },
   applicationPrincipal: { type: 'customApplication' },
 };
 
@@ -130,7 +130,7 @@ const memberPrincipals: PermissionsPrincipalsWithRolesContext = {
   ...rolePrincipals,
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: MEMBER_ROLE_ID,
+    roleIds: [MEMBER_ROLE_ID],
     workspaceMemberId: MEMBER_ID,
   },
   applicationPrincipal: { type: 'customApplication' },
@@ -140,7 +140,7 @@ const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
   ...memberPrincipals,
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: 'missing-role',
+    roleIds: ['missing-role'],
     workspaceMemberId: MEMBER_ID,
   },
   applicationPrincipal: { type: 'customApplication' },

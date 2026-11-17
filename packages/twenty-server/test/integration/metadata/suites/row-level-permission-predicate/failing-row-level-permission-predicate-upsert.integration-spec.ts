@@ -3,7 +3,7 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
@@ -17,7 +17,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 
 type TestSetup = {
   createdRoleId: string;
@@ -29,7 +29,7 @@ type TestSetup = {
 };
 
 type TestContext = {
-  input: (testSetup: TestSetup) => UpsertRowLevelPermissionPredicatesInput;
+  input: (testSetup: TestSetup) => UpsertRowLevelPermissionRulesInput;
 };
 
 const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<TestContext>[] =
@@ -40,8 +40,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: 'invalid-uuid',
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [],
-          predicateGroups: [],
+          rules: [],
         }),
       },
     },
@@ -51,8 +50,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: 'invalid-uuid',
-          predicates: [],
-          predicateGroups: [],
+          rules: [],
         }),
       },
     },
@@ -62,13 +60,16 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              fieldMetadataId: 'invalid-uuid',
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              predicates: [
+                {
+                  fieldMetadataId: 'invalid-uuid',
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -78,82 +79,14 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              fieldMetadataId: v4(),
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            },
-          ],
-          predicateGroups: [],
-        }),
-      },
-    },
-    {
-      title:
-        'when rowLevelPermissionPredicateGroupId in predicate does not exist',
-      context: {
-        input: (testSetup) => ({
-          roleId: testSetup.createdRoleId,
-          objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
-            {
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              rowLevelPermissionPredicateGroupId: v4(),
-            },
-          ],
-          predicateGroups: [],
-        }),
-      },
-    },
-    {
-      title:
-        'when parentRowLevelPermissionPredicateGroupId in group does not exist',
-      context: {
-        input: (testSetup) => ({
-          roleId: testSetup.createdRoleId,
-          objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [],
-          predicateGroups: [
-            {
-              objectMetadataId: testSetup.companyObjectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-              parentRowLevelPermissionPredicateGroupId: v4(),
-            },
-          ],
-        }),
-      },
-    },
-    {
-      title: 'when objectMetadataId in predicate group is not a valid UUID',
-      context: {
-        input: (testSetup) => ({
-          roleId: testSetup.createdRoleId,
-          objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [],
-          predicateGroups: [
-            {
-              objectMetadataId: 'invalid-uuid',
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            },
-          ],
-        }),
-      },
-    },
-    {
-      title: 'when objectMetadataId in predicate group does not exist',
-      context: {
-        input: (testSetup) => ({
-          roleId: testSetup.createdRoleId,
-          objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [],
-          predicateGroups: [
-            {
-              objectMetadataId: v4(),
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+              predicates: [
+                {
+                  fieldMetadataId: v4(),
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                },
+              ],
             },
           ],
         }),
@@ -165,14 +98,18 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.GREATER_THAN_OR_EQUAL,
-              value: 'Apple',
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand:
+                    RowLevelPermissionPredicateOperand.GREATER_THAN_OR_EQUAL,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -183,15 +120,18 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.IS,
-              workspaceMemberFieldMetadataId:
-                testSetup.workspaceMemberCalendarStartDayFieldMetadataId,
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  workspaceMemberFieldMetadataId:
+                    testSetup.workspaceMemberCalendarStartDayFieldMetadataId,
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -201,15 +141,18 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              relationFieldMetadataId: testSetup.companyNameFieldMetadataId,
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Apple',
+              predicates: [
+                {
+                  relationFieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -219,15 +162,19 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              relationFieldMetadataId: testSetup.personCompanyFieldMetadataId,
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Apple',
+              predicates: [
+                {
+                  relationFieldMetadataId:
+                    testSetup.personCompanyFieldMetadataId,
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -237,15 +184,18 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.createdRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              relationFieldMetadataId: v4(),
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Apple',
+              predicates: [
+                {
+                  relationFieldMetadataId: v4(),
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -255,14 +205,17 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.adminRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Apple',
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         }),
       },
     },
@@ -272,12 +225,14 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         input: (testSetup) => ({
           roleId: testSetup.adminRoleId,
           objectMetadataId: testSetup.companyObjectMetadataId,
-          predicates: [],
-          predicateGroups: [
+          rules: [
             {
-              objectMetadataId: testSetup.companyObjectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+              predicateGroups: [
+                {
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                },
+              ],
             },
           ],
         }),
@@ -420,7 +375,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   it.each(
     eachTestingContextFilter(failingRowLevelPermissionPredicateUpsertTestCases),
   )('$title', async ({ context }) => {
-    const { errors } = await upsertRowLevelPermissionPredicates({
+    const { errors } = await upsertRowLevelPermissionRules({
       expectToFail: true,
       input: context.input({
         createdRoleId,
@@ -445,20 +400,23 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     });
 
     try {
-      const { errors } = await upsertRowLevelPermissionPredicates({
+      const { errors } = await upsertRowLevelPermissionRules({
         expectToFail: true,
         input: {
           roleId: createdRoleId,
           objectMetadataId: personObjectMetadataId,
-          predicates: [
+          rules: [
             {
-              relationFieldMetadataId: personCompanyFieldMetadataId,
-              fieldMetadataId: companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Apple',
+              predicates: [
+                {
+                  relationFieldMetadataId: personCompanyFieldMetadataId,
+                  fieldMetadataId: companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
             },
           ],
-          predicateGroups: [],
         },
       });
 

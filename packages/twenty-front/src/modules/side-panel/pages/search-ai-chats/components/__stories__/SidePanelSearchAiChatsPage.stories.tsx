@@ -1,3 +1,4 @@
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -13,7 +14,7 @@ import {
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -623,11 +624,21 @@ export const OpenChatWithKeyboard: Story = {
     await expect(
       await canvas.findByText('Conversation opened in the side panel'),
     ).toBeVisible();
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        SECOND_THREAD_ID,
-      ),
-    );
+    await waitFor(() => {
+      const askAiPageId = jotaiStore
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.pageId;
+
+      assertIsDefinedOrThrow(askAiPageId);
+
+      expect(
+        jotaiStore.get(
+          askAiSidePanelThreadIdComponentState.atomFamily({
+            instanceId: askAiPageId,
+          }),
+        ),
+      ).toBe(SECOND_THREAD_ID);
+    });
     await expect(
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);

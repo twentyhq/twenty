@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -9,7 +10,6 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { AiChatPrepromptEffect } from '@/ai/components/AiChatPrepromptEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
@@ -42,7 +42,6 @@ const NewChatStory = () => (
   <StyledPageChat>
     <Suspense fallback={null}>
       <AiChatNewThreadPageContent showInformationBanner={false} />
-      <AiChatPrepromptEffect />
     </Suspense>
   </StyledPageChat>
 );
@@ -75,6 +74,7 @@ const meta = {
   title: 'Modules/AI/AiChatTab',
   component: AiChatTab,
   decorators: [
+    AiChatInstanceDecorator,
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,

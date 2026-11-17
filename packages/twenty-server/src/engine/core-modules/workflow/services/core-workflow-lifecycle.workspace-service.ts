@@ -24,7 +24,7 @@ import {
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -72,7 +72,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
     private readonly commandMenuItemService: CommandMenuItemService,
@@ -299,7 +299,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           resolved,
         });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },
@@ -356,7 +356,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
         await this.deleteCommandMenuItem({ workspaceId, resolved });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },

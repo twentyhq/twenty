@@ -148,7 +148,7 @@ const readEverything: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: FULL_ACCESS_ROLE_ID,
+    roleIds: [FULL_ACCESS_ROLE_ID],
     workspaceMemberId: 'member-1',
   },
   applicationPrincipal: { type: 'customApplication' },
@@ -158,7 +158,7 @@ const readThroughRlsRule: PermissionsPrincipalsWithRolesContext = {
   ...readEverything,
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: ROLE_WITH_RLS_RULE_ID,
+    roleIds: [ROLE_WITH_RLS_RULE_ID],
     workspaceMemberId: 'member-1',
   },
 };
@@ -167,7 +167,7 @@ const owningApplication: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: {
     type: 'application',
-    roleId: APPLICATION_ROLE_ID,
+    roleIds: [APPLICATION_ROLE_ID],
     applicationId: APPLICATION_ID,
   },
   applicationPrincipal: {
@@ -181,7 +181,7 @@ const withoutObjectPermission: PermissionsPrincipalsWithRolesContext = {
   ...readEverything,
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: ROLE_WITHOUT_PERMISSION_ID,
+    roleIds: [ROLE_WITHOUT_PERMISSION_ID],
     workspaceMemberId: 'member-1',
   },
   applicationPrincipal: { type: 'customApplication' },
@@ -354,7 +354,7 @@ describe('buildAccessSQLCondition', () => {
       },
       mainPrincipal: {
         type: 'workspaceMember',
-        roleId: 'role-3',
+        roleIds: ['role-3'],
         workspaceMemberId: 'member-1',
       },
       applicationPrincipal: { type: 'customApplication' },
