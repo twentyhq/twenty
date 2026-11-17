@@ -1,11 +1,11 @@
 import { type Decorator } from '@storybook/react-vite';
 
-import { AiChatTestDisplayedThreadInitEffect } from '@/ai/testing/AiChatTestDisplayedThreadInitEffect';
+import { AiChatInstanceDisplayedThreadEffect } from '@/ai/components/AiChatInstanceDisplayedThreadEffect';
 import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 
 export const AiChatInstanceDecorator: Decorator = (Story) => (
   <AiChatTestInstance>
-    <AiChatTestDisplayedThreadInitEffect />
+    <AiChatInstanceDisplayedThreadEffect />
     <Story />
   </AiChatTestInstance>
 );

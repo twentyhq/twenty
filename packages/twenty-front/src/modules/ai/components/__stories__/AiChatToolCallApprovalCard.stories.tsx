@@ -1,3 +1,4 @@
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
@@ -195,10 +196,12 @@ export const PendingRequests: Story = {
       ),
     );
     const previousThread = jotaiStore.get(aiChatTestDisplayedThreadIdAtom);
+    const previousCurrentThread = jotaiStore.get(currentAiChatThreadState.atom);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: 'approval-preview-story',
     });
     const previousMessages = jotaiStore.get(messagesAtom);
+    jotaiStore.set(currentAiChatThreadState.atom, 'approval-preview-story');
     jotaiStore.set(aiChatTestDisplayedThreadIdAtom, 'approval-preview-story');
     jotaiStore.set(messagesAtom, [
       {
@@ -225,6 +228,7 @@ export const PendingRequests: Story = {
       },
     ]);
     return () => {
+      jotaiStore.set(currentAiChatThreadState.atom, previousCurrentThread);
       jotaiStore.set(aiChatTestDisplayedThreadIdAtom, previousThread);
       jotaiStore.set(messagesAtom, previousMessages);
     };

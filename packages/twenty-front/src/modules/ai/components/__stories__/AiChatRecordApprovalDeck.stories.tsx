@@ -1,3 +1,4 @@
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
@@ -67,11 +68,13 @@ const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
 
 const seedPendingProposals = (proposals: ProposedToolCall[]) => {
   const previousThread = jotaiStore.get(aiChatTestDisplayedThreadIdAtom);
+  const previousCurrentThread = jotaiStore.get(currentAiChatThreadState.atom);
   const messagesAtom = aiChatMessagesFamilyState.atomFamily({
     threadId: THREAD_ID,
   });
   const previousMessages = jotaiStore.get(messagesAtom);
 
+  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
   jotaiStore.set(messagesAtom, [
     {
@@ -88,6 +91,7 @@ const seedPendingProposals = (proposals: ProposedToolCall[]) => {
   ]);
 
   return () => {
+    jotaiStore.set(currentAiChatThreadState.atom, previousCurrentThread);
     jotaiStore.set(aiChatTestDisplayedThreadIdAtom, previousThread);
     jotaiStore.set(messagesAtom, previousMessages);
   };
