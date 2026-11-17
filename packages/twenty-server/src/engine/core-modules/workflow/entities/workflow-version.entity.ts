@@ -101,5 +101,6 @@ export class WorkflowVersionEntity extends SyncableEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'coreWorkflowId' })
-  coreWorkflow: Relation<WorkflowEntity>;
+  // Nullable until 2.43 sets the column NOT NULL: released upgrade commands mirror versions before their core workflow exists
+  coreWorkflow: Relation<WorkflowEntity> | null;
 }
