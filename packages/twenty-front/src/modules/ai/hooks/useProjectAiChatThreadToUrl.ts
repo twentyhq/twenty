@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
@@ -29,15 +29,14 @@ export const useProjectAiChatThreadToUrl = () => {
       }
 
       const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
-      const newThreadPathSegment = isOnInboxPage
-        ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
-        : null;
+      const aiChatPageRoute = getAiChatPageRoute({
+        isInbox: isOnInboxPage,
+        threadId: isNewChat ? null : threadId,
+      });
 
       navigateApp(
-        isOnInboxPage ? AppPath.AiChatInbox : AppPath.AiChat,
-        {
-          threadId: isNewChat ? newThreadPathSegment : threadId,
-        },
+        aiChatPageRoute.appPath,
+        { threadId: aiChatPageRoute.threadId },
         undefined,
         { replace: !isInboxClosed, state: getCurrentHistoryEntryState() },
       );

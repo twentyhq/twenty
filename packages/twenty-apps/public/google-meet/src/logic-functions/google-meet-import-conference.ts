@@ -1,10 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection } from 'twenty-sdk/logic-function';
+import { enqueueJobs, getConnection } from 'twenty-sdk/logic-function';
 
-import { GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER,
+  GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/google-meet-conference-sync-outcome.type';
+import { GOOGLE_MEET_CALL_SUMMARY_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/google-meet-call-summary.constant';
+import { buildGoogleMeetCallSummaryJob } from 'src/logic-functions/utils/build-google-meet-call-summary-job.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { syncGoogleMeetConferenceOrThrow } from 'src/logic-functions/utils/sync-google-meet-conference-or-throw.util';
 
@@ -36,18 +41,33 @@ export const googleMeetImportConferenceHandler = async ({
     };
   }
 
-  const outcome = await syncGoogleMeetConferenceOrThrow({
-    accessToken: getConnectionAccessTokenOrThrow(
-      await getConnection(connectedAccountId),
-    ),
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
-    conferenceRecord: {
-      name: conferenceRecordName,
-      startTime,
-      ...(isNonEmptyString(endTime) ? { endTime } : {}),
-      ...(isNonEmptyString(spaceName) ? { space: spaceName } : {}),
-    },
-  });
+  const connection = await getConnection(connectedAccountId);
+
+  const { outcome, shouldGenerateAiSummary } =
+    await syncGoogleMeetConferenceOrThrow({
+      accessToken: getConnectionAccessTokenOrThrow(connection),
+      coreApiClient: new CoreApiClient({ runAs: 'application' }),
+      conferenceRecord: {
+        name: conferenceRecordName,
+        startTime,
+        ...(isNonEmptyString(endTime) ? { endTime } : {}),
+        ...(isNonEmptyString(spaceName) ? { space: spaceName } : {}),
+      },
+    });
+
+  if (shouldGenerateAiSummary) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier:
+        GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER,
+      retryLimit: GOOGLE_MEET_CALL_SUMMARY_JOB_RETRY_LIMIT,
+      jobs: [
+        buildGoogleMeetCallSummaryJob({
+          conferenceRecordName,
+          userWorkspaceId: connection.userWorkspaceId,
+        }),
+      ],
+    });
+  }
 
   return { success: true, outcome };
 };
