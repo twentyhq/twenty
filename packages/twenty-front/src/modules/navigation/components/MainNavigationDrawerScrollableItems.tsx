@@ -1,7 +1,6 @@
 import { GettingStartedOpenedSection } from '@/getting-started/components/GettingStartedOpenedSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
-import { MainNavigationDrawerFixedRows } from '@/navigation/components/MainNavigationDrawerFixedRows';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 
 import { styled } from '@linaria/react';
@@ -54,7 +53,6 @@ export const MainNavigationDrawerScrollableItems = () => {
   if (isDefined(activeNavigationMenuTab)) {
     return (
       <StyledScrollableItemsContainer>
-        <MainNavigationDrawerFixedRows />
         <NavigationDrawerOpenedSection />
         <GettingStartedOpenedSection />
         <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
@@ -69,7 +67,6 @@ export const MainNavigationDrawerScrollableItems = () => {
 
   return (
     <StyledScrollableItemsContainer>
-      <MainNavigationDrawerFixedRows />
       <NavigationDrawerOpenedSection />
       <GettingStartedOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
