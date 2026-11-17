@@ -10,6 +10,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -45,6 +46,13 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
+const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] = [
+  NavigationMenuItemType.AI_CHAT_INBOX,
+  NavigationMenuItemType.AI_CHAT_FAVORITES,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
+  NavigationMenuItemType.AI_CHAT_RECENTS,
+];
+
 const StyledUnreadBadge = styled.span`
   pointer-events: none;
   position: absolute;
@@ -69,6 +77,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -90,6 +99,27 @@ export const MainNavigationDrawerTabSwitcher = () => {
   }
 
   const shouldShowTooltips = !isExpanded && !isMobile;
+  const tabIdsWithAiChatSection = new Set(
+    workspaceNavigationMenuItems
+      .filter(
+        (item) =>
+          isDefined(item.parentId) && AI_CHAT_SECTION_TYPES.includes(item.type),
+      )
+      .map((item) => item.parentId),
+  );
+  const unreadBadge = (
+    <Badge
+      render={<StyledUnreadBadge />}
+      aria-hidden="true"
+      size="xs"
+      color="red"
+      shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+    >
+      {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+        ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+        : unreadOpenThreadCount}
+    </Badge>
+  );
 
   return (
     <StyledSwitcher
@@ -130,21 +160,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
             }
             onClick={() => switchNavigationDrawerTab(drawerTab)}
-            iconAccessory={
-              isUnread && (
-                <Badge
-                  render={<StyledUnreadBadge />}
-                  aria-hidden="true"
-                  size="xs"
-                  color="red"
-                  shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
-                >
-                  {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
-                    ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
-                    : unreadOpenThreadCount}
-                </Badge>
-              )
-            }
+            iconAccessory={isUnread && unreadBadge}
           />
         );
 
@@ -161,6 +177,13 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
               shouldShowTooltip={shouldShowTooltips}
+              iconAccessory={
+                isAiChatInboxEnabled &&
+                unreadOpenThreadCount > 0 &&
+                activeNavigationMenuTab?.id !== tab.id &&
+                tabIdsWithAiChatSection.has(tab.id) &&
+                unreadBadge
+              }
             />
           )),
           ...(isLayoutCustomizationModeEnabled &&

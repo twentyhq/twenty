@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -29,6 +29,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
+  iconAccessory?: ReactNode;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -36,6 +37,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
+  iconAccessory,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -70,6 +72,7 @@ export const MainNavigationDrawerSidebarTab = ({
         tooltip={tab.name}
         shouldShowTooltip={shouldShowTooltip}
         onClick={handleClick}
+        iconAccessory={iconAccessory}
       />
       {isLayoutCustomizationModeEnabled && (
         <DropdownRoot dropdownId={dropdownId} type="menu">
