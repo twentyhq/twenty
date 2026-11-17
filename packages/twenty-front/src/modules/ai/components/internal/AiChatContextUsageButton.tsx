@@ -1,3 +1,4 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
@@ -23,7 +24,6 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
 import { aiChatUserSelectedModelTierState } from '@/ai/states/aiChatUserSelectedModelTierState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -57,10 +57,10 @@ export const AiChatContextUsageButton = () => {
     onOpen: () => setShowDetails(false),
   });
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const tiers = useAiModelTiers();

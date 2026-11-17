@@ -30,7 +30,6 @@ const FOLDERS = [
     itemNames: [
       'workflowsFolderAllWorkflows',
       'workflowsFolderAllWorkflowRuns',
-      'workflowsFolderAllWorkflowVersions',
     ],
   },
   {

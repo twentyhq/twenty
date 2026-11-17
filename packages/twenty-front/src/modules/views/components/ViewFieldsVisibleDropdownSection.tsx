@@ -5,6 +5,8 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
+import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -41,6 +43,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
+
+  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -117,6 +121,13 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
+                  const columnHeader = getRecordFieldColumnHeader({
+                    fieldMetadataItem,
+                    lookupTarget: getRecordFieldLookupTarget({
+                      recordField,
+                      fieldMetadataItem,
+                    }),
+                  });
 
                   return (
                     <DraggableItem
@@ -128,7 +139,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           key={recordField.id}
                           startIcon={
                             <ApplicationStackIcon
-                              Icon={getIcon(fieldMetadataItem.icon)}
+                              Icon={getIcon(columnHeader.icon)}
                               applicationId={fieldMetadataItem.applicationId}
                             />
                           }
@@ -160,7 +171,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                           }
                           dragHandleVisibility="always"
                         >
-                          {fieldMetadataItem.label}
+                          {columnHeader.label}
                         </DraggableListRow>
                       }
                     />

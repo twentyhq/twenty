@@ -3,8 +3,7 @@ import { NavigationDrawerInboxThreadSection } from '@/inbox/components/Navigatio
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
 import { useLingui } from '@lingui/react/macro';
 
 const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
@@ -12,7 +11,7 @@ const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
 export const MobileHomeInboxSection = () => {
   const { t } = useLingui();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const aiChatPageThreadId = useAiChatPageThreadId();
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
@@ -34,7 +33,7 @@ export const MobileHomeInboxSection = () => {
         sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
         title={t`Conversations`}
         threads={threads}
-        currentThreadId={currentAiChatThread}
+        currentThreadId={aiChatPageThreadId}
         onThreadClick={handleThreadClick}
       />
       <InboxThreadListFetchMoreTrigger

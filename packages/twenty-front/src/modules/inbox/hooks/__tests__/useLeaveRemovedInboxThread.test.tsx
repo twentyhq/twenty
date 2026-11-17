@@ -5,8 +5,7 @@ import { type ReactNode } from 'react';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatInputIsEmptyFamilySelector } from '@/ai/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
@@ -71,7 +70,7 @@ describe('useLeaveRemovedAiChatThread', () => {
     resetJotaiStore();
     loadAiChatThread.mockResolvedValue(null);
     jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_ID);
-    jotaiStore.set(currentAiChatThreadState.atom, REMOVED_CHAT_ID);
+    window.history.pushState(null, '', `/inbox/${REMOVED_CHAT_ID}`);
   });
 
   it('moves to the most recent chat with its draft when the current one is gone', async () => {
@@ -94,8 +93,11 @@ describe('useLeaveRemovedAiChatThread', () => {
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(RECENT_CHAT_ID);
-    expect(jotaiStore.get(aiChatInputIsEmptySelector.atom)).toBe(false);
+    expect(
+      jotaiStore.get(
+        aiChatInputIsEmptyFamilySelector.selectorFamily(RECENT_CHAT_ID),
+      ),
+    ).toBe(false);
     expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
   });
 
@@ -104,17 +106,17 @@ describe('useLeaveRemovedAiChatThread', () => {
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(NEW_CHAT_ID);
+    expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(NEW_CHAT_ID);
   });
 
   it('stays on the new chat, which has no thread until its first message', async () => {
     setInboxThreadList(jotaiStore, []);
-    jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_ID);
+    window.history.pushState(null, '', '/inbox/new');
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(NEW_CHAT_ID);
     expect(loadAiChatThread).not.toHaveBeenCalled();
+    expect(projectAiChatThreadToUrl).not.toHaveBeenCalled();
   });
 
   it('stays on a chat that is still listed', async () => {
@@ -124,7 +126,6 @@ describe('useLeaveRemovedAiChatThread', () => {
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(REMOVED_CHAT_ID);
     expect(loadAiChatThread).not.toHaveBeenCalled();
     expect(projectAiChatThreadToUrl).not.toHaveBeenCalled();
   });
@@ -140,7 +141,6 @@ describe('useLeaveRemovedAiChatThread', () => {
     await leave();
 
     expect(loadAiChatThread).toHaveBeenCalledWith(REMOVED_CHAT_ID);
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(REMOVED_CHAT_ID);
     expect(projectAiChatThreadToUrl).not.toHaveBeenCalled();
   });
 });

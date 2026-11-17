@@ -1,9 +1,7 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 
-import { closingAiChatThreadIdState } from '@/ai/states/closingAiChatThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { resetClosingInboxThread } from '@/inbox/utils/resetClosingInboxThread';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
 
 type InboxConversationCloseEffectProps = {
   isPresent: boolean;
@@ -15,15 +13,10 @@ export const InboxConversationCloseEffect = ({
   const store = useStore();
 
   useLayoutEffect(() => {
-    store.set(
-      closingAiChatThreadIdState.atom,
-      isPresent ? null : store.get(currentAiChatThreadState.atom),
-    );
+    if (!isPresent) {
+      store.set(aiChatContinueInSidePanelThreadIdState.atom, null);
+    }
   }, [isPresent, store]);
-
-  useLayoutEffect(() => {
-    return () => resetClosingInboxThread(store);
-  }, [store]);
 
   return null;
 };

@@ -9,9 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -217,9 +217,8 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
     aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     [
@@ -239,8 +238,10 @@ const renderMessage = ({
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatMessage messageId={messageId} error={error} />
-        {hasComposerQuote && <AiChatComposerQuote />}
+        <AiChatTestInstance>
+          <AiChatMessage messageId={messageId} error={error} />
+          {hasComposerQuote && <AiChatComposerQuote />}
+        </AiChatTestInstance>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -425,7 +426,7 @@ describe('AiChatMessage', () => {
     expect(screen.getByText('Replying to')).toBeInTheDocument();
 
     act(() => {
-      jotaiStore.set(currentAiChatThreadState.atom, 'another-thread');
+      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'another-thread');
       jotaiStore.set(
         aiChatQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',

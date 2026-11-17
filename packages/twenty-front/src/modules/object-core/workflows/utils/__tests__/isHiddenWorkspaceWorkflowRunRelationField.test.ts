@@ -3,17 +3,23 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 
 describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
-  it.each(['workflow', 'workflowVersion'])(
-    'should hide the %s relation field on a workflow run',
-    (fieldName) => {
-      expect(
-        isHiddenWorkspaceWorkflowRunRelationField({
-          objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-          fieldName,
-        }),
-      ).toBe(true);
-    },
-  );
+  it('should hide the workflowVersion relation field on a workflow run', () => {
+    expect(
+      isHiddenWorkspaceWorkflowRunRelationField({
+        objectNameSingular: StandardObjectNameSingular.WorkflowRun,
+        fieldName: 'workflowVersion',
+      }),
+    ).toBe(true);
+  });
+
+  it('should keep the dropped workflow relation field on a workflow run', () => {
+    expect(
+      isHiddenWorkspaceWorkflowRunRelationField({
+        objectNameSingular: StandardObjectNameSingular.WorkflowRun,
+        fieldName: 'workflow',
+      }),
+    ).toBe(false);
+  });
 
   it('should keep the other workflow run fields', () => {
     expect(

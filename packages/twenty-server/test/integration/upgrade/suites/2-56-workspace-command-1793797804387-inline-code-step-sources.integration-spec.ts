@@ -14,8 +14,6 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -62,8 +60,6 @@ type CodeStep = {
 type LegacyCodeStepWorkflow = {
   coreWorkflowId: string;
   coreWorkflowVersionId: string;
-  workspaceWorkflowId: string;
-  workspaceWorkflowVersionId: string;
   step: CodeStep;
   logicFunctionId: string;
 };
@@ -88,7 +84,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   let unreadableSourceWorkflow: LegacyCodeStepWorkflow;
   let otherApplicationWorkflow: LegacyCodeStepWorkflow;
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowVersionIds: string[] = [];
   const logicFunctionIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -297,16 +292,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       [coreWorkflowVersionId, JSON.stringify([legacyStep])],
     );
 
-    const {
-      workspaceWorkflowId,
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    } = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    });
-
-    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
-
     const [step] = await readSteps({
       schema: 'core',
       workflowVersionId: coreWorkflowVersionId,
@@ -315,8 +300,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     return {
       coreWorkflowId,
       coreWorkflowVersionId,
-      workspaceWorkflowId,
-      workspaceWorkflowVersionId,
       step,
       logicFunctionId,
     };
@@ -361,8 +344,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
-
     for (const logicFunctionId of logicFunctionIds) {
       if (await logicFunctionExists(logicFunctionId)) {
         await deleteLogicFunction({
@@ -397,12 +378,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     ).toEqual([legacyWorkflow.step]);
     expect(
       await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: legacyWorkflow.workspaceWorkflowVersionId,
-      }),
-    ).toEqual([legacyWorkflow.step]);
-    expect(
-      await readSteps({
         schema: 'core',
         workflowVersionId: missingFunctionWorkflow.coreWorkflowVersionId,
       }),
@@ -421,12 +396,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       await readSteps({
         schema: 'core',
         workflowVersionId: legacyWorkflow.coreWorkflowVersionId,
-      }),
-    ).toEqual([inlinedStep]);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: legacyWorkflow.workspaceWorkflowVersionId,
       }),
     ).toEqual([inlinedStep]);
   });
@@ -456,12 +425,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
         workflowVersionId: oversizedWorkflow.coreWorkflowVersionId,
       }),
     ).toEqual([oversizedWorkflow.step]);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: oversizedWorkflow.workspaceWorkflowVersionId,
-      }),
-    ).toEqual([oversizedWorkflow.step]);
   });
 
   it('leaves a step whose source contains a NUL character untouched', async () => {
@@ -471,12 +434,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
         workflowVersionId: nulSourceWorkflow.coreWorkflowVersionId,
       }),
     ).toEqual([nulSourceWorkflow.step]);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: nulSourceWorkflow.workspaceWorkflowVersionId,
-      }),
-    ).toEqual([nulSourceWorkflow.step]);
   });
 
   it('leaves a step whose function exists but whose source cannot be read untouched', async () => {
@@ -484,12 +441,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       await readSteps({
         schema: 'core',
         workflowVersionId: unreadableSourceWorkflow.coreWorkflowVersionId,
-      }),
-    ).toEqual([unreadableSourceWorkflow.step]);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: unreadableSourceWorkflow.workspaceWorkflowVersionId,
       }),
     ).toEqual([unreadableSourceWorkflow.step]);
   });

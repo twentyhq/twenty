@@ -82,9 +82,7 @@ describe('useProjectAiChatThreadToUrl', () => {
       `/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`,
     );
 
-    const { result } = renderHook(() =>
-      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
-    );
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
@@ -146,22 +144,6 @@ describe('useProjectAiChatThreadToUrl', () => {
     window.history.pushState(null, '', '/objects/companies');
 
     const { result } = renderHook(() => useProjectAiChatThreadToUrl());
-
-    act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
-    });
-
-    expect(navigateAppMock).not.toHaveBeenCalled();
-  });
-
-  it('preserves the closed inbox when an automatic projection finishes after closing', () => {
-    window.history.pushState(null, '', `/inbox/${THREAD_A}`);
-
-    const { result } = renderHook(() =>
-      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
-    );
-
-    window.history.pushState(null, '', '/inbox');
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
