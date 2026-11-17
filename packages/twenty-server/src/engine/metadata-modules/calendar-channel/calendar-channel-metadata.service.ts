@@ -7,6 +7,7 @@ import {
   CalendarChannelSyncStage,
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   CalendarChannelException,
@@ -17,6 +18,8 @@ import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
+import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
@@ -30,6 +33,29 @@ export class CalendarChannelMetadataService {
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
     return this.repository.find({ where: { workspaceId } });
+  }
+
+  async findPublicConnectedAccountForCaller({
+    connectedAccountId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ConnectedAccountPublicDTO | null> {
+    if (!isDefined(userWorkspaceId)) {
+      return null;
+    }
+
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
+        id: connectedAccountId,
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return buildPublicConnectedAccount(connectedAccount);
   }
 
   async findByUserWorkspaceId({
