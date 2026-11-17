@@ -2,8 +2,12 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
@@ -11,6 +15,9 @@ export const useNavigateToAiChatPage = () => {
   const store = useStore();
   const navigate = useNavigateApp();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   const navigateToAiChatPage = ({
     threadId,
@@ -26,11 +33,17 @@ export const useNavigateToAiChatPage = () => {
 
     void closeSidePanelMenu();
 
+    const newChatPathSegment = isAiChatInboxEnabled
+      ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
+      : null;
+
     navigate(
-      AppPath.AiChat,
+      isAiChatInboxEnabled ? AppPath.AiChatInbox : AppPath.AiChat,
       {
         threadId:
-          isDefined(threadId) && isValidUuid(threadId) ? threadId : null,
+          isDefined(threadId) && isValidUuid(threadId)
+            ? threadId
+            : newChatPathSegment,
       },
       undefined,
       {

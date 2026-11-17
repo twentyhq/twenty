@@ -155,7 +155,7 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
-  it('sends a chat record to the chat page', () => {
+  it('sends a chat record to the inbox', () => {
     mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
     mockParameters = {
       objectNameSingular: 'agentChatThread',
@@ -164,7 +164,7 @@ describe('RecordShowPage workspace surface composition', () => {
 
     render(<RecordShowPage />);
 
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/chat/chat-1');
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/inbox/chat-1');
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 

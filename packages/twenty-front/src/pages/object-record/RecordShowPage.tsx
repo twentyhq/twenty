@@ -40,7 +40,7 @@ export const RecordShowPage = () => {
       return (
         <Navigate
           replace
-          to={getAppPath(AppPath.AiChat, {
+          to={getAppPath(AppPath.AiChatInbox, {
             threadId: parameters.objectRecordId,
           })}
         />
