@@ -1,7 +1,7 @@
 {
   "name": "@twentyhq/google-meet",
   "version": "0.1.0",
-  "description": "Import Google Meet recordings, transcripts and Gemini notes into Twenty Call Recordings.",
+  "description": "Import Google Meet transcripts and Gemini notes into Twenty Call Recordings.",
   "author": "Twenty",
   "license": "MIT",
   "engines": {
