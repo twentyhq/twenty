@@ -154,6 +154,11 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Edit own profile information',
     icon: 'IconUser',
   },
+  [PermissionFlagType.READ_PRIVATE_CHANNELS]: {
+    label: 'Read Private Channels',
+    description: "Read every member's channels and who owns them",
+    icon: 'IconAt',
+  },
 };
 
 export const STANDARD_PERMISSION_FLAG_DEFINITIONS: StandardPermissionFlagDefinition[] =
