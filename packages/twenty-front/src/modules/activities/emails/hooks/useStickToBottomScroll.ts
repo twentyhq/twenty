@@ -16,12 +16,20 @@ export const useStickToBottomScroll = () => {
     }
 
     let isPinnedToBottom = true;
+    let lastScrollTop = scrollContainer.scrollTop;
 
+    // Only scrolling up unpins: content can grow again before the scroll event
+    // of our own scroll to the bottom fires, which then looks far from the bottom
     const handleScroll = () => {
       const { scrollHeight, scrollTop, clientHeight } = scrollContainer;
 
-      isPinnedToBottom =
-        scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD_IN_PX;
+      if (scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD_IN_PX) {
+        isPinnedToBottom = true;
+      } else if (scrollTop < lastScrollTop) {
+        isPinnedToBottom = false;
+      }
+
+      lastScrollTop = scrollTop;
     };
 
     // Media loads after its message renders, so heights change without a new message

@@ -51,8 +51,12 @@ const renderScrollContainer = () => {
     get: () => clientHeight,
   });
 
-  const growContentTo = (height: number) => {
+  const setContentHeight = (height: number) => {
     scrollHeight = height;
+  };
+
+  const growContentTo = (height: number) => {
+    setContentHeight(height);
     resizeElement(scrollContent);
   };
 
@@ -61,7 +65,12 @@ const renderScrollContainer = () => {
     resizeElement(scrollContainer);
   };
 
-  return { scrollContainer, growContentTo, shrinkViewportTo };
+  return {
+    scrollContainer,
+    setContentHeight,
+    growContentTo,
+    shrinkViewportTo,
+  };
 };
 
 describe('useStickToBottomScroll', () => {
@@ -89,15 +98,43 @@ describe('useStickToBottomScroll', () => {
     expect(scrollContainer.scrollTop).toBe(500);
   });
 
+  it('stays pinned when content grows again before its own scroll is reported', () => {
+    const { scrollContainer, setContentHeight, growContentTo } =
+      renderScrollContainer();
+
+    growContentTo(800);
+    setContentHeight(1200);
+    fireEvent.scroll(scrollContainer);
+    growContentTo(1200);
+
+    expect(scrollContainer.scrollTop).toBe(1200);
+  });
+
   it('leaves the position alone once the reader scrolled up', () => {
     const { scrollContainer, growContentTo, shrinkViewportTo } =
       renderScrollContainer();
 
-    scrollContainer.scrollTop = 0;
-    fireEvent.scroll(scrollContainer);
     growContentTo(800);
+    fireEvent.scroll(scrollContainer);
+    scrollContainer.scrollTop = 300;
+    fireEvent.scroll(scrollContainer);
+    growContentTo(1200);
     shrinkViewportTo(60);
 
-    expect(scrollContainer.scrollTop).toBe(0);
+    expect(scrollContainer.scrollTop).toBe(300);
+  });
+
+  it('follows the bottom again once the reader scrolled back down', () => {
+    const { scrollContainer, growContentTo } = renderScrollContainer();
+
+    growContentTo(800);
+    fireEvent.scroll(scrollContainer);
+    scrollContainer.scrollTop = 300;
+    fireEvent.scroll(scrollContainer);
+    scrollContainer.scrollTop = 700;
+    fireEvent.scroll(scrollContainer);
+    growContentTo(1200);
+
+    expect(scrollContainer.scrollTop).toBe(1200);
   });
 });
