@@ -4,8 +4,7 @@ import { type FindOptionsWhere } from 'typeorm';
 
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 
-// userWorkspaceId is undefined for API keys, which see shared workflows but nobody's private one.
-// TypeORM ORs these clauses, so extra conditions go in each.
+// TypeORM ORs these clauses, so extra conditions go in each
 export const buildCoreWorkflowVisibilityWhere = ({
   userWorkspaceId,
   ...where

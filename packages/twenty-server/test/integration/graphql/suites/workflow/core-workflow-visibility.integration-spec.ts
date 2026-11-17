@@ -734,6 +734,15 @@ describe('core workflow visibility (e2e)', () => {
 
     afterAll(async () => {
       if (isDefined(ownerlessPrivateCoreWorkflowId)) {
+        await global.testDataSource.query(
+          `UPDATE core."workflow" SET "visibility" = 'WORKSPACE' WHERE id = $1`,
+          [ownerlessPrivateCoreWorkflowId],
+        );
+
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+
         await deleteCoreWorkflows({
           coreWorkflowIds: [ownerlessPrivateCoreWorkflowId],
         });

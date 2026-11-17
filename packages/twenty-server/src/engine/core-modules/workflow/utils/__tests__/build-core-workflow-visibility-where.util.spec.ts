@@ -4,6 +4,7 @@ import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules
 import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
+import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
 
 const READER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
@@ -91,5 +92,41 @@ describe('canChangeCoreWorkflowVisibilitySelectExpression', () => {
     ).toBe(
       `coalesce((c."createdByUserWorkspaceId" IS NULL OR c."createdByUserWorkspaceId" = $2::uuid), false)`,
     );
+  });
+});
+
+describe('isCoreWorkflowVisibleToUser', () => {
+  it('should show workspace workflows to everyone and private ones to their creator only', () => {
+    expect(
+      isCoreWorkflowVisibleToUser({
+        visibility: WorkflowVisibility.WORKSPACE,
+        createdByUserWorkspaceId: null,
+        userWorkspaceId: undefined,
+      }),
+    ).toBe(true);
+    expect(
+      isCoreWorkflowVisibleToUser({
+        visibility: WorkflowVisibility.PRIVATE,
+        createdByUserWorkspaceId: READER_USER_WORKSPACE_ID,
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(true);
+    expect(
+      isCoreWorkflowVisibleToUser({
+        visibility: WorkflowVisibility.PRIVATE,
+        createdByUserWorkspaceId: 'someone-else',
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(false);
+  });
+
+  it('should hide a private workflow with no creator from everyone', () => {
+    expect(
+      isCoreWorkflowVisibleToUser({
+        visibility: WorkflowVisibility.PRIVATE,
+        createdByUserWorkspaceId: null,
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(false);
   });
 });
