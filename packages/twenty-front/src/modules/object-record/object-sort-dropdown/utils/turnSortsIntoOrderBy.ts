@@ -12,7 +12,6 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import {
   findById,
   getOrderByForFieldMetadataType,
-  getOrderByForRelationField as getOrderByForRelationTargetField,
   isDefined,
 } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -54,11 +53,11 @@ export const turnSortsIntoOrderBy = (
         correspondingField.type === FieldMetadataType.RELATION &&
         isDefined(relationTargetField)
       ) {
-        return getOrderByForRelationTargetField({
-          field: correspondingField,
-          labelIdentifierField: relationTargetField,
+        return getOrderByForFieldMetadataType({
+          field: relationTargetField,
           orderByDirection: direction,
-        });
+          primaryCompositeSubField: sort.subFieldName,
+        }).map((orderByEntry) => ({ [correspondingField.name]: orderByEntry }));
       }
 
       if (correspondingField.type === FieldMetadataType.RELATION) {
