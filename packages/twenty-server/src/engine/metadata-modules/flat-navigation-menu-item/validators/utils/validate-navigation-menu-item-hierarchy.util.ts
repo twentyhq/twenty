@@ -11,6 +11,12 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
 > = {
   [NavigationMenuItemType.TAB]: [],
   [NavigationMenuItemType.SECTION]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.FAVORITES]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_CHAT_INBOX]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_CHAT_FAVORITES]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_CHAT_CHANNELS]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_CHAT_RECENTS]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_AGENTS]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.FOLDER]: [
     NavigationMenuItemType.TAB,
     NavigationMenuItemType.SECTION,
