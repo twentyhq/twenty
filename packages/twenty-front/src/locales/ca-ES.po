@@ -24038,6 +24038,7 @@ msgstr "Rep un correu que conté l'enllaç per actualitzar la contrasenya"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Recent"
 

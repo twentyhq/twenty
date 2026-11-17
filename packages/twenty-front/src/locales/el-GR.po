@@ -24038,6 +24038,7 @@ msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμ�
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Πρόσφατο"
 

@@ -24038,6 +24038,7 @@ msgstr "Отримати лист з посиланням для оновлен�
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Нещодавні"
 

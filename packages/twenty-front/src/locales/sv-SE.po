@@ -24040,6 +24040,7 @@ msgstr "Ta emot ett e-postmeddelande med länk för att uppdatera lösenordet"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Senaste"
 

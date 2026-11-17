@@ -24038,6 +24038,7 @@ msgstr "Obdržíte e-mail s odkazem na aktualizaci hesla"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Nedávné"
 

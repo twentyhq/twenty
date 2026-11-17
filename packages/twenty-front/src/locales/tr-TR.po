@@ -24038,6 +24038,7 @@ msgstr "Şifre güncelleme bağlantısı içeren e-posta alın"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Son kullanılanlar"
 

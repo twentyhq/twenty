@@ -24038,6 +24038,7 @@ msgstr "Recevoir un email contenant un lien de mise à jour du mot de passe"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Récent"
 

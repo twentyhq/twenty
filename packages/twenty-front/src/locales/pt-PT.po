@@ -24038,6 +24038,7 @@ msgstr "Receber um e-mail com um link para atualização da palavra-passe"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Recente"
 
