@@ -3404,6 +3404,7 @@ msgstr "已连接账户 \"{connectedAccountId}\" 没有启用同步的日历渠�
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "未找到已连接账户。"
 
