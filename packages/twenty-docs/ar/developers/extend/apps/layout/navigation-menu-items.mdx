@@ -31,14 +31,14 @@ export default defineNavigationMenuItem({
 
 * يحدّد `type` ما الذي يرتبط به عنصر القائمة. كل نوع يقترن بحقل معرّف محدّد:
 
-  | النوع                                | ماذا يفعل                             | حقل مطلوب                                                                  |
-  | ------------------------------------ | ------------------------------------- | -------------------------------------------------------------------------- |
-  | `NavigationMenuItemType.VIEW`        | يفتح عرضًا محفوظًا                    | `viewUniversalIdentifier`                                                  |
-  | `NavigationMenuItemType.LINK`        | يفتح عنوان URL خارجيًا                | `link`                                                                     |
-  | `NavigationMenuItemType.FOLDER`      | يجمع العناصر المتداخلة تحت تسمية      | `name` (وتشير العناصر الفرعية إلى المجلّد عبر `folderUniversalIdentifier`) |
-  | `NavigationMenuItemType.OBJECT`      | يفتح صفحة الفهرس الافتراضية لكائنٍ ما | `targetObjectUniversalIdentifier`                                          |
-  | `NavigationMenuItemType.PAGE_LAYOUT` | يفتح مخطّط صفحة مستقلًا               | `pageLayoutUniversalIdentifier`                                            |
-  | `NavigationMenuItemType.NATIVE_PAGE` | يفتح صفحة مضمنة                       | `nativePageKey`: `'workflows'` أو `'agents'`                               |
+  | النوع                                | ماذا يفعل                             | حقل مطلوب                                                                 |
+  | ------------------------------------ | ------------------------------------- | ------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | يفتح عرضًا محفوظًا                    | `viewUniversalIdentifier`                                                 |
+  | `NavigationMenuItemType.LINK`        | يفتح عنوان URL خارجيًا                | `link`                                                                    |
+  | `NavigationMenuItemType.FOLDER`      | يجمع العناصر المتداخلة تحت تسمية      | `name` (وتشير العناصر الفرعية إلى المجلد عبر `parentUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | يفتح صفحة الفهرس الافتراضية لكائنٍ ما | `targetObjectUniversalIdentifier`                                         |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | يفتح مخطّط صفحة مستقلًا               | `pageLayoutUniversalIdentifier`                                           |
+  | `NavigationMenuItemType.NATIVE_PAGE` | يفتح صفحة مضمنة                       | `nativePageKey`: `'workflows'` أو `'agents'`                              |
 
 * `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
 
@@ -48,7 +48,7 @@ export default defineNavigationMenuItem({
 
 * `icon` و`color` اختياريان ويخصّصان مظهر الإدخال.
 
-* `folderUniversalIdentifier` متاح أيضًا على أي عنصر لوضعه متداخلًا داخل عنصر أب من النوع `FOLDER`.
+* `parentUniversalIdentifier` متاح أيضًا على أي عنصر لوضعه متداخلًا داخل عنصر أب من النوع `FOLDER`. الاسم السابق، `folderUniversalIdentifier`، مهمل ولكنه لا يزال مقبولًا.
 
 * يقوم `twenty app pull` بكتابة عناصر قائمة التنقل الخاصة بك مرة أخرى كملفات `defineNavigationMenuItem()`. ينتمي عنصر أضافه عضو مساحة عمل إلى شريطه الجانبي الخاص، وعنصر مثبّت إلى سجل، إلى مساحة العمل تلك بدلاً من تطبيقك، ويُبلّغ عنهما بدلاً من ذلك؛ راجع [ما لا تكتبه عملية السحب](/ar/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 

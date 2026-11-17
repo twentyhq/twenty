@@ -4031,6 +4031,9 @@ export default {
             "pageLayoutId": [
                 564
             ],
+            "parentId": [
+                564
+            ],
             "position": [
                 8
             ],
@@ -5839,6 +5842,9 @@ export default {
                 564
             ],
             "workspaceInviteHash": [
+                4
+            ],
+            "workspacePersonalInviteToken": [
                 4
             ],
             "__typename": [
@@ -10134,19 +10140,6 @@ export default {
                     ]
                 }
             ],
-            "upgradeApplication": [
-                1,
-                {
-                    "appRegistrationId": [
-                        4,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        4,
-                        "String!"
-                    ]
-                }
-            ],
             "uploadAppTarball": [
                 86,
                 {
@@ -10391,6 +10384,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [
@@ -14867,6 +14863,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [

@@ -1,3 +1,4 @@
+import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -41,6 +42,7 @@ describe('useIsAiChatComposerCentered', () => {
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
     jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   });
 
   it('should center the composer on an empty full page chat', () => {

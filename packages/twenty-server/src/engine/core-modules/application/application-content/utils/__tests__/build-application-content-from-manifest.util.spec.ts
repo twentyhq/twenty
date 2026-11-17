@@ -5,7 +5,11 @@ import {
   type PageLayoutManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, PageLayoutType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  NavigationMenuItemType,
+  PageLayoutType,
+} from 'twenty-shared/types';
 
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 
@@ -167,5 +171,34 @@ describe('buildApplicationContentFromManifest', () => {
     expect(content.translations).toEqual([
       expect.objectContaining({ label: 'fr-FR', count: 2 }),
     ]);
+  });
+
+  it('should read the parent folder from manifests that still use folderUniversalIdentifier', () => {
+    const content = buildApplicationContentFromManifest({
+      navigationMenuItems: [
+        {
+          universalIdentifier: 'billing-folder',
+          type: NavigationMenuItemType.FOLDER,
+          name: 'Billing',
+          position: 0,
+        },
+        {
+          universalIdentifier: 'billing-link',
+          type: NavigationMenuItemType.LINK,
+          name: 'Billing portal',
+          link: 'https://example.com',
+          position: 0,
+          folderUniversalIdentifier: 'billing-folder',
+        },
+      ],
+    });
+
+    expect(content.navigationMenuItems).toContainEqual(
+      expect.objectContaining({
+        universalIdentifier: 'billing-link',
+        parentLabel: 'Billing',
+        parentUniversalIdentifier: 'billing-folder',
+      }),
+    );
   });
 });

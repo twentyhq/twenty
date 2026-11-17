@@ -1,5 +1,5 @@
-import { type SendMessageData } from '@unipile/sdk';
-
-export type UnipileOutgoingAttachment = NonNullable<
-  SendMessageData['body']['attachments']
->[number];
+export type UnipileOutgoingAttachment = {
+  content: Buffer;
+  contentType: string;
+  filename: string;
+};

@@ -1,14 +1,12 @@
 import { testHttpRequest } from 'test/integration/graphql/suites/workflow/utils/test-http-request.util';
 import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/types/floci-lambda-driver.type';
 import { switchToFlociLambdaDriver } from 'test/integration/logic-function-lambda/utils/switch-to-floci-lambda-driver.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -44,11 +42,6 @@ describe('Outbound HTTP requests on the Lambda driver should fail', () => {
   beforeAll(async () => {
     flociLambdaDriver = await switchToFlociLambdaDriver();
 
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     // Allowed for the server only: the Lambda must refuse them whatever the server allows.
     await updateConfigVariable({
       input: {
@@ -61,11 +54,6 @@ describe('Outbound HTTP requests on the Lambda driver should fail', () => {
   afterAll(async () => {
     await updateConfigVariable({
       input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
-      value: false,
-      expectToFail: false,
     });
     await flociLambdaDriver?.restore();
   }, LAMBDA_TEST_TIMEOUT_MS);

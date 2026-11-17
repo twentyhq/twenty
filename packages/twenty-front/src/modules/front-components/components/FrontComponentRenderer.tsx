@@ -35,8 +35,10 @@ type FrontComponentRendererProps = {
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
+  errorFallback?: ReactNode;
   shouldPreventPageZoom?: boolean;
 };
 
@@ -52,8 +54,10 @@ type FrontComponentRendererContentProps = {
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
+  errorFallback?: ReactNode;
   shouldPreventPageZoom?: boolean;
 };
 
@@ -65,8 +69,10 @@ export const FrontComponentRenderer = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   loadingFallback,
   unavailableFallback,
+  errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
@@ -96,8 +102,10 @@ export const FrontComponentRenderer = ({
           objectNameSingular={objectNameSingular}
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
+          onToolCallArgumentsChange={onToolCallArgumentsChange}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
+          errorFallback={errorFallback}
           shouldPreventPageZoom={shouldPreventPageZoom}
         />
       )}
@@ -113,8 +121,10 @@ const FrontComponentRendererContent = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   loadingFallback,
   unavailableFallback,
+  errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
   const colorScheme = useThemeColorScheme();
@@ -142,6 +152,7 @@ const FrontComponentRendererContent = ({
     objectNameSingular,
     timelineActivityId,
     toolCall,
+    onToolCallArgumentsChange,
     colorScheme,
   });
 
@@ -281,6 +292,7 @@ const FrontComponentRendererContent = ({
             storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
+            errorFallback={errorFallback}
             shouldPreventPageZoom={shouldPreventPageZoom}
           />
         </FrontComponentRendererProvider>

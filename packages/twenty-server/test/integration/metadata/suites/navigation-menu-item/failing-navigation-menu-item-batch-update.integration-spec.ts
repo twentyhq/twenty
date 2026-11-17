@@ -30,12 +30,12 @@ const failingBatchUpdateTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when updating with invalid folderId',
+    title: 'when updating with invalid parentId',
     context: {
       buildInputs: (itemId: string) => [
         {
           id: itemId,
-          update: { folderId: 'not-a-valid-uuid' },
+          update: { parentId: 'not-a-valid-uuid' },
         },
       ],
     },

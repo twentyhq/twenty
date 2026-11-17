@@ -724,6 +724,11 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "مالک حساب برای شرکت‌ها"
 
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "حساب‌هایی که به پنل مدیریت یا جعل هویت دسترسی دارند، نمی‌توانند از طریق SSO به یک فضای کاری بپیوندند. دعوت‌نامه را با روش ورود دیگری بپذیرید."
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -1333,6 +1338,11 @@ msgstr "یک خطای غیرمنتظره رخ داد."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "یک خطای ناشناخته تقویم رخ داد."
+
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "یک حساب تأییدنشده برای این ایمیل از قبل وجود دارد. پیش از پذیرفتن دعوت‌نامه از طریق SSO، ایمیل آن را تأیید کنید یا گذرواژه‌اش را بازنشانی کنید."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10592,6 +10602,11 @@ msgstr "گروه گزاره مجوز در سطح ردیف والد یافت نش
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "گروه فیلتر نمای والد یافت نشد"
+
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "parentId و folderId باید مطابقت داشته باشند. folderId منسوخ شده است؛ از parentId استفاده کنید."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

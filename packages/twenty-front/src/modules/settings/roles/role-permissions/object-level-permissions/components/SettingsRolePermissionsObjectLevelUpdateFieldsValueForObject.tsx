@@ -4,6 +4,7 @@ import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissi
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsRolePermissionsObjectLevelUpdateFieldsValueForObjectProps = {
   roleId: string;
@@ -38,7 +39,9 @@ export const SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject = ({
 
   const numberOfRestrictedFieldMetadataItemsOnUpdate =
     roleFieldPermissions.filter(
-      (fieldPermission) => fieldPermission.canUpdateFieldValue === false,
+      (fieldPermission) =>
+        isDefined(fieldPermission.canUpdateFieldValue) &&
+        !fieldPermission.canUpdateFieldValue,
     ).length;
 
   const canUpdateSome =
