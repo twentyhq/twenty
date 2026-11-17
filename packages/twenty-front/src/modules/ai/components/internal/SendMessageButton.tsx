@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
@@ -21,7 +21,7 @@ export const SendMessageButton = ({
   isDisabled = false,
 }: SendMessageButtonProps) => {
   const { t } = useLingui();
-  const { instanceId, threadId } = useAiChatInstance();
+  const { instanceId, threadId } = useAiChatInstanceOrThrow();
   const aiChatInputIsEmpty = useAtomFamilySelectorValue(
     aiChatInputIsEmptyFamilySelector,
     threadId,

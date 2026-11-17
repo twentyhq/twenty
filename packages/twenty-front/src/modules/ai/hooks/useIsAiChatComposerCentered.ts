@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useContext } from 'react';
 
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
@@ -13,7 +13,7 @@ export const useIsAiChatComposerCentered = () => {
   // The workspace setup preamble is its own intro; centering would fight it.
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,

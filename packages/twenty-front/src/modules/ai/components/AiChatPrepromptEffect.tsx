@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatPrepromptState } from '@/ai/states/aiChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const AiChatPrepromptEffect = () => {
   const store = useStore();
-  const { instanceId, threadId } = useAiChatInstance();
+  const { instanceId, threadId } = useAiChatInstanceOrThrow();
   const aiChatPreprompt = useAtomStateValue(aiChatPrepromptState);
 
   useEffect(() => {

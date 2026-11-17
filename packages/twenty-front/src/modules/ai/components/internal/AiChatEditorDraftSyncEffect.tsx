@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { serializeAiChatEditorDraft } from '@/ai/utils/serializeAiChatEditorDraft';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,7 +15,7 @@ type AiChatEditorDraftSyncEffectProps = {
 export const AiChatEditorDraftSyncEffect = ({
   editor,
 }: AiChatEditorDraftSyncEffectProps) => {
-  const { threadId } = useAiChatInstance();
+  const { threadId } = useAiChatInstanceOrThrow();
   const draft = useAtomStateValue(aiChatDraftsByThreadIdState)[threadId] ?? '';
 
   useEffect(() => {

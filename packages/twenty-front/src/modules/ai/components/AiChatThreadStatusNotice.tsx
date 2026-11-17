@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const AiChatThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const { event } = useAtomFamilySelectorValue(
     aiChatThreadMemberStateFamilySelector,
     currentAiChatThread ?? '',

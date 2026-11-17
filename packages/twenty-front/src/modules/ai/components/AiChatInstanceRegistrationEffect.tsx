@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const AiChatInstanceRegistrationEffect = () => {
-  const { instanceId, threadId } = useAiChatInstance();
+  const { instanceId, threadId } = useAiChatInstanceOrThrow();
   const setAiChatOpenThreadIdByInstanceId = useSetAtomState(
     aiChatOpenThreadIdByInstanceIdState,
   );

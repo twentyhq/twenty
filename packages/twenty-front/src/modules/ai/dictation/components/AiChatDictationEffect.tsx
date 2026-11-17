@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -31,7 +31,7 @@ export const AiChatDictationEffect = ({
 }: AiChatDictationEffectProps) => {
   const isSupported = useDictationAvailability();
   const store = useStore();
-  const { instanceId } = useAiChatInstance();
+  const { instanceId } = useAiChatInstanceOrThrow();
 
   const [dictationEngine, setDictationEngine] = useAtomComponentState(
     dictationEngineComponentState,

@@ -20,7 +20,7 @@ import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewT
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
@@ -103,7 +103,7 @@ export const useAiChat = () => {
     instanceId,
     threadId: aiChatThreadId,
     onThreadChange,
-  } = useAiChatInstance();
+  } = useAiChatInstanceOrThrow();
   const { modelIdForRequest } = useAiChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const canSendAiChatMessage = useCanSendAiChatMessage();

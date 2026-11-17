@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { styled } from '@linaria/react';
 import { type ChangeEvent, type Ref } from 'react';
@@ -13,7 +13,7 @@ type AiChatFileInputProps = {
 
 export const AiChatFileInput = ({ ref }: AiChatFileInputProps) => {
   const { uploadFiles } = useAiChatFileUpload();
-  const { threadId } = useAiChatInstance();
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {
@@ -22,7 +22,7 @@ export const AiChatFileInput = ({ ref }: AiChatFileInputProps) => {
 
     const files = Array.from(event.target.files);
 
-    uploadFiles(files, threadId);
+    uploadFiles({ files, threadId });
     event.target.value = '';
   };
 

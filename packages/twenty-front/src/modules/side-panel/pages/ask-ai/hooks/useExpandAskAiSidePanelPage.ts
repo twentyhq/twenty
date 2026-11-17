@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -28,11 +29,13 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
       : undefined,
     hasExpandShortcut: false,
     expand: () => {
-      const askAiSidePanelThreadId = store.get(
-        askAiSidePanelThreadIdComponentState.atomFamily({
-          instanceId: sidePanelPageInstanceId ?? '',
-        }),
-      );
+      const askAiSidePanelThreadId = isDefined(sidePanelPageInstanceId)
+        ? store.get(
+            askAiSidePanelThreadIdComponentState.atomFamily({
+              instanceId: sidePanelPageInstanceId,
+            }),
+          )
+        : null;
 
       const isOnNewChat =
         askAiSidePanelThreadId === store.get(newAiChatThreadIdState.atom);

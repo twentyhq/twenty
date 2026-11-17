@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +11,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AiChatStreamingAutoScrollEffect = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
 
   const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
     threadId: currentAiChatThread,

@@ -1,11 +1,11 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { getAiChatThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useCurrentAiChatThreadAccess = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const permissions = useAtomFamilySelectorValue(
     aiChatThreadPermissionsFamilySelector,

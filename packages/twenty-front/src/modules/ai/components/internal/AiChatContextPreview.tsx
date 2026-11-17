@@ -1,5 +1,5 @@
 import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
@@ -14,7 +14,7 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AiChatContextPreview = () => {
-  const { threadId } = useAiChatInstance();
+  const { threadId } = useAiChatInstanceOrThrow();
   const [aiChatSelectedFiles, setAiChatSelectedFiles] = useAtomFamilyState(
     aiChatSelectedFilesFamilyState,
     { threadId },

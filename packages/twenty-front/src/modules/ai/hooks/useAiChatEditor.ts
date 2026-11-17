@@ -1,6 +1,6 @@
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
 import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -37,7 +37,7 @@ import { useLingui } from '@lingui/react/macro';
 export const useAiChatEditor = () => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const { instanceId, threadId: draftKey } = useAiChatInstance();
+  const { instanceId, threadId: draftKey } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
   const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
     aiChatDraftsByThreadIdState,
@@ -103,7 +103,7 @@ export const useAiChatEditor = () => {
           return false;
         }
 
-        uploadFiles(pastedFiles, draftKey);
+        uploadFiles({ files: pastedFiles, threadId: draftKey });
         return true;
       },
     },

@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { type Editor } from '@tiptap/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -20,7 +20,7 @@ export const AiChatSentMessageHandOffEffect = ({
   isComposerCentered,
 }: AiChatSentMessageHandOffEffectProps) => {
   const store = useStore();
-  const { instanceId } = useAiChatInstance();
+  const { instanceId } = useAiChatInstanceOrThrow();
 
   const handOffSentMessage = (detail?: AiChatInstanceEventDetail) => {
     if (detail?.instanceId !== instanceId) {

@@ -1,11 +1,11 @@
 import { useLayoutEffect } from 'react';
 
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 export const AiChatInstanceDisplayedThreadEffect = () => {
-  const { threadId } = useAiChatInstance();
+  const { threadId } = useAiChatInstanceOrThrow();
   const [aiChatDisplayedThread, setAiChatDisplayedThread] =
     useAtomComponentState(aiChatDisplayedThreadComponentState);
 

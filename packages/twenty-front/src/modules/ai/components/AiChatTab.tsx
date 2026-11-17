@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
@@ -32,7 +32,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,
@@ -71,7 +71,9 @@ export const AiChatTab = () => {
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
-          onUploadFiles={(files) => uploadFiles(files, currentAiChatThread)}
+          onUploadFiles={(files) =>
+            uploadFiles({ files, threadId: currentAiChatThread })
+          }
         />
       )}
       {!isDraggingFile && (

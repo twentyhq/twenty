@@ -1,5 +1,5 @@
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -26,7 +26,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     StartWorkspaceSetupChatDocument,
   );
   const store = useStore();
-  const { onThreadChange } = useAiChatInstance();
+  const { onThreadChange } = useAiChatInstanceOrThrow();
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
   const { addInboxThread } = useAddInboxThread();

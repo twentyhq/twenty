@@ -1,5 +1,5 @@
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -31,7 +31,7 @@ const StyledContainer = styled(StyledAiChatContentContainer)<{
 
 export const AiChatTypingParticipants = () => {
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const aiChatHasMessage = useAtomComponentSelectorValue(
     aiChatHasMessageComponentSelector,
   );

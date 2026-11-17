@@ -60,7 +60,10 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return newAiChatThreadId;
     }
 
-    const uploadedFiles = await uploadFiles(files, newAiChatThreadId);
+    const uploadedFiles = await uploadFiles({
+      files,
+      threadId: newAiChatThreadId,
+    });
 
     const isNewChatStillOpen = Object.values(
       store.get(aiChatOpenThreadIdByInstanceIdState.atom),

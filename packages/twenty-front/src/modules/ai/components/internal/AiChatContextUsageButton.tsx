@@ -1,4 +1,4 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
@@ -57,7 +57,7 @@ export const AiChatContextUsageButton = () => {
     onOpen: () => setShowDetails(false),
   });
 
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
 
   const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
     threadId: currentAiChatThread,

@@ -1,6 +1,6 @@
 import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,7 +16,7 @@ import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFami
 
 export const AiChatComposerQuote = () => {
   const { t } = useLingui();
-  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
   const aiChatDisplayedThread = useAtomComponentStateValue(
     aiChatDisplayedThreadComponentState,
   );

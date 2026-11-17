@@ -78,7 +78,10 @@ describe('useAiChatFileUpload', () => {
     try {
       act(() => {
         jotaiStore.set(currentAiChatThreadState.atom, NEW_THREAD_ID);
-        upload = result.current.uploadFiles([file], NEW_THREAD_ID);
+        upload = result.current.uploadFiles({
+          files: [file],
+          threadId: NEW_THREAD_ID,
+        });
       });
 
       await waitFor(() => expect(putFile).toHaveBeenCalled());

@@ -17,10 +17,13 @@ export const useAiChatFileUpload = () => {
   const { enqueueToast } = useToast();
   const store = useStore();
 
-  const sendFile = async (
-    file: File,
-    threadId: string,
-  ): Promise<AiChatFileUIPart | null> => {
+  const sendFile = async ({
+    file,
+    threadId,
+  }: {
+    file: File;
+    threadId: string;
+  }): Promise<AiChatFileUIPart | null> => {
     const selectedFilesAtom = aiChatSelectedFilesFamilyState.atomFamily({
       threadId,
     });
@@ -67,7 +70,13 @@ export const useAiChatFileUpload = () => {
     }
   };
 
-  const uploadFiles = async (files: File[], threadId: string) => {
+  const uploadFiles = async ({
+    files,
+    threadId,
+  }: {
+    files: File[];
+    threadId: string;
+  }) => {
     const currentThread = store.get(
       aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
@@ -85,7 +94,7 @@ export const useAiChatFileUpload = () => {
     );
 
     const successfulUploads = (
-      await Promise.all(files.map((file) => sendFile(file, threadId)))
+      await Promise.all(files.map((file) => sendFile({ file, threadId })))
     ).filter(isDefined);
 
     if (isNonEmptyArray(successfulUploads)) {
