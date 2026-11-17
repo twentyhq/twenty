@@ -11,7 +11,7 @@ import { buildGoogleMeetConferenceRecordFilter } from 'src/logic-functions/utils
 import { buildGoogleMeetUrl } from 'src/logic-functions/utils/build-google-meet-url.util';
 import { fetchGoogleMeetJson } from 'src/logic-functions/utils/fetch-google-meet-json.util';
 
-const listGoogleMeetConferenceRecordPages = async ({
+const listGoogleMeetConferenceRecordPagesOrThrow = async ({
   accessToken,
   filter,
   pageToken,
@@ -48,7 +48,7 @@ const listGoogleMeetConferenceRecordPages = async ({
 
   return [
     ...conferenceRecords,
-    ...(await listGoogleMeetConferenceRecordPages({
+    ...(await listGoogleMeetConferenceRecordPagesOrThrow({
       accessToken,
       filter,
       pageToken: page.nextPageToken,
@@ -66,7 +66,7 @@ export const listGoogleMeetConferenceRecords = ({
   startedAfter: Date;
   startedBefore: Date;
 }): Promise<GoogleMeetConferenceRecord[]> =>
-  listGoogleMeetConferenceRecordPages({
+  listGoogleMeetConferenceRecordPagesOrThrow({
     accessToken,
     filter: buildGoogleMeetConferenceRecordFilter({
       startedAfter,

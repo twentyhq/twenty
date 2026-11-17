@@ -7,6 +7,7 @@ import {
   GOOGLE_MEET_RETRYABLE_STATUSES,
 } from 'src/logic-functions/constants/google-meet-api.constant';
 import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
+import { parseRetryAfterMilliseconds } from 'src/logic-functions/utils/parse-retry-after-milliseconds.util';
 import { sleepForMilliseconds } from 'src/logic-functions/utils/sleep-for-milliseconds.util';
 
 type GoogleMeetErrorBody = {
@@ -18,7 +19,7 @@ type GoogleMeetRequest = {
   url: string;
 };
 
-const fetchGoogleMeetResponseWithRetries = async ({
+const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
   accessToken,
   url,
   attempt,
@@ -39,11 +40,11 @@ const fetchGoogleMeetResponseWithRetries = async ({
     return response;
   }
 
-  const retryAfterSeconds = Number(response.headers.get('Retry-After'));
   const retryDelayMilliseconds =
-    retryAfterSeconds > 0
-      ? retryAfterSeconds * 1_000
-      : GOOGLE_MEET_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
+    parseRetryAfterMilliseconds({
+      retryAfter: response.headers.get('Retry-After'),
+      now: new Date(),
+    }) ?? GOOGLE_MEET_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
 
   if (
     GOOGLE_MEET_RETRYABLE_STATUSES.has(response.status) &&
@@ -53,7 +54,7 @@ const fetchGoogleMeetResponseWithRetries = async ({
   ) {
     await sleepForMilliseconds(retryDelayMilliseconds);
 
-    return fetchGoogleMeetResponseWithRetries({
+    return fetchGoogleMeetResponseWithRetriesOrThrow({
       accessToken,
       url,
       attempt: attempt + 1,
@@ -83,7 +84,7 @@ export const fetchGoogleMeetJson = async <TResponse>({
   accessToken,
   url,
 }: GoogleMeetRequest): Promise<TResponse> => {
-  const response = await fetchGoogleMeetResponseWithRetries({
+  const response = await fetchGoogleMeetResponseWithRetriesOrThrow({
     accessToken,
     url,
     attempt: 0,
