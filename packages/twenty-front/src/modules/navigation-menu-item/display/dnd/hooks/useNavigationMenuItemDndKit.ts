@@ -101,13 +101,17 @@ export const useNavigationMenuItemDndKit = (
         resolved.destination.droppableId,
         sectionType,
       );
-      if (isDefined(destFolderId)) {
+      const destinationParent = getNavItemById(destFolderId ?? undefined);
+      if (
+        isDefined(destinationParent) &&
+        isNavigationMenuItemFolder(destinationParent)
+      ) {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag],
+    [sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(

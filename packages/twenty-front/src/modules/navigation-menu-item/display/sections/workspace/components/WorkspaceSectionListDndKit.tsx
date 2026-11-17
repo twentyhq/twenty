@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import {
@@ -34,6 +35,7 @@ const StyledListItemRow = styled.div`
 `;
 
 export const WorkspaceSectionListDndKit = ({
+  containerId,
   filteredItems,
   getEditModeProps,
   folderChildrenById,
@@ -50,17 +52,22 @@ export const WorkspaceSectionListDndKit = ({
   ).length;
   const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   const orphanAppendDndIndex = filteredItems.length;
+  const listDroppableId = isDefined(containerId)
+    ? `${NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX}${containerId}`
+    : NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
         <StyledListItemRow key={item.id}>
-          <NavigationMenuItemOrphanDropTarget index={index} compact />
+          <NavigationMenuItemOrphanDropTarget
+            index={index}
+            compact
+            droppableId={listDroppableId}
+          />
           <NavigationMenuItemSortableItem
             id={item.id}
             index={index}
-            group={
-              NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-            }
+            group={listDroppableId}
             disabled={
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
@@ -73,15 +80,13 @@ export const WorkspaceSectionListDndKit = ({
               folderCount={folderCount}
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              orphanIndex={index}
+              orphanIndex={isDefined(containerId) ? undefined : index}
             />
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}
       <NavigationMenuItemDroppableSlot
-        droppableId={
-          NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-        }
+        droppableId={listDroppableId}
         index={orphanAppendDndIndex}
         disabled={workspaceDropDisabled}
         collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
@@ -90,8 +95,17 @@ export const WorkspaceSectionListDndKit = ({
           index={orphanAppendDndIndex}
           compact
           highlightPosition="top"
+          droppableId={listDroppableId}
         />
-        {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
+        {isAddMenuItemButtonVisible && (
+          <WorkspaceSectionAddMenuItemButton
+            container={
+              isDefined(containerId)
+                ? { id: containerId, itemCount: filteredItems.length }
+                : undefined
+            }
+          />
+        )}
       </NavigationMenuItemDroppableSlot>
     </StyledList>
   );

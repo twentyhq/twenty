@@ -1,20 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
-
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
+import { WorkspaceSectionListDndKit } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit';
 import { useEditModeNavigationMenuItemClick } from '@/navigation-menu-item/edit/hooks/useEditModeNavigationMenuItemClick';
-import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
-const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.betweenSiblingsGap};
-  padding-top: ${themeCssVariables.betweenSiblingsGap};
-`;
 
 type NavigationMenuContainerEditableItemsProps = {
   containerId: string;
@@ -27,34 +15,22 @@ export const NavigationMenuContainerEditableItems = ({
   topLevelItems,
   folderChildrenById,
 }: NavigationMenuContainerEditableItemsProps) => {
-  const [
-    selectedNavigationMenuItemIdInEditMode,
-    setSelectedNavigationMenuItemIdInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
   const handleNavigationMenuItemClick = useEditModeNavigationMenuItemClick();
-  const folderCount = topLevelItems.filter(isNavigationMenuItemFolder).length;
 
   return (
-    <StyledList>
-      {topLevelItems.map((item) => (
-        <NavigationMenuItemDisplay
-          key={item.id}
-          item={item}
-          isDragging={false}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          editModeProps={{
-            isSelectedInEditMode:
-              selectedNavigationMenuItemIdInEditMode === item.id,
-            onEditModeClick: () =>
-              setSelectedNavigationMenuItemIdInEditMode(item.id),
-          }}
-          onNavigationMenuItemClick={handleNavigationMenuItemClick}
-        />
-      ))}
-      <WorkspaceSectionAddMenuItemButton
-        container={{ id: containerId, itemCount: topLevelItems.length }}
-      />
-    </StyledList>
+    <WorkspaceSectionListDndKit
+      containerId={containerId}
+      filteredItems={topLevelItems}
+      folderChildrenById={folderChildrenById}
+      getEditModeProps={(item) => ({
+        isSelectedInEditMode:
+          selectedNavigationMenuItemIdInEditMode === item.id,
+        onEditModeClick: () => handleNavigationMenuItemClick({ item }),
+      })}
+      onNavigationMenuItemClick={handleNavigationMenuItemClick}
+    />
   );
 };

@@ -14,6 +14,7 @@ import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
@@ -45,11 +46,9 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     ? workspaceNavigationMenuItems
     : navigationMenuItems;
 
-  const getSortedItems = (): Array<{
-    id: string;
-    position: number;
-    parentId?: string | null;
-  }> =>
+  const getSortedItems = (): Array<
+    Pick<NavigationMenuItem, 'id' | 'position' | 'parentId' | 'type'>
+  > =>
     isDraftMode
       ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
           (a, b) => a.position - b.position,
@@ -155,9 +154,14 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       section,
     );
 
+    const destinationParent = allItems.find(
+      (item) => item.id === destinationFolderId,
+    );
+
     if (
       isNavigationMenuItemFolder(draggedItem) &&
-      isDefined(destinationFolderId)
+      isDefined(destinationParent) &&
+      isNavigationMenuItemFolder(destinationParent)
     ) {
       return;
     }
@@ -187,8 +191,10 @@ export const useHandleNavigationMenuItemDragAndDrop = (
 
     const isSameFolder = sourceFolderId === destinationFolderId;
 
-    const destinationList = getSortedItems().filter((item) =>
-      matchesFolderId(item, destinationFolderId),
+    const destinationList = getSortedItems().filter(
+      (item) =>
+        matchesFolderId(item, destinationFolderId) &&
+        !isNavigationMenuItemTabOrSection(item),
     );
 
     if (
