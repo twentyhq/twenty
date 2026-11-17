@@ -25,7 +25,8 @@ const personTableShape: WorkspaceTableShape = {
     jobTitle: buildColumn('jobTitle'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'jobTitle', 'deletedAt'],
+  storedColumnNames: ['id', 'jobTitle', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };

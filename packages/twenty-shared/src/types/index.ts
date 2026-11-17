@@ -73,6 +73,13 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ComputedFieldExpressionBinaryOperator } from './ComputedFieldExpressionBinaryOperator';
+export type { ComputedFieldExpressionFunction } from './ComputedFieldExpressionFunction';
+export type { ComputedFieldExpressionFunctionName } from './ComputedFieldExpressionFunctionName';
+export type { ComputedFieldExpressionNode } from './ComputedFieldExpressionNode';
+export type { ComputedFieldExpressionUnaryOperator } from './ComputedFieldExpressionUnaryOperator';
+export type { ComputedFieldExpressionVariableName } from './ComputedFieldExpressionVariableName';
+export type { ComputedFieldValueType } from './ComputedFieldValueType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
@@ -90,6 +97,9 @@ export type {
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';
+export type { ExpressionDate } from './ExpressionDate';
+export type { ExpressionDatePart } from './ExpressionDatePart';
+export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
@@ -118,6 +128,7 @@ export {
   FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE,
   isFieldMetadataTypeWithDefaultValue,
 } from './FieldMetadataDefaultValue';
+export type { FieldMetadataFilteredRelationComputation } from './FieldMetadataFilteredRelationComputation';
 export type { FieldMetadataFormulaComputation } from './FieldMetadataFormulaComputation';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
@@ -349,6 +360,7 @@ export { StepLogicalOperator } from './StepFilters';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export type { TypedComputedFieldExpressionNode } from './TypedComputedFieldExpressionNode';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';

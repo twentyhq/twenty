@@ -25,7 +25,8 @@ const personTableShape: WorkspaceTableShape = {
     name: buildColumn('name'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'name', 'deletedAt'],
+  storedColumnNames: ['id', 'name', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };
@@ -38,6 +39,7 @@ const buildQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyMutationCriteriaToQueryBuilder', () => {

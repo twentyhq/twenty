@@ -16,7 +16,7 @@ import {
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type DefinedRelationUniversalIdentifierRecord = {
-  relationTargetFieldMetadataUniversalIdentifier: string;
+  relationTargetFieldMetadataUniversalIdentifier: string | null;
   relationTargetObjectMetadataUniversalIdentifier: string;
 };
 

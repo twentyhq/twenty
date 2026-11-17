@@ -115,7 +115,7 @@ export class WorkspaceMutationQueryBuilder {
     };
   }
 
-  private buildStatement(): {
+  buildStatement(): {
     sql: string;
     parameters: Record<string, unknown>;
   } {

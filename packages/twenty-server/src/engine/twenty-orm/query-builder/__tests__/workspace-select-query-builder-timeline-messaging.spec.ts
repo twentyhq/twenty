@@ -22,7 +22,8 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
     columnShapeByColumnName: Object.fromEntries(
       columnNames.map((columnName) => [columnName, buildColumn(columnName)]),
     ),
-    columnNames,
+    storedColumnNames: columnNames,
+    computedColumnNames: [],
     relationShapeByFieldName,
     hasDeletedAtColumn: true,
   });
@@ -172,6 +173,7 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
         shapeByObjectMetadataId[objectMetadataId],
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     return { queryBuilder, executedStatements };

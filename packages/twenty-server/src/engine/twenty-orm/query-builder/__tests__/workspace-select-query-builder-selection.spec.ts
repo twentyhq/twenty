@@ -302,6 +302,7 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     failingBuilder.setFindOptions({ select: { id: true } });

@@ -1,7 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import {
+  type QueryBuilderContext,
+  WorkspaceSelectQueryBuilder,
+} from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
@@ -32,7 +35,8 @@ export const companyTableShape: WorkspaceTableShape = {
     name: buildColumn('name'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'name', 'deletedAt'],
+  storedColumnNames: ['id', 'name', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     person: {
       fieldName: 'person',
@@ -58,13 +62,14 @@ export const personTableShape: WorkspaceTableShape = {
     companyId: buildColumn('companyId'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: [
+  storedColumnNames: [
     'id',
     'nameFirstName',
     'nameLastName',
     'companyId',
     'deletedAt',
   ],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     company: {
       fieldName: 'company',
@@ -105,11 +110,13 @@ export const buildQueryBuilder = ({
   tableShape = personTableShape,
   onBeforeExecute = () => undefined,
   recordReadRestrictions = NO_RECORD_READ_RESTRICTIONS,
+  buildComputedFieldExpressionSql = () => Promise.resolve(undefined),
 }: {
   rows?: Record<string, unknown>[];
   tableShape?: WorkspaceTableShape;
   onBeforeExecute?: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
   recordReadRestrictions?: RecordReadRestrictions;
+  buildComputedFieldExpressionSql?: QueryBuilderContext['buildComputedFieldExpressionSql'];
 } = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -126,6 +133,7 @@ export const buildQueryBuilder = ({
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql,
   });
 
   return { queryBuilder, executedStatements };

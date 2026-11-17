@@ -1,8 +1,6 @@
-import {
-  evictLeastRecentlyUsed,
-  readLruEntry,
-  writeLruEntry,
-} from 'src/utils/lru-map.util';
+import { evictLeastRecentlyUsed } from '@/utils/cache/evictLeastRecentlyUsed';
+import { readLruEntry } from '@/utils/cache/readLruEntry';
+import { writeLruEntry } from '@/utils/cache/writeLruEntry';
 
 describe('readLruEntry', () => {
   it('returns undefined for a missing key', () => {

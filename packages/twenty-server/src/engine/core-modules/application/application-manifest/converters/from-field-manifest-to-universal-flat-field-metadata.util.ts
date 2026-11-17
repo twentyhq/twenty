@@ -1,5 +1,10 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import {
+  hasInverseRelationField,
+  isComputedField,
+  isDefined,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   type RelationAndMorphRelationFieldMetadataType,
@@ -36,8 +41,12 @@ const getRelationTargetUniversalIdentifiers = (
     };
   }
 
+  // Only a computed relation reads through the inverse field of another relation
+  const isMissingInverseField =
+    !hasInverseRelationField(fieldManifest) && !isComputedField(fieldManifest);
+
   if (
-    !fieldManifest.relationTargetFieldMetadataUniversalIdentifier ||
+    isMissingInverseField ||
     !fieldManifest.relationTargetObjectMetadataUniversalIdentifier
   ) {
     throw new ApplicationException(
@@ -48,7 +57,7 @@ const getRelationTargetUniversalIdentifiers = (
 
   return {
     relationTargetFieldMetadataUniversalIdentifier:
-      fieldManifest.relationTargetFieldMetadataUniversalIdentifier,
+      fieldManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     relationTargetObjectMetadataUniversalIdentifier:
       fieldManifest.relationTargetObjectMetadataUniversalIdentifier,
   };
@@ -130,7 +139,9 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isActive: true,
     isSystem: false,
     isSystemSideEffect: false,
-    isUIEditable: fieldManifest.isUIEditable ?? true,
+    isUIEditable:
+      !isDefined(fieldManifest.computation) &&
+      (fieldManifest.isUIEditable ?? true),
     disabledFieldPermissionActions:
       fieldManifest.disabledFieldPermissionActions ?? null,
     computation: fieldManifest.computation ?? null,

@@ -2,8 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  FeatureFlagKey,
+  isFieldMetadataTypeWithDefaultValue,
+} from 'twenty-shared/types';
+import {
+  isComputedField,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -13,6 +20,8 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { buildFlatFieldMetadataComputationValidationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/build-flat-field-metadata-computation-validation-error.util';
+import { buildUniversalComputedFieldSchemaReader } from 'src/engine/metadata-modules/computed-field/utils/build-universal-computed-field-schema-reader.util';
 import { validateFlatFieldMetadataComputation } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-computation.util';
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
@@ -21,6 +30,7 @@ import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
@@ -35,6 +45,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataUpdate({
     universalIdentifier,
     flatEntityUpdate,
+    finalFlatEntityMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
@@ -251,9 +262,29 @@ export class FlatFieldMetadataValidatorService {
       ),
     );
 
-    validationResult.errors.push(
-      ...validateFlatFieldMetadataComputation(flatFieldMetadataToValidate),
-    );
+    if (
+      isComputedField(existingFlatFieldMetadataToUpdate) !==
+        isComputedField(flatFieldMetadataToValidate) ||
+      existingFlatFieldMetadataToUpdate.computation?.kind !==
+        flatFieldMetadataToValidate.computation?.kind
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        message:
+          'A field cannot become computed, stop being computed, or change its kind of computation',
+        userFriendlyMessage: msg`A stored field cannot become computed, or the other way around. Create a new field instead.`,
+      });
+    } else {
+      validationResult.errors.push(
+        ...validateFlatFieldMetadataComputation({
+          flatFieldMetadataToValidate,
+          ...buildUniversalComputedFieldSchemaReader({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMapsList: [finalFlatEntityMaps],
+          }),
+        }),
+      );
+    }
 
     const fieldMetadataTypeValidationErrors =
       this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
@@ -395,7 +426,8 @@ export class FlatFieldMetadataValidatorService {
     buildOptions,
     remainingFlatEntityMapsToValidate,
     additionalCacheDataMaps,
-  }: UniversalFlatEntityValidationArgs<
+    finalFlatEntityMaps,
+  }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -496,8 +528,36 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
-      ...validateFlatFieldMetadataComputation(flatFieldMetadataToValidate),
     );
+
+    // Creation only: a stored field cannot become computed, so an update never makes a new computed field
+    const isComputedFieldWithoutFeatureFlag =
+      isComputedField(flatFieldMetadataToValidate) &&
+      !(
+        additionalCacheDataMaps.featureFlagsMap[
+          FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED
+        ] ?? false
+      );
+
+    if (isComputedFieldWithoutFeatureFlag) {
+      validationResult.errors.push(
+        buildFlatFieldMetadataComputationValidationError({
+          flatFieldMetadata: flatFieldMetadataToValidate,
+          message: 'computed fields are not enabled for this workspace',
+        }),
+      );
+    } else {
+      validationResult.errors.push(
+        ...validateFlatFieldMetadataComputation({
+          flatFieldMetadataToValidate,
+          // The final maps: a field created or renamed in the same migration may be validated after this one
+          ...buildUniversalComputedFieldSchemaReader({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMapsList: [finalFlatEntityMaps],
+          }),
+        }),
+      );
+    }
 
     validationResult.errors.push(
       ...this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(

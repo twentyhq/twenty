@@ -114,10 +114,10 @@ describe('buildWorkspaceTableShape', () => {
   });
 
   it('should expand a composite field into one column per property', () => {
-    expect(tableShape.columnNames).toEqual(
+    expect(tableShape.storedColumnNames).toEqual(
       expect.arrayContaining(['nameFirstName', 'nameLastName']),
     );
-    expect(tableShape.columnNames).not.toContain('name');
+    expect(tableShape.storedColumnNames).not.toContain('name');
   });
 
   it('should record the parent field of every composite sub-column', () => {
@@ -128,8 +128,8 @@ describe('buildWorkspaceTableShape', () => {
   });
 
   it('should give a to-one relation a foreign key column but a to-many none', () => {
-    expect(tableShape.columnNames).toContain('companyId');
-    expect(tableShape.columnNames).not.toContain('petsId');
+    expect(tableShape.storedColumnNames).toContain('companyId');
+    expect(tableShape.storedColumnNames).not.toContain('petsId');
 
     expect(tableShape.relationShapeByFieldName['company'].joinColumnName).toBe(
       'companyId',

@@ -36,6 +36,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Import recurring meetings 90 days ahead`,
     description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
   },
+  [FeatureFlagKey.IS_COMPUTED_FIELDS_ENABLED]: {
+    label: msg`Computed fields`,
+    description: msg`Create formula and rollup fields, whose value is calculated when read, through the API and app manifests.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,

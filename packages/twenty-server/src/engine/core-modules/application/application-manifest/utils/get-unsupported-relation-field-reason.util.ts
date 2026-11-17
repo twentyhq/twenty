@@ -1,11 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  hasInverseRelationField,
+  isComputedField,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type ExportableRelationFlatFieldMetadata = UniversalFlatFieldMetadata & {
-  relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;
   universalSettings: NonNullable<
     UniversalFlatFieldMetadata['universalSettings']
@@ -19,10 +22,13 @@ export const getUnsupportedRelationFieldReason = (
     return undefined;
   }
 
+  // Only a computed relation reads through the inverse field of another relation
+  const isMissingInverseField =
+    !hasInverseRelationField(flatFieldMetadata) &&
+    !isComputedField(flatFieldMetadata);
+
   if (
-    !isDefined(
-      flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-    ) ||
+    isMissingInverseField ||
     !isDefined(
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
     ) ||

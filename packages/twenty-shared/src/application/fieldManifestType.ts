@@ -4,6 +4,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type FieldMetadataComputation,
   type FieldMetadataDefaultValue,
+  type FieldMetadataFilteredRelationComputation,
   type FieldMetadataType,
   type FieldMetadataUniversalSettings,
   type RelationAndMorphRelationFieldMetadataType,
@@ -52,14 +53,26 @@ export type RegularFieldManifest<
 export type RelationFieldManifest<
   T extends RelationAndMorphRelationFieldMetadataType =
     RelationAndMorphRelationFieldMetadataType,
-> = Omit<BaseRegularFieldManifest<T>, 'universalSettings' | 'type'> & {
+> = Omit<
+  BaseRegularFieldManifest<T>,
+  'universalSettings' | 'type' | 'computation'
+> & {
   type: T;
   isNullable?: boolean;
   defaultValue?: FieldMetadataDefaultValue<T>;
-  relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;
   universalSettings: FieldMetadataUniversalSettings<T>;
-} & ([T] extends [FieldMetadataType.MORPH_RELATION]
+} & (
+    | {
+        computation?: undefined;
+        relationTargetFieldMetadataUniversalIdentifier: string;
+      }
+    | {
+        computation: FieldMetadataFilteredRelationComputation;
+        relationTargetFieldMetadataUniversalIdentifier?: undefined;
+      }
+  ) &
+  ([T] extends [FieldMetadataType.MORPH_RELATION]
     ? {
         morphId: string;
       }

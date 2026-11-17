@@ -23,6 +23,10 @@ export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfOb
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
+export { evictLeastRecentlyUsed } from './cache/evictLeastRecentlyUsed';
+export { memoizeLeastRecentlyUsed } from './cache/memoizeLeastRecentlyUsed';
+export { readLruEntry } from './cache/readLruEntry';
+export { writeLruEntry } from './cache/writeLruEntry';
 export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { canAccessThroughAllRecordsOrRlsPermission } from './canAccessThroughAllRecordsOrRlsPermission';
@@ -35,6 +39,10 @@ export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuC
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { ComputedFieldExpressionError } from './computed-field/ComputedFieldExpressionError';
+export { getComputedFieldExpressionFieldPaths } from './computed-field/getComputedFieldExpressionFieldPaths';
+export { parseComputedFieldExpressionOrThrow } from './computed-field/parseComputedFieldExpressionOrThrow';
+export { typeCheckComputedFieldExpressionOrThrow } from './computed-field/typeCheckComputedFieldExpressionOrThrow';
 export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
 export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';
 export { formatRecordExportHeader } from './csv/formatRecordExportHeader';
@@ -72,12 +80,28 @@ export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { getEventLogRetentionInHours } from './event-logs/getEventLogRetentionInHours';
+export { addToExpressionDate } from './expression-date/addToExpressionDate';
+export { assertExpressionDatePartOrThrow } from './expression-date/assertExpressionDatePartOrThrow';
+export { assertExpressionDateUnitOrThrow } from './expression-date/assertExpressionDateUnitOrThrow';
+export { computeExpressionDateDifference } from './expression-date/computeExpressionDateDifference';
+export { countExpressionCalendarMonths } from './expression-date/countExpressionCalendarMonths';
+export { formatExpressionDate } from './expression-date/formatExpressionDate';
+export { getExpressionDateLiteralErrorMessage } from './expression-date/getExpressionDateLiteralErrorMessage';
+export { getExpressionDatePart } from './expression-date/getExpressionDatePart';
+export { isExpressionDateInSupportedRange } from './expression-date/isExpressionDateInSupportedRange';
+export { isExpressionDatePart } from './expression-date/isExpressionDatePart';
+export { isExpressionDateUnit } from './expression-date/isExpressionDateUnit';
+export { parseExpressionDate } from './expression-date/parseExpressionDate';
+export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
+export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
+export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
   computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
+export { hasInverseRelationField } from './fieldMetadata/hasInverseRelationField';
 export { hasStoredColumn } from './fieldMetadata/hasStoredColumn';
 export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
 export { isComputedField } from './fieldMetadata/isComputedField';
@@ -382,7 +406,6 @@ export { safeDecodeURIComponent } from './url/safeDecodeURIComponent';
 export { uuidToBase36 } from './uuidToBase36';
 export { buildValidationRuleEvaluationContext } from './validation-rule/buildValidationRuleEvaluationContext';
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
-export { computeValidationRuleDaysSince } from './validation-rule/computeValidationRuleDaysSince';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';

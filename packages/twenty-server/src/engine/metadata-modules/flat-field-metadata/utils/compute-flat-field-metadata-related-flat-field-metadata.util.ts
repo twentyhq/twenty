@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { hasInverseRelationField } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -19,12 +20,14 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   if (
     isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
   ) {
-    return [
-      findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-        flatFieldMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ];
+    return hasInverseRelationField(flatFieldMetadata)
+      ? [
+          findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
+            flatFieldMetadata,
+            flatFieldMetadataMaps,
+          }),
+        ]
+      : [];
   }
 
   if (

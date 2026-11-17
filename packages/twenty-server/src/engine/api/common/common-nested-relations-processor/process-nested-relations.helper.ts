@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  type FieldMetadataFilteredRelationComputation,
+  FieldMetadataType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
@@ -195,12 +199,19 @@ export class ProcessNestedRelationsHelper {
     }
 
     const relationType = sourceFieldMetadata.settings.relationType;
+    const filteredRelationComputation =
+      sourceFieldMetadata.computation?.kind === 'FILTERED_RELATION'
+        ? sourceFieldMetadata.computation
+        : undefined;
+    // A filtered relation loads the records of the relation it derives from, under its own name
+    const loadedRelationFieldName =
+      filteredRelationComputation?.relationFieldName ?? sourceFieldName;
     const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName,
+        sourceFieldName: loadedRelationFieldName,
         fieldMaps,
       });
 
@@ -213,8 +224,20 @@ export class ProcessNestedRelationsHelper {
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
+    const { unreadableFieldMetadataIds } =
+      targetObjectRepository.recordReadRestrictions;
+    // A filtered relation has no inverse field to carry its own restriction, so both fields are checked
+    const isRelationUnreadable =
+      unreadableFieldMetadataIds.has(sourceFieldMetadata.id) ||
+      unreadableFieldMetadataIds.has(
+        fieldMaps.fieldIdByName[loadedRelationFieldName],
+      );
+
     // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
-    if (await targetObjectRepository.isReadDisabled()) {
+    if (
+      isRelationUnreadable ||
+      (await targetObjectRepository.isReadDisabled())
+    ) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
         parentObjectRecordsAggregatedValues,
@@ -302,6 +325,7 @@ export class ProcessNestedRelationsHelper {
           sourceFieldName,
           targetObjectNameSingular,
           relationQueryArgs,
+          filteredRelationComputation,
           relationQueryParser: new GraphqlQueryParser(
             targetObjectMetadata,
             flatObjectMetadataMaps,
@@ -417,6 +441,7 @@ export class ProcessNestedRelationsHelper {
     sourceFieldName,
     targetObjectNameSingular,
     relationQueryArgs,
+    filteredRelationComputation,
     relationQueryParser,
   }: {
     referenceQueryBuilder: WorkspaceSelectQueryBuilder;
@@ -432,6 +457,7 @@ export class ProcessNestedRelationsHelper {
     sourceFieldName: string;
     targetObjectNameSingular: string;
     relationQueryArgs?: NestedRelationQueryArgs;
+    filteredRelationComputation?: FieldMetadataFilteredRelationComputation;
     relationQueryParser: GraphqlQueryParser;
     // oxlint-disable-next-line typescript/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
@@ -451,10 +477,13 @@ export class ProcessNestedRelationsHelper {
     ) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
-      this.applyNestedRelationFilterToBuilder({
+      await this.applyNestedRelationFilterToBuilder({
         queryBuilder: aggregateQueryBuilder,
         targetObjectNameSingular,
+        column,
+        ids,
         relationQueryArgs,
+        filteredRelationComputation,
         relationQueryParser,
       });
 
@@ -509,6 +538,7 @@ export class ProcessNestedRelationsHelper {
         ids,
         perParentLimit,
         relationQueryArgs,
+        filteredRelationComputation,
         relationQueryParser,
       });
 
@@ -531,13 +561,13 @@ export class ProcessNestedRelationsHelper {
       );
     }
 
-    if (isDefined(relationQueryArgs?.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        hydrationQueryBuilder,
-        relationQueryArgs.orderBy,
-        targetObjectNameSingular,
-      );
-    }
+    await this.applyNestedRelationOrderToBuilder({
+      queryBuilder: hydrationQueryBuilder,
+      targetObjectNameSingular,
+      relationQueryArgs,
+      filteredRelationComputation,
+      relationQueryParser,
+    });
 
     const result = await hydrationQueryBuilder.getMany();
 
@@ -551,6 +581,7 @@ export class ProcessNestedRelationsHelper {
     ids,
     perParentLimit,
     relationQueryArgs,
+    filteredRelationComputation,
     relationQueryParser,
   }: {
     targetObjectRepository: WorkspaceRepository;
@@ -559,6 +590,7 @@ export class ProcessNestedRelationsHelper {
     ids: string[];
     perParentLimit: number;
     relationQueryArgs?: NestedRelationQueryArgs;
+    filteredRelationComputation?: FieldMetadataFilteredRelationComputation;
     relationQueryParser: GraphqlQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
@@ -571,10 +603,13 @@ export class ProcessNestedRelationsHelper {
       .createQueryBuilder(targetObjectNameSingular)
       .select(`"${targetObjectNameSingular}"."id"`, 'id');
 
-    this.applyNestedRelationFilterToBuilder({
+    await this.applyNestedRelationFilterToBuilder({
       queryBuilder: perParentRecordIdsQueryBuilder,
       targetObjectNameSingular,
+      column,
+      ids: sanitizedIds,
       relationQueryArgs,
+      filteredRelationComputation,
       relationQueryParser,
     });
 
@@ -582,13 +617,13 @@ export class ProcessNestedRelationsHelper {
       `"${targetObjectNameSingular}".${column} = "lateralParents"."parentId"`,
     );
 
-    if (isDefined(relationQueryArgs?.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        perParentRecordIdsQueryBuilder,
-        relationQueryArgs.orderBy,
-        targetObjectNameSingular,
-      );
-    }
+    await this.applyNestedRelationOrderToBuilder({
+      queryBuilder: perParentRecordIdsQueryBuilder,
+      targetObjectNameSingular,
+      relationQueryArgs,
+      filteredRelationComputation,
+      relationQueryParser,
+    });
 
     await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
 
@@ -610,30 +645,79 @@ export class ProcessNestedRelationsHelper {
     return limitedRecords.map((limitedRecord) => limitedRecord.id);
   }
 
-  private applyNestedRelationFilterToBuilder({
+  // The stored definition of a filtered relation decides its records, and the query filter narrows them.
+  // The query filter is applied first because it replaces the conditions of the builder.
+  private async applyNestedRelationFilterToBuilder({
+    queryBuilder,
+    targetObjectNameSingular,
+    column,
+    ids,
+    relationQueryArgs,
+    filteredRelationComputation,
+    relationQueryParser,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    targetObjectNameSingular: string;
+    column: string;
+    ids: string[];
+    relationQueryArgs?: NestedRelationQueryArgs;
+    filteredRelationComputation?: FieldMetadataFilteredRelationComputation;
+    relationQueryParser: GraphqlQueryParser;
+  }): Promise<void> {
+    if (isDefined(relationQueryArgs?.filter)) {
+      relationQueryParser.applyFilterToBuilder(
+        queryBuilder,
+        targetObjectNameSingular,
+        relationQueryArgs.filter,
+      );
+      relationQueryParser.applyDeletedAtToBuilder(
+        queryBuilder,
+        relationQueryArgs.filter,
+      );
+    }
+
+    if (isDefined(filteredRelationComputation)) {
+      const { filter, orderBy, limit } = filteredRelationComputation;
+
+      await queryBuilder.whereInRecordsPerParent({
+        filter,
+        orderBy,
+        limit,
+        joinColumnName: column.replace(/["']/g, ''),
+        parentRecordIds: ids,
+      });
+    }
+  }
+
+  // The stored order of a filtered relation is its default one
+  private async applyNestedRelationOrderToBuilder({
     queryBuilder,
     targetObjectNameSingular,
     relationQueryArgs,
+    filteredRelationComputation,
     relationQueryParser,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
     relationQueryArgs?: NestedRelationQueryArgs;
+    filteredRelationComputation?: FieldMetadataFilteredRelationComputation;
     relationQueryParser: GraphqlQueryParser;
-  }): void {
-    if (!isDefined(relationQueryArgs?.filter)) {
+  }): Promise<void> {
+    if (isDefined(relationQueryArgs?.orderBy)) {
+      relationQueryParser.applyOrderToBuilder(
+        queryBuilder,
+        relationQueryArgs.orderBy,
+        targetObjectNameSingular,
+      );
+
       return;
     }
 
-    relationQueryParser.applyFilterToBuilder(
-      queryBuilder,
-      targetObjectNameSingular,
-      relationQueryArgs.filter,
-    );
-    relationQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      relationQueryArgs.filter,
-    );
+    if (isDefined(filteredRelationComputation)) {
+      await queryBuilder.orderByExpressions(
+        filteredRelationComputation.orderBy,
+      );
+    }
   }
 
   private assignRelationResults({

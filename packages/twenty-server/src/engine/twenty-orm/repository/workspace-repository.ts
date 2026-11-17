@@ -86,7 +86,15 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type ComputedColumnSqlContext } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql-context.type';
+import { buildComputedColumnSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-column-sql.util';
+import { type WrittenRows } from 'src/engine/twenty-orm/sql/types/written-rows.type';
+import { buildComputedFieldExpressionSql } from 'src/engine/twenty-orm/computed-column/utils/build-computed-field-expression-sql.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  type QueryBuilderContext,
+  WorkspaceSelectQueryBuilder,
+} from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
@@ -161,7 +169,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.options = options;
   }
 
-  private get recordReadRestrictions(): RecordReadRestrictions {
+  get recordReadRestrictions(): RecordReadRestrictions {
     const { permissionsPrincipals, shouldBypassPermissionChecks } =
       this.options;
 
@@ -187,19 +195,40 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.options.executor.execute(compiled) as Promise<T[]>;
   }
 
-  createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
-    return new WorkspaceSelectQueryBuilder(
-      alias ?? this.options.tableShape.nameSingular,
-      {
-        tableShape: this.options.tableShape,
-        executor: this.options.executor,
-        recordReadRestrictions: this.recordReadRestrictions,
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
-        onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
-        formatResult: (records) => this.formatResult(records),
-      },
-    );
+  createQueryBuilder(
+    alias?: string,
+    options?: Pick<QueryBuilderContext, 'computedColumnSqlContext'>,
+  ): WorkspaceSelectQueryBuilder {
+    return this.buildSelectQueryBuilder({
+      alias: alias ?? this.options.tableShape.nameSingular,
+      onBeforeExecute: (queryBuilder) =>
+        this.prepareForExecution({ queryBuilder }),
+      computedColumnSqlContext: options?.computedColumnSqlContext,
+    });
+  }
+
+  private buildSelectQueryBuilder({
+    alias,
+    onBeforeExecute,
+    computedColumnSqlContext,
+  }: Pick<
+    QueryBuilderContext,
+    'onBeforeExecute' | 'computedColumnSqlContext'
+  > & {
+    alias: string;
+  }): WorkspaceSelectQueryBuilder {
+    return new WorkspaceSelectQueryBuilder(alias, {
+      tableShape: this.options.tableShape,
+      executor: this.options.executor,
+      recordReadRestrictions: this.recordReadRestrictions,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+      onBeforeExecute,
+      formatResult: (records) => this.formatResult(records),
+      buildComputedFieldExpressionSql: (args) =>
+        this.buildComputedFieldExpressionSql(args),
+      computedColumnSqlContext,
+    });
   }
 
   formatResult<T>(records: unknown): T {
@@ -226,18 +255,35 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  async applyWriteRowLevelPermissions(
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    kind: MutationKind,
-  ): Promise<void> {
+  // Every step a select needs before it runs or is embedded, in one place so a caller cannot forget one
+  async prepareForExecution({
+    queryBuilder,
+    mutationKind,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    mutationKind?: MutationKind;
+  }): Promise<void> {
     await this.applyRowLevelPermissionPredicates(
       queryBuilder,
-      OPERATION_TYPE_BY_MUTATION_KIND[kind],
+      isDefined(mutationKind)
+        ? OPERATION_TYPE_BY_MUTATION_KIND[mutationKind]
+        : 'read',
     );
+    // A mutation's filter is not a read: as with a filter on stored columns, only what it returns is checked
+    if (!isDefined(mutationKind)) {
+      await this.validateQueryIsPermitted(queryBuilder);
+      await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    }
+
+    await this.resolveComputedColumns(queryBuilder);
   }
 
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  get flatObjectMetadata(): FlatObjectMetadata {
+    return this.options.flatObjectMetadata;
   }
 
   getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
@@ -599,7 +645,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const { identifiers, generatedMaps, raw } = await this.runInsert({
       records,
       columnsToReturn: this.options.shouldBypassPermissionChecks
-        ? Object.keys(this.options.tableShape.columnShapeByColumnName)
+        ? this.options.tableShape.storedColumnNames
         : ['id'],
       onConflictDoNothing: options?.onConflictDoNothing,
     });
@@ -1050,15 +1096,27 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await this.assertRecordStockAvailable(recordsToInsert.length);
 
+    const isSelectingComputedColumn =
+      this.isSelectingComputedColumn(columnsToReturn);
+    const returnedColumnNames = isSelectingComputedColumn
+      ? this.options.tableShape.storedColumnNames
+      : columnsToReturn;
+
     const sql = buildInsertStatement({
       tableShape: this.options.tableShape,
       columnNames,
       rows,
-      returningColumns: columnsToReturn,
+      returningColumns: returnedColumnNames,
       onConflictDoNothing,
     });
 
-    const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+    const rawRows = isSelectingComputedColumn
+      ? await this.buildWrittenRowsQueryBuilder({
+          alias: this.options.tableShape.nameSingular,
+          columnsToReturn,
+          writtenRows: { statement: sql, returnedColumnNames, parameters },
+        }).getMany<ObjectRecord>({ noFormatting: true })
+      : await this.executeRaw<ObjectRecord>(sql, parameters);
 
     await writtenRecordsValidator?.validate({
       writtenRecords: rawRows,
@@ -1434,11 +1492,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return queryBuilder.getMany<ObjectRecord>({ noFormatting: true });
     }
 
-    const { columnNames, columnShapeByColumnName } = this.options.tableShape;
+    const { storedColumnNames, columnShapeByColumnName } =
+      this.options.tableShape;
 
     return queryBuilder
       .select(
-        columnNames.filter((columnName) => {
+        storedColumnNames.filter((columnName) => {
           const columnShape = columnShapeByColumnName[columnName];
 
           return (
@@ -1458,14 +1517,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private buildBypassingEventSelectQueryBuilder(
     alias: string,
   ): WorkspaceSelectQueryBuilder {
-    return new WorkspaceSelectQueryBuilder(alias, {
-      tableShape: this.options.tableShape,
-      executor: this.options.executor,
-      recordReadRestrictions: this.recordReadRestrictions,
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
-      tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+    return this.buildSelectQueryBuilder({
+      alias,
       onBeforeExecute: () => undefined,
-      formatResult: (records) => this.formatResult(records),
     });
   }
 
@@ -1745,7 +1799,60 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       mutationQueryBuilder.set(setColumns ?? {});
     }
 
-    return mutationQueryBuilder.returning(columnsToReturn).execute();
+    if (!this.isSelectingComputedColumn(columnsToReturn)) {
+      return mutationQueryBuilder.returning(columnsToReturn).execute();
+    }
+
+    const { storedColumnNames } = this.options.tableShape;
+    const { sql, parameters } = mutationQueryBuilder
+      .returning(storedColumnNames)
+      .buildStatement();
+
+    return {
+      generatedMaps: await this.buildWrittenRowsQueryBuilder({
+        alias: selectQueryBuilder.alias,
+        columnsToReturn,
+        writtenRows: {
+          statement: sql,
+          returnedColumnNames: storedColumnNames,
+          parameters,
+        },
+        computedColumnSqlContext: selectQueryBuilder.computedColumnSqlContext,
+      }).getMany<ObjectRecord>(),
+    };
+  }
+
+  private isSelectingComputedColumn(columnsToReturn: string[]): boolean {
+    return columnsToReturn.some((columnName) =>
+      this.options.tableShape.computedColumnNames.includes(columnName),
+    );
+  }
+
+  private buildWrittenRowsQueryBuilder({
+    alias,
+    columnsToReturn,
+    writtenRows,
+    computedColumnSqlContext,
+  }: {
+    alias: string;
+    columnsToReturn: string[];
+    writtenRows: WrittenRows & { parameters: Record<string, unknown> };
+    computedColumnSqlContext?: ComputedColumnSqlContext;
+  }): WorkspaceSelectQueryBuilder {
+    return this.buildSelectQueryBuilder({
+      alias,
+      onBeforeExecute: async (queryBuilder) => {
+        // The write filtered its rows and checked its selection; stored columns stay as a write returns them
+        await this.nullifyRlsRuleUnreadableFields(queryBuilder, {
+          isNullifyingStoredColumns: false,
+        });
+        await this.resolveComputedColumns(queryBuilder);
+      },
+      computedColumnSqlContext,
+    })
+      .fromWrittenRows(writtenRows)
+      .select(columnsToReturn)
+      .withDeleted();
   }
 
   private buildEventSnapshotQueryBuilder(
@@ -1878,21 +1985,78 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  private async onBeforeExecute(
+  private buildComputedFieldExpressionSql(
+    args: Parameters<QueryBuilderContext['buildComputedFieldExpressionSql']>[0],
+  ) {
+    return buildComputedFieldExpressionSql({
+      ...args,
+      repository: this.getRepositoryForObjectMetadataId(
+        this.options.flatObjectMetadata.id,
+      ),
+    });
+  }
+
+  // Loops because a computed column can itself read other computed columns
+  private async resolveComputedColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
-    await this.applyRowLevelPermissionPredicates(queryBuilder);
-    await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    for (
+      let unresolvedComputedColumns =
+        queryBuilder.getUnresolvedComputedColumns();
+      unresolvedComputedColumns.length > 0;
+      unresolvedComputedColumns = queryBuilder.getUnresolvedComputedColumns()
+    ) {
+      for (const {
+        alias,
+        tableShape,
+        columnName,
+      } of unresolvedComputedColumns) {
+        const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId:
+            tableShape.columnShapeByColumnName[columnName].fieldMetadataId,
+          flatEntityMaps: this.options.internalContext.flatFieldMetadataMaps,
+        });
+
+        queryBuilder.setComputedColumnSql({
+          alias,
+          columnName,
+          computedColumnSql: await buildComputedColumnSql({
+            flatFieldMetadata,
+            alias,
+            repository: this.getRepositoryForObjectMetadataId(
+              tableShape.objectMetadataId,
+            ),
+            context: queryBuilder.computedColumnSqlContext,
+          }),
+        });
+      }
+    }
+  }
+
+  async buildUnreadableFieldsSQLConditions({
+    objectMetadataId,
+    tableAlias,
+  }: {
+    objectMetadataId: string;
+    tableAlias: string;
+  }): Promise<{ fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return [];
+    }
+
+    return this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
+      {
+        principals: this.resolvePermissionsPrincipalsOrThrow(),
+        objectMetadataId,
+        tableAlias,
+      },
+    );
   }
 
   private async nullifyRlsRuleUnreadableFields(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    { isNullifyingStoredColumns = true } = {},
   ): Promise<void> {
-    if (this.options.shouldBypassPermissionChecks) {
-      return;
-    }
-
     const aliases = [
       { alias: queryBuilder.alias, tableShape: this.options.tableShape },
       ...queryBuilder.getJoinAliases().map(({ name }) => ({
@@ -1910,13 +2074,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
 
       const unreadableFieldsSQLConditions =
-        await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
-          {
-            principals: this.resolvePermissionsPrincipalsOrThrow(),
-            objectMetadataId: tableShape.objectMetadataId,
-            tableAlias: alias,
-          },
-        );
+        await this.buildUnreadableFieldsSQLConditions({
+          objectMetadataId: tableShape.objectMetadataId,
+          tableAlias: alias,
+        });
 
       if (!isNonEmptyArray(unreadableFieldsSQLConditions)) {
         continue;
@@ -1938,8 +2099,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
-            .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
+            .filter(
+              ([columnName, fieldMetadataId]) =>
+                fieldMetadataIds.includes(fieldMetadataId) &&
+                (isNullifyingStoredColumns ||
+                  tableShape.computedColumnNames.includes(columnName)),
             )
             .map(([columnName]) => columnName),
           condition: sqlCondition,

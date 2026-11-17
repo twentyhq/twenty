@@ -9,6 +9,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { hasComputedColumn } from 'src/engine/twenty-orm/computed-column/utils/has-computed-column.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyOrmException,
@@ -112,8 +113,13 @@ export const buildWorkspaceTableShape = ({
       fieldMetadataId: flatFieldMetadata.id,
       fieldName: flatFieldMetadata.name,
       fieldMetadataType: flatFieldMetadata.type,
+      ...(hasComputedColumn(flatFieldMetadata) ? { isComputed: true } : {}),
     };
   }
+
+  const isComputedColumn = (columnName: string) =>
+    columnShapeByColumnName[columnName].isComputed ?? false;
+  const allColumnNames = Object.keys(columnShapeByColumnName);
 
   return {
     objectMetadataId: flatObjectMetadata.id,
@@ -121,7 +127,10 @@ export const buildWorkspaceTableShape = ({
     schemaName: getWorkspaceSchemaName(workspaceId),
     tableName: computeObjectTargetTable(flatObjectMetadata),
     columnShapeByColumnName,
-    columnNames: Object.keys(columnShapeByColumnName),
+    storedColumnNames: allColumnNames.filter(
+      (columnName) => !isComputedColumn(columnName),
+    ),
+    computedColumnNames: allColumnNames.filter(isComputedColumn),
     relationShapeByFieldName,
     hasDeletedAtColumn: isDefined(columnShapeByColumnName['deletedAt']),
   };

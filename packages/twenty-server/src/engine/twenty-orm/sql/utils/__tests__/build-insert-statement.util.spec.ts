@@ -23,7 +23,8 @@ const personTableShape: WorkspaceTableShape = {
     nameFirstName: buildColumn('nameFirstName'),
     jobTitle: buildColumn('jobTitle'),
   },
-  columnNames: ['id', 'nameFirstName', 'jobTitle'],
+  storedColumnNames: ['id', 'nameFirstName', 'jobTitle'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: false,
 };

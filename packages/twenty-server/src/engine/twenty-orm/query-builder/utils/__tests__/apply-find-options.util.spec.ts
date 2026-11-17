@@ -32,7 +32,8 @@ const personTableShape: WorkspaceTableShape = {
     companyId: buildColumn('companyId'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'name', 'companyId', 'deletedAt'],
+  storedColumnNames: ['id', 'name', 'companyId', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };
@@ -45,6 +46,7 @@ const buildQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyFindOptionsToQueryBuilder', () => {
@@ -161,7 +163,8 @@ const messageShape: WorkspaceTableShape = {
     receivedAt: buildColumn('receivedAt'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'threadId', 'receivedAt', 'deletedAt'],
+  storedColumnNames: ['id', 'threadId', 'receivedAt', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     thread: {
       fieldName: 'thread',
@@ -185,7 +188,8 @@ const threadShape: WorkspaceTableShape = {
     subject: buildColumn('subject'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'subject', 'deletedAt'],
+  storedColumnNames: ['id', 'subject', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     messages: {
       fieldName: 'messages',
@@ -206,6 +210,7 @@ const buildThreadQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => messageShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyFindOptionsToQueryBuilder relation order', () => {

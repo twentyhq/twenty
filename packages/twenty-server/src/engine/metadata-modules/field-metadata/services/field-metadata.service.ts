@@ -8,6 +8,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { fillComputedFieldsBindings } from 'src/engine/metadata-modules/computed-field/utils/fill-computed-fields-bindings.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -345,7 +346,7 @@ export class FieldMetadataService {
     }
 
     const {
-      flatFieldMetadatasToUpdate,
+      flatFieldMetadatasToUpdate: transpiledFlatFieldMetadatasToUpdate,
       flatFieldMetadatasToCreate,
       flatIndexMetadatasToUpdate,
       flatIndexMetadatasToDelete,
@@ -359,6 +360,12 @@ export class FieldMetadataService {
       flatViewsToUpdate,
       flatViewsToDelete,
     } = inputTranspilationResult.result;
+
+    const flatFieldMetadatasToUpdate = fillComputedFieldsBindings({
+      flatFieldMetadatas: transpiledFlatFieldMetadatasToUpdate,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -502,7 +509,7 @@ export class FieldMetadataService {
     );
 
     const {
-      flatFieldMetadatas: flatFieldMetadatasToCreate,
+      flatFieldMetadatas: transpiledFlatFieldMetadatasToCreate,
       indexMetadatas: flatIndexMetadatasToCreate,
     } = allTranspiledTranspilationInputs.reduce(
       (acc, { result }) => ({
@@ -514,6 +521,13 @@ export class FieldMetadataService {
       }),
       { flatFieldMetadatas: [], indexMetadatas: [] },
     );
+
+    // After every input is transpiled: a computed field may read a field created by the same call
+    const flatFieldMetadatasToCreate = fillComputedFieldsBindings({
+      flatFieldMetadatas: transpiledFlatFieldMetadatasToCreate,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

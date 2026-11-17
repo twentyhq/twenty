@@ -117,7 +117,33 @@ Export each field's identifier as a named constant and import it from the other 
 
 ### Computed Fields
 
-A field's `computation` (a `FORMULA` or a `ROLLUP`) is reserved for computed fields, which are not available yet: a sync that declares one is rejected.
+A field with a `computation` stores nothing: the database calculates its value on read. It can be selected, filtered and sorted like a stored field, and it cannot be written. The workspace needs the `IS_COMPUTED_FIELDS_ENABLED` feature flag. A formula or rollup field's `type` is `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME`, and the build of the workspace rejects a computation whose value does not fit it. A filtered relation is a `RELATION` field.
+
+```ts
+// A formula over the record's own fields
+computation: { kind: 'FORMULA', expression: 'round(budget / openTaskCount, 2)' },
+
+// A rollup over the records of a one-to-many relation
+computation: {
+  kind: 'ROLLUP',
+  relationFieldName: 'tasks',
+  operation: 'COUNT', // or SUM, AVG, MIN, MAX with an `expression`
+  filter: "status != 'DONE'",
+},
+
+// A filtered relation: a one-to-many relation showing some records of another one.
+// It has no inverse field, so it takes no `relationTargetFieldMetadataUniversalIdentifier`.
+// The filter, order and limit decide its records; a query filters and sorts inside them.
+computation: {
+  kind: 'FILTERED_RELATION',
+  relationFieldName: 'tasks',
+  filter: "status != 'DONE'", // optional
+  orderBy: [{ expression: 'dueAt', direction: 'AscNullsLast' }], // optional, each an expression on the related record
+  limit: 3, // optional, 1 to 60
+},
+```
+
+Expressions reference fields by name: `amount.amountMicros` for a composite sub-field, `company.name` for a field of a to-one relation (its id is `company.id`, not `companyId`), and other computed fields by their name. A value is null when its reader cannot read a field or object it uses. A field that a row-level permission rule hides on some records reads as empty on those records. A field read by a computed field cannot be deleted; renaming it updates the computed field.
 
 ## Roles And Permissions
 
@@ -134,7 +160,7 @@ When adding permissions:
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Two date functions are available in both forms: `daysSince(date)` returns whole days since the date (negative for a future date), and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Date functions are available in both forms, read dates in UTC, and take a unit `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`: `dateDiff(from, to, unit)` returns whole units between two dates (minutes and hours are elapsed time, longer units count calendar days and months), such as `dateDiff(createdAt, now, 'HOUR') < 24`; `dateAdd(date, amount, unit)` moves a date; `dateTrunc(date, unit)` returns the start of the unit; `datePart(date, part)` returns `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'` (1 is Monday), `'HOUR'` or `'MINUTE'` as a number; and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';

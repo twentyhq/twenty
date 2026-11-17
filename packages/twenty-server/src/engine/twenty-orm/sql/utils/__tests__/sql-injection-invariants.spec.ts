@@ -35,7 +35,8 @@ const buildTableShape = (columnNames: string[]): WorkspaceTableShape => ({
   columnShapeByColumnName: Object.fromEntries(
     columnNames.map((columnName) => [columnName, buildColumn(columnName)]),
   ),
-  columnNames,
+  storedColumnNames: columnNames,
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: columnNames.includes('deletedAt'),
 });
@@ -48,6 +49,7 @@ const buildQueryBuilder = (columnNames = ['id', 'name', 'deletedAt']) =>
     tableShapeByObjectMetadataId: () => buildTableShape(columnNames),
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('ORM v2 SQL injection invariants', () => {

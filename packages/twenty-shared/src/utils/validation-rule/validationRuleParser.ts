@@ -1,9 +1,13 @@
 import { isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
+import { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from '@/constants/ExpressionParserDisabledMathOperators';
+
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
+import { parseExpressionDate } from '@/utils/expression-date/parseExpressionDate';
+import { isDefined } from '@/utils/validation/isDefined';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 
 // An operator enabled here for apps also needs a helper in twenty-sdk's ruleExpression
@@ -26,36 +30,7 @@ export const validationRuleParser = new Parser({
     floor: true,
     round: true,
     trunc: true,
-    power: false,
-    factorial: false,
-    assignment: false,
-    fndef: false,
-    random: false,
-    min: false,
-    max: false,
-    sin: false,
-    cos: false,
-    tan: false,
-    asin: false,
-    acos: false,
-    atan: false,
-    sinh: false,
-    cosh: false,
-    tanh: false,
-    asinh: false,
-    acosh: false,
-    atanh: false,
-    sqrt: false,
-    cbrt: false,
-    log: false,
-    log2: false,
-    ln: false,
-    lg: false,
-    log10: false,
-    expm1: false,
-    log1p: false,
-    exp: false,
-    sign: false,
+    ...EXPRESSION_PARSER_DISABLED_MATH_OPERATORS,
   },
 });
 
@@ -84,6 +59,20 @@ const getComparableValue = ({
     return toPlainDateStringOrSelf(value);
   }
 
+  if (isString(value) && isString(otherValue)) {
+    const date = parseExpressionDate(value);
+    const otherDate = parseExpressionDate(otherValue);
+
+    if (
+      isDefined(date) &&
+      isDefined(otherDate) &&
+      !date.isDateOnly &&
+      !otherDate.isDateOnly
+    ) {
+      return date.dateTime.epochNanoseconds;
+    }
+  }
+
   return value;
 };
 
@@ -102,6 +91,16 @@ const compareDefinedValues =
       getComparableValue({ value: right, otherValue: left }),
     );
 
+const areEqual = ({ left, right }: { left: unknown; right: unknown }) =>
+  isString(left) && isString(right)
+    ? getComparableValue({ value: left, otherValue: right }) ===
+      getComparableValue({ value: right, otherValue: left })
+    : left === right;
+
+validationRuleParser.binaryOps['=='] = (left: unknown, right: unknown) =>
+  areEqual({ left, right });
+validationRuleParser.binaryOps['!='] = (left: unknown, right: unknown) =>
+  !areEqual({ left, right });
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
   (left, right) => left < right,
 );

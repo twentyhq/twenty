@@ -31,7 +31,8 @@ const companyTableShape: WorkspaceTableShape = {
     id: buildColumn('id'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: ['id', 'deletedAt'],
+  storedColumnNames: ['id', 'deletedAt'],
+  computedColumnNames: [],
   relationShapeByFieldName: {},
   hasDeletedAtColumn: true,
 };
@@ -49,7 +50,7 @@ const personTableShape: WorkspaceTableShape = {
     updatedAt: buildColumn('updatedAt'),
     deletedAt: buildColumn('deletedAt'),
   },
-  columnNames: [
+  storedColumnNames: [
     'id',
     'nameFirstName',
     'jobTitle',
@@ -57,6 +58,7 @@ const personTableShape: WorkspaceTableShape = {
     'updatedAt',
     'deletedAt',
   ],
+  computedColumnNames: [],
   relationShapeByFieldName: {
     company: {
       fieldName: 'company',
@@ -88,6 +90,7 @@ const buildBuilders = ({
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
   return { selectQueryBuilder, executedStatements };
@@ -253,7 +256,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         id: buildColumn('id'),
         updatedAt: buildColumn('updatedAt'),
       },
-      columnNames: ['id', 'updatedAt'],
+      storedColumnNames: ['id', 'updatedAt'],
       hasDeletedAtColumn: false,
     };
 
@@ -264,6 +267,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     expect(() =>
@@ -315,7 +319,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         id: buildColumn('id'),
         deletedAt: buildColumn('deletedAt'),
       },
-      columnNames: ['id', 'deletedAt'],
+      storedColumnNames: ['id', 'deletedAt'],
     };
 
     const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
@@ -325,6 +329,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     expect(() =>

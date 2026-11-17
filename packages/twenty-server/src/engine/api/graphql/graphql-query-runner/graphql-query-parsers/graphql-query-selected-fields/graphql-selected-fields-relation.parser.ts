@@ -87,7 +87,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       ...(isOneToManyRelation &&
       isPlainObject(fieldValue) &&
       isPlainObject(fieldValue.__arguments)
-        ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
+        ? this.resolveQueryArgs({
+            graphqlArguments: fieldValue.__arguments,
+            targetObjectMetadata,
+            hasStoredOrder:
+              fieldMetadata.computation?.kind === 'FILTERED_RELATION',
+          })
         : {}),
       nestedRelationQueryArgsByFieldName:
         relationAccumulator.nestedRelationQueryArgsByFieldName,
@@ -95,10 +100,15 @@ export class GraphqlQuerySelectedFieldsRelationParser {
   }
 
   // Resolved while parsing so a malformed argument fails before a mutation writes anything
-  private resolveQueryArgs(
-    graphqlArguments: Record<string, unknown>,
-    targetObjectMetadata: FlatObjectMetadata,
-  ) {
+  private resolveQueryArgs({
+    graphqlArguments,
+    targetObjectMetadata,
+    hasStoredOrder,
+  }: {
+    graphqlArguments: Record<string, unknown>;
+    targetObjectMetadata: FlatObjectMetadata;
+    hasStoredOrder: boolean;
+  }) {
     const { filter, orderBy, first } =
       extractNestedRelationQueryArgs(graphqlArguments);
 
@@ -109,9 +119,9 @@ export class GraphqlQuerySelectedFieldsRelationParser {
         flatObjectMetadataMaps: this.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.flatFieldMetadataMaps,
       }),
-      // first pages a LIMIT per parent, which needs an order to be deterministic
+      // first pages a LIMIT per parent, which needs an order to be deterministic; a filtered relation stores one
       orderBy:
-        isDefined(orderBy) || isDefined(first)
+        isDefined(orderBy) || (isDefined(first) && !hasStoredOrder)
           ? [...(orderBy ?? []), DEFAULT_ID_ORDER_BY_TIEBREAKER]
           : undefined,
       first,

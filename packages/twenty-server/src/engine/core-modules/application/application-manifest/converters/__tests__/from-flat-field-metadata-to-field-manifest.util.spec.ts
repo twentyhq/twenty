@@ -92,7 +92,10 @@ const TEXT_FIELD_MANIFEST: Required<
 };
 
 const RELATION_FIELD_MANIFEST: Required<
-  Omit<RelationFieldManifest<FieldMetadataType.RELATION>, 'morphId'>
+  Omit<
+    RelationFieldManifest<FieldMetadataType.RELATION>,
+    'morphId' | 'computation'
+  >
 > = {
   universalIdentifier: FIELD_UID,
   type: FieldMetadataType.RELATION,
@@ -105,11 +108,6 @@ const RELATION_FIELD_MANIFEST: Required<
   isNullable: true,
   isUIEditable: true,
   disabledFieldPermissionActions: [],
-  computation: {
-    kind: 'ROLLUP',
-    relationFieldName: 'projects',
-    operation: 'COUNT',
-  },
   isUnique: false,
   isSearchable: false,
   isAuditLogged: true,
@@ -173,6 +171,39 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     ).toEqual(RELATION_FIELD_MANIFEST);
   });
 
+  it('should reproduce a filtered relation, which has no inverse field', () => {
+    const { relationTargetFieldMetadataUniversalIdentifier: _, ...relation } =
+      RELATION_FIELD_MANIFEST;
+    const filteredRelationFieldManifest: RelationFieldManifest<FieldMetadataType.RELATION> =
+      {
+        ...relation,
+        isUIEditable: false,
+        computation: {
+          kind: 'FILTERED_RELATION',
+          relationFieldName: 'projects',
+          orderBy: [{ expression: 'createdAt', direction: 'DescNullsLast' }],
+        },
+        universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      };
+
+    const universalFlatFieldMetadata =
+      fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: filteredRelationFieldManifest,
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(
+      universalFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+    ).toBeNull();
+    expect(
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toEqual(filteredRelationFieldManifest);
+  });
+
   it('should reproduce a select field after an inverse then a forward conversion', () => {
     const flatFieldMetadata = getFlatFieldMetadataMock({
       universalIdentifier: FIELD_UID,
@@ -199,6 +230,26 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
+  });
+
+  it('should export a computation without the bindings the server fills on sync', () => {
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      type: FieldMetadataType.NUMBER,
+      computation: {
+        kind: 'FORMULA',
+        expression: 'budget * 2',
+        bindings: { budget: TARGET_FIELD_UID },
+      },
+    });
+
+    expect(
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }).computation,
+    ).toEqual({ kind: 'FORMULA', expression: 'budget * 2' });
   });
 
   it('should export the base values of an option a workspace overrides', () => {

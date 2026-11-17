@@ -8,6 +8,8 @@ export type WorkspaceColumnShape = {
   fieldName: string;
   fieldMetadataType: FieldMetadataType;
   compositeParentFieldName?: string;
+  // Not stored: its value is an SQL expression supplied when a query references it
+  isComputed?: true;
 };
 
 export type WorkspaceRelationShape = {
@@ -25,7 +27,9 @@ export type WorkspaceTableShape = {
   schemaName: string;
   tableName: string;
   columnShapeByColumnName: Record<string, WorkspaceColumnShape>;
-  columnNames: string[];
+  // The default projection and writes never touch computed columns
+  storedColumnNames: string[];
+  computedColumnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
   hasDeletedAtColumn: boolean;
 };
