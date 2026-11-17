@@ -32,9 +32,10 @@ export default defineApplication({
         GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       label: 'AI summaries',
       description:
-        'Whether calls without Gemini notes get an AI summary. Set to false to avoid AI credit usage.',
+        'Whether your calls without Gemini notes get an AI summary. Turn off to avoid AI credit usage.',
       isSecret: false,
       type: FieldType.BOOLEAN,
+      scope: 'USER',
       value: true,
     },
   },

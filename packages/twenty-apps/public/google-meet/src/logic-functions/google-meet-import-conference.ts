@@ -10,7 +10,6 @@ import {
 import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/google-meet-conference-sync-outcome.type';
 import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
-import { isGoogleMeetAiSummaryEnabled } from 'src/logic-functions/utils/is-google-meet-ai-summary-enabled.util';
 import { syncGoogleMeetConferenceOrThrow } from 'src/logic-functions/utils/sync-google-meet-conference-or-throw.util';
 
 type GoogleMeetImportConferenceResult =
@@ -41,10 +40,10 @@ export const googleMeetImportConferenceHandler = async ({
     };
   }
 
+  const connection = await getConnection(connectedAccountId);
+
   const { outcome, needsAiSummary } = await syncGoogleMeetConferenceOrThrow({
-    accessToken: getConnectionAccessTokenOrThrow(
-      await getConnection(connectedAccountId),
-    ),
+    accessToken: getConnectionAccessTokenOrThrow(connection),
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
     conferenceRecord: {
       name: conferenceRecordName,
@@ -54,7 +53,7 @@ export const googleMeetImportConferenceHandler = async ({
     },
   });
 
-  if (needsAiSummary && isGoogleMeetAiSummaryEnabled()) {
+  if (needsAiSummary) {
     const callRecordingId =
       computeCallRecordingIdForGoogleMeetConference(conferenceRecordName);
 
@@ -64,7 +63,10 @@ export const googleMeetImportConferenceHandler = async ({
       jobs: [
         {
           jobId: `google-meet-summary-${callRecordingId}`,
-          payload: { callRecordingId },
+          payload: {
+            callRecordingId,
+            userWorkspaceId: connection.userWorkspaceId,
+          },
         },
       ],
     });

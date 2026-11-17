@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -7,7 +8,7 @@ import { GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER } from 'src/c
 import { type GoogleMeetCallSummaryOutcome } from 'src/logic-functions/types/google-meet-call-summary-outcome.type';
 import { buildGoogleMeetCallSummaryPrompt } from 'src/logic-functions/utils/build-google-meet-call-summary-prompt.util';
 import { findCallRecordingForSummary } from 'src/logic-functions/utils/find-call-recording-for-summary.util';
-import { isGoogleMeetAiSummaryEnabled } from 'src/logic-functions/utils/is-google-meet-ai-summary-enabled.util';
+import { isGoogleMeetAiSummaryEnabledForMember } from 'src/logic-functions/utils/is-google-meet-ai-summary-enabled-for-member.util';
 import { isTranscriptEntryList } from 'src/logic-functions/utils/is-transcript-entry-list.util';
 import { parseGoogleMeetCallSummaryResponse } from 'src/logic-functions/utils/parse-google-meet-call-summary-response.util';
 import { runGoogleMeetCallSummarizerOrThrow } from 'src/logic-functions/utils/run-google-meet-call-summarizer-or-throw.util';
@@ -19,14 +20,33 @@ type GoogleMeetSummarizeCallRecordingResult =
 
 export const googleMeetSummarizeCallRecordingHandler = async ({
   callRecordingId,
+  userWorkspaceId,
 }: {
   callRecordingId?: string;
+  userWorkspaceId?: string;
 }): Promise<GoogleMeetSummarizeCallRecordingResult> => {
-  if (!isNonEmptyString(callRecordingId)) {
+  if (
+    !isNonEmptyString(callRecordingId) ||
+    !isNonEmptyString(userWorkspaceId)
+  ) {
     return { success: false, error: 'Invalid Google Meet call summary job' };
   }
 
-  if (!isGoogleMeetAiSummaryEnabled()) {
+  const { myUserApplicationVariables } = await new MetadataApiClient({
+    runAs: 'application',
+  }).query({
+    myUserApplicationVariables: {
+      userWorkspaceId: true,
+      variables: { key: true, value: true },
+    },
+  });
+
+  if (
+    !isGoogleMeetAiSummaryEnabledForMember({
+      memberApplicationVariables: myUserApplicationVariables,
+      userWorkspaceId,
+    })
+  ) {
     return { success: true, outcome: 'DISABLED' };
   }
 
