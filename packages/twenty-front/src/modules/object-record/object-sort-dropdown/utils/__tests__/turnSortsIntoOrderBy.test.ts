@@ -193,6 +193,16 @@ describe('turnSortsIntoOrderBy', () => {
           updatedAt: '2021-01-01',
           isActive: true,
         } as FieldMetadataItem,
+        {
+          id: 'company-employees-field-id',
+          universalIdentifier: 'company-employees-field-id',
+          name: 'employees',
+          type: FieldMetadataType.NUMBER,
+          label: 'Employees',
+          createdAt: '2021-01-01',
+          updatedAt: '2021-01-01',
+          isActive: true,
+        } as FieldMetadataItem,
       ],
       readableFields: [],
       updatableFields: [],
@@ -313,6 +323,26 @@ describe('turnSortsIntoOrderBy', () => {
 
       expect(result).toEqual([
         { company: { name: 'DescNullsLast' } },
+        { position: 'AscNullsFirst' },
+      ]);
+    });
+
+    it('should sort a lookup column by the looked-up field', () => {
+      const sorts: RecordSort[] = [
+        {
+          id: 'sort-1',
+          fieldMetadataId: 'company-relation-field-id',
+          relationTargetFieldMetadataId: 'company-employees-field-id',
+          direction: ViewSortDirection.DESC,
+        },
+      ];
+
+      const result = turnSortsIntoOrderBy(personObjectMetadataItem, sorts, [
+        companyObjectMetadataItem,
+      ]);
+
+      expect(result).toEqual([
+        { company: { employees: 'DescNullsLast' } },
         { position: 'AscNullsFirst' },
       ]);
     });

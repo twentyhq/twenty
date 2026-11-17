@@ -48,7 +48,6 @@ export const useHandleToggleColumnSort = ({
 
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
-      // A view sorts a field once, so a lookup column's sort replaces its relation's
       const existingSort = currentRecordSorts.find(
         (sort) =>
           sort.fieldMetadataId === fieldMetadataId &&
