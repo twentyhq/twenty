@@ -167,4 +167,32 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
     expect(recordingData.title).toBe('Meeting started 2026/11/17 18:10 IST');
     expect(recordingData).not.toHaveProperty('calendarEventId');
   });
+
+  it('should import a conference whose transcript document cannot be read, without title', async () => {
+    fetchMock.mockImplementation(async (url) =>
+      url.startsWith('https://docs.googleapis.com/')
+        ? new Response(
+            JSON.stringify({ error: { status: 'PERMISSION_DENIED' } }),
+            { status: 403 },
+          )
+        : new Response(JSON.stringify(GOOGLE_RESPONSES[url] ?? {})),
+    );
+
+    const coreApiClient = buildCoreApiClient();
+
+    await expect(
+      syncGoogleMeetConferenceOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        conferenceRecord: {
+          name: CONFERENCE_RECORD.name,
+          startTime: CONFERENCE_RECORD.startTime,
+        },
+      }),
+    ).resolves.toBe('CREATED');
+
+    expect(
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data,
+    ).not.toHaveProperty('title');
+  });
 });
