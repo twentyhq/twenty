@@ -34,8 +34,8 @@ import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/util
 import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { findAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-assigned-role-id.util';
-import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
+import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
+import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
 import { findRecordSharingFlatObjectMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/find-record-sharing-flat-object-metadata-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/internal/role/utils/can-roles-access-all-records.util';
@@ -246,32 +246,33 @@ export class RecordSharingReadService {
     workspaceId: string;
     grants: RecordShare[];
   }): Promise<RecordSharingGrantDTO[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, flatRoleMaps } =
+    const { flatWorkspaceMemberMaps, flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-        'flatRoleMaps',
+        'flatRoleTargetMaps',
       ]);
-    const roleIdsByPrincipal = resolveRecordSharePrincipalRoleIds({
-      principals: grants,
-      flatWorkspaceMemberMaps,
-      userWorkspaceRoleMap,
-    });
 
-    return grants.map((grant, index) => ({
-      id: grant.id,
-      principalType: grant.principalType,
-      principalId: grant.principalId,
-      principalRoleId:
-        grant.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
-          ? (findAssignedRoleId({
-              roleIds: roleIdsByPrincipal[index] ?? [],
-              flatRoleMaps,
-            }) ?? null)
+    return grants.map((grant) => {
+      const userWorkspaceId = resolveRecordSharePrincipalUserWorkspaceId({
+        principal: grant,
+        flatWorkspaceMemberMaps,
+      });
+
+      return {
+        id: grant.id,
+        principalType: grant.principalType,
+        principalId: grant.principalId,
+        principalRoleId: isDefined(userWorkspaceId)
+          ? (findFlatRoleTargetFromForeignKey({
+              flatRoleTargetMaps,
+              targetMetadataForeignKey: 'userWorkspaceId',
+              targetId: userWorkspaceId,
+            })?.roleId ?? null)
           : null,
-      accessLevel: grant.accessLevel,
-      rowCause: grant.rowCause,
-    }));
+        accessLevel: grant.accessLevel,
+        rowCause: grant.rowCause,
+      };
+    });
   }
 
   private async buildRoles({

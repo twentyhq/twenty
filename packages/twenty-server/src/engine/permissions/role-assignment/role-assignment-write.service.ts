@@ -18,7 +18,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { findAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-assigned-role-id.util';
+import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 
 @Injectable()
 export class RoleAssignmentWriteService {
@@ -69,17 +69,17 @@ export class RoleAssignmentWriteService {
       actingUserWorkspaceId,
     });
 
-    const { userWorkspaceRoleMap, flatRoleMaps } =
+    const { flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-        'flatRoleMaps',
+        'flatRoleTargetMaps',
       ]);
 
     if (
-      findAssignedRoleId({
-        roleIds: userWorkspaceRoleMap[userWorkspace.id] ?? [],
-        flatRoleMaps,
-      }) === roleId
+      findFlatRoleTargetFromForeignKey({
+        flatRoleTargetMaps,
+        targetMetadataForeignKey: 'userWorkspaceId',
+        targetId: userWorkspace.id,
+      })?.roleId === roleId
     ) {
       return { workspaceMember, userWorkspaceId: userWorkspace.id };
     }
@@ -369,21 +369,21 @@ export class RoleAssignmentWriteService {
     roleId: string;
     workspaceId: string;
   }): Promise<FlatWorkspaceMember[]> {
-    const { userWorkspaceRoleMap, flatRoleMaps, flatWorkspaceMemberMaps } =
+    const { flatRoleTargetMaps, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-        'flatRoleMaps',
+        'flatRoleTargetMaps',
         'flatWorkspaceMemberMaps',
       ]);
 
-    return Object.keys(userWorkspaceRoleMap)
+    return Object.values(flatRoleTargetMaps.byUniversalIdentifier)
+      .filter(isDefined)
       .filter(
-        (userWorkspaceId) =>
-          findAssignedRoleId({
-            roleIds: userWorkspaceRoleMap[userWorkspaceId] ?? [],
-            flatRoleMaps,
-          }) === roleId,
+        (flatRoleTarget) =>
+          flatRoleTarget.roleId === roleId &&
+          !flatRoleTarget.isSystemSideEffect,
       )
+      .map(({ userWorkspaceId }) => userWorkspaceId)
+      .filter(isDefined)
       .map((userWorkspaceId) => {
         const workspaceMemberId =
           flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
