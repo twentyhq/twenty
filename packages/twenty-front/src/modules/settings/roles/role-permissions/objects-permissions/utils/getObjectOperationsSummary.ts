@@ -5,7 +5,6 @@ import {
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconAdjustments,
   type IconComponent,
@@ -22,31 +21,33 @@ export const getObjectOperationsSummary = ({
   const orderedOperations = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter((key) =>
     operations.includes(key),
   );
-  const highestOperation = orderedOperations.at(-1);
 
-  const label =
-    orderedOperations.length === 0
-      ? t`No access`
-      : orderedOperations
-          .map((operation, index) => {
-            const operationLabel = i18n._(
-              SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[operation].label,
-            );
+  if (orderedOperations.length === 0) {
+    return {
+      label: t`No access`,
+      Icon: isAdvanced ? IconAdjustments : IconEyeOff,
+    };
+  }
 
-            return index === 0
-              ? operationLabel
-              : operationLabel.toLocaleLowerCase();
-          })
-          .join(', ');
+  const [firstOperationLabel, ...otherOperationLabels] = orderedOperations.map(
+    (operation) =>
+      i18n._(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[operation].label),
+  );
+  const label = [
+    firstOperationLabel,
+    ...otherOperationLabels.map((operationLabel) =>
+      operationLabel.toLocaleLowerCase(),
+    ),
+  ].join(', ');
 
   if (isAdvanced) {
     return { label, Icon: IconAdjustments };
   }
 
+  const highestOperation = orderedOperations[orderedOperations.length - 1];
+
   return {
     label,
-    Icon: isDefined(highestOperation)
-      ? SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestOperation].Icon
-      : IconEyeOff,
+    Icon: SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestOperation].Icon,
   };
 };
