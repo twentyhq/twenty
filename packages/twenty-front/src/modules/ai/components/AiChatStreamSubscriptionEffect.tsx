@@ -56,12 +56,10 @@ export const AiChatStreamSubscriptionEffect = ({
     const thread = store.get(
       aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
+    const usageAtom = aiChatUsageFamilyState.atomFamily({ threadId });
 
-    if (isDefined(thread)) {
-      store.set(
-        aiChatUsageFamilyState.atomFamily({ threadId }),
-        getAiChatUsageFromThread(thread),
-      );
+    if (isDefined(thread) && !isDefined(store.get(usageAtom))) {
+      store.set(usageAtom, getAiChatUsageFromThread(thread));
     }
   }, [store, threadId]);
 
