@@ -141,5 +141,10 @@ describe('googleMeetEventsResolverHandler', () => {
         skipped: 'No workspace claims this subscription',
       }),
     );
+
+    expect(kv.get).toHaveBeenCalledExactlyOnceWith(
+      'google-meet-event-subscription:subscriptions/first',
+      { scope: 'SERVER' },
+    );
   });
 });
