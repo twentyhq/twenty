@@ -8,7 +8,6 @@ import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/ro
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
-import { getObjectPermissionFromOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionFromOperations';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -93,7 +92,14 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     upsertObjectPermissionInDraftRole({
       ...existingObjectPermission,
       objectMetadataId: objectMetadataItem.id,
-      ...getObjectPermissionFromOperations(nextOperations),
+      canReadObjectRecords: nextOperations.includes('canReadObjectRecords'),
+      canUpdateObjectRecords: nextOperations.includes('canUpdateObjectRecords'),
+      canSoftDeleteObjectRecords: nextOperations.includes(
+        'canSoftDeleteObjectRecords',
+      ),
+      canDestroyObjectRecords: nextOperations.includes(
+        'canDestroyObjectRecords',
+      ),
     });
   };
 
