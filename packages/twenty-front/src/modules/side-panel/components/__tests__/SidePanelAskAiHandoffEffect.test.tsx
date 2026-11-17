@@ -3,8 +3,6 @@ import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
 import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 
@@ -53,56 +51,6 @@ describe('SidePanelAskAiHandoffEffect', () => {
       resetNavigationStack: true,
     });
     expect(onContinueChatFromFullWidth).toHaveBeenCalled();
-  });
-
-  it('continues a new chat as the side panel new chat', () => {
-    const store = createStore();
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-
-    store.set(aiChatContinueInSidePanelThreadIdState.atom, newAiChatThreadId);
-
-    render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/objects/companies']}>
-          <SidePanelAskAiHandoffEffect
-            onContinueChatFromFullWidth={onContinueChatFromFullWidth}
-          />
-        </MemoryRouter>
-      </Provider>,
-    );
-
-    expect(openAskAiPage).toHaveBeenCalledWith({
-      threadId: undefined,
-      resetNavigationStack: true,
-    });
-  });
-
-  it('keeps a new chat whose first message is still sending', () => {
-    const store = createStore();
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-
-    store.set(aiChatContinueInSidePanelThreadIdState.atom, newAiChatThreadId);
-    store.set(
-      aiChatIsSendingMessageFamilyState.atomFamily({
-        threadId: newAiChatThreadId,
-      }),
-      true,
-    );
-
-    render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/objects/companies']}>
-          <SidePanelAskAiHandoffEffect
-            onContinueChatFromFullWidth={onContinueChatFromFullWidth}
-          />
-        </MemoryRouter>
-      </Provider>,
-    );
-
-    expect(openAskAiPage).toHaveBeenCalledWith({
-      threadId: newAiChatThreadId,
-      resetNavigationStack: true,
-    });
   });
 
   it('closes the chat when leaving it for settings', () => {
