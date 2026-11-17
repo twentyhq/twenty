@@ -97,6 +97,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-a-universal-id',
+        groupKey: 'workflow',
       },
     );
     expect(messageQueueService.add).toHaveBeenCalledWith(
@@ -107,6 +108,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-b-universal-id',
+        groupKey: 'workflow',
       },
     );
   });
@@ -130,12 +132,14 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
+        groupKey: 'workflow',
       },
       {
         id: 'run-of-deleted-workflow',
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
+        groupKey: 'workflow',
       },
     ]);
   });

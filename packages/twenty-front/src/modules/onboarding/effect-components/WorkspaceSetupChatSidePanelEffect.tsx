@@ -3,15 +3,17 @@ import { useStore } from 'jotai';
 
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
 import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
+import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { Navigate, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 export const WorkspaceSetupChatSidePanelEffect = () => {
@@ -22,6 +24,13 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
   const { pathname } = useLocation();
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const newAiChatPageRoute = getAiChatPageRoute({
+    isInbox: isAiChatInboxEnabled,
+    threadId: null,
+  });
 
   useLayoutEffect(() => {
     if (!shouldOpenAiChatAfterOnboarding) {
@@ -31,7 +40,7 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
 
     if (
       store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) ||
-      isAiChatPath(pathname) ||
+      isDefined(getCurrentAiChatPageThreadId(store)) ||
       isSettingsPath(pathname) ||
       isDefined(store.get(aiChatContinueInSidePanelThreadIdState.atom))
     ) {
@@ -52,7 +61,9 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
       <Navigate
         to={
           isSettingsPath(defaultHomePagePath)
-            ? getAppPath(AppPath.AiChat, { threadId: null })
+            ? getAppPath(newAiChatPageRoute.appPath, {
+                threadId: newAiChatPageRoute.threadId,
+              })
             : defaultHomePagePath
         }
         replace
