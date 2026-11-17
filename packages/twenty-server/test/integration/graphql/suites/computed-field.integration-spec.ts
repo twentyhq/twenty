@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -795,6 +796,53 @@ describe('Computed fields (e2e)', () => {
         taskCount: 1,
         summary: 'BETA: idle',
       });
+    });
+
+    it('returns computed fields of the records a write destroys', async () => {
+      const projectId = '20202020-c0f1-4000-8000-000000000004';
+      const taskId = buildTaskId(TASKS.length + 1);
+
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id',
+          data: [{ id: projectId, name: 'Gamma', budget: 10 }],
+          upsert: false,
+        }),
+      );
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          data: [{ id: taskId, projectId, status: 'TODO', points: 1 }],
+          upsert: false,
+        }),
+      );
+
+      const response = await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id taskCount summary',
+          filter: { id: { eq: projectId } },
+        }),
+      );
+
+      await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          filter: { id: { eq: taskId } },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.destroyRollupProjects).toEqual([
+        { id: projectId, taskCount: 1, summary: 'GAMMA: open' },
+      ]);
     });
 
     it('updates the records matching a filter on a computed field', async () => {
