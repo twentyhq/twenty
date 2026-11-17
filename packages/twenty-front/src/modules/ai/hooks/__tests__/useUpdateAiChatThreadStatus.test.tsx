@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
@@ -195,12 +195,15 @@ describe('useUpdateAiChatThreadStatus', () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderUpdateInboxState();
 
-    store.set(aiChatThreadVisitState.atom, {
-      threadId: THREAD_ID,
-      isUnread: false,
-      lastReadAt: LAST_ACTIVITY_AT,
-      isKeptUnread: false,
-    });
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      {
+        threadId: THREAD_ID,
+        isUnread: false,
+        lastReadAt: LAST_ACTIVITY_AT,
+        isKeptUnread: false,
+      },
+    );
 
     act(() => {
       void result.current.updateAgentChatThreadInboxState({
@@ -209,7 +212,11 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadVisitState.atom)).toEqual({
+    expect(
+      store.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual({
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,
@@ -227,7 +234,10 @@ describe('useUpdateAiChatThreadStatus', () => {
       isKeptUnread: false,
     };
 
-    store.set(aiChatThreadVisitState.atom, visit);
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      visit,
+    );
 
     await act(async () => {
       await result.current.updateAgentChatThreadInboxState({
@@ -236,7 +246,11 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadVisitState.atom)).toEqual(visit);
+    expect(
+      store.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual(visit);
   });
 
   it('keeps a visit to another chat opened while the refused request was pending', async () => {
@@ -249,15 +263,21 @@ describe('useUpdateAiChatThreadStatus', () => {
     };
 
     mutate.mockImplementation(async () => {
-      store.set(aiChatThreadVisitState.atom, otherVisit);
+      store.set(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: OTHER_THREAD_ID }),
+        otherVisit,
+      );
       throw new Error('Network error');
     });
-    store.set(aiChatThreadVisitState.atom, {
-      threadId: THREAD_ID,
-      isUnread: false,
-      lastReadAt: LAST_ACTIVITY_AT,
-      isKeptUnread: false,
-    });
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      {
+        threadId: THREAD_ID,
+        isUnread: false,
+        lastReadAt: LAST_ACTIVITY_AT,
+        isKeptUnread: false,
+      },
+    );
 
     await act(async () => {
       await result.current.updateAgentChatThreadInboxState({
@@ -266,6 +286,10 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadVisitState.atom)).toEqual(otherVisit);
+    expect(
+      store.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: OTHER_THREAD_ID }),
+      ),
+    ).toEqual(otherVisit);
   });
 });

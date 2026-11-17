@@ -1,4 +1,4 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 export type AiChatThreadVisit = {
   threadId: string;
@@ -13,10 +13,10 @@ export type AiChatThreadVisit = {
   readRequestedForParticipantUpdatedAt?: string;
 };
 
-// The thread on screen in a visible tab
-export const aiChatThreadVisitState = createAtomState<AiChatThreadVisit | null>(
-  {
-    key: 'ai/aiChatThreadVisitState',
-    defaultValue: null,
-  },
-);
+export const aiChatThreadVisitFamilyState = createAtomFamilyState<
+  AiChatThreadVisit | null,
+  { threadId: string }
+>({
+  key: 'ai/aiChatThreadVisitFamilyState',
+  defaultValue: null,
+});

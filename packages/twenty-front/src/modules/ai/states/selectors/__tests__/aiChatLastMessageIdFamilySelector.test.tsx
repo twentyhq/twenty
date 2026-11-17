@@ -1,16 +1,15 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { aiChatLastMessageIdSelector } from '@/ai/states/selectors/aiChatLastMessageIdSelector';
-import { aiChatNonLastMessageIdsSelector } from '@/ai/states/selectors/aiChatNonLastMessageIdsSelector';
+import { aiChatLastMessageIdFamilySelector } from '@/ai/states/selectors/aiChatLastMessageIdFamilySelector';
+import { aiChatNonLastMessageIdsFamilySelector } from '@/ai/states/selectors/aiChatNonLastMessageIdsFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const THREAD_ID = 'thread';
 
@@ -25,10 +24,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('aiChatLastMessageIdSelector', () => {
+describe('aiChatLastMessageIdFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   });
 
   it.each([
@@ -55,8 +53,14 @@ describe('aiChatLastMessageIdSelector', () => {
 
       const { result } = renderHook(
         () => ({
-          nonLastMessageIds: useAtomStateValue(aiChatNonLastMessageIdsSelector),
-          lastMessageId: useAtomStateValue(aiChatLastMessageIdSelector),
+          nonLastMessageIds: useAtomFamilySelectorValue(
+            aiChatNonLastMessageIdsFamilySelector,
+            THREAD_ID,
+          ),
+          lastMessageId: useAtomFamilySelectorValue(
+            aiChatLastMessageIdFamilySelector,
+            THREAD_ID,
+          ),
         }),
         { wrapper: Wrapper },
       );

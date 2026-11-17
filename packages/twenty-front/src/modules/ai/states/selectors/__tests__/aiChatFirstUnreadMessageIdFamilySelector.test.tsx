@@ -1,22 +1,21 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitState,
-} from '@/ai/states/aiChatThreadVisitState';
-import { aiChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdSelector';
+  aiChatThreadVisitFamilyState,
+} from '@/ai/states/aiChatThreadVisitFamilyState';
+import { aiChatFirstUnreadMessageIdFamilySelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const THREAD_ID = 'thread';
 const ME = 'my-workspace-member-id';
@@ -49,25 +48,31 @@ const getFirstUnreadMessageId = (
   visit: Omit<AiChatThreadVisit, 'isKeptUnread'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(aiChatThreadVisitState.atom, {
-    ...visit,
-    isKeptUnread: false,
-  });
+  jotaiStore.set(
+    aiChatThreadVisitFamilyState.atomFamily({ threadId: visit.threadId }),
+    {
+      ...visit,
+      isKeptUnread: false,
+    },
+  );
   jotaiStore.set(
     aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     messages,
   );
 
   return renderHook(
-    () => useAtomStateValue(aiChatFirstUnreadMessageIdSelector),
+    () =>
+      useAtomFamilySelectorValue(
+        aiChatFirstUnreadMessageIdFamilySelector,
+        THREAD_ID,
+      ),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('aiChatFirstUnreadMessageIdSelector', () => {
+describe('aiChatFirstUnreadMessageIdFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: ME,
     } as never);

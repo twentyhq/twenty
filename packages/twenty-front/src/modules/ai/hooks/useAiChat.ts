@@ -1,3 +1,4 @@
+import { dispatchAiChatRefetchMessagesEvent } from '@/ai/utils/dispatchAiChatRefetchMessagesEvent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -16,10 +17,8 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
-import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
@@ -37,9 +36,9 @@ import { getAiChatMessageAuthor } from '@/ai/utils/getAiChatMessageAuthor';
 import { getAiChatMessageQuoteSource } from '@/ai/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai/utils/prependAiChatQuoteToText';
 import { aiChatLastSentBrowsingContextFamilyState } from '@/ai/states/aiChatLastSentBrowsingContextFamilyState';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
 import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
@@ -48,11 +47,13 @@ import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwait
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/aiChatIsAwaitingPersistedRefetchFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getAiChatInitialRecipients } from '@/ai/utils/getAiChatInitialRecipients';
 import { getAiChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAiChatNewThreadDirectMessageWorkspaceMemberId';
@@ -61,7 +62,6 @@ import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAiC
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -95,6 +95,11 @@ type AiChatMessageToSend = {
 };
 
 export const useAiChat = () => {
+  const {
+    instanceId,
+    threadId: aiChatThreadId,
+    onThreadChange,
+  } = useAiChatInstanceOrThrow();
   const { modelIdForRequest } = useAiChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const canSendAiChatMessage = useCanSendAiChatMessage();
@@ -112,15 +117,12 @@ export const useAiChat = () => {
     useWarnAboutParticipantMentionsNotAdded();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
     shouldPreserveClosedInbox: true,
   });
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
   const store = useStore();
-
-  const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
 
   const setAiChatDraftsByThreadId = useSetAtomState(
     aiChatDraftsByThreadIdState,
@@ -143,9 +145,12 @@ export const useAiChat = () => {
       const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily(
         { threadId },
       );
+      const uploadedFilesAtom = aiChatUploadedFilesFamilyState.atomFamily({
+        threadId,
+      });
       const aiChatUploadedFiles = isDirectMessage
         ? []
-        : store.get(aiChatUploadedFilesState.atom);
+        : store.get(uploadedFilesAtom);
       const browsingContext = getBrowsingContext();
       const lastSentBrowsingContextAtom =
         aiChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
@@ -220,7 +225,7 @@ export const useAiChat = () => {
       }));
 
       if (!isDirectMessage) {
-        setAiChatUploadedFiles([]);
+        store.set(uploadedFilesAtom, []);
       }
 
       store.set(isSendingMessageAtom, true);
@@ -321,7 +326,7 @@ export const useAiChat = () => {
           }
         }
 
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchAiChatRefetchMessagesEvent(threadId);
       } catch (error) {
         rollbackOptimisticRestore();
 
@@ -337,7 +342,7 @@ export const useAiChat = () => {
           ...prev,
           [threadId]: serializedContentToSend,
         }));
-        setAiChatUploadedFiles((currentUploadedFiles) => [
+        store.set(uploadedFilesAtom, (currentUploadedFiles) => [
           ...aiChatUploadedFiles,
           ...currentUploadedFiles,
         ]);
@@ -357,11 +362,10 @@ export const useAiChat = () => {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
         }
 
-        if (store.get(currentAiChatThreadState.atom) === threadId) {
-          dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-            content: serializedContentToSend,
-          });
-        }
+        dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+          AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+          { threadId, content: serializedContentToSend },
+        );
       } finally {
         store.set(isSendingMessageAtom, false);
       }
@@ -369,7 +373,6 @@ export const useAiChat = () => {
     [
       store,
       getBrowsingContext,
-      setAiChatUploadedFiles,
       setAiChatDraftsByThreadId,
       modelIdForRequest,
       aiModels,
@@ -384,8 +387,7 @@ export const useAiChat = () => {
 
   const handleSendMessage = useCallback(async () => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-    const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
+    const threadId = aiChatThreadId;
     const isNewChat = threadId === newAiChatThreadId;
     const isDirectMessage = store.get(
       aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
@@ -511,6 +513,14 @@ export const useAiChat = () => {
       });
 
       if (isDefined(directMessageThreadId)) {
+        const isStillOnNewChat =
+          store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
+          threadId;
+
+        if (isStillOnNewChat) {
+          onThreadChange(directMessageThreadId);
+        }
+
         await sendToThread({
           threadId: directMessageThreadId,
           isNewChat: false,
@@ -529,7 +539,9 @@ export const useAiChat = () => {
       return;
     }
 
-    const aiChatSelectedFiles = store.get(aiChatSelectedFilesState.atom);
+    const aiChatSelectedFiles = store.get(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
+    );
 
     if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
       enqueueToast({
@@ -540,7 +552,9 @@ export const useAiChat = () => {
       return;
     }
 
-    setCurrentAiChatThread(threadId);
+    if (isNewChat) {
+      onThreadChange(threadId);
+    }
 
     setAiChatDraftsByThreadId((prev) => ({
       ...prev,
@@ -548,9 +562,10 @@ export const useAiChat = () => {
     }));
     store.set(quotedMessageIdAtom, null);
 
-    dispatchBrowserEvent(AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-      content: '',
-    });
+    dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
+      AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      { threadId, content: '' },
+    );
 
     await sendToThread({
       threadId,
@@ -574,21 +589,14 @@ export const useAiChat = () => {
     isDirectMessageIdentityEnabled,
     openNewAiChatAsDirectMessage,
     enqueueToast,
-    setCurrentAiChatThread,
+    instanceId,
+    aiChatThreadId,
+    onThreadChange,
     sendToThread,
   ]);
 
-  useListenToBrowserEvent({
-    eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
-    onBrowserEvent: handleSendMessage,
-  });
-
   const handleStop = useCallback(async () => {
-    const threadId = store.get(currentAiChatThreadState.atom);
-
-    if (!isDefined(threadId)) {
-      return;
-    }
+    const threadId = aiChatThreadId;
 
     store.set(
       aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
@@ -603,12 +611,7 @@ export const useAiChat = () => {
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }
-  }, [store, apolloClient, enqueueToast]);
-
-  useListenToBrowserEvent({
-    eventName: AI_CHAT_STOP_EVENT_NAME,
-    onBrowserEvent: handleStop,
-  });
+  }, [store, apolloClient, enqueueToast, aiChatThreadId]);
 
   return {
     handleSendMessage,

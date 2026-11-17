@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -44,7 +45,10 @@ export const SidePanelAskAiHandoffEffect = ({
     }
 
     onContinueChatFromFullWidth();
-    openAskAiPage({ resetNavigationStack: true });
+    openAskAiPage({
+      threadId: store.get(currentAiChatThreadState.atom) ?? undefined,
+      resetNavigationStack: true,
+    });
   }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
 
   return null;

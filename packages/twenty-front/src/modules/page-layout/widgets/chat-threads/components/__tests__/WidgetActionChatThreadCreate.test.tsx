@@ -13,7 +13,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 const NEW_CHAT_ID = '20202020-0000-4000-8000-0000000000dd';
 
-const switchToNewChat = jest.fn();
+const switchToNewChat = jest.fn(() => NEW_CHAT_ID);
 const mockHasPermissionFlag = jest.fn(() => true);
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
