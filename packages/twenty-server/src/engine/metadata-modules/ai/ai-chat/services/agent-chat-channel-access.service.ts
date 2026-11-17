@@ -8,7 +8,6 @@ import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/age
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { type AgentChatChannelAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-access-args.type';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { isAgentChatChannelOpenToRoles } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-roles.util';
@@ -78,11 +77,7 @@ export class AgentChatChannelAccessService {
       ]),
     ]);
 
-    return (
-      isDefined(principals)
-        ? getPermissionsPrincipalsMainRoleIds(principals)
-        : []
-    )
+    return (isDefined(principals) ? principals.mainPrincipal.roleIds : [])
       .map((roleId) =>
         findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: roleId,

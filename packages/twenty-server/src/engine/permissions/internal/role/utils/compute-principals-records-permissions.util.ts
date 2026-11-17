@@ -9,7 +9,6 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { getPermissionsPrincipalsActingApplication } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application.util';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
 import { computePermissionUnion } from 'src/engine/permissions/internal/role/utils/compute-permission-union.util';
 import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-disabled-actions.util';
@@ -63,10 +62,8 @@ export const computePrincipalsRecordsPermissions = ({
     });
   };
 
-  const mainRecordsPermissionsPerRole = getPermissionsPrincipalsMainRoleIds(
-    principals,
-  ).map((roleId) =>
-    restrictToDisabledActions({ roleId, isLimitingRole: false }),
+  const mainRecordsPermissionsPerRole = principals.mainPrincipal.roleIds.map(
+    (roleId) => restrictToDisabledActions({ roleId, isLimitingRole: false }),
   );
   const limitingRecordsPermissionsPerRole =
     getPermissionsPrincipalsLimitingRoleIds(principals).map((roleId) =>

@@ -11,7 +11,6 @@ import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/ac
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
-import { getPermissionsPrincipalsMainRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-main-role-ids.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { AccessGroupReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-read.repository';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
@@ -50,18 +49,17 @@ export class AccessGroupReadService {
 
     return this.findCompactIds({
       workspaceId,
-      accessGroups: getPermissionsPrincipalsMainRoleIds(principals).flatMap(
-        (roleId) =>
-          buildRoleAccessGroupsOrThrow({
-            roleId,
-            objectMetadataId,
-            objectRecordsPermissions:
-              rolesPermissions[roleId]?.objects[objectMetadataId],
-            operationTypes: [operationType],
-            workspaceMembers,
-            flatFieldMetadataMaps,
-            isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
-          }),
+      accessGroups: principals.mainPrincipal.roleIds.flatMap((roleId) =>
+        buildRoleAccessGroupsOrThrow({
+          roleId,
+          objectMetadataId,
+          objectRecordsPermissions:
+            rolesPermissions[roleId]?.objects[objectMetadataId],
+          operationTypes: [operationType],
+          workspaceMembers,
+          flatFieldMetadataMaps,
+          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+        }),
       ),
     });
   }

@@ -5,7 +5,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
-import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import {
@@ -36,33 +35,28 @@ export class RolePermissionsService {
     return this.findPrincipalRoleIds(authContext);
   }
 
-  async findUserWorkspaceRoleIdOrThrow({
+  async findUserWorkspaceRoleIdsOrThrow({
     workspaceId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<string> {
-    const { userWorkspaceRoleMap, flatRoleMaps } =
+  }): Promise<string[]> {
+    const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
-        'flatRoleMaps',
       ]);
 
-    const roleId = findUserWorkspaceAssignedRoleId({
-      userWorkspaceId,
-      userWorkspaceRoleMap,
-      flatRoleMaps,
-    });
+    const roleIds = userWorkspaceRoleMap[userWorkspaceId];
 
-    if (!isDefined(roleId)) {
+    if (!isNonEmptyArray(roleIds)) {
       throw new PermissionsException(
         `User workspace ${userWorkspaceId} has no role assigned`,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
       );
     }
 
-    return roleId;
+    return roleIds;
   }
 
   async findRolesByUserWorkspaceIds({
@@ -118,12 +112,11 @@ export class RolePermissionsService {
   }: {
     workspaceId: string;
     workspaceMemberIds: string[];
-  }): Promise<(string | undefined)[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, flatRoleMaps } =
+  }): Promise<string[][]> {
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
-        'flatRoleMaps',
       ]);
 
     return resolveRecordSharePrincipalRoleIds({
@@ -133,7 +126,6 @@ export class RolePermissionsService {
       })),
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
-      flatRoleMaps,
     });
   }
 

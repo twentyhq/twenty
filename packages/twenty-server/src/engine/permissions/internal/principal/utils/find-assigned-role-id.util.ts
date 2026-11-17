@@ -2,18 +2,15 @@
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
-import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 
-export const findUserWorkspaceAssignedRoleId = ({
-  userWorkspaceId,
-  userWorkspaceRoleMap,
+export const findAssignedRoleId = ({
+  roleIds,
   flatRoleMaps,
 }: {
-  userWorkspaceId: string;
-  userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  roleIds: string[];
   flatRoleMaps: FlatRoleMaps;
 }): string | undefined =>
-  userWorkspaceRoleMap[userWorkspaceId]?.find(
+  roleIds.find(
     (roleId) =>
       findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: roleId,

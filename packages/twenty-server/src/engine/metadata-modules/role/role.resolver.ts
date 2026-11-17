@@ -240,12 +240,10 @@ export class RoleResolver {
       return undefined;
     }
 
-    return [
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
-        workspaceId,
-        userWorkspaceId: actingUserWorkspaceId,
-      }),
-    ];
+    return this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
+      workspaceId,
+      userWorkspaceId: actingUserWorkspaceId,
+    });
   }
 
   @Mutation(() => [ObjectPermissionDTO])

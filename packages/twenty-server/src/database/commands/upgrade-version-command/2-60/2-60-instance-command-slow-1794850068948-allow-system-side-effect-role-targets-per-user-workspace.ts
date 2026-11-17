@@ -1,12 +1,12 @@
-import { QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.60.0', 1794850068948)
-export class AllowSystemSideEffectRoleTargetsPerUserWorkspaceFastInstanceCommand
-  implements FastInstanceCommand
-{
+@RegisteredInstanceCommand('2.60.0', 1794850068948, { type: 'slow' })
+export class AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand implements SlowInstanceCommand {
+  async runDataMigration(): Promise<void> {}
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"',

@@ -47,7 +47,6 @@ const buildRoleMaps = (
   },
 ): PermissionsPrincipalsRoleMaps => ({
   userWorkspaceRoleMap: {},
-  flatRoleMaps: createEmptyFlatEntityMaps(),
   apiKeyRoleMap: {},
   flatRoleTargetByAgentIdMaps: {},
   flatRoleTargetByApplicationIdMaps: {},

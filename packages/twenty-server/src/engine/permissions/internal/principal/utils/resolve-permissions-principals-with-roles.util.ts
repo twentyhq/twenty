@@ -27,8 +27,6 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
-import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 
 export type PermissionsPrincipalsRoleMaps = {
@@ -37,7 +35,6 @@ export type PermissionsPrincipalsRoleMaps = {
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
   };
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  flatRoleMaps: FlatRoleMaps;
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
@@ -99,30 +96,6 @@ const findWorkspaceMemberUserWorkspaceId = ({
 
   return isDefined(userId)
     ? roleMaps.flatWorkspaceMemberMaps?.userWorkspaceIdByUserId[userId]
-    : undefined;
-};
-
-const findWorkspaceMemberRoleId = ({
-  workspaceMemberId,
-  roleMaps,
-}: {
-  workspaceMemberId: string;
-  roleMaps: Pick<
-    PermissionsPrincipalsRoleMaps,
-    'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap' | 'flatRoleMaps'
-  >;
-}): string | undefined => {
-  const userWorkspaceId = findWorkspaceMemberUserWorkspaceId({
-    workspaceMemberId,
-    roleMaps,
-  });
-
-  return isDefined(userWorkspaceId)
-    ? findUserWorkspaceAssignedRoleId({
-        userWorkspaceId,
-        userWorkspaceRoleMap: roleMaps.userWorkspaceRoleMap,
-        flatRoleMaps: roleMaps.flatRoleMaps,
-      })
     : undefined;
 };
 
@@ -219,11 +192,9 @@ const resolveApplicationPrincipal = ({
 
   const applicationRoleId = findApplicationRoleId({
     applicationId: applicationPrincipal.applicationId,
+    // any main role works: an application acting with one adds no limit
     userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
-      ? findWorkspaceMemberRoleId({
-          workspaceMemberId: mainPrincipal.workspaceMemberId,
-          roleMaps,
-        })
+      ? mainPrincipal.roleIds[0]
       : undefined,
     workspaceId,
     roleMaps,

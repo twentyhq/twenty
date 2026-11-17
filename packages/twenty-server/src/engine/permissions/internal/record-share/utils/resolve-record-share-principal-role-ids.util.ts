@@ -5,15 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 
 export const resolveRecordSharePrincipalRoleIds = ({
   principals,
   flatWorkspaceMemberMaps,
   userWorkspaceRoleMap,
-  flatRoleMaps,
 }: {
   principals: Pick<RecordShare, 'principalType' | 'principalId'>[];
   flatWorkspaceMemberMaps: Pick<
@@ -21,12 +18,11 @@ export const resolveRecordSharePrincipalRoleIds = ({
     'byId' | 'userWorkspaceIdByUserId'
   >;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  flatRoleMaps: FlatRoleMaps;
-}): (string | undefined)[] =>
+}): string[][] =>
   principals.map((principal) => {
     switch (principal.principalType) {
       case RecordSharePrincipalType.ROLE:
-        return principal.principalId;
+        return [principal.principalId];
       case RecordSharePrincipalType.WORKSPACE_MEMBER: {
         const flatWorkspaceMember =
           flatWorkspaceMemberMaps.byId[principal.principalId];
@@ -35,7 +31,7 @@ export const resolveRecordSharePrincipalRoleIds = ({
           !isDefined(flatWorkspaceMember) ||
           isDefined(flatWorkspaceMember.deletedAt)
         ) {
-          return undefined;
+          return [];
         }
 
         const userWorkspaceId =
@@ -44,14 +40,10 @@ export const resolveRecordSharePrincipalRoleIds = ({
           ];
 
         return isDefined(userWorkspaceId)
-          ? findUserWorkspaceAssignedRoleId({
-              userWorkspaceId,
-              userWorkspaceRoleMap,
-              flatRoleMaps,
-            })
-          : undefined;
+          ? (userWorkspaceRoleMap[userWorkspaceId] ?? [])
+          : [];
       }
       default:
-        return undefined;
+        return [];
     }
   });

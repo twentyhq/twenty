@@ -17,7 +17,6 @@ import {
 } from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
 import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
@@ -292,17 +291,13 @@ describe('Conversation sharing through the authenticated API', () => {
       const cache = getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
       );
-      const { userWorkspaceRoleMap, flatRoleMaps, flatObjectMetadataMaps } =
+      const { userWorkspaceRoleMap, flatObjectMetadataMaps } =
         await cache.getOrRecompute(workspaceId, [
           'userWorkspaceRoleMap',
-          'flatRoleMaps',
           'flatObjectMetadataMaps',
         ]);
-      const roleId = findUserWorkspaceAssignedRoleId({
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        userWorkspaceRoleMap,
-        flatRoleMaps,
-      });
+      const roleId =
+        userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY]?.[0];
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
@@ -453,11 +448,10 @@ describe('Conversation sharing through the authenticated API', () => {
       const cache = getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
       );
-      const { flatObjectMetadataMaps, userWorkspaceRoleMap, flatRoleMaps } =
+      const { flatObjectMetadataMaps, userWorkspaceRoleMap } =
         await cache.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
           'userWorkspaceRoleMap',
-          'flatRoleMaps',
         ]);
       const owner = {
         workspaceId,
@@ -472,13 +466,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : {
-              roleId: findUserWorkspaceAssignedRoleId({
-                userWorkspaceId: sender.userWorkspaceId,
-                userWorkspaceRoleMap,
-                flatRoleMaps,
-              }),
-            };
+          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId]?.[0] };
       const threadId = randomUUID();
       const target = {
         objectMetadataId:

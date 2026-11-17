@@ -34,6 +34,7 @@ import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/util
 import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
+import { findAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-assigned-role-id.util';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { findRecordSharingFlatObjectMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/find-record-sharing-flat-object-metadata-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
@@ -251,11 +252,10 @@ export class RecordSharingReadService {
         'userWorkspaceRoleMap',
         'flatRoleMaps',
       ]);
-    const roleIds = resolveRecordSharePrincipalRoleIds({
+    const roleIdsByPrincipal = resolveRecordSharePrincipalRoleIds({
       principals: grants,
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
-      flatRoleMaps,
     });
 
     return grants.map((grant, index) => ({
@@ -264,7 +264,10 @@ export class RecordSharingReadService {
       principalId: grant.principalId,
       principalRoleId:
         grant.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
-          ? (roleIds[index] ?? null)
+          ? (findAssignedRoleId({
+              roleIds: roleIdsByPrincipal[index] ?? [],
+              flatRoleMaps,
+            }) ?? null)
           : null,
       accessLevel: grant.accessLevel,
       rowCause: grant.rowCause,

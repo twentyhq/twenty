@@ -18,7 +18,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { findUserWorkspaceAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-assigned-role-id.util';
+import { findAssignedRoleId } from 'src/engine/permissions/internal/principal/utils/find-assigned-role-id.util';
 
 @Injectable()
 export class RoleAssignmentWriteService {
@@ -76,9 +76,8 @@ export class RoleAssignmentWriteService {
       ]);
 
     if (
-      findUserWorkspaceAssignedRoleId({
-        userWorkspaceId: userWorkspace.id,
-        userWorkspaceRoleMap,
+      findAssignedRoleId({
+        roleIds: userWorkspaceRoleMap[userWorkspace.id] ?? [],
         flatRoleMaps,
       }) === roleId
     ) {
@@ -380,9 +379,8 @@ export class RoleAssignmentWriteService {
     return Object.keys(userWorkspaceRoleMap)
       .filter(
         (userWorkspaceId) =>
-          findUserWorkspaceAssignedRoleId({
-            userWorkspaceId,
-            userWorkspaceRoleMap,
+          findAssignedRoleId({
+            roleIds: userWorkspaceRoleMap[userWorkspaceId] ?? [],
             flatRoleMaps,
           }) === roleId,
       )
