@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -8,16 +7,16 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+type WorkspaceDataSource = NonNullable<RunOnWorkspaceArgs['dataSource']>;
+
 const COMMAND_MENU_ITEM_PREDICATE = `
   WHERE cmi."workspaceId" = $1
     AND cmi."coreWorkflowVersionId" IS NULL
-    AND cmi."workflowVersionId" IS NOT NULL`;
-
-const RESOLVABLE_COMMAND_MENU_ITEM_PREDICATE = `${COMMAND_MENU_ITEM_PREDICATE}
+    AND cmi."workflowVersionId" IS NOT NULL
     AND cwv."workspaceId" = $1
     AND cwv."workspaceWorkflowVersionId" = cmi."workflowVersionId"`;
 
-const RESOLVABLE_WORKFLOW_PREDICATE = `
+const WORKFLOW_PREDICATE = `
   WHERE cw."workspaceId" = $1
     AND cw."lastPublishedCoreWorkflowVersionId" IS NULL
     AND cw."lastPublishedVersionId" IS NOT NULL
@@ -53,159 +52,84 @@ export class BackfillLegacyWorkflowVersionLinksCommand extends ProvisionedWorksp
     }
 
     const dryRun = options.dryRun ?? false;
-    const queryRunner = dataSource.createQueryRunner();
 
-    await queryRunner.connect();
+    const commandMenuItemCount = await this.backfill({
+      dataSource,
+      workspaceId,
+      dryRun,
+      label: 'coreWorkflowVersionId on command menu item(s)',
+      countQuery: `SELECT count(*)::int AS total
+        FROM core."commandMenuItem" cmi, core."workflowVersion" cwv
+        ${COMMAND_MENU_ITEM_PREDICATE}`,
+      updateQuery: `UPDATE core."commandMenuItem" cmi
+        SET "coreWorkflowVersionId" = cwv.id
+        FROM core."workflowVersion" cwv
+        ${COMMAND_MENU_ITEM_PREDICATE}`,
+    });
 
-    try {
-      const backfilledCommandMenuItemCount =
-        await this.backfillCommandMenuItems({
-          queryRunner,
-          workspaceId,
-          dryRun,
-        });
+    const workflowCount = await this.backfill({
+      dataSource,
+      workspaceId,
+      dryRun,
+      label: 'lastPublishedCoreWorkflowVersionId on core workflow(s)',
+      countQuery: `SELECT count(*)::int AS total
+        FROM core."workflow" cw, core."workflowVersion" cwv
+        ${WORKFLOW_PREDICATE}`,
+      updateQuery: `UPDATE core."workflow" cw
+        SET "lastPublishedCoreWorkflowVersionId" = cwv.id
+        FROM core."workflowVersion" cwv
+        ${WORKFLOW_PREDICATE}`,
+    });
 
-      const backfilledWorkflowCount = await this.backfillWorkflows({
-        queryRunner,
-        workspaceId,
-        dryRun,
-      });
+    if (!dryRun && (commandMenuItemCount > 0 || workflowCount > 0)) {
+      await this.workspaceCacheService.flush(workspaceId, [
+        'flatCommandMenuItemMaps',
+        'flatWorkflowMaps',
+      ]);
+    }
+  }
 
-      await this.warnAboutUnresolvableCommandMenuItems({
-        queryRunner,
-        workspaceId,
-        dryRun,
-        backfilledCommandMenuItemCount,
-      });
+  private async backfill({
+    dataSource,
+    workspaceId,
+    dryRun,
+    label,
+    countQuery,
+    updateQuery,
+  }: {
+    dataSource: WorkspaceDataSource;
+    workspaceId: string;
+    dryRun: boolean;
+    label: string;
+    countQuery: string;
+    updateQuery: string;
+  }): Promise<number> {
+    if (dryRun) {
+      const [{ total }]: { total: number }[] = await dataSource.query(
+        countQuery,
+        [workspaceId],
+      );
 
-      if (
-        !dryRun &&
-        (backfilledCommandMenuItemCount > 0 || backfilledWorkflowCount > 0)
-      ) {
-        await this.workspaceCacheService.flush(workspaceId, [
-          'flatCommandMenuItemMaps',
-          'flatWorkflowMaps',
-        ]);
+      if (total > 0) {
+        this.logger.log(
+          `[DRY RUN] Would backfill ${label}: ${total} for workspace ${workspaceId}`,
+        );
       }
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  private async backfillCommandMenuItems({
-    queryRunner,
-    workspaceId,
-    dryRun,
-  }: {
-    queryRunner: QueryRunner;
-    workspaceId: string;
-    dryRun: boolean;
-  }): Promise<number> {
-    const [{ total }] = await queryRunner.query(
-      `SELECT count(*)::int AS total
-       FROM core."commandMenuItem" cmi, core."workflowVersion" cwv
-       ${RESOLVABLE_COMMAND_MENU_ITEM_PREDICATE}`,
-      [workspaceId],
-    );
-
-    if (total === 0) {
-      return 0;
-    }
-
-    if (dryRun) {
-      this.logger.log(
-        `[DRY RUN] Would backfill coreWorkflowVersionId on ${total} command menu item(s) for workspace ${workspaceId}`,
-      );
 
       return total;
     }
 
-    await queryRunner.query(
-      `UPDATE core."commandMenuItem" cmi
-       SET "coreWorkflowVersionId" = cwv.id
-       FROM core."workflowVersion" cwv
-       ${RESOLVABLE_COMMAND_MENU_ITEM_PREDICATE}`,
+    const [, updatedCount]: [unknown[], number] = await dataSource.query(
+      updateQuery,
       [workspaceId],
     );
 
-    this.logger.log(
-      `Backfilled coreWorkflowVersionId on ${total} command menu item(s) for workspace ${workspaceId}`,
-    );
-
-    return total;
-  }
-
-  private async backfillWorkflows({
-    queryRunner,
-    workspaceId,
-    dryRun,
-  }: {
-    queryRunner: QueryRunner;
-    workspaceId: string;
-    dryRun: boolean;
-  }): Promise<number> {
-    const [{ total }] = await queryRunner.query(
-      `SELECT count(*)::int AS total
-       FROM core."workflow" cw, core."workflowVersion" cwv
-       ${RESOLVABLE_WORKFLOW_PREDICATE}`,
-      [workspaceId],
-    );
-
-    if (total === 0) {
-      return 0;
-    }
-
-    if (dryRun) {
+    if (updatedCount > 0) {
       this.logger.log(
-        `[DRY RUN] Would backfill lastPublishedCoreWorkflowVersionId on ${total} core workflow(s) for workspace ${workspaceId}`,
+        `Backfilled ${label}: ${updatedCount} for workspace ${workspaceId}`,
       );
-
-      return total;
     }
 
-    await queryRunner.query(
-      `UPDATE core."workflow" cw
-       SET "lastPublishedCoreWorkflowVersionId" = cwv.id
-       FROM core."workflowVersion" cwv
-       ${RESOLVABLE_WORKFLOW_PREDICATE}`,
-      [workspaceId],
-    );
-
-    this.logger.log(
-      `Backfilled lastPublishedCoreWorkflowVersionId on ${total} core workflow(s) for workspace ${workspaceId}`,
-    );
-
-    return total;
-  }
-
-  private async warnAboutUnresolvableCommandMenuItems({
-    queryRunner,
-    workspaceId,
-    dryRun,
-    backfilledCommandMenuItemCount,
-  }: {
-    queryRunner: QueryRunner;
-    workspaceId: string;
-    dryRun: boolean;
-    backfilledCommandMenuItemCount: number;
-  }): Promise<void> {
-    const [{ total }] = await queryRunner.query(
-      `SELECT count(*)::int AS total
-       FROM core."commandMenuItem" cmi
-       ${COMMAND_MENU_ITEM_PREDICATE}`,
-      [workspaceId],
-    );
-
-    const unresolvableCount = dryRun
-      ? total - backfilledCommandMenuItemCount
-      : total;
-
-    if (unresolvableCount === 0) {
-      return;
-    }
-
-    this.logger.warn(
-      `${unresolvableCount} command menu item(s) in workspace ${workspaceId} keep only a legacy workflowVersionId that resolves to no core workflow version`,
-    );
+    return updatedCount;
   }
 }
