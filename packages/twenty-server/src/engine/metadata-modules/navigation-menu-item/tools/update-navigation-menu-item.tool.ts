@@ -27,7 +27,7 @@ const updateNavigationMenuItemInputSchema = z.object({
     .nullable()
     .optional()
     .describe(
-      'Move into a different folder. Pass null to move to the top level.',
+      'Move into a different folder, section or tab. Pass null to move to the top level (Home).',
     ),
   link: z
     .string()
@@ -44,7 +44,7 @@ const updateNavigationMenuItemInputSchema = z.object({
   name: 'update_navigation_menu_item',
   category: ToolCategory.NAVIGATION_MENU_ITEM,
   accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
-  description: `Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
+  description: `Update a navigation menu item (rename, recolor, move between folders, sections and tabs, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
 })
 export class UpdateNavigationMenuItemTool extends BaseTool<
   typeof updateNavigationMenuItemInputSchema

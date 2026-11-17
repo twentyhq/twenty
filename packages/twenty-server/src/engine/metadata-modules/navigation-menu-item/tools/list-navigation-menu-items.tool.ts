@@ -21,7 +21,7 @@ const listNavigationMenuItemsInputSchema = z.object({
   parentId: z
     .uuid()
     .optional()
-    .describe('Only return items inside this folder.'),
+    .describe('Only return items inside this folder, section or tab.'),
   type: navigationMenuItemTypeSchema
     .optional()
     .describe(
