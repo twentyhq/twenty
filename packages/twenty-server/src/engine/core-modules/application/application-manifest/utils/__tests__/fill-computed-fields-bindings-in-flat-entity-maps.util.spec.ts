@@ -8,7 +8,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-const OBJECT_UID = 'project-object';
+const OBJECT_UNIVERSAL_IDENTIFIER = 'project-object';
 
 const buildField = ({
   universalIdentifier,
@@ -22,7 +22,7 @@ const buildField = ({
   getFlatFieldMetadataMock({
     universalIdentifier,
     objectMetadataId: 'project-object-id',
-    objectMetadataUniversalIdentifier: OBJECT_UID,
+    objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
     type: FieldMetadataType.NUMBER,
     name,
     computation,
@@ -52,8 +52,8 @@ const fillManifestComputation = (computation: FieldMetadataComputation) => {
       flatObjectMetadataMaps: {
         ...createEmptyFlatEntityMaps(),
         byUniversalIdentifier: {
-          [OBJECT_UID]: getFlatObjectMetadataMock({
-            universalIdentifier: OBJECT_UID,
+          [OBJECT_UNIVERSAL_IDENTIFIER]: getFlatObjectMetadataMock({
+            universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
           }),
         },
       },

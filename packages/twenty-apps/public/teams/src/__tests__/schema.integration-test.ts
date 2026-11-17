@@ -120,7 +120,7 @@ describe('App installation', () => {
     );
 
     if (!isDefined(application)) {
-      throw new Error('The Microsoft Teams application was not installed.');
+      throw new Error('The Teams application was not installed.');
     }
 
     const { applicationConnectionProviders } = await client.query({
@@ -147,7 +147,7 @@ describe('App installation', () => {
     }) => ({
       applicationId: application.id,
       name,
-      displayName: 'Microsoft Teams',
+      displayName: 'Teams',
       type: 'oauth',
       scope,
       oauth: {

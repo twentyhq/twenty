@@ -3,7 +3,6 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -100,15 +99,12 @@ export const createCoreWorkflow = async ({
 
 export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
   coreWorkflowId,
-  withWorkspaceRecords = false,
 }: {
   coreWorkflowId: string;
-  withWorkspaceRecords?: boolean;
 }): Promise<{
   workspaceWorkflowId: string;
   workspaceWorkflowVersionIds: string[];
 }> => {
-  const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
   const workspaceWorkflowId = randomUUID();
 
   await global.testDataSource.query(
@@ -116,13 +112,8 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
     [coreWorkflowId, workspaceWorkflowId],
   );
 
-  const coreVersions: {
-    id: string;
-    status: string;
-    triggers: object[] | null;
-    steps: object[] | null;
-  }[] = await global.testDataSource.query(
-    `SELECT id, status, triggers, steps FROM core."workflowVersion" WHERE "coreWorkflowId" = $1 ORDER BY "createdAt"`,
+  const coreVersions: { id: string }[] = await global.testDataSource.query(
+    `SELECT id FROM core."workflowVersion" WHERE "coreWorkflowId" = $1 ORDER BY "createdAt"`,
     [coreWorkflowId],
   );
 
@@ -136,25 +127,6 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
       [coreVersion.id, workspaceWorkflowId, workspaceWorkflowVersionId],
     );
 
-    if (withWorkspaceRecords) {
-      await global.testDataSource.query(
-        `INSERT INTO "${workspaceSchema}"."workflowVersion" (id, name, status, trigger, steps, "coreWorkflowVersionId")
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-          workspaceWorkflowVersionId,
-          `v${workspaceWorkflowVersionIds.length + 1}`,
-          coreVersion.status,
-          isDefined(coreVersion.triggers?.[0])
-            ? JSON.stringify(coreVersion.triggers[0])
-            : null,
-          isDefined(coreVersion.steps)
-            ? JSON.stringify(coreVersion.steps)
-            : null,
-          coreVersion.id,
-        ],
-      );
-    }
-
     workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
   }
 
@@ -164,19 +136,6 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
   );
 
   return { workspaceWorkflowId, workspaceWorkflowVersionIds };
-};
-
-export const deleteLegacyWorkspaceWorkflowRecords = async ({
-  workspaceWorkflowVersionIds,
-}: {
-  workspaceWorkflowVersionIds: string[];
-}): Promise<void> => {
-  const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
-  await global.testDataSource.query(
-    `DELETE FROM "${workspaceSchema}"."workflowVersion" WHERE id = ANY($1::uuid[])`,
-    [workspaceWorkflowVersionIds],
-  );
 };
 
 export const findCoreWorkflowVersions = async ({

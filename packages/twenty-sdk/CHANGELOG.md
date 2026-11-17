@@ -18,6 +18,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **`ruleExpression.daysSince` is removed; use `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.** `dateDiff` gives the same whole UTC days, and also minutes, hours, weeks, months, quarters or years. Rules already saved with `daysSince` keep evaluating, but it is deprecated and no longer offered.
 
+- **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflowVersion`.** Workflow versions live in Twenty's core workflow store, and Twenty 2.60 drops the legacy workspace `workflowVersion` object from every workspace, along with `workflowRun.workflowVersion`, `timelineActivity.targetWorkflowVersion` and any other relation field that points at it. Remove references to the identifier, including relation fields that target it.
+
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflow` or `workflowAutomatedTrigger`.** Workflows live in Twenty's core workflow store, and Twenty 2.58 drops these legacy workspace objects from every workspace, along with any relation fields that point at them. Remove references to both identifiers, including relation fields that target them. To ship a workflow with your app, declare it with `defineWorkflow()`.
 
 - **`MetadataApiClient.uploadFile` in `twenty-client-sdk` takes one object and no longer accepts a content type.** The file now goes straight to Twenty's file storage (the API issues an upload target, the client sends the bytes there, then the API confirms the upload) instead of being streamed through the GraphQL API, and the MIME type is detected from the bytes on completion. Update every call:

@@ -5,7 +5,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -74,10 +73,9 @@ export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutatio
   ({
     allFlatEntityMapsToMutate,
   }: {
-    allFlatEntityMapsToMutate: Partial<AllFlatEntityMaps>;
+    allFlatEntityMapsToMutate: Partial<LooseAllFlatEntityMaps>;
   }): void => {
-    const looseAllFlatEntityMaps =
-      allFlatEntityMapsToMutate as unknown as Partial<LooseAllFlatEntityMaps>;
+    const looseAllFlatEntityMaps = allFlatEntityMapsToMutate;
 
     for (const metadataName of Object.values(ALL_METADATA_NAME)) {
       const parentFlatEntityMaps =

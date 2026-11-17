@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppOAuthRefreshModule } from 'src/engine/core-modules/application/connection-provider/refresh/app-oauth-refresh.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { GoogleApiRefreshAccessTokenModule } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/google-api-refresh-access-token.module';
@@ -14,6 +15,7 @@ import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-acco
     GoogleApiRefreshAccessTokenModule,
     MicrosoftApiRefreshAccessTokenModule,
     AppOAuthRefreshModule,
+    CacheLockModule,
     ConnectedAccountTokenEncryptionModule,
   ],
   providers: [ConnectedAccountRefreshTokensService],

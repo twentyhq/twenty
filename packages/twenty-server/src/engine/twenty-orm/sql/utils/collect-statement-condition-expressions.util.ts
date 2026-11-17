@@ -6,7 +6,6 @@ import {
   type SelectStatementState,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 
-// Every clause that filters, joins, groups or hides rows and columns, as the statement will render it
 export const collectStatementConditionExpressions = (
   state: SelectStatementState,
 ): string[] => {

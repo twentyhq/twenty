@@ -5,7 +5,7 @@ export const getStoredColumnNames = ({
   tableShape,
   columnNames,
 }: {
-  tableShape: WorkspaceTableShape;
+  tableShape: Pick<WorkspaceTableShape, 'columnShapeByColumnName'>;
   columnNames: string[];
 }): string[] =>
   columnNames.filter(

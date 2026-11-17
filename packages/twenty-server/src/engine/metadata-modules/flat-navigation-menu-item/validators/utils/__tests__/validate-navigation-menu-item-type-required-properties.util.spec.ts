@@ -20,7 +20,7 @@ const buildFlatNavigationMenuItem = (
     position: 0,
     targetRecordId: null,
     userWorkspaceId: null,
-    folderUniversalIdentifier: null,
+    parentUniversalIdentifier: null,
     viewUniversalIdentifier: null,
     pageLayoutUniversalIdentifier: null,
     targetObjectMetadataUniversalIdentifier: null,

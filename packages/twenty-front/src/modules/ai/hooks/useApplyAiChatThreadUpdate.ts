@@ -1,8 +1,5 @@
 import { useCallback } from 'react';
 
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
-import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadRecordUpdateCountState } from '@/ai/states/aiChatThreadRecordUpdateCountState';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -30,49 +27,5 @@ export const useApplyAiChatThreadUpdate = () => {
     [store, upsertRecordsInStore],
   );
 
-  const prependAiChatThreadToList = useCallback(
-    (threadId: string) => {
-      const recentThreadListAtom = inboxThreadListFamilyState.atomFamily(
-        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
-      );
-      const inboxThreadList = store.get(recentThreadListAtom);
-
-      if (
-        inboxThreadList === null ||
-        inboxThreadList.threadIds.includes(threadId)
-      ) {
-        return;
-      }
-
-      store.set(recentThreadListAtom, {
-        ...inboxThreadList,
-        threadIds: [threadId, ...inboxThreadList.threadIds],
-      });
-    },
-    [store],
-  );
-
-  const addAiChatThread = useCallback(
-    (thread: AiChatThreadUpdate) => {
-      applyAiChatThreadUpdate(thread);
-      prependAiChatThreadToList(thread.id);
-    },
-    [applyAiChatThreadUpdate, prependAiChatThreadToList],
-  );
-
-  const addLoadedAiChatThread = useCallback(
-    (thread: AiChatThreadUpdate) => {
-      upsertRecordsInStore({
-        partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
-      });
-      prependAiChatThreadToList(thread.id);
-    },
-    [prependAiChatThreadToList, upsertRecordsInStore],
-  );
-
-  return {
-    applyAiChatThreadUpdate,
-    addAiChatThread,
-    addLoadedAiChatThread,
-  };
+  return { applyAiChatThreadUpdate };
 };
