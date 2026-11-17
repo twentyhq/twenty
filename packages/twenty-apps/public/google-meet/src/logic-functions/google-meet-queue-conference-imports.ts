@@ -56,7 +56,7 @@ export default defineLogicFunction({
     GOOGLE_MEET_QUEUE_CONFERENCE_IMPORTS_UNIVERSAL_IDENTIFIER,
   name: 'google-meet-queue-conference-imports',
   description:
-    'Finds the Google Meet conferences a connection finished in the last day and queues one import per conference.',
+    'Finds the Google Meet conferences a connection finished in the last two days and queues one import per conference.',
   timeoutSeconds: 120,
   handler: googleMeetQueueConferenceImportsHandler,
 });
