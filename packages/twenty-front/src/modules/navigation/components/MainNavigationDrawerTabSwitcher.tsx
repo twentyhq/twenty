@@ -11,11 +11,11 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
-import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
-import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
-import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
-import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerTabs';
+import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
@@ -51,7 +51,7 @@ const StyledUnreadBadge = styled.span`
   top: calc(-1 * ${themeCssVariables.spacing['1.5']});
 `;
 
-export const MainNavigationDrawerModeSwitcher = () => {
+export const MainNavigationDrawerTabSwitcher = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
@@ -60,10 +60,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
   );
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
-  const modes = useNavigationDrawerModes();
-  const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
-  const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
-    useSwitchNavigationDrawerMode();
+  const drawerTabs = useNavigationDrawerTabs();
+  const activeNavigationDrawerTab = useActiveNavigationDrawerTab();
+  const { switchNavigationDrawerTab, switchToNavigationMenuTab } =
+    useSwitchNavigationDrawerTab();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
     containerId: null,
@@ -74,8 +74,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  const getDisabledModeTooltip = (mode: NavigationDrawerActiveTab) => {
-    if (mode === NAVIGATION_DRAWER_TABS.SETTINGS) {
+  const getDisabledDrawerTabTooltip = (
+    drawerTab: NavigationDrawerActiveTab,
+  ) => {
+    if (drawerTab === NAVIGATION_DRAWER_TABS.SETTINGS) {
       return t`Finish editing the layout to open Settings`;
     }
 
@@ -84,7 +86,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
       : t`Finish editing the layout to open AI`;
   };
 
-  if (modes.length === 0) {
+  if (drawerTabs.length === 0) {
     return null;
   }
 
@@ -94,39 +96,41 @@ export const MainNavigationDrawerModeSwitcher = () => {
     <StyledSwitcher
       isExpanded={isExpanded}
       role="group"
-      aria-label={t`Navigation modes`}
+      aria-label={t`Navigation drawerTabs`}
     >
-      {modes.map(({ Icon, label, mode }) => {
+      {drawerTabs.map(({ Icon, label, tab: drawerTab }) => {
         const isActive =
-          mode === activeNavigationDrawerMode &&
+          drawerTab === activeNavigationDrawerTab &&
           !(
-            mode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+            drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
             isDefined(activeNavigationMenuTab)
           );
         // Inside the inbox, its Open item already shows what is unread
         const isUnread =
           isAiChatInboxEnabled &&
-          mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
+          drawerTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
           unreadOpenThreadCount > 0 &&
           !isActive;
         const isDisabled =
-          mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+          drawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
 
-        const modeButton = (
-          <MainNavigationDrawerModeButton
-            key={mode}
+        const drawerTabButton = (
+          <MainNavigationDrawerTab
+            key={drawerTab}
             Icon={Icon}
             label={label}
             isActive={isActive}
             isExpanded={isExpanded}
             isDisabled={isDisabled}
-            tooltip={isDisabled ? getDisabledModeTooltip(mode) : label}
+            tooltip={
+              isDisabled ? getDisabledDrawerTabTooltip(drawerTab) : label
+            }
             shouldShowTooltip={shouldShowTooltips}
             ariaLabel={
               isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
             }
-            onClick={() => switchNavigationDrawerMode(mode)}
+            onClick={() => switchNavigationDrawerTab(drawerTab)}
             iconAccessory={
               isUnread && (
                 <Badge
@@ -145,14 +149,14 @@ export const MainNavigationDrawerModeSwitcher = () => {
           />
         );
 
-        if (mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
-          return modeButton;
+        if (drawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
+          return drawerTabButton;
         }
 
         return [
-          modeButton,
+          drawerTabButton,
           ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerModeButton
+            <MainNavigationDrawerTab
               key={tab.id}
               Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
               label={tab.name}

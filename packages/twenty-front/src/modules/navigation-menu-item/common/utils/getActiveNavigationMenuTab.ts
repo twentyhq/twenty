@@ -7,16 +7,16 @@ import {
 export const getActiveNavigationMenuTab = ({
   tabs,
   currentNavigationMenuTabId,
-  activeNavigationDrawerMode,
+  activeNavigationDrawerTab,
   isLayoutCustomizationModeEnabled,
 }: {
   tabs: NamedNavigationMenuItem[];
   currentNavigationMenuTabId: string | null;
-  activeNavigationDrawerMode: NavigationDrawerActiveTab;
+  activeNavigationDrawerTab: NavigationDrawerActiveTab;
   isLayoutCustomizationModeEnabled: boolean;
 }): NamedNavigationMenuItem | null => {
   if (
-    activeNavigationDrawerMode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
+    activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
     isLayoutCustomizationModeEnabled
   ) {
     return null;

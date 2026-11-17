@@ -87,7 +87,7 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-type MainNavigationDrawerModeButtonProps = {
+type MainNavigationDrawerTabProps = {
   Icon: IconComponent;
   label: string;
   isActive: boolean;
@@ -100,7 +100,7 @@ type MainNavigationDrawerModeButtonProps = {
   iconAccessory?: ReactNode;
 };
 
-export const MainNavigationDrawerModeButton = ({
+export const MainNavigationDrawerTab = ({
   Icon,
   label,
   isActive,
@@ -111,7 +111,7 @@ export const MainNavigationDrawerModeButton = ({
   onClick,
   ariaLabel,
   iconAccessory,
-}: MainNavigationDrawerModeButtonProps) => {
+}: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
 

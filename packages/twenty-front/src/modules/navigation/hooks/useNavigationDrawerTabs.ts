@@ -21,13 +21,13 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export type NavigationDrawerMode = {
+export type NavigationDrawerTabOption = {
   Icon: IconComponent;
   label: string;
-  mode: NavigationDrawerActiveTab;
+  tab: NavigationDrawerActiveTab;
 };
 
-export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
+export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
   const { t } = useLingui();
 
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
@@ -38,14 +38,14 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     WorkspaceActivationStatus.SUSPENDED,
   );
 
-  // The route guard holds a suspended workspace on billing settings, so other modes would bounce back.
+  // The route guard holds a suspended workspace on billing settings, so other tabs would bounce back.
   if (isWorkspaceSuspended) {
     return [];
   }
 
-  const navigationDrawerModeDisplays: Record<
+  const navigationDrawerTabDisplays: Record<
     NavigationDrawerActiveTab,
-    Omit<NavigationDrawerMode, 'mode'>
+    Omit<NavigationDrawerTabOption, 'tab'>
   > = {
     [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU]: {
       Icon: IconHome,
@@ -61,7 +61,6 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
   };
 
   return NAVIGATION_DRAWER_MODE_ORDER.filter(
-    (mode) =>
-      mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || hasAiPermission,
-  ).map((mode) => ({ ...navigationDrawerModeDisplays[mode], mode }));
+    (tab) => tab !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || hasAiPermission,
+  ).map((tab) => ({ ...navigationDrawerTabDisplays[tab], tab }));
 };

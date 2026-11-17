@@ -39,12 +39,6 @@ type WorkspaceSectionContainerProps = {
     objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  containerId?: string | null;
-  navigationSectionId?: string;
-  isTitleHidden?: boolean;
-  isReadOnly?: boolean;
-  visibleItemLimit?: number;
-  isHiddenWhenEmpty?: boolean;
 };
 
 export const WorkspaceSectionContainer = ({
@@ -54,31 +48,21 @@ export const WorkspaceSectionContainer = ({
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  containerId = null,
-  navigationSectionId = doNotTranslate('Workspace'),
-  isTitleHidden = false,
-  isReadOnly = false,
-  visibleItemLimit,
-  isHiddenWhenEmpty = false,
 }: WorkspaceSectionContainerProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const isEditable = isLayoutCustomizationModeEnabled && !isReadOnly;
   const { toggleNavigationSection, isNavigationSectionOpen } =
-    useNavigationSection(navigationSectionId);
+    useNavigationSection(doNotTranslate('Workspace'));
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const isTopLevelItem = (item: NavigationMenuItem) =>
-    (item.parentId ?? null) === containerId;
-
-  const flatItems = items.filter(isTopLevelItem);
+  const flatItems = items.filter((item) => !isDefined(item.parentId));
 
   const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
     (acc, item) => {
       const parentId = item.parentId;
-      if (isDefined(parentId) && !isTopLevelItem(item)) {
+      if (isDefined(parentId)) {
         const children = acc.get(parentId) ?? [];
         children.push(item);
         acc.set(parentId, children);
@@ -96,11 +80,9 @@ export const WorkspaceSectionContainer = ({
 
   const filteredItems = filteredTopLevelItems;
 
-  const workspaceOrphanItemsForSection = isEditable ? flatItems : filteredItems;
-
-  if (isHiddenWhenEmpty && workspaceOrphanItemsForSection.length === 0) {
-    return null;
-  }
+  const workspaceOrphanItemsForSection = isLayoutCustomizationModeEnabled
+    ? flatItems
+    : filteredItems;
 
   const getEditModeProps = (item: NavigationMenuItem): EditModeProps => {
     const itemId = item.id;
@@ -134,15 +116,14 @@ export const WorkspaceSectionContainer = ({
       isOpen={isNavigationSectionOpen}
       onToggle={() => toggleNavigationSection()}
       rightIcon={rightIcon}
-      alwaysShowRightIcon={isEditable}
-      isTitleHidden={isTitleHidden}
+      alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
       contentWrapper={(children) => (
         <StyledWorkspaceSectionContentGapOffset>
           {children}
         </StyledWorkspaceSectionContentGapOffset>
       )}
     >
-      {isEditable ? (
+      {isLayoutCustomizationModeEnabled ? (
         <Suspense
           fallback={
             <WorkspaceSectionListEditModeFallback
@@ -165,7 +146,6 @@ export const WorkspaceSectionContainer = ({
           filteredItems={filteredItems}
           folderChildrenById={filteredFolderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          visibleItemLimit={visibleItemLimit}
         />
       )}
     </NavigationMenuItemSection>

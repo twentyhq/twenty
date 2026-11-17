@@ -6,7 +6,7 @@ import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiC
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -25,13 +25,13 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isAiModePath } from '~/utils/isAiModePath';
 
-export const useSwitchNavigationDrawerMode = () => {
+export const useSwitchNavigationDrawerTab = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   const navigateSettings = useNavigateSettings();
 
-  const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
+  const activeNavigationDrawerTab = useActiveNavigationDrawerTab();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
   const isAiModePage = isAiModePath(location.pathname);
@@ -95,12 +95,12 @@ export const useSwitchNavigationDrawerMode = () => {
   };
 
   // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.
-  const switchNavigationDrawerMode = (mode: NavigationDrawerActiveTab) => {
+  const switchNavigationDrawerTab = (mode: NavigationDrawerActiveTab) => {
     switch (mode) {
       case NAVIGATION_DRAWER_TABS.NAVIGATION_MENU:
         setCurrentNavigationMenuTabId(null);
         if (
-          activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+          activeNavigationDrawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
         ) {
           return;
         }
@@ -125,10 +125,10 @@ export const useSwitchNavigationDrawerMode = () => {
   const switchToNavigationMenuTab = (tabId: string) => {
     setCurrentNavigationMenuTabId(tabId);
 
-    if (activeNavigationDrawerMode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
+    if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
       switchToNavigationMenu();
     }
   };
 
-  return { switchNavigationDrawerMode, switchToNavigationMenuTab };
+  return { switchNavigationDrawerTab, switchToNavigationMenuTab };
 };

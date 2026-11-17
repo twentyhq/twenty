@@ -9,7 +9,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
+import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
@@ -23,21 +23,21 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-type ModeSwitcherStoryProps = {
+type TabSwitcherStoryProps = {
   unreadOpenThreadCount: number;
   isExpanded: boolean;
   isInboxEnabled: boolean;
   routePath: string;
 };
 
-const ModeSwitcherWithCollapseControl = () => {
+const TabSwitcherWithCollapseControl = () => {
   const [isExpanded, setIsExpanded] = useAtomState(
     isNavigationDrawerExpandedState,
   );
 
   return (
     <>
-      <MainNavigationDrawerModeSwitcher />
+      <MainNavigationDrawerTabSwitcher />
       <Button onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
       </Button>
@@ -45,12 +45,12 @@ const ModeSwitcherWithCollapseControl = () => {
   );
 };
 
-const ModeSwitcherStory = ({
+const TabSwitcherStory = ({
   unreadOpenThreadCount,
   isExpanded,
   isInboxEnabled,
   routePath,
-}: ModeSwitcherStoryProps) => {
+}: TabSwitcherStoryProps) => {
   const [store] = useState(() => {
     const initialStore = createStore();
 
@@ -90,16 +90,16 @@ const ModeSwitcherStory = ({
     <Provider store={store}>
       <MockedProvider mocks={[summaryMock]}>
         <MemoryRouter initialEntries={[routePath]}>
-          <ModeSwitcherWithCollapseControl />
+          <TabSwitcherWithCollapseControl />
         </MemoryRouter>
       </MockedProvider>
     </Provider>
   );
 };
 
-const meta: Meta<ModeSwitcherStoryProps> = {
-  title: 'Modules/Navigation/MainNavigationDrawerModeSwitcher',
-  component: MainNavigationDrawerModeSwitcher,
+const meta: Meta<TabSwitcherStoryProps> = {
+  title: 'Modules/Navigation/MainNavigationDrawerTabSwitcher',
+  component: MainNavigationDrawerTabSwitcher,
   decorators: [ComponentDecorator, ToastDecorator],
   parameters: { container: { width: 240, height: 180 } },
   args: {
@@ -109,7 +109,7 @@ const meta: Meta<ModeSwitcherStoryProps> = {
     routePath: '/',
   },
   render: (args) => (
-    <ModeSwitcherStory
+    <TabSwitcherStory
       key={`${args.unreadOpenThreadCount}-${args.isExpanded}-${args.isInboxEnabled}-${args.routePath}`}
       unreadOpenThreadCount={args.unreadOpenThreadCount}
       isExpanded={args.isExpanded}
@@ -144,7 +144,7 @@ const meta: Meta<ModeSwitcherStoryProps> = {
 };
 
 export default meta;
-type Story = StoryObj<ModeSwitcherStoryProps>;
+type Story = StoryObj<TabSwitcherStoryProps>;
 
 export const UnreadCount: Story = {
   play: async ({ canvasElement }) => {

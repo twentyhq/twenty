@@ -25,10 +25,10 @@ const WorkspaceSectionDispatcher = lazy(() =>
   ),
 );
 
-const NavigationMenuItemSections = lazy(() =>
-  import('@/navigation-menu-item/display/sections/components/NavigationMenuItemSections').then(
+const NavigationMenuSectionList = lazy(() =>
+  import('@/navigation-menu-item/display/section/components/NavigationMenuSectionList').then(
     (module) => ({
-      default: module.NavigationMenuItemSections,
+      default: module.NavigationMenuSectionList,
     }),
   ),
 );
@@ -72,7 +72,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <FavoritesSectionDispatcher />
         <WorkspaceSectionDispatcher />
-        <NavigationMenuItemSections containerId={null} />
+        <NavigationMenuSectionList containerId={null} />
       </Suspense>
     </StyledScrollableItemsContainer>
   );

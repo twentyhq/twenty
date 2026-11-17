@@ -3,7 +3,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { getActiveNavigationMenuTab } from '@/navigation-menu-item/common/utils/getActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
-import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useActiveNavigationMenuTab = () =>
@@ -15,7 +15,7 @@ export const useActiveNavigationMenuTab = () =>
     currentNavigationMenuTabId: useAtomStateValue(
       currentNavigationMenuTabIdState,
     ),
-    activeNavigationDrawerMode: useActiveNavigationDrawerMode(),
+    activeNavigationDrawerTab: useActiveNavigationDrawerTab(),
     isLayoutCustomizationModeEnabled: useAtomStateValue(
       isLayoutCustomizationModeEnabledState,
     ),

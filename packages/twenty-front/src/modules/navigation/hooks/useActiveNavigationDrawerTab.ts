@@ -10,7 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isAiModePath } from '~/utils/isAiModePath';
 
 // Settings, AI chat and inbox pages decide their mode; elsewhere the stored tab wins so chat history stays listed.
-export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
+export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   const { pathname } = useLocation();
   const isSettingsDrawer = useIsSettingsDrawer();
   const navigationDrawerActiveTab = useAtomStateValue(
