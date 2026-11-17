@@ -3,6 +3,7 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findNonAdvancedRecordFilterForColumn } from '@/object-record/record-table/record-table-header/utils/findNonAdvancedRecordFilterForColumn';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
@@ -50,13 +51,12 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       );
     }
 
-    const existingNonAdvancedRecordFilter = currentRecordFilters.find(
-      (recordFilter) =>
-        recordFilter.fieldMetadataId === fieldMetadataItemId &&
-        (recordFilter.relationTargetFieldMetadataId ?? undefined) ===
-          relationTargetFieldMetadataItem?.id &&
-        !isDefined(recordFilter.recordFilterGroupId),
-    );
+    const existingNonAdvancedRecordFilter =
+      findNonAdvancedRecordFilterForColumn({
+        recordFilters: currentRecordFilters,
+        fieldMetadataItemId,
+        relationTargetFieldMetadataId: relationTargetFieldMetadataItem?.id,
+      });
 
     if (isDefined(existingNonAdvancedRecordFilter)) {
       setEditableFilterChipDropdownStates(existingNonAdvancedRecordFilter);
