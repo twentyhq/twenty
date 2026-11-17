@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
@@ -8,6 +9,8 @@ import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThr
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatRecentsSectionProps = {
   sectionId: string;
@@ -21,12 +24,22 @@ export const NavigationMenuAiChatRecentsSection = ({
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
   });
+  const isDirectMessageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+  );
   const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
   const favoriteThreadIds = new Set(
     useAtomStateValue(inboxFavoriteThreadsSelector).map(({ id }) => id),
   );
   const recentThreads = threads
-    .filter(({ id }) => !favoriteThreadIds.has(id))
+    .filter(
+      ({ id, conversationType }) =>
+        !favoriteThreadIds.has(id) &&
+        !(
+          isDirectMessageEnabled &&
+          conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+        ),
+    )
     .slice(0, INBOX_RECENT_THREADS_MAX_COUNT);
 
   if (recentThreads.length === 0) {

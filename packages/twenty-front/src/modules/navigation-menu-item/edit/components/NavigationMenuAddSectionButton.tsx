@@ -49,6 +49,10 @@ export const NavigationMenuAddSectionButton = ({
   const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
     (builtInSection) =>
       (!builtInSection.isAi || (hasAiPermission && isAiChatInboxEnabled)) &&
+      !(
+        builtInSection.type === NavigationMenuItemType.FAVORITES &&
+        containerId === null
+      ) &&
       !workspaceNavigationMenuItems.some(
         (item) =>
           item.type === builtInSection.type &&
@@ -103,7 +107,6 @@ export const NavigationMenuAddSectionButton = ({
                         createBuiltInSection({
                           containerId,
                           type: builtInSection.type,
-                          name: t(builtInSection.label),
                         }),
                       ),
                   }}

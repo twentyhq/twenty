@@ -3,6 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { type NavigationMenuBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionType';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -38,13 +39,11 @@ export const useCreateNavigationMenuTabOrSection = () => {
   const createBuiltInSection = ({
     containerId,
     type,
-    name,
   }: {
     containerId: string | null;
-    type: NavigationMenuItemType;
-    name: string;
+    type: NavigationMenuBuiltInSectionType;
   }) => {
-    createItem({ type, name }, { targetFolderId: containerId });
+    createItem({ type }, { targetFolderId: containerId });
   };
 
   return { createTab, createSection, createBuiltInSection };

@@ -1,24 +1,37 @@
-import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
+import { useLingui } from '@lingui/react/macro';
+
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuEditableBuiltInSectionProps = {
   section: Pick<
-    NamedNavigationMenuItem,
+    NavigationMenuItem,
     'id' | 'name' | 'icon' | 'parentId' | 'type'
   >;
 };
 
 export const NavigationMenuEditableBuiltInSection = ({
   section,
-}: NavigationMenuEditableBuiltInSectionProps) => (
-  <NavigationMenuItemSection
-    title={section.name}
-    isOpen={false}
-    onToggle={() => undefined}
-    rightIcon={<NavigationMenuSectionMenu section={section} />}
-    alwaysShowRightIcon
-  >
-    {null}
-  </NavigationMenuItemSection>
-);
+}: NavigationMenuEditableBuiltInSectionProps) => {
+  const { t } = useLingui();
+  const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+    ({ type }) => type === section.type,
+  );
+
+  if (builtInSection === undefined) {
+    return null;
+  }
+
+  return (
+    <NavigationDrawerSection>
+      <NavigationDrawerSectionTitle
+        label={t(builtInSection.label)}
+        rightIcon={<NavigationMenuSectionMenu section={section} />}
+        alwaysShowRightIcon
+      />
+    </NavigationDrawerSection>
+  );
+};
