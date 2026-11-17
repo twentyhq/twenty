@@ -1,6 +1,5 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
-import { useAddRecordTableLookupColumn } from '@/object-record/record-table/hooks/useAddRecordTableLookupColumn';
 import { useCanAddRecordTableLookupColumns } from '@/object-record/record-table/hooks/useCanAddRecordTableLookupColumns';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
@@ -34,7 +33,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const { getIcon } = useIcons();
 
-  const { changeRecordFieldVisibility } =
+  const { changeRecordFieldVisibility, addLookupRecordField } =
     useChangeRecordFieldVisibility(recordTableId);
 
   const handleAddColumn = useCallback(
@@ -56,8 +55,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
   });
 
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
-  const { addRecordTableLookupColumn } =
-    useAddRecordTableLookupColumn(recordTableId);
 
   const isFieldVisible = (fieldMetadataItem: FieldMetadataItem) =>
     isDefined(
@@ -171,8 +168,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
           <RecordTableLookupTargetFieldSelectMenu
             relationFieldMetadataItem={relationFieldMetadataItem}
             onSelect={(lookupTargetFieldMetadataItem) =>
-              addRecordTableLookupColumn({
-                relationFieldMetadataItemId: relationFieldMetadataItem.id,
+              addLookupRecordField({
+                fieldMetadataId: relationFieldMetadataItem.id,
                 relationTargetFieldMetadataId: lookupTargetFieldMetadataItem.id,
               })
             }

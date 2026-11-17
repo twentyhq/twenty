@@ -86,7 +86,6 @@ const meta: Meta<typeof RecordCalendarGrid> = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
-        columnDescriptorByRecordFieldId,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
@@ -113,7 +112,6 @@ const meta: Meta<typeof RecordCalendarGrid> = {
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
-            columnDescriptorByRecordFieldId,
             fieldMetadataItemByFieldMetadataItemId,
           }}
         >

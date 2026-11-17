@@ -1,4 +1,4 @@
-import { getPositionBetween } from '~/utils/getPositionBetween';
+import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 
 describe('getPositionBetween', () => {
   it('returns next - 1 when only next is defined (insert before)', () => {

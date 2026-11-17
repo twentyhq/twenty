@@ -1,10 +1,11 @@
 import { Dropdown } from 'twenty-ui/components/navigation';
 
+import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
@@ -12,6 +13,7 @@ import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTa
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
   IconArrowLeft,
@@ -34,7 +36,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { t } = useLingui();
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const { columnDescriptorByRecordFieldId } = useRecordIndexContextOrThrow();
 
   const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
@@ -99,9 +100,15 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const columnDescriptor = columnDescriptorByRecordFieldId[recordField.id];
-  const isFilterable = columnDescriptor?.isFilterable === true;
-  const isSortable = columnDescriptor?.isSortable === true;
+  const filterableAndSortable = useAtomFamilySelectorValue(
+    isFieldMetadataItemFilterableAndSortableSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
+  );
+
+  // Filter, sort and totals would act on the relation, not on the looked-up field
+  const isLookup = isDefined(useRecordFieldLookupTarget(recordField));
+  const isFilterable = filterableAndSortable.isFilterable && !isLookup;
+  const isSortable = filterableAndSortable.isSortable && !isLookup;
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);

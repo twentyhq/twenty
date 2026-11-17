@@ -4,6 +4,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -34,10 +35,8 @@ export const useRelevantRecordsGqlFields = ({
     currentRecordFiltersComponentState,
   );
 
-  const {
-    fieldMetadataItemByFieldMetadataItemId,
-    columnDescriptorByRecordFieldId,
-  } = useRecordIndexContextOrThrow();
+  const { fieldMetadataItemByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -82,7 +81,16 @@ export const useRelevantRecordsGqlFields = ({
       depth: 1,
     }),
     lookupTargets: visibleRecordFields
-      .map(({ id }) => columnDescriptorByRecordFieldId[id]?.lookupTarget)
+      .map((recordField) =>
+        getRecordFieldLookupTarget({
+          recordField,
+          fieldMetadataItem:
+            fieldMetadataItemByFieldMetadataItemId[
+              recordField.fieldMetadataItemId
+            ],
+          objectMetadataItems,
+        }),
+      )
       .filter(isDefined),
   });
 

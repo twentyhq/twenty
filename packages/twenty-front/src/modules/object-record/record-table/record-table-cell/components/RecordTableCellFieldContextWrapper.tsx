@@ -1,3 +1,4 @@
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -29,8 +30,9 @@ export const RecordTableCellFieldContextWrapper = ({
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
-    columnDescriptorByRecordFieldId,
   } = useRecordIndexContextOrThrow();
+
+  const lookupTarget = useRecordFieldLookupTarget(recordField);
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -43,9 +45,6 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
-
-  const lookupTarget =
-    columnDescriptorByRecordFieldId[recordField.id]?.lookupTarget;
 
   if (isDefined(lookupTarget)) {
     return (

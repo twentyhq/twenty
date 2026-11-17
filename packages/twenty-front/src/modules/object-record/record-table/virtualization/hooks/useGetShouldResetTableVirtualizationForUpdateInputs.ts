@@ -1,4 +1,5 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -9,8 +10,7 @@ import { isDefined, mapById } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
-  const { objectMetadataItem, columnDescriptorByRecordFieldId } =
-    useRecordIndexContextOrThrow();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
     objectMetadataItem,
@@ -24,11 +24,15 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     currentRecordFiltersComponentState,
   );
 
-  const lookupRelationFieldNames = Object.values(
-    columnDescriptorByRecordFieldId,
-  )
-    .map(({ lookupTarget }) => lookupTarget?.relationFieldName)
-    .filter(isDefined);
+  const currentRecordFields = useAtomComponentStateValue(
+    currentRecordFieldsComponentState,
+  );
+
+  const lookupRelationFieldMetadataItemIds = currentRecordFields
+    .filter(({ relationTargetFieldMetadataId }) =>
+      isDefined(relationTargetFieldMetadataId),
+    )
+    .map(({ fieldMetadataItemId }) => fieldMetadataItemId);
 
   const getShouldResetTableVirtualizationForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
@@ -78,8 +82,8 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
 
       // The update returns the new related record without its looked-up field
       if (
-        updatedFieldMetadataItems.some(({ name }) =>
-          lookupRelationFieldNames.includes(name),
+        updatedFieldMetadataItemIds.some((fieldMetadataItemId) =>
+          lookupRelationFieldMetadataItemIds.includes(fieldMetadataItemId),
         )
       ) {
         thereIsAnUpdateOnALookupRelation = true;

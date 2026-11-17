@@ -28,7 +28,6 @@ const meta: Meta = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
-        columnDescriptorByRecordFieldId,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
@@ -54,7 +53,6 @@ const meta: Meta = {
               recordIndexId: instanceId,
               viewBarInstanceId: instanceId,
               fieldDefinitionByFieldMetadataItemId,
-              columnDescriptorByRecordFieldId,
               fieldMetadataItemByFieldMetadataItemId,
               labelIdentifierFieldMetadataItem,
               recordFieldByFieldMetadataItemId,
