@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
+import { useIsCurrentAiChatThreadNew } from '@/ai/hooks/useIsCurrentAiChatThreadNew';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
@@ -14,8 +14,7 @@ import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent
 export const AiChatPage = () => {
   const { threadId } = useParams();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const isOnNewAiChatSlot = currentAiChatThread === newAiChatThreadId;
+  const isOnNewAiChatSlot = useIsCurrentAiChatThreadNew();
   const isMobile = useIsMobile();
   const displayedThreadId = getDisplayedAiChatThreadId({
     urlThreadId: threadId,
