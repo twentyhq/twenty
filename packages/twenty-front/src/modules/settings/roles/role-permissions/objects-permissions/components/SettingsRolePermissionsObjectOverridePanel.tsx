@@ -143,6 +143,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           <TableRow
             key={key}
             gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
+            onClick={isEditable ? () => toggleKey(key) : undefined}
           >
             <TableCell gap={themeCssVariables.spacing[2]}>
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
@@ -156,6 +157,8 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                 aria-label={getObjectPermissionActionLabel(key)}
                 checked={grantedKeys.includes(key)}
                 disabled={!isEditable}
+                hoverable={false}
+                onClick={(event) => event.stopPropagation()}
                 onCheckedChange={() => toggleKey(key)}
               />
             </TableCell>
