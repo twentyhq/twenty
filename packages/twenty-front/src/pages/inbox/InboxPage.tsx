@@ -364,7 +364,7 @@ const InboxPageContent = () => {
             <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
-                  <AiChatPageEffects />
+                  <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
                   <AiChatNewThreadPageContent
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}
@@ -373,7 +373,10 @@ const InboxPageContent = () => {
               )}
               {isThreadShown && (
                 <>
-                  <AiChatPageEffects />
+                  <AiChatPageEffects
+                    threadId={selectedThreadId}
+                    isNewChat={false}
+                  />
                   <AiChatThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={

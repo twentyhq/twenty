@@ -2,7 +2,7 @@ import { GettingStartedSidebarCard } from '@/getting-started/components/GettingS
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
-import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
+import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
 import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
 import { NavigationDrawerModeTransition } from '@/navigation/components/NavigationDrawerModeTransition';
 import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawerContent';
@@ -30,7 +30,7 @@ export const AppNavigationDrawer = ({
       {/* Mobile switches modes from the bottom navigation bar instead. */}
       {!isMobile && (
         <NavigationDrawerFixedContent>
-          <MainNavigationDrawerModeSwitcher />
+          <MainNavigationDrawerTabSwitcher />
         </NavigationDrawerFixedContent>
       )}
 

@@ -7,7 +7,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -36,7 +36,7 @@ describe('Shared conversation composer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(currentAiChatThreadState.atom, 'shared-thread');
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'shared-thread');
   });
 
   it.each([false, undefined])(
