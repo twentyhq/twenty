@@ -19,11 +19,11 @@ export const googleMeetImportConferenceHandler = async ({
   endTime,
   spaceName,
 }: {
-  connectedAccountId?: unknown;
-  conferenceRecordName?: unknown;
-  startTime?: unknown;
-  endTime?: unknown;
-  spaceName?: unknown;
+  connectedAccountId?: string;
+  conferenceRecordName?: string;
+  startTime?: string;
+  endTime?: string;
+  spaceName?: string;
 }): Promise<GoogleMeetImportConferenceResult> => {
   if (
     !isNonEmptyString(connectedAccountId) ||

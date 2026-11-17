@@ -1,5 +1,5 @@
+import { type CallRecordingUpsertOutcome } from 'src/logic-functions/types/call-recording-upsert-outcome.type';
+
 export type GoogleMeetConferenceSyncOutcome =
-  | 'NO_TRANSCRIPT'
-  | 'CREATED'
-  | 'UPDATED'
-  | 'SKIPPED_DELETED';
+  | CallRecordingUpsertOutcome
+  | 'NO_TRANSCRIPT';
