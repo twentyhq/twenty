@@ -22,7 +22,6 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       name: navigationMenuItemManifest.name ?? null,
       icon: navigationMenuItemManifest.icon ?? null,
       color: navigationMenuItemManifest.color ?? null,
-      visibleItemLimit: navigationMenuItemManifest.visibleItemLimit ?? null,
       position: navigationMenuItemManifest.position,
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,

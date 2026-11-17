@@ -9,9 +9,6 @@ export class AddTabAndSectionNavigationMenuItemsFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" ADD "visibleItemLimit" integer',
-    );
-    await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
     );
     await queryRunner.query(
@@ -59,9 +56,6 @@ export class AddTabAndSectionNavigationMenuItemsFastInstanceCommand
     );
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL) OR ("type" = 'NATIVE_PAGE' AND "nativePageKey" IS NOT NULL) OR ("type" = 'WORKFLOW' AND "workflowId" IS NOT NULL) OR ("type" = 'AGENT' AND "agentId" IS NOT NULL))`,
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "visibleItemLimit"',
     );
   }
 }

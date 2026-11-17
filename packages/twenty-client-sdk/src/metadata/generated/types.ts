@@ -4052,9 +4052,6 @@ export default {
             "viewId": [
                 564
             ],
-            "visibleItemLimit": [
-                2
-            ],
             "workflowId": [
                 564
             ],
@@ -10426,9 +10423,6 @@ export default {
             "viewId": [
                 564
             ],
-            "visibleItemLimit": [
-                2
-            ],
             "workflowId": [
                 564
             ],
@@ -14886,9 +14880,6 @@ export default {
             ],
             "position": [
                 8
-            ],
-            "visibleItemLimit": [
-                2
             ],
             "__typename": [
                 4

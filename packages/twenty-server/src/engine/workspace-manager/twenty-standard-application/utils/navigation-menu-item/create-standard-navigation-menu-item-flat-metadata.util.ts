@@ -88,7 +88,6 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,
-    visibleItemLimit: null,
     position,
     createdAt: now,
     updatedAt: now,

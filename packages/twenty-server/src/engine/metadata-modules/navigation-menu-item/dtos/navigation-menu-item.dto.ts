@@ -1,4 +1,4 @@
-import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import { type NativePageKey } from 'twenty-shared/types';
 import {
@@ -65,10 +65,6 @@ export class NavigationMenuItemDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   color?: string | null;
-
-  @IsOptional()
-  @Field(() => Int, { nullable: true })
-  visibleItemLimit?: number | null;
 
   @IsUUID()
   @IsOptional()

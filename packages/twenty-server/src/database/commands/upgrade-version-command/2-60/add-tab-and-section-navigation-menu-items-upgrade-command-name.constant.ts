@@ -1,2 +1,0 @@
-export const ADD_TAB_AND_SECTION_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME =
-  '2.60.0_AddTabAndSectionNavigationMenuItemsFastInstanceCommand_1794849275147';
