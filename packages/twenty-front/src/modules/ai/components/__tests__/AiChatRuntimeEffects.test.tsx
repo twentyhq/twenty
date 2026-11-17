@@ -4,6 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AiChatRuntimeEffects } from '@/ai/components/AiChatRuntimeEffects';
+import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
@@ -13,12 +14,9 @@ jest.mock('@/ai/components/AiChatMessagesFetchEffect', () => ({
   AiChatMessagesFetchEffect: () => null,
 }));
 jest.mock('@/ai/components/AiChatStreamSubscriptionEffect', () => ({
-  AiChatStreamSubscriptionEffect: () => (
-    <div data-testid="stream-subscription" />
+  AiChatStreamSubscriptionEffect: ({ threadId }: { threadId: string }) => (
+    <div data-testid="stream-subscription">{threadId}</div>
   ),
-}));
-jest.mock('@/ai/components/AiChatPrepromptEffect', () => ({
-  AiChatPrepromptEffect: () => null,
 }));
 
 const renderRuntimeEffects = () =>
@@ -32,12 +30,21 @@ describe('AiChatRuntimeEffects', () => {
   beforeEach(() => {
     jotaiStore.set(aiChatUISessionStartTimeState.atom, Temporal.Now.instant());
     jotaiStore.set(currentWorkspaceState.atom, null);
+    jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+      'side-panel': 'thread-1',
+      'chat-widget': 'thread-1',
+      'inbox-pane': 'thread-2',
+    });
   });
 
-  it('should run the chat runtime once the chat has been opened', () => {
+  it('should run one chat runtime per open thread', () => {
     renderRuntimeEffects();
 
-    expect(screen.queryByTestId('stream-subscription')).not.toBeNull();
+    expect(
+      screen
+        .queryAllByTestId('stream-subscription')
+        .map((element) => element.textContent),
+    ).toEqual(['thread-1', 'thread-2']);
   });
 
   it('should not run the chat runtime for a suspended workspace', () => {

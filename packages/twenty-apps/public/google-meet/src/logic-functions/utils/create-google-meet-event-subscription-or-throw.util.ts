@@ -1,5 +1,5 @@
 import {
-  GOOGLE_MEET_TRANSCRIPT_GENERATED_EVENT_TYPE,
+  GOOGLE_MEET_EVENT_TYPES,
   GOOGLE_WORKSPACE_EVENTS_API_BASE_URL,
 } from 'src/logic-functions/constants/google-workspace-events.constant';
 import { type GoogleMeetEventSubscription } from 'src/logic-functions/types/google-meet-event-subscription.type';
@@ -33,7 +33,7 @@ export const createGoogleMeetEventSubscriptionOrThrow = async ({
         method: 'POST',
         body: {
           targetResource: buildGoogleMeetUserTargetResource(googleUserId),
-          eventTypes: [GOOGLE_MEET_TRANSCRIPT_GENERATED_EVENT_TYPE],
+          eventTypes: GOOGLE_MEET_EVENT_TYPES,
           notificationEndpoint: { pubsubTopic },
         },
       }),

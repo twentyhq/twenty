@@ -1,14 +1,18 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';
-import { isDictationRecordingState } from '@/ai/dictation/states/isDictationRecordingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { dictationEngineComponentState } from '@/ai/dictation/states/dictationEngineComponentState';
+import { isDictationRecordingComponentState } from '@/ai/dictation/states/isDictationRecordingComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 // AiChatDictationEffect owns the engine lifecycle.
 export const useDictation = () => {
-  const dictationEngine = useAtomStateValue(dictationEngineState);
-  const isDictationRecording = useAtomStateValue(isDictationRecordingState);
+  const dictationEngine = useAtomComponentStateValue(
+    dictationEngineComponentState,
+  );
+  const isDictationRecording = useAtomComponentStateValue(
+    isDictationRecordingComponentState,
+  );
 
   const toggleDictation = useCallback(() => {
     if (!isDefined(dictationEngine)) {

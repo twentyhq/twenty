@@ -2,10 +2,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 // Remove with the workspace workflow and workflowVersion objects, once the
 // core migration owns them.
-const HIDDEN_WORKSPACE_WORKFLOW_RUN_RELATION_FIELD_NAMES = [
-  'workflow',
-  'workflowVersion',
-];
+const HIDDEN_WORKSPACE_WORKFLOW_RUN_RELATION_FIELD_NAMES = ['workflowVersion'];
 
 export const isHiddenWorkspaceWorkflowRunRelationField = ({
   objectNameSingular,
