@@ -32,7 +32,6 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
-import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -314,24 +313,6 @@ export class AdminPanelBillingArrangementService {
           isWorkspaceJob: true,
         },
       );
-
-      const endDate = getBillingArrangementEndDate(arrangement);
-      const msUntilEnd = isDefined(endDate)
-        ? endDate.getTime() - Date.now()
-        : 0;
-
-      if (msUntilEnd > 0) {
-        await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
-          UpdateSubscriptionQuantityJob.name,
-          { workspaceId: arrangement.workspaceId },
-          {
-            ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
-            delay: msUntilEnd,
-            workspaceId: arrangement.workspaceId,
-            isWorkspaceJob: true,
-          },
-        );
-      }
     }
 
     if (
