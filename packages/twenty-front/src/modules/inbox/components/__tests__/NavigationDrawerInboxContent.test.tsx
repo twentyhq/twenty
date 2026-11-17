@@ -237,7 +237,7 @@ describe('NavigationDrawerInboxContent', () => {
       { id: 'chat-0', title: 'Chat 0', deletedAt: null },
     ]);
 
-    const { getByRole, queryByText } = renderContent();
+    const { getByRole } = renderContent();
 
     const recents = getByRole('region', { name: 'Recent' });
 

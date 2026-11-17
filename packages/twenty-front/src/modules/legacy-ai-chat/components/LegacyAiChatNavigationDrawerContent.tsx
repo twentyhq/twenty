@@ -47,7 +47,7 @@ export const LegacyAiChatNavigationDrawerContent = () => {
   const { threads, isLoading } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
-  const favoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
+  const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
 
   if (isLoading && threads.length === 0) {
     return (
@@ -57,7 +57,7 @@ export const LegacyAiChatNavigationDrawerContent = () => {
     );
   }
 
-  const favoriteThreadIds = new Set(favoriteThreads.map(({ id }) => id));
+  const favoriteThreadIds = new Set(inboxFavoriteThreads.map(({ id }) => id));
   const recentThreads = threads.filter(({ id }) => !favoriteThreadIds.has(id));
 
   return (
@@ -66,7 +66,7 @@ export const LegacyAiChatNavigationDrawerContent = () => {
         <StyledSectionsContainer>
           <NavigationDrawerInboxFavoritesSection
             channels={[]}
-            threads={favoriteThreads}
+            threads={inboxFavoriteThreads}
             currentThreadId={aiChatPageThreadId}
             onThreadClick={handleThreadClick}
           />

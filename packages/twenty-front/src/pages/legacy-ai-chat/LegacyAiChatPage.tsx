@@ -1,10 +1,11 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
+import { NavigatePreservingSearchAndHash } from '@/app/routing/components/NavigatePreservingSearchAndHash';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -28,8 +29,7 @@ export const LegacyAiChatPage = () => {
     });
 
     return (
-      <Navigate
-        replace
+      <NavigatePreservingSearchAndHash
         to={getAppPath(inboxRoute.appPath, { threadId: inboxRoute.threadId })}
       />
     );
