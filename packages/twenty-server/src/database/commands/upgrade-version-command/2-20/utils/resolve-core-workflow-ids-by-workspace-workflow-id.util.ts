@@ -7,6 +7,7 @@ type CoreWorkflowReverseRow = {
   id: string;
 };
 
+// TODO(@thomtrp): remove once the oldest supported upgrade version is past 2.41
 export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
   executeQuery,
   workspaceId,
