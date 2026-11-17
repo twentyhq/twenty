@@ -303,7 +303,7 @@ describe('resolveRuntimeLimitingRole', () => {
             workspaceId: 'workspace-id',
             mainPrincipal: {
               type: 'workspaceMember',
-              roleId: 'member-role-id',
+              roleIds: ['member-role-id'],
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },
