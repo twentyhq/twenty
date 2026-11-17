@@ -52,3 +52,21 @@ export const InvalidName: Story = {
     expect(canvas.getByRole('button', { name: 'Save' })).toBeDisabled();
   },
 };
+
+export const NameFollowsLabel: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const labelInput = await canvas.findByPlaceholderText('Linear', undefined, {
+      timeout: 3000,
+    });
+    const nameInput = canvas.getByPlaceholderText('linear');
+
+    await userEvent.type(labelInput, 'Linear Tools');
+    expect(nameInput).toHaveValue('linear_tools');
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'linear');
+    await userEvent.type(labelInput, ' v2');
+    expect(nameInput).toHaveValue('linear');
+  },
+};
