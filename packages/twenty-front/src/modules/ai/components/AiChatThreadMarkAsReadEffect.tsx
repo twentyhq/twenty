@@ -1,10 +1,11 @@
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadOpenViewCountState } from '@/ai/states/aiChatThreadOpenViewCountState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
@@ -25,7 +26,9 @@ export const AiChatThreadMarkAsReadEffect = () => {
   const store = useStore();
   // The displayed thread rather than the selected one, which can still be
   // loading or fail to load
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomComponentStateValue(
+    aiChatDisplayedThreadComponentState,
+  );
   const threadId =
     isDefined(aiChatDisplayedThread) && isValidUuid(aiChatDisplayedThread)
       ? aiChatDisplayedThread

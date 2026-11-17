@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
@@ -111,7 +112,7 @@ const UsageStory = ({
 const meta = {
   title: 'Modules/AI/AiChatContextUsageButton',
   component: AiChatContextUsageButton,
-  decorators: [ComponentDecorator],
+  decorators: [AiChatInstanceDecorator, ComponentDecorator],
   parameters: { container: { width: 400, height: 650 } },
 } satisfies Meta<typeof AiChatContextUsageButton>;
 export default meta;

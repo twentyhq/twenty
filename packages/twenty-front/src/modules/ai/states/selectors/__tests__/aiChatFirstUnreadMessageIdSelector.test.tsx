@@ -1,22 +1,25 @@
+import {
+  AiChatTestInstance,
+  aiChatTestDisplayedThreadIdAtom,
+} from '@/ai/testing/AiChatTestInstance';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import {
   type AiChatThreadVisit,
   aiChatThreadVisitState,
 } from '@/ai/states/aiChatThreadVisitState';
-import { aiChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdSelector';
+import { aiChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdComponentSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const THREAD_ID = 'thread';
 const ME = 'my-workspace-member-id';
@@ -42,7 +45,9 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  <JotaiProvider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </JotaiProvider>
 );
 
 const getFirstUnreadMessageId = (
@@ -59,15 +64,18 @@ const getFirstUnreadMessageId = (
   );
 
   return renderHook(
-    () => useAtomStateValue(aiChatFirstUnreadMessageIdSelector),
+    () =>
+      useAtomComponentSelectorValue(
+        aiChatFirstUnreadMessageIdComponentSelector,
+      ),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('aiChatFirstUnreadMessageIdSelector', () => {
+describe('aiChatFirstUnreadMessageIdComponentSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: ME,
     } as never);

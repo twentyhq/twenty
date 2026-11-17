@@ -1,6 +1,7 @@
+import { useContext } from 'react';
 import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
 import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatInstanceContext } from '@/ai/states/contexts/AiChatInstanceContext';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -20,6 +21,7 @@ export const useAiChatFileUpload = () => {
   const setAiChatSelectedFiles = useSetAtomState(aiChatSelectedFilesState);
   const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
   const store = useStore();
+  const aiChatThreadId = useContext(AiChatInstanceContext)?.threadId;
 
   const sendFile = async (file: File): Promise<AiChatFileUIPart | null> => {
     const abortController = new AbortController();
@@ -69,11 +71,8 @@ export const useAiChatFileUpload = () => {
   };
 
   const uploadFiles = async (files: File[]) => {
-    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
     const currentThread = store.get(
-      aiChatThreadRecordFamilySelector.selectorFamily(
-        currentAiChatThread ?? '',
-      ),
+      aiChatThreadRecordFamilySelector.selectorFamily(aiChatThreadId ?? ''),
     );
 
     if (

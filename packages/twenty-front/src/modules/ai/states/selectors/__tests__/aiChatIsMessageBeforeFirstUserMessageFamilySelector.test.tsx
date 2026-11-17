@@ -1,15 +1,18 @@
+import {
+  AiChatTestInstance,
+  aiChatTestDisplayedThreadIdAtom,
+} from '@/ai/testing/AiChatTestInstance';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { aiChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/aiChatIsMessageBeforeFirstUserMessageFamilySelector';
+import { aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const THREAD_ID = 'thread';
 
@@ -21,13 +24,15 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  <JotaiProvider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </JotaiProvider>
 );
 
-describe('aiChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
+describe('aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
     jotaiStore.set(
       aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       MESSAGES,
@@ -42,8 +47,8 @@ describe('aiChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
   ])('returns $expected for $messageId', ({ messageId, expected }) => {
     const { result } = renderHook(
       () =>
-        useAtomFamilySelectorValue(
-          aiChatIsMessageBeforeFirstUserMessageFamilySelector,
+        useAtomComponentFamilySelectorValue(
+          aiChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
           { messageId },
         ),
       { wrapper: Wrapper },

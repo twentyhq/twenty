@@ -8,7 +8,8 @@ import { useTheme } from 'twenty-ui/theme';
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
 import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
 import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAiChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
@@ -31,6 +32,9 @@ export const AiChatRecordApprovalDeck = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const store = useStore();
   const { answerAiChatToolCall } = useAnswerAiChatToolCall();
+  const aiChatDisplayedThreadAtom = useAtomComponentStateCallbackState(
+    aiChatDisplayedThreadComponentState,
+  );
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
@@ -63,7 +67,7 @@ export const AiChatRecordApprovalDeck = ({
     );
 
     // answers go to the conversation the batch started in, even if the person opens another one
-    const threadId = store.get(aiChatDisplayedThreadState.atom);
+    const threadId = store.get(aiChatDisplayedThreadAtom);
 
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);

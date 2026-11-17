@@ -20,6 +20,13 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => mockUseAtomStateValue(),
 }));
 
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
+  () => ({
+    useAtomComponentSelectorValue: () => mockUseAtomStateValue(),
+  }),
+);
+
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
   ScrollWrapper: ({
     children,

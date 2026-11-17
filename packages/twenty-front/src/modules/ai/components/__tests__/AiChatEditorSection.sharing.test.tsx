@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -25,7 +26,9 @@ jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
 }));
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>{children}</I18nProvider>
+    <I18nProvider i18n={i18n}>
+      <AiChatTestInstance>{children}</AiChatTestInstance>
+    </I18nProvider>
   </JotaiProvider>
 );
 

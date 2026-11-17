@@ -1,3 +1,7 @@
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -6,17 +10,15 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
-import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
-import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
+import { aiChatMessageIdsComponentSelector } from '@/ai/states/selectors/aiChatMessageIdsComponentSelector';
+import { aiChatMessageComponentFamilySelector } from '@/ai/states/selectors/aiChatMessageComponentFamilySelector';
 import { getAiChatMessageReaders } from '@/ai/utils/getAiChatMessageReaders';
 import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -52,7 +54,9 @@ export const AiChatMessageReceipt = ({
   messageId,
 }: AiChatMessageReceiptProps) => {
   const { t } = useLingui();
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomComponentStateValue(
+    aiChatDisplayedThreadComponentState,
+  );
   const aiChatThreadReadPositions = useAtomFamilyStateValue(
     aiChatThreadReadPositionsFamilyState,
     { threadId: aiChatDisplayedThread },
@@ -61,9 +65,11 @@ export const AiChatMessageReceipt = ({
     aiChatIsSendingMessageFamilyState,
     { threadId: aiChatDisplayedThread ?? '' },
   );
-  const aiChatMessageIds = useAtomStateValue(aiChatMessageIdsSelector);
-  const agentChatMessage = useAtomFamilySelectorValue(
-    aiChatMessageFamilySelector,
+  const aiChatMessageIds = useAtomComponentSelectorValue(
+    aiChatMessageIdsComponentSelector,
+  );
+  const agentChatMessage = useAtomComponentFamilySelectorValue(
+    aiChatMessageComponentFamilySelector,
     { messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

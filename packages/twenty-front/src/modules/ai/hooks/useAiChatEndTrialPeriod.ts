@@ -1,4 +1,4 @@
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { buildAskAiThreadRedirectPath } from '@/ai/utils/buildAskAiThreadRedirectPath';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 export const useAiChatEndTrialPeriod = () => {
   const location = useLocation();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId: currentAiChatThread } = useAiChatInstance();
   const { openAskAiThread } = useOpenAskAiThread();
 
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();

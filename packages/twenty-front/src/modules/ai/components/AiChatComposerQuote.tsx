@@ -1,3 +1,6 @@
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -5,19 +8,18 @@ import { AiChatComposerQuotePreview } from '@/ai/components/AiChatComposerQuoteP
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
 import { useAiChatMessageAuthor } from '@/ai/hooks/useAiChatMessageAuthor';
 import { useIsOwnAiChatMessage } from '@/ai/hooks/useIsOwnAiChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageQuoteExcerpt } from '@/ai/utils/getAiChatMessageQuoteExcerpt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatComposerQuote = () => {
   const { t } = useLingui();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const { threadId: currentAiChatThread } = useAiChatInstance();
+  const aiChatDisplayedThread = useAtomComponentStateValue(
+    aiChatDisplayedThreadComponentState,
+  );
   const [aiChatQuotedMessageId, setAiChatQuotedMessageId] = useAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
     {

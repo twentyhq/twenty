@@ -1,3 +1,4 @@
+import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,10 +6,8 @@ import { IconBellOff, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -26,7 +25,7 @@ export const AiChatThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId: currentAiChatThread } = useAiChatInstance();
   const { event } = useAtomFamilySelectorValue(
     aiChatThreadMemberStateFamilySelector,
     currentAiChatThread ?? '',

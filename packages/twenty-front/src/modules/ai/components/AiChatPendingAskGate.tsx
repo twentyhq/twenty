@@ -1,3 +1,5 @@
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -7,9 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
 import { useAiChatPendingToolCalls } from '@/ai/hooks/useAiChatPendingToolCalls';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { isAiChatPendingRecordApproval } from '@/ai/utils/isAiChatPendingRecordApproval';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
   display: flex;
@@ -41,7 +41,9 @@ export const AiChatPendingAskGate = ({
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
   const pendingToolCalls = useAiChatPendingToolCalls();
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomComponentStateValue(
+    aiChatDisplayedThreadComponentState,
+  );
   const [selection, setSelection] = useState<RequestSelection>({
     threadId: null,
     toolCallId: null,

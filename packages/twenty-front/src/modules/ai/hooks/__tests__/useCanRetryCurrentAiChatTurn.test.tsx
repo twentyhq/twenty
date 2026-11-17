@@ -1,8 +1,11 @@
+import {
+  AiChatTestInstance,
+  aiChatTestDisplayedThreadIdAtom,
+} from '@/ai/testing/AiChatTestInstance';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -14,13 +17,15 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <Provider store={jotaiStore}>{children}</Provider>
+  <Provider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </Provider>
 );
 
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread');
+    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, 'thread');
     jotaiStore.set(currentAiChatThreadState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',

@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useAskAiSidePanelThreadId } from '@/side-panel/pages/ask-ai/hooks/useAskAiSidePanelThreadId';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -11,7 +11,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const askAiSidePanelThreadId = useAskAiSidePanelThreadId();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   return {
@@ -21,7 +21,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
       : undefined,
     hasExpandShortcut: false,
     expand: () => {
-      navigateToAiChatPage({ threadId: currentAiChatThread });
+      navigateToAiChatPage({ threadId: askAiSidePanelThreadId });
     },
   };
 };

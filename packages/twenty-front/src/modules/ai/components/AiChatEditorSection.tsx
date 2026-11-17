@@ -1,3 +1,5 @@
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
 import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
@@ -34,14 +36,13 @@ import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContent
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
+import { aiChatHasMessageComponentSelector } from '@/ai/states/selectors/aiChatHasMessageComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
@@ -152,7 +153,7 @@ const EditableAiChatEditorSection = () => {
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
   const canSendAiChatMessage = useCanSendAiChatMessage();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId: currentAiChatThread } = useAiChatInstance();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,
@@ -188,7 +189,9 @@ const EditableAiChatEditorSection = () => {
       />
     </StyledInputBox>
   );
-  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
+  const aiChatHasMessage = useAtomComponentSelectorValue(
+    aiChatHasMessageComponentSelector,
+  );
 
   return (
     <>

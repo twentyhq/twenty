@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import {
@@ -8,7 +9,7 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatTestDisplayedThreadIdAtom } from '@/ai/testing/AiChatTestInstance';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -65,13 +66,13 @@ const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
 );
 
 const seedPendingProposals = (proposals: ProposedToolCall[]) => {
-  const previousThread = jotaiStore.get(aiChatDisplayedThreadState.atom);
+  const previousThread = jotaiStore.get(aiChatTestDisplayedThreadIdAtom);
   const messagesAtom = aiChatMessagesFamilyState.atomFamily({
     threadId: THREAD_ID,
   });
   const previousMessages = jotaiStore.get(messagesAtom);
 
-  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
   jotaiStore.set(messagesAtom, [
     {
       id: 'pending-record-approvals',
@@ -87,7 +88,7 @@ const seedPendingProposals = (proposals: ProposedToolCall[]) => {
   ]);
 
   return () => {
-    jotaiStore.set(aiChatDisplayedThreadState.atom, previousThread);
+    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, previousThread);
     jotaiStore.set(messagesAtom, previousMessages);
   };
 };
@@ -136,6 +137,7 @@ const meta: Meta<typeof AiChatPendingAskGate> = {
   title: 'Modules/AI/AiChatRecordApprovalDeck',
   component: AiChatPendingAskGate,
   decorators: [
+    AiChatInstanceDecorator,
     RootDecorator,
     ObjectMetadataItemsDecorator,
     IconsProviderDecorator,

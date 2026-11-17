@@ -20,6 +20,10 @@ import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
+jest.mock('@/ai/components/AiChatInstanceSendEffect', () => ({
+  AiChatInstanceSendEffect: () => null,
+}));
+
 jest.mock('@/ai/components/AiChatTab', () => {
   const { useContext } = jest.requireActual('react');
   const { AiChatSurfaceContext } = jest.requireActual(
@@ -38,10 +42,6 @@ jest.mock('@/ai/components/AiChatPageHeader', () => ({
 
 jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
   AiChatPageThreadUrlSyncEffect: () => null,
-}));
-
-jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
-  AiChatPageCloseSidePanelChatEffect: () => null,
 }));
 
 let mockIsMobile = false;

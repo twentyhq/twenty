@@ -1,14 +1,15 @@
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
-import { aiChatMessageIdsSelector } from '@/ai/states/selectors/aiChatMessageIdsSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { aiChatMessageComponentFamilySelector } from '@/ai/states/selectors/aiChatMessageComponentFamilySelector';
+import { aiChatMessageIdsComponentSelector } from '@/ai/states/selectors/aiChatMessageIdsComponentSelector';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledErrorWrapper = styled.div`
@@ -16,7 +17,9 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomComponentStateValue(
+    aiChatDisplayedThreadComponentState,
+  );
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
     threadId: aiChatDisplayedThread,
   });
@@ -25,11 +28,13 @@ export const AiChatErrorUnderMessageList = () => {
     { threadId: aiChatDisplayedThread },
   );
 
-  const aiChatMessageIds = useAtomStateValue(aiChatMessageIdsSelector);
+  const aiChatMessageIds = useAtomComponentSelectorValue(
+    aiChatMessageIdsComponentSelector,
+  );
 
   const lastMessageId = aiChatMessageIds.at(-1);
-  const agentChatMessage = useAtomFamilySelectorValue(
-    aiChatMessageFamilySelector,
+  const agentChatMessage = useAtomComponentFamilySelectorValue(
+    aiChatMessageComponentFamilySelector,
     { messageId: lastMessageId },
   );
 

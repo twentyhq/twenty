@@ -86,7 +86,7 @@ describe('AiChatMessagesFetchEffect', () => {
     render(
       <JotaiProvider store={store}>
         <MockedProvider mocks={[CHAT_MESSAGES_MOCK]}>
-          <AiChatMessagesFetchEffect />
+          <AiChatMessagesFetchEffect threadId={THREAD_ID} />
         </MockedProvider>
       </JotaiProvider>,
     );

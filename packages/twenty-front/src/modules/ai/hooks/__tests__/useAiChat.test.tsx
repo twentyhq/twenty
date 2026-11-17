@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { type MockedResponse } from '@apollo/client/testing';
 import { useApolloClient } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
@@ -211,7 +212,9 @@ const renderAiChat = ({
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <MetadataAndApolloMocksWrapper>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter>{children}</MemoryRouter>
+        <MemoryRouter>
+          <AiChatTestInstance>{children}</AiChatTestInstance>
+        </MemoryRouter>
       </I18nProvider>
     </MetadataAndApolloMocksWrapper>
   );
@@ -459,7 +462,7 @@ describe('useAiChat', () => {
     await send(result);
 
     expect(restoreEditorContent).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: { content: '' } }),
+      expect.objectContaining({ detail: { threadId: THREAD_ID, content: '' } }),
     );
 
     window.removeEventListener(
@@ -765,7 +768,11 @@ describe('useAiChat', () => {
       expect.objectContaining({ threadId: DIRECT_MESSAGE_THREAD_ID }),
     );
     expect(result.current.currentAiChatThread).toBe(EXISTING_THREAD_ID);
-    expect(restoreEditorContent).not.toHaveBeenCalled();
+    expect(restoreEditorContent).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: expect.objectContaining({ threadId: EXISTING_THREAD_ID }),
+      }),
+    );
     expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 

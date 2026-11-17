@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import {
@@ -42,7 +43,7 @@ import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatTestDisplayedThreadIdAtom } from '@/ai/testing/AiChatTestInstance';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -504,7 +505,7 @@ const AiChatMessagesSetterEffect = ({
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
     const previousCurrentThread = store.get(currentAiChatThreadState.atom);
-    const previousDisplayedThread = store.get(aiChatDisplayedThreadState.atom);
+    const previousDisplayedThread = store.get(aiChatTestDisplayedThreadIdAtom);
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
@@ -518,7 +519,7 @@ const AiChatMessagesSetterEffect = ({
     });
 
     store.set(currentAiChatThreadState.atom, currentThreadId);
-    store.set(aiChatDisplayedThreadState.atom, currentThreadId);
+    store.set(aiChatTestDisplayedThreadIdAtom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -553,7 +554,7 @@ const AiChatMessagesSetterEffect = ({
 
     return () => {
       store.set(currentAiChatThreadState.atom, previousCurrentThread);
-      store.set(aiChatDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(aiChatTestDisplayedThreadIdAtom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
@@ -586,6 +587,7 @@ const meta: Meta<typeof AiChatMessage> = {
   title: 'Modules/AI/AiChatMessage',
   component: AiChatMessage,
   decorators: [
+    AiChatInstanceDecorator,
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,

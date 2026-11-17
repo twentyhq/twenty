@@ -1,10 +1,11 @@
+import { dispatchAiChatRefetchMessagesEvent } from '@/ai/utils/dispatchAiChatRefetchMessagesEvent';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
 import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
@@ -14,7 +15,6 @@ import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaust
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
@@ -27,6 +27,9 @@ export const useAnswerAiChatToolCall = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAiChatModelId();
+  const aiChatDisplayedThreadAtom = useAtomComponentStateCallbackState(
+    aiChatDisplayedThreadComponentState,
+  );
 
   // Returns whether answered, so a card stays disabled until the call closes.
   const answerAiChatToolCall = useCallback(
@@ -34,7 +37,7 @@ export const useAnswerAiChatToolCall = () => {
       toolCallId,
       response,
       optimisticToolOutput,
-      threadId = store.get(aiChatDisplayedThreadState.atom),
+      threadId = store.get(aiChatDisplayedThreadAtom),
     }: {
       toolCallId: string;
       response: Record<string, unknown>;
@@ -88,7 +91,7 @@ export const useAnswerAiChatToolCall = () => {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchAiChatRefetchMessagesEvent(threadId);
 
         return true;
       } catch (error) {
@@ -103,7 +106,7 @@ export const useAnswerAiChatToolCall = () => {
         if (
           isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
         ) {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchAiChatRefetchMessagesEvent(threadId);
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
             updateToolPartOutput({
@@ -119,7 +122,13 @@ export const useAnswerAiChatToolCall = () => {
         return false;
       }
     },
-    [apolloCoreClient, store, enqueueToast, modelIdForRequest],
+    [
+      apolloCoreClient,
+      store,
+      enqueueToast,
+      modelIdForRequest,
+      aiChatDisplayedThreadAtom,
+    ],
   );
 
   return { answerAiChatToolCall };

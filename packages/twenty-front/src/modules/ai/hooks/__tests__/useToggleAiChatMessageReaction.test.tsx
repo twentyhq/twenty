@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -35,7 +36,9 @@ const renderToggleReaction = () => {
 
   const { result } = renderHook(() => useToggleAiChatMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <Provider store={store}>{children}</Provider>
+      <Provider store={store}>
+        <AiChatTestInstance>{children}</AiChatTestInstance>
+      </Provider>
     ),
   });
 

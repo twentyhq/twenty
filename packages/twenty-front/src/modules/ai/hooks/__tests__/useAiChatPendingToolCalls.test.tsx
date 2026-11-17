@@ -1,10 +1,13 @@
+import {
+  AiChatTestInstance,
+  aiChatTestDisplayedThreadIdAtom,
+} from '@/ai/testing/AiChatTestInstance';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { useAiChatPendingToolCalls } from '@/ai/hooks/useAiChatPendingToolCalls';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import {
@@ -28,13 +31,15 @@ const questionsCall = (
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <Provider store={jotaiStore}>{children}</Provider>
+  <Provider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </Provider>
 );
 
 describe('useAiChatPendingToolCalls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(aiChatTestDisplayedThreadIdAtom, 'thread-id');
     jotaiStore.set(aiChatMessagesFamilyState.atomFamily(key), [
       {
         id: 'assistant-1',

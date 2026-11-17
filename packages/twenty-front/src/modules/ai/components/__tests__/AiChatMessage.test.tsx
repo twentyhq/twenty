@@ -9,7 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import {
+  AiChatTestInstance,
+  aiChatTestDisplayedThreadIdAtom,
+} from '@/ai/testing/AiChatTestInstance';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -217,7 +220,7 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(aiChatTestDisplayedThreadIdAtom, THREAD_ID);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
   jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
@@ -239,8 +242,10 @@ const renderMessage = ({
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatMessage messageId={messageId} error={error} />
-        {hasComposerQuote && <AiChatComposerQuote />}
+        <AiChatTestInstance>
+          <AiChatMessage messageId={messageId} error={error} />
+          {hasComposerQuote && <AiChatComposerQuote />}
+        </AiChatTestInstance>
       </I18nProvider>
     </JotaiProvider>,
   );

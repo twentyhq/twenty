@@ -1,10 +1,16 @@
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { isInboxPath } from '~/utils/isInboxPath';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
@@ -20,9 +26,25 @@ export const SidePanelTopBarRightCornerIcon = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const setAskAiSidePanelThreadId = useSetAtomComponentState(
+    askAiSidePanelThreadIdComponentState,
+  );
+  const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+  const setAiChatNewThreadChannelId = useSetAtomState(
+    aiChatNewThreadChannelIdState,
+  );
   const [sidePanelSearchObjectFilter, setSidePanelSearchObjectFilter] =
     useAtomState(sidePanelSearchObjectFilterState);
+
+  const handleNewChatClick = () => {
+    if (!isInboxPath(window.location.pathname)) {
+      setAiChatNewThreadChannelId(null);
+    }
+
+    setAskAiSidePanelThreadId(newAiChatThreadId);
+    setShouldFocusChatEditor(true);
+  };
 
   const isOnSearchPage = sidePanelPage === SidePanelPages.SearchRecords;
 
@@ -46,7 +68,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
       <IconButton
         size="sm"
         variant="ghost"
-        onClick={() => switchToNewChat()}
+        onClick={handleNewChatClick}
         aria-label={t`New conversation`}
       >
         <IconEdit />

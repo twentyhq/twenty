@@ -5,10 +5,10 @@ import { type ReactNode } from 'react';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai/states/aiChatPrepromptState';
 import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -28,8 +28,13 @@ let finishUpload: () => void = () => {};
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
-    switchToNewChat: () =>
-      jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID),
+    switchToNewChat: () => {
+      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+        'side-panel': NEW_CHAT_THREAD_ID,
+      });
+
+      return NEW_CHAT_THREAD_ID;
+    },
   }),
 }));
 
@@ -80,6 +85,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       [NEW_CHAT_THREAD_ID]: 'Import these contacts',
     });
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toEqual({
+      threadId: NEW_CHAT_THREAD_ID,
       serializedDocument: 'Import these contacts',
       mode: 'SEND',
     });
@@ -100,7 +106,9 @@ describe('useOpenAskAiPageWithPreprompt', () => {
         files: [new File(['name'], 'contacts.csv')],
       });
 
-      jotaiStore.set(currentAiChatThreadState.atom, OTHER_CHAT_THREAD_ID);
+      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+        'side-panel': OTHER_CHAT_THREAD_ID,
+      });
       finishUpload();
       await opening;
     });
