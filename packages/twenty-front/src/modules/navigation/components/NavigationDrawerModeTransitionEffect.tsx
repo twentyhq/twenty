@@ -20,20 +20,20 @@ export const NavigationDrawerModeTransitionEffect = ({
   const { i18n } = useLingui();
   const shouldReduceMotion = useReducedMotion();
 
-  const [previousNavigationDrawerMode, setPreviousNavigationDrawerMode] =
+  const [previousNavigationDrawerTab, setPreviousNavigationDrawerTab] =
     useState(activeNavigationDrawerTab);
   const [modeTransition, setModeTransition] = useState<{
     direction: NavigationDrawerModeTransitionDirection;
   } | null>(null);
 
-  if (activeNavigationDrawerTab !== previousNavigationDrawerMode) {
-    setPreviousNavigationDrawerMode(activeNavigationDrawerTab);
+  if (activeNavigationDrawerTab !== previousNavigationDrawerTab) {
+    setPreviousNavigationDrawerTab(activeNavigationDrawerTab);
     setModeTransition(
       shouldReduceMotion
         ? null
         : {
             direction: getNavigationDrawerModeTransitionDirection({
-              previousNavigationDrawerMode,
+              previousNavigationDrawerMode: previousNavigationDrawerTab,
               nextNavigationDrawerMode: activeNavigationDrawerTab,
               textDirection: getLocaleTextDirection(i18n.locale),
             }),

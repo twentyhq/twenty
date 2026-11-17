@@ -17,9 +17,10 @@ import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerT
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
-  type NavigationMenuItem,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
@@ -49,13 +50,15 @@ jest.mock('twenty-ui/utilities', () => ({
 const mockSwitchNavigationDrawerTab = jest.fn();
 const mockSwitchToNavigationMenuTab = jest.fn();
 
-const salesTab = {
+const salesTab: NamedNavigationMenuItem = {
   id: 'sales-tab-id',
   type: NavigationMenuItemType.TAB,
   name: 'Sales',
   icon: 'IconBriefcase',
   position: 0,
-} as NavigationMenuItem & { name: string };
+  createdAt: '2026-01-01',
+  updatedAt: '2026-01-01',
+};
 
 const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
