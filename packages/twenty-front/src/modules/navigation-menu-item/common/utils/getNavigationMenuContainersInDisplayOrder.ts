@@ -1,20 +1,22 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { isNavigationMenuItemSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSection';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const getNavigationMenuSectionsInContainer = ({
+export const getNavigationMenuContainersInDisplayOrder = ({
   navigationMenuItems,
+  type,
   containerId,
 }: {
   navigationMenuItems: NavigationMenuItem[];
+  type: NavigationMenuItemType.TAB | NavigationMenuItemType.SECTION;
   containerId: string | null;
 }): NamedNavigationMenuItem[] =>
   navigationMenuItems
     .filter(
       (item): item is NamedNavigationMenuItem =>
-        isNavigationMenuItemSection(item) &&
+        item.type === type &&
         isNonEmptyString(item.name) &&
         (item.parentId ?? null) === containerId,
     )

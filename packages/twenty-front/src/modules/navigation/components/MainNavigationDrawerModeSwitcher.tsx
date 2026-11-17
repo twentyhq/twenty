@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Badge } from 'twenty-ui/primitives/data-display';
@@ -9,7 +10,7 @@ import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSum
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -63,7 +64,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
     useSwitchNavigationDrawerMode();
-  const navigationMenuTabs = useWorkspaceNavigationMenuTabs();
+  const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
+    type: NavigationMenuItemType.TAB,
+    containerId: null,
+  });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
   const isAiChatInboxEnabled = useIsFeatureEnabled(

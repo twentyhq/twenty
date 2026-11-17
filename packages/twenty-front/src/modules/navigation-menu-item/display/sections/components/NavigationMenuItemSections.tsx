@@ -1,5 +1,6 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -10,7 +11,10 @@ type NavigationMenuItemSectionsProps = {
 export const NavigationMenuItemSections = ({
   containerId,
 }: NavigationMenuItemSectionsProps) => {
-  const sections = useWorkspaceNavigationMenuSections(containerId);
+  const sections = useWorkspaceNavigationMenuContainers({
+    type: NavigationMenuItemType.SECTION,
+    containerId,
+  });
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );

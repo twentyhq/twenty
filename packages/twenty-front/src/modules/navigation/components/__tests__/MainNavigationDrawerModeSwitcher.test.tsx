@@ -9,7 +9,7 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -31,7 +31,7 @@ jest.mock(
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 jest.mock(
-  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
+  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 
@@ -140,7 +140,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       switchNavigationDrawerMode: mockSwitchNavigationDrawerMode,
       switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
-    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
+    jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
@@ -254,7 +254,9 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   });
 
   it('opens a sidebar tab from its button', async () => {
-    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([salesTab]);
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
 
     renderModeSwitcher();
 
@@ -265,7 +267,9 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   });
 
   it('marks the open sidebar tab as current instead of Home', () => {
-    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([salesTab]);
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
 
     renderModeSwitcher();
