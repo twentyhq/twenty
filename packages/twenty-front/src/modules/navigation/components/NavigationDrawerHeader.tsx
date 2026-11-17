@@ -86,7 +86,7 @@ export const NavigationDrawerHeader = () => {
           <StyledRightActions>
             <MediaAccessIndicator />
             {searchButton}
-            <MainNavigationDrawerEditButton size="sm" />
+            <MainNavigationDrawerEditButton />
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -98,7 +98,6 @@ export const NavigationDrawerHeader = () => {
         <StyledCollapsedSearch>
           <MediaAccessIndicator />
           {searchButton}
-          <MainNavigationDrawerEditButton size="md" />
         </StyledCollapsedSearch>
       )}
     </StyledContainer>

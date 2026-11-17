@@ -3,9 +3,11 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconTool } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -14,13 +16,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-type MainNavigationDrawerEditButtonProps = {
-  size: 'sm' | 'md';
-};
-
-export const MainNavigationDrawerEditButton = ({
-  size,
-}: MainNavigationDrawerEditButtonProps) => {
+export const MainNavigationDrawerEditButton = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
@@ -31,11 +27,14 @@ export const MainNavigationDrawerEditButton = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
 
   if (
     !isCustomizableSidebarEnabled ||
     isMobile ||
     !hasLayoutsPermission ||
+    !isLayoutCustomizationAllowedOnCurrentPage ||
     isLayoutCustomizationModeEnabled
   ) {
     return null;
@@ -45,9 +44,13 @@ export const MainNavigationDrawerEditButton = ({
     <div onMouseEnter={preloadNavigationMenuItemDndKit}>
       <LightIconButton
         emphasis="standard"
-        size={size}
+        size="sm"
         onClick={() => enterLayoutCustomizationMode()}
         aria-label={t`Customize sidebar`}
+        tooltip={t`Customize sidebar`}
+        tooltipDelay={TooltipDelay.longDelay}
+        tooltipPlace="bottom"
+        tooltipOffset={5}
       >
         <IconTool />
       </LightIconButton>
