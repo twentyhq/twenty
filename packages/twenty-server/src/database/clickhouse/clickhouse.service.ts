@@ -130,12 +130,13 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    if (this.mainClient) {
-      await this.mainClient.close();
-    }
+    const clients = [this.mainClient, ...this.clients.values()];
 
-    for (const [, client] of this.clients) {
-      await client.close();
+    this.mainClient = undefined;
+    this.clients.clear();
+
+    for (const client of clients) {
+      await client?.close();
     }
   }
 
