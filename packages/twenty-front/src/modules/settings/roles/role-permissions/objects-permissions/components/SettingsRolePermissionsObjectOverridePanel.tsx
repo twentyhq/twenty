@@ -93,10 +93,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     upsertObjectPermissionInDraftRole({
       ...existingObjectPermission,
       objectMetadataId: objectMetadataItem.id,
-      ...getObjectPermissionFromOperations({
-        role: settingsDraftRole,
-        operations: nextOperations,
-      }),
+      ...getObjectPermissionFromOperations(nextOperations),
     });
   };
 

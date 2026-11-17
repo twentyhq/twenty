@@ -1,17 +1,15 @@
+import { getRoleWithUpsertedObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/utils/getRoleWithUpsertedObjectPermission';
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
+import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
+import { getObjectPermissionFromOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionFromOperations';
 import { getRoleWithoutObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutObjectRowLevelPermissionRules';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
-import { settingsRoleListedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleListedObjectOverrideIdsFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const useSettingsRoleObjectOverrides = (roleId: string) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
-    roleId,
-  );
-  const setSettingsRoleListedObjectOverrideIds = useSetAtomFamilyState(
-    settingsRoleListedObjectOverrideIdsFamilyState,
     roleId,
   );
   const setSettingsRoleExpandedObjectOverrideIds = useSetAtomFamilyState(
@@ -21,10 +19,17 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
   const { resetObjectPermission } = useResetObjectPermission(roleId);
 
   const addObjectOverride = (objectMetadataId: string) => {
-    setSettingsRoleListedObjectOverrideIds((currentIds) => [
-      ...currentIds.filter((id) => id !== objectMetadataId),
-      objectMetadataId,
-    ]);
+    setSettingsDraftRole((currentSettingsDraftRole) =>
+      getRoleWithUpsertedObjectPermission(currentSettingsDraftRole, {
+        objectMetadataId,
+        ...getObjectPermissionFromOperations(
+          getObjectOperations({
+            role: currentSettingsDraftRole,
+            objectMetadataId,
+          }),
+        ),
+      }),
+    );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) => [
       ...currentIds.filter((id) => id !== objectMetadataId),
       objectMetadataId,
@@ -32,11 +37,6 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
   };
 
   const toggleObjectOverrideExpanded = (objectMetadataId: string) => {
-    setSettingsRoleListedObjectOverrideIds((currentIds) =>
-      currentIds.includes(objectMetadataId)
-        ? currentIds
-        : [...currentIds, objectMetadataId],
-    );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) =>
       currentIds.includes(objectMetadataId)
         ? currentIds.filter((id) => id !== objectMetadataId)
@@ -52,23 +52,14 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
         objectMetadataId,
       }),
     );
-    setSettingsRoleListedObjectOverrideIds((currentIds) =>
-      currentIds.filter((id) => id !== objectMetadataId),
-    );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) =>
       currentIds.filter((id) => id !== objectMetadataId),
     );
-  };
-
-  const resetListedObjectOverrides = () => {
-    setSettingsRoleListedObjectOverrideIds([]);
-    setSettingsRoleExpandedObjectOverrideIds([]);
   };
 
   return {
     addObjectOverride,
     toggleObjectOverrideExpanded,
     removeObjectOverride,
-    resetListedObjectOverrides,
   };
 };
