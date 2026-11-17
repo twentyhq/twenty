@@ -1,6 +1,6 @@
-# Google Meet
+# Meet
 
-**Your Google Meet recordings, transcripts and Gemini notes, right inside your CRM.**
+**Your Google Meet transcripts and Gemini notes, right inside your CRM.**
 
 This app is under construction. It imports the transcript and Gemini notes of
 the Google Meet calls a member organized into Call Recordings; recordings are
