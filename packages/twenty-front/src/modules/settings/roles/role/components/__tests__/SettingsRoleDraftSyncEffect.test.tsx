@@ -4,6 +4,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
@@ -30,7 +31,14 @@ const renderEffect = (
   render(
     <JotaiProvider store={store}>
       <RoutedFlowStateScopeContext.Provider value={scopeId}>
-        <SettingsRoleDraftSyncEffect roleId={ROLE_ID} />
+        <SettingsRoleDraftSyncEffect
+          roleId={ROLE_ID}
+          draftRoleAtom={settingsDraftRoleFamilyState.getAtom(ROLE_ID, scopeId)}
+          initialDraftRoleAtom={settingsInitialDraftRoleFamilyState.getAtom(
+            ROLE_ID,
+            scopeId,
+          )}
+        />
       </RoutedFlowStateScopeContext.Provider>
     </JotaiProvider>,
   );

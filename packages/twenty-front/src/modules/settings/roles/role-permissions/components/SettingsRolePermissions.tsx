@@ -5,6 +5,8 @@ import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permis
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { SettingsRolePermissionsInboxChannelsSection } from '@/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
@@ -33,6 +35,7 @@ export const SettingsRolePermissions = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -45,7 +48,17 @@ export const SettingsRolePermissions = ({
 
   return (
     <StyledRolePermissionsContainer>
-      <SettingsRoleDraftSyncEffect roleId={roleId} />
+      <SettingsRoleDraftSyncEffect
+        roleId={roleId}
+        draftRoleAtom={settingsDraftRoleFamilyState.getAtom(
+          roleId,
+          routedFlowStateScopeId,
+        )}
+        initialDraftRoleAtom={settingsInitialDraftRoleFamilyState.getAtom(
+          roleId,
+          routedFlowStateScopeId,
+        )}
+      />
       <SettingsRolePermissionsObjectsSection
         roleId={roleId}
         isEditable={isEditable}
