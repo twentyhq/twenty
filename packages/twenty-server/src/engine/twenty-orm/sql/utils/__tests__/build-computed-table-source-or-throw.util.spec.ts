@@ -1,9 +1,9 @@
-import { buildComputedTableSource } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
+import { buildComputedTableSourceOrThrow } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source-or-throw.util';
 
-describe('buildComputedTableSource', () => {
+describe('buildComputedTableSourceOrThrow', () => {
   it('returns the table itself when no computed column is used', () => {
     expect(
-      buildComputedTableSource({
+      buildComputedTableSourceOrThrow({
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {},
@@ -13,7 +13,7 @@ describe('buildComputedTableSource', () => {
 
   it('exposes computed columns next to the stored ones', () => {
     expect(
-      buildComputedTableSource({
+      buildComputedTableSourceOrThrow({
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
@@ -34,7 +34,7 @@ describe('buildComputedTableSource', () => {
 
   it('computes a column above the computed columns it reads', () => {
     expect(
-      buildComputedTableSource({
+      buildComputedTableSourceOrThrow({
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
@@ -55,7 +55,7 @@ describe('buildComputedTableSource', () => {
 
   it('refuses computed columns that read each other', () => {
     expect(() =>
-      buildComputedTableSource({
+      buildComputedTableSourceOrThrow({
         tableExpression: '"workspace"."company"',
         alias: 'company',
         computedColumnSqlByColumnName: {
