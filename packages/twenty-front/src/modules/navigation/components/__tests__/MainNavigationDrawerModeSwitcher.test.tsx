@@ -262,6 +262,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
 
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledTimes(1);
     expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
     expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
   });
