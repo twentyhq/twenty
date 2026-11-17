@@ -29,6 +29,7 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   workspaceId: _workspaceId,
   applicationId: _applicationId,
+  coreWorkflowId: _coreWorkflowId,
   ...universalFlatWorkflowVersion
 }: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
   universalFlatWorkflowVersion;
@@ -40,7 +41,7 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   UniversalFlatWorkflowVersion,
   | 'universalIdentifier'
   | 'applicationUniversalIdentifier'
-  | 'coreWorkflowId'
+  | 'coreWorkflowUniversalIdentifier'
   | 'workflowId'
   | 'steps'
   | 'createdAt'
@@ -116,7 +117,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
               workflowUniversalIdentifier: definition.universalIdentifier,
             }),
         applicationUniversalIdentifier,
-        coreWorkflowId: workflowId,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
         workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
         trigger,
         steps,

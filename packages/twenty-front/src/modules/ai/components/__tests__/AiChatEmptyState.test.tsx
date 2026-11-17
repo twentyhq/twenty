@@ -1,5 +1,4 @@
 import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
-import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -7,7 +6,7 @@ import { type ReactNode } from 'react';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {
   jotaiStore,
@@ -31,8 +30,7 @@ describe('AiChatEmptyState', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {

@@ -198,6 +198,16 @@ export class ConnectionProviderOAuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    const workspaceHostCallbackUrl =
+      await this.flowRedirectService.findWorkspaceHostCallbackUrl({
+        request: req,
+        state,
+      });
+
+    if (isDefined(workspaceHostCallbackUrl)) {
+      return res.redirect(workspaceHostCallbackUrl);
+    }
+
     const browserNonces = this.flowCookieService.readBrowserNonces(req);
 
     if (errorParam) {

@@ -1,5 +1,4 @@
 import { aiChatMessagesLoadingFamilyState } from '@/ai/states/aiChatMessagesLoadingFamilyState';
-import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const aiChatIsLoadingFamilySelector = createAtomFamilySelector<
@@ -10,6 +9,5 @@ export const aiChatIsLoadingFamilySelector = createAtomFamilySelector<
   get:
     (threadId) =>
     ({ get }) =>
-      get(aiChatMessagesLoadingFamilyState, { threadId }) ||
-      !get(hasInitializedAiChatThreadsState),
+      get(aiChatMessagesLoadingFamilyState, { threadId }),
 });

@@ -2,8 +2,8 @@ import { type ReactNode } from 'react';
 
 import { AiChatInstanceRegistrationEffect } from '@/ai/components/AiChatInstanceRegistrationEffect';
 import { AiChatInstanceContext } from '@/ai/states/contexts/AiChatInstanceContext';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -14,17 +14,16 @@ type AiChatTestInstanceProps = {
 };
 
 export const AiChatTestInstance = ({ children }: AiChatTestInstanceProps) => {
-  const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
-    currentAiChatThreadState,
-  );
+  const [aiChatTestInstanceThreadId, setAiChatTestInstanceThreadId] =
+    useAtomState(aiChatTestInstanceThreadIdState);
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
   return (
     <AiChatInstanceContext.Provider
       value={{
         instanceId: AI_CHAT_TEST_INSTANCE_ID,
-        threadId: currentAiChatThread ?? newAiChatThreadId,
-        onThreadChange: setCurrentAiChatThread,
+        threadId: aiChatTestInstanceThreadId ?? newAiChatThreadId,
+        onThreadChange: setAiChatTestInstanceThreadId,
       }}
     >
       <AiChatInstanceRegistrationEffect />

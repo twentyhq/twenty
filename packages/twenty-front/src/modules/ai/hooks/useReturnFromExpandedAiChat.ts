@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -27,7 +27,7 @@ export const useReturnFromExpandedAiChat = ({
 
   return useCallback(() => {
     if (!reopenSidePanel) {
-      store.set(shouldContinueAiChatInSidePanelState.atom, false);
+      store.set(aiChatContinueInSidePanelThreadIdState.atom, null);
       store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       void closeSidePanelMenu();
     }

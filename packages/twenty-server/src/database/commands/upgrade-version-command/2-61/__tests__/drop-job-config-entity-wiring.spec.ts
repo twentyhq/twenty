@@ -6,9 +6,8 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 
 // A decorator naming a dormant command fails boot, so the wiring can only land once 2.61 is current.
 // Without it the command drops a column the entities still select.
-const isDropCommandDormant = (TWENTY_NEXT_VERSIONS as readonly string[]).includes(
-  '2.61.0',
-);
+const nextVersions: readonly string[] = TWENTY_NEXT_VERSIONS;
+const isDropCommandDormant = nextVersions.includes('2.61.0');
 
 describe.each([
   { entityName: 'workflow', entityClass: WorkflowEntity },
