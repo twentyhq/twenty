@@ -96,19 +96,29 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { openRecordFilterChipFromTableHeader } =
     useOpenRecordFilterChipFromTableHeader();
 
+  const lookupTargetFieldMetadataItem =
+    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
+
   const handleFilterClick = () => {
-    openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
+    openRecordFilterChipFromTableHeader({
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+      relationTargetFieldMetadataItem: lookupTargetFieldMetadataItem,
+    });
   };
 
   const filterableAndSortable = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
+    {
+      fieldMetadataItemId:
+        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+    },
   );
 
-  // Filter, sort and totals would act on the relation, not on the looked-up field
-  const isLookup = isDefined(useRecordFieldLookupTarget(recordField));
-  const isFilterable = filterableAndSortable.isFilterable && !isLookup;
-  const isSortable = filterableAndSortable.isSortable && !isLookup;
+  const isFilterable = filterableAndSortable.isFilterable;
+  // Sorting by a related record's field needs a relation target on view sorts
+  const isSortable =
+    filterableAndSortable.isSortable &&
+    !isDefined(lookupTargetFieldMetadataItem);
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);
