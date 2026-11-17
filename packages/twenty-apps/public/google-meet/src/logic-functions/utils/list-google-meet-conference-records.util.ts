@@ -6,6 +6,7 @@ import {
 } from 'src/logic-functions/constants/google-meet-api.constant';
 import { type GoogleMeetConferenceRecord } from 'src/logic-functions/types/google-meet-conference-record.type';
 import { type GoogleMeetConferenceRecordPage } from 'src/logic-functions/types/google-meet-conference-record-page.type';
+import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
 import { buildGoogleMeetConferenceRecordFilter } from 'src/logic-functions/utils/build-google-meet-conference-record-filter.util';
 import { buildGoogleMeetUrl } from 'src/logic-functions/utils/build-google-meet-url.util';
 import { fetchGoogleMeetJson } from 'src/logic-functions/utils/fetch-google-meet-json.util';
@@ -22,7 +23,10 @@ const listGoogleMeetConferenceRecordPages = async ({
   pageIndex: number;
 }): Promise<GoogleMeetConferenceRecord[]> => {
   if (pageIndex >= MAX_GOOGLE_MEET_CONFERENCE_RECORD_PAGES) {
-    throw new Error('Google Meet conference pagination exceeded its limit');
+    throw new GoogleMeetException({
+      message: 'Google Meet conference pagination exceeded its limit',
+      code: 'PAGINATION_LIMIT_EXCEEDED',
+    });
   }
 
   const page = await fetchGoogleMeetJson<GoogleMeetConferenceRecordPage>({

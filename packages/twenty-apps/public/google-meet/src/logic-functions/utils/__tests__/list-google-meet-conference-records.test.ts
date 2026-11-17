@@ -82,9 +82,9 @@ describe('listGoogleMeetConferenceRecords', () => {
       buildPageResponse({ nextPageToken: 'next-page' }),
     );
 
-    await expect(listConferenceRecords()).rejects.toThrow(
-      'Google Meet conference pagination exceeded its limit',
-    );
+    await expect(listConferenceRecords()).rejects.toMatchObject({
+      code: 'PAGINATION_LIMIT_EXCEEDED',
+    });
     expect(fetchMock).toHaveBeenCalledTimes(
       MAX_GOOGLE_MEET_CONFERENCE_RECORD_PAGES,
     );

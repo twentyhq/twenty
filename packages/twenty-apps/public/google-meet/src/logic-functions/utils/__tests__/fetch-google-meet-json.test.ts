@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GoogleMeetRequestError } from 'src/logic-functions/types/google-meet-request-error.type';
+import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
 import { fetchGoogleMeetJson } from 'src/logic-functions/utils/fetch-google-meet-json.util';
 
 const REQUEST_URL = 'https://meet.googleapis.com/v2/conferenceRecords';
@@ -65,6 +65,18 @@ describe('fetchGoogleMeetJson', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it('should fail without waiting when Google asks for a longer delay than the retry budget', async () => {
+    fetchMock.mockResolvedValue(
+      new Response('{}', { status: 429, headers: { 'Retry-After': '60' } }),
+    );
+
+    await expect(fetchConferenceRecords()).rejects.toMatchObject({
+      code: 'REQUEST_FAILED',
+      httpStatus: 429,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should stop retrying after four attempts', async () => {
     fetchMock.mockImplementation(
       async () => new Response('{}', { status: 503 }),
@@ -94,9 +106,10 @@ describe('fetchGoogleMeetJson', () => {
       (caughtError: unknown) => caughtError,
     );
 
-    expect(error).toBeInstanceOf(GoogleMeetRequestError);
+    expect(error).toBeInstanceOf(GoogleMeetException);
     expect(error).toMatchObject({
       message: 'Google Meet request failed (403 PERMISSION_DENIED): Denied',
+      code: 'REQUEST_FAILED',
       httpStatus: 403,
       googleStatus: 'PERMISSION_DENIED',
     });
