@@ -8,14 +8,18 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
+  type NavigationMenuItem,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
@@ -26,6 +30,10 @@ jest.mock(
 );
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
+);
+jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 
 let mockIsInboxEnabled = true;
 
@@ -39,6 +47,15 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 const mockSwitchNavigationDrawerMode = jest.fn();
+const mockSwitchToNavigationMenuTab = jest.fn();
+
+const salesTab = {
+  id: 'sales-tab-id',
+  type: NavigationMenuItemType.TAB,
+  name: 'Sales',
+  icon: 'IconBriefcase',
+  position: 0,
+} as NavigationMenuItem;
 
 const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
@@ -121,7 +138,10 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       .mockReturnValue(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     jest.mocked(useSwitchNavigationDrawerMode).mockReturnValue({
       switchNavigationDrawerMode: mockSwitchNavigationDrawerMode,
+      switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
@@ -231,5 +251,31 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     expect(
       screen.queryByRole('group', { name: 'Navigation modes' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('opens a sidebar tab from its button', async () => {
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([salesTab]);
+
+    renderModeSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
+  });
+
+  it('marks the open sidebar tab as current instead of Home', () => {
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderModeSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Sales' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
+      'aria-current',
+    );
   });
 });

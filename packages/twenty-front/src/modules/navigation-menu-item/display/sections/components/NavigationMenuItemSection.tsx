@@ -12,6 +12,7 @@ type NavigationMenuItemSectionProps = {
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
   forceExpanded?: boolean;
+  isTitleHidden?: boolean;
   children: ReactNode;
   contentWrapper?: (children: ReactNode) => ReactNode;
 };
@@ -23,11 +24,12 @@ export const NavigationMenuItemSection = ({
   rightIcon,
   alwaysShowRightIcon,
   forceExpanded = false,
+  isTitleHidden = false,
   children,
   contentWrapper,
 }: NavigationMenuItemSectionProps) => {
   const content = (
-    <Collapsible.Root open={isOpen || forceExpanded}>
+    <Collapsible.Root open={isOpen || forceExpanded || isTitleHidden}>
       <Collapsible.Panel dimension="height" containAnimation>
         {children}
       </Collapsible.Panel>
@@ -36,15 +38,17 @@ export const NavigationMenuItemSection = ({
 
   return (
     <NavigationDrawerSection>
-      <NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerSectionTitle
-          label={title}
-          onClick={onToggle}
-          rightIcon={rightIcon}
-          alwaysShowRightIcon={alwaysShowRightIcon}
-          isOpen={isOpen}
-        />
-      </NavigationDrawerAnimatedCollapseWrapper>
+      {!isTitleHidden && (
+        <NavigationDrawerAnimatedCollapseWrapper>
+          <NavigationDrawerSectionTitle
+            label={title}
+            onClick={onToggle}
+            rightIcon={rightIcon}
+            alwaysShowRightIcon={alwaysShowRightIcon}
+            isOpen={isOpen}
+          />
+        </NavigationDrawerAnimatedCollapseWrapper>
+      )}
       {contentWrapper ? contentWrapper(content) : content}
     </NavigationDrawerSection>
   );

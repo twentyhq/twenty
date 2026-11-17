@@ -1,18 +1,20 @@
-import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Badge } from 'twenty-ui/primitives/data-display';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useIcons } from 'twenty-ui/icon/provider';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
+import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
@@ -41,85 +43,6 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
-const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
-  align-items: center;
-  background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.light : 'transparent'};
-  border: none;
-  border-radius: ${({ isExpanded }) =>
-    isExpanded
-      ? themeCssVariables.border.radius.smRound
-      : themeCssVariables.border.radius.mdRound};
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  corner-shape: round;
-  cursor: pointer;
-  display: flex;
-  // Only the labelled mode may shrink: long translations otherwise push Settings off the drawer.
-  flex-shrink: ${({ isActive, isExpanded }) =>
-    isActive && isExpanded ? 1 : 0};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${({ isActive, isExpanded }) =>
-    isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
-  height: ${({ isExpanded }) =>
-    isExpanded
-      ? themeCssVariables.spacing[7]
-      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
-  justify-content: ${({ isExpanded }) =>
-    isExpanded ? 'flex-start' : 'center'};
-  min-width: 0;
-  padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
-  transition:
-    background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
-    color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
-    gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-  width: ${({ isExpanded }) =>
-    isExpanded ? 'auto' : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
-
-  &[aria-disabled='true'] {
-    color: ${themeCssVariables.font.color.light};
-    cursor: not-allowed;
-  }
-
-  &:hover:not([aria-disabled='true']) {
-    background: ${({ isActive }) =>
-      isActive
-        ? themeCssVariables.background.transparent.light
-        : themeCssVariables.background.transparent.lighter};
-    color: ${themeCssVariables.font.color.primary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 1px;
-  }
-`;
-
-const StyledModeIcon = styled.span`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  position: relative;
-  width: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledModeLabelBase = styled.span`
-  display: block;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledModeLabel = motion.create(StyledModeLabelBase);
-
 const StyledUnreadBadge = styled.span`
   pointer-events: none;
   position: absolute;
@@ -129,7 +52,7 @@ const StyledUnreadBadge = styled.span`
 
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { getIcon } = useIcons();
 
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -138,8 +61,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const modes = useNavigationDrawerModes();
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
-  const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
-  const shouldReduceMotion = useReducedMotion();
+  const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
+    useSwitchNavigationDrawerMode();
+  const navigationMenuTabs = useWorkspaceNavigationMenuTabs();
+  const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -168,7 +93,12 @@ export const MainNavigationDrawerModeSwitcher = () => {
       aria-label={t`Navigation modes`}
     >
       {modes.map(({ Icon, label, mode }) => {
-        const isActive = mode === activeNavigationDrawerMode;
+        const isActive =
+          mode === activeNavigationDrawerMode &&
+          !(
+            mode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+            isDefined(activeNavigationMenuTab)
+          );
         // Inside the inbox, its Open item already shows what is unread
         const isUnread =
           isAiChatInboxEnabled &&
@@ -179,63 +109,62 @@ export const MainNavigationDrawerModeSwitcher = () => {
           mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
 
-        return (
-          <Tooltip
+        const modeButton = (
+          <MainNavigationDrawerModeButton
             key={mode}
-            content={isDisabled ? getDisabledModeTooltip(mode) : label}
-            disabled={!shouldShowTooltips && !isDisabled}
-            delay={TooltipDelay.noDelay}
-            side={isExpanded ? 'bottom' : 'right'}
-            positionMethod="fixed"
-          >
-            <StyledMode
-              type="button"
-              isActive={isActive}
-              isExpanded={isExpanded}
-              aria-label={
-                isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
-              }
-              aria-current={isActive || undefined}
-              aria-disabled={isDisabled}
-              onClick={() => {
-                if (isDisabled) {
-                  return;
-                }
-
-                switchNavigationDrawerMode(mode);
-              }}
-            >
-              <StyledModeIcon>
-                <Icon size={theme.icon.size.md} />
-                {isUnread && (
-                  <Badge
-                    render={<StyledUnreadBadge />}
-                    aria-hidden="true"
-                    size="xs"
-                    color="red"
-                    shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
-                  >
-                    {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
-                      ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
-                      : unreadOpenThreadCount}
-                  </Badge>
-                )}
-              </StyledModeIcon>
-              <StyledModeLabel
-                initial={false}
-                animate={{ width: isExpanded && isActive ? 'auto' : 0 }}
-                transition={{
-                  duration: shouldReduceMotion
-                    ? 0
-                    : theme.animation.duration.normal,
-                  ease: 'easeInOut',
-                }}
-              >
-                {label}
-              </StyledModeLabel>
-            </StyledMode>
-          </Tooltip>
+            Icon={Icon}
+            label={label}
+            isActive={isActive}
+            isExpanded={isExpanded}
+            isDisabled={isDisabled}
+            tooltip={isDisabled ? getDisabledModeTooltip(mode) : label}
+            shouldShowTooltip={shouldShowTooltips}
+            ariaLabel={
+              isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
+            }
+            onClick={() => switchNavigationDrawerMode(mode)}
+            iconAccessory={
+              isUnread && (
+                <Badge
+                  render={<StyledUnreadBadge />}
+                  aria-hidden="true"
+                  size="xs"
+                  color="red"
+                  shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+                >
+                  {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+                    ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+                    : unreadOpenThreadCount}
+                </Badge>
+              )
+            }
+          />
         );
+
+        if (mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
+          return modeButton;
+        }
+
+        return [
+          modeButton,
+          ...navigationMenuTabs.map((tab) => (
+            <MainNavigationDrawerModeButton
+              key={tab.id}
+              Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
+              label={tab.name ?? ''}
+              isActive={activeNavigationMenuTab?.id === tab.id}
+              isExpanded={isExpanded}
+              isDisabled={isLayoutCustomizationModeEnabled}
+              tooltip={
+                isLayoutCustomizationModeEnabled
+                  ? t`Finish editing the layout to open this tab`
+                  : (tab.name ?? '')
+              }
+              shouldShowTooltip={shouldShowTooltips}
+              onClick={() => switchToNavigationMenuTab(tab.id)}
+            />
+          )),
+        ];
       })}
     </StyledSwitcher>
   );

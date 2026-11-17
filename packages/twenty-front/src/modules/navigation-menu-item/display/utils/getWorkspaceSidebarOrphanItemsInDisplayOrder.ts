@@ -8,6 +8,8 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSection';
+import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -22,6 +24,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
     typeof getObjectPermissionsForObject
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
+  containerId?: string | null;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -31,9 +34,15 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   views,
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
+  containerId = null,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.parentId))
+    .filter(
+      (item) =>
+        (item.parentId ?? null) === containerId &&
+        !isNavigationMenuItemTab(item) &&
+        !isNavigationMenuItemSection(item),
+    )
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
