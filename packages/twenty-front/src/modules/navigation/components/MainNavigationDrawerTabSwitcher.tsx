@@ -10,6 +10,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
@@ -46,12 +47,10 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
-const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] = [
-  NavigationMenuItemType.AI_CHAT_INBOX,
-  NavigationMenuItemType.AI_CHAT_FAVORITES,
-  NavigationMenuItemType.AI_CHAT_CHANNELS,
-  NavigationMenuItemType.AI_CHAT_RECENTS,
-];
+const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] =
+  NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(({ isAi }) => isAi).map(
+    ({ type }) => type,
+  );
 
 const StyledUnreadBadge = styled.span`
   pointer-events: none;
