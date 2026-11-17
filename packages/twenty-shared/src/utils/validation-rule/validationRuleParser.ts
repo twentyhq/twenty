@@ -102,6 +102,15 @@ const compareDefinedValues =
       getComparableValue({ value: right, otherValue: left }),
     );
 
+const areEqual = (left: unknown, right: unknown) =>
+  isString(left) && isString(right)
+    ? getComparableValue({ value: left, otherValue: right }) ===
+      getComparableValue({ value: right, otherValue: left })
+    : left === right;
+
+validationRuleParser.binaryOps['=='] = areEqual;
+validationRuleParser.binaryOps['!='] = (left: unknown, right: unknown) =>
+  !areEqual(left, right);
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
   (left, right) => left < right,
 );
