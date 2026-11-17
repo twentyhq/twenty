@@ -1,13 +1,11 @@
 import { useStore } from 'jotai';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
   const store = useStore();
-  const { selectAiChatThread } = useSelectAiChatThread();
 
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
@@ -24,11 +22,10 @@ export const useOpenAskAiThread = () => {
       return;
     }
 
-    if (isValidUuid(threadId)) {
-      selectAiChatThread(threadId);
-    }
-
-    openAskAiPage({ resetNavigationStack: true });
+    openAskAiPage({
+      threadId: isValidUuid(threadId) ? threadId : undefined,
+      resetNavigationStack: true,
+    });
   };
 
   return { openAskAiThread };

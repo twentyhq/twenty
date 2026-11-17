@@ -10,6 +10,7 @@ import {
   AppNavigatorContext,
 } from '@/app/contexts/AppNavigatorContext';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -28,7 +29,13 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <I18nProvider i18n={i18n}>
     <AppNavigatorContext.Provider value={appNavigator}>
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+      <JotaiProvider store={jotaiStore}>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: 'side-panel-page' }}
+        >
+          {children}
+        </SidePanelPageComponentInstanceContext.Provider>
+      </JotaiProvider>
     </AppNavigatorContext.Provider>
   </I18nProvider>
 );

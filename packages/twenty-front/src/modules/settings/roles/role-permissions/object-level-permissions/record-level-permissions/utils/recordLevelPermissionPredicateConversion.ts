@@ -137,6 +137,7 @@ export const convertRecordFilterGroupToPredicateGroup = ({
     | 'canUpdateRecords'
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
+    | 'rowLevelPermissionRuleId'
   >;
 }): RowLevelPermissionPredicateGroup => {
   return {
@@ -154,6 +155,8 @@ export const convertRecordFilterGroupToPredicateGroup = ({
     canUpdateRecords: existingPredicateGroup?.canUpdateRecords ?? false,
     canSoftDeleteRecords: existingPredicateGroup?.canSoftDeleteRecords ?? false,
     canDestroyRecords: existingPredicateGroup?.canDestroyRecords ?? false,
+    rowLevelPermissionRuleId:
+      existingPredicateGroup?.rowLevelPermissionRuleId ?? null,
     roleId,
     objectMetadataId,
   };

@@ -309,6 +309,8 @@ import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } f
 import { AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794606690417-add-view-field-relation-target-field-metadata-id';
 import { RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794839679151-rename-navigation-menu-item-folder-id-to-parent-id';
 import { AddTabAndSectionNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794921429000-add-tab-and-section-navigation-menu-items';
+import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794922746000-add-is-system-side-effect-to-role-and-role-target';
+import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -620,4 +622,6 @@ export const INSTANCE_COMMANDS = [
   AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand,
   RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand,
   AddTabAndSectionNavigationMenuItemsFastInstanceCommand,
+  AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand,
+  AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
 ];

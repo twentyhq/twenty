@@ -9,8 +9,8 @@ import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThr
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitState,
-} from '@/ai/states/aiChatThreadVisitState';
+  aiChatThreadVisitFamilyState,
+} from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
@@ -49,22 +49,26 @@ export const useUpdateAiChatThreadStatus = () => {
     }) => {
       const now = new Date();
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
-      const previousVisit = store.get(aiChatThreadVisitState.atom);
       const previousParticipants = store.get(
         aiChatThreadParticipantsState.atom,
       );
 
-      if (
-        isDefined(optimisticVisit) &&
-        isDefined(previousVisit) &&
-        threadIds.includes(previousVisit.threadId)
-      ) {
-        store.set(aiChatThreadVisitState.atom, {
-          ...previousVisit,
-          ...optimisticVisit,
+      const visitUpdates = threadIds.map((threadId) => {
+        const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+          threadId,
         });
-      }
-      const optimisticVisitState = store.get(aiChatThreadVisitState.atom);
+        const previousVisit = store.get(visitAtom);
+
+        if (isDefined(optimisticVisit) && isDefined(previousVisit)) {
+          store.set(visitAtom, { ...previousVisit, ...optimisticVisit });
+        }
+
+        return {
+          visitAtom,
+          previousVisit,
+          optimisticVisitState: store.get(visitAtom),
+        };
+      });
       const getThreadLastActivityAt = (threadId: string) =>
         store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
           ?.lastActivityAt ?? null;
@@ -123,10 +127,15 @@ export const useUpdateAiChatThreadStatus = () => {
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
-        // A visit to another chat since then is kept
-        store.set(aiChatThreadVisitState.atom, (visit) =>
-          visit === optimisticVisitState ? previousVisit : visit,
-        );
+        for (const {
+          visitAtom,
+          previousVisit,
+          optimisticVisitState,
+        } of visitUpdates) {
+          store.set(visitAtom, (visit) =>
+            visit === optimisticVisitState ? previousVisit : visit,
+          );
+        }
 
         // A newer row may have arrived since, and is kept
         store.set(aiChatThreadParticipantsState.atom, (participants) => {

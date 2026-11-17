@@ -8,7 +8,6 @@ import {
   type AiChatPrepromptMode,
   aiChatPrepromptState,
 } from '@/ai/states/aiChatPrepromptState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -21,17 +20,16 @@ export const useStageAiChatPreprompt = () => {
   const setAiChatPreprompt = useSetAtomState(aiChatPrepromptState);
 
   const stageAiChatPreprompt = ({
+    threadId,
     serializedDocument,
     mode,
   }: {
+    threadId: string;
     serializedDocument: string;
     mode: AiChatPrepromptMode;
   }) => {
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-    const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
     const isIdleNewChat =
-      threadId === newAiChatThreadId &&
+      threadId === store.get(newAiChatThreadIdState.atom) &&
       !store.get(aiChatIsSendingMessageFamilyState.atomFamily({ threadId }));
 
     setAiChatDraftsByThreadId((previousDrafts) => ({
@@ -46,7 +44,7 @@ export const useStageAiChatPreprompt = () => {
       );
     }
 
-    setAiChatPreprompt({ serializedDocument, mode });
+    setAiChatPreprompt({ threadId, serializedDocument, mode });
   };
 
   return { stageAiChatPreprompt };
