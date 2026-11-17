@@ -43,3 +43,21 @@ export const validateNavigationMenuItemParentType = ({
     },
   ];
 };
+
+export const validateNavigationMenuItemTypeChange = ({
+  type,
+  parentType,
+  childTypes,
+}: {
+  type: NavigationMenuItemType;
+  parentType: NavigationMenuItemType | undefined;
+  childTypes: NavigationMenuItemType[];
+}): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] => [
+  ...validateNavigationMenuItemParentType({ type, parentType }),
+  ...childTypes.flatMap((childType) =>
+    validateNavigationMenuItemParentType({
+      type: childType,
+      parentType: type,
+    }),
+  ),
+];
