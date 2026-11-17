@@ -1,8 +1,10 @@
 import { type MouseEvent } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-const FIELD_INTERACTIVE_ELEMENT_SELECTOR =
-  '[data-inline-cell-display-mode], button, a, input, textarea, [role]';
+const FIELD_INTERACTIVE_ELEMENT_SELECTOR = doNotTranslate(
+  '[data-inline-cell-display-mode], button, a, input, textarea, [role]',
+);
 
 export const isClickOnRecordBoardCardFieldBackground = (
   event: MouseEvent<HTMLElement>,
