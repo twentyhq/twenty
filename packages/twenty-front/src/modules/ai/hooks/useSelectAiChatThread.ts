@@ -1,26 +1,30 @@
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useSwitchAiChatThreadWithDraft } from '@/ai/hooks/useSwitchAiChatThreadWithDraft';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingAiChatThreadIdState } from '@/ai/states/closingAiChatThreadIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { getAiChatPageThreadId } from '@/ai/utils/getAiChatPageThreadId';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useSelectAiChatThread = () => {
   const store = useStore();
-  const { switchThreadWithDraft } = useSwitchAiChatThreadWithDraft();
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
 
-  const selectAiChatThread = (toThreadId: string) => {
-    store.set(closingAiChatThreadIdState.atom, null);
+  const selectAiChatThread = useCallback(
+    (toThreadId: string) => {
+      const aiChatPageThreadId = getAiChatPageThreadId({
+        pathname: window.location.pathname,
+        newAiChatThreadId: store.get(newAiChatThreadIdState.atom),
+      });
 
-    if (store.get(currentAiChatThreadState.atom) !== toThreadId) {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
-    }
+      if (aiChatPageThreadId !== toThreadId) {
+        store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      }
 
-    switchThreadWithDraft(toThreadId);
-    projectAiChatThreadToUrl(toThreadId);
-  };
+      projectAiChatThreadToUrl(toThreadId);
+    },
+    [store, projectAiChatThreadToUrl],
+  );
 
   return { selectAiChatThread };
 };

@@ -12,7 +12,8 @@ import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAiChatThreadsPage'
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { inboxThreadListLoadCountFamilyState } from '@/inbox/states/inboxThreadListLoadCountFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { getAiChatPageThreadId } from '@/ai/utils/getAiChatPageThreadId';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
@@ -225,7 +226,10 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const selectedThreadId = store.get(currentAiChatThreadState.atom);
+      const selectedThreadId = getAiChatPageThreadId({
+        pathname: window.location.pathname,
+        newAiChatThreadId: store.get(newAiChatThreadIdState.atom),
+      });
 
       await refreshAiChatThreadPermissions([
         ...page.threadIds,

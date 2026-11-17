@@ -13,7 +13,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -30,7 +30,7 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const renderBar = (editor: Editor) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     onInitializeJotaiStore: (store) => {
-      store.set(currentAiChatThreadState.atom, THREAD_ID);
+      store.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     },
   });
 

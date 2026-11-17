@@ -1,9 +1,10 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isInboxPath } from '~/utils/isInboxPath';
@@ -33,11 +34,15 @@ export const SidePanelAskAiHandoffEffect = ({
       return;
     }
 
-    if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
+    const aiChatContinueInSidePanelThreadId = store.get(
+      aiChatContinueInSidePanelThreadIdState.atom,
+    );
+
+    if (!isDefined(aiChatContinueInSidePanelThreadId)) {
       return;
     }
 
-    store.set(shouldContinueAiChatInSidePanelState.atom, false);
+    store.set(aiChatContinueInSidePanelThreadIdState.atom, null);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     if (isSettingsPath(pathname)) {
@@ -46,7 +51,11 @@ export const SidePanelAskAiHandoffEffect = ({
 
     onContinueChatFromFullWidth();
     openAskAiPage({
-      threadId: store.get(currentAiChatThreadState.atom) ?? undefined,
+      threadId:
+        aiChatContinueInSidePanelThreadId ===
+        store.get(newAiChatThreadIdState.atom)
+          ? undefined
+          : aiChatContinueInSidePanelThreadId,
       resetNavigationStack: true,
     });
   }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);

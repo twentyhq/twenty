@@ -24,7 +24,6 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -414,7 +413,6 @@ const meta = {
         recordNode: mockedWorkspaceMemberRecords[0],
       }),
     );
-    jotaiStore.set(currentAiChatThreadState.atom, CURRENT_THREAD_ID);
     jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
@@ -706,9 +704,6 @@ export const LeaveWhileOpening: Story = {
         }),
       }),
     );
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
     await expect(
       jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
     ).toBe(SidePanelPages.CommandMenuDisplay);
@@ -734,9 +729,6 @@ export const FailedOpen: Story = {
         'This chat could not be opened. Try selecting it again.',
       ),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
     await expect(
       canvas.queryByRole('status', { name: 'Opening chat...' }),
     ).not.toBeInTheDocument();
@@ -783,9 +775,6 @@ export const UnavailableChat: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Quarterly planning notes' }),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
   },
 };
 

@@ -1,96 +1,58 @@
-import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
-import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
+const projectAiChatThreadToUrl = jest.fn();
+
 jest.mock('@/ai/hooks/useProjectAiChatThreadToUrl', () => ({
-  useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl: jest.fn() }),
+  useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
 }));
+
+const ONBOARDING_THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
+const OTHER_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
+const selectFromOnboardingChat = (threadId: string) => {
+  window.history.pushState(null, '', `/chat/${ONBOARDING_THREAD_ID}`);
+  jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+  const { result } = renderHook(() => useSelectAiChatThread(), {
+    wrapper: Wrapper,
+  });
+
+  act(() => result.current.selectAiChatThread(threadId));
+};
+
 describe('useSelectAiChatThread', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     resetJotaiStore();
   });
 
-  it.each(['new-chat-thread', 'other-thread'])(
-    'leaves onboarding when selecting %s',
-    (threadId) => {
-      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-      jotaiStore.set(currentAiChatThreadState.atom, 'onboarding-thread');
-      const { result } = renderHook(() => useSelectAiChatThread(), {
-        wrapper: Wrapper,
-      });
+  it('opens the selected chat and leaves onboarding', () => {
+    selectFromOnboardingChat(OTHER_THREAD_ID);
 
-      act(() => result.current.selectAiChatThread(threadId));
-
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(threadId);
-      expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-        false,
-      );
-    },
-  );
-  it('preserves onboarding when reselecting the current setup conversation', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-    jotaiStore.set(currentAiChatThreadState.atom, 'onboarding-thread');
-    const { result } = renderHook(() => useSelectAiChatThread(), {
-      wrapper: Wrapper,
-    });
-
-    act(() => result.current.selectAiChatThread('onboarding-thread'));
-
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      'onboarding-thread',
+    expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(OTHER_THREAD_ID);
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      false,
     );
+  });
+
+  it('preserves onboarding when reselecting the setup conversation', () => {
+    selectFromOnboardingChat(ONBOARDING_THREAD_ID);
+
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       true,
     );
-  });
-  it('restores usage from an archived thread and preserves it on reselection', () => {
-    const thread: AiChatThreadRecord = {
-      __typename: 'AgentChatThread',
-      id: 'archived-thread',
-      title: null,
-      deletedAt: '2026-09-01',
-      createdAt: '2026-08-01',
-      updatedAt: '2026-09-01',
-      conversationSize: 120,
-      contextWindowTokens: 1000,
-      totalInputTokens: 250,
-      totalOutputTokens: 30,
-      totalCacheReadTokens: 80,
-      totalInputCredits: 125000,
-      totalOutputCredits: 50000,
-    };
-    setInboxThreadList(jotaiStore, [thread]);
-    const usageAtom = aiChatUsageFamilyState.atomFamily({
-      threadId: thread.id,
-    });
-    const { result } = renderHook(() => useSelectAiChatThread(), {
-      wrapper: Wrapper,
-    });
-    act(() => result.current.selectAiChatThread(thread.id));
-    expect(jotaiStore.get(usageAtom)).toMatchObject({
-      inputTokens: 250,
-      cachedInputTokens: 80,
-      lastMessage: null,
-    });
-    const liveUsage = { ...jotaiStore.get(usageAtom)!, inputTokens: 500 };
-    jotaiStore.set(usageAtom, liveUsage);
-    act(() => result.current.selectAiChatThread(thread.id));
-    expect(jotaiStore.get(usageAtom)).toEqual(liveUsage);
   });
 });

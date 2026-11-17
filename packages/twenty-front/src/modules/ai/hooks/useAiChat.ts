@@ -25,7 +25,6 @@ import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOpenNewAiChatAsDirectMessage } from '@/ai/hooks/useOpenNewAiChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai/hooks/useWarnAboutParticipantMentionsNotAdded';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
@@ -40,7 +39,6 @@ import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesF
 import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
 import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/aiChatUnconfirmedFirstMessageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
@@ -117,9 +115,6 @@ export const useAiChat = () => {
     useWarnAboutParticipantMentionsNotAdded();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
-    shouldPreserveClosedInbox: true,
-  });
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
   const store = useStore();
@@ -321,8 +316,12 @@ export const useAiChat = () => {
             );
           }
 
-          if (store.get(currentAiChatThreadState.atom) === threadId) {
-            projectAiChatThreadToUrl(threadId);
+          const isInstanceStillOnThread =
+            store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
+            threadId;
+
+          if (isInstanceStillOnThread) {
+            onThreadChange(threadId);
           }
         }
 
@@ -372,11 +371,12 @@ export const useAiChat = () => {
     },
     [
       store,
+      instanceId,
+      onThreadChange,
       getBrowsingContext,
       setAiChatDraftsByThreadId,
       modelIdForRequest,
       aiModels,
-      projectAiChatThreadToUrl,
       refreshAiChatThreadPermissions,
       apolloClient,
       applyOptimisticRestore,
