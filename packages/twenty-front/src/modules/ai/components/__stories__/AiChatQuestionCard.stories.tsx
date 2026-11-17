@@ -6,7 +6,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 import { styled } from '@linaria/react';
@@ -90,7 +90,7 @@ const StoreSeederEffect = () => {
   const store = useStore();
 
   useEffect(() => {
-    store.set(currentAiChatThreadState.atom, 'thread-1');
+    store.set(aiChatTestInstanceThreadIdState.atom, 'thread-1');
   }, [store]);
 
   return null;

@@ -699,6 +699,11 @@ msgstr ""
 msgid "{countNonRelation, plural, one {# field} other {# fields}}"
 msgstr ""
 
+#. js-lingui-id: 0Iz7tg
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{credits} credits/month"
+msgstr ""
+
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit each} other {{label}, earn {formattedCreditsReward} free credits each}}"
@@ -920,7 +925,7 @@ msgid "{label}, {statusLabel}"
 msgstr ""
 
 #. js-lingui-id: g4xrfh
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr ""
 
@@ -1146,6 +1151,11 @@ msgstr ""
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr ""
+
+#. js-lingui-id: X/yTAr
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
 msgstr ""
 
 #. js-lingui-id: iL/HBr
@@ -1790,6 +1800,11 @@ msgstr ""
 msgid "About your app"
 msgstr ""
 
+#. js-lingui-id: g/S81Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Above the commitment"
+msgstr ""
+
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
@@ -1987,6 +2002,7 @@ msgstr ""
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -2035,6 +2051,7 @@ msgstr ""
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
 msgstr ""
@@ -2194,6 +2211,12 @@ msgstr ""
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
+msgstr ""
+
+#. js-lingui-id: rY10B9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Add arrangement"
 msgstr ""
 
 #. js-lingui-id: U76pXW
@@ -2729,6 +2752,16 @@ msgstr ""
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
 msgstr ""
 
+#. js-lingui-id: NxahIk
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added by"
+msgstr ""
+
+#. js-lingui-id: z1dTLo
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added on"
+msgstr ""
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -3010,7 +3043,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -4277,6 +4310,21 @@ msgstr ""
 msgid "Armenian"
 msgstr ""
 
+#. js-lingui-id: T1TSIx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Arrangement added."
+msgstr ""
+
+#. js-lingui-id: EboPKL
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangement ended."
+msgstr ""
+
+#. js-lingui-id: We0TcM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangements"
+msgstr ""
+
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
@@ -4553,6 +4601,11 @@ msgstr ""
 #. js-lingui-id: df2y9Y
 #: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
 msgid "At least one protocol must be configured"
+msgstr ""
+
+#. js-lingui-id: QAlSoU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
 msgstr ""
 
 #. js-lingui-id: tqMllA
@@ -5672,6 +5725,7 @@ msgstr ""
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
@@ -6994,8 +7048,20 @@ msgid "Commas and dot"
 msgstr ""
 
 #. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
+msgstr ""
+
+#. js-lingui-id: As9mhp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Commercial exceptions to the plan, with why and until when."
+msgstr ""
+
+#. js-lingui-id: 1JmJ2B
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Committed seats"
 msgstr ""
 
 #. js-lingui-id: hZotg6
@@ -8600,6 +8666,11 @@ msgstr ""
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr ""
 
+#. js-lingui-id: x8lB6y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit allowance"
+msgstr ""
+
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit balance"
@@ -8613,6 +8684,11 @@ msgstr ""
 #. js-lingui-id: 7iwYAn
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
+msgstr ""
+
+#. js-lingui-id: OeJw5Y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit grant"
 msgstr ""
 
 #. js-lingui-id: zH6NZT
@@ -8729,6 +8805,11 @@ msgstr ""
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
+msgstr ""
+
+#. js-lingui-id: 30XINA
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Credits per month"
 msgstr ""
 
 #. js-lingui-id: 7CTZ9z
@@ -9076,6 +9157,11 @@ msgstr ""
 #. js-lingui-id: MNGIVW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Customise the fields available in the {objectLabelSingular} views and their display order in the {objectLabelSingular} detail view and menus."
+msgstr ""
+
+#. js-lingui-id: 5GgtFa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Customizable sidebar"
 msgstr ""
 
 #. js-lingui-id: qqLY+j
@@ -10231,6 +10317,8 @@ msgstr ""
 #. js-lingui-id: URmyfc
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleSecurityColumns.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -10397,6 +10485,11 @@ msgstr ""
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
+msgstr ""
+
+#. js-lingui-id: H6Ma8Z
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Discount"
 msgstr ""
 
 #. js-lingui-id: xt4a74
@@ -11574,6 +11667,17 @@ msgstr ""
 msgid "Encryption key rotation"
 msgstr ""
 
+#. js-lingui-id: xDr/ct
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End"
+msgstr ""
+
+#. js-lingui-id: VhdLE7
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End arrangement"
+msgstr ""
+
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -11601,6 +11705,16 @@ msgstr ""
 msgid "End trial period to continue using Workflow or AI features."
 msgstr ""
 
+#. js-lingui-id: 237hSL
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "Ended"
+msgstr ""
+
+#. js-lingui-id: eNtnOy
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Ended by"
+msgstr ""
+
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Ending"
@@ -11620,11 +11734,15 @@ msgstr ""
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr ""
 
 #. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
 msgstr ""
@@ -13051,6 +13169,11 @@ msgstr ""
 msgid "Failed to load agent details."
 msgstr ""
 
+#. js-lingui-id: dQLWeE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Failed to load billing arrangements."
+msgstr ""
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13818,18 +13941,23 @@ msgid "Finish editing the layout to expand chat"
 msgstr ""
 
 #. js-lingui-id: yJoako
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open AI"
 msgstr ""
 
 #. js-lingui-id: KstqNM
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
 msgstr ""
 
 #. js-lingui-id: 6cOXRd
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
+msgstr ""
+
+#. js-lingui-id: 1yKuEJ
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
+msgid "Finish editing the layout to open this tab"
 msgstr ""
 
 #. js-lingui-id: SNdnlf
@@ -14129,6 +14257,11 @@ msgstr ""
 #. js-lingui-id: sCMpw5
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
+msgstr ""
+
+#. js-lingui-id: x2qGE3
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Free seats"
 msgstr ""
 
 #. js-lingui-id: nLC6tu
@@ -14823,6 +14956,11 @@ msgstr ""
 msgid "Happy"
 msgstr ""
 
+#. js-lingui-id: 4OOUC8
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Hard cap"
+msgstr ""
+
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
 msgid "Has attachments"
@@ -15127,7 +15265,7 @@ msgstr ""
 #. js-lingui-id: i0qMbr
 #: src/modules/ai/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
 msgstr ""
 
@@ -15712,7 +15850,7 @@ msgid "Inactive Skill Options"
 msgstr ""
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Inbox"
 msgstr ""
 
@@ -17322,6 +17460,16 @@ msgstr ""
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: cF6iqz
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Limit override"
+msgstr ""
+
+#. js-lingui-id: BDi/z7
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "Limit removed"
+msgstr ""
+
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
@@ -18902,6 +19050,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
@@ -19256,7 +19405,7 @@ msgid "navigation menu item"
 msgstr ""
 
 #. js-lingui-id: aTTshK
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Navigation modes"
 msgstr ""
 
@@ -19292,6 +19441,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementEndDate.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20065,6 +20215,7 @@ msgid "No emoji found"
 msgstr ""
 
 #. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
 msgstr ""
@@ -21382,6 +21533,11 @@ msgstr ""
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr ""
 
+#. js-lingui-id: YO4da4
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "One-time"
+msgstr ""
+
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
@@ -22671,6 +22827,11 @@ msgstr ""
 msgid "Pick Record"
 msgstr ""
 
+#. js-lingui-id: 48B257
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Pick the end date"
+msgstr ""
+
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB."
@@ -23619,6 +23780,9 @@ msgid "Read/Edit/Delete permissions"
 msgstr ""
 
 #. js-lingui-id: VJScHU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -24058,6 +24222,11 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Refresh status"
+msgstr ""
+
+#. js-lingui-id: J0LAHU
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Refund"
 msgstr ""
 
 #. js-lingui-id: vpZcGd
@@ -24563,6 +24732,11 @@ msgstr ""
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
+msgstr ""
+
+#. js-lingui-id: JsTqK9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
 msgstr ""
 
 #. js-lingui-id: uFEgGd
@@ -25481,6 +25655,7 @@ msgstr ""
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr ""
@@ -26010,6 +26185,7 @@ msgid "seats"
 msgstr ""
 
 #. js-lingui-id: grt0Pu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -26147,7 +26323,13 @@ msgstr ""
 msgid "See installed applications"
 msgstr ""
 
+#. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+msgid "See less"
+msgstr ""
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr ""
@@ -26966,7 +27148,7 @@ msgstr ""
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27264,6 +27446,11 @@ msgstr ""
 msgid "Show only rows with errors"
 msgstr ""
 
+#. js-lingui-id: KefbEP
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show sidebar tabs and sections."
+msgstr ""
+
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -27345,6 +27532,11 @@ msgstr ""
 #. js-lingui-id: a6TaW9
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Signatory title"
+msgstr ""
+
+#. js-lingui-id: +Ou1Pl
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Signed a 2-year deal for 25 seats"
 msgstr ""
 
 #. js-lingui-id: Lz4j8Q
@@ -27645,6 +27837,11 @@ msgstr ""
 #. js-lingui-id: 01L/Si
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "SOC 2"
+msgstr ""
+
+#. js-lingui-id: mbsiG9
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Soft cap"
 msgstr ""
 
 #. js-lingui-id: zfjcH5
@@ -28000,6 +28197,8 @@ msgstr ""
 #. js-lingui-id: W1KkjZ
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Starts"
 msgstr ""
 
@@ -28039,6 +28238,8 @@ msgstr ""
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28984,6 +29185,11 @@ msgstr ""
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
 msgstr ""
 
+#. js-lingui-id: XOno1Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
+msgstr ""
+
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
@@ -29730,6 +29936,11 @@ msgstr ""
 #. js-lingui-id: yLvOxg
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
+msgstr ""
+
+#. js-lingui-id: 3Xb+Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "This many members are not billed. Seats are synced right away."
 msgstr ""
 
 #. js-lingui-id: V6FP3d
@@ -30528,6 +30739,11 @@ msgstr ""
 msgid "Trial expired. Please update your billing details."
 msgstr ""
 
+#. js-lingui-id: SyzXYh
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Trial extension"
+msgstr ""
+
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Trial period"
@@ -30824,6 +31040,9 @@ msgstr ""
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx

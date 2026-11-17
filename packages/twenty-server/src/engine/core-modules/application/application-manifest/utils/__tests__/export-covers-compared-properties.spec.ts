@@ -397,6 +397,7 @@ const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
       ...flatUniversalWorkflowVersion,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
+      coreWorkflowId: universalFlatWorkflow.id,
     },
     references,
   });

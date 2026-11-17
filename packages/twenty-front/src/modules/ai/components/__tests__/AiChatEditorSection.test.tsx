@@ -10,7 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -38,7 +38,7 @@ const renderEditorSection = (currentAiChatThread: string) => {
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
       store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-      store.set(currentAiChatThreadState.atom, currentAiChatThread);
+      store.set(aiChatTestInstanceThreadIdState.atom, currentAiChatThread);
     },
   });
 

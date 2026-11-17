@@ -11,9 +11,11 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { billingState } from '@/client-config/states/billingState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from '@/settings/admin-panel/constants/BillingArrangementCommentMaxLength';
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
+import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/queries/workspaceBillingArrangements';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
@@ -49,8 +51,6 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const COMMENT_MAX_LENGTH = 500;
-
 export const SettingsAdminWorkspaceUsageLimitModal = ({
   dialogId,
   workspaceId,
@@ -82,6 +82,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     client: apolloAdminClient,
     refetchQueries: [
       { query: WORKSPACE_USAGE_LIMITS, variables: { workspaceId } },
+      { query: WORKSPACE_BILLING_ARRANGEMENTS, variables: { workspaceId } },
     ],
   };
 
@@ -290,7 +291,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                     placeholder={t`Compensation for the October outage`}
                     value={commentValue}
                     onChange={setComment}
-                    maxLength={COMMENT_MAX_LENGTH}
+                    maxLength={BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH}
                     fullWidth
                   />
                 </>
