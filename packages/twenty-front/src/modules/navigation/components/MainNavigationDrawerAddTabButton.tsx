@@ -1,4 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
@@ -14,7 +16,14 @@ export const MainNavigationDrawerAddTabButton = ({
   shouldShowTooltip,
 }: MainNavigationDrawerAddTabButtonProps) => {
   const { t } = useLingui();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const { createTab } = useCreateNavigationMenuTabOrSection();
+
+  if (!isCustomizableSidebarEnabled) {
+    return null;
+  }
 
   return (
     <MainNavigationDrawerTab

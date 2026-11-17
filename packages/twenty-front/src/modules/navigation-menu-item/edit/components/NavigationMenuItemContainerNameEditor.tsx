@@ -32,7 +32,8 @@ export const NavigationMenuItemContainerNameEditor = ({
   onSubmit,
 }: NavigationMenuItemContainerNameEditorProps) => {
   const { updateItem } = useNavigationMenuItemEditController('workspace');
-  const [name, setName] = useState(item.name ?? '');
+  const [initialName] = useState(item.name ?? '');
+  const [name, setName] = useState(initialName);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -70,9 +71,9 @@ export const NavigationMenuItemContainerNameEditor = ({
           fullWidth
           onChange={(value) => {
             setName(value);
-            if (isNonEmptyString(value.trim())) {
-              void updateItem(item.id, { name: value.trim() });
-            }
+            void updateItem(item.id, {
+              name: isNonEmptyString(value.trim()) ? value.trim() : initialName,
+            });
           }}
           onKeyDown={handleKeyDown}
         />

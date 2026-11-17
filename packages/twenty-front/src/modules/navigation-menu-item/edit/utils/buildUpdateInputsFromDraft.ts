@@ -1,4 +1,3 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
@@ -6,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 
@@ -35,10 +35,7 @@ export const buildUpdateInputsFromDraft = ({
     const positionChanged = original.position !== draftItem.position;
     const parentIdChanged =
       (original.parentId ?? null) !== (draftItem.parentId ?? null);
-    const isContainer =
-      isNavigationMenuItemFolder(draftItem) ||
-      draftItem.type === NavigationMenuItemType.TAB ||
-      draftItem.type === NavigationMenuItemType.SECTION;
+    const isContainer = isNavigationMenuItemContainer(draftItem);
     const nameChanged =
       (isContainer || isNavigationMenuItemLink(draftItem)) &&
       (original.name ?? null) !== (draftItem.name ?? null);

@@ -1,4 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -14,7 +16,14 @@ export const NavigationMenuAddSectionButton = ({
   containerId,
 }: NavigationMenuAddSectionButtonProps) => {
   const { t } = useLingui();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const { createSection } = useCreateNavigationMenuTabOrSection();
+
+  if (!isCustomizableSidebarEnabled) {
+    return null;
+  }
 
   return (
     <NavigationDrawerSection>
