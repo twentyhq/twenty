@@ -85,19 +85,22 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
+  const lookupTargetFieldMetadataItem =
+    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
+
   const handleToggleColumnSort = useHandleToggleColumnSort({
     objectMetadataItemId: objectMetadataId,
   });
 
   const handleSortClick = () => {
-    handleToggleColumnSort(recordField.fieldMetadataItemId);
+    handleToggleColumnSort({
+      fieldMetadataId: recordField.fieldMetadataItemId,
+      relationTargetFieldMetadataId: lookupTargetFieldMetadataItem?.id,
+    });
   };
 
   const { openRecordFilterChipFromTableHeader } =
     useOpenRecordFilterChipFromTableHeader();
-
-  const lookupTargetFieldMetadataItem =
-    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
 
   const handleFilterClick = () => {
     openRecordFilterChipFromTableHeader({
@@ -106,19 +109,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const filterableAndSortable = useAtomFamilySelectorValue(
+  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     {
       fieldMetadataItemId:
         lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
     },
   );
-
-  const isFilterable = filterableAndSortable.isFilterable;
-  // Sorting by a related record's field needs a relation target on view sorts
-  const isSortable =
-    filterableAndSortable.isSortable &&
-    !isDefined(lookupTargetFieldMetadataItem);
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);

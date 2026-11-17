@@ -4,7 +4,8 @@ import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictl
 type ViewSortComparableFields =
   | 'fieldMetadataId'
   | 'direction'
-  | 'subFieldName';
+  | 'subFieldName'
+  | 'relationTargetFieldMetadataId';
 
 export const areViewSortsEqual = (
   viewSortA: Pick<ViewSort, ViewSortComparableFields>,
@@ -14,6 +15,7 @@ export const areViewSortsEqual = (
     'fieldMetadataId',
     'direction',
     'subFieldName',
+    'relationTargetFieldMetadataId',
   ];
 
   return propertiesToCompare.every((property) =>
