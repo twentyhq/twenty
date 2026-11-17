@@ -119,7 +119,7 @@ export class ServerAdminIdentityAssertionService {
 
     throw new AuthException(
       'The server admin workspace requires a valid identity assertion',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      AuthExceptionCode.IDENTITY_ASSERTION_REQUIRED,
     );
   }
 

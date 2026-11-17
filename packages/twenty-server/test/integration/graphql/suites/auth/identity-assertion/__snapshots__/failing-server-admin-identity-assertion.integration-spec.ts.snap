@@ -4,7 +4,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -18,7 +18,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -32,7 +32,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -46,7 +46,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -60,7 +60,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -74,7 +74,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
@@ -88,7 +88,7 @@ exports[`Requests refused in the server admin workspace behind an identity-aware
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
+    "subCode": "IDENTITY_ASSERTION_REQUIRED",
     "userFriendlyMessage": {
       "id": Any<String>,
       "message": "You do not have permission to perform this action.",
