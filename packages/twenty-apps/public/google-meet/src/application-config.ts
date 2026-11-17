@@ -1,7 +1,8 @@
-import { defineApplication } from 'twenty-sdk/define';
+import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import {
   GOOGLE_CLIENT_ID_SERVER_VARIABLE_NAME,
+  GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_NAME,
   GOOGLE_CLIENT_SECRET_SERVER_VARIABLE_NAME,
   GOOGLE_MEET_PUBSUB_AUDIENCE_SERVER_VARIABLE_NAME,
   GOOGLE_MEET_PUBSUB_SERVICE_ACCOUNT_EMAIL_SERVER_VARIABLE_NAME,
@@ -11,6 +12,7 @@ import {
   APP_DESCRIPTION,
   APP_DISPLAY_NAME,
   APPLICATION_UNIVERSAL_IDENTIFIER,
+  GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplication({
@@ -24,6 +26,19 @@ export default defineApplication({
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+  applicationVariables: {
+    [GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_NAME]: {
+      universalIdentifier:
+        GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'AI summaries',
+      description:
+        'Whether your calls without Gemini notes get an AI summary. Turn off to avoid AI credit usage.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      scope: 'USER',
+      value: true,
+    },
+  },
   serverVariables: {
     [GOOGLE_CLIENT_ID_SERVER_VARIABLE_NAME]: {
       description: 'OAuth client ID from the Google Cloud project.',
