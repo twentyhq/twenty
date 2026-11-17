@@ -36,16 +36,16 @@ type AiChatMessagesFetchEffectProps = {
 };
 
 export const AiChatMessagesFetchEffect = ({
-  threadId: currentAiChatThread,
+  threadId,
 }: AiChatMessagesFetchEffectProps) => {
   const store = useStore();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
-  const isNewThread = currentAiChatThread === newAiChatThreadId;
+  const isNewThread = threadId === newAiChatThreadId;
 
   const setAiChatMessagesLoading = useSetAtomFamilyState(
     aiChatMessagesLoadingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setSkipMessagesSkeletonUntilLoaded = useSetAtomState(
@@ -54,17 +54,17 @@ export const AiChatMessagesFetchEffect = ({
 
   const setAiChatFetchedMessages = useSetAtomFamilyState(
     aiChatFetchedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setAiChatQueuedMessages = useSetAtomFamilyState(
     aiChatQueuedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setAiChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
     aiChatIsAwaitingPersistedRefetchFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const handleFirstLoad = useCallback(
@@ -76,9 +76,7 @@ export const AiChatMessagesFetchEffect = ({
 
   const handleDataLoaded = useCallback(
     (data: GetChatMessagesQuery) => {
-      const error = store.get(
-        aiChatErrorFamilyState.atomFamily({ threadId: currentAiChatThread }),
-      );
+      const error = store.get(aiChatErrorFamilyState.atomFamily({ threadId }));
       if (isGraphqlErrorOfType(error, 'NOT_FOUND')) {
         return;
       }
@@ -86,7 +84,7 @@ export const AiChatMessagesFetchEffect = ({
       // A live snapshot is at least as recent as a fetch, which may have been read before it
       const liveReactionRevisions = store.get(
         aiChatLiveReactionRevisionsFamilyState.atomFamily({
-          threadId: currentAiChatThread,
+          threadId,
         }),
       );
 
@@ -116,7 +114,7 @@ export const AiChatMessagesFetchEffect = ({
         return;
       }
 
-      const familyKey = { threadId: currentAiChatThread };
+      const familyKey = { threadId };
 
       const handleEvent = store.get(
         aiChatHandleEventCallbackFamilyState.atomFamily(familyKey),
@@ -147,7 +145,7 @@ export const AiChatMessagesFetchEffect = ({
       }
     },
     [
-      currentAiChatThread,
+      threadId,
       setAiChatFetchedMessages,
       setAiChatQueuedMessages,
       setAiChatIsAwaitingPersistedRefetch,
@@ -169,7 +167,7 @@ export const AiChatMessagesFetchEffect = ({
   const { refetch: refetchAiChatMessages } = useQueryWithCallbacks(
     GetChatMessagesDocument,
     {
-      variables: { threadId: currentAiChatThread },
+      variables: { threadId },
       fetchPolicy: 'network-only',
       skip: isNewThread,
       onFirstLoad: handleFirstLoad,
@@ -188,11 +186,11 @@ export const AiChatMessagesFetchEffect = ({
 
   const handleRefetchMessagesEvent = useCallback(
     (detail?: AiChatThreadEventDetail) => {
-      if (detail?.threadId === currentAiChatThread) {
+      if (detail?.threadId === threadId) {
         handleRefetchMessages();
       }
     },
-    [currentAiChatThread, handleRefetchMessages],
+    [threadId, handleRefetchMessages],
   );
 
   useListenToBrowserEvent<AiChatThreadEventDetail>({
@@ -203,12 +201,12 @@ export const AiChatMessagesFetchEffect = ({
   const handleSseClientReconnected = useCallback(() => {
     store.set(
       aiChatLiveReactionRevisionsFamilyState.atomFamily({
-        threadId: currentAiChatThread,
+        threadId,
       }),
       {},
     );
     handleRefetchMessages();
-  }, [currentAiChatThread, handleRefetchMessages, store]);
+  }, [threadId, handleRefetchMessages, store]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,

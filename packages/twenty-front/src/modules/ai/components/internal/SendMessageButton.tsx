@@ -21,22 +21,22 @@ export const SendMessageButton = ({
   isDisabled = false,
 }: SendMessageButtonProps) => {
   const { t } = useLingui();
-  const { instanceId, threadId: currentAiChatThread } = useAiChatInstance();
+  const { instanceId, threadId } = useAiChatInstance();
   const aiChatInputIsEmpty = useAtomFamilySelectorValue(
     aiChatInputIsEmptyFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
   const aiChatIsLoading = useAtomFamilySelectorValue(
     aiChatIsLoadingFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const handleSendClick = () => {

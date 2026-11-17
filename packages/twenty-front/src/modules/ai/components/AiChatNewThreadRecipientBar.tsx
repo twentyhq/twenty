@@ -1,4 +1,3 @@
-import { useAiChatInstance } from '@/ai/hooks/useAiChatInstance';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,7 +39,6 @@ export const AiChatNewThreadRecipientBar = () => {
   const recipientRowRef = useRef<HTMLDivElement>(null);
   const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
-  const { threadId: currentAiChatThread } = useAiChatInstance();
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -67,7 +65,7 @@ export const AiChatNewThreadRecipientBar = () => {
     recipients.recipientWorkspaceMemberIds.includes(id),
   );
 
-  const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
+  const isCreatingChat = isOnNewAiChatSlot;
 
   if (
     !isAiChatInboxEnabled ||

@@ -11,8 +11,7 @@ import { isSilentAiChatMessage } from '@/ai/utils/isSilentAiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-// The member's own messages are never new to them; a message without a sender
-// predates multiplayer chats, when every user message was the owner's
+// Own messages are never new; a senderless message predates multiplayer, so it is the owner's
 export const aiChatFirstUnreadMessageIdComponentSelector =
   createAtomComponentSelector<string | null>({
     key: 'aiChatFirstUnreadMessageIdComponentSelector',
