@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isArray, isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
@@ -52,7 +52,7 @@ import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constant
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
 import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
-import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
+import { type ScheduledRecallBotCancellation } from 'src/logic-functions/types/scheduled-recall-bot-cancellation.type';
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
@@ -273,6 +273,13 @@ type ArmedFollowUp = {
   dueAt: number;
 };
 
+type QueuedScheduledRecallBotCancellation = {
+  payload: {
+    scheduledRecallBotCancellations?: ScheduledRecallBotCancellation[];
+  };
+  delayMs: number;
+};
+
 type FakeRecallTranscript = {
   id: string;
   statusCode: string;
@@ -338,7 +345,7 @@ class FakeRecallApi {
   stuckRequestSweepRequests: object[] = [];
   calendarEventSweepRequests: object[] = [];
   followUps: ArmedFollowUp[] = [];
-  cancellationCleanupRequests: object[] = [];
+  cancellationCleanupRequests: QueuedScheduledRecallBotCancellation[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -354,6 +361,7 @@ class FakeRecallApi {
   failCallRecordingReads = false;
   failRecallRemovals = false;
   failBotUpdates = false;
+  failingRecallRemovalBotIds = new Set<string>();
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -516,7 +524,12 @@ class FakeRecallApi {
           if (this.failCancellationCleanupEnqueue) {
             return jsonResponse(503, {});
           }
-          this.cancellationCleanupRequests.push(...payloads);
+          this.cancellationCleanupRequests.push(
+            ...payloads.map((payload) => ({
+              payload,
+              delayMs: input.delayMs ?? 0,
+            })),
+          );
           break;
         case IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
           this.artifactImportRequests.push(...payloads);
@@ -604,7 +617,10 @@ class FakeRecallApi {
     const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
 
     if (method === 'POST' && ejectedBotIdMatch !== null) {
-      if (this.failRecallRemovals) {
+      if (
+        this.failRecallRemovals ||
+        this.failingRecallRemovalBotIds.has(ejectedBotIdMatch[1])
+      ) {
         return jsonResponse(400, {});
       }
 
@@ -615,7 +631,11 @@ class FakeRecallApi {
     }
 
     if (method === 'DELETE' && botIdMatch !== null) {
-      if (this.failNextDelete || this.failRecallRemovals) {
+      if (
+        this.failNextDelete ||
+        this.failRecallRemovals ||
+        this.failingRecallRemovalBotIds.has(botIdMatch[1])
+      ) {
         this.failNextDelete = false;
 
         return jsonResponse(400, {});
@@ -4254,6 +4274,14 @@ describe('call recorder app lifecycle (integration)', () => {
         'false',
       );
 
+    const runQueuedScheduledRecallBotCancellationSlots = async () => {
+      for (const { payload } of recall.cancellationCleanupRequests) {
+        if (isArray(payload.scheduledRecallBotCancellations)) {
+          await cancelScheduledRecallBotsHandler(payload);
+        }
+      }
+    };
+
     it('cancels the request inline and leaves the Recall bot to the enqueued job', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -4270,7 +4298,8 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
       expect(recall.deletedBotIds).not.toContain(botId);
 
-      await cancelScheduledRecallBotsHandler();
+      await cancelScheduledRecallBotsHandler({});
+      await runQueuedScheduledRecallBotCancellationSlots();
 
       const callRecording = await fetchCallRecording(callRecordingId);
 
@@ -4318,25 +4347,140 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
     });
 
-    it('stops the cancellation chain when Recall is down, leaving the bot to its follow-up', async () => {
+    it('plans one cancellation job per minute: meetings not over soonest first, then meetingless bots, then ended meetings', async () => {
+      const laterCalendarEventId = await createCalendarEvent({
+        startsAt: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+        endsAt: new Date(Date.now() + 49 * 60 * 60 * 1000).toISOString(),
+      });
+      const soonerCalendarEventId = await createCalendarEvent();
+      const endedCalendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+      const endedCallRecordingId = await createPendingCallRecording({
+        calendarEventId: endedCalendarEventId,
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-ended-meeting',
+      });
+      const laterCallRecordingId = await createPendingCallRecording({
+        calendarEventId: laterCalendarEventId,
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-later-meeting',
+      });
+      const soonerCallRecordingId = await createPendingCallRecording({
+        calendarEventId: soonerCalendarEventId,
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-sooner-meeting',
+      });
+      const meetinglessCallRecordingIds = await Promise.all(
+        Array.from({ length: 29 }, (_, index) =>
+          createPendingCallRecording({
+            recordingRequestStatus: 'CANCELED',
+            externalBotId: `recall-bot-without-meeting-${index}`,
+          }),
+        ),
+      );
+      const expectedPlannedCallRecordingIds = [
+        soonerCallRecordingId,
+        laterCallRecordingId,
+        ...[...meetinglessCallRecordingIds].sort(),
+        endedCallRecordingId,
+      ];
+
+      await cancelScheduledRecallBotsHandler({});
+
+      const plannedSlots = recall.cancellationCleanupRequests.map(
+        ({ payload, delayMs }) => ({
+          delayMs,
+          callRecordingIds: (payload.scheduledRecallBotCancellations ?? []).map(
+            ({ callRecordingId }) => callRecordingId,
+          ),
+        }),
+      );
+
+      expect(plannedSlots.length).toBeGreaterThanOrEqual(2);
+      plannedSlots.forEach(({ delayMs, callRecordingIds }, slotIndex) => {
+        expect(delayMs).toBe(slotIndex * 60_000);
+        expect(callRecordingIds.length).toBeGreaterThan(0);
+        expect(callRecordingIds.length).toBeLessThanOrEqual(30);
+      });
+      expect(
+        plannedSlots
+          .flatMap(({ callRecordingIds }) => callRecordingIds)
+          .filter((callRecordingId) =>
+            expectedPlannedCallRecordingIds.includes(callRecordingId),
+          ),
+      ).toEqual(expectedPlannedCallRecordingIds);
+      expect(recall.deletedBotIds).toEqual([]);
+    });
+
+    it('carries a cancellation job past a recording the Twenty API rejects', async () => {
+      const callRecordingId = await createPendingCallRecording({
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-beside-a-rejected-recording',
+      });
+
+      const result = await cancelScheduledRecallBotsHandler({
+        scheduledRecallBotCancellations: [
+          {
+            callRecordingId: 'not-a-call-recording-uuid',
+            externalBotId: 'recall-bot-of-a-rejected-recording',
+          },
+          {
+            callRecordingId,
+            externalBotId: 'recall-bot-beside-a-rejected-recording',
+          },
+        ],
+      });
+
+      expect(result).toEqual({
+        canceledCallRecordingIds: [callRecordingId],
+        failedCallRecordingIds: ['not-a-call-recording-uuid'],
+      });
+      expect(
+        (await fetchCallRecording(callRecordingId)).externalBotId,
+      ).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([
+        'recall-bot-beside-a-rejected-recording',
+      ]);
+    });
+
+    it('carries a cancellation job past a bot Recall will not remove, leaving it to its follow-up', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
+      const removableCallRecordingId = await createPendingCallRecording({
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-removable',
+      });
 
       turnRecordingOff();
       await syncCalendarBotSchedulingHandler();
 
-      recall.failRecallRemovals = true;
+      recall.failingRecallRemovalBotIds.add(botId);
 
-      const result = await cancelScheduledRecallBots({ client, sliceSize: 1 });
+      const result = await cancelScheduledRecallBotsHandler({
+        scheduledRecallBotCancellations: [
+          { callRecordingId, externalBotId: botId },
+          {
+            callRecordingId: removableCallRecordingId,
+            externalBotId: 'recall-bot-removable',
+          },
+        ],
+      });
 
-      expect(result.canceledCallRecordingIds).toEqual([]);
-      expect(result.failedCallRecordingIds).toEqual([callRecordingId]);
-      expect(result.hasMore).toBe(false);
+      expect(result).toEqual({
+        canceledCallRecordingIds: [removableCallRecordingId],
+        failedCallRecordingIds: [callRecordingId],
+      });
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         botId,
       );
+      expect(
+        (await fetchCallRecording(removableCallRecordingId)).externalBotId,
+      ).toBeFalsy();
+      expect(recall.cancellationCleanupRequests).toHaveLength(1);
 
-      recall.failRecallRemovals = false;
+      recall.failingRecallRemovalBotIds.clear();
       await runArmedFollowUps();
 
       expect(
