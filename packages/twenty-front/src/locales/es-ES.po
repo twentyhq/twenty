@@ -16391,6 +16391,16 @@ msgstr "Expresión cron no válida. Se esperaban entre 4 y 6 campos, se obtuvier
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Patrón cron no válido: {errorMessage}"
 
+#. js-lingui-id: DQm/44
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE."
+msgstr ""
+
+#. js-lingui-id: UAtSd1
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR."
+msgstr ""
+
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
@@ -21724,6 +21734,11 @@ msgstr "Una vez reclamada, instala esta aplicación en el espacio de trabajo de 
 #: src/modules/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning.tsx
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Uno o más filtros hacen referencia a campos desactivados o eliminados y se eliminarán automáticamente al guardar."
+
+#. js-lingui-id: zTzoj2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE."
+msgstr ""
 
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -29493,6 +29508,11 @@ msgstr "No se pudo cargar el Acuerdo de procesamiento de datos. Inténtalo de nu
 msgid "The date and time of the write being checked."
 msgstr "La fecha y hora de la escritura que se está comprobando."
 
+#. js-lingui-id: ny+Evg
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month."
+msgstr ""
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -29635,15 +29655,15 @@ msgstr "El nombre que los destinatarios ven junto a tu dirección en su bandeja 
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "El nombre que los destinatarios ven junto a tu dirección. Se establece cuando se crea el canal."
 
-#. js-lingui-id: op7R9r
-#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
-msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr "El número de días desde la fecha hasta hoy, en UTC. Negativo para una fecha futura."
-
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "El número de elementos de la lista, o 0 cuando no es una lista."
+
+#. js-lingui-id: SpoTRx
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
+msgstr ""
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -29699,6 +29719,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "El correo electrónico compartido que quieres usar."
+
+#. js-lingui-id: XWiOdK
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr ""
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
