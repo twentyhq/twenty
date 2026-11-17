@@ -1,6 +1,5 @@
 import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
@@ -52,7 +51,6 @@ export const initializeNewAiChatStory = ({
     },
   ]);
   jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(aiChatDisplayedThreadState.atom, NEW_CHAT_THREAD_ID);
   jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   jotaiStore.set(
     inboxThreadListFamilyState.atomFamily(

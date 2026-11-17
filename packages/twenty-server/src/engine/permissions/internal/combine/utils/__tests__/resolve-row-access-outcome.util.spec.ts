@@ -36,7 +36,7 @@ const readOnlyPermissions: ObjectRecordsPermissions = {
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { type: 'role', roleId: READ_ONLY_ROLE_ID },
+  mainPrincipal: { type: 'role', roleIds: [READ_ONLY_ROLE_ID] },
   applicationPrincipal: { type: 'customApplication' },
 };
 
@@ -44,7 +44,7 @@ const owningApplicationPrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: {
     type: 'application',
-    roleId: APPLICATION_ROLE_ID,
+    roleIds: [APPLICATION_ROLE_ID],
     applicationId: APPLICATION_ID,
   },
   applicationPrincipal: {
@@ -106,7 +106,7 @@ describe('resolveRowAccessOutcome', () => {
       resolveOutcome({
         principals: {
           ...readOnlyPrincipals,
-          mainPrincipal: { type: 'role', roleId: 'missing-role' },
+          mainPrincipal: { type: 'role', roleIds: ['missing-role'] },
           applicationPrincipal: { type: 'customApplication' },
         },
       }),

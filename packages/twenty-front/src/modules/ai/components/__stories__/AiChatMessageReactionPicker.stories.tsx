@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
@@ -61,6 +62,7 @@ const meta: Meta<typeof AiChatMessageReactionPicker> = {
         </StyledReactions>
       </>
     ),
+    AiChatInstanceDecorator,
     ToastDecorator,
     RootDecorator,
     ComponentDecorator,

@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
@@ -72,38 +73,40 @@ const UsageStory = ({
   });
   return (
     <Provider store={store}>
-      <MockedProvider
-        mocks={[
-          {
-            request: { query: GetAiChatUsageDocument },
-            maxUsageCount: Infinity,
-            delay: loading ? Infinity : 0,
-            ...(error
-              ? { error: new Error('Usage unavailable') }
-              : {
-                  result: {
-                    data: {
-                      aiChatUsage:
-                        limit === null
-                          ? null
-                          : {
-                              limitValue: limit,
-                              consumedValue: consumed,
-                              periodEnd: null,
-                              kind,
-                            },
-                      aiChatUserCreditsUsage: userCreditsUsage && {
-                        __typename: 'AiChatUserCreditsUsage',
-                        ...userCreditsUsage,
+      <AiChatTestInstance>
+        <MockedProvider
+          mocks={[
+            {
+              request: { query: GetAiChatUsageDocument },
+              maxUsageCount: Infinity,
+              delay: loading ? Infinity : 0,
+              ...(error
+                ? { error: new Error('Usage unavailable') }
+                : {
+                    result: {
+                      data: {
+                        aiChatUsage:
+                          limit === null
+                            ? null
+                            : {
+                                limitValue: limit,
+                                consumedValue: consumed,
+                                periodEnd: null,
+                                kind,
+                              },
+                        aiChatUserCreditsUsage: userCreditsUsage && {
+                          __typename: 'AiChatUserCreditsUsage',
+                          ...userCreditsUsage,
+                        },
                       },
                     },
-                  },
-                }),
-          },
-        ]}
-      >
-        {children ?? <AiChatContextUsageButton />}
-      </MockedProvider>
+                  }),
+            },
+          ]}
+        >
+          {children ?? <AiChatContextUsageButton />}
+        </MockedProvider>
+      </AiChatTestInstance>
     </Provider>
   );
 };

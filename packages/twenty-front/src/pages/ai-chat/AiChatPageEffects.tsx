@@ -1,4 +1,3 @@
-import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageThreadSelection } from '@/ai/components/AiChatPageThreadSelection';
 
@@ -6,7 +5,6 @@ import { AiChatPageThreadSelection } from '@/ai/components/AiChatPageThreadSelec
 export const AiChatPageEffects = () => (
   <>
     <AiChatPageThreadSelection />
-    <AiChatPageCloseSidePanelChatEffect />
     <AiChatPageContinueInSidePanelEffect />
   </>
 );

@@ -40,7 +40,7 @@ export type UserContext = {
 
 export type AgentActorContext = {
   actorMetadata: ActorMetadata;
-  roleId: string;
+  roleIds: string[];
   userId: string;
   userWorkspaceId: string;
   userContext: UserContext;
@@ -134,8 +134,8 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId =
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         userWorkspaceId,
         workspaceId,
       });
@@ -156,7 +156,7 @@ export class AgentActorContextService {
 
     return {
       actorMetadata,
-      roleId,
+      roleIds,
       userId: userWorkspace.userId,
       userWorkspaceId,
       userContext,
@@ -196,7 +196,7 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.resolveRoleIdOrThrow({
+    const roleIds = await this.resolveRoleIdsOrThrow({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
       workspaceMemberId,
@@ -216,11 +216,11 @@ export class AgentActorContextService {
         workspaceMember,
         userSessionVariant: 'standard',
       }),
-      roleId,
+      roleIds,
     };
   }
 
-  private async resolveRoleIdOrThrow({
+  private async resolveRoleIdsOrThrow({
     userWorkspaceId,
     workspaceId,
     workspaceMemberId,
@@ -228,9 +228,9 @@ export class AgentActorContextService {
     userWorkspaceId: string;
     workspaceId: string;
     workspaceMemberId: string;
-  }): Promise<string> {
+  }): Promise<string[]> {
     try {
-      return await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+      return await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         userWorkspaceId,
         workspaceId,
       });

@@ -40,10 +40,6 @@ jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
   AiChatPageThreadUrlSyncEffect: () => null,
 }));
 
-jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
-  AiChatPageCloseSidePanelChatEffect: () => null,
-}));
-
 let mockIsMobile = false;
 
 jest.mock('twenty-ui/utilities', () => ({
