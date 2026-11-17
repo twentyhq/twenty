@@ -1,4 +1,4 @@
-import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
+import { isSnakeCaseToolName } from '@/ai/utils/is-snake-case-tool-name.util';
 
 describe('isSnakeCaseToolName', () => {
   it.each([['delete_webhook'], ['list_webhooks'], ['find_many_v2']])(
