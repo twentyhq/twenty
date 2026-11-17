@@ -26,8 +26,7 @@ export const SettingsMcpServerSignInSection = ({
     {
       variables: { applicationId: mcpServer.applicationId },
       skip: !isDefined(mcpServer.connectionProviderId),
-      // Every server of an application shares this list, so a cached copy can
-      // predate the provider created with this server.
+      // The cached list is shared by the app's servers and can predate this server's provider
       fetchPolicy: 'cache-and-network',
     },
   );
