@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { createPublicKey, type KeyObject } from 'crypto';
+import { type KeyObject } from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import * as z from 'zod';
 
 import {
   AuthException,
@@ -16,30 +15,13 @@ import { type IdentityAssertionSigningKeySet } from 'src/engine/core-modules/aut
 import { type IdentityAssertionRefusalReason } from 'src/engine/core-modules/auth/identity-assertion/types/identity-assertion-refusal-reason.type';
 import { areIdentityAssertionSigningKeysFresh } from 'src/engine/core-modules/auth/identity-assertion/utils/are-identity-assertion-signing-keys-fresh.util';
 import { getIdentityAssertionKeyId } from 'src/engine/core-modules/auth/identity-assertion/utils/get-identity-assertion-key-id.util';
+import { parseIdentityAssertionSigningKeys } from 'src/engine/core-modules/auth/identity-assertion/utils/parse-identity-assertion-signing-keys.util';
 import { shouldFetchIdentityAssertionSigningKeys } from 'src/engine/core-modules/auth/identity-assertion/utils/should-fetch-identity-assertion-signing-keys.util';
 import { verifyIdentityAssertion } from 'src/engine/core-modules/auth/identity-assertion/utils/verify-identity-assertion.util';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { isServerAdminWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-workspace.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-const SIGNING_KEY_SET_SCHEMA = z.object({ keys: z.array(z.unknown()) });
-
-const SIGNING_KEY_SCHEMA = z.discriminatedUnion('kty', [
-  z.object({
-    kid: z.string(),
-    kty: z.literal('RSA'),
-    n: z.string(),
-    e: z.string(),
-  }),
-  z.object({
-    kid: z.string(),
-    kty: z.literal('EC'),
-    crv: z.string(),
-    x: z.string(),
-    y: z.string(),
-  }),
-]);
 
 @Injectable()
 export class ServerAdminIdentityAssertionService {
@@ -265,23 +247,12 @@ export class ServerAdminIdentityAssertionService {
       const response = await this.secureHttpClientService
         .getHttpClient({
           timeout: IDENTITY_ASSERTION_SIGNING_KEYS_FETCH_TIMEOUT_MS,
+          maxRedirects: 0,
         })
         .get<unknown>(signingKeysUrl);
 
-      const { keys } = SIGNING_KEY_SET_SCHEMA.parse(response.data);
-
-      signingKeySet.keysByKeyId = new Map(
-        keys.flatMap((key) => {
-          const signingKey = SIGNING_KEY_SCHEMA.safeParse(key);
-
-          if (!signingKey.success) {
-            return [];
-          }
-
-          const { kid, ...jsonWebKey } = signingKey.data;
-
-          return [[kid, createPublicKey({ key: jsonWebKey, format: 'jwk' })]];
-        }),
+      signingKeySet.keysByKeyId = parseIdentityAssertionSigningKeys(
+        response.data,
       );
       signingKeySet.fetchedAt = Date.now();
     } catch (error) {
