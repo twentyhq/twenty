@@ -1,12 +1,12 @@
-import { parseSendAppMessageResult as parseSendAppMessageResultWithAttachmentCount } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
+import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 
-const parseSendAppMessageResult = (data: unknown, attachmentCount = 0) =>
-  parseSendAppMessageResultWithAttachmentCount({ data, attachmentCount });
+const parseResultWithoutAttachments = (data: unknown) =>
+  parseSendAppMessageResult({ data, attachmentCount: 0 });
 
 describe('parseSendAppMessageResult', () => {
   it('returns the trimmed external id with the send time', () => {
     expect(
-      parseSendAppMessageResult({
+      parseResultWithoutAttachments({
         externalId: ' message-a ',
         sentAt: '2026-10-23T09:30:00.000Z',
       }),
@@ -27,7 +27,7 @@ describe('parseSendAppMessageResult', () => {
   ])(
     'accepts %s as the send time, or leaves it out',
     (_label, sentAt, isKept) => {
-      const result = parseSendAppMessageResult({
+      const result = parseResultWithoutAttachments({
         externalId: 'message-a',
         sentAt,
       });
@@ -39,7 +39,7 @@ describe('parseSendAppMessageResult', () => {
 
   it('reads an epoch in seconds as seconds', () => {
     expect(
-      parseSendAppMessageResult({
+      parseResultWithoutAttachments({
         externalId: 'message-a',
         sentAt: 1792747800,
       }),
@@ -54,7 +54,7 @@ describe('parseSendAppMessageResult', () => {
 
   it('leaves the send time out when it is absent or null', () => {
     expect(
-      parseSendAppMessageResult({ externalId: 'message-a', sentAt: null }),
+      parseResultWithoutAttachments({ externalId: 'message-a', sentAt: null }),
     ).toEqual({ isValid: true, sentMessage: { externalId: 'message-a' } });
   });
 
@@ -65,7 +65,7 @@ describe('parseSendAppMessageResult', () => {
     ['a blank id', { externalId: '  ' }],
     ['an id over 512 characters', { externalId: 'a'.repeat(513) }],
   ])('rejects %s', (_label, data) => {
-    expect(parseSendAppMessageResult(data)).toEqual({
+    expect(parseResultWithoutAttachments(data)).toEqual({
       isValid: false,
       reason: expect.any(String),
     });
@@ -73,8 +73,8 @@ describe('parseSendAppMessageResult', () => {
 
   it('returns the attachments sent in their own message and the rejected ones', () => {
     expect(
-      parseSendAppMessageResult(
-        {
+      parseSendAppMessageResult({
+        data: {
           externalId: 'message-a',
           splitAttachments: [
             {
@@ -86,8 +86,8 @@ describe('parseSendAppMessageResult', () => {
           ],
           rejectedAttachmentIndexes: [0],
         },
-        3,
-      ),
+        attachmentCount: 3,
+      }),
     ).toEqual({
       isValid: true,
       sentMessage: {
@@ -107,14 +107,14 @@ describe('parseSendAppMessageResult', () => {
 
   it('leaves empty or null attachment reports out', () => {
     expect(
-      parseSendAppMessageResult(
-        {
+      parseSendAppMessageResult({
+        data: {
           externalId: 'message-a',
           splitAttachments: [],
           rejectedAttachmentIndexes: null,
         },
-        2,
-      ),
+        attachmentCount: 2,
+      }),
     ).toEqual({ isValid: true, sentMessage: { externalId: 'message-a' } });
   });
 
@@ -152,10 +152,10 @@ describe('parseSendAppMessageResult', () => {
     ],
   ])('rejects %s', (_label, attachmentReport) => {
     expect(
-      parseSendAppMessageResult(
-        { externalId: 'message-a', ...attachmentReport },
-        2,
-      ),
+      parseSendAppMessageResult({
+        data: { externalId: 'message-a', ...attachmentReport },
+        attachmentCount: 2,
+      }),
     ).toEqual({ isValid: false, reason: expect.any(String) });
   });
 });

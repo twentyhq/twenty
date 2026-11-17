@@ -25,6 +25,7 @@ const send = () =>
     chatId: 'chat-1',
     text: 'Thanks, talk soon',
     attachments: [],
+    deadlineAtMs: Date.now() + 1000,
   });
 
 describe('sendUnipileChatMessage', () => {
@@ -41,6 +42,7 @@ describe('sendUnipileChatMessage', () => {
     expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith({
       auth: 'key',
       throwOnError: true,
+      signal: expect.any(AbortSignal),
       path: { account_id: 'acc_1', chat_id: 'chat-1' },
       body: { text: 'Thanks, talk soon' },
     });
@@ -55,6 +57,7 @@ describe('sendUnipileChatMessage', () => {
       accountId: 'acc_1',
       chatId: 'chat-1',
       text: 'See attached',
+      deadlineAtMs: Date.now() + 1000,
       attachments: [
         {
           content: Buffer.from('report'),
@@ -72,6 +75,7 @@ describe('sendUnipileChatMessage', () => {
     expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith({
       auth: 'key',
       throwOnError: true,
+      signal: expect.any(AbortSignal),
       path: { account_id: 'acc_1', chat_id: 'chat-1' },
       body: { text: 'See attached' },
       bodySerializer: expect.any(Function),
@@ -124,5 +128,23 @@ describe('sendUnipileChatMessage', () => {
     await expect(send()).rejects.toBeInstanceOf(UnipileRateLimitError);
     expect(mocks.sendMessage).toHaveBeenCalledOnce();
     expect(mocks.wait).not.toHaveBeenCalled();
+  });
+
+  it('aborts the request at the deadline', async () => {
+    mocks.sendMessage.mockResolvedValue({
+      data: { object: 'MessageSent', message_id: 'message-1' },
+    });
+
+    await sendUnipileChatMessage({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: 'Thanks, talk soon',
+      attachments: [],
+      deadlineAtMs: Date.now() - 1000,
+    });
+
+    const [{ signal }] = mocks.sendMessage.mock.calls[0];
+
+    await vi.waitFor(() => expect(signal.aborted).toBe(true));
   });
 });

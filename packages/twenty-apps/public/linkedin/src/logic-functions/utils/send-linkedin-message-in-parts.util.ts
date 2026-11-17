@@ -13,14 +13,24 @@ export const sendLinkedinMessageInParts = async ({
   chatId,
   text,
   attachments,
+  deadlineAtMs,
 }: {
   accountId: string;
   chatId: string;
   text: string;
   attachments: UnipileOutgoingAttachment[];
+  deadlineAtMs: number;
 }): Promise<LinkedinSendMessageResult> => {
-  let externalId = isNonEmptyString(text)
-    ? await sendUnipileChatMessage({ accountId, chatId, text, attachments: [] })
+  const chat = { accountId, chatId, deadlineAtMs };
+  let sentMessage = isNonEmptyString(text)
+    ? {
+        externalId: await sendUnipileChatMessage({
+          ...chat,
+          text,
+          attachments: [],
+        }),
+        sentAt: new Date().toISOString(),
+      }
     : undefined;
   const splitAttachments: NonNullable<
     LinkedinSendMessageResult['splitAttachments']
@@ -29,25 +39,28 @@ export const sendLinkedinMessageInParts = async ({
 
   for (const [attachmentIndex, attachment] of attachments.entries()) {
     try {
-      const attachmentExternalId = await sendUnipileChatMessage({
-        accountId,
-        chatId,
-        text: '',
-        attachments: [attachment],
-      });
+      if (Date.now() >= deadlineAtMs) {
+        throw new Error('No time left to send it');
+      }
 
-      if (isDefined(externalId)) {
-        splitAttachments.push({
-          attachmentIndex,
-          externalId: attachmentExternalId,
-        });
+      const attachmentMessage = {
+        externalId: await sendUnipileChatMessage({
+          ...chat,
+          text: '',
+          attachments: [attachment],
+        }),
+        sentAt: new Date().toISOString(),
+      };
+
+      if (isDefined(sentMessage)) {
+        splitAttachments.push({ attachmentIndex, ...attachmentMessage });
       } else {
-        externalId = attachmentExternalId;
+        sentMessage = attachmentMessage;
       }
     } catch (error) {
       // Once a part is sent, failing the reply would make a retry send it twice
       if (
-        !isDefined(externalId) &&
+        !isDefined(sentMessage) &&
         !isUnipileUnsupportedMediaTypeError(error)
       ) {
         throw error;
@@ -60,9 +73,9 @@ export const sendLinkedinMessageInParts = async ({
     }
   }
 
-  if (!isDefined(externalId)) {
+  if (!isDefined(sentMessage)) {
     throw new Error('LinkedIn refused every attachment of the reply');
   }
 
-  return { externalId, splitAttachments, rejectedAttachmentIndexes };
+  return { ...sentMessage, splitAttachments, rejectedAttachmentIndexes };
 };

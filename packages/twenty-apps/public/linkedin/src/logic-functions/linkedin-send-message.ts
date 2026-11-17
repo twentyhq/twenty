@@ -91,6 +91,7 @@ export const linkedinSendMessageHandler = async ({
     chatId: threadExternalId,
     text,
     attachments: unipileAttachments,
+    deadlineAtMs,
   };
 
   try {

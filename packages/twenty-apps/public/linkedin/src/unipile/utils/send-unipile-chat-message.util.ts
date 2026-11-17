@@ -32,17 +32,21 @@ export const sendUnipileChatMessage = async ({
   chatId,
   text,
   attachments,
+  deadlineAtMs,
 }: {
   accountId: string;
   chatId: string;
   text: string;
   attachments: UnipileOutgoingAttachment[];
+  deadlineAtMs: number;
 }): Promise<string> => {
+  const signal = AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1));
   const { data } = await requestUnipile(
     'send message',
     () =>
       new UnipileMessaging().sendMessage({
         ...getUnipileRequestOptions(),
+        signal,
         path: { account_id: accountId, chat_id: chatId },
         body: { text },
         // Unipile rejects base64 attachments in a JSON body past ~1MB (413),
