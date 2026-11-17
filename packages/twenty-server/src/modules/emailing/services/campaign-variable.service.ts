@@ -6,6 +6,8 @@ import {
   type CampaignVariableDefinition,
   isDefined,
   listCampaignVariablesForFields,
+  readLruEntry,
+  writeLruEntry,
 } from 'twenty-shared/utils';
 
 import {
@@ -19,7 +21,6 @@ import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-fie
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 
 export type PersonCampaignVariables = {
   definitions: CampaignVariableDefinition[];
