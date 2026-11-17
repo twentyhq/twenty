@@ -159,6 +159,7 @@ const VIEW_SORT_MANIFEST: ViewSortManifest = {
   fieldMetadataUniversalIdentifier: FIELD_UID,
   direction: ViewSortDirection.DESC,
   subFieldName: 'primaryLinkUrl',
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const VIEW_MANIFEST: ViewManifest = {

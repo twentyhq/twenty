@@ -311,6 +311,7 @@ import { RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand } from 's
 import { AddTabAndSectionNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794921429000-add-tab-and-section-navigation-menu-items';
 import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794922746000-add-is-system-side-effect-to-role-and-role-target';
 import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
+import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794927394074-add-view-sort-relation-target-field-metadata-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -624,4 +625,5 @@ export const INSTANCE_COMMANDS = [
   AddTabAndSectionNavigationMenuItemsFastInstanceCommand,
   AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand,
   AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
+  AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
 ];

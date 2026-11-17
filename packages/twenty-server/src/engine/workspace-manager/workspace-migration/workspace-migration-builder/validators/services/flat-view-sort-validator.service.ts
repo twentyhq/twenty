@@ -12,6 +12,7 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { ViewSortDirection } from 'twenty-shared/types';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { validateFlatViewSortRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util';
 
 @Injectable()
 export class FlatViewSortValidatorService {
@@ -63,6 +64,14 @@ export class FlatViewSortValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...validateFlatViewSortRelationTarget({
+          flatViewSort: flatViewSortToValidate,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
@@ -124,6 +133,7 @@ export class FlatViewSortValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
@@ -174,6 +184,21 @@ export class FlatViewSortValidatorService {
       ...validationResult.flatEntityMinimalInformation,
       viewUniversalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,
     };
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatViewSort.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (isDefined(flatFieldMetadata)) {
+      validationResult.errors.push(
+        ...validateFlatViewSortRelationTarget({
+          flatViewSort: updatedFlatViewSort,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
+    }
 
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,

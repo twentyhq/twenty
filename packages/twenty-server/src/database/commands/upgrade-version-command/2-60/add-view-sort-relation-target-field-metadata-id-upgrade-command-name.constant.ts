@@ -1,0 +1,2 @@
+export const ADD_VIEW_SORT_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME =
+  '2.60.0_AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand_1794927394074';
