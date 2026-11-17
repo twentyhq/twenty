@@ -3842,7 +3842,7 @@ type Mutation {
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
-  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
@@ -4764,6 +4764,7 @@ type RowLevelPermissionPredicate {
   relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
+  rowLevelPermissionRuleId: String
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
@@ -4781,36 +4782,12 @@ type RowLevelPermissionPredicateGroup {
   parentRowLevelPermissionPredicateGroupId: String
   positionInRowLevelPermissionPredicateGroup: Float
   roleId: String!
-}
-
-input RowLevelPermissionPredicateGroupInput {
-  canDestroyRecords: Boolean
-  canReadRecords: Boolean
-  canSoftDeleteRecords: Boolean
-  canUpdateRecords: Boolean
-  id: UUID
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
-  objectMetadataId: UUID!
-  parentRowLevelPermissionPredicateGroupId: UUID
-  positionInRowLevelPermissionPredicateGroup: Float
+  rowLevelPermissionRuleId: String
 }
 
 enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND
   OR
-}
-
-input RowLevelPermissionPredicateInput {
-  fieldMetadataId: UUID!
-  id: UUID
-  operand: RowLevelPermissionPredicateOperand!
-  positionInRowLevelPermissionPredicateGroup: Float
-  relationFieldMetadataId: UUID
-  rowLevelPermissionPredicateGroupId: UUID
-  subFieldName: String
-  value: JSON
-  workspaceMemberFieldMetadataId: String
-  workspaceMemberSubFieldName: String
 }
 
 enum RowLevelPermissionPredicateOperand {
@@ -4840,6 +4817,37 @@ type RowLevelPermissionRule {
   canUpdateRecords: Boolean!
   id: UUID!
   objectMetadataId: UUID!
+}
+
+input RowLevelPermissionRuleInput {
+  canCreateRecords: Boolean
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
+  id: UUID
+  predicateGroups: [RowLevelPermissionRulePredicateGroupInput!]
+  predicates: [RowLevelPermissionRulePredicateInput!]
+}
+
+input RowLevelPermissionRulePredicateGroupInput {
+  id: UUID
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
+  position: Float
+  predicateGroups: [RowLevelPermissionRulePredicateGroupInput!]
+  predicates: [RowLevelPermissionRulePredicateInput!]
+}
+
+input RowLevelPermissionRulePredicateInput {
+  fieldMetadataId: UUID!
+  id: UUID
+  operand: RowLevelPermissionPredicateOperand!
+  position: Float
+  relationFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON
+  workspaceMemberFieldMetadataId: String
+  workspaceMemberSubFieldName: String
 }
 
 type RowLevelRecordsPermissions {
@@ -5983,21 +5991,16 @@ input UpsertPermissionFlagsInput {
   roleId: UUID!
 }
 
-input UpsertRowLevelPermissionPredicatesInput {
-  canCreateRecords: Boolean
-  canDestroyRecords: Boolean
-  canReadRecords: Boolean
-  canSoftDeleteRecords: Boolean
-  canUpdateRecords: Boolean
+input UpsertRowLevelPermissionRulesInput {
   objectMetadataId: UUID!
-  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
-  predicates: [RowLevelPermissionPredicateInput!]!
   roleId: UUID!
+  rules: [RowLevelPermissionRuleInput!]!
 }
 
-type UpsertRowLevelPermissionPredicatesResult {
+type UpsertRowLevelPermissionRulesResult {
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
+  rules: [RowLevelPermissionRule!]!
 }
 
 input UpsertViewWidgetInput {
