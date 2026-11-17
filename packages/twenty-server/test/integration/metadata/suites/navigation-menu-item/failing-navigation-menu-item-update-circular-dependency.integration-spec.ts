@@ -1,4 +1,5 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
@@ -22,7 +23,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
   });
 
   afterAll(async () => {
-    if (folderId) {
+    if (isDefined(folderId)) {
       await deleteNavigationMenuItem({
         expectToFail: false,
         input: { id: folderId },
