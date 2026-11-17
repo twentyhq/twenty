@@ -174,25 +174,31 @@ describe('field permissions on an RLS rule (integration)', () => {
     ]);
   });
 
-  it('should not match the hidden value in a filter', async () => {
-    const response = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: {
-          id: { in: originalPeople.map(({ id }) => id) },
-          avatarUrl: { eq: 'Secret avatar' },
-        },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+  it.each([
+    ['the hidden value', { eq: 'Secret avatar' }],
+    ['an empty value', { is: 'NULL' }],
+  ])(
+    'should not match %s in a filter on the hidden field',
+    async (_, avatarUrlFilter) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          filter: {
+            id: { in: originalPeople.map(({ id }) => id) },
+            avatarUrl: avatarUrlFilter,
+          },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.people.edges).toEqual([]);
-  });
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.people.edges).toEqual([]);
+    },
+  );
 
-  it('should not reveal the hidden value through a group', async () => {
+  it('should leave the rows a field is hidden on out of a group on it', async () => {
     const introFieldMetadataId = await findFieldMetadataId('intro');
     const setIntroReadability = (canReadFieldValue: false | null) =>
       upsertFieldPermissions({
@@ -232,12 +238,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(
-        response.body.data.peopleGroupBy.flatMap(
-          ({ groupByDimensionValues }: { groupByDimensionValues: unknown[] }) =>
-            groupByDimensionValues,
-        ),
-      ).not.toContain('Secret intro');
+      expect(response.body.data.peopleGroupBy).toEqual([]);
     } finally {
       await setIntroReadability(null);
       await global.testDataSource.query(

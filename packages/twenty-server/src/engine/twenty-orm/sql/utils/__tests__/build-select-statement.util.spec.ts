@@ -88,7 +88,7 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should group a nullified column by its nullified value', () => {
+  it('should group a nullified column by its nullified value and leave out the rows it is hidden on', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
@@ -101,9 +101,10 @@ describe('buildSelectStatement', () => {
 
     expect(sql).toContain(`${nullifiedColumn} AS "groupId"`);
     expect(sql).toContain(`GROUP BY ${nullifiedColumn}`);
+    expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
   });
 
-  it('should filter and order on the nullified value of a column, and leave row access conditions and string literals alone', () => {
+  it('should leave out of a filter the rows its column is hidden on, order on the nullified value, and leave row access conditions and string literals alone', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
@@ -122,9 +123,21 @@ describe('buildSelectStatement', () => {
       '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
     expect(sql).toContain(
-      `WHERE (${nullifiedColumn} = :a OR "person"."name" = '"person"."id"') AND ("person"."id" = :ownerId)`,
+      `WHERE (${nullifiedColumn} = :a OR "person"."name" = '"person"."id"') AND ("person"."id" = :ownerId) AND (NOT COALESCE(("person"."x" = :x), FALSE))`,
     );
     expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
+  });
+
+  it('should keep every row when only a sort reads a hidden column', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).not.toContain('NOT COALESCE');
   });
 
   it('should keep row access conditions outside a user OR chain', () => {

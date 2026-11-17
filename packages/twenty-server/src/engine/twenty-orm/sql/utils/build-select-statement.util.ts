@@ -110,7 +110,7 @@ const renderNullifiedColumn = ({
     .map((nullifyCondition) => `(${nullifyCondition})`)
     .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
 
-// a column hidden on some rows reads as NULL wherever a caller can test it, so a filter, a sort or a group cannot reveal it
+// a column hidden on some rows reads as NULL wherever a caller can test it, so a sort or a computed value cannot reveal it
 export const maskNullifiedColumnReferences = ({
   expression,
   columnNullifyConditions,
@@ -154,6 +154,55 @@ export const maskNullifiedColumnReferences = ({
           ),
     )
     .join('');
+};
+
+const findReferencedColumnNullifyConditions = ({
+  expression,
+  columnNullifyConditions,
+}: {
+  expression: string;
+  columnNullifyConditions: ColumnNullifyConditions;
+}): string[] => {
+  const expressionOutsideLiterals = expression
+    .split(SQL_STRING_LITERALS)
+    .filter((_, segmentIndex) => segmentIndex % 2 === 0)
+    .join(' ');
+
+  return Object.entries(columnNullifyConditions).flatMap(
+    ([alias, conditions]) =>
+      Object.entries(conditions).flatMap(([columnName, nullifyConditions]) =>
+        expressionOutsideLiterals.includes(quoteColumn(alias, columnName))
+          ? nullifyConditions
+          : [],
+      ),
+  );
+};
+
+// a row whose filtered or grouped column is hidden matches no filter and joins no group on it, not even an empty one
+const buildHiddenRowExclusionCondition = (
+  state: SelectStatementState,
+): string | undefined => {
+  const aliases = collectStatementAliases(state);
+  const excludedConditions = [
+    ...new Set(
+      [
+        ...state.whereClauses.map(({ sql }) => sql),
+        ...state.existsFilterClauses.map(({ conditionSql }) => conditionSql),
+        ...state.groupByExpressions,
+      ].flatMap((expression) =>
+        findReferencedColumnNullifyConditions({
+          expression: quoteQualifiedAliasReferences(expression, aliases),
+          columnNullifyConditions: state.columnNullifyConditions,
+        }),
+      ),
+    ),
+  ];
+
+  return excludedConditions.length > 0
+    ? `NOT COALESCE(${excludedConditions
+        .map((excludedCondition) => `(${excludedCondition})`)
+        .join(' OR ')}, FALSE)`
+    : undefined;
 };
 
 const renderProjectedColumn = ({
@@ -532,7 +581,10 @@ export const buildWhereExpression = (
           columnNullifyConditions: state.columnNullifyConditions,
         }),
       })),
-      rowAccessConditions: state.rowAccessConditions,
+      rowAccessConditions: [
+        ...state.rowAccessConditions,
+        buildHiddenRowExclusionCondition(state),
+      ].filter(isDefined),
     }),
     aliases,
   );
