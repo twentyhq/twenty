@@ -6,8 +6,7 @@ export type BrandedType<TValue, TBrand extends string> = TValue & {
   readonly [brandedTypeTag]?: { readonly [TBrandName in TBrand]: true };
 };
 
-// Not distributive: a union is branded only as a whole, so callers that brand a
-// union member narrow with NonNullable or Extract before asking
+// Not distributive: callers narrow with NonNullable or Extract before asking
 export type HasBrandedType<TValue, TBrand extends string> = [TValue] extends [
   { readonly [brandedTypeTag]?: infer TBrands },
 ]
