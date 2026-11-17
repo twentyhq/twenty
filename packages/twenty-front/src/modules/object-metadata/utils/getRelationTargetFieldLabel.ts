@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-export const getRelationTargetRecordFilterLabel = ({
+export const getRelationTargetFieldLabel = ({
   sourceFieldMetadataItem,
   relationTargetFieldMetadataItem,
 }: {

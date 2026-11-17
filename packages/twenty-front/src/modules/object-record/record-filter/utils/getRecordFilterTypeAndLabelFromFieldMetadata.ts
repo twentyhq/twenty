@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getRelationTargetRecordFilterLabel } from '@/object-record/record-filter/utils/getRelationTargetRecordFilterLabel';
+import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
@@ -48,7 +48,7 @@ export const getRecordFilterTypeAndLabelFromFieldMetadata = ({
   const label = isSystemSearchVectorField(sourceFieldMetadataItem.name)
     ? t`Search`
     : isDefined(relationTargetFieldMetadataItem)
-      ? getRelationTargetRecordFilterLabel({
+      ? getRelationTargetFieldLabel({
           sourceFieldMetadataItem,
           relationTargetFieldMetadataItem,
         })
