@@ -4,6 +4,7 @@ import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissi
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsRolePermissionsObjectLevelSeeFieldsValueForObjectProps = {
   roleId: string;
@@ -38,7 +39,9 @@ export const SettingsRolePermissionsObjectLevelSeeFieldsValueForObject = ({
 
   const numberOfRestrictedFieldMetadataItemsOnRead =
     roleFieldPermissions.filter(
-      (fieldPermission) => fieldPermission.canReadFieldValue === false,
+      (fieldPermission) =>
+        isDefined(fieldPermission.canReadFieldValue) &&
+        !fieldPermission.canReadFieldValue,
     ).length;
 
   const canReadSome =

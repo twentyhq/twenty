@@ -114,12 +114,12 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
     },
-    folder: {
+    parent: {
       metadataName: 'navigationMenuItem',
-      foreignKey: 'folderId',
+      foreignKey: 'parentId',
       inverseOneToManyProperty: null,
       isNullable: true,
-      universalForeignKey: 'folderUniversalIdentifier',
+      universalForeignKey: 'parentUniversalIdentifier',
     },
     view: {
       metadataName: 'view',
@@ -768,6 +768,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   workflowVersion: {
     workspace: null,
     application: null,
+    coreWorkflow: {
+      metadataName: 'workflow',
+      foreignKey: 'coreWorkflowId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'coreWorkflowUniversalIdentifier',
+    },
   },
   agentChatChannel: {
     workspace: null,

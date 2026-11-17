@@ -9,7 +9,7 @@ const FIND_MANY_NAVIGATION_MENU_ITEMS_QUERY = `
       targetRecordId
       targetObjectMetadataId
       viewId
-      folderId
+      parentId
       name
       link
       icon

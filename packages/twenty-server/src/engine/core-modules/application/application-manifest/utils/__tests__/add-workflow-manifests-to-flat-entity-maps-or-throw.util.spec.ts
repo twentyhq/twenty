@@ -47,10 +47,13 @@ const compute = ({
   )) {
     const version = (workflow as UniversalFlatWorkflow | undefined)
       ?.flatUniversalWorkflowVersion;
-    if (isDefined(version)) {
+    if (isDefined(version) && isDefined(workflow)) {
       fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
         version.universalIdentifier
-      ] = version as FlatWorkflowVersion;
+      ] = {
+        ...version,
+        coreWorkflowId: workflow.id,
+      } as FlatWorkflowVersion;
     }
   }
   const toAllUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();

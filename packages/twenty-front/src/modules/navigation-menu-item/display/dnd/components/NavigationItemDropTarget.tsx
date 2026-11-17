@@ -47,7 +47,7 @@ const StyledDropTarget = styled.div<{
 `;
 
 type NavigationItemDropTargetProps = {
-  folderId: string | null;
+  parentId: string | null;
   index: number;
   sectionId: NavigationSections;
   children?: ReactNode;
@@ -58,7 +58,7 @@ type NavigationItemDropTargetProps = {
 };
 
 export const NavigationItemDropTarget = ({
-  folderId,
+  parentId,
   index,
   sectionId,
   children,
@@ -71,7 +71,7 @@ export const NavigationItemDropTarget = ({
     NavigationDropTargetContext,
   );
   const dropTargetId =
-    dropTargetIdOverride ?? `${sectionId}-${folderId ?? 'orphan'}-${index}`;
+    dropTargetIdOverride ?? `${sectionId}-${parentId ?? 'orphan'}-${index}`;
   const isDragOver = activeDropTargetId === dropTargetId;
   const isDropForbidden = forbiddenDropTargetId === dropTargetId;
 
@@ -83,7 +83,7 @@ export const NavigationItemDropTarget = ({
       data-drop-forbidden={isDropForbidden ? 'true' : undefined}
     >
       <NavigationMenuItemInsertionPreview
-        folderId={folderId}
+        parentId={parentId}
         index={index}
         sectionId={sectionId}
         subItemState={previewSubItemState}

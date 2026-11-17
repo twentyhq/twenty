@@ -11,7 +11,6 @@ import { getRecordTableWidgetIsUIEditable } from '@/page-layout/widgets/record-t
 import {
   getRecordTableWidgetLayoutViewType,
   isRecordTableWidgetContentEditingSupported,
-  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -22,7 +21,7 @@ import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout
 import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent';
 import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarFieldDropdownContent';
 import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent';
-import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
+import { RecordTableLayoutSelectionSection } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
@@ -164,8 +163,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const isKanbanLayout = currentLayoutViewType === ViewType.KANBAN_WIDGET;
   const isCalendarLayout = currentLayoutViewType === ViewType.CALENDAR_WIDGET;
 
-  const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
-    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
   const isWidgetContentEditingSupported =
     isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
@@ -211,7 +208,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
     'record-table-source',
     ...(hasViewId
       ? [
-          'object-view-layout',
           'record-table-fields',
           'record-table-filter',
           'record-table-sort',
@@ -244,6 +240,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
       >
         <StyledSettingsContainer>
           <SidePanelList selectableItemIds={selectableItemIds}>
+            {hasViewId && (
+              <RecordTableLayoutSelectionSection
+                pageLayoutId={pageLayoutId}
+                widgetId={widgetInEditMode.id}
+                objectMetadataId={widgetInEditMode.objectMetadataId!}
+                currentLayoutViewType={currentLayoutViewType}
+              />
+            )}
             <SidePanelGroup heading={t`Settings`}>
               <SelectableListItem
                 itemId="record-table-source"
@@ -267,43 +271,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
                     collisionPadding={{ left: 0, right: 0 }}
                   >
                     <RecordTableDataSourceDropdownContent />
-                  </DropdownContent>
-                </DropdownRoot>
-              </SelectableListItem>
-              <SelectableListItem
-                itemId="object-view-layout"
-                onEnter={
-                  hasViewId
-                    ? () =>
-                        openDropdown({
-                          dropdownComponentInstanceIdFromProps:
-                            'object-view-layout',
-                        })
-                    : undefined
-                }
-              >
-                <DropdownRoot dropdownId="object-view-layout" type="picker">
-                  <CommandMenuItemDropdownTrigger
-                    Icon={CurrentLayoutIcon}
-                    label={t`Layout`}
-                    id="object-view-layout"
-                    description={t(currentLayoutLabel)}
-                    disabled={!hasViewId}
-                    contextualTextPosition="right"
-                  />
-                  <DropdownContent
-                    side="bottom"
-                    align="end"
-                    collisionPadding={{ left: 0, right: 0 }}
-                  >
-                    {hasViewId && (
-                      <RecordTableLayoutDropdownContent
-                        pageLayoutId={pageLayoutId}
-                        widgetId={widgetInEditMode.id}
-                        objectMetadataId={widgetInEditMode.objectMetadataId!}
-                        currentLayoutViewType={currentLayoutViewType}
-                      />
-                    )}
                   </DropdownContent>
                 </DropdownRoot>
               </SelectableListItem>

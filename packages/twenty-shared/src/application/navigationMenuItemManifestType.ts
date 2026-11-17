@@ -11,6 +11,9 @@ export type NavigationMenuItemManifest = SyncableEntityOptions & {
   viewUniversalIdentifier?: string;
   link?: string;
   nativePageKey?: NativePageKey;
+  parentUniversalIdentifier?: string;
+  // TODO(@thomtrp): remove once published apps no longer send it, along with normalizeNavigationMenuItemManifest
+  /** @deprecated Use parentUniversalIdentifier instead. */
   folderUniversalIdentifier?: string;
   targetObjectUniversalIdentifier?: string;
   pageLayoutUniversalIdentifier?: string;

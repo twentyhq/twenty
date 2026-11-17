@@ -20,11 +20,20 @@ export const buildWorkflowVersionSideEffects = ({
   }
 
   const { universalIdentifier } = version;
-  const workflowVersions = Object.values(
-    relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .filter(({ coreWorkflowId }) => coreWorkflowId === version.coreWorkflowId);
+  const coreWorkflowId =
+    relatedFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
+      flatEntity.universalIdentifier
+    ]?.id;
+  const workflowVersions = isDefined(coreWorkflowId)
+    ? Object.values(
+        relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (flatWorkflowVersion) =>
+            flatWorkflowVersion.coreWorkflowId === coreWorkflowId,
+        )
+    : [];
   const existingVersion =
     relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
       universalIdentifier

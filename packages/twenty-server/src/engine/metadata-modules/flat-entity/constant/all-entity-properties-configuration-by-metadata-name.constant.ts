@@ -1452,10 +1452,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    folderId: {
+    parentId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: 'folderUniversalIdentifier',
+      universalProperty: 'parentUniversalIdentifier',
     },
     name: {
       toCompare: true,
@@ -2620,7 +2620,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     coreWorkflowId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'coreWorkflowUniversalIdentifier',
     },
     workflowId: {
       toCompare: false,
