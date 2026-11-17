@@ -43,9 +43,7 @@ type ManyToOneRelationValue<
             inverseOneToManyProperty:
               | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TTargetMetadataName]
               | null;
-            // Read off the foreign key column, not the relation property: a
-            // column an upgrade command still leaves unset is nullable even
-            // where the relation that reads it is not
+            // Read off the column: one an upgrade command leaves unset is nullable even where its relation is not
             isNullable: FK extends keyof MetadataEntity<TSourceMetadataName>
               ? null extends MetadataEntity<TSourceMetadataName>[FK]
                 ? true

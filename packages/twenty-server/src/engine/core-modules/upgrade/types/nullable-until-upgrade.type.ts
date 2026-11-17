@@ -1,10 +1,7 @@
 import { type Expect } from 'twenty-shared/testing';
 import { type BrandedType, type HasBrandedType } from 'twenty-shared/types';
 
-// A foreign key column that is already NOT NULL at the current version but that
-// a released upgrade command still has to leave unset while it runs against an
-// older schema. Drop the wrapper once those commands fall out of
-// TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.
+// Drop the wrapper once the upgrade commands that leave this column unset fall out of TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS
 export type NullableUntilUpgrade<TValue> = BrandedType<
   TValue,
   'nullableUntilUpgrade'
