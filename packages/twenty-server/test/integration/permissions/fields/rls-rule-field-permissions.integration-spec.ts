@@ -193,23 +193,58 @@ describe('field permissions on an RLS rule (integration)', () => {
   });
 
   it('should not reveal the hidden value through a group', async () => {
-    const response = await makeGraphqlApiRequest(
-      groupByOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        groupBy: [{ avatarUrl: true }],
-        filter: { id: { in: originalPeople.map(({ id }) => id) } },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    const introFieldMetadataId = await findFieldMetadataId('intro');
+    const setIntroReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: [
+            {
+              objectMetadataId,
+              fieldMetadataId: introFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+    const [{ intro: originalIntro }] = await global.testDataSource.query(
+      `SELECT "intro" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [originalPeople[0].id],
     );
 
-    expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.peopleGroupBy.flatMap(
-        ({ groupByDimensionValues }: { groupByDimensionValues: unknown[] }) =>
-          groupByDimensionValues,
-      ),
-    ).not.toContain('Secret avatar');
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "intro" = 'Secret intro' WHERE "id" = $1`,
+      [originalPeople[0].id],
+    );
+    await setIntroReadability(false);
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ intro: true }],
+          filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.peopleGroupBy.flatMap(
+          ({ groupByDimensionValues }: { groupByDimensionValues: unknown[] }) =>
+            groupByDimensionValues,
+        ),
+      ).not.toContain('Secret intro');
+    } finally {
+      await setIntroReadability(null);
+      await global.testDataSource.query(
+        `UPDATE ${PERSON_TABLE} SET "intro" = $1 WHERE "id" = $2`,
+        [originalIntro, originalPeople[0].id],
+      );
+    }
   });
 
   it('should keep the field on a record reached through a share', async () => {
