@@ -12,6 +12,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { IDENTITY_ASSERTION_SIGNING_KEYS_FETCH_TIMEOUT_MS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-signing-keys-fetch-timeout-ms.constant';
+import { type IdentityAssertionSigningKeySet } from 'src/engine/core-modules/auth/identity-assertion/types/identity-assertion-signing-key-set.type';
 import { type IdentityAssertionRefusalReason } from 'src/engine/core-modules/auth/identity-assertion/types/identity-assertion-refusal-reason.type';
 import { areIdentityAssertionSigningKeysFresh } from 'src/engine/core-modules/auth/identity-assertion/utils/are-identity-assertion-signing-keys-fresh.util';
 import { getIdentityAssertionKeyId } from 'src/engine/core-modules/auth/identity-assertion/utils/get-identity-assertion-key-id.util';
@@ -45,11 +46,10 @@ export class ServerAdminIdentityAssertionService {
   private readonly logger = new Logger(
     ServerAdminIdentityAssertionService.name,
   );
-  private signingKeysByKeyId = new Map<string, KeyObject>();
-  private signingKeysUrl: string | undefined;
-  private signingKeysFetchedAt: number | undefined;
-  private signingKeysFetchAttemptedAt: number | undefined;
-  private signingKeysFetch: Promise<void> | undefined;
+  private readonly signingKeySetsByUrl = new Map<
+    string,
+    IdentityAssertionSigningKeySet
+  >();
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -184,54 +184,82 @@ export class ServerAdminIdentityAssertionService {
       return undefined;
     }
 
-    if (this.signingKeysUrl !== signingKeysUrl) {
-      this.signingKeysUrl = signingKeysUrl;
-      this.signingKeysByKeyId = new Map();
-      this.signingKeysFetchedAt = undefined;
-      this.signingKeysFetchAttemptedAt = undefined;
-    }
-
-    if (
-      shouldFetchIdentityAssertionSigningKeys({
-        fetchedAt: this.signingKeysFetchedAt,
-        fetchAttemptedAt: this.signingKeysFetchAttemptedAt,
-        isSigningKeyKnown: this.signingKeysByKeyId.has(keyId),
-        now: Date.now(),
-      })
-    ) {
-      this.signingKeysFetch ??= this.fetchSigningKeys(signingKeysUrl).finally(
-        () => {
-          this.signingKeysFetch = undefined;
-        },
-      );
-    }
-
-    const cachedSigningKey = this.findFreshSigningKey(keyId);
+    const signingKeySet = this.getSigningKeySet(signingKeysUrl);
+    const cachedSigningKey = this.findFreshSigningKey({ signingKeySet, keyId });
 
     if (isDefined(cachedSigningKey)) {
       return cachedSigningKey;
     }
 
-    await this.signingKeysFetch;
+    if (
+      shouldFetchIdentityAssertionSigningKeys({
+        fetchedAt: signingKeySet.fetchedAt,
+        fetchAttemptedAt: signingKeySet.fetchAttemptedAt,
+        isSigningKeyKnown: signingKeySet.keysByKeyId.has(keyId),
+        now: Date.now(),
+      })
+    ) {
+      signingKeySet.fetch ??= this.fetchSigningKeys({
+        signingKeysUrl,
+        signingKeySet,
+      }).finally(() => {
+        signingKeySet.fetch = undefined;
+      });
+    }
 
-    return this.findFreshSigningKey(keyId);
+    await signingKeySet.fetch;
+
+    return this.findFreshSigningKey({ signingKeySet, keyId });
   }
 
-  private findFreshSigningKey(keyId: string): KeyObject | undefined {
+  private getSigningKeySet(
+    signingKeysUrl: string,
+  ): IdentityAssertionSigningKeySet {
+    const existingSigningKeySet = this.signingKeySetsByUrl.get(signingKeysUrl);
+
+    if (isDefined(existingSigningKeySet)) {
+      return existingSigningKeySet;
+    }
+
+    const signingKeySet: IdentityAssertionSigningKeySet = {
+      keysByKeyId: new Map(),
+      fetchedAt: undefined,
+      fetchAttemptedAt: undefined,
+      fetch: undefined,
+    };
+
+    this.signingKeySetsByUrl.set(signingKeysUrl, signingKeySet);
+
+    return signingKeySet;
+  }
+
+  private findFreshSigningKey({
+    signingKeySet,
+    keyId,
+  }: {
+    signingKeySet: IdentityAssertionSigningKeySet;
+    keyId: string;
+  }): KeyObject | undefined {
     if (
       !areIdentityAssertionSigningKeysFresh({
-        fetchedAt: this.signingKeysFetchedAt,
+        fetchedAt: signingKeySet.fetchedAt,
         now: Date.now(),
       })
     ) {
       return undefined;
     }
 
-    return this.signingKeysByKeyId.get(keyId);
+    return signingKeySet.keysByKeyId.get(keyId);
   }
 
-  private async fetchSigningKeys(signingKeysUrl: string): Promise<void> {
-    this.signingKeysFetchAttemptedAt = Date.now();
+  private async fetchSigningKeys({
+    signingKeysUrl,
+    signingKeySet,
+  }: {
+    signingKeysUrl: string;
+    signingKeySet: IdentityAssertionSigningKeySet;
+  }): Promise<void> {
+    signingKeySet.fetchAttemptedAt = Date.now();
 
     try {
       const response = await this.secureHttpClientService
@@ -242,7 +270,7 @@ export class ServerAdminIdentityAssertionService {
 
       const { keys } = SIGNING_KEY_SET_SCHEMA.parse(response.data);
 
-      this.signingKeysByKeyId = new Map(
+      signingKeySet.keysByKeyId = new Map(
         keys.flatMap((key) => {
           const signingKey = SIGNING_KEY_SCHEMA.safeParse(key);
 
@@ -255,7 +283,7 @@ export class ServerAdminIdentityAssertionService {
           return [[kid, createPublicKey({ key: jsonWebKey, format: 'jwk' })]];
         }),
       );
-      this.signingKeysFetchedAt = Date.now();
+      signingKeySet.fetchedAt = Date.now();
     } catch (error) {
       this.logger.error(
         `Could not fetch the identity assertion signing keys from ${signingKeysUrl}`,
