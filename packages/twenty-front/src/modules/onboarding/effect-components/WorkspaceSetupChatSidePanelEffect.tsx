@@ -2,14 +2,13 @@ import { useLayoutEffect } from 'react';
 import { useStore } from 'jotai';
 
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
 import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { Navigate, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -28,11 +27,10 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const newAiChatPagePath = isAiChatInboxEnabled
-    ? getAppPath(AppPath.AiChatInbox, {
-        threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
-      })
-    : getAppPath(AppPath.AiChat, { threadId: null });
+  const newAiChatPageRoute = getAiChatPageRoute({
+    isInbox: isAiChatInboxEnabled,
+    threadId: null,
+  });
 
   useLayoutEffect(() => {
     if (!shouldOpenAiChatAfterOnboarding) {
@@ -63,7 +61,9 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
       <Navigate
         to={
           isSettingsPath(defaultHomePagePath)
-            ? newAiChatPagePath
+            ? getAppPath(newAiChatPageRoute.appPath, {
+                threadId: newAiChatPageRoute.threadId,
+              })
             : defaultHomePagePath
         }
         replace

@@ -1,8 +1,7 @@
-import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -33,18 +32,14 @@ export const useNavigateToAiChatPage = () => {
 
     void closeSidePanelMenu();
 
-    const newChatPathSegment = isAiChatInboxEnabled
-      ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
-      : null;
+    const aiChatPageRoute = getAiChatPageRoute({
+      isInbox: isAiChatInboxEnabled,
+      threadId: isDefined(threadId) && isValidUuid(threadId) ? threadId : null,
+    });
 
     navigate(
-      isAiChatInboxEnabled ? AppPath.AiChatInbox : AppPath.AiChat,
-      {
-        threadId:
-          isDefined(threadId) && isValidUuid(threadId)
-            ? threadId
-            : newChatPathSegment,
-      },
+      aiChatPageRoute.appPath,
+      { threadId: aiChatPageRoute.threadId },
       undefined,
       {
         state: {
