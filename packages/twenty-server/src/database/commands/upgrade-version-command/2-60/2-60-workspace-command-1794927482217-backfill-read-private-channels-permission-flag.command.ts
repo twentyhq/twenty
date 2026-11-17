@@ -12,7 +12,7 @@ import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspac
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.60.0', 1794917727559)
+@RegisteredWorkspaceCommand('2.60.0', 1794927482217)
 @Command({
   name: 'upgrade:2-60:backfill-read-private-channels-permission-flag',
   description:
