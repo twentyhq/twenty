@@ -5,8 +5,9 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
+// Same frame color as DefaultLayout, which takes over once the app is ready.
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.tertiary};
+  background: ${themeCssVariables.grayScale.gray3};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
