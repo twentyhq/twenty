@@ -1,5 +1,4 @@
 import { isNumber } from '@sniptt/guards';
-import { type Temporal } from 'temporal-polyfill';
 
 import { type ExpressionDate } from '@/types/ExpressionDate';
 import { type ExpressionDateUnit } from '@/types/ExpressionDateUnit';
@@ -11,31 +10,7 @@ import { isExpressionDateInSupportedRange } from '@/utils/expression-date/isExpr
 import { parseExpressionDate } from '@/utils/expression-date/parseExpressionDate';
 import { toExpressionDateTimeInUtc } from '@/utils/expression-date/toExpressionDateTimeInUtc';
 import { truncateTowardZero } from '@/utils/expression-date/truncateTowardZero';
-
-const toDuration = ({
-  amount,
-  unit,
-}: {
-  amount: number;
-  unit: ExpressionDateUnit;
-}): Temporal.DurationLike => {
-  switch (unit) {
-    case 'MINUTE':
-      return { minutes: amount };
-    case 'HOUR':
-      return { hours: amount };
-    case 'DAY':
-      return { days: amount };
-    case 'WEEK':
-      return { weeks: amount };
-    case 'MONTH':
-      return { months: amount };
-    case 'QUARTER':
-      return { months: amount * 3 };
-    case 'YEAR':
-      return { years: amount };
-  }
-};
+import { addUnitToZonedDateTime } from '@/utils/filter/dates/utils/addUnitToZonedDateTime';
 
 // Temporal throws a RangeError for an amount it cannot represent
 const addDurationOrNull = ({
@@ -48,16 +23,15 @@ const addDurationOrNull = ({
   unit: ExpressionDateUnit;
 }): ExpressionDate | null => {
   try {
-    const duration = toDuration({ amount, unit });
+    const dateTime = addUnitToZonedDateTime(
+      toExpressionDateTimeInUtc(expressionDate),
+      unit,
+      amount,
+    );
 
-    if (expressionDate.isDateOnly && unit !== 'MINUTE' && unit !== 'HOUR') {
-      return { isDateOnly: true, date: expressionDate.date.add(duration) };
-    }
-
-    return {
-      isDateOnly: false,
-      dateTime: toExpressionDateTimeInUtc(expressionDate).add(duration),
-    };
+    return expressionDate.isDateOnly && unit !== 'MINUTE' && unit !== 'HOUR'
+      ? { isDateOnly: true, date: dateTime.toPlainDate() }
+      : { isDateOnly: false, dateTime };
   } catch (error) {
     if (error instanceof RangeError) {
       return null;
