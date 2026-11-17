@@ -1,10 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconTrash } from 'twenty-ui/icon';
 
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { useNavigationMenuContainerReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -23,6 +25,12 @@ export const NavigationMenuTabMenuContent = ({
     currentNavigationMenuTabIdState,
   );
   const { remove } = useNavigationMenuItemMoveRemove('workspace');
+  const reorderOptions = useNavigationMenuContainerReorderOptions({
+    itemId: tab.id,
+    type: NavigationMenuItemType.TAB,
+    containerId: null,
+    onMoved: onClose,
+  });
 
   return (
     <>
@@ -34,6 +42,9 @@ export const NavigationMenuTabMenuContent = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section>
+        {reorderOptions.map((option) => (
+          <NavigationMenuItemSelectableItem key={option.id} item={option} />
+        ))}
         <NavigationMenuItemSelectableItem
           item={{
             id: 'delete',
