@@ -75,7 +75,7 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
           twentyStandardFlatApplication.id,
           workspaceCustomFlatApplication.id,
         ]),
-        standardApplication: twentyStandardFlatApplication,
+        ownerApplication: workspaceCustomFlatApplication,
         workspaceId,
         now: new Date().toISOString(),
       });

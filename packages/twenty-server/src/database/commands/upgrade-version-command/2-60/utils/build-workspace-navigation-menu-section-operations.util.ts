@@ -10,7 +10,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
   sectionId,
   sectionName,
   movableApplicationIds,
-  standardApplication,
+  ownerApplication,
   workspaceId,
   now,
 }: {
@@ -18,7 +18,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
   sectionId: string;
   sectionName: string;
   movableApplicationIds: Set<string>;
-  standardApplication: { id: string; universalIdentifier: string };
+  ownerApplication: { id: string; universalIdentifier: string };
   workspaceId: string;
   now: string;
 }): {
@@ -80,8 +80,8 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
     agentUniversalIdentifier: null,
     position: lowestRootPosition - 1,
     workspaceId,
-    applicationId: standardApplication.id,
-    applicationUniversalIdentifier: standardApplication.universalIdentifier,
+    applicationId: ownerApplication.id,
+    applicationUniversalIdentifier: ownerApplication.universalIdentifier,
     createdAt: now,
     updatedAt: now,
   };

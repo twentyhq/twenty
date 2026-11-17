@@ -24,9 +24,9 @@ const build = (navigationMenuItems: FlatNavigationMenuItem[]) =>
     sectionId: 'section',
     sectionName: 'Workspace',
     movableApplicationIds: new Set(['custom-app', 'standard-app']),
-    standardApplication: {
-      id: 'standard-app',
-      universalIdentifier: 'standard-app-uid',
+    ownerApplication: {
+      id: 'custom-app',
+      universalIdentifier: 'custom-app-uid',
     },
     workspaceId: 'workspace',
     now: '2026-11-17T00:00:00.000Z',
@@ -60,6 +60,7 @@ describe('buildWorkspaceNavigationMenuSectionOperations', () => {
         WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
       position: -1,
       parentId: null,
+      applicationId: 'custom-app',
     });
     expect(flatEntityToUpdate.map((item) => item.id)).toEqual([
       'object',
