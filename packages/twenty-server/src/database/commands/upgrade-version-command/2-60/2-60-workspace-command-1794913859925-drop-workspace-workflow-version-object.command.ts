@@ -103,7 +103,7 @@ type LegacyDataSummary = {
   unresolvableRunCount: number;
 };
 
-@RegisteredWorkspaceCommand('2.60.0', 1794837318007)
+@RegisteredWorkspaceCommand('2.60.0', 1794913859925)
 @Command({
   name: 'upgrade:2-60:drop-workspace-workflow-version-object',
   description:
