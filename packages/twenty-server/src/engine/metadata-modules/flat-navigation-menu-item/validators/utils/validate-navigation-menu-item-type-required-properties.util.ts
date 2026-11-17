@@ -105,6 +105,14 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         userFriendlyMessage: msg`A name is required for SECTION type`,
       });
     }
+    case NavigationMenuItemType.FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_INBOX:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+    case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case NavigationMenuItemType.AI_AGENTS: {
+      return [];
+    }
     case NavigationMenuItemType.OBJECT: {
       return validateUuidProperty({
         value: targetObjectMetadataUniversalIdentifier,
