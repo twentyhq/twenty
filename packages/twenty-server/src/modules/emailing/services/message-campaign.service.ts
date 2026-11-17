@@ -173,8 +173,8 @@ export class MessageCampaignService {
     requestedScheduledAt?: Date;
     expectedRecipientCount?: number;
   }): Promise<PreparedCampaignSend> {
-    const roleId =
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         workspaceId,
         userWorkspaceId,
       });
@@ -211,7 +211,7 @@ export class MessageCampaignService {
       });
 
     return {
-      roleId,
+      roleIds,
       emailingDomainId: emailingDomain.id,
       messageChannelId: messageChannel.id,
       sendableRecipients,
@@ -310,14 +310,14 @@ export class MessageCampaignService {
     from: MessageCampaignStatus;
     fromScheduledAt?: Date;
   }): Promise<SendCampaignResult> {
-    const { roleId, emailingDomainId, messageChannelId, sendableRecipients } =
+    const { roleIds, emailingDomainId, messageChannelId, sendableRecipients } =
       prepared;
 
     const claimed =
       await this.messageCampaignLifecycleService.transitionCampaignStatus({
         workspaceId,
         campaignId,
-        roleId,
+        roleIds,
         from,
         to: MessageCampaignStatus.SENDING,
         scheduledAt: null,
@@ -353,7 +353,7 @@ export class MessageCampaignService {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({
           workspaceId,
           campaignId,
-          roleId,
+          roleIds,
           from: MessageCampaignStatus.SENDING,
           to: from,
           scheduledAt: fromScheduledAt ?? null,

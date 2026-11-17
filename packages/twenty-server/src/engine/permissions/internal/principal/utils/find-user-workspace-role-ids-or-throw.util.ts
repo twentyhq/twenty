@@ -1,11 +1,8 @@
 /* @license Enterprise */
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import {
   PermissionsException,
@@ -13,25 +10,16 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 
-export const findUserWorkspaceFlatRoleOrThrow = ({
+export const findUserWorkspaceRoleIdsOrThrow = ({
   userWorkspaceId,
   userWorkspaceRoleMap,
-  flatRoleMaps,
 }: {
   userWorkspaceId: string;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  flatRoleMaps: FlatRoleMaps;
-}): FlatRole => {
-  const roleId = userWorkspaceRoleMap[userWorkspaceId];
+}): string[] => {
+  const roleIds = userWorkspaceRoleMap[userWorkspaceId];
 
-  const flatRole = isDefined(roleId)
-    ? findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: roleId,
-        flatEntityMaps: flatRoleMaps,
-      })
-    : undefined;
-
-  if (!isDefined(flatRole)) {
+  if (!isNonEmptyArray(roleIds)) {
     throw new PermissionsException(
       PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
       PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
@@ -41,5 +29,5 @@ export const findUserWorkspaceFlatRoleOrThrow = ({
     );
   }
 
-  return flatRole;
+  return roleIds;
 };
