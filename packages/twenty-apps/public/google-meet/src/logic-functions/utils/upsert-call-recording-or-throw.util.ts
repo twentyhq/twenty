@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
+import { type CallRecordingUpsertOutcome } from 'src/logic-functions/types/call-recording-upsert-outcome.type';
 
 const doesCallRecordingMatchOrThrow = async ({
   coreApiClient,
@@ -48,7 +49,7 @@ export const upsertCallRecordingOrThrow = async ({
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   fields: CallRecordingSyncFields;
-}): Promise<'CREATED' | 'UPDATED' | 'SKIPPED_DELETED'> => {
+}): Promise<CallRecordingUpsertOutcome> => {
   if (
     await doesCallRecordingMatchOrThrow({
       coreApiClient,
