@@ -484,7 +484,9 @@ export const buildWhereExpression = (
 
 const WRITTEN_ROWS_RELATION_NAME = 'written';
 
-const buildTableExpression = (tableShape: WorkspaceTableShape): string =>
+const buildTableExpression = (
+  tableShape: Pick<WorkspaceTableShape, 'schemaName' | 'tableName'>,
+): string =>
   `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
     tableShape.tableName,
   )}`;

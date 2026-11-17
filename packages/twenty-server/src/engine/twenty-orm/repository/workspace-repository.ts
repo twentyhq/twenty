@@ -1828,7 +1828,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  // Selects the computed columns over the rows a write returns, in the write's statement
   private buildWrittenRowsQueryBuilder({
     alias,
     columnsToReturn,
