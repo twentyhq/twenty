@@ -10,7 +10,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -316,10 +315,10 @@ export class CoreWorkflowAccessService {
     return coreWorkflows.filter(
       (coreWorkflow) =>
         coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
-        !canChangeCoreWorkflowVisibility({
-          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-          userWorkspaceId,
-        }),
+        !(
+          isDefined(userWorkspaceId) &&
+          coreWorkflow.createdByUserWorkspaceId === userWorkspaceId
+        ),
     );
   }
 }

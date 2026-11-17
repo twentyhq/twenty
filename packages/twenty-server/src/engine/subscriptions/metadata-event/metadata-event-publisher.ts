@@ -28,10 +28,20 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
     ? event.properties.before
     : event.properties.after) as BroadcastEventRecord | undefined;
 
-const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
-  record?.visibility === WorkflowVisibility.PRIVATE
-    ? (record.createdByUserWorkspaceId ?? undefined)
-    : undefined;
+const getWorkflowRecipientUserWorkspaceIds = (
+  workflow: Pick<
+    BroadcastEventRecord,
+    'visibility' | 'createdByUserWorkspaceId'
+  >,
+): string[] | undefined => {
+  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
+    return undefined;
+  }
+
+  return isNonEmptyString(workflow.createdByUserWorkspaceId)
+    ? [workflow.createdByUserWorkspaceId]
+    : [];
+};
 
 const getViewRecipientUserWorkspaceIds = (
   view: Pick<BroadcastEventRecord, 'visibility' | 'createdByUserWorkspaceId'>,
@@ -137,13 +147,10 @@ export class MetadataEventPublisher {
           return isNonEmptyString(record?.userWorkspaceId)
             ? [record.userWorkspaceId]
             : undefined;
-        case 'workflow': {
-          const ownerUserWorkspaceId = getPrivateWorkflowOwner(record);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
+        case 'workflow':
+          return isDefined(record)
+            ? getWorkflowRecipientUserWorkspaceIds(record)
             : undefined;
-        }
         case 'workflowVersion': {
           const coreWorkflowId = record?.coreWorkflowId;
 
@@ -163,12 +170,7 @@ export class MetadataEventPublisher {
             return [];
           }
 
-          const ownerUserWorkspaceId =
-            getPrivateWorkflowOwner(parentFlatWorkflow);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
-            : undefined;
+          return getWorkflowRecipientUserWorkspaceIds(parentFlatWorkflow);
         }
         default:
           return undefined;
