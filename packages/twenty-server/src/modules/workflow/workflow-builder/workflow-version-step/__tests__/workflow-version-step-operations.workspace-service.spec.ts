@@ -6,6 +6,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -34,7 +35,59 @@ const buildCodeStep = (input: WorkflowCodeActionInput): WorkflowCodeAction => ({
   },
 });
 
-const buildService = async () => {
+const MCP_SERVER_ID = 'mcp-server-id';
+const MCP_SERVER_UNIVERSAL_IDENTIFIER = 'mcp-server-universal-identifier';
+
+const buildFlatMcpServer = (): FlatMcpServer => ({
+  id: MCP_SERVER_ID,
+  universalIdentifier: MCP_SERVER_UNIVERSAL_IDENTIFIER,
+  workspaceId: WORKSPACE_ID,
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  name: 'docs',
+  label: 'Docs',
+  url: 'https://docs.example.com/mcp',
+  connectionProviderId: null,
+  connectionProviderUniversalIdentifier: null,
+  isActive: true,
+  tools: [
+    {
+      name: 'search_docs',
+      description: null,
+      annotations: null,
+      inputSchema: {
+        type: 'object',
+        properties: { sort: { type: 'string', enum: ['asc', 'desc'] } },
+      },
+    },
+  ],
+  toolsSyncedAt: null,
+  toolsSyncError: null,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
+const flatEntityMapsCacheServiceWithMcpServer = {
+  getOrRecomputeManyOrAllFlatEntityMaps: async () => ({
+    flatMcpServerMaps: {
+      byUniversalIdentifier: {
+        [MCP_SERVER_UNIVERSAL_IDENTIFIER]: buildFlatMcpServer(),
+      },
+      universalIdentifierById: {
+        [MCP_SERVER_ID]: MCP_SERVER_UNIVERSAL_IDENTIFIER,
+      },
+      universalIdentifiersByApplicationId: {},
+    },
+  }),
+};
+
+const buildService = async ({
+  flatEntityMapsCacheService = {},
+  featureFlagService = {},
+}: {
+  flatEntityMapsCacheService?: object;
+  featureFlagService?: object;
+} = {}) => {
   const testingModule = await Test.createTestingModule({
     providers: [
       WorkflowVersionStepOperationsWorkspaceService,
@@ -45,10 +98,13 @@ const buildService = async () => {
       },
       { provide: WorkflowCommonWorkspaceService, useValue: {} },
       { provide: WorkspaceCacheService, useValue: {} },
-      { provide: WorkspaceManyOrAllFlatEntityMapsCacheService, useValue: {} },
+      {
+        provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+        useValue: flatEntityMapsCacheService,
+      },
       { provide: CoreWorkflowTriggerService, useValue: {} },
       { provide: FindRecordsService, useValue: {} },
-      { provide: FeatureFlagService, useValue: {} },
+      { provide: FeatureFlagService, useValue: featureFlagService },
       { provide: WorkflowAiAgentStepAgentService, useValue: {} },
     ],
   }).compile();
@@ -128,5 +184,28 @@ describe('WorkflowVersionStepOperationsWorkspaceService duplicate steps', () => 
     const step = buildCodeStep({ code: '', logicFunctionInput: {} });
 
     expect(service.markStepAsDuplicate({ step }).position).toBeUndefined();
+  });
+});
+
+describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
+  it('seeds untouched optional tool inputs with null', async () => {
+    const service = await buildService({
+      flatEntityMapsCacheService: flatEntityMapsCacheServiceWithMcpServer,
+      featureFlagService: { isFeatureEnabled: async () => true },
+    });
+
+    const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
+      type: WorkflowActionType.MCP_TOOL,
+      workspaceId: WORKSPACE_ID,
+      defaultSettings: {
+        input: { mcpServerId: MCP_SERVER_ID, toolName: 'search_docs' },
+      },
+    });
+
+    expect(builtStep.settings.input).toEqual({
+      mcpServerId: MCP_SERVER_ID,
+      toolName: 'search_docs',
+      toolInput: { sort: null },
+    });
   });
 });
