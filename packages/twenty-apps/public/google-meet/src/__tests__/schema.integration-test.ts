@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-sdk/utils';
 import { describe, expect, it } from 'vitest';
 
 import {
-  GOOGLE_MEET_PROVIDER_NAME,
   GOOGLE_MEET_READONLY_SCOPE,
   GOOGLE_MEET_USER_PROVIDER_NAME,
 } from 'src/constants/google-meet.constant';
@@ -13,7 +12,7 @@ import {
 } from 'src/constants/universal-identifiers';
 
 describe('App installation', () => {
-  it('registers workspace-shared and personal Google OAuth without configured credentials', async () => {
+  it('registers only personal Google OAuth without configured credentials', async () => {
     const client = new MetadataApiClient();
 
     const { findManyApplications } = await client.query({
@@ -44,36 +43,18 @@ describe('App installation', () => {
       },
     });
 
-    const buildExpectedProvider = ({
-      name,
-      scope,
-    }: {
-      name: string;
-      scope: 'USER' | 'WORKSPACE';
-    }) => ({
-      applicationId: application.id,
-      name,
-      displayName: APP_DISPLAY_NAME,
-      type: 'oauth',
-      scope,
-      oauth: {
-        scopes: expect.arrayContaining([GOOGLE_MEET_READONLY_SCOPE]),
-        isClientCredentialsConfigured: false,
+    expect(applicationConnectionProviders).toEqual([
+      {
+        applicationId: application.id,
+        name: GOOGLE_MEET_USER_PROVIDER_NAME,
+        displayName: APP_DISPLAY_NAME,
+        type: 'oauth',
+        scope: 'USER',
+        oauth: {
+          scopes: expect.arrayContaining([GOOGLE_MEET_READONLY_SCOPE]),
+          isClientCredentialsConfigured: false,
+        },
       },
-    });
-
-    expect(applicationConnectionProviders).toHaveLength(2);
-    expect(applicationConnectionProviders).toEqual(
-      expect.arrayContaining([
-        buildExpectedProvider({
-          name: GOOGLE_MEET_PROVIDER_NAME,
-          scope: 'WORKSPACE',
-        }),
-        buildExpectedProvider({
-          name: GOOGLE_MEET_USER_PROVIDER_NAME,
-          scope: 'USER',
-        }),
-      ]),
-    );
+    ]);
   });
 });
