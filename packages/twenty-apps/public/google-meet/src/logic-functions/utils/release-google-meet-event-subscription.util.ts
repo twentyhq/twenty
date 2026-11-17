@@ -22,8 +22,7 @@ export const releaseGoogleMeetEventSubscription = async ({
       subscriptionName,
     });
   } finally {
-    // Held until Google answered, so no other workspace claims a subscription that is about to be deleted,
-    // and released even on failure, so the account can be connected elsewhere.
+    // The claim outlives the Google call, so no other workspace takes a subscription about to be deleted.
     await kv.delete(eventSubscriptionKey);
     await kv.delete(eventSubscriptionKey, { scope: 'SERVER' });
   }
