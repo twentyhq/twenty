@@ -65,6 +65,8 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 `daysSince(date)` has been removed. Replace it in existing rules with `dateDiff(date, now, 'DAY')`. Units for `dateDiff`, `dateAdd` and `dateTrunc` are `'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`; parts for `datePart` are `'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`. Dates are read in UTC, and `dateAdd` gives no value when the date or the result falls outside the years 1 to 9999. A date compared with a date and time compares their UTC days, with `eq` and `notEq` too.
 
+Date comparisons use the UTC calendar day when a date has no time. Two date-times compare as instants, so equivalent offsets and fractional-second spellings compare equally. This also changes existing expressions that compared those values as text.
+
 The builder outputs a plain string, which is what [`twenty app pull`](/developers/extend/apps/operations/cli) writes back. You can write that string directly:
 
 ```ts

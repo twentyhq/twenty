@@ -16,6 +16,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Breaking Changes
 
+- **Date comparisons in rule expressions now compare values rather than timestamp spellings.** `==` and `!=` compare a date with a date-time by UTC calendar day; two date-times compare as instants for equality and ordering, including equivalent offsets and fractional-second precision. Existing rules and trigger conditions that relied on strict string equality or lexicographic timestamp ordering can change result.
+
 - **`ruleExpression.daysSince` is removed; use `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.** `dateDiff` gives the same whole UTC days, and also minutes, hours, weeks, months, quarters or years. `daysSince` is also removed from string expressions. Update existing rules to `dateDiff(date, now, 'DAY')` before upgrading.
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflowVersion`.** Workflow versions live in Twenty's core workflow store, and Twenty 2.60 drops the legacy workspace `workflowVersion` object from every workspace, along with `workflowRun.workflowVersion`, `timelineActivity.targetWorkflowVersion` and any other relation field that points at it. Remove references to the identifier, including relation fields that target it.
