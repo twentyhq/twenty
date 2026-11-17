@@ -1,3 +1,5 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
+import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,15 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
-import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';
+import { dictationEngineComponentState } from '@/ai/dictation/states/dictationEngineComponentState';
 import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
-import { isDictationRecordingState } from '@/ai/dictation/states/isDictationRecordingState';
+import { isDictationRecordingComponentState } from '@/ai/dictation/states/isDictationRecordingComponentState';
 import { getDictationFailureMessage } from '@/ai/dictation/utils/getDictationFailureMessage';
 import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage';
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -28,10 +31,14 @@ export const AiChatDictationEffect = ({
 }: AiChatDictationEffectProps) => {
   const isSupported = useDictationAvailability();
   const store = useStore();
+  const { instanceId } = useAiChatInstanceOrThrow();
 
-  const [dictationEngine, setDictationEngine] =
-    useAtomState(dictationEngineState);
-  const setIsDictationRecording = useSetAtomState(isDictationRecordingState);
+  const [dictationEngine, setDictationEngine] = useAtomComponentState(
+    dictationEngineComponentState,
+  );
+  const setIsDictationRecording = useSetAtomComponentState(
+    isDictationRecordingComponentState,
+  );
   const setHasWebSpeechProvenSilent = useSetAtomState(
     hasWebSpeechProvenSilentState,
   );
@@ -104,11 +111,16 @@ export const AiChatDictationEffect = ({
   ]);
 
   // Both send paths dispatch this, so dictation needn't be lifted into the composer.
-  const handleSendMessage = useCallback(() => {
-    dictationEngine?.cancel();
-  }, [dictationEngine]);
+  const handleSendMessage = useCallback(
+    (detail?: AiChatInstanceEventDetail) => {
+      if (detail?.instanceId === instanceId) {
+        dictationEngine?.cancel();
+      }
+    },
+    [instanceId, dictationEngine],
+  );
 
-  useListenToBrowserEvent({
+  useListenToBrowserEvent<AiChatInstanceEventDetail>({
     eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
   });

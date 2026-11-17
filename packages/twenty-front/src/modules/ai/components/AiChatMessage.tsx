@@ -1,10 +1,10 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -23,7 +23,6 @@ import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReacti
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
@@ -36,9 +35,9 @@ import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubb
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { AiChatUserMessageCollapsibleContent } from '@/ai/components/AiChatUserMessageCollapsibleContent';
-import { aiChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdSelector';
+import { aiChatFirstUnreadMessageIdFamilySelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdFamilySelector';
 import { aiChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/aiChatIsMessageBeforeFirstUserMessageFamilySelector';
-import { aiChatMessageFamilySelector } from '@/ai/states/selectors/aiChatMessageFamilySelector';
+import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
 import { isAiChatMessageOwn } from '@/ai/utils/isAiChatMessageOwn';
 import { parseAiChatMessageQuote } from '@/ai/utils/parseAiChatMessageQuote';
 import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
@@ -137,42 +136,42 @@ export const AiChatMessage = ({
   onEdit,
   onDelete,
 }: AiChatMessageProps) => {
+  const { threadId } = useAiChatInstanceOrThrow();
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const agentChatMessage = useAtomFamilySelectorValue(
-    aiChatMessageFamilySelector,
-    { messageId },
+    aiChatThreadMessageFamilySelector,
+    { threadId, messageId },
   );
 
   const isMessageBeforeFirstUserMessage = useAtomFamilySelectorValue(
     aiChatIsMessageBeforeFirstUserMessageFamilySelector,
-    { messageId },
+    { threadId, messageId },
   );
 
-  const aiChatFirstUnreadMessageId = useAtomStateValue(
-    aiChatFirstUnreadMessageIdSelector,
+  const aiChatFirstUnreadMessageId = useAtomFamilySelectorValue(
+    aiChatFirstUnreadMessageIdFamilySelector,
+    threadId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
   const aiChatThreadReadPositions = useAtomFamilyStateValue(
     aiChatThreadReadPositionsFamilyState,
-    { threadId: aiChatDisplayedThread },
+    { threadId },
   );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const setAiChatQuotedMessageId = useSetAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);

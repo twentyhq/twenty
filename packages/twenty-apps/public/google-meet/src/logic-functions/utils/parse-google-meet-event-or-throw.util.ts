@@ -19,15 +19,14 @@ export const parseGoogleMeetEventOrThrow = (
     return undefined;
   }
 
-  const transcriptName = parseGoogleMeetEventDataOrThrow(
-    pushBody?.message?.data,
-  ).transcript?.name;
+  const eventData = parseGoogleMeetEventDataOrThrow(pushBody?.message?.data);
+  const artifactName = eventData.transcript?.name ?? eventData.smartNote?.name;
 
   return {
     subscriptionName: source.slice(
       GOOGLE_WORKSPACE_EVENTS_SOURCE_PREFIX.length,
     ),
     eventType,
-    ...(isNonEmptyString(transcriptName) ? { transcriptName } : {}),
+    ...(isNonEmptyString(artifactName) ? { artifactName } : {}),
   };
 };
