@@ -128,6 +128,34 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
   });
 
+  it('should leave hidden rows out inside the relation filter whose alias they belong to', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: {
+          task: { title: ['"task"."x" = :x'] },
+        },
+        whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
+        existsFilterClauses: [
+          {
+            token: '__exists_task__',
+            alias: 'task',
+            parentAlias: 'person',
+            relationFieldName: 'tasks',
+            targetTableShape: { ...personTableShape, tableName: 'task' },
+            correlationCondition: '"task"."personId" = "person"."id"',
+            conditionSql: `"task"."title" = 'Secret'`,
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+    const subquery = sql.slice(sql.indexOf('EXISTS'));
+
+    expect(subquery).toContain('NOT COALESCE(("task"."x" = :x), FALSE)');
+    expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('NOT COALESCE');
+  });
+
   it('should keep every row when only a sort reads a hidden column', () => {
     const sql = buildSelectStatement(
       buildState({
