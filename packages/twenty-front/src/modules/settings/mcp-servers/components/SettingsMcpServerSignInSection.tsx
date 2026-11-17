@@ -31,6 +31,21 @@ export const SettingsMcpServerSignInSection = ({
     },
   );
 
+  const perMemberConnectionProvider = data?.applicationConnectionProviders.find(
+    (connectionProvider) =>
+      connectionProvider.id === mcpServer.connectionProviderId &&
+      connectionProvider.scope === ConnectionProviderScope.USER,
+  );
+
+  if (isDefined(perMemberConnectionProvider)) {
+    return (
+      <SettingsMcpServerConnectionsSection
+        mcpServerId={mcpServer.id}
+        connectionProvider={perMemberConnectionProvider}
+      />
+    );
+  }
+
   if (isDefined(error)) {
     return (
       <SettingsApplicationLoadErrorBanner
@@ -40,20 +55,5 @@ export const SettingsMcpServerSignInSection = ({
     );
   }
 
-  const perMemberConnectionProvider = data?.applicationConnectionProviders.find(
-    (connectionProvider) =>
-      connectionProvider.id === mcpServer.connectionProviderId &&
-      connectionProvider.scope === ConnectionProviderScope.USER,
-  );
-
-  if (!isDefined(perMemberConnectionProvider)) {
-    return null;
-  }
-
-  return (
-    <SettingsMcpServerConnectionsSection
-      mcpServerId={mcpServer.id}
-      connectionProvider={perMemberConnectionProvider}
-    />
-  );
+  return null;
 };
