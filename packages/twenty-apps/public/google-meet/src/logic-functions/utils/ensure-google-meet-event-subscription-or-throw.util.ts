@@ -24,14 +24,17 @@ export const ensureGoogleMeetEventSubscriptionOrThrow = async ({
     });
   }
 
-  if (existingSubscription.notificationEndpoint?.pubsubTopic === pubsubTopic) {
+  if (
+    existingSubscription.notificationEndpoint?.pubsubTopic === pubsubTopic &&
+    existingSubscription.state !== 'SUSPENDED'
+  ) {
     return renewGoogleMeetEventSubscriptionOrThrow({
       accessToken,
       subscriptionName: existingSubscription.name,
     });
   }
 
-  // Google does not let a subscription move to another topic.
+  // Google does not let a subscription move to another topic, and renewing does not resume a suspended one.
   await deleteGoogleMeetEventSubscription({
     accessToken,
     subscriptionName: existingSubscription.name,

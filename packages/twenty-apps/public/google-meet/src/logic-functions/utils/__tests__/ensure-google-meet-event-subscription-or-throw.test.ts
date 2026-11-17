@@ -79,6 +79,24 @@ describe('ensureGoogleMeetEventSubscriptionOrThrow', () => {
     expect(deleteGoogleMeetEventSubscription).not.toHaveBeenCalled();
   });
 
+  it('should replace a subscription that Google suspended', async () => {
+    await expect(
+      ensureGoogleMeetEventSubscriptionOrThrow({
+        ...SUBSCRIPTION_REQUEST,
+        existingSubscription: { ...EXISTING_SUBSCRIPTION, state: 'SUSPENDED' },
+      }),
+    ).resolves.toEqual(CREATED_SUBSCRIPTION);
+
+    expect(deleteGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith({
+      accessToken: 'token',
+      subscriptionName: 'subscriptions/existing',
+    });
+    expect(
+      createGoogleMeetEventSubscriptionOrThrow,
+    ).toHaveBeenCalledExactlyOnceWith(SUBSCRIPTION_REQUEST);
+    expect(renewGoogleMeetEventSubscriptionOrThrow).not.toHaveBeenCalled();
+  });
+
   it('should replace a subscription that publishes to another topic', async () => {
     await expect(
       ensureGoogleMeetEventSubscriptionOrThrow({

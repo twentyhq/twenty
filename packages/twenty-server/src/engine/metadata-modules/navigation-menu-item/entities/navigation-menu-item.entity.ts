@@ -80,7 +80,9 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL)
   OR ("type" = 'NATIVE_PAGE' AND "nativePageKey" IS NOT NULL)
   OR ("type" = 'WORKFLOW' AND "workflowId" IS NOT NULL)
-  OR ("type" = 'AGENT' AND "agentId" IS NOT NULL)`,
+  OR ("type" = 'AGENT' AND "agentId" IS NOT NULL)
+  OR ("type" = 'TAB')
+  OR ("type" = 'SECTION')`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
