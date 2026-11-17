@@ -17,12 +17,10 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type UseAiChatNewThreadRecipientSuggestionsParams = {
   search: string;
-  isDropdownOpen: boolean;
 };
 
 export const useAiChatNewThreadRecipientSuggestions = ({
   search,
-  isDropdownOpen,
 }: UseAiChatNewThreadRecipientSuggestionsParams) => {
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
@@ -40,28 +38,11 @@ export const useAiChatNewThreadRecipientSuggestions = ({
   const aiChatAccessibleChannels = useAtomStateValue(
     aiChatAccessibleChannelsSelector,
   );
-  const [wasDropdownOpen, setWasDropdownOpen] = useState(isDropdownOpen);
-  const [searchWhileDropdownOpen, setSearchWhileDropdownOpen] =
-    useState(search);
   const [visibleSuggestionCount, setVisibleSuggestionCount] = useState(
     AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
   );
 
-  if (wasDropdownOpen !== isDropdownOpen) {
-    setWasDropdownOpen(isDropdownOpen);
-  }
-
-  if (
-    isDropdownOpen &&
-    (!wasDropdownOpen || searchWhileDropdownOpen !== search)
-  ) {
-    setSearchWhileDropdownOpen(search);
-    setVisibleSuggestionCount(
-      AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
-    );
-  }
-
-  const searchQuery = searchWhileDropdownOpen.trim();
+  const searchQuery = search.trim();
   const isAssistantSuggested =
     !aiChatNewThreadRecipients.isAssistantParticipant &&
     normalizeSearchText(assistantName).includes(
@@ -121,6 +102,10 @@ export const useAiChatNewThreadRecipientSuggestions = ({
       setVisibleSuggestionCount(
         (currentCount) =>
           currentCount + AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
+      ),
+    resetVisibleSuggestionCount: () =>
+      setVisibleSuggestionCount(
+        AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
       ),
   };
 };

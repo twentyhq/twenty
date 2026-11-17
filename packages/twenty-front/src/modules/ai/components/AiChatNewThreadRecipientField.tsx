@@ -1,12 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  type FormEvent,
-  type MouseEvent,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type MouseEvent, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FormFieldRow } from 'twenty-ui/components/input';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -69,6 +63,8 @@ export const AiChatNewThreadRecipientField = () => {
   const addRecipientsInputFocusId = `${suggestionsDropdownId}-input`;
   const addRecipientsInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
+  const [searchWhenSuggestionsClosed, setSearchWhenSuggestionsClosed] =
+    useState('');
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     suggestionsDropdownId,
@@ -102,7 +98,11 @@ export const AiChatNewThreadRecipientField = () => {
     suggestionIds,
     hasMoreSuggestions,
     showMoreSuggestions,
-  } = useAiChatNewThreadRecipientSuggestions({ search, isDropdownOpen });
+    resetVisibleSuggestionCount,
+  } = useAiChatNewThreadRecipientSuggestions({
+    // The list fades out on close, so it keeps the results it showed.
+    search: isDropdownOpen ? search : searchWhenSuggestionsClosed,
+  });
 
   useRemoveFocusItemFromFocusStackOnUnmount({
     focusId: addRecipientsInputFocusId,
@@ -132,18 +132,20 @@ export const AiChatNewThreadRecipientField = () => {
     });
   };
 
-  const handleAddRecipientsInputBlur = () => {
-    removeFocusItemFromFocusStackById({ focusId: addRecipientsInputFocusId });
-    closeDropdown(suggestionsDropdownId);
-    setSearch('');
+  const handleSuggestionsClose = () => {
+    setSearchWhenSuggestionsClosed(search);
   };
 
-  const handleAddRecipientsContainerChange = (
-    event: FormEvent<HTMLDivElement>,
-  ) => {
-    if (event.target instanceof HTMLInputElement && event.target.value === '') {
-      openSuggestions();
-    }
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    resetVisibleSuggestionCount();
+  };
+
+  const handleAddRecipientsInputBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: addRecipientsInputFocusId });
+    handleSuggestionsClose();
+    closeDropdown(suggestionsDropdownId);
+    setSearch('');
   };
 
   const handleRecipientsMouseDown = (event: MouseEvent<HTMLDivElement>) => {
@@ -161,7 +163,9 @@ export const AiChatNewThreadRecipientField = () => {
       dropdownId={suggestionsDropdownId}
       items={suggestionIds}
       value={search}
-      onValueChange={setSearch}
+      openOnInputClick
+      onValueChange={handleSearchChange}
+      onClose={handleSuggestionsClose}
     >
       <FormFieldRow aria-label={t`Recipients`} contentPaddingInline={0}>
         <Autocomplete.InputGroup
@@ -224,10 +228,7 @@ export const AiChatNewThreadRecipientField = () => {
               }}
             />
           )}
-          <StyledAddRecipientsContainer
-            onMouseDown={handleRecipientsMouseDown}
-            onChange={handleAddRecipientsContainerChange}
-          >
+          <StyledAddRecipientsContainer onMouseDown={handleRecipientsMouseDown}>
             <Autocomplete.Input
               ref={addRecipientsInputRef}
               type="text"
@@ -238,7 +239,6 @@ export const AiChatNewThreadRecipientField = () => {
               render={<Input variant="plain" hasFocusRing={false} />}
               onFocus={handleAddRecipientsInputFocus}
               onBlur={handleAddRecipientsInputBlur}
-              onClick={openSuggestions}
             />
           </StyledAddRecipientsContainer>
         </Autocomplete.InputGroup>
