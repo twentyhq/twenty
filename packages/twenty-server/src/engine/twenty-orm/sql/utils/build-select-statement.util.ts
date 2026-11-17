@@ -111,10 +111,13 @@ const renderNullifiedColumn = ({
     .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
 
 // a column hidden on some rows reads as NULL wherever a caller can test it, so a filter, a sort or a group cannot reveal it
-export const maskNullifiedColumnReferences = (
-  expression: string,
-  columnNullifyConditions: ColumnNullifyConditions,
-): string => {
+export const maskNullifiedColumnReferences = ({
+  expression,
+  columnNullifyConditions,
+}: {
+  expression: string;
+  columnNullifyConditions: ColumnNullifyConditions;
+}): string => {
   const maskedColumnByQuotedColumn = new Map(
     Object.entries(columnNullifyConditions).flatMap(([alias, conditions]) =>
       Object.entries(conditions).map(
@@ -174,10 +177,10 @@ const renderProjectedColumn = ({
 
   // a grouped column has to be written exactly as its GROUP BY expression is
   if (state.groupByExpressions.length > 0) {
-    return maskNullifiedColumnReferences(
-      quotedColumn,
-      state.columnNullifyConditions,
-    );
+    return maskNullifiedColumnReferences({
+      expression: quotedColumn,
+      columnNullifyConditions: state.columnNullifyConditions,
+    });
   }
 
   return renderNullifiedColumn({ quotedColumn, nullifyConditions });
@@ -230,6 +233,20 @@ export const quoteQualifiedAliasReferences = (
         : quoteQualifiedAliasReferencesInSegment(segment, aliases),
     )
     .join('');
+
+const renderMaskedExpression = ({
+  expression,
+  aliases,
+  columnNullifyConditions,
+}: {
+  expression: string;
+  aliases: string[];
+  columnNullifyConditions: ColumnNullifyConditions;
+}): string =>
+  maskNullifiedColumnReferences({
+    expression: quoteQualifiedAliasReferences(expression, aliases),
+    columnNullifyConditions,
+  });
 
 export const collectStatementAliases = (
   state: SelectStatementState,
@@ -385,10 +402,11 @@ export const buildProjection = (
           alias: plainColumn[1],
           columnName: plainColumn[2],
         })
-      : maskNullifiedColumnReferences(
-          quoteQualifiedAliasReferences(extraSelect.expression, aliases),
-          state.columnNullifyConditions,
-        );
+      : renderMaskedExpression({
+          expression: extraSelect.expression,
+          aliases,
+          columnNullifyConditions: state.columnNullifyConditions,
+        });
 
     expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
   }
@@ -429,11 +447,15 @@ export const renderWhereExpressionWithRowAccess = ({
     : rowAccessExpression;
 };
 
-const renderExistsFilter = (
-  existsFilterClause: ExistsFilterClause,
-  includeDeleted: boolean,
-  columnNullifyConditions: ColumnNullifyConditions,
-): string => {
+const renderExistsFilter = ({
+  existsFilterClause,
+  includeDeleted,
+  columnNullifyConditions,
+}: {
+  existsFilterClause: ExistsFilterClause;
+  includeDeleted: boolean;
+  columnNullifyConditions: ColumnNullifyConditions;
+}): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
@@ -441,10 +463,10 @@ const renderExistsFilter = (
 
   if (existsFilterClause.conditionSql.length > 0) {
     conditions.push(
-      maskNullifiedColumnReferences(
-        existsFilterClause.conditionSql,
+      maskNullifiedColumnReferences({
+        expression: existsFilterClause.conditionSql,
         columnNullifyConditions,
-      ),
+      }),
     );
   }
 
@@ -479,15 +501,13 @@ export const substituteExistsFilterTokens = ({
 }): string =>
   existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
-      substituted
-        .split(existsFilterClause.token)
-        .join(
-          renderExistsFilter(
-            existsFilterClause,
-            includeDeleted,
-            columnNullifyConditions,
-          ),
-        ),
+      substituted.split(existsFilterClause.token).join(
+        renderExistsFilter({
+          existsFilterClause,
+          includeDeleted,
+          columnNullifyConditions,
+        }),
+      ),
     expression,
   );
 
@@ -506,10 +526,11 @@ export const buildWhereExpression = (
     renderWhereExpressionWithRowAccess({
       whereClauses: state.whereClauses.map((whereClause) => ({
         ...whereClause,
-        sql: maskNullifiedColumnReferences(
-          quoteQualifiedAliasReferences(whereClause.sql, aliases),
-          state.columnNullifyConditions,
-        ),
+        sql: renderMaskedExpression({
+          expression: whereClause.sql,
+          aliases,
+          columnNullifyConditions: state.columnNullifyConditions,
+        }),
       })),
       rowAccessConditions: state.rowAccessConditions,
     }),
@@ -641,10 +662,11 @@ export const buildGroupByClause = (state: SelectStatementState): string => {
 
   return `GROUP BY ${state.groupByExpressions
     .map((expression) =>
-      maskNullifiedColumnReferences(
-        quoteQualifiedAliasReferences(expression, aliases),
-        state.columnNullifyConditions,
-      ),
+      renderMaskedExpression({
+        expression: expression,
+        aliases,
+        columnNullifyConditions: state.columnNullifyConditions,
+      }),
     )
     .join(', ')}`;
 };
@@ -659,10 +681,11 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
   return `ORDER BY ${state.orderByClauses
     .map(
       (orderByClause) =>
-        `${maskNullifiedColumnReferences(
-          quoteQualifiedAliasReferences(orderByClause.expression, aliases),
-          state.columnNullifyConditions,
-        )} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
+        `${renderMaskedExpression({
+          expression: orderByClause.expression,
+          aliases,
+          columnNullifyConditions: state.columnNullifyConditions,
+        })} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
@@ -695,10 +718,11 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
 
   return `DISTINCT ON (${state.distinctOnExpressions
     .map((expression) =>
-      maskNullifiedColumnReferences(
-        quoteQualifiedAliasReferences(expression, aliases),
-        state.columnNullifyConditions,
-      ),
+      renderMaskedExpression({
+        expression: expression,
+        aliases,
+        columnNullifyConditions: state.columnNullifyConditions,
+      }),
     )
     .join(', ')}) `;
 };

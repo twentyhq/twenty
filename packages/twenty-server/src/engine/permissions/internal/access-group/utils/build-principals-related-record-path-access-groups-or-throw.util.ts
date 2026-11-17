@@ -1,15 +1,13 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
-import { buildRelatedRecordPathSourceRequest } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-source-request.util';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
+import { isRelationFieldUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/is-relation-field-unreadable-by-principals.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
@@ -33,15 +31,17 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   ];
 
   return findRelatedRecordPathsExtendingAccess(request).flatMap(
-    (resolvedPath) => {
-      const { isInherent, sourceFlatObjectMetadata } = resolvedPath;
-      const sourceRequest = buildRelatedRecordPathSourceRequest({
-        request,
-        resolvedPath,
-      });
+    ({ isInherent, sourceFlatObjectMetadata, hops }) => {
+      const sourceRequest = {
+        ...request,
+        flatObjectMetadata: sourceFlatObjectMetadata,
+      };
 
       if (
-        !isDefined(sourceRequest) ||
+        isRelationFieldUnreadableByPrincipals({
+          ...sourceRequest,
+          relationFieldMetadataId: hops[0].relationFieldMetadataId,
+        }) ||
         !canRelatedRecordPathExtendAccessToObject(sourceRequest)
       ) {
         return [];
@@ -54,7 +54,7 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
                 roleId,
                 objectMetadataId: sourceFlatObjectMetadata.id,
                 objectRecordsPermissions:
-                  sourceRequest.metadataMaps.rolesPermissions[roleId]?.objects[
+                  metadataMaps.rolesPermissions[roleId]?.objects[
                     sourceFlatObjectMetadata.id
                   ],
                 operationTypes: [request.operationType],

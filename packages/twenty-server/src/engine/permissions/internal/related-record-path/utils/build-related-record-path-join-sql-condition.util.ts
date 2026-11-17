@@ -16,7 +16,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 export type BuildEntrySQLCondition = (args: {
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;
-  reachedThroughResolvedPath?: ResolvedRelatedRecordPath;
 }) => SQLCondition | boolean;
 
 export const buildRelatedRecordPathJoinSQLCondition = ({
@@ -75,12 +74,10 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
           tableAlias: sourceTableAlias,
           visitedObjectMetadataIds,
-          reachedThroughResolvedPath: resolvedPath,
         })
       : buildEntrySQLCondition({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
           tableAlias: sourceTableAlias,
-          reachedThroughResolvedPath: resolvedPath,
         });
 
     if (sourceSQLCondition === false) {
@@ -121,17 +118,14 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     flatObjectMetadata,
     tableAlias,
     visitedObjectMetadataIds,
-    reachedThroughResolvedPath,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
     tableAlias: string;
     visitedObjectMetadataIds: Set<string>;
-    reachedThroughResolvedPath?: ResolvedRelatedRecordPath;
   }): SQLCondition | boolean => {
     const entrySQLCondition = buildEntrySQLCondition({
       flatObjectMetadata,
       tableAlias,
-      reachedThroughResolvedPath,
     });
 
     if (

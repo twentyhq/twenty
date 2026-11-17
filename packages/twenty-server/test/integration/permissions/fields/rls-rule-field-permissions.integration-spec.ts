@@ -501,7 +501,7 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
-  it('should reject a relation to a single record', async () => {
+  it('should reject a relation field', async () => {
     const { errors } = await upsertFieldPermissions({
       expectToFail: true,
       input: {
