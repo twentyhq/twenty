@@ -23,7 +23,7 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatObjectMetadataItemsSelector';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
+import { LegacyAiChatPage } from '~/pages/legacy-ai-chat/LegacyAiChatPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -152,8 +152,8 @@ const allowSelectedConversationUpdates = () => {
 };
 
 const meta = {
-  title: 'Pages/AiChat/AiChatPage',
-  component: AiChatPage,
+  title: 'Pages/LegacyAiChat/LegacyAiChatPage',
+  component: LegacyAiChatPage,
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -171,7 +171,7 @@ const meta = {
       ],
     },
   },
-} satisfies Meta<typeof AiChatPage>;
+} satisfies Meta<typeof LegacyAiChatPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

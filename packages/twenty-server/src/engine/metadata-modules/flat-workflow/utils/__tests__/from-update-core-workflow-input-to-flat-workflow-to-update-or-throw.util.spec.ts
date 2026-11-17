@@ -1,6 +1,5 @@
 import { WorkflowVisibility } from 'twenty-shared/types';
 
-import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow } from 'src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
@@ -20,7 +19,6 @@ const existingFlatWorkflow: FlatWorkflow = {
   lastPublishedCoreWorkflowVersionId: null,
   workspaceWorkflowId: null,
   isSystem: false,
-  jobConfig: DEFAULT_WORKFLOW_JOB_CONFIG,
   visibility: WorkflowVisibility.WORKSPACE,
   createdByUserWorkspaceId: CREATOR_USER_WORKSPACE_ID,
   navigationMenuItemIds: [],
