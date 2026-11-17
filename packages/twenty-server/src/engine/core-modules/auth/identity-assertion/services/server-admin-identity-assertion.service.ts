@@ -61,13 +61,13 @@ export class ServerAdminIdentityAssertionService {
       'SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE',
     );
 
-    if (
-      !isDefined(serverAdminWorkspaceId) ||
-      !isDefined(header) ||
-      !isDefined(signingKeysUrl) ||
-      !isDefined(issuer) ||
-      !isDefined(audience)
-    ) {
+    const isIdentityAssertionConfigured =
+      isDefined(header) ||
+      isDefined(signingKeysUrl) ||
+      isDefined(issuer) ||
+      isDefined(audience);
+
+    if (!isIdentityAssertionConfigured || !isDefined(serverAdminWorkspaceId)) {
       return;
     }
 
@@ -78,8 +78,9 @@ export class ServerAdminIdentityAssertionService {
     }
 
     const refusal = await this.findRefusal({
-      assertion: request.headers[header.toLowerCase()],
+      requestHeaders: request.headers,
       userEmail: authContext.user?.email,
+      header,
       signingKeysUrl,
       issuer,
       audience,
@@ -107,20 +108,34 @@ export class ServerAdminIdentityAssertionService {
   }
 
   private async findRefusal({
-    assertion,
+    requestHeaders,
     userEmail,
+    header,
     signingKeysUrl,
     issuer,
     audience,
   }: {
-    assertion: string | string[] | undefined;
+    requestHeaders: Request['headers'];
     userEmail: string | undefined;
-    signingKeysUrl: string;
-    issuer: string;
-    audience: string;
+    header: string | undefined;
+    signingKeysUrl: string | undefined;
+    issuer: string | undefined;
+    audience: string | undefined;
   }): Promise<
     { reason: IdentityAssertionRefusalReason; detail?: string } | undefined
   > {
+    // A partial configuration must never leave the workspace open.
+    if (
+      !isDefined(header) ||
+      !isDefined(signingKeysUrl) ||
+      !isDefined(issuer) ||
+      !isDefined(audience)
+    ) {
+      return { reason: 'CONFIGURATION_INCOMPLETE' };
+    }
+
+    const assertion = requestHeaders[header.toLowerCase()];
+
     if (!isNonEmptyString(assertion)) {
       return { reason: 'ASSERTION_MISSING' };
     }

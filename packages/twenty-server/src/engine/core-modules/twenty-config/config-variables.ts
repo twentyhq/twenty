@@ -21,7 +21,7 @@ import {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { IsLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/decorators/is-lambda-resource-tags.decorator';
@@ -61,6 +61,7 @@ import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/d
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { getMissingServerAdminIdentityAssertionVariables } from 'src/engine/core-modules/twenty-config/utils/get-missing-server-admin-identity-assertion-variables.util';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
   ConfigVariableException,
@@ -73,14 +74,6 @@ import {
   DEFAULT_DISABLED_MODELS,
   DEFAULT_MODELS_BY_TIER,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
-
-const isServerAdminIdentityAssertionConfigured = (
-  env: ConfigVariables,
-): boolean =>
-  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_HEADER) ||
-  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL) ||
-  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER) ||
-  isDefined(env.SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE);
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -628,11 +621,7 @@ export class ConfigVariables {
     // Env-only: the admin panel must not be able to lift its own restriction.
     isEnvOnly: true,
   })
-  @ValidateIf(
-    (env) =>
-      isDefined(env.SERVER_ADMIN_WORKSPACE_ID) ||
-      isServerAdminIdentityAssertionConfigured(env),
-  )
+  @IsOptional()
   @IsUUID()
   SERVER_ADMIN_WORKSPACE_ID: string | undefined;
 
@@ -643,7 +632,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
-  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   SERVER_ADMIN_IDENTITY_ASSERTION_HEADER: string | undefined;
@@ -655,7 +644,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
-  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsOptional()
   @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
   SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL: string | undefined;
 
@@ -665,7 +654,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
-  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER: string | undefined;
@@ -676,7 +665,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
-  @ValidateIf(isServerAdminIdentityAssertionConfigured)
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE: string | undefined;
@@ -2874,6 +2863,19 @@ export const validate = (config: Record<string, unknown>): ConfigVariables => {
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
+    throw new ConfigVariableException(
+      'Config variables validation failed',
+      ConfigVariableExceptionCode.VALIDATION_FAILED,
+    );
+  }
+
+  const missingServerAdminIdentityAssertionVariables =
+    getMissingServerAdminIdentityAssertionVariables(validatedConfig);
+
+  if (isNonEmptyArray(missingServerAdminIdentityAssertionVariables)) {
+    Logger.error(
+      `The server admin identity assertion is partially configured, missing: ${missingServerAdminIdentityAssertionVariables.join(', ')}`,
+    );
     throw new ConfigVariableException(
       'Config variables validation failed',
       ConfigVariableExceptionCode.VALIDATION_FAILED,
