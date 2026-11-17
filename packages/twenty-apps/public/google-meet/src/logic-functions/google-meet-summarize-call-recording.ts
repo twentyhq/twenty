@@ -1,19 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { runAgent } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import {
-  GOOGLE_MEET_CALL_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER,
-  GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type GoogleMeetCallSummaryOutcome } from 'src/logic-functions/types/google-meet-call-summary-outcome.type';
 import { buildGoogleMeetCallSummaryPrompt } from 'src/logic-functions/utils/build-google-meet-call-summary-prompt.util';
 import { findCallRecordingForSummary } from 'src/logic-functions/utils/find-call-recording-for-summary.util';
+import { isGoogleMeetAiSummaryEnabled } from 'src/logic-functions/utils/is-google-meet-ai-summary-enabled.util';
 import { isTranscriptEntryList } from 'src/logic-functions/utils/is-transcript-entry-list.util';
 import { parseGoogleMeetCallSummaryResponse } from 'src/logic-functions/utils/parse-google-meet-call-summary-response.util';
-import { saveCallRecordingSummaryOrThrow } from 'src/logic-functions/utils/save-call-recording-summary-or-throw.util';
+import { runGoogleMeetCallSummarizerOrThrow } from 'src/logic-functions/utils/run-google-meet-call-summarizer-or-throw.util';
+import { saveCallRecordingSummaryIfEmptyOrThrow } from 'src/logic-functions/utils/save-call-recording-summary-if-empty-or-throw.util';
 
 type GoogleMeetSummarizeCallRecordingResult =
   | { success: true; outcome: GoogleMeetCallSummaryOutcome }
@@ -26,6 +24,10 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
 }): Promise<GoogleMeetSummarizeCallRecordingResult> => {
   if (!isNonEmptyString(callRecordingId)) {
     return { success: false, error: 'Invalid Google Meet call summary job' };
+  }
+
+  if (!isGoogleMeetAiSummaryEnabled()) {
+    return { success: true, outcome: 'DISABLED' };
   }
 
   const coreApiClient = new CoreApiClient({ runAs: 'application' });
@@ -56,11 +58,7 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
   }
 
   const summaryMarkdown = parseGoogleMeetCallSummaryResponse(
-    await runAgent({
-      agentUniversalIdentifier:
-        GOOGLE_MEET_CALL_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER,
-      input: prompt,
-    }),
+    await runGoogleMeetCallSummarizerOrThrow(prompt),
   );
 
   if (!isNonEmptyString(summaryMarkdown)) {
@@ -70,13 +68,16 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
     };
   }
 
-  await saveCallRecordingSummaryOrThrow({
+  const isSaved = await saveCallRecordingSummaryIfEmptyOrThrow({
     coreApiClient,
     callRecordingId,
     summaryMarkdown,
   });
 
-  return { success: true, outcome: 'SUMMARIZED' };
+  return {
+    success: true,
+    outcome: isSaved ? 'SUMMARIZED' : 'ALREADY_SUMMARIZED',
+  };
 };
 
 export default defineLogicFunction({
