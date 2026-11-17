@@ -1,10 +1,12 @@
 import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionsSection';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
@@ -29,6 +31,7 @@ type SettingsMcpServerEditFormProps = {
 export const SettingsMcpServerEditForm = ({
   mcpServer,
 }: SettingsMcpServerEditFormProps) => {
+  const { t } = useLingui();
   const { updateMcpServer } = useUpdateMcpServer();
   const { navigateToMcpServersList } = useNavigateToMcpServersList();
 
@@ -40,13 +43,14 @@ export const SettingsMcpServerEditForm = ({
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
-  const { data: connectionProvidersData } = useQuery(
-    ApplicationConnectionProvidersDocument,
-    {
-      variables: { applicationId: mcpServer.applicationId },
-      skip: !isDefined(mcpServer.connectionProviderId),
-    },
-  );
+  const {
+    data: connectionProvidersData,
+    error: connectionProvidersError,
+    refetch: refetchConnectionProviders,
+  } = useQuery(ApplicationConnectionProvidersDocument, {
+    variables: { applicationId: mcpServer.applicationId },
+    skip: !isDefined(mcpServer.connectionProviderId),
+  });
   const perMemberConnectionProvider =
     connectionProvidersData?.applicationConnectionProviders.find(
       (connectionProvider) =>
@@ -93,11 +97,18 @@ export const SettingsMcpServerEditForm = ({
         }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
-        {isDefined(perMemberConnectionProvider) && (
-          <SettingsMcpServerConnectionsSection
-            mcpServerId={mcpServer.id}
-            connectionProvider={perMemberConnectionProvider}
+        {isDefined(connectionProvidersError) ? (
+          <SettingsApplicationLoadErrorBanner
+            message={t`The sign-in for this server could not be loaded. Check your connection and try again.`}
+            onRetry={() => refetchConnectionProviders().catch(() => undefined)}
           />
+        ) : (
+          isDefined(perMemberConnectionProvider) && (
+            <SettingsMcpServerConnectionsSection
+              mcpServerId={mcpServer.id}
+              connectionProvider={perMemberConnectionProvider}
+            />
+          )
         )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />

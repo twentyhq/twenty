@@ -1,5 +1,6 @@
 import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationProviderConnections } from '@/settings/applications/components/SettingsApplicationProviderConnections';
 import { APP_CONNECTED_ACCOUNT_PROVIDERS } from '@/settings/applications/constants/AppConnectedAccountProviders';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
@@ -31,21 +32,26 @@ export const SettingsMcpServerConnectionsSection = ({
       description={t`This server asks each member to sign in with their own account.`}
       shouldShowMissingCredentialsBanner={!canStartAuthorization}
     >
-      <SettingsApplicationProviderConnections
-        applicationId={connectionProvider.applicationId}
-        connectionProvider={connectionProvider}
-        connections={accounts.filter(
-          (account) => account.connectionProviderId === connectionProvider.id,
-        )}
-        canStartAuthorization={canStartAuthorization}
-        isLoading={loading}
-        hasLoadError={isDefined(error)}
-        onRetry={() => refetch().catch(() => undefined)}
-        connectTitle={t`Sign in to use this server`}
-        redirectLocation={getSettingsPath(SettingsPath.AiMcpServerDetail, {
-          mcpServerId,
-        })}
-      />
+      {isDefined(error) ? (
+        <SettingsApplicationLoadErrorBanner
+          message={t`Your connections could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      ) : (
+        <SettingsApplicationProviderConnections
+          applicationId={connectionProvider.applicationId}
+          connectionProvider={connectionProvider}
+          connections={accounts.filter(
+            (account) => account.connectionProviderId === connectionProvider.id,
+          )}
+          canStartAuthorization={canStartAuthorization}
+          isLoading={loading}
+          connectTitle={t`Sign in to use this server`}
+          redirectLocation={getSettingsPath(SettingsPath.AiMcpServerDetail, {
+            mcpServerId,
+          })}
+        />
+      )}
     </SettingsApplicationConnectionProviderSection>
   );
 };
