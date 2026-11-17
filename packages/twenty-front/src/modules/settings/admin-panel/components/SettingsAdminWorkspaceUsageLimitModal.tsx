@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { billingState } from '@/client-config/states/billingState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from '@/settings/admin-panel/constants/BillingArrangementCommentMaxLength';
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
@@ -49,8 +50,6 @@ const StyledFields = styled.div`
 const StyledActionSlot = styled.div`
   flex: 1;
 `;
-
-const COMMENT_MAX_LENGTH = 500;
 
 export const SettingsAdminWorkspaceUsageLimitModal = ({
   dialogId,
@@ -292,7 +291,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                     placeholder={t`Compensation for the October outage`}
                     value={commentValue}
                     onChange={setComment}
-                    maxLength={COMMENT_MAX_LENGTH}
+                    maxLength={BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH}
                     fullWidth
                   />
                 </>

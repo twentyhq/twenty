@@ -198,6 +198,7 @@ export type AdminPanelWorkspaceBillingArrangement = {
   endDate?: Maybe<Scalars['DateTime']['output']>;
   grantedBy?: Maybe<UserInfo>;
   id: Scalars['UUID']['output'];
+  isManageable: Scalars['Boolean']['output'];
   label: BillingArrangementLabel;
   revokedBy?: Maybe<UserInfo>;
   seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
@@ -723,11 +724,13 @@ export type Mutation = {
   addModelToProvider: Scalars['Boolean']['output'];
   clearMaintenanceMode: Scalars['Boolean']['output'];
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
+  createWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   createWorkspaceDataExport: WorkspaceDataExport;
   createWorkspaceUsageLimit: AdminPanelUsageLimit;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteJobs: DeleteJobsResponse;
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
+  endWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
@@ -767,6 +770,18 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateWorkspaceBillingArrangementArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  creditAllowance?: InputMaybe<Scalars['Float']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label: BillingArrangementLabel;
+  seatCapMode?: InputMaybe<BillingArrangementSeatCapMode>;
+  seats?: InputMaybe<Scalars['Int']['input']>;
+  type: BillingArrangementType;
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationCreateWorkspaceDataExportArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
@@ -794,6 +809,12 @@ export type MutationDeleteJobsArgs = {
 
 export type MutationDeleteWorkspaceUsageLimitArgs = {
   usageLimitId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationEndWorkspaceBillingArrangementArgs = {
+  billingArrangementId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
 };
 

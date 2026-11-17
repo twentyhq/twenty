@@ -22,3 +22,10 @@ export const ONE_TIME_BILLING_ARRANGEMENT_TYPES: BillingArrangementType[] = [
   BillingArrangementType.REFUND,
   BillingArrangementType.CREDIT_GRANT,
 ];
+
+export const ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES: BillingArrangementType[] =
+  [
+    BillingArrangementType.COMMITTED_SEATS,
+    BillingArrangementType.FREE_SEATS,
+    BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
+  ];
