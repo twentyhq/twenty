@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type GoogleMeetConferenceRecord } from 'src/logic-functions/types/google-meet-conference-record.type';
-import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/google-meet-conference-sync-outcome.type';
+import { type GoogleMeetConferenceSyncResult } from 'src/logic-functions/types/google-meet-conference-sync-result.type';
 import { buildGoogleMeetCallRecordingSyncFields } from 'src/logic-functions/utils/build-google-meet-call-recording-sync-fields.util';
 import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
 import { findGoogleMeetCalendarEvent } from 'src/logic-functions/utils/find-google-meet-calendar-event.util';
@@ -15,6 +15,7 @@ import { listGoogleMeetSmartNotes } from 'src/logic-functions/utils/list-google-
 import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
 import { listGoogleMeetTranscripts } from 'src/logic-functions/utils/list-google-meet-transcripts.util';
 import { mapGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/map-google-meet-transcript-entries.util';
+import { shouldGenerateGoogleMeetAiSummary } from 'src/logic-functions/utils/should-generate-google-meet-ai-summary.util';
 import { upsertCallRecordingOrThrow } from 'src/logic-functions/utils/upsert-call-recording-or-throw.util';
 
 export const syncGoogleMeetConferenceOrThrow = async ({
@@ -28,7 +29,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
     GoogleMeetConferenceRecord,
     'name' | 'startTime' | 'endTime' | 'space'
   >;
-}): Promise<GoogleMeetConferenceSyncOutcome> => {
+}): Promise<GoogleMeetConferenceSyncResult> => {
   const [transcripts, smartNotes] = await Promise.all([
     listGoogleMeetTranscripts({
       accessToken,
@@ -41,7 +42,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
   ]);
 
   if (!isNonEmptyArray(transcripts) && !isNonEmptyArray(smartNotes)) {
-    return 'NO_ARTIFACT';
+    return { outcome: 'NO_ARTIFACT', shouldGenerateAiSummary: false };
   }
 
   const [participants, transcriptEntriesByTranscript, space, summaryMarkdown] =
@@ -72,7 +73,13 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       })
     : undefined;
 
-  return upsertCallRecordingOrThrow({
+  const transcriptEntries = mapGoogleMeetTranscriptEntries({
+    conferenceRecord,
+    participants,
+    transcriptEntries: transcriptEntriesByTranscript.flat(),
+  });
+
+  const outcome = await upsertCallRecordingOrThrow({
     coreApiClient,
     callRecordingId: computeCallRecordingIdForGoogleMeetConference(
       conferenceRecord.name,
@@ -85,12 +92,19 @@ export const syncGoogleMeetConferenceOrThrow = async ({
         artifacts: [...transcripts, ...smartNotes],
       }),
       summaryMarkdown,
-      transcriptEntries: mapGoogleMeetTranscriptEntries({
-        conferenceRecord,
-        participants,
-        transcriptEntries: transcriptEntriesByTranscript.flat(),
-      }),
+      transcriptEntries,
       calendarEvent,
     }),
   });
+
+  return {
+    outcome,
+    shouldGenerateAiSummary:
+      outcome !== 'SKIPPED_DELETED' &&
+      shouldGenerateGoogleMeetAiSummary({
+        transcriptEntries,
+        summaryMarkdown,
+        smartNotes,
+      }),
+  };
 };
