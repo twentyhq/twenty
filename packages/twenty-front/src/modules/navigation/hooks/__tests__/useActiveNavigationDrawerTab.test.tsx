@@ -1,4 +1,4 @@
-import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
   type NavigationDrawerActiveTab,
@@ -20,7 +20,7 @@ const renderActiveNavigationDrawerMode = ({
 
   store.set(navigationDrawerActiveTabState.atom, activeTab);
 
-  return renderHook(() => useActiveNavigationDrawerMode(), {
+  return renderHook(() => useActiveNavigationDrawerTab(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Provider store={store}>
         <MemoryRouter initialEntries={[pathname]}>{children}</MemoryRouter>
@@ -29,7 +29,7 @@ const renderActiveNavigationDrawerMode = ({
   });
 };
 
-describe('useActiveNavigationDrawerMode', () => {
+describe('useActiveNavigationDrawerTab', () => {
   it('is the settings mode on a settings page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/settings/profile',

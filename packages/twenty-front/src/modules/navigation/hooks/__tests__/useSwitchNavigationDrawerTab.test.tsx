@@ -2,7 +2,7 @@ import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRou
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -59,7 +59,7 @@ const renderSwitchNavigationDrawerMode = ({
 
   const { result } = renderHook(
     () => ({
-      ...useSwitchNavigationDrawerMode(),
+      ...useSwitchNavigationDrawerTab(),
       location: useLocation(),
     }),
     {
@@ -78,7 +78,7 @@ const renderSwitchNavigationDrawerMode = ({
   return { result, store };
 };
 
-describe('useSwitchNavigationDrawerMode', () => {
+describe('useSwitchNavigationDrawerTab', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
@@ -103,7 +103,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
+      result.current.switchNavigationDrawerTab(
         NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
       ),
     );
@@ -122,7 +122,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
+      result.current.switchNavigationDrawerTab(
         NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
       ),
     );
@@ -136,7 +136,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
+      result.current.switchNavigationDrawerTab(
         NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
       ),
     );
@@ -153,7 +153,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
+      result.current.switchNavigationDrawerTab(
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
@@ -170,7 +170,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
+      result.current.switchNavigationDrawerTab(
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
@@ -184,7 +184,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       const { result } = renderSwitchNavigationDrawerMode({ pathname });
 
       act(() =>
-        result.current.switchNavigationDrawerMode(
+        result.current.switchNavigationDrawerTab(
           NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
         ),
       );
@@ -202,7 +202,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
 
       act(() =>
-        result.current.switchNavigationDrawerMode(
+        result.current.switchNavigationDrawerTab(
           NAVIGATION_DRAWER_TABS.SETTINGS,
         ),
       );
@@ -211,7 +211,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
 
       act(() =>
-        result.current.switchNavigationDrawerMode(
+        result.current.switchNavigationDrawerTab(
           NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
         ),
       );
@@ -229,7 +229,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       });
       act(() => store.set(isNavigationDrawerExpandedState.atom, !isExpanded));
       act(() =>
-        result.current.switchNavigationDrawerMode(
+        result.current.switchNavigationDrawerTab(
           NAVIGATION_DRAWER_TABS.SETTINGS,
         ),
       );
@@ -237,7 +237,7 @@ describe('useSwitchNavigationDrawerMode', () => {
 
       act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
       act(() =>
-        result.current.switchNavigationDrawerMode(
+        result.current.switchNavigationDrawerTab(
           NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
         ),
       );
@@ -272,7 +272,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU, DEFAULT_HOME_PAGE_PATH],
     ] as const) {
       window.history.replaceState(null, '', result.current.location.pathname);
-      act(() => result.current.switchNavigationDrawerMode(mode));
+      act(() => result.current.switchNavigationDrawerTab(mode));
 
       expect(result.current.location.pathname).toBe(pathname);
       expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(false);
@@ -288,9 +288,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     act(() => store.set(isNavigationDrawerExpandedState.atom, false));
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.SETTINGS,
-      ),
+      result.current.switchNavigationDrawerTab(NAVIGATION_DRAWER_TABS.SETTINGS),
     );
 
     expect(result.current.location.pathname).toBe('/settings/profile');
@@ -303,9 +301,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.SETTINGS,
-      ),
+      result.current.switchNavigationDrawerTab(NAVIGATION_DRAWER_TABS.SETTINGS),
     );
 
     expect(result.current.location.pathname).toBe('/settings/profile');
@@ -324,9 +320,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.SETTINGS,
-      ),
+      result.current.switchNavigationDrawerTab(NAVIGATION_DRAWER_TABS.SETTINGS),
     );
 
     expect(result.current.location.pathname).toBe('/settings/profile');
@@ -338,9 +332,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     });
 
     act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.SETTINGS,
-      ),
+      result.current.switchNavigationDrawerTab(NAVIGATION_DRAWER_TABS.SETTINGS),
     );
 
     expect(result.current.location.pathname).toBe('/settings/experience');
