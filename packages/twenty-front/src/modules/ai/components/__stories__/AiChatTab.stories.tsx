@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -11,6 +11,7 @@ import { ThemeProvider } from 'twenty-ui/theme';
 
 import { AiChatPrepromptEffect } from '@/ai/components/AiChatPrepromptEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
@@ -29,6 +30,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 const StyledPageChat = styled.div`
   display: flex;
@@ -155,7 +157,21 @@ const focusRecipientRemoval = async ({
 
 export const InboxNewChat: Story = {
   ...FullPageNewChat,
-  beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: true }),
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+    jotaiStore.set(currentWorkspaceMembersState.atom, [
+      ...jotaiStore.get(currentWorkspaceMembersState.atom),
+      ...Array.from(
+        { length: AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE + 10 },
+        (_, index) => ({
+          ...mockedWorkspaceMemberData,
+          id: `20202020-7c1e-4a0f-9d2b-${String(index).padStart(12, '0')}`,
+          name: { firstName: 'Teammate', lastName: String(index + 1) },
+          userEmail: `teammate${index + 1}@example.com`,
+        }),
+      ),
+    ]);
+  },
   parameters: {
     ...newChatParameters,
     container: { width: 660, height: 784 },
@@ -164,7 +180,11 @@ export const InboxNewChat: Story = {
     await expectNewChatWelcome(canvasElement);
 
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
     const recipients = canvas.getByRole('group', { name: 'Recipients' });
+    const addRecipients = within(recipients).getByRole('combobox', {
+      name: 'Add people or a channel',
+    });
 
     await userEvent.click(
       await focusRecipientRemoval({ recipients, label: 'Ada' }),
@@ -179,27 +199,48 @@ export const InboxNewChat: Story = {
         ),
       ).isAssistantParticipant,
     ).toBe(false);
+    await expect(addRecipients).toHaveFocus();
 
-    await userEvent.click(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    );
-    const popup = await within(canvasElement.ownerDocument.body).findByRole(
-      'dialog',
-      { name: 'Select recipients' },
-    );
+    await userEvent.click(addRecipients);
+    const suggestionList = await body.findByRole('listbox', {
+      name: 'Select recipients',
+    });
 
-    await userEvent.click(within(popup).getByRole('button', { name: 'Ada' }));
-    await expect(within(recipients).getByText('Ada')).toBeVisible();
-    await userEvent.type(
-      within(popup).getByRole('searchbox', { name: 'Search recipients' }),
-      'Jane',
+    await expect(within(suggestionList).getAllByRole('option')).toHaveLength(
+      AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
     );
-    await userEvent.click(
-      within(popup).getByRole('button', { name: /Jane Doe/ }),
+    fireEvent.scroll(suggestionList, {
+      target: { scrollTop: suggestionList.scrollHeight },
+    });
+    await waitFor(() =>
+      expect(
+        within(suggestionList).getAllByRole('option').length,
+      ).toBeGreaterThan(AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE),
     );
+    await userEvent.type(addRecipients, 'Jane');
+    const janeOption = await body.findByRole('option', { name: /Jane Doe/ });
+
+    await expect(
+      body.queryByRole('option', { name: 'Ada' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(janeOption).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await expect(within(recipients).getByText('Jane Doe')).toBeVisible();
+    await expect(addRecipients).toHaveValue('');
+    await expect(addRecipients).toHaveFocus();
+    await userEvent.click(addRecipients);
+    await userEvent.click(await body.findByRole('option', { name: 'Ada' }));
+    await expect(within(recipients).getByText('Ada')).toBeVisible();
+    await userEvent.type(addRecipients, 'Nobody');
+    await waitFor(() =>
+      expect(body.getByText('No recipients found')).toBeVisible(),
+    );
+    await userEvent.clear(addRecipients);
+    await waitFor(() =>
+      expect(body.getAllByRole('option')).toHaveLength(
+        AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
+      ),
+    );
     await userEvent.keyboard('{Escape}');
     await userEvent.click(
       await focusRecipientRemoval({ recipients, label: 'Jane Doe' }),
@@ -207,6 +248,7 @@ export const InboxNewChat: Story = {
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
+    await expect(addRecipients).toHaveValue('');
     const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
       threadId: jotaiStore.get(newAiChatThreadIdState.atom),
     });
