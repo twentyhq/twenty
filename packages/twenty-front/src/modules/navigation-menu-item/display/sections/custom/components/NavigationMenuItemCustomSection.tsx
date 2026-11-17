@@ -1,10 +1,10 @@
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 
 type NavigationMenuItemCustomSectionProps = {
-  section: Pick<NavigationMenuItem, 'id' | 'name'>;
+  section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
 };
 
 export const NavigationMenuItemCustomSection = ({
@@ -14,7 +14,7 @@ export const NavigationMenuItemCustomSection = ({
 
   return (
     <WorkspaceSectionContainer
-      sectionTitle={section.name ?? ''}
+      sectionTitle={section.name}
       items={items}
       containerId={section.id}
       navigationSectionId={`navigation-menu-section-${section.id}`}

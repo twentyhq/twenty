@@ -1,9 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
-type NamedNavigationMenuItem = NavigationMenuItem & { name: string };
 
 export const getNavigationMenuTabsInDisplayOrder = (
   navigationMenuItems: NavigationMenuItem[],
