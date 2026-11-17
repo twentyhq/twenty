@@ -184,7 +184,10 @@ const attachThroughRegistry = async ({
   execution: { workspaceId, threadId, persona, executionContext },
   record,
 }: {
-  execution: AgentRunExecution;
+  execution: Pick<
+    AgentRunExecution,
+    'workspaceId' | 'threadId' | 'persona' | 'executionContext'
+  >;
   record: { objectNameSingular: string; recordId: string };
 }) => {
   const authContext = await getAppProviderByClassName<AgentRunPersonaService>(

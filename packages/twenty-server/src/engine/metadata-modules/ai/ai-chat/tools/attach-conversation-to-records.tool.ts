@@ -2,6 +2,7 @@ import {
   ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   ToolCategory,
 } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -80,7 +81,7 @@ const buildOutputMessage = ({
       oauthClient: false,
       application: { withUser: true, withoutUser: false },
     },
-    requiredPermissionFlags: [],
+    requiredPermissionFlags: [PermissionFlagType.AI],
     requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
   },
   description:
