@@ -43,15 +43,20 @@ export const resolveComputedFieldSlotExpressionsOrThrow = <
   return {
     sourceRelation,
     slotExpressions: getComputedFieldSlotExpressions(computation).map(
-      (slotExpression) =>
-        slotExpression.slot.evaluatedOn === 'RELATED_RECORD' &&
-        isDefined(sourceRelation)
-          ? {
-              ...slotExpression,
-              evaluatedObject: sourceRelation.relatedObject,
-              pathPrefix: [sourceRelation.fieldName],
-            }
-          : { ...slotExpression, evaluatedObject: object, pathPrefix: [] },
+      (slotExpression) => {
+        if (
+          slotExpression.slot.evaluatedOn !== 'RELATED_RECORD' ||
+          !isDefined(sourceRelation)
+        ) {
+          return { ...slotExpression, evaluatedObject: object, pathPrefix: [] };
+        }
+
+        return {
+          ...slotExpression,
+          evaluatedObject: sourceRelation.relatedObject,
+          pathPrefix: [sourceRelation.fieldName],
+        };
+      },
     ),
   };
 };
