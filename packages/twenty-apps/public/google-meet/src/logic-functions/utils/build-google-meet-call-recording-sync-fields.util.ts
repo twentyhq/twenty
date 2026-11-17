@@ -8,6 +8,7 @@ import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry
 
 export const buildGoogleMeetCallRecordingSyncFields = ({
   conferenceRecord,
+  title,
   transcriptEntries,
   calendarEvent,
 }: {
@@ -15,11 +16,10 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
     GoogleMeetConferenceRecord,
     'name' | 'startTime' | 'endTime'
   >;
+  title: string | undefined;
   transcriptEntries: TranscriptEntry[];
-  calendarEvent: Pick<CalendarEventCandidate, 'id' | 'title'> | undefined;
+  calendarEvent: Pick<CalendarEventCandidate, 'id'> | undefined;
 }): CallRecordingSyncFields => {
-  const title = calendarEvent?.title?.trim();
-
   return {
     ...(isNonEmptyString(title) ? { title } : {}),
     status: isNonEmptyArray(transcriptEntries) ? 'COMPLETED' : 'PROCESSING',
