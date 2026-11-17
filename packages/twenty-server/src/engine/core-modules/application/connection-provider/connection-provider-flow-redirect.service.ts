@@ -83,7 +83,6 @@ export class ConnectionProviderFlowRedirectService {
     return res.redirect(url.toString());
   }
 
-  // Providers call back on SERVER_URL, but sign-in may have started (and set the flow cookie) on the workspace host
   async findWorkspaceHostCallbackUrl({
     request,
     state,
