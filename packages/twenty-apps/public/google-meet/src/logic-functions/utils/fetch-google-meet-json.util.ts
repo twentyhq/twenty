@@ -56,6 +56,7 @@ const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
     }) ?? GOOGLE_MEET_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
 
   if (
+    method !== 'POST' &&
     GOOGLE_MEET_RETRYABLE_STATUSES.has(response.status) &&
     attempt + 1 < GOOGLE_MEET_REQUEST_MAX_ATTEMPTS &&
     waitedMilliseconds + retryDelayMilliseconds <=
