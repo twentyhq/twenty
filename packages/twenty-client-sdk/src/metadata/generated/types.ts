@@ -3982,6 +3982,9 @@ export default {
             "name": [
                 4
             ],
+            "signInScope": [
+                180
+            ],
             "url": [
                 4
             ],
@@ -5844,6 +5847,9 @@ export default {
             "workspaceInviteHash": [
                 4
             ],
+            "workspacePersonalInviteToken": [
+                4
+            ],
             "__typename": [
                 4
             ]
@@ -6868,6 +6874,9 @@ export default {
             ],
             "name": [
                 4
+            ],
+            "signInScope": [
+                180
             ],
             "tools": [
                 373
@@ -10134,19 +10143,6 @@ export default {
                     "input": [
                         632,
                         "UpdateWorkspaceMemberSettingsInput!"
-                    ]
-                }
-            ],
-            "upgradeApplication": [
-                1,
-                {
-                    "appRegistrationId": [
-                        4,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        4,
-                        "String!"
                     ]
                 }
             ],
@@ -14781,6 +14777,9 @@ export default {
             ],
             "name": [
                 4
+            ],
+            "signInScope": [
+                180
             ],
             "url": [
                 4
