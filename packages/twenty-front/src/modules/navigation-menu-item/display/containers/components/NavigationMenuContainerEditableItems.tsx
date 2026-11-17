@@ -34,14 +34,13 @@ export const NavigationMenuContainerEditableItems = ({
 
   return (
     <StyledList>
-      {topLevelItems.map((item, index) => (
+      {topLevelItems.map((item) => (
         <NavigationMenuItemDisplay
           key={item.id}
           item={item}
           isDragging={false}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
-          orphanIndex={index}
           editModeProps={{
             isSelectedInEditMode:
               selectedNavigationMenuItemIdInEditMode === item.id,
