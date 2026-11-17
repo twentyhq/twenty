@@ -18,7 +18,6 @@ export const AiChatPage = () => {
     return (
       <>
         <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
-        {/* A new chat has no record until its first message is sent */}
         <AiChatNewThreadPageContent />
       </>
     );

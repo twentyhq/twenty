@@ -8,7 +8,7 @@ import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
-import { getAiChatPageThreadId } from '@/ai/utils/getAiChatPageThreadId';
+import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
@@ -18,12 +18,7 @@ export const useLeaveRemovedInboxThread = () => {
   const { loadAiChatThread } = useLoadAiChatThread();
 
   const leaveRemovedInboxThread = useCallback(async () => {
-    const getOpenThreadId = () =>
-      getAiChatPageThreadId({
-        pathname: window.location.pathname,
-        newAiChatThreadId: store.get(newAiChatThreadIdState.atom),
-      });
-    const currentThreadId = getOpenThreadId();
+    const currentThreadId = getCurrentAiChatPageThreadId(store);
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threads = store.get(inboxRecentThreadsSelector.atom);
 
@@ -38,7 +33,7 @@ export const useLeaveRemovedInboxThread = () => {
     // Only the first page is reloaded, so an older chat is looked up first
     if (
       (await loadAiChatThread(currentThreadId)) !== null ||
-      getOpenThreadId() !== currentThreadId
+      getCurrentAiChatPageThreadId(store) !== currentThreadId
     ) {
       return;
     }

@@ -2,8 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { getAiChatPageThreadId } from '@/ai/utils/getAiChatPageThreadId';
+import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useSelectAiChatThread = () => {
@@ -12,12 +11,7 @@ export const useSelectAiChatThread = () => {
 
   const selectAiChatThread = useCallback(
     (toThreadId: string) => {
-      const aiChatPageThreadId = getAiChatPageThreadId({
-        pathname: window.location.pathname,
-        newAiChatThreadId: store.get(newAiChatThreadIdState.atom),
-      });
-
-      if (aiChatPageThreadId !== toThreadId) {
+      if (getCurrentAiChatPageThreadId(store) !== toThreadId) {
         store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       }
 

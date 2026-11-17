@@ -20,8 +20,11 @@ export const getAiChatPageThreadId = ({
     return urlThreadId;
   }
 
-  return isDefined(aiChatPageMatch) ||
-    urlThreadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT
+  if (isDefined(aiChatPageMatch)) {
+    return newAiChatThreadId;
+  }
+
+  return urlThreadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT
     ? newAiChatThreadId
     : null;
 };
