@@ -2,9 +2,9 @@ import { getConnection } from 'twenty-sdk/logic-function';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { googleMeetRegisterConnectionHandler } from 'src/logic-functions/google-meet-register-connection';
-import { createGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/create-google-meet-event-subscription-or-throw.util';
+import { claimGoogleMeetEventSubscription } from 'src/logic-functions/utils/claim-google-meet-event-subscription.util';
+import { ensureGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/ensure-google-meet-event-subscription-or-throw.util';
 import { findGoogleMeetEventSubscription } from 'src/logic-functions/utils/find-google-meet-event-subscription.util';
-import { renewGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/renew-google-meet-event-subscription-or-throw.util';
 import { storeGoogleMeetConnectionSubscription } from 'src/logic-functions/utils/store-google-meet-connection-subscription.util';
 
 vi.mock('twenty-sdk/logic-function', () => ({ getConnection: vi.fn() }));
@@ -15,13 +15,13 @@ vi.mock(
 );
 
 vi.mock(
-  'src/logic-functions/utils/create-google-meet-event-subscription-or-throw.util',
-  () => ({ createGoogleMeetEventSubscriptionOrThrow: vi.fn() }),
+  'src/logic-functions/utils/claim-google-meet-event-subscription.util',
+  () => ({ claimGoogleMeetEventSubscription: vi.fn() }),
 );
 
 vi.mock(
-  'src/logic-functions/utils/renew-google-meet-event-subscription-or-throw.util',
-  () => ({ renewGoogleMeetEventSubscriptionOrThrow: vi.fn() }),
+  'src/logic-functions/utils/ensure-google-meet-event-subscription-or-throw.util',
+  () => ({ ensureGoogleMeetEventSubscriptionOrThrow: vi.fn() }),
 );
 
 vi.mock(
@@ -31,6 +31,7 @@ vi.mock(
 
 const PUBSUB_TOPIC = 'projects/twenty/topics/google-meet';
 const SUBSCRIPTION = { name: 'subscriptions/first' };
+const EXISTING_SUBSCRIPTION = { name: 'subscriptions/existing' };
 
 describe('googleMeetRegisterConnectionHandler', () => {
   beforeEach(() => {
@@ -42,10 +43,7 @@ describe('googleMeetRegisterConnectionHandler', () => {
       externalAccountId: '1234567890',
     });
     vi.mocked(findGoogleMeetEventSubscription).mockResolvedValue(undefined);
-    vi.mocked(createGoogleMeetEventSubscriptionOrThrow).mockResolvedValue(
-      SUBSCRIPTION,
-    );
-    vi.mocked(renewGoogleMeetEventSubscriptionOrThrow).mockResolvedValue(
+    vi.mocked(ensureGoogleMeetEventSubscriptionOrThrow).mockResolvedValue(
       SUBSCRIPTION,
     );
   });
@@ -71,24 +69,29 @@ describe('googleMeetRegisterConnectionHandler', () => {
       accessToken: 'token',
       googleUserId: '1234567890',
     });
+    expect(claimGoogleMeetEventSubscription).not.toHaveBeenCalled();
     expect(
-      createGoogleMeetEventSubscriptionOrThrow,
+      ensureGoogleMeetEventSubscriptionOrThrow,
     ).toHaveBeenCalledExactlyOnceWith({
       accessToken: 'token',
       googleUserId: '1234567890',
       pubsubTopic: PUBSUB_TOPIC,
+      existingSubscription: undefined,
     });
-    expect(renewGoogleMeetEventSubscriptionOrThrow).not.toHaveBeenCalled();
     expect(
       storeGoogleMeetConnectionSubscription,
     ).toHaveBeenCalledExactlyOnceWith({
+      accessToken: 'token',
       connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/first',
+      replacedSubscriptionName: undefined,
     });
   });
 
-  it('should renew the subscription the Google account already has', async () => {
-    vi.mocked(findGoogleMeetEventSubscription).mockResolvedValue(SUBSCRIPTION);
+  it('should claim the subscription the Google account already has before using it', async () => {
+    vi.mocked(findGoogleMeetEventSubscription).mockResolvedValue(
+      EXISTING_SUBSCRIPTION,
+    );
 
     await expect(
       googleMeetRegisterConnectionHandler({
@@ -99,19 +102,45 @@ describe('googleMeetRegisterConnectionHandler', () => {
       subscriptionName: 'subscriptions/first',
     });
 
+    expect(claimGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith(
+      'subscriptions/existing',
+    );
     expect(
-      renewGoogleMeetEventSubscriptionOrThrow,
+      ensureGoogleMeetEventSubscriptionOrThrow,
     ).toHaveBeenCalledExactlyOnceWith({
       accessToken: 'token',
-      subscriptionName: 'subscriptions/first',
+      googleUserId: '1234567890',
+      pubsubTopic: PUBSUB_TOPIC,
+      existingSubscription: EXISTING_SUBSCRIPTION,
     });
-    expect(createGoogleMeetEventSubscriptionOrThrow).not.toHaveBeenCalled();
     expect(
       storeGoogleMeetConnectionSubscription,
     ).toHaveBeenCalledExactlyOnceWith({
+      accessToken: 'token',
       connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/first',
+      replacedSubscriptionName: 'subscriptions/existing',
     });
+  });
+
+  it('should leave alone a subscription that another workspace owns', async () => {
+    const claimError = new Error('Key is claimed by another workspace');
+
+    vi.mocked(findGoogleMeetEventSubscription).mockResolvedValue(
+      EXISTING_SUBSCRIPTION,
+    );
+    vi.mocked(claimGoogleMeetEventSubscription).mockRejectedValueOnce(
+      claimError,
+    );
+
+    await expect(
+      googleMeetRegisterConnectionHandler({
+        connectedAccountId: 'connected-account-id',
+      }),
+    ).rejects.toBe(claimError);
+
+    expect(ensureGoogleMeetEventSubscriptionOrThrow).not.toHaveBeenCalled();
+    expect(storeGoogleMeetConnectionSubscription).not.toHaveBeenCalled();
   });
 
   it('should fail when the Pub/Sub topic is not configured', async () => {

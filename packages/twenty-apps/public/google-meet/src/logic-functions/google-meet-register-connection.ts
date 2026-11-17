@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GOOGLE_MEET_PUBSUB_TOPIC_SERVER_VARIABLE_NAME } from 'src/constants/google-meet.constant';
 import { GOOGLE_MEET_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
-import { createGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/create-google-meet-event-subscription-or-throw.util';
+import { claimGoogleMeetEventSubscription } from 'src/logic-functions/utils/claim-google-meet-event-subscription.util';
+import { ensureGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/ensure-google-meet-event-subscription-or-throw.util';
 import { findGoogleMeetEventSubscription } from 'src/logic-functions/utils/find-google-meet-event-subscription.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
-import { renewGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/renew-google-meet-event-subscription-or-throw.util';
 import { storeGoogleMeetConnectionSubscription } from 'src/logic-functions/utils/store-google-meet-connection-subscription.util';
 
 type GoogleMeetRegisterConnectionResult =
@@ -50,20 +50,23 @@ export const googleMeetRegisterConnectionHandler = async ({
     accessToken,
     googleUserId,
   });
-  const subscription = isDefined(existingSubscription)
-    ? await renewGoogleMeetEventSubscriptionOrThrow({
-        accessToken,
-        subscriptionName: existingSubscription.name,
-      })
-    : await createGoogleMeetEventSubscriptionOrThrow({
-        accessToken,
-        googleUserId,
-        pubsubTopic,
-      });
+
+  if (isDefined(existingSubscription)) {
+    await claimGoogleMeetEventSubscription(existingSubscription.name);
+  }
+
+  const subscription = await ensureGoogleMeetEventSubscriptionOrThrow({
+    accessToken,
+    googleUserId,
+    pubsubTopic,
+    existingSubscription,
+  });
 
   await storeGoogleMeetConnectionSubscription({
+    accessToken,
     connectedAccountId,
     subscriptionName: subscription.name,
+    replacedSubscriptionName: existingSubscription?.name,
   });
 
   return { success: true, subscriptionName: subscription.name };
