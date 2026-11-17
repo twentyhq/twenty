@@ -857,6 +857,48 @@ describe('Computed fields (e2e)', () => {
       ]);
     });
 
+    it('writes only the records its filter selects when the filter and the response read different text literals', async () => {
+      const fieldIds: string[] = [];
+
+      for (const [name, expression] of [
+        ['isNamedAlpha', "name == 'Alpha'"],
+        ['isNamedBeta', "name == 'Beta'"],
+      ]) {
+        const { data } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name,
+          type: FieldMetadataType.BOOLEAN,
+          computation: { kind: 'FORMULA', expression },
+        });
+
+        fieldIds.push(data.createOneField.id);
+      }
+
+      try {
+        const response = await makeGraphqlApiRequest(
+          updateManyOperationFactory({
+            objectMetadataSingularName: 'rollupProject',
+            objectMetadataPluralName: 'rollupProjects',
+            gqlFields: 'id budget isNamedBeta',
+            filter: { isNamedAlpha: { eq: true } },
+            data: { budget: 100 },
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.updateRollupProjects).toEqual([
+          { id: ALPHA_PROJECT_ID, budget: 100, isNamedBeta: false },
+        ]);
+        expect(await findProjectValuesById('budget')).toEqual({
+          [ALPHA_PROJECT_ID]: 100,
+          [BETA_PROJECT_ID]: 30,
+          [EMPTY_PROJECT_ID]: 0,
+        });
+      } finally {
+        await deactivateAndDeleteFields(fieldIds);
+      }
+    });
+
     it('refuses to write a computed field', async () => {
       const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
