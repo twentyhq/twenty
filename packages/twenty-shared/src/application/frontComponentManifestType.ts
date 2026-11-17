@@ -1,3 +1,4 @@
+import { type SourceFileManifest } from './sourceFileManifestType';
 import { type FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from '@/application/constants/FrontComponentWidgetPageLayoutTypes';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
@@ -35,6 +36,7 @@ export type FrontComponentManifest = {
   name?: string;
   description?: string;
   sourceComponentPath: string;
+  sourceFiles?: SourceFileManifest[];
   builtComponentPath: string;
   builtComponentChecksum: string;
   componentName: string;
