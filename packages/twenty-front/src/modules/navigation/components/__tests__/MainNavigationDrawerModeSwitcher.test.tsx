@@ -55,7 +55,7 @@ const salesTab = {
   name: 'Sales',
   icon: 'IconBriefcase',
   position: 0,
-} as NavigationMenuItem;
+} as NavigationMenuItem & { name: string };
 
 const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },

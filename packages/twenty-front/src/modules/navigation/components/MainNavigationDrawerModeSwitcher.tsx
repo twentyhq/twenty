@@ -151,14 +151,14 @@ export const MainNavigationDrawerModeSwitcher = () => {
             <MainNavigationDrawerModeButton
               key={tab.id}
               Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
-              label={tab.name ?? ''}
+              label={tab.name}
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
               isDisabled={isLayoutCustomizationModeEnabled}
               tooltip={
                 isLayoutCustomizationModeEnabled
                   ? t`Finish editing the layout to open this tab`
-                  : (tab.name ?? '')
+                  : tab.name
               }
               shouldShowTooltip={shouldShowTooltips}
               onClick={() => switchToNavigationMenuTab(tab.id)}
