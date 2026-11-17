@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
@@ -22,7 +23,7 @@ type BroadcastEventRecord = {
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
   viewId?: string | null;
-  overrides?: unknown;
+  overrides?: FlatView['overrides'];
   applicationUniversalIdentifier?: string;
 };
 

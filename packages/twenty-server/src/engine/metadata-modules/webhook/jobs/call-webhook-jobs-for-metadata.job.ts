@@ -128,11 +128,6 @@ export class CallWebhookJobsForMetadataJob {
             flatEntity: {
               visibility: record.visibility,
               overrides: record.overrides,
-              applicationUniversalIdentifier: isNonEmptyString(
-                record.applicationUniversalIdentifier,
-              )
-                ? record.applicationUniversalIdentifier
-                : undefined,
             },
             property: 'visibility',
           }) === ViewVisibility.WORKSPACE
