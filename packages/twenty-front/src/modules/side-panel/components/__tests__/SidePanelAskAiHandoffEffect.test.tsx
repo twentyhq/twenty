@@ -15,13 +15,10 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
 
 const CONTINUED_THREAD_ID = '20202020-0000-4000-8000-000000000002';
 
-const leaveChatPageFor = (
-  pathname: string,
-  continuedThreadId = CONTINUED_THREAD_ID,
-) => {
+const leaveChatPageFor = (pathname: string) => {
   const store = createStore();
 
-  store.set(aiChatContinueInSidePanelThreadIdState.atom, continuedThreadId);
+  store.set(aiChatContinueInSidePanelThreadIdState.atom, CONTINUED_THREAD_ID);
   store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
   render(
