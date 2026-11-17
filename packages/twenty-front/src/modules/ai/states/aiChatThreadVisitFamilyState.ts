@@ -13,7 +13,6 @@ export type AiChatThreadVisit = {
   readRequestedForParticipantUpdatedAt?: string;
 };
 
-// A thread on screen in a visible tab
 export const aiChatThreadVisitFamilyState = createAtomFamilyState<
   AiChatThreadVisit | null,
   { threadId: string }

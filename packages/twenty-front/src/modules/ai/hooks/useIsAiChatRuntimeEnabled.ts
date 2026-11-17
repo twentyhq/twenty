@@ -5,7 +5,6 @@ import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartT
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 
-// The session starts the first time the chat is opened
 export const useIsAiChatRuntimeEnabled = () => {
   const aiChatUISessionStartTime = useAtomStateValue(
     aiChatUISessionStartTimeState,
