@@ -31,6 +31,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private mainClient: ClickHouseClient | undefined;
   private clients: Map<string, ClickHouseClient> = new Map();
   private isClientInitializing: Map<string, boolean> = new Map();
+  private isDestroyed = false;
   private readonly logger = new Logger(ClickHouseService.name);
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {
@@ -55,7 +56,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     clientId: string,
     url?: string,
   ): Promise<ClickHouseClient | undefined> {
-    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL') || this.isDestroyed) {
       return undefined;
     }
 
@@ -71,6 +72,12 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
     try {
       const clientInstance = await this.createAndInitializeClient(url);
+
+      if (this.isDestroyed) {
+        await clientInstance.close();
+
+        return undefined;
+      }
 
       this.clients.set(clientId, clientInstance);
 
@@ -130,6 +137,8 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
+    this.isDestroyed = true;
+
     const clients = [this.mainClient, ...this.clients.values()];
 
     this.mainClient = undefined;
