@@ -8326,11 +8326,6 @@ msgstr "ایجاد یک وظیفه برای این رکورد: "
 msgid "Create a workflow"
 msgstr "ایجاد یک گردش کار"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "یک گردش کار ایجاد کنید و برای مشاهده نسخه‌های آن به اینجا بازگردید"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "در این دوره هیچ نسخه‌ای گزارش نشده است"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "هنوز هیچ اجرای گردش کاری وجود ندارد"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "هنوز هیچ نسخه‌ای از گردش کار وجود ندارد"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

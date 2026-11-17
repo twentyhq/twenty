@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ServerAdminIdentityAssertionService } from 'src/engine/core-modules/auth/identity-assertion/services/server-admin-identity-assertion.service';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -13,6 +14,7 @@ import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/serv
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -35,11 +37,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CoreEntityCacheModule,
     ImpersonationAuthorizationModule,
     UserSessionModule,
+    SecureHttpClientModule,
   ],
   providers: [
     RenewTokenService,
     JwtAuthStrategy,
     AccessTokenService,
+    ServerAdminIdentityAssertionService,
     LoginTokenService,
     RefreshTokenService,
     WorkspaceAgnosticTokenService,
