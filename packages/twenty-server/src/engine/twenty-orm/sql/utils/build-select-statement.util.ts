@@ -5,6 +5,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
+import { type WrittenRows } from 'src/engine/twenty-orm/sql/types/written-rows.type';
 import { buildComputedTableSource } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
@@ -77,6 +78,8 @@ export type ComputedColumnSqlByAlias = Record<
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
+  // Read instead of the table, so a write can return values computed over the rows it wrote
+  writtenRows?: WrittenRows;
   findOptions: FindOptionsLike;
   explicitSelection?: string[];
   extraSelectClauses: SelectClause[];
@@ -401,7 +404,7 @@ const renderExistsFilter = (
 
   const tableSource = buildTableSource({
     state,
-    tableShape: existsFilterClause.targetTableShape,
+    tableExpression: buildTableExpression(existsFilterClause.targetTableShape),
     alias: existsFilterClause.alias,
   });
 
@@ -476,19 +479,24 @@ export const buildWhereExpression = (
   return `(${filterExpression}) AND ${softDeletePredicate}`;
 };
 
+const WRITTEN_ROWS_RELATION_NAME = 'written';
+
+const buildTableExpression = (tableShape: WorkspaceTableShape): string =>
+  `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
+    tableShape.tableName,
+  )}`;
+
 const buildTableSource = ({
   state,
-  tableShape,
+  tableExpression,
   alias,
 }: {
   state: Pick<SelectStatementState, 'computedColumnSqlByAlias'>;
-  tableShape: WorkspaceTableShape;
+  tableExpression: string;
   alias: string;
 }): string =>
   buildComputedTableSource({
-    tableExpression: `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
-      tableShape.tableName,
-    )}`,
+    tableExpression,
     alias,
     computedColumnSqlByColumnName: state.computedColumnSqlByAlias[alias] ?? {},
   });
@@ -496,9 +504,20 @@ const buildTableSource = ({
 export const buildFromClause = (state: SelectStatementState): string =>
   `FROM ${buildTableSource({
     state,
-    tableShape: state.tableShape,
+    tableExpression: isDefined(state.writtenRows)
+      ? escapeIdentifier(WRITTEN_ROWS_RELATION_NAME)
+      : buildTableExpression(state.tableShape),
     alias: state.alias,
   })} AS ${escapeIdentifier(state.alias)}`;
+
+// The column list names the returned columns as the table does, which is what computed columns read
+const buildWithWrittenRowsClause = ({
+  statement,
+  returnedColumnNames,
+}: WrittenRows): string =>
+  `WITH ${escapeIdentifier(WRITTEN_ROWS_RELATION_NAME)} (${returnedColumnNames
+    .map((columnName) => escapeIdentifier(columnName))
+    .join(', ')}) AS (${statement})`;
 
 const buildToManyDedupedJoinSource = ({
   tableExpression,
@@ -567,7 +586,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
 
       const tableSource = buildTableSource({
         state,
-        tableShape: joinClause.targetTableShape,
+        tableExpression: buildTableExpression(joinClause.targetTableShape),
         alias: joinClause.alias,
       });
 
@@ -651,6 +670,9 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
   return [
+    isDefined(state.writtenRows)
+      ? buildWithWrittenRowsClause(state.writtenRows)
+      : '',
     `SELECT ${buildDistinctOnClause(state)}${buildProjection(state).expressions.join(', ')}`,
     buildFromClause(state),
     buildJoinClause(state),
