@@ -6,12 +6,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewSortExceptionCode } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import {
+  FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { ViewSortDirection } from 'twenty-shared/types';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { validateFlatViewSortRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util';
 
 @Injectable()
@@ -52,27 +57,12 @@ export class FlatViewSortValidatorService {
       });
     }
 
-    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatViewSortToValidate.fieldMetadataUniversalIdentifier,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
-        message: t`Field metadata not found`,
-        userFriendlyMessage: msg`Field metadata not found`,
-      });
-    } else {
-      validationResult.errors.push(
-        ...validateFlatViewSortRelationTarget({
-          flatViewSort: flatViewSortToValidate,
-          flatFieldMetadata,
-          flatFieldMetadataMaps,
-        }),
-      );
-    }
+    validationResult.errors.push(
+      ...this.validateFieldMetadata({
+        flatViewSort: flatViewSortToValidate,
+        flatFieldMetadataMaps,
+      }),
+    );
 
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatViewSortToValidate.viewUniversalIdentifier,
@@ -185,26 +175,12 @@ export class FlatViewSortValidatorService {
       viewUniversalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,
     };
 
-    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: updatedFlatViewSort.fieldMetadataUniversalIdentifier,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
-        message: t`Field metadata not found`,
-        userFriendlyMessage: msg`Field metadata not found`,
-      });
-    } else {
-      validationResult.errors.push(
-        ...validateFlatViewSortRelationTarget({
-          flatViewSort: updatedFlatViewSort,
-          flatFieldMetadata,
-          flatFieldMetadataMaps,
-        }),
-      );
-    }
+    validationResult.errors.push(
+      ...this.validateFieldMetadata({
+        flatViewSort: updatedFlatViewSort,
+        flatFieldMetadataMaps,
+      }),
+    );
 
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,
@@ -256,5 +232,38 @@ export class FlatViewSortValidatorService {
     }
 
     return validationResult;
+  }
+
+  private validateFieldMetadata({
+    flatViewSort,
+    flatFieldMetadataMaps,
+  }: {
+    flatViewSort: Pick<
+      UniversalFlatViewSort,
+      | 'fieldMetadataUniversalIdentifier'
+      | 'relationTargetFieldMetadataUniversalIdentifier'
+    >;
+    flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
+  }): FlatEntityValidationError<ViewSortExceptionCode>[] {
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewSort.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      return [
+        {
+          code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+          message: t`Field metadata not found`,
+          userFriendlyMessage: msg`Field metadata not found`,
+        },
+      ];
+    }
+
+    return validateFlatViewSortRelationTarget({
+      flatViewSort,
+      flatFieldMetadata,
+      flatFieldMetadataMaps,
+    });
   }
 }
