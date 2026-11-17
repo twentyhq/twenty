@@ -69,14 +69,24 @@ describe('sendUnipileChatMessage', () => {
       ],
     });
 
-    const [{ bodySerializer, headers }] = mocks.sendMessage.mock.calls[0];
-    const formData: FormData = bodySerializer();
-    const [deck, photo] = [
-      formData.get('attachments[0]'),
-      formData.get('attachments[1]'),
-    ] as File[];
+    expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith({
+      auth: 'key',
+      throwOnError: true,
+      path: { account_id: 'acc_1', chat_id: 'chat-1' },
+      body: { text: 'See attached' },
+      bodySerializer: expect.any(Function),
+      headers: { 'Content-Type': null },
+    });
 
-    expect(headers).toEqual({ 'Content-Type': null });
+    const [{ bodySerializer }] = mocks.sendMessage.mock.calls[0];
+    const formData: FormData = bodySerializer();
+    const deck = formData.get('attachments[0]');
+    const photo = formData.get('attachments[1]');
+
+    if (!(deck instanceof File) || !(photo instanceof File)) {
+      throw new Error('Attachments were not sent as files');
+    }
+
     expect(formData.get('text')).toBe('See attached');
     expect(deck.name).toBe('deck.pdf');
     expect(deck.type).toBe('application/pdf');
