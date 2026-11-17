@@ -23,10 +23,10 @@ export const BrowserNotificationPermissionCard = () => {
   };
 
   const sendTestNotification = () => {
-    const notification = createBrowserNotification(
-      t`Desktop notifications are on`,
-      { body: t`New messages will show up like this` },
-    );
+    const notification = createBrowserNotification({
+      title: t`Desktop notifications are on`,
+      options: { body: t`New messages will show up like this` },
+    });
 
     if (isDefined(notification)) {
       notification.onclick = () => notification.close();

@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLevel';
 import { type InboxNotificationLevel } from '@/inbox/types/InboxNotificationLevel';
+import { isWithinInboxNotificationActivityWindow } from '@/inbox/utils/isWithinInboxNotificationActivityWindow';
 
 export const isInboxNotificationDue = ({
   thread,
@@ -53,8 +54,16 @@ export const isInboxNotificationDue = ({
     (thread.directMessageFirstWorkspaceMemberId === currentWorkspaceMemberId ||
       thread.directMessageSecondWorkspaceMemberId === currentWorkspaceMemberId);
   const isAssignedToMe = thread.assigneeId === currentWorkspaceMemberId;
+  const lastMentionedAt = participant?.lastMentionedAt;
+  const isMentionedByLastMessage =
+    isMentioned &&
+    isDefined(lastMentionedAt) &&
+    isWithinInboxNotificationActivityWindow({
+      timestamp: lastMentionedAt,
+      lastActivityAt: thread.lastActivityAt,
+    });
 
-  if (isDirectMessageWithMe || isMentioned || isAssignedToMe) {
+  if (isDirectMessageWithMe || isMentionedByLastMessage || isAssignedToMe) {
     return true;
   }
 

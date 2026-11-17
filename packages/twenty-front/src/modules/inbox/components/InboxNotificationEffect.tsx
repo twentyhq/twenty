@@ -16,12 +16,11 @@ import { INBOX_NOTIFICATION_LEVEL } from '@/inbox/constants/InboxNotificationLev
 import { useShowInboxNotification } from '@/inbox/hooks/useShowInboxNotification';
 import { inboxNotificationLevelState } from '@/inbox/states/inboxNotificationLevelState';
 import { inboxNotifiedLastActivityAtByThreadIdState } from '@/inbox/states/inboxNotifiedLastActivityAtByThreadIdState';
-import {
-  answerFocusedTabRequestsFromOtherTabs,
-  isAnotherTabFocused,
-} from '@/inbox/utils/inboxNotificationTabChannel';
+import { answerFocusedTabRequestsFromOtherTabs } from '@/inbox/utils/answerFocusedTabRequestsFromOtherTabs';
+import { isAnotherTabFocused } from '@/inbox/utils/isAnotherTabFocused';
 import { isDocumentFocused } from '@/inbox/utils/isDocumentFocused';
 import { isInboxNotificationDue } from '@/inbox/utils/isInboxNotificationDue';
+import { isWithinInboxNotificationActivityWindow } from '@/inbox/utils/isWithinInboxNotificationActivityWindow';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -32,10 +31,6 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { getBrowserNotificationPermission } from '~/utils/getBrowserNotificationPermission';
-
-// A mention or new DM writes the participant row next to the message, so a
-// participant change this close to the last activity belongs to that message
-const PARTICIPANT_ACTIVITY_WINDOW_MS = 2_000;
 
 export const InboxNotificationEffect = () => {
   const store = useStore();
@@ -178,10 +173,10 @@ export const InboxNotificationEffect = () => {
 
       if (
         !isDefined(thread?.lastActivityAt) ||
-        Math.abs(
-          new Date(participant.updatedAt).getTime() -
-            new Date(thread.lastActivityAt).getTime(),
-        ) > PARTICIPANT_ACTIVITY_WINDOW_MS
+        !isWithinInboxNotificationActivityWindow({
+          timestamp: participant.updatedAt,
+          lastActivityAt: thread.lastActivityAt,
+        })
       ) {
         return;
       }

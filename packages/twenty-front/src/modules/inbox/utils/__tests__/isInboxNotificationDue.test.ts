@@ -112,6 +112,25 @@ describe('isInboxNotificationDue', () => {
     ).toBe(true);
   });
 
+  it('should not notify for a later message while an earlier mention is unresolved', () => {
+    const participantMentionedEarlier = {
+      ...unreadFollowedParticipant,
+      lastMentionedAt: '2026-11-16T09:30:00.000Z',
+    };
+
+    expect(
+      isDue({
+        participant: { ...participantMentionedEarlier, isSubscribed: false },
+      }),
+    ).toBe(false);
+    expect(
+      isDue({
+        inboxNotificationLevel: INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS,
+        participant: participantMentionedEarlier,
+      }),
+    ).toBe(false);
+  });
+
   it('should only notify for direct messages, mentions and assigned chats when the level asks for it', () => {
     const inboxNotificationLevel = INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
 
