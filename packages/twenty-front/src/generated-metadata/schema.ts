@@ -1380,6 +1380,7 @@ export type BooleanFieldComparison = {
 
 export type CalendarChannel = {
   __typename?: 'CalendarChannel';
+  connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
   createdAt: Scalars['DateTime']['output'];
@@ -1394,7 +1395,6 @@ export type CalendarChannel = {
   syncedAt?: Maybe<Scalars['DateTime']['output']>;
   throttleFailureCount: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  userWorkspaceId: Scalars['UUID']['output'];
   visibility: CalendarChannelVisibility;
 };
 

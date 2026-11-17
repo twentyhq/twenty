@@ -32,13 +32,16 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(channelIds).not.toContain(CALENDAR_CHANNEL_DATA_SEED_IDS.JONY);
     });
 
-    it('should return the member who owns each calendar channel', async () => {
+    it('should return the connected account of each calendar channel', async () => {
       const response = await makeMetadataApiRequest({
         query: gql`
           query MyCalendarChannels {
             myCalendarChannels {
               id
-              userWorkspaceId
+              connectedAccount {
+                id
+                userWorkspaceId
+              }
             }
           }
         `,
@@ -52,9 +55,10 @@ describe('calendarChannelResolver (e2e)', () => {
           channel.id === CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
       );
 
-      expect(janeChannel.userWorkspaceId).toBe(
-        USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      );
+      expect(janeChannel.connectedAccount).toEqual({
+        id: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
@@ -84,7 +88,9 @@ describe('calendarChannelResolver (e2e)', () => {
             updateCalendarChannel(input: $input) {
               id
               visibility
-              userWorkspaceId
+              connectedAccount {
+                userWorkspaceId
+              }
             }
           }
         `,
@@ -101,9 +107,10 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(response.body.data.updateCalendarChannel.visibility).toBe(
         'METADATA',
       );
-      expect(response.body.data.updateCalendarChannel.userWorkspaceId).toBe(
-        USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      );
+      expect(
+        response.body.data.updateCalendarChannel.connectedAccount
+          .userWorkspaceId,
+      ).toBe(USER_WORKSPACE_DATA_SEED_IDS.JANE);
     });
 
     it('should deny updating another user channel', async () => {
