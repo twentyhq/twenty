@@ -1,17 +1,16 @@
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { kv } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { googleMeetUnregisterConnectionHandler } from 'src/logic-functions/google-meet-unregister-connection';
-import { deleteGoogleMeetEventSubscription } from 'src/logic-functions/utils/delete-google-meet-event-subscription.util';
+import { releaseGoogleMeetEventSubscription } from 'src/logic-functions/utils/release-google-meet-event-subscription.util';
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  getConnection: vi.fn(),
   kv: { get: vi.fn(), delete: vi.fn() },
 }));
 
 vi.mock(
-  'src/logic-functions/utils/delete-google-meet-event-subscription.util',
-  () => ({ deleteGoogleMeetEventSubscription: vi.fn() }),
+  'src/logic-functions/utils/release-google-meet-event-subscription.util',
+  () => ({ releaseGoogleMeetEventSubscription: vi.fn() }),
 );
 
 const CONNECTION_SUBSCRIPTION_KEY =
@@ -27,10 +26,6 @@ const mockStoredValues = (storedValues: Record<string, string>) =>
 describe('googleMeetUnregisterConnectionHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getConnection, { partial: true }).mockResolvedValue({
-      id: 'connected-account-id',
-      accessToken: 'token',
-    });
   });
 
   it('should delete the subscription of the removed connection', async () => {
@@ -45,16 +40,11 @@ describe('googleMeetUnregisterConnectionHandler', () => {
       }),
     ).resolves.toEqual({ success: true, isSubscriptionDeleted: true });
 
-    expect(vi.mocked(kv.delete).mock.calls).toEqual([
-      [CONNECTION_SUBSCRIPTION_KEY],
-      [EVENT_SUBSCRIPTION_KEY],
-      [EVENT_SUBSCRIPTION_KEY, { scope: 'SERVER' }],
-    ]);
-    expect(getConnection).toHaveBeenCalledExactlyOnceWith(
-      'connected-account-id',
+    expect(kv.delete).toHaveBeenCalledExactlyOnceWith(
+      CONNECTION_SUBSCRIPTION_KEY,
     );
-    expect(deleteGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith({
-      accessToken: 'token',
+    expect(releaseGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith({
+      connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/first',
     });
   });
@@ -74,7 +64,7 @@ describe('googleMeetUnregisterConnectionHandler', () => {
     expect(kv.delete).toHaveBeenCalledExactlyOnceWith(
       CONNECTION_SUBSCRIPTION_KEY,
     );
-    expect(deleteGoogleMeetEventSubscription).not.toHaveBeenCalled();
+    expect(releaseGoogleMeetEventSubscription).not.toHaveBeenCalled();
   });
 
   it('should do nothing for a connection without subscription', async () => {
@@ -87,7 +77,7 @@ describe('googleMeetUnregisterConnectionHandler', () => {
     ).resolves.toEqual({ success: true, isSubscriptionDeleted: false });
 
     expect(kv.delete).not.toHaveBeenCalled();
-    expect(deleteGoogleMeetEventSubscription).not.toHaveBeenCalled();
+    expect(releaseGoogleMeetEventSubscription).not.toHaveBeenCalled();
   });
 
   it('should refuse a hook without connection', async () => {

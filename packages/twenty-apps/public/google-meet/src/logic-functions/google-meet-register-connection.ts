@@ -63,7 +63,6 @@ export const googleMeetRegisterConnectionHandler = async ({
   });
 
   await storeGoogleMeetConnectionSubscription({
-    accessToken,
     connectedAccountId,
     subscriptionName: subscription.name,
     replacedSubscriptionName: existingSubscription?.name,

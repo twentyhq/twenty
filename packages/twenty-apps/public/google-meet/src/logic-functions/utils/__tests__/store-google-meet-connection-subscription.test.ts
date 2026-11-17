@@ -23,7 +23,6 @@ const CONNECTION_SUBSCRIPTION_KEY =
   'google-meet-connection-subscription:connected-account-id';
 
 const SUBSCRIPTION_TO_STORE = {
-  accessToken: 'token',
   connectedAccountId: 'connected-account-id',
   subscriptionName: 'subscriptions/first',
   replacedSubscriptionName: undefined,
@@ -58,7 +57,7 @@ describe('storeGoogleMeetConnectionSubscription', () => {
     await storeGoogleMeetConnectionSubscription(SUBSCRIPTION_TO_STORE);
 
     expect(releaseGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith({
-      accessToken: 'token',
+      connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/previous',
     });
   });
@@ -72,7 +71,7 @@ describe('storeGoogleMeetConnectionSubscription', () => {
     });
 
     expect(releaseGoogleMeetEventSubscription).toHaveBeenCalledExactlyOnceWith({
-      accessToken: 'token',
+      connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/replaced',
     });
   });

@@ -1,12 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { kv } from 'twenty-sdk/logic-function';
 
 import { GOOGLE_MEET_UNREGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { deleteGoogleMeetEventSubscription } from 'src/logic-functions/utils/delete-google-meet-event-subscription.util';
-import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getGoogleMeetConnectionSubscriptionKey } from 'src/logic-functions/utils/get-google-meet-connection-subscription-key.util';
 import { getGoogleMeetEventSubscriptionKey } from 'src/logic-functions/utils/get-google-meet-event-subscription-key.util';
+import { releaseGoogleMeetEventSubscription } from 'src/logic-functions/utils/release-google-meet-event-subscription.util';
 
 type GoogleMeetUnregisterConnectionResult =
   | { success: true; isSubscriptionDeleted: boolean }
@@ -40,12 +39,8 @@ export const googleMeetUnregisterConnectionHandler = async ({
     return { success: true, isSubscriptionDeleted: false };
   }
 
-  await kv.delete(eventSubscriptionKey);
-  await kv.delete(eventSubscriptionKey, { scope: 'SERVER' });
-  await deleteGoogleMeetEventSubscription({
-    accessToken: getConnectionAccessTokenOrThrow(
-      await getConnection(connectedAccountId),
-    ),
+  await releaseGoogleMeetEventSubscription({
+    connectedAccountId,
     subscriptionName,
   });
 
