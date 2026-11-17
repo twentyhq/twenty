@@ -49,7 +49,7 @@ describe('googleMeetQueueConferenceImportsHandler', () => {
     vi.useRealTimers();
   });
 
-  it('should queue the conferences that ended in the last six hours', async () => {
+  it('should queue the conferences that ended in the last day', async () => {
     await expect(
       googleMeetQueueConferenceImportsHandler({
         connectedAccountId: 'connected-account-id',
@@ -61,7 +61,7 @@ describe('googleMeetQueueConferenceImportsHandler', () => {
     );
     expect(listGoogleMeetConferenceRecords).toHaveBeenCalledExactlyOnceWith({
       accessToken: 'token',
-      startedAfter: new Date('2026-11-17T04:15:00Z'),
+      startedAfter: new Date('2026-11-16T08:15:00Z'),
       startedBefore: NOW,
     });
     expect(
