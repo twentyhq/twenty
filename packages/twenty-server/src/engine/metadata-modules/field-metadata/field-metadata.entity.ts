@@ -124,7 +124,9 @@ export class FieldMetadataEntity<
       DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides>> | null;
+  standardOverrides: WasRemovedInUpgrade<
+    JsonbProperty<FieldMetadataOverrides>
+  > | null;
 
   // TODO: drop once 2.59 has run on every workspace; read options through resolveFlatFieldMetadataOptions.
   @Column('jsonb', { nullable: true })

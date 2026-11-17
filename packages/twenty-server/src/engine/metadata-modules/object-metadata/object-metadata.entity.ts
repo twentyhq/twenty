@@ -111,7 +111,9 @@ export class ObjectMetadataEntity
       DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: WasRemovedInUpgrade<JsonbProperty<ObjectMetadataOverrides>> | null;
+  standardOverrides: WasRemovedInUpgrade<
+    JsonbProperty<ObjectMetadataOverrides>
+  > | null;
 
   /**
    * @deprecated
