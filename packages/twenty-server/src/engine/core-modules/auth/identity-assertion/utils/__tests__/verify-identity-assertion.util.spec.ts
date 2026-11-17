@@ -1,6 +1,7 @@
 import { generateKeyPairSync } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
+import { isDefined } from 'twenty-shared/utils';
 
 import { verifyIdentityAssertion } from 'src/engine/core-modules/auth/identity-assertion/utils/verify-identity-assertion.util';
 
@@ -24,9 +25,14 @@ const signAssertion = ({
   algorithm?: jwt.Algorithm;
   issuer?: string;
   audience?: string;
-  expiresIn?: number;
+  expiresIn?: number | null;
 } = {}) =>
-  jwt.sign(payload, signingKey, { algorithm, issuer, audience, expiresIn });
+  jwt.sign(payload, signingKey, {
+    algorithm,
+    issuer,
+    audience,
+    ...(isDefined(expiresIn) ? { expiresIn } : {}),
+  });
 
 const verify = (assertion: string) =>
   verifyIdentityAssertion({
@@ -67,6 +73,10 @@ describe('verifyIdentityAssertion', () => {
       isValid: true,
       email: undefined,
     });
+  });
+
+  it('should refuse an assertion without expiry', () => {
+    expect(verify(signAssertion({ expiresIn: null })).isValid).toBe(false);
   });
 
   it('should refuse an assertion for another audience', () => {

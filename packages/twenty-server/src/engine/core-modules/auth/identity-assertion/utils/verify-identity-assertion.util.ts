@@ -7,6 +7,7 @@ import { IDENTITY_ASSERTION_ALGORITHMS } from 'src/engine/core-modules/auth/iden
 
 const IDENTITY_ASSERTION_PAYLOAD_SCHEMA = z.object({
   email: z.string().optional(),
+  exp: z.number(),
 });
 
 export const verifyIdentityAssertion = ({
