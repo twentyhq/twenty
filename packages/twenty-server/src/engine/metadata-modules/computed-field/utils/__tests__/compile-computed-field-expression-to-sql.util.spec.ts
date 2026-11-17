@@ -61,11 +61,6 @@ describe('compileComputedFieldExpressionToSql', () => {
     ],
     ['createdAt < now', '("record"."createdAt" < NOW())', BOOLEAN],
     [
-      'daysSince(createdAt) > 30',
-      `(((NOW() AT TIME ZONE 'UTC')::date - "record"."createdAt"::date) > 30)`,
-      BOOLEAN,
-    ],
-    [
       'isDefined(closedAt) == true',
       '(("record"."closedAt" IS NOT NULL) = TRUE)',
       BOOLEAN,
@@ -77,6 +72,57 @@ describe('compileComputedFieldExpressionToSql', () => {
       parameters: {},
     });
   });
+
+  it.each([
+    [
+      "dateDiff(createdAt, now, 'DAY') > 30",
+      `(((NOW() AT TIME ZONE 'UTC')::date - ("record"."createdAt" AT TIME ZONE 'UTC')::date) > 30)`,
+      BOOLEAN,
+    ],
+    [
+      "dateDiff(createdAt, closedAt, 'MINUTE')",
+      `TRUNC(EXTRACT(EPOCH FROM ("record"."closedAt" - "record"."createdAt")) / 60)`,
+      NUMBER,
+    ],
+    [
+      "dateDiff(dueAt, today, 'QUARTER')",
+      `(SELECT TRUNC((EXTRACT(YEAR FROM "dateFunctionOperands"."age") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."age")) / 3.0) FROM (SELECT AGE((NOW() AT TIME ZONE 'UTC')::date::timestamp, "record"."dueAt"::timestamp) AS "age" OFFSET 0) AS "dateFunctionOperands")`,
+      NUMBER,
+    ],
+    [
+      "dateAdd(dueAt, quantity, 'MONTH')",
+      `(SELECT ("dateFunctionOperands"."date" + (CASE WHEN EXTRACT(EPOCH FROM "dateFunctionOperands"."date") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(YEAR FROM "dateFunctionOperands"."date") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."date") - 1 + "dateFunctionOperands"."amount" * 1) BETWEEN 12 AND 119999 THEN "dateFunctionOperands"."amount" END * INTERVAL '1 month'))::date FROM (SELECT "record"."dueAt" AS "date", TRUNC("record"."quantity"::numeric) AS "amount" OFFSET 0) AS "dateFunctionOperands")`,
+      DATE,
+    ],
+    [
+      "dateAdd(createdAt, 4, 'HOUR')",
+      `(SELECT ((("dateFunctionOperands"."date" AT TIME ZONE 'UTC') + (CASE WHEN EXTRACT(EPOCH FROM "dateFunctionOperands"."date") BETWEEN -62135596800 AND 253402300799.999999 AND (EXTRACT(EPOCH FROM "dateFunctionOperands"."date") + "dateFunctionOperands"."amount" * 3600) BETWEEN -62135596800 AND 253402300799.999999 THEN "dateFunctionOperands"."amount" END * INTERVAL '1 hour')) AT TIME ZONE 'UTC') FROM (SELECT "record"."createdAt" AS "date", TRUNC(4::numeric) AS "amount" OFFSET 0) AS "dateFunctionOperands")`,
+      DATE_TIME,
+    ],
+    [
+      "dateTrunc(createdAt, 'WEEK')",
+      `(DATE_TRUNC('week', ("record"."createdAt" AT TIME ZONE 'UTC')) AT TIME ZONE 'UTC')`,
+      DATE_TIME,
+    ],
+    [
+      "dateTrunc(dueAt, 'MONTH')",
+      `DATE_TRUNC('month', "record"."dueAt"::timestamp)::date`,
+      DATE,
+    ],
+    [
+      "datePart(createdAt, 'DAY_OF_WEEK')",
+      `EXTRACT(ISODOW FROM ("record"."createdAt" AT TIME ZONE 'UTC'))`,
+      NUMBER,
+    ],
+  ])(
+    'compiles the date function %s',
+    (expression, expectedSql, expectedType) => {
+      expect(compile(expression)).toMatchObject({
+        sql: expectedSql,
+        type: expectedType,
+      });
+    },
+  );
 
   it.each([
     ['constructor', '"record"."constructor"'],
@@ -116,6 +162,59 @@ describe('compileComputedFieldExpressionToSql', () => {
     expect(compile("status != 'DONE'").sql).toBe(
       '("record"."status" IS DISTINCT FROM :text0::text)',
     );
+  });
+
+  it('writes each operand of a nested date function once', () => {
+    const nestedExpression = Array.from({ length: 10 }).reduce<string>(
+      (expression) => `dateAdd(${expression}, 1, 'MONTH')`,
+      'dueAt',
+    );
+
+    expect(
+      compile(nestedExpression).sql.split('"record"."dueAt"'),
+    ).toHaveLength(2);
+  });
+
+  it('compares a date and a date and time as UTC days', () => {
+    expect(compile("createdAt > '2026-01-01'").sql).toBe(
+      `(("record"."createdAt" AT TIME ZONE 'UTC')::date > :text0::date)`,
+    );
+    expect(compile('dueAt == createdAt').sql).toBe(
+      `("record"."dueAt" = ("record"."createdAt" AT TIME ZONE 'UTC')::date)`,
+    );
+  });
+
+  it('widens a date to a date and time outside comparisons, whatever the order', () => {
+    expect(compile('coalesce(dueAt, createdAt)')).toMatchObject({
+      sql: `COALESCE(("record"."dueAt"::timestamp AT TIME ZONE 'UTC'), "record"."createdAt")`,
+      type: DATE_TIME,
+    });
+    expect(compile('coalesce(createdAt, dueAt)')).toMatchObject({
+      sql: `COALESCE("record"."createdAt", ("record"."dueAt"::timestamp AT TIME ZONE 'UTC'))`,
+      type: DATE_TIME,
+    });
+  });
+
+  it('binds a date literal in a comparison as the shared parser reads it', () => {
+    expect(
+      compile("createdAt == '2026-09-23T10:41:00+02:00[Europe/Paris]'"),
+    ).toMatchObject({
+      sql: '("record"."createdAt" = :text0::timestamptz)',
+      parameters: { text0: '2026-09-23T08:41:00.000Z' },
+    });
+  });
+
+  it('reads a date text by its shape and never binds a unit', () => {
+    expect(
+      compile("dateDiff('2026-01-31', '2026-03-01T10:00:00Z', 'MONTH')"),
+    ).toEqual({
+      sql: `(SELECT (EXTRACT(YEAR FROM "dateFunctionOperands"."age") * 12 + EXTRACT(MONTH FROM "dateFunctionOperands"."age")) FROM (SELECT AGE((:text1::timestamptz AT TIME ZONE 'UTC')::date::timestamp, :text0::date::timestamp) AS "age" OFFSET 0) AS "dateFunctionOperands")`,
+      type: NUMBER,
+      parameters: {
+        text0: '2026-01-31',
+        text1: '2026-03-01T10:00:00.000Z',
+      },
+    });
   });
 
   it('reads a text value compared with a date as a date', () => {

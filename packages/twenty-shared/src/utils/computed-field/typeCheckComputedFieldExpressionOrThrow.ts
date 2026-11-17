@@ -8,9 +8,8 @@ import { assertUnreachable } from '@/utils/assertUnreachable';
 import { ComputedFieldExpressionError } from '@/utils/computed-field/ComputedFieldExpressionError';
 import { assertComputedFieldExpressionTypeOrThrow } from '@/utils/computed-field/internal/assertComputedFieldExpressionTypeOrThrow';
 import { checkComputedFieldExpressionBinaryOperationOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionBinaryOperationOrThrow';
-import { getComputedFieldExpressionUnifiedType } from '@/utils/computed-field/internal/getComputedFieldExpressionUnifiedType';
 import { isComputedFieldExpressionFunctionName } from '@/utils/computed-field/internal/isComputedFieldExpressionFunctionName';
-import { unifyComputedFieldExpressionOperandOrThrow } from '@/utils/computed-field/internal/unifyComputedFieldExpressionOperandOrThrow';
+import { unifyComputedFieldExpressionOperandsOrThrow } from '@/utils/computed-field/internal/unifyComputedFieldExpressionOperandsOrThrow';
 
 const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 
@@ -80,12 +79,10 @@ export const typeCheckComputedFieldExpressionOrThrow = ({
           usage: `The condition of ${usage}`,
         });
 
-        const type = getComputedFieldExpressionUnifiedType([
-          whenTrue,
-          whenFalse,
-        ]);
-        const unify = (operand: TypedComputedFieldExpressionNode) =>
-          unifyComputedFieldExpressionOperandOrThrow({ operand, type, usage });
+        const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
+          operands: [whenTrue, whenFalse],
+          usage,
+        });
 
         return {
           ...node,
@@ -131,6 +128,10 @@ export const typeCheckComputedFieldExpressionOrThrow = ({
       case 'list':
         throw new ComputedFieldExpressionError(
           'A list can only be used after "in"',
+        );
+      case 'dateConversion':
+        throw new ComputedFieldExpressionError(
+          'A date conversion is only added by the type check',
         );
       default:
         return assertUnreachable(node);

@@ -2,7 +2,7 @@ import { type ComputedFieldExpressionBinaryOperator } from '@/types/ComputedFiel
 import { type ComputedFieldExpressionUnaryOperator } from '@/types/ComputedFieldExpressionUnaryOperator';
 import { type ComputedFieldExpressionVariableName } from '@/types/ComputedFieldExpressionVariableName';
 
-// A list is only valid as the right operand of "in"
+// A list is only valid as the right operand of "in"; only the type check adds a date conversion, read in UTC
 export type ComputedFieldExpressionNode<
   TAnnotation = unknown,
   TFunctionName extends string = string,
@@ -40,6 +40,10 @@ export type ComputedFieldExpressionNode<
   | {
       kind: 'list';
       items: ComputedFieldExpressionNode<TAnnotation, TFunctionName>[];
+    }
+  | {
+      kind: 'dateConversion';
+      operand: ComputedFieldExpressionNode<TAnnotation, TFunctionName>;
     }
 ) &
   TAnnotation;

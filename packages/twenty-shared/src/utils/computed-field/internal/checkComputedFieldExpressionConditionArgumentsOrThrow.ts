@@ -1,8 +1,7 @@
 import { type ComputedFieldExpressionFunction } from '@/types/ComputedFieldExpressionFunction';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { assertComputedFieldExpressionTypeOrThrow } from '@/utils/computed-field/internal/assertComputedFieldExpressionTypeOrThrow';
-import { getComputedFieldExpressionUnifiedType } from '@/utils/computed-field/internal/getComputedFieldExpressionUnifiedType';
-import { unifyComputedFieldExpressionOperandOrThrow } from '@/utils/computed-field/internal/unifyComputedFieldExpressionOperandOrThrow';
+import { unifyComputedFieldExpressionOperandsOrThrow } from '@/utils/computed-field/internal/unifyComputedFieldExpressionOperandsOrThrow';
 
 // The first argument is the condition; the others are its branches and share one type
 export const checkComputedFieldExpressionConditionArgumentsOrThrow: ComputedFieldExpressionFunction['checkArgumentsOrThrow'] =
@@ -15,17 +14,14 @@ export const checkComputedFieldExpressionConditionArgumentsOrThrow: ComputedFiel
       usage: `The condition of ${usage}`,
     });
 
-    const type = getComputedFieldExpressionUnifiedType(branches);
+    const { type, unify } = unifyComputedFieldExpressionOperandsOrThrow({
+      operands: branches,
+      usage,
+    });
 
     return {
       functionArguments: functionArguments.map((operand) =>
-        operand === condition
-          ? operand
-          : unifyComputedFieldExpressionOperandOrThrow({
-              operand,
-              type,
-              usage,
-            }),
+        operand === condition ? operand : unify(operand),
       ),
       type,
     };

@@ -7,7 +7,10 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { COMPUTED_FIELD_EXPRESSION_BINARY_OPERATOR_SQL } from 'src/engine/metadata-modules/computed-field/constants/computed-field-expression-binary-operator-sql.constant';
 import { COMPUTED_FIELD_EXPRESSION_FUNCTION_SQL } from 'src/engine/metadata-modules/computed-field/constants/computed-field-expression-function-sql.constant';
+import { type ComputedFieldDateSqlOperand } from 'src/engine/metadata-modules/computed-field/types/computed-field-date-sql-operand.type';
 import { COMPUTED_FIELD_EXPRESSION_VARIABLE_SQL } from 'src/engine/metadata-modules/computed-field/constants/computed-field-expression-variable-sql.constant';
+import { toComputedFieldInstantSql } from 'src/engine/metadata-modules/computed-field/utils/to-computed-field-instant-sql.util';
+import { toComputedFieldUtcDateSql } from 'src/engine/metadata-modules/computed-field/utils/to-computed-field-utc-date-sql.util';
 
 const TEXT_LITERAL_SQL_TYPE: Partial<Record<FieldMetadataType, string>> = {
   [FieldMetadataType.DATE]: 'date',
@@ -72,6 +75,19 @@ export const emitComputedFieldExpressionSql = ({
         });
       case 'list':
         return `(${node.items.map(emitSql).join(', ')})`;
+      case 'dateConversion': {
+        const operand: ComputedFieldDateSqlOperand = {
+          sql: emitSql(node.operand),
+          type:
+            node.operand.type === FieldMetadataType.DATE
+              ? FieldMetadataType.DATE
+              : FieldMetadataType.DATE_TIME,
+        };
+
+        return node.type === FieldMetadataType.DATE
+          ? toComputedFieldUtcDateSql(operand)
+          : toComputedFieldInstantSql(operand);
+      }
       default:
         return assertUnreachable(node);
     }

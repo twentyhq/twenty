@@ -237,7 +237,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
   - a field of a to-one relation as `company.name`, and its id as `company.id` (the `companyId` column is not a field name);
   - other computed fields by their name.
 - **Operators:** `+ - * / %`, `== != < <= > >=`, `and or not`, `value in [a, b]`, `condition ? a : b`. Text goes in single quotes.
-- **Functions:** `if`, `coalesce`, `isDefined`, `isEmpty`, `min`, `max`, `round`, `abs`, `ceil`, `floor`, `trunc`, `concat`, `lower`, `upper`, `length`, `daysBetween`, `daysSince`. `now` and `today` give the current time and date.
+- **Functions:** `if`, `coalesce`, `isDefined`, `isEmpty`, `min`, `max`, `round`, `abs`, `ceil`, `floor`, `trunc`, `concat`, `lower`, `upper`, `length`, `dateDiff`, `dateAdd`, `dateTrunc`, `datePart`. `now` and `today` give the current time and date. The date functions take a unit written as text (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) and read dates in UTC, for example `dateDiff(createdAt, closedAt, 'HOUR')`.
 - A value only reflects the related records its reader is allowed to see.
 - A value is empty when its reader cannot read a field or an object it uses. A field that a row-level permission rule hides on some records reads as empty on those records.
 - The response of a destroy returns computed fields empty: the record no longer exists.

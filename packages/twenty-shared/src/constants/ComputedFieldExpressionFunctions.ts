@@ -5,7 +5,10 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { buildComputedFieldExpressionArgumentsOfTypeTypingRule } from '@/utils/computed-field/internal/buildComputedFieldExpressionArgumentsOfTypeTypingRule';
 import { buildComputedFieldExpressionUnifiedArgumentsTypingRule } from '@/utils/computed-field/internal/buildComputedFieldExpressionUnifiedArgumentsTypingRule';
 import { checkComputedFieldExpressionConditionArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionConditionArgumentsOrThrow';
-import { checkComputedFieldExpressionDayCountArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionDayCountArgumentsOrThrow';
+import { checkComputedFieldExpressionDateAddArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionDateAddArgumentsOrThrow';
+import { checkComputedFieldExpressionDateDiffArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionDateDiffArgumentsOrThrow';
+import { checkComputedFieldExpressionDatePartArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionDatePartArgumentsOrThrow';
+import { checkComputedFieldExpressionDateTruncArgumentsOrThrow } from '@/utils/computed-field/internal/checkComputedFieldExpressionDateTruncArgumentsOrThrow';
 
 // One description per function: a later evaluator in JavaScript belongs next to the typing rule
 export const COMPUTED_FIELD_EXPRESSION_FUNCTIONS: Record<
@@ -136,14 +139,25 @@ export const COMPUTED_FIELD_EXPRESSION_FUNCTIONS: Record<
         type: FieldMetadataType.NUMBER,
       }),
   },
-  daysBetween: {
+  dateDiff: {
+    minimumArgumentCount: 3,
+    maximumArgumentCount: 3,
+    checkArgumentsOrThrow: checkComputedFieldExpressionDateDiffArgumentsOrThrow,
+  },
+  dateAdd: {
+    minimumArgumentCount: 3,
+    maximumArgumentCount: 3,
+    checkArgumentsOrThrow: checkComputedFieldExpressionDateAddArgumentsOrThrow,
+  },
+  dateTrunc: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    checkArgumentsOrThrow: checkComputedFieldExpressionDayCountArgumentsOrThrow,
+    checkArgumentsOrThrow:
+      checkComputedFieldExpressionDateTruncArgumentsOrThrow,
   },
-  daysSince: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: 1,
-    checkArgumentsOrThrow: checkComputedFieldExpressionDayCountArgumentsOrThrow,
+  datePart: {
+    minimumArgumentCount: 2,
+    maximumArgumentCount: 2,
+    checkArgumentsOrThrow: checkComputedFieldExpressionDatePartArgumentsOrThrow,
   },
 };

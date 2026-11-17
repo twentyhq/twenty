@@ -1,7 +1,7 @@
 import { type ComputedFieldExpressionFunctionName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { COMPUTED_FIELD_EXPRESSION_VARIABLE_SQL } from 'src/engine/metadata-modules/computed-field/constants/computed-field-expression-variable-sql.constant';
+import { COMPUTED_FIELD_EXPRESSION_DATE_FUNCTION_SQL } from 'src/engine/metadata-modules/computed-field/constants/computed-field-expression-date-function-sql.constant';
 import { type ComputedFieldExpressionFunctionSqlRenderer } from 'src/engine/metadata-modules/computed-field/types/computed-field-expression-function-sql-renderer.type';
 
 const rendering =
@@ -37,11 +37,7 @@ export const COMPUTED_FIELD_EXPRESSION_FUNCTION_SQL = {
   lower: calling('LOWER'),
   upper: calling('UPPER'),
   length: calling('CHAR_LENGTH'),
-  daysBetween: rendering(([from, to]) => `(${to}::date - ${from}::date)`),
-  daysSince: rendering(
-    ([from]) =>
-      `(${COMPUTED_FIELD_EXPRESSION_VARIABLE_SQL.today} - ${from}::date)`,
-  ),
+  ...COMPUTED_FIELD_EXPRESSION_DATE_FUNCTION_SQL,
 } satisfies Record<
   ComputedFieldExpressionFunctionName,
   ComputedFieldExpressionFunctionSqlRenderer

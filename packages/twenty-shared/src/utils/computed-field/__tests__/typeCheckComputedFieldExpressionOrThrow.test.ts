@@ -33,7 +33,12 @@ describe('typeCheckComputedFieldExpressionOrThrow', () => {
     ["name || ' ' || status", TEXT],
     ["status in ['TODO', 'DOING']", BOOLEAN],
     ['length(name)', NUMBER],
-    ['daysBetween(createdAt, dueAt)', NUMBER],
+    ["dateDiff(createdAt, dueAt, 'DAY')", NUMBER],
+    ["dateAdd(dueAt, 1, 'MONTH')", DATE],
+    ["dateAdd(dueAt, 90, 'MINUTE')", DATE_TIME],
+    ["dateTrunc(createdAt, 'WEEK')", DATE_TIME],
+    ["datePart(dueAt, 'DAY_OF_WEEK')", NUMBER],
+    ['coalesce(dueAt, createdAt)', DATE_TIME],
     ['isEmpty(hidden)', BOOLEAN],
     ['hidden', undefined],
     ['coalesce(hidden, amount)', NUMBER],
@@ -46,13 +51,61 @@ describe('typeCheckComputedFieldExpressionOrThrow', () => {
       right: { kind: 'textLiteral', value: '2030-01-01', type: DATE },
     });
     expect(typeCheck("coalesce(createdAt, '2030-01-01')")).toMatchObject({
-      functionArguments: [{}, { kind: 'textLiteral', type: DATE_TIME }],
+      functionArguments: [
+        {},
+        {
+          kind: 'dateConversion',
+          operand: { kind: 'textLiteral', type: DATE },
+          type: DATE_TIME,
+        },
+      ],
     });
-    expect(typeCheck("daysSince('2030-01-01')")).toMatchObject({
-      functionArguments: [{ kind: 'textLiteral', type: DATE }],
+    expect(
+      typeCheck("dateTrunc('2026-09-23T10:41:00+02:00[Europe/Paris]', 'DAY')"),
+    ).toMatchObject({
+      functionArguments: [
+        {
+          kind: 'textLiteral',
+          value: '2026-09-23T08:41:00.000Z',
+          type: DATE_TIME,
+        },
+        {},
+      ],
     });
     expect(typeCheck("name == '2030-01-01'")).toMatchObject({
       right: { kind: 'textLiteral', type: TEXT },
+    });
+  });
+
+  it('checks membership like "==" item by item when the items share a date kind', () => {
+    expect(typeCheck('createdAt in [dueAt, today]')).toMatchObject({
+      left: { kind: 'dateConversion', type: DATE },
+    });
+    expect(
+      typeCheck("dueAt in [createdAt, '2026-01-02T18:00:00Z']"),
+    ).toMatchObject({
+      left: { type: DATE },
+      right: {
+        items: [{ kind: 'dateConversion' }, { kind: 'dateConversion' }],
+      },
+    });
+  });
+
+  it('compares a date and a date and time as UTC days, and widens a date elsewhere', () => {
+    expect(typeCheck('createdAt > dueAt')).toMatchObject({
+      left: {
+        kind: 'dateConversion',
+        operand: { type: DATE_TIME },
+        type: DATE,
+      },
+      right: { type: DATE },
+    });
+    expect(typeCheck('max(dueAt, createdAt)')).toMatchObject({
+      functionArguments: [
+        { kind: 'dateConversion', operand: { type: DATE }, type: DATE_TIME },
+        { type: DATE_TIME },
+      ],
+      type: DATE_TIME,
     });
   });
 
@@ -73,10 +126,20 @@ describe('typeCheckComputedFieldExpressionOrThrow', () => {
     ['upper(amount)', '"upper" expects text, not number'],
     ['round(name)', '"round" expects number, not text'],
     ['amount and isActive', '"and" expects boolean, not number'],
-    ['daysSince(amount)', '"daysSince" cannot combine date and number'],
-    ["dueAt > 'tomorrow-ish'", "which is not a date such as '2030-01-31'"],
-    ["coalesce(dueAt, 'n/a')", "which is not a date such as '2030-01-31'"],
-    ["dueAt > '2030-02-31'", "which is not a date such as '2030-01-31'"],
+    ["dateDiff(amount, now, 'DAY')", '"dateDiff" expects date or date_time'],
+    ["dateAdd(createdAt, name, 'DAY')", '"dateAdd" expects number, not text'],
+    ["dateTrunc(createdAt, 'day')", '"day" is not a date unit'],
+    ["datePart(createdAt, 'WEEKDAY')", '"WEEKDAY" is not a date part'],
+    ['dateTrunc(createdAt, name)', 'needs its unit written as text'],
+    ["dueAt > 'tomorrow-ish'", 'cannot read "tomorrow-ish" as a date'],
+    ["coalesce(dueAt, 'n/a')", 'cannot read "n/a" as a date'],
+    ["dueAt > '2030-02-31'", 'cannot read "2030-02-31" as a date'],
+    ["createdAt > '2026-01-01T10:00:00'", 'cannot read "2026-01-01T10:00:00"'],
+    ["dueAt > '+010000-01-01'", 'cannot read "+010000-01-01" as a date'],
+    [
+      "createdAt in [dueAt, '2026-01-02T18:00:00Z']",
+      '"in" cannot check a date and time against both dates and dates and times',
+    ],
   ])('rejects %s', (expression, expectedMessage) => {
     expect(() => typeCheck(expression)).toThrow(expectedMessage);
   });

@@ -12,6 +12,7 @@ export const getComputedFieldExpressionNodeChildren = (
     case 'variable':
       return [];
     case 'unaryOperation':
+    case 'dateConversion':
       return [node.operand];
     case 'binaryOperation':
       return [node.left, node.right];
