@@ -6,6 +6,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -34,7 +35,72 @@ const buildCodeStep = (input: WorkflowCodeActionInput): WorkflowCodeAction => ({
   },
 });
 
-const buildService = async () => {
+const MCP_SERVER_ID = 'mcp-server-id';
+const MCP_SERVER_UNIVERSAL_IDENTIFIER = 'mcp-server-universal-identifier';
+
+const buildFlatMcpServer = (): FlatMcpServer => ({
+  id: MCP_SERVER_ID,
+  universalIdentifier: MCP_SERVER_UNIVERSAL_IDENTIFIER,
+  workspaceId: WORKSPACE_ID,
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  name: 'docs',
+  label: 'Docs',
+  url: 'https://docs.example.com/mcp',
+  connectionProviderId: null,
+  connectionProviderUniversalIdentifier: null,
+  isActive: true,
+  tools: [
+    {
+      name: 'search_docs',
+      description: null,
+      annotations: null,
+      inputSchema: {
+        type: 'object',
+        required: ['query', 'mode'],
+        properties: {
+          query: { type: 'string' },
+          mode: { type: 'string', enum: ['fast', 'slow'] },
+          tags: { type: 'array', items: { type: 'string' } },
+          sort: { type: 'string', enum: ['asc', 'desc'] },
+          filter: {
+            type: 'object',
+            required: ['status'],
+            properties: {
+              status: { type: 'string', enum: ['open', 'closed'] },
+            },
+          },
+        },
+      },
+    },
+  ],
+  toolsSyncedAt: null,
+  toolsSyncError: null,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
+const flatEntityMapsCacheServiceWithMcpServer = {
+  getOrRecomputeManyOrAllFlatEntityMaps: async () => ({
+    flatMcpServerMaps: {
+      byUniversalIdentifier: {
+        [MCP_SERVER_UNIVERSAL_IDENTIFIER]: buildFlatMcpServer(),
+      },
+      universalIdentifierById: {
+        [MCP_SERVER_ID]: MCP_SERVER_UNIVERSAL_IDENTIFIER,
+      },
+      universalIdentifiersByApplicationId: {},
+    },
+  }),
+};
+
+const buildService = async ({
+  flatEntityMapsCacheService = {},
+  featureFlagService = {},
+}: {
+  flatEntityMapsCacheService?: object;
+  featureFlagService?: object;
+} = {}) => {
   const testingModule = await Test.createTestingModule({
     providers: [
       WorkflowVersionStepOperationsWorkspaceService,
@@ -45,10 +111,13 @@ const buildService = async () => {
       },
       { provide: WorkflowCommonWorkspaceService, useValue: {} },
       { provide: WorkspaceCacheService, useValue: {} },
-      { provide: WorkspaceManyOrAllFlatEntityMapsCacheService, useValue: {} },
+      {
+        provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+        useValue: flatEntityMapsCacheService,
+      },
       { provide: WorkflowVersionCoreSyncService, useValue: {} },
       { provide: FindRecordsService, useValue: {} },
-      { provide: FeatureFlagService, useValue: {} },
+      { provide: FeatureFlagService, useValue: featureFlagService },
       { provide: WorkflowAiAgentStepAgentService, useValue: {} },
     ],
   }).compile();
@@ -128,5 +197,59 @@ describe('WorkflowVersionStepOperationsWorkspaceService duplicate steps', () => 
     const step = buildCodeStep({ code: '', logicFunctionInput: {} });
 
     expect(service.markStepAsDuplicate({ step }).position).toBeUndefined();
+  });
+});
+
+describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
+  const buildMcpToolService = () =>
+    buildService({
+      flatEntityMapsCacheService: flatEntityMapsCacheServiceWithMcpServer,
+      featureFlagService: { isFeatureEnabled: async () => true },
+    });
+
+  it('seeds untouched optional tool inputs with null', async () => {
+    const service = await buildMcpToolService();
+
+    const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
+      type: WorkflowActionType.MCP_TOOL,
+      workspaceId: WORKSPACE_ID,
+      defaultSettings: {
+        input: { mcpServerId: MCP_SERVER_ID, toolName: 'search_docs' },
+      },
+    });
+
+    expect(builtStep.settings.input).toEqual({
+      mcpServerId: MCP_SERVER_ID,
+      toolName: 'search_docs',
+      toolInput: {
+        query: null,
+        mode: 'fast',
+        tags: null,
+        sort: null,
+        filter: { status: null },
+      },
+    });
+  });
+
+  it('keeps the tool input it is given', async () => {
+    const service = await buildMcpToolService();
+
+    const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
+      type: WorkflowActionType.MCP_TOOL,
+      workspaceId: WORKSPACE_ID,
+      defaultSettings: {
+        input: {
+          mcpServerId: MCP_SERVER_ID,
+          toolName: 'search_docs',
+          toolInput: { query: 'invoices', sort: 'desc' },
+        },
+      },
+    });
+
+    expect(builtStep.settings.input).toEqual({
+      mcpServerId: MCP_SERVER_ID,
+      toolName: 'search_docs',
+      toolInput: { query: 'invoices', sort: 'desc' },
+    });
   });
 });

@@ -164,7 +164,7 @@ export class McpServerResolver {
     return canCallerReachApplication({
       callingApplication,
       applicationId: mcpServer.applicationId,
-      operation: 'trigger',
+      operation: 'read',
       workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
     });
   }
