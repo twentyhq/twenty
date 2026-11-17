@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseGoogleMeetEvent } from 'src/logic-functions/utils/parse-google-meet-event.util';
+import { parseGoogleMeetEventOrThrow } from 'src/logic-functions/utils/parse-google-meet-event-or-throw.util';
 
 const TRANSCRIPT_DATA = Buffer.from(
   JSON.stringify({
@@ -8,10 +8,10 @@ const TRANSCRIPT_DATA = Buffer.from(
   }),
 ).toString('base64');
 
-describe('parseGoogleMeetEvent', () => {
+describe('parseGoogleMeetEventOrThrow', () => {
   it('should read the subscription, type and transcript of a transcript event', () => {
     expect(
-      parseGoogleMeetEvent({
+      parseGoogleMeetEventOrThrow({
         message: {
           attributes: {
             'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
@@ -29,7 +29,7 @@ describe('parseGoogleMeetEvent', () => {
 
   it('should read an event that carries no transcript', () => {
     expect(
-      parseGoogleMeetEvent({
+      parseGoogleMeetEventOrThrow({
         message: {
           attributes: {
             'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
@@ -44,11 +44,25 @@ describe('parseGoogleMeetEvent', () => {
     });
   });
 
+  it('should fail for an event whose data cannot be read', () => {
+    expect(() =>
+      parseGoogleMeetEventOrThrow({
+        message: {
+          attributes: {
+            'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
+            'ce-type': 'google.workspace.meet.transcript.v2.fileGenerated',
+          },
+          data: Buffer.from('not json').toString('base64'),
+        },
+      }),
+    ).toThrow(expect.objectContaining({ code: 'EVENT_DATA_UNREADABLE' }));
+  });
+
   it('should return nothing for a message that is not a Google Workspace event', () => {
-    expect(parseGoogleMeetEvent(null)).toBeUndefined();
-    expect(parseGoogleMeetEvent({})).toBeUndefined();
+    expect(parseGoogleMeetEventOrThrow(null)).toBeUndefined();
+    expect(parseGoogleMeetEventOrThrow({})).toBeUndefined();
     expect(
-      parseGoogleMeetEvent({
+      parseGoogleMeetEventOrThrow({
         message: {
           attributes: {
             'ce-source': '//other.googleapis.com/subscriptions/first',
@@ -58,7 +72,7 @@ describe('parseGoogleMeetEvent', () => {
       }),
     ).toBeUndefined();
     expect(
-      parseGoogleMeetEvent({
+      parseGoogleMeetEventOrThrow({
         message: {
           attributes: {
             'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
