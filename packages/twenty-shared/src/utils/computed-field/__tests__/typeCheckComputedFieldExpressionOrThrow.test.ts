@@ -77,6 +77,20 @@ describe('typeCheckComputedFieldExpressionOrThrow', () => {
     });
   });
 
+  it('checks membership like "==" item by item when the items share a date kind', () => {
+    expect(typeCheck('createdAt in [dueAt, today]')).toMatchObject({
+      left: { kind: 'dateConversion', type: DATE },
+    });
+    expect(
+      typeCheck("dueAt in [createdAt, '2026-01-02T18:00:00Z']"),
+    ).toMatchObject({
+      left: { type: DATE },
+      right: {
+        items: [{ kind: 'dateConversion' }, { kind: 'dateConversion' }],
+      },
+    });
+  });
+
   it('compares a date and a date and time as UTC days, and widens a date elsewhere', () => {
     expect(typeCheck('createdAt > dueAt')).toMatchObject({
       left: {
@@ -122,6 +136,10 @@ describe('typeCheckComputedFieldExpressionOrThrow', () => {
     ["dueAt > '2030-02-31'", 'cannot read "2030-02-31" as a date'],
     ["createdAt > '2026-01-01T10:00:00'", 'cannot read "2026-01-01T10:00:00"'],
     ["dueAt > '+010000-01-01'", 'cannot read "+010000-01-01" as a date'],
+    [
+      "createdAt in [dueAt, '2026-01-02T18:00:00Z']",
+      '"in" cannot check a date and time against both dates and dates and times',
+    ],
   ])('rejects %s', (expression, expectedMessage) => {
     expect(() => typeCheck(expression)).toThrow(expectedMessage);
   });

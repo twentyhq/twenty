@@ -5,6 +5,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type TypedComputedFieldExpressionNode } from '@/types/TypedComputedFieldExpressionNode';
 import { ComputedFieldExpressionError } from '@/utils/computed-field/ComputedFieldExpressionError';
 import { assertComputedFieldExpressionTypeOrThrow } from '@/utils/computed-field/internal/assertComputedFieldExpressionTypeOrThrow';
+import { toComputedFieldExpressionDateOperandOrThrow } from '@/utils/computed-field/internal/toComputedFieldExpressionDateOperandOrThrow';
 import { unifyComputedFieldExpressionOperandsOrThrow } from '@/utils/computed-field/internal/unifyComputedFieldExpressionOperandsOrThrow';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -17,7 +18,7 @@ type CheckOperandsOrThrow = (
   args: Operands & { usage: string },
 ) => Operands & { type: ComputedFieldValueType };
 
-const { NUMBER, TEXT, BOOLEAN } = FieldMetadataType;
+const { NUMBER, TEXT, BOOLEAN, DATE, DATE_TIME } = FieldMetadataType;
 
 const takingOnly =
   (type: ComputedFieldValueType): CheckOperandsOrThrow =>
@@ -53,6 +54,34 @@ const comparing =
     return { left: unify(left), right: unify(right), type: BOOLEAN };
   };
 
+// One IN list converts every item the same way, so it can only match "==" item by item when the items share a date kind
+const assertDateMembershipComparesEachItemAsEqualityOrThrow = ({
+  left,
+  items,
+  usage,
+}: {
+  left: TypedComputedFieldExpressionNode;
+  items: TypedComputedFieldExpressionNode[];
+  usage: string;
+}): void => {
+  if (left.type !== DATE_TIME) {
+    return;
+  }
+
+  const itemTypes = items.map((item) =>
+    item.kind === 'textLiteral'
+      ? toComputedFieldExpressionDateOperandOrThrow({ operand: item, usage })
+          .type
+      : item.type,
+  );
+
+  if (itemTypes.includes(DATE) && itemTypes.includes(DATE_TIME)) {
+    throw new ComputedFieldExpressionError(
+      `${usage} cannot check a date and time against both dates and dates and times; split it into separate "in" checks`,
+    );
+  }
+};
+
 const listing: CheckOperandsOrThrow = ({ left, right, usage }) => {
   if (right.kind !== 'list' || right.items.length === 0) {
     throw new ComputedFieldExpressionError(
@@ -64,6 +93,12 @@ const listing: CheckOperandsOrThrow = ({ left, right, usage }) => {
     operands: [left, ...right.items],
     usage,
     isComparison: true,
+  });
+
+  assertDateMembershipComparesEachItemAsEqualityOrThrow({
+    left,
+    items: right.items,
+    usage,
   });
 
   return {

@@ -84,4 +84,18 @@ describe('date functions in validation rule expressions', () => {
       }),
     ).toEqual({ status: 'failed' });
   });
+
+  it.each(['2026-09-23T10:00:00', '20260923', '2026-09-23T22:00:00-05:00'])(
+    'should read %s in daysSince as it was read before dateDiff',
+    (closeDate) => {
+      const evaluate = createValidationRuleEvaluator({
+        expression: 'daysSince(closeDate) >= 0',
+        fields: FIELDS,
+      });
+
+      expect(
+        evaluate({ record: { closeDate }, now: '2026-09-24T12:00:00.000Z' }),
+      ).toEqual({ status: 'passed' });
+    },
+  );
 });

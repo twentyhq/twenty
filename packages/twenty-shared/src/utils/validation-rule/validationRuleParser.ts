@@ -5,7 +5,6 @@ import { EXPRESSION_PARSER_DISABLED_MATH_OPERATORS } from '@/constants/Expressio
 
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
-import { computeExpressionDateDifference } from '@/utils/expression-date/computeExpressionDateDifference';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
 import { getValidationRuleNowInUtc } from '@/utils/validation-rule/internal/getValidationRuleNowInUtc';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
@@ -109,10 +108,18 @@ validationRuleParser.functions = Object.fromEntries(
   ]),
 );
 
-// Deprecated and left out of VALIDATION_RULE_FUNCTIONS, so editors and the SDK never offer it: rules saved before dateDiff keep evaluating
-validationRuleParser.functions.daysSince = (date: unknown) =>
-  computeExpressionDateDifference(
-    date,
-    getValidationRuleNowInUtc().toInstant().toString(),
-    'DAY',
-  );
+// Deprecated and hidden from editors and the SDK; it keeps its original, more lenient date reading so saved rules behave as before
+validationRuleParser.functions.daysSince = (date: unknown) => {
+  if (!isString(date)) {
+    return null;
+  }
+
+  try {
+    return parseToPlainDateOrThrow(date).until(
+      getValidationRuleNowInUtc().toPlainDate(),
+      { largestUnit: 'days' },
+    ).days;
+  } catch {
+    return null;
+  }
+};
