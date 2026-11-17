@@ -26,7 +26,10 @@ export const googleMeetIdentifyAccountHandler = async ({
     });
   }
 
-  return { externalAccountId: userInfo.sub };
+  return {
+    externalAccountId: userInfo.sub,
+    ...(isNonEmptyString(userInfo.email) ? { handle: userInfo.email } : {}),
+  };
 };
 
 export default defineLogicFunction({
