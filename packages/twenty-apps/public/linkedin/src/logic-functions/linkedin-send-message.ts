@@ -4,7 +4,6 @@ import {
   getConnection,
   type SendAppMessageAttachment,
   type SendAppMessagePayload,
-  type SendAppMessageResult,
 } from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
@@ -13,7 +12,10 @@ import { LINKEDIN_SEND_MESSAGE_ATTACHMENTS_MAX_TOTAL_SIZE_BYTES } from 'src/cons
 import { LINKEDIN_SEND_MESSAGE_TIMEOUT_SECONDS } from 'src/constants/linkedin-send-message-timeout-seconds.constant';
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { downloadSendMessageAttachmentOrThrow } from 'src/logic-functions/utils/download-send-message-attachment.util';
+import { sendLinkedinMessageInParts } from 'src/logic-functions/utils/send-linkedin-message-in-parts.util';
+import { type LinkedinSendMessageResult } from 'src/types/linkedin-send-message-result.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
+import { isUnipileUnsupportedMediaTypeError } from 'src/unipile/utils/is-unipile-unsupported-media-type-error.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
 const downloadAttachmentsWithinTotalSizeLimitOrThrow = async ({
@@ -63,7 +65,7 @@ export const linkedinSendMessageHandler = async ({
   threadExternalId,
   text,
   attachments,
-}: SendAppMessagePayload): Promise<SendAppMessageResult> => {
+}: SendAppMessagePayload): Promise<LinkedinSendMessageResult> => {
   const connection = await getConnection(connectedAccountId);
   const unipileAccountId = connection.externalAccountId;
 
@@ -84,14 +86,26 @@ export const linkedinSendMessageHandler = async ({
       deadlineAtMs,
     });
 
-  const externalId = await sendUnipileChatMessage({
+  const message = {
     accountId: unipileAccountId,
     chatId: threadExternalId,
     text,
     attachments: unipileAttachments,
-  });
+  };
 
-  return { externalId };
+  try {
+    return { externalId: await sendUnipileChatMessage(message) };
+  } catch (error) {
+    const canSendInParts =
+      unipileAttachments.length > 1 ||
+      (unipileAttachments.length === 1 && isNonEmptyString(text));
+
+    if (!isUnipileUnsupportedMediaTypeError(error) || !canSendInParts) {
+      throw error;
+    }
+
+    return sendLinkedinMessageInParts(message);
+  }
 };
 
 export default defineLogicFunction({

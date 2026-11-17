@@ -4952,6 +4952,7 @@ input SendAppChannelMessageInput {
 type SendAppChannelMessageOutput {
   messageId: UUID!
   messageThreadId: UUID!
+  rejectedAttachmentNames: [String!]!
 }
 
 type SendChatMessageResult {

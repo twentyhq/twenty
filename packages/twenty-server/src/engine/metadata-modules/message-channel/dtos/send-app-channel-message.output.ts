@@ -9,4 +9,7 @@ export class SendAppChannelMessageOutput {
 
   @Field(() => UUIDScalarType)
   messageThreadId: string;
+
+  @Field(() => [String])
+  rejectedAttachmentNames: string[];
 }

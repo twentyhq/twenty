@@ -145,6 +145,7 @@ describe('ApplicationMessageSendService', () => {
     await expect(service.send(SEND_ARGS)).resolves.toEqual({
       messageId: 'message-1',
       messageThreadId: 'message-thread-1',
+      rejectedAttachmentNames: [],
     });
 
     expect(deleteFiles).toHaveBeenCalledWith({
@@ -178,6 +179,7 @@ describe('ApplicationMessageSendService', () => {
     ).resolves.toEqual({
       messageId: 'message-1',
       messageThreadId: 'message-thread-1',
+      rejectedAttachmentNames: [],
     });
   });
 
@@ -231,6 +233,7 @@ describe('ApplicationMessageSendService', () => {
     await expect(service.send(SEND_ARGS)).resolves.toEqual({
       messageId: 'message-1',
       messageThreadId: 'message-thread-1',
+      rejectedAttachmentNames: [],
     });
 
     expect(sendOrThrow).toHaveBeenCalledTimes(1);
@@ -284,6 +287,7 @@ describe('ApplicationMessageSendService', () => {
     await expect(service.send(SEND_ARGS)).resolves.toEqual({
       messageId: 'message-1',
       messageThreadId: 'message-thread-1',
+      rejectedAttachmentNames: [],
     });
 
     expect(sendOrThrow).toHaveBeenCalledTimes(1);
@@ -297,5 +301,68 @@ describe('ApplicationMessageSendService', () => {
         ],
       }),
     );
+  });
+
+  it('should save each attachment sent in its own message and report the rejected ones', async () => {
+    const attachments = [
+      { id: 'upload-1', name: 'deck.pdf' },
+      { id: 'upload-2', name: 'archive.zip' },
+      { id: 'upload-3', name: 'photo.jpg' },
+    ];
+
+    sendOrThrow.mockResolvedValue({
+      externalId: 'message-external-1',
+      sentAt: '2026-01-01T00:00:00.000Z',
+      splitAttachments: [
+        { attachmentIndex: 2, externalId: 'message-external-2' },
+      ],
+      rejectedAttachmentIndexes: [1],
+    });
+    copyIntoAttachmentFileFieldOrThrow.mockResolvedValue([
+      { fileId: 'copy-1', label: 'deck.pdf' },
+      { fileId: 'copy-3', label: 'photo.jpg' },
+    ]);
+
+    await expect(service.send({ ...SEND_ARGS, attachments })).resolves.toEqual({
+      messageId: 'message-1',
+      messageThreadId: 'message-thread-1',
+      rejectedAttachmentNames: ['archive.zip'],
+    });
+
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledTimes(1);
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledWith({
+      attachments: [attachments[0], attachments[2]],
+      workspaceId: 'workspace-1',
+    });
+    expect(ingest).toHaveBeenCalledTimes(1);
+    expect(ingest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: [
+          expect.objectContaining({
+            externalId: 'message-external-1',
+            text: 'Hello',
+            attachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
+          }),
+          expect.objectContaining({
+            externalId: 'message-external-2',
+            text: '',
+            receivedAt: new Date('2026-01-01T00:00:00.000Z'),
+            attachments: [{ fileId: 'copy-3', label: 'photo.jpg' }],
+          }),
+        ],
+      }),
+    );
+    expect(deleteFiles).toHaveBeenCalledTimes(1);
+    expect(deleteFiles).toHaveBeenCalledWith({
+      fileIds: ['upload-1', 'upload-3', 'upload-2'],
+      workspaceId: 'workspace-1',
+    });
+    expect(deleteUnreferencedCopies).toHaveBeenCalledTimes(2);
+    expect(deleteUnreferencedCopies).toHaveBeenLastCalledWith({
+      copiedAttachments: [{ fileId: 'copy-3', label: 'photo.jpg' }],
+      workspaceId: 'workspace-1',
+      messageChannelId: 'channel-1',
+      messageExternalId: 'message-external-2',
+    });
   });
 });

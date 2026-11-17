@@ -13424,6 +13424,9 @@ export default {
             "messageThreadId": [
                 564
             ],
+            "rejectedAttachmentNames": [
+                4
+            ],
             "__typename": [
                 4
             ]

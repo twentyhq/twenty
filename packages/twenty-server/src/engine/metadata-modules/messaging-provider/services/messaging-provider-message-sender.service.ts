@@ -96,7 +96,10 @@ export class MessagingProviderMessageSenderService {
         ),
     });
 
-    const parsedResult = parseSendAppMessageResult(data);
+    const parsedResult = parseSendAppMessageResult({
+      data,
+      attachmentCount: payload.attachments.length,
+    });
 
     if (!parsedResult.isValid) {
       throw new MessagingProviderException(

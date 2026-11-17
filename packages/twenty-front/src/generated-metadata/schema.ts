@@ -7303,6 +7303,7 @@ export type SendAppChannelMessageOutput = {
   __typename?: 'SendAppChannelMessageOutput';
   messageId: Scalars['UUID']['output'];
   messageThreadId: Scalars['UUID']['output'];
+  rejectedAttachmentNames: Array<Scalars['String']['output']>;
 };
 
 export type SendChatMessageResult = {

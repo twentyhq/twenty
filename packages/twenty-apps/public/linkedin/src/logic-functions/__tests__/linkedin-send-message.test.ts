@@ -23,6 +23,9 @@ vi.mock(
   }),
 );
 
+const { UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
+
 const { linkedinSendMessageHandler } =
   await import('src/logic-functions/linkedin-send-message');
 
@@ -150,6 +153,150 @@ describe('linkedinSendMessageHandler', () => {
       linkedinSendMessageHandler({ ...PAYLOAD, attachments: [ATTACHMENT] }),
     ).rejects.toThrow('Attachment deck.pdf is larger than 26214400 bytes');
     expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  describe('when LinkedIn refuses the attachments sent together', () => {
+    const DECK = {
+      content: Buffer.from('deck'),
+      contentType: 'application/pdf',
+      filename: 'deck.pdf',
+    };
+    const ARCHIVE = {
+      content: Buffer.from('archive'),
+      contentType: 'application/zip',
+      filename: 'archive.zip',
+    };
+    const UNSUPPORTED_MEDIA_TYPE_ERROR = new UnipileRequestError(
+      'Unipile send message failed (415): Unsupported media type',
+      415,
+    );
+    const TWO_ATTACHMENTS = [
+      ATTACHMENT,
+      { ...ATTACHMENT, filename: 'archive.zip' },
+    ];
+
+    beforeEach(() => {
+      mocks.downloadSendMessageAttachmentOrThrow.mockImplementation(
+        async ({ attachment }: { attachment: { filename: string } }) =>
+          attachment.filename === 'archive.zip' ? ARCHIVE : DECK,
+      );
+    });
+
+    it('sends the text, then each attachment on its own, and reports the refused ones', async () => {
+      mocks.sendUnipileChatMessage
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
+        .mockResolvedValueOnce('message-text')
+        .mockResolvedValueOnce('message-deck')
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR);
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          attachments: TWO_ATTACHMENTS,
+        }),
+      ).resolves.toEqual({
+        externalId: 'message-text',
+        splitAttachments: [{ attachmentIndex: 0, externalId: 'message-deck' }],
+        rejectedAttachmentIndexes: [1],
+      });
+
+      const chat = { accountId: 'acc_1', chatId: 'chat-1' };
+
+      expect(mocks.sendUnipileChatMessage.mock.calls).toEqual([
+        [{ ...chat, text: 'Thanks, talk soon', attachments: [DECK, ARCHIVE] }],
+        [{ ...chat, text: 'Thanks, talk soon', attachments: [] }],
+        [{ ...chat, text: '', attachments: [DECK] }],
+        [{ ...chat, text: '', attachments: [ARCHIVE] }],
+      ]);
+    });
+
+    it('makes the first accepted attachment the message of a reply without text', async () => {
+      mocks.sendUnipileChatMessage
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
+        .mockResolvedValueOnce('message-archive');
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          text: '',
+          attachments: TWO_ATTACHMENTS,
+        }),
+      ).resolves.toEqual({
+        externalId: 'message-archive',
+        splitAttachments: [],
+        rejectedAttachmentIndexes: [0],
+      });
+    });
+
+    it('fails a reply without text when every attachment is refused', async () => {
+      mocks.sendUnipileChatMessage.mockRejectedValue(
+        UNSUPPORTED_MEDIA_TYPE_ERROR,
+      );
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          text: '',
+          attachments: TWO_ATTACHMENTS,
+        }),
+      ).rejects.toThrow('LinkedIn refused every attachment of the reply');
+    });
+
+    it('fails a reply without text on another error before anything is sent', async () => {
+      const rateLimitError = new UnipileRequestError('Too many requests', 429);
+
+      mocks.sendUnipileChatMessage
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
+        .mockRejectedValueOnce(rateLimitError);
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          text: '',
+          attachments: TWO_ATTACHMENTS,
+        }),
+      ).rejects.toBe(rateLimitError);
+      expect(mocks.sendUnipileChatMessage).toHaveBeenCalledTimes(2);
+    });
+
+    it('reports an attachment that fails after the text was sent instead of failing the reply', async () => {
+      mocks.sendUnipileChatMessage
+        .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
+        .mockResolvedValueOnce('message-text')
+        .mockRejectedValueOnce(
+          new UnipileRequestError('Too many requests', 429),
+        )
+        .mockResolvedValueOnce('message-archive');
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          attachments: TWO_ATTACHMENTS,
+        }),
+      ).resolves.toEqual({
+        externalId: 'message-text',
+        splitAttachments: [
+          { attachmentIndex: 1, externalId: 'message-archive' },
+        ],
+        rejectedAttachmentIndexes: [0],
+      });
+    });
+
+    it('fails a single refused attachment sent without text', async () => {
+      mocks.sendUnipileChatMessage.mockRejectedValue(
+        UNSUPPORTED_MEDIA_TYPE_ERROR,
+      );
+
+      await expect(
+        linkedinSendMessageHandler({
+          ...PAYLOAD,
+          text: '',
+          attachments: [ATTACHMENT],
+        }),
+      ).rejects.toBe(UNSUPPORTED_MEDIA_TYPE_ERROR);
+      expect(mocks.sendUnipileChatMessage).toHaveBeenCalledOnce();
+    });
   });
 
   it('refuses to send through a connection without a Unipile account', async () => {

@@ -61,6 +61,7 @@ export type {
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,
+  SendAppMessageSplitAttachment,
 } from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';
