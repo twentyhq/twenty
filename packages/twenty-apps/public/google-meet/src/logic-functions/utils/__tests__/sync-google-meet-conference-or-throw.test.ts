@@ -169,14 +169,16 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
   });
 
   it('should import a conference whose transcript document cannot be read, without title', async () => {
-    fetchMock.mockImplementation(async (url) =>
-      url.startsWith('https://docs.googleapis.com/')
-        ? new Response(
-            JSON.stringify({ error: { status: 'PERMISSION_DENIED' } }),
-            { status: 403 },
-          )
-        : new Response(JSON.stringify(GOOGLE_RESPONSES[url] ?? {})),
-    );
+    fetchMock.mockImplementation(async (url) => {
+      if (url.startsWith('https://docs.googleapis.com/')) {
+        return new Response(
+          JSON.stringify({ error: { status: 'PERMISSION_DENIED' } }),
+          { status: 403 },
+        );
+      }
+
+      return new Response(JSON.stringify(GOOGLE_RESPONSES[url] ?? {}));
+    });
 
     const coreApiClient = buildCoreApiClient();
 
