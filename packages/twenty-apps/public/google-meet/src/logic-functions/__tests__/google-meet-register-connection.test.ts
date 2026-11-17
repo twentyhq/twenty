@@ -81,7 +81,6 @@ describe('googleMeetRegisterConnectionHandler', () => {
     expect(
       storeGoogleMeetConnectionSubscription,
     ).toHaveBeenCalledExactlyOnceWith({
-      accessToken: 'token',
       connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/first',
       replacedSubscriptionName: undefined,
@@ -116,7 +115,6 @@ describe('googleMeetRegisterConnectionHandler', () => {
     expect(
       storeGoogleMeetConnectionSubscription,
     ).toHaveBeenCalledExactlyOnceWith({
-      accessToken: 'token',
       connectedAccountId: 'connected-account-id',
       subscriptionName: 'subscriptions/first',
       replacedSubscriptionName: 'subscriptions/existing',

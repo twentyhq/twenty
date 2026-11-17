@@ -7,12 +7,10 @@ import { getGoogleMeetEventSubscriptionKey } from 'src/logic-functions/utils/get
 import { releaseGoogleMeetEventSubscription } from 'src/logic-functions/utils/release-google-meet-event-subscription.util';
 
 export const storeGoogleMeetConnectionSubscription = async ({
-  accessToken,
   connectedAccountId,
   subscriptionName,
   replacedSubscriptionName,
 }: {
-  accessToken: string;
   connectedAccountId: string;
   subscriptionName: string;
   replacedSubscriptionName: string | undefined;
@@ -38,7 +36,7 @@ export const storeGoogleMeetConnectionSubscription = async ({
 
   for (const staleSubscriptionName of staleSubscriptionNames) {
     await releaseGoogleMeetEventSubscription({
-      accessToken,
+      connectedAccountId,
       subscriptionName: staleSubscriptionName,
     });
   }
