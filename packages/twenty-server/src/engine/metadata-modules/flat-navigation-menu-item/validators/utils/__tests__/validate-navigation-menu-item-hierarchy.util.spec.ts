@@ -56,6 +56,21 @@ describe('validateNavigationMenuItemHierarchy', () => {
     ).toBe(false);
   });
 
+  it('should only allow a built-in section inside a tab', () => {
+    expect(
+      isAllowed({
+        type: NavigationMenuItemType.FAVORITES,
+        parentType: NavigationMenuItemType.TAB,
+      }),
+    ).toBe(true);
+    expect(
+      isAllowed({
+        type: NavigationMenuItemType.AI_CHAT_INBOX,
+        parentType: NavigationMenuItemType.SECTION,
+      }),
+    ).toBe(false);
+  });
+
   it('should allow a folder inside a tab or a section but not a folder', () => {
     expect(
       isAllowed({
