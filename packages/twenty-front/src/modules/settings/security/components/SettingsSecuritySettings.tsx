@@ -158,11 +158,10 @@ export const SettingsSecuritySettings = () => {
   const minEventLogRetentionInDays = EVENT_LOG_RETENTION.minInDays;
   const maxEventLogRetentionInDays = EVENT_LOG_RETENTION.maxInDays;
   const proPlanEventLogRetentionInHours = EVENT_LOG_RETENTION.proPlanInHours;
-  const hasSsoEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.SSO && entitlement.value,
-    ) === true;
+  const hasSsoEntitlement = currentWorkspace?.billingEntitlements?.some(
+    (entitlement) =>
+      entitlement.key === BillingEntitlementKey.SSO && entitlement.value,
+  );
 
   return (
     <>

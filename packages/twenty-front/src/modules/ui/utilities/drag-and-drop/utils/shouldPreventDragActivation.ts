@@ -37,5 +37,5 @@ export const shouldPreventDragActivation = (
     return false;
   }
 
-  return Boolean(target.closest(NON_DRAGGABLE_TARGET_SELECTOR));
+  return isDefined(target.closest(NON_DRAGGABLE_TARGET_SELECTOR));
 };
