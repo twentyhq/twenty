@@ -219,7 +219,6 @@ const renderMessage = ({
   ]);
   jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
     aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     [

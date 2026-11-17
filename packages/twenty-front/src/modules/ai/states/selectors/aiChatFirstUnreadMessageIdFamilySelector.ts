@@ -48,16 +48,16 @@ export const aiChatFirstUnreadMessageIdFamilySelector =
             return false;
           }
 
-          if (message.role === AGENT_MESSAGE_ROLE.USER) {
-            const isOwnMessage = isAiChatMessageOwn({
+          const isOwnUserMessage =
+            message.role === AGENT_MESSAGE_ROLE.USER &&
+            isAiChatMessageOwn({
               message,
               currentWorkspaceMemberId: currentWorkspaceMember?.id,
               isSenderlessUserMessageOwn: isSenderlessMessageOwn,
             });
 
-            if (isOwnMessage) {
-              return false;
-            }
+          if (isOwnUserMessage) {
+            return false;
           }
 
           return (
