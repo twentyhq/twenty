@@ -3,8 +3,6 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -37,7 +35,6 @@ type FindRecordsStep = {
 
 type SortedWorkflow = {
   coreWorkflowVersionId: string;
-  workspaceWorkflowVersionId: string;
   step: FindRecordsStep;
 };
 
@@ -60,7 +57,6 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   let companyNameFieldId: string;
   let apiSortedWorkflow: SortedWorkflow;
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowVersionIds: string[] = [];
   const companyIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -136,21 +132,12 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
       ],
     );
 
-    const {
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    } = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    });
-
-    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
-
     const [step] = await readSteps({
       schema: 'core',
       workflowVersionId: coreWorkflowVersionId,
     });
 
-    return { coreWorkflowVersionId, workspaceWorkflowVersionId, step };
+    return { coreWorkflowVersionId, step };
   };
 
   beforeAll(async () => {
@@ -179,8 +166,6 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
-
     for (const companyId of companyIds) {
       await makeGraphqlApiRequest(
         destroyOneOperationFactory({
@@ -195,8 +180,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   it('changes nothing in a dry run', async () => {
     await runCommand({ dryRun: true });
 
-    const { coreWorkflowVersionId, workspaceWorkflowVersionId, step } =
-      apiSortedWorkflow;
+    const { coreWorkflowVersionId, step } = apiSortedWorkflow;
 
     expect(
       await readSteps({
@@ -204,15 +188,9 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
         workflowVersionId: coreWorkflowVersionId,
       }),
     ).toEqual([step]);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: workspaceWorkflowVersionId,
-      }),
-    ).toEqual([step]);
   });
 
-  it('converts a sort written through the API into record sorts, the same in core and the workspace', async () => {
+  it('converts a sort written through the API into record sorts', async () => {
     await runCommand();
 
     const [coreStep] = await readSteps({
@@ -223,12 +201,6 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     expect(coreStep.settings.input.orderBy).toEqual({
       recordSorts: [{ fieldMetadataId: companyNameFieldId, direction: 'DESC' }],
     });
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: apiSortedWorkflow.workspaceWorkflowVersionId,
-      }),
-    ).toEqual([coreStep]);
   });
 
   it('runs the converted sort', async () => {

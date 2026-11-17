@@ -3982,6 +3982,9 @@ export default {
             "name": [
                 4
             ],
+            "signInScope": [
+                180
+            ],
             "url": [
                 4
             ],
@@ -4029,6 +4032,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [
@@ -5841,6 +5847,9 @@ export default {
             "workspaceInviteHash": [
                 4
             ],
+            "workspacePersonalInviteToken": [
+                4
+            ],
             "__typename": [
                 4
             ]
@@ -6865,6 +6874,9 @@ export default {
             ],
             "name": [
                 4
+            ],
+            "signInScope": [
+                180
             ],
             "tools": [
                 373
@@ -10134,19 +10146,6 @@ export default {
                     ]
                 }
             ],
-            "upgradeApplication": [
-                1,
-                {
-                    "appRegistrationId": [
-                        4,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        4,
-                        "String!"
-                    ]
-                }
-            ],
             "uploadAppTarball": [
                 86,
                 {
@@ -10391,6 +10390,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [
@@ -14776,6 +14778,9 @@ export default {
             "name": [
                 4
             ],
+            "signInScope": [
+                180
+            ],
             "url": [
                 4
             ],
@@ -14867,6 +14872,9 @@ export default {
                 4
             ],
             "pageLayoutId": [
+                564
+            ],
+            "parentId": [
                 564
             ],
             "position": [

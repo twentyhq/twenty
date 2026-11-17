@@ -89,11 +89,8 @@ export class GetFieldMetadataTool extends BaseTool<
       limit: input.limit ?? 100,
     });
 
-    const compactedFields = (rawResults as unknown as Record<string, unknown>[])
-      .filter(
-        (field) =>
-          !METADATA_TOOL_EXCLUDED_FIELD_NAMES.has(field.name as string),
-      )
+    const compactedFields = rawResults
+      .filter((field) => !METADATA_TOOL_EXCLUDED_FIELD_NAMES.has(field.name))
       .map((field) => {
         if (field.isSystem && !input.includeFullSystemFields) {
           return {

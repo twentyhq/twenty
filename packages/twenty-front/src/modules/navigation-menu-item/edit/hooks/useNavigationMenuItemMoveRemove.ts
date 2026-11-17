@@ -21,11 +21,11 @@ export const useNavigationMenuItemMoveRemove = (
     if (!isDefined(currentItem)) {
       return null;
     }
-    const folderId = currentItem.folderId ?? null;
+    const parentId = currentItem.parentId ?? null;
     return currentItems
       .filter(
         (item) =>
-          (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
+          (item.parentId ?? null) === parentId && visibleItemIds.has(item.id),
       )
       .sort((a, b) => a.position - b.position);
   };
@@ -76,7 +76,7 @@ export const useNavigationMenuItemMoveRemove = (
 
     if (isNavigationMenuItemFolder(itemToRemove)) {
       const childIds = currentItems
-        .filter((item) => item.folderId === navigationMenuItemId)
+        .filter((item) => item.parentId === navigationMenuItemId)
         .map((item) => item.id);
       await deleteItems([navigationMenuItemId, ...childIds]);
       return;
@@ -104,11 +104,11 @@ export const useNavigationMenuItemMoveRemove = (
     // Block moving a folder into one of its own descendants (would orphan the subtree).
     if (isFolder && isDefined(targetFolderId)) {
       const descendantFolderIds = new Set<string>();
-      const collectDescendants = (folderId: string) => {
+      const collectDescendants = (parentId: string) => {
         currentItems
           .filter(
             (item) =>
-              isNavigationMenuItemFolder(item) && item.folderId === folderId,
+              isNavigationMenuItemFolder(item) && item.parentId === parentId,
           )
           .forEach((item) => {
             descendantFolderIds.add(item.id);
@@ -123,8 +123,8 @@ export const useNavigationMenuItemMoveRemove = (
 
     const itemsInTargetFolder = currentItems.filter((item) =>
       targetFolderId === null
-        ? !isDefined(item.folderId)
-        : item.folderId === targetFolderId,
+        ? !isDefined(item.parentId)
+        : item.parentId === targetFolderId,
     );
     const maxPositionInTarget =
       itemsInTargetFolder.length > 0
@@ -132,7 +132,7 @@ export const useNavigationMenuItemMoveRemove = (
         : -1;
 
     await updateItem(navigationMenuItemId, {
-      folderId: targetFolderId ?? null,
+      parentId: targetFolderId ?? null,
       position: maxPositionInTarget + 1,
     });
   };
