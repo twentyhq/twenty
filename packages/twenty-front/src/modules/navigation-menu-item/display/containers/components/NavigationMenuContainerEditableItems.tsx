@@ -3,6 +3,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -30,6 +31,7 @@ export const NavigationMenuContainerEditableItems = ({
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const folderCount = topLevelItems.filter(isNavigationMenuItemFolder).length;
 
   return (
@@ -53,7 +55,12 @@ export const NavigationMenuContainerEditableItems = ({
         />
       ))}
       <WorkspaceSectionAddMenuItemButton
-        container={{ id: containerId, itemCount: topLevelItems.length }}
+        container={{
+          id: containerId,
+          itemCount: workspaceNavigationMenuItems.filter(
+            (item) => item.parentId === containerId,
+          ).length,
+        }}
       />
     </StyledList>
   );
