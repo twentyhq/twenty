@@ -6,10 +6,8 @@ import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useShouldShowAiChatEmptyState = () => {
@@ -24,9 +22,6 @@ export const useShouldShowAiChatEmptyState = () => {
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
     { threadId },
-  );
-  const hasInitializedAiChatThreads = useAtomStateValue(
-    hasInitializedAiChatThreadsState,
   );
 
   const aiChatHasMessage = useAtomFamilySelectorValue(
@@ -43,7 +38,6 @@ export const useShouldShowAiChatEmptyState = () => {
     !isMobile &&
     !aiChatHasMessage &&
     !isDefined(aiChatError) &&
-    hasInitializedAiChatThreads &&
     !aiChatIsAwaitingFirstChunk &&
     !aiChatIsStreaming
   );

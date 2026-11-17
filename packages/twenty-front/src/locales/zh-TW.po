@@ -704,6 +704,11 @@ msgstr "{objectLabel} 上的 {count}"
 msgid "{countNonRelation, plural, one {# field} other {# fields}}"
 msgstr "{countNonRelation, plural, other {# 個欄位}}"
 
+#. js-lingui-id: 0Iz7tg
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{credits} credits/month"
+msgstr ""
+
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit each} other {{label}, earn {formattedCreditsReward} free credits each}}"
@@ -925,7 +930,7 @@ msgid "{label}, {statusLabel}"
 msgstr "{label}，{statusLabel}"
 
 #. js-lingui-id: g4xrfh
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr "{label}，{unreadOpenThreadCount} 則未讀"
 
@@ -1152,6 +1157,11 @@ msgstr "來自席位的 {seatCreditsDisplay} 點數，每年重設"
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
 msgstr "來自席位的 {seatCreditsDisplay} 點數，每年重設 · 來自您點數方案的 {packageCreditsDisplay} 點數，可結轉"
+
+#. js-lingui-id: X/yTAr
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
+msgstr ""
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1795,6 +1805,11 @@ msgstr "關於此工作區"
 msgid "About your app"
 msgstr "關於您的應用程式"
 
+#. js-lingui-id: g/S81Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Above the commitment"
+msgstr ""
+
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
@@ -1992,6 +2007,7 @@ msgstr "啟用中..."
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -2040,6 +2056,7 @@ msgstr "參與者"
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
 msgstr "添加"
@@ -2200,6 +2217,12 @@ msgstr "新增活動標題"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "添加已批准的訪問域"
+
+#. js-lingui-id: rY10B9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Add arrangement"
+msgstr ""
 
 #. js-lingui-id: U76pXW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -2734,6 +2757,16 @@ msgstr "已添加 {beautifiedCreatedAt}"
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
 msgstr "已將<0>續約日期</0>新增至<1>{companiesLabel}</1>"
 
+#. js-lingui-id: NxahIk
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added by"
+msgstr ""
+
+#. js-lingui-id: z1dTLo
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added on"
+msgstr ""
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -3015,7 +3048,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -4282,6 +4315,21 @@ msgstr "引數必須是有效的 JSON 物件。"
 msgid "Armenian"
 msgstr "亞美尼亞語"
 
+#. js-lingui-id: T1TSIx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Arrangement added."
+msgstr ""
+
+#. js-lingui-id: EboPKL
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangement ended."
+msgstr ""
+
+#. js-lingui-id: We0TcM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangements"
+msgstr ""
+
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
@@ -4559,6 +4607,11 @@ msgstr "至少需要一項操作"
 #: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
 msgid "At least one protocol must be configured"
 msgstr "必須設定至少一個通訊協定"
+
+#. js-lingui-id: QAlSoU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
+msgstr ""
 
 #. js-lingui-id: tqMllA
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -5677,6 +5730,7 @@ msgstr "加拿大"
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
@@ -6999,9 +7053,21 @@ msgid "Commas and dot"
 msgstr "逗號與句點"
 
 #. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
 msgstr "留言"
+
+#. js-lingui-id: As9mhp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Commercial exceptions to the plan, with why and until when."
+msgstr ""
+
+#. js-lingui-id: 1JmJ2B
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Committed seats"
+msgstr ""
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8605,6 +8671,11 @@ msgstr "憑證"
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "OAuth 授權流程的憑證與範圍"
 
+#. js-lingui-id: x8lB6y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit allowance"
+msgstr ""
+
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit balance"
@@ -8619,6 +8690,11 @@ msgstr "目前期間的點數使用情況"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
 msgstr "隨時間變化的點數消耗。"
+
+#. js-lingui-id: OeJw5Y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit grant"
+msgstr ""
 
 #. js-lingui-id: zH6NZT
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -8735,6 +8811,11 @@ msgstr "在方案額度之外授予的點數。可持續使用，直到用盡為
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
 msgstr "每日免費積分"
+
+#. js-lingui-id: 30XINA
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Credits per month"
+msgstr ""
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9082,6 +9163,11 @@ msgstr "customer_satisfaction"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Customise the fields available in the {objectLabelSingular} views and their display order in the {objectLabelSingular} detail view and menus."
 msgstr "自訂 {objectLabelSingular} 檢視中可用的欄位，以及它們在 {objectLabelSingular} 詳細檢視與選單中的顯示順序。"
+
+#. js-lingui-id: 5GgtFa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Customizable sidebar"
+msgstr ""
 
 #. js-lingui-id: qqLY+j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10236,6 +10322,8 @@ msgstr "詳細資訊"
 #. js-lingui-id: URmyfc
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleSecurityColumns.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -10403,6 +10491,11 @@ msgstr "已中斷連線"
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
 msgstr "已中斷 {totalCount} 個連線中的 {successfulCount} 個。無法中斷：{failedLabels}。"
+
+#. js-lingui-id: H6Ma8Z
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Discount"
+msgstr ""
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11579,6 +11672,17 @@ msgstr "加密"
 msgid "Encryption key rotation"
 msgstr "加密金鑰輪替"
 
+#. js-lingui-id: xDr/ct
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End"
+msgstr ""
+
+#. js-lingui-id: VhdLE7
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End arrangement"
+msgstr ""
+
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -11606,6 +11710,16 @@ msgstr "結束試用期"
 msgid "End trial period to continue using Workflow or AI features."
 msgstr "結束試用期以繼續使用工作流程或 AI 功能。"
 
+#. js-lingui-id: 237hSL
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "Ended"
+msgstr ""
+
+#. js-lingui-id: eNtnOy
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Ended by"
+msgstr ""
+
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Ending"
@@ -11625,11 +11739,15 @@ msgstr "端點 URL"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr "結束"
 
 #. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
 msgstr "結束（選填）"
@@ -13092,6 +13210,11 @@ msgstr "無法將相關記錄連結至此活動"
 msgid "Failed to load agent details."
 msgstr "無法載入代理詳細資料。"
 
+#. js-lingui-id: dQLWeE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Failed to load billing arrangements."
+msgstr ""
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13859,19 +13982,24 @@ msgid "Finish editing the layout to expand chat"
 msgstr "完成版面配置編輯以展開聊天"
 
 #. js-lingui-id: yJoako
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open AI"
 msgstr "完成版面配置編輯以開啟 AI"
 
 #. js-lingui-id: KstqNM
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
 msgstr "完成版面配置編輯以開啟收件匣"
 
 #. js-lingui-id: 6cOXRd
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "完成版面配置編輯以開啟設定"
+
+#. js-lingui-id: 1yKuEJ
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
+msgid "Finish editing the layout to open this tab"
+msgstr ""
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14171,6 +14299,11 @@ msgstr "免費點數"
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
 msgstr "已賺取的免費點數"
+
+#. js-lingui-id: x2qGE3
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Free seats"
+msgstr ""
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -14864,6 +14997,11 @@ msgstr "帳號"
 msgid "Happy"
 msgstr "開心"
 
+#. js-lingui-id: 4OOUC8
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Hard cap"
+msgstr ""
+
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
 msgid "Has attachments"
@@ -15168,7 +15306,7 @@ msgstr "聘請合作夥伴協助你導入並自訂 Twenty。"
 #. js-lingui-id: i0qMbr
 #: src/modules/ai/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
 msgstr "首頁"
 
@@ -15753,7 +15891,7 @@ msgid "Inactive Skill Options"
 msgstr ""
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Inbox"
 msgstr "收件箱"
 
@@ -17363,6 +17501,16 @@ msgstr "限制可添加到此欄位的值的數量"
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: cF6iqz
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Limit override"
+msgstr ""
+
+#. js-lingui-id: BDi/z7
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "Limit removed"
+msgstr ""
+
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
@@ -18943,6 +19091,7 @@ msgstr "適用於進階專案的更多進階欄位"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
@@ -19297,7 +19446,7 @@ msgid "navigation menu item"
 msgstr "導覽選單項目"
 
 #. js-lingui-id: aTTshK
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Navigation modes"
 msgstr "導覽模式"
 
@@ -19333,6 +19482,7 @@ msgstr "網路錯誤"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementEndDate.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20106,6 +20256,7 @@ msgid "No emoji found"
 msgstr "找不到表情符號"
 
 #. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
 msgstr "無結束日期"
@@ -21423,6 +21574,11 @@ msgstr "每次執行一個"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "一份訂閱提供一組組織金鑰，可供一個正式環境執行個體與一個潛在的預備或測試執行個體使用。若要執行預備或測試環境，請在第二台伺服器上安裝 Twenty，使用相同的組織金鑰啟用，然後將該伺服器註冊為開發環境執行個體。開發環境執行個體可在不額外收費的情況下解鎖進階功能，且不會計入您的正式環境席次數量。"
 
+#. js-lingui-id: YO4da4
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "One-time"
+msgstr ""
+
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
@@ -22712,6 +22868,11 @@ msgstr "選擇一個或多個欄位。您選取它們的順序會成為索引中
 msgid "Pick Record"
 msgstr "挑選記錄"
 
+#. js-lingui-id: 48B257
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Pick the end date"
+msgstr ""
+
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB."
@@ -23660,6 +23821,9 @@ msgid "Read/Edit/Delete permissions"
 msgstr "讀取／編輯／刪除權限"
 
 #. js-lingui-id: VJScHU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -24100,6 +24264,11 @@ msgstr "重新整理此日期的可用時間。"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Refresh status"
 msgstr "重新整理狀態"
+
+#. js-lingui-id: J0LAHU
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Refund"
+msgstr ""
 
 #. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -24605,6 +24774,11 @@ msgstr "重新排序選項"
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
 msgstr "取代小工具"
+
+#. js-lingui-id: JsTqK9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
+msgstr ""
 
 #. js-lingui-id: uFEgGd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25522,6 +25696,7 @@ msgstr "排程行銷活動"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr "已排程"
@@ -26051,6 +26226,7 @@ msgid "seats"
 msgstr "座位"
 
 #. js-lingui-id: grt0Pu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -26188,7 +26364,13 @@ msgstr "查看函式"
 msgid "See installed applications"
 msgstr "查看已安裝的應用程式"
 
+#. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+msgid "See less"
+msgstr ""
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "查看更多"
@@ -27007,7 +27189,7 @@ msgstr "正在設定您的<0>資料庫</0>..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27305,6 +27487,11 @@ msgstr "顯示於"
 msgid "Show only rows with errors"
 msgstr "僅顯示有錯誤的行"
 
+#. js-lingui-id: KefbEP
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show sidebar tabs and sections."
+msgstr ""
+
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -27387,6 +27574,11 @@ msgstr "維護期間暫時無法註冊。"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Signatory title"
 msgstr "簽署人職稱"
+
+#. js-lingui-id: +Ou1Pl
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Signed a 2-year deal for 25 seats"
+msgstr ""
 
 #. js-lingui-id: Lz4j8Q
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
@@ -27687,6 +27879,11 @@ msgstr "已暫停至 {eventTime}"
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "SOC 2"
 msgstr "服務組織控制 2"
+
+#. js-lingui-id: mbsiG9
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Soft cap"
+msgstr ""
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -28041,6 +28238,8 @@ msgstr "自 {scheduledChangeStartDate} 起生效"
 #. js-lingui-id: W1KkjZ
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Starts"
 msgstr "開始"
 
@@ -28080,6 +28279,8 @@ msgstr "統計資料"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -29025,6 +29226,11 @@ msgstr "該時間已不再可用。請選擇其他時間。"
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
 msgstr "這約為 {formattedNewlyEarnedAiActions} 次 AI 動作。點數永不過期。"
 
+#. js-lingui-id: XOno1Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
+msgstr ""
+
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
@@ -29772,6 +29978,11 @@ msgstr "這是目前的簽署金鑰。撤銷它會使所有以其簽署的 JWT �
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
 msgstr "此鍵應透過主體輸入設定"
+
+#. js-lingui-id: 3Xb+Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "This many members are not billed. Seats are synced right away."
+msgstr ""
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30569,6 +30780,11 @@ msgstr "試用期已過。請聯繫您的管理員。"
 msgid "Trial expired. Please update your billing details."
 msgstr "試用期已過期。請更新您的結算詳情。"
 
+#. js-lingui-id: SyzXYh
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Trial extension"
+msgstr ""
+
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Trial period"
@@ -30865,6 +31081,9 @@ msgstr "此工作區的雙因素驗證已重設。請從「設定」的「個人
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx

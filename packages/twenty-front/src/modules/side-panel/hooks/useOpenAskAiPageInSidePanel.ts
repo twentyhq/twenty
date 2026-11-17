@@ -1,6 +1,5 @@
 import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
-import { resetClosingInboxThread } from '@/inbox/utils/resetClosingInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -38,8 +37,6 @@ export const useOpenAskAiPageInSidePanel = () => {
       if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
         return;
       }
-
-      resetClosingInboxThread(store);
 
       const shouldReset =
         resetNavigationStack !== undefined
