@@ -5,7 +5,6 @@ import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/co
 import { type ComputedFieldSlotExpression } from 'src/engine/metadata-modules/computed-field/types/computed-field-slot-expression.type';
 import { getComputedFieldComputationTextProperty } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-computation-text-property.util';
 
-// The expressions the computation holds, each with the slot that says how it is evaluated
 export const getComputedFieldSlotExpressions = (
   computation: FieldMetadataComputation,
 ): ComputedFieldSlotExpression[] =>
