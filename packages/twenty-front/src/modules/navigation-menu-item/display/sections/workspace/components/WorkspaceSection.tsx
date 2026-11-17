@@ -68,7 +68,11 @@ export const WorkspaceSection = () => {
     }
   };
 
-  if (isCustomizableSidebarEnabled && items.length === 0) {
+  if (
+    isCustomizableSidebarEnabled &&
+    !isLayoutCustomizationModeEnabled &&
+    items.length === 0
+  ) {
     return null;
   }
 
