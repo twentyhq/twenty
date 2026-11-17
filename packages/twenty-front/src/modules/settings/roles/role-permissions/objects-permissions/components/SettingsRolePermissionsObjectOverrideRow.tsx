@@ -27,14 +27,12 @@ type SettingsRolePermissionsObjectOverrideRowProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
-  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectOverrideRow = ({
   roleId,
   objectMetadataItem,
   isEditable,
-  fromAgentId,
 }: SettingsRolePermissionsObjectOverrideRowProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -121,7 +119,6 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
           isEditable={isEditable}
-          fromAgentId={fromAgentId}
         />
       </Collapsible.Panel>
     </Collapsible.Root>

@@ -12,7 +12,6 @@ import { coreAgentIsSavingFamilyState } from '@/object-core/agents/states/coreAg
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
-import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -119,11 +118,8 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     }
   };
 
-  const { resetListedObjectOverrides } = useSettingsRoleObjectOverrides(roleId);
-
   const discardCoreAgentChanges = () => {
     resetDraft();
-    resetListedObjectOverrides();
     setCoreAgentDiscardCount((discardCount) => discardCount + 1);
 
     if (isDefined(settingsInitialDraftRole)) {

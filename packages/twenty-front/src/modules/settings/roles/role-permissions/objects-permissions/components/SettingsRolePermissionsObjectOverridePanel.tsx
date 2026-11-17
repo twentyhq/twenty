@@ -19,7 +19,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -53,14 +52,12 @@ type SettingsRolePermissionsObjectOverridePanelProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
-  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectOverridePanel = ({
   roleId,
   objectMetadataItem,
   isEditable,
-  fromAgentId,
 }: SettingsRolePermissionsObjectOverridePanelProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
@@ -117,11 +114,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   };
 
   const openObjectPage = () => {
-    navigateSettings(
-      SettingsPath.RoleObjectLevel,
-      { roleId, objectMetadataId: objectMetadataItem.id },
-      isDefined(fromAgentId) ? { fromAgent: fromAgentId } : undefined,
-    );
+    navigateSettings(SettingsPath.RoleObjectLevel, {
+      roleId,
+      objectMetadataId: objectMetadataItem.id,
+    });
   };
 
   return (
