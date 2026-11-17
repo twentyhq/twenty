@@ -3,11 +3,31 @@ import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+
+const findFlatWorkflowVersionsOfCoreWorkflow = ({
+  coreWorkflowId,
+  flatWorkflowVersionMaps,
+}: {
+  coreWorkflowId: string | undefined;
+  flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
+}): FlatWorkflowVersion[] => {
+  if (!isDefined(coreWorkflowId)) {
+    return [];
+  }
+
+  return Object.values(flatWorkflowVersionMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter(
+      (flatWorkflowVersion) =>
+        flatWorkflowVersion.coreWorkflowId === coreWorkflowId,
+    );
+};
 
 export const buildWorkflowVersionSideEffects = ({
   flatEntity,
@@ -20,20 +40,13 @@ export const buildWorkflowVersionSideEffects = ({
   }
 
   const { universalIdentifier } = version;
-  const coreWorkflowId =
-    relatedFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
-      flatEntity.universalIdentifier
-    ]?.id;
-  const workflowVersions = isDefined(coreWorkflowId)
-    ? Object.values(
-        relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .filter(
-          (flatWorkflowVersion) =>
-            flatWorkflowVersion.coreWorkflowId === coreWorkflowId,
-        )
-    : [];
+  const workflowVersions = findFlatWorkflowVersionsOfCoreWorkflow({
+    coreWorkflowId:
+      relatedFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
+        flatEntity.universalIdentifier
+      ]?.id,
+    flatWorkflowVersionMaps: relatedFlatEntityMaps.flatWorkflowVersionMaps,
+  });
   const existingVersion =
     relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
       universalIdentifier

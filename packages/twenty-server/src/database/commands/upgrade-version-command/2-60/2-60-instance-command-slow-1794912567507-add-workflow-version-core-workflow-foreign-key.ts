@@ -2,9 +2,14 @@ import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredInstanceCommand('2.60.0', 1794912567507, { type: 'slow' })
-export class AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand implements SlowInstanceCommand {
+export class AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `DELETE FROM "core"."workflowVersion" "workflowVersion"
@@ -13,6 +18,17 @@ export class AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand impleme
             WHERE "workflow"."id" = "workflowVersion"."coreWorkflowId"
         )`,
     );
+
+    const workspaces = await dataSource.query<{ id: string }[]>(
+      `SELECT "id" FROM "core"."workspace"`,
+    );
+
+    for (const workspace of workspaces) {
+      await this.workspaceCacheService.flush(workspace.id, [
+        'flatWorkflowVersionMaps',
+        'workflowAutomatedTriggerMaps',
+      ]);
+    }
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
