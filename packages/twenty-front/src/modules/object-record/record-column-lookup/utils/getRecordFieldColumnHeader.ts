@@ -12,7 +12,9 @@ export const getRecordFieldColumnHeader = ({
   lookupTarget,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
-  lookupTarget: RecordFieldLookupTarget | undefined;
+  lookupTarget:
+    | Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>
+    | undefined;
 }): ColumnHeaderFieldMetadataItem => {
   const lookupTargetFieldMetadataItem =
     lookupTarget?.lookupTargetFieldMetadataItem;

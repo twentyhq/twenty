@@ -35,6 +35,7 @@ describe('getRecordFieldColumnHeader', () => {
           recordField: { relationTargetFieldMetadataId: employeesField.id },
           fieldMetadataItem: companyField,
           objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+          isLookupColumnsEnabled: true,
         }),
       }),
     ).toEqual({

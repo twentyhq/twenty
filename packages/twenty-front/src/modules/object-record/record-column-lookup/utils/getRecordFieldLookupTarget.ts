@@ -19,12 +19,16 @@ export const getRecordFieldLookupTarget = ({
   recordField,
   fieldMetadataItem,
   objectMetadataItems,
+  isLookupColumnsEnabled,
 }: {
   recordField: Pick<RecordField, 'relationTargetFieldMetadataId'>;
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
+  isLookupColumnsEnabled: boolean;
 }): RecordFieldLookupTarget | undefined => {
+  // With the flag off a lookup column renders, loads and aggregates as its plain relation
   if (
+    !isLookupColumnsEnabled ||
     !isDefined(recordField.relationTargetFieldMetadataId) ||
     !isPlainManyToOneRelationField(fieldMetadataItem)
   ) {

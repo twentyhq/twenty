@@ -20,7 +20,6 @@ type RecordTableCellLookupFieldContextProps = {
   children: ReactNode;
 };
 
-// A lookup cell is a plain cell of the related record, so it only resolves which record and field to show
 export const RecordTableCellLookupFieldContext = ({
   recordFieldId,
   fieldMetadataItem,

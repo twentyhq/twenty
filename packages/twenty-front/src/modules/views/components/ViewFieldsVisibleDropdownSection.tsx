@@ -1,13 +1,12 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -18,9 +17,7 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
@@ -47,10 +44,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const isLookupColumnsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED,
-  );
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -129,13 +123,10 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget: isLookupColumnsEnabled
-                      ? getRecordFieldLookupTarget({
-                          recordField,
-                          fieldMetadataItem,
-                          objectMetadataItems,
-                        })
-                      : undefined,
+                    lookupTarget: getRecordFieldLookupTarget(
+                      recordField,
+                      fieldMetadataItem,
+                    ),
                   });
 
                   return (
