@@ -12,6 +12,7 @@ import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { getAiChatUsageFromThread } from '@/ai/utils/getAiChatUsageFromThread';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -52,16 +53,18 @@ export const AiChatStreamSubscriptionEffect = ({
     { threadId },
   );
 
+  const aiChatThreadRecord = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
+    threadId,
+  );
+
   useEffect(() => {
-    const thread = store.get(
-      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
-    );
     const usageAtom = aiChatUsageFamilyState.atomFamily({ threadId });
 
-    if (isDefined(thread) && !isDefined(store.get(usageAtom))) {
-      store.set(usageAtom, getAiChatUsageFromThread(thread));
+    if (isDefined(aiChatThreadRecord) && !isDefined(store.get(usageAtom))) {
+      store.set(usageAtom, getAiChatUsageFromThread(aiChatThreadRecord));
     }
-  }, [store, threadId]);
+  }, [store, threadId, aiChatThreadRecord]);
 
   useEffect(() => {
     if (
