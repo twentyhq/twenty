@@ -34,9 +34,5 @@ export const downloadSendMessageAttachmentOrThrow = async ({
     maxSizeBytes,
   });
 
-  return {
-    content: content.toString('base64'),
-    content_type: contentType,
-    filename,
-  };
+  return { content, contentType, filename };
 };
