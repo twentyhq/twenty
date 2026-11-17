@@ -34,7 +34,6 @@ import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/util
 import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
 import { findRecordSharingFlatObjectMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/find-record-sharing-flat-object-metadata-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
@@ -250,6 +249,19 @@ export class RecordSharingReadService {
         'flatWorkspaceMemberMaps',
         'flatRoleTargetMaps',
       ]);
+    const assignedRoleIdByUserWorkspaceId = new Map(
+      Object.values(flatRoleTargetMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatRoleTarget) =>
+            isDefined(flatRoleTarget.userWorkspaceId) &&
+            !flatRoleTarget.isSystemSideEffect,
+        )
+        .map((flatRoleTarget) => [
+          flatRoleTarget.userWorkspaceId,
+          flatRoleTarget.roleId,
+        ]),
+    );
 
     return grants.map((grant) => {
       const userWorkspaceId = resolveRecordSharePrincipalUserWorkspaceId({
@@ -262,11 +274,7 @@ export class RecordSharingReadService {
         principalType: grant.principalType,
         principalId: grant.principalId,
         principalRoleId: isDefined(userWorkspaceId)
-          ? (findFlatRoleTargetFromForeignKey({
-              flatRoleTargetMaps,
-              targetMetadataForeignKey: 'userWorkspaceId',
-              targetId: userWorkspaceId,
-            })?.roleId ?? null)
+          ? (assignedRoleIdByUserWorkspaceId.get(userWorkspaceId) ?? null)
           : null,
         accessLevel: grant.accessLevel,
         rowCause: grant.rowCause,

@@ -1,21 +1,37 @@
-import { type QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
+import { createCoreIndexConcurrently } from 'src/database/commands/upgrade-version-command/2-46/utils/create-core-index-concurrently.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
+const INDEXES = [
+  {
+    indexName: 'IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE',
+    createIndexQuery:
+      'CREATE UNIQUE INDEX IF NOT EXISTS "IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId") WHERE "isSystemSideEffect" = false',
+  },
+  {
+    indexName: 'IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE',
+    createIndexQuery:
+      'CREATE UNIQUE INDEX IF NOT EXISTS "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId", "roleId")',
+  },
+];
+
 @RegisteredInstanceCommand('2.60.0', 1794850068948, { type: 'slow' })
 export class AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand implements SlowInstanceCommand {
-  async runDataMigration(): Promise<void> {}
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    for (const index of INDEXES) {
+      await createCoreIndexConcurrently({ dataSource, ...index });
+    }
+  }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    for (const { createIndexQuery } of INDEXES) {
+      await queryRunner.query(createIndexQuery);
+    }
+
     await queryRunner.query(
       'ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"',
-    );
-    await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_ROLE_TARGET_UNIQUE_ASSIGNED_USER_WORKSPACE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId") WHERE "isSystemSideEffect" = false',
-    );
-    await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE_ROLE" ON "core"."roleTarget" ("workspaceId", "userWorkspaceId", "roleId")',
     );
   }
 
