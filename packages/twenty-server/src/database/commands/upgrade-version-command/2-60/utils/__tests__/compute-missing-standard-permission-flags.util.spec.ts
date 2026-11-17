@@ -27,20 +27,19 @@ const standardFlatPermissionFlags = Object.values(
 
 const toFlatPermissionFlagMaps = (
   flatPermissionFlags: FlatPermissionFlag[],
-): FlatEntityMaps<FlatPermissionFlag> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      flatPermissionFlags.map((flatPermissionFlag) => [
-        flatPermissionFlag.universalIdentifier,
-        { ...flatPermissionFlag, id: `existing-${flatPermissionFlag.key}` },
-      ]),
-    ),
-  }) as FlatEntityMaps<FlatPermissionFlag>;
+): Pick<FlatEntityMaps<FlatPermissionFlag>, 'byUniversalIdentifier'> => ({
+  byUniversalIdentifier: Object.fromEntries(
+    flatPermissionFlags.map((flatPermissionFlag) => [
+      flatPermissionFlag.universalIdentifier,
+      { ...flatPermissionFlag, id: `existing-${flatPermissionFlag.key}` },
+    ]),
+  ),
+});
 
 const withoutKeys = (keys: PermissionFlagType[]) =>
   standardFlatPermissionFlags.filter(
     (standardFlatPermissionFlag) =>
-      !keys.includes(standardFlatPermissionFlag.key as PermissionFlagType),
+      !keys.some((key) => key === standardFlatPermissionFlag.key),
   );
 
 describe('computeMissingStandardPermissionFlags', () => {
@@ -102,15 +101,21 @@ describe('computeMissingStandardPermissionFlags', () => {
   });
 
   it('skips a standard flag whose key another application already registered', () => {
-    const appFlagWithStandardKey = {
-      ...standardFlatPermissionFlags.find(
-        (standardFlatPermissionFlag) =>
-          standardFlatPermissionFlag.key ===
-          PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
-      ),
+    const standardCalendarFlag = standardFlatPermissionFlags.find(
+      (standardFlatPermissionFlag) =>
+        standardFlatPermissionFlag.key ===
+        PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+    );
+
+    if (!isDefined(standardCalendarFlag)) {
+      throw new Error('Missing standard CREATE_CALENDAR_EVENT_TOOL flag');
+    }
+
+    const appFlagWithStandardKey: FlatPermissionFlag = {
+      ...standardCalendarFlag,
       universalIdentifier: '20202020-0000-0000-0000-0000000000c3',
       applicationId: OTHER_APPLICATION_ID,
-    } as FlatPermissionFlag;
+    };
 
     const { permissionFlagsToCreate, permissionFlagsSkippedForKeyClash } =
       computeMissingStandardPermissionFlags({
