@@ -46,14 +46,14 @@ export const SettingsMcpServerSignInSection = ({
     );
   }
 
-  if (isDefined(error)) {
-    return (
-      <SettingsApplicationLoadErrorBanner
-        message={t`The sign-in for this server could not be loaded. Check your connection and try again.`}
-        onRetry={() => refetch().catch(() => undefined)}
-      />
-    );
+  if (!isDefined(error)) {
+    return null;
   }
 
-  return null;
+  return (
+    <SettingsApplicationLoadErrorBanner
+      message={t`The sign-in for this server could not be loaded. Check your connection and try again.`}
+      onRetry={() => refetch().catch(() => undefined)}
+    />
+  );
 };
