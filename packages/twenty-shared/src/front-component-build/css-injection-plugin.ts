@@ -14,7 +14,7 @@ const buildStyleInjectionModule = (cssText: string): string =>
 
 type CssInjectionPluginOptions = {
   getBuildPlugins?: () => esbuild.Plugin[];
-  onSourceFiles?: (paths: string[]) => void;
+  onSourceFiles?: (paths: string[], entryPath: string) => void;
 };
 
 export const createCssInjectionPlugin = (
@@ -64,7 +64,7 @@ export const createCssInjectionPlugin = (
       const sourceFiles = Object.keys(result.metafile.inputs).map((input) =>
         resolve(build.initialOptions.absWorkingDir ?? process.cwd(), input),
       );
-      options?.onSourceFiles?.(sourceFiles);
+      options?.onSourceFiles?.(sourceFiles, path);
       const cssText = outputFile.text;
 
       return {

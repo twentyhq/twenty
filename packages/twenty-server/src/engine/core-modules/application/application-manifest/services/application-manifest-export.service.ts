@@ -66,12 +66,14 @@ export class ApplicationManifestExportService {
     applicationUniversalIdentifier,
     shouldIncludeDependencies = false,
     shouldIncludeSourceFiles = false,
+    shouldIncludeSourceDependencies = false,
     shouldIncludePublicAssets = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldIncludeDependencies?: boolean;
     shouldIncludeSourceFiles?: boolean;
+    shouldIncludeSourceDependencies?: boolean;
     shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
@@ -154,6 +156,7 @@ export class ApplicationManifestExportService {
         applicationUniversalIdentifier,
         applicationAllFlatEntityMaps,
         shouldIncludeSourceFiles,
+        shouldIncludeSourceDependencies,
       },
     );
     const {
@@ -309,7 +312,9 @@ export class ApplicationManifestExportService {
       ],
       files: [
         ...(shouldIncludeDependencies ? dependencyFiles : []),
-        ...sourceFiles,
+        ...sourceFiles.filter(
+          (file) => !publicAssetFiles.some((asset) => asset.path === file.path),
+        ),
         ...publicAssetFiles,
       ],
     };

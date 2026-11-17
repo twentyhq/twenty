@@ -1,3 +1,4 @@
+import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
 import { Injectable } from '@nestjs/common';
 import {
   isRestorableFrontComponentSourcePath,
@@ -20,18 +21,23 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class ApplicationFrontComponentExportService {
-  constructor(private readonly fileStorageService: FileStorageService) {}
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly applicationFrontComponentSourceService: ApplicationFrontComponentSourceService,
+  ) {}
 
   async exportFrontComponents({
     workspaceId,
     applicationUniversalIdentifier,
     applicationAllFlatEntityMaps,
     shouldIncludeSourceFiles,
+    shouldIncludeSourceDependencies = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     applicationAllFlatEntityMaps: AllFlatEntityMaps;
     shouldIncludeSourceFiles: boolean;
+    shouldIncludeSourceDependencies?: boolean;
   }) {
     const frontComponents: FrontComponentManifest[] = [];
     const files: ApplicationExportFile[] = [];
@@ -39,6 +45,7 @@ export class ApplicationFrontComponentExportService {
     if (!shouldIncludeSourceFiles) {
       return { frontComponents, files, coverage };
     }
+    let remainingBytes = 8 * 1024 * 1024;
     for (const component of sortFlatEntitiesByUniversalIdentifier(
       applicationAllFlatEntityMaps.flatFrontComponentMaps,
     )) {
@@ -65,6 +72,29 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
+      let inventory: Awaited<
+        ReturnType<ApplicationFrontComponentSourceService['read']>
+      >;
+      try {
+        inventory = shouldIncludeSourceDependencies
+          ? await this.applicationFrontComponentSourceService.read({
+              workspaceId,
+              applicationUniversalIdentifier,
+              component: manifest,
+              remainingBytes,
+              exportedFiles: files,
+            })
+          : undefined;
+      } catch (error) {
+        coverage.push({
+          ...unsupportedCoverage,
+          reason:
+            error instanceof Error
+              ? error.message
+              : 'Unable to restore front component sources',
+        });
+        continue;
+      }
       const location = {
         workspaceId,
         applicationUniversalIdentifier,
@@ -79,9 +109,14 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
-      const content = (
-        await streamToBuffer(await this.fileStorageService.readFile(location))
-      ).toString('utf8');
+      const content =
+        inventory?.files.find((file) => file.path === path)?.content ??
+        (
+          await streamToBuffer(
+            await this.fileStorageService.readFile(location),
+            remainingBytes,
+          )
+        ).toString('utf8');
       const reason = getUnsupportedFrontComponentSourceReason({
         source: content,
         universalIdentifier: component.universalIdentifier,
@@ -93,12 +128,28 @@ export class ApplicationFrontComponentExportService {
         coverage.push({ ...unsupportedCoverage, reason });
         continue;
       }
-      frontComponents.push(manifest);
+      frontComponents.push(
+        isDefined(inventory)
+          ? { ...manifest, sourceFiles: inventory.sourceFiles }
+          : manifest,
+      );
       coverage.push({
         ...unsupportedCoverage,
         status: ApplicationExportCoverageStatus.EXPORTED,
       });
-      files.push({ folder: FileFolder.Source, path, content });
+      for (const file of inventory?.files ?? [
+        { folder: FileFolder.Source, path, content },
+      ]) {
+        const existing = files.find((entry) => entry.path === file.path);
+        if (isDefined(existing)) {
+          continue;
+        }
+        remainingBytes -= Buffer.byteLength(
+          file.content,
+          file.encoding === 'base64' ? 'base64' : 'utf8',
+        );
+        files.push(file);
+      }
     }
     return { frontComponents, files, coverage };
   }

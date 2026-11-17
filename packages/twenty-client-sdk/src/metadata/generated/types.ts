@@ -1551,6 +1551,9 @@ export default {
             "content": [
                 4
             ],
+            "encoding": [
+                4
+            ],
             "folder": [
                 4
             ],
@@ -11737,6 +11740,9 @@ export default {
                         1
                     ],
                     "shouldIncludePublicAssets": [
+                        1
+                    ],
+                    "shouldIncludeSourceDependencies": [
                         1
                     ],
                     "shouldIncludeSourceFiles": [

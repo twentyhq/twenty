@@ -1,6 +1,8 @@
+import { createHash } from 'node:crypto';
 import { isArray, isString } from '@sniptt/guards';
 import {
   ASSETS_DIR,
+  isSourceFileManifestList,
   isRestorableFrontComponentSourcePath,
   type FrontComponentManifest,
 } from 'twenty-shared/application';
@@ -23,7 +25,10 @@ export const parsePullFiles = ({
   frontComponents = [],
 }: {
   value: unknown;
-  frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
+  frontComponents?: Pick<
+    FrontComponentManifest,
+    'sourceComponentPath' | 'sourceFiles'
+  >[];
 }): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
@@ -32,6 +37,34 @@ export const parsePullFiles = ({
     });
   }
 
+  const inventory = new Map<string, string>();
+  for (const component of frontComponents) {
+    if (component.sourceFiles === undefined) continue;
+    if (
+      !isSourceFileManifestList(component.sourceFiles) ||
+      !component.sourceFiles.some(
+        (file) => file.filePath === component.sourceComponentPath,
+      )
+    ) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message:
+          'The server returned an invalid front component source inventory.',
+      });
+    }
+    for (const file of component.sourceFiles) {
+      if (
+        inventory.has(file.filePath) &&
+        inventory.get(file.filePath) !== file.checksum
+      ) {
+        throw new CliError({
+          code: 'INVALID_RESPONSE',
+          message: `Conflicting source checksums for ${file.filePath}.`,
+        });
+      }
+      inventory.set(file.filePath, file.checksum);
+    }
+  }
   const files: AppExportFile[] = [];
   const paths = new Set<string>();
 
@@ -40,7 +73,9 @@ export const parsePullFiles = ({
       !isPlainObject(file) ||
       !isString(file.folder) ||
       !isString(file.path) ||
-      !isString(file.content)
+      !isString(file.content) ||
+      (file.encoding != null &&
+        (file.encoding !== 'base64' || file.folder !== FileFolder.Source))
     ) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
@@ -50,10 +85,11 @@ export const parsePullFiles = ({
 
     const isFrontComponentSource =
       file.folder === FileFolder.Source &&
-      frontComponents.some(
-        (component) => component.sourceComponentPath === file.path,
-      ) &&
-      isRestorableFrontComponentSourcePath(file.path);
+      (inventory.has(file.path) ||
+        (frontComponents.some(
+          (component) => component.sourceComponentPath === file.path,
+        ) &&
+          isRestorableFrontComponentSourcePath(file.path)));
     const isPublicAsset = file.folder === FileFolder.PublicAsset;
 
     if (
@@ -83,12 +119,12 @@ export const parsePullFiles = ({
     }
 
     if (
-      isPublicAsset &&
+      (isPublicAsset || file.encoding === 'base64') &&
       Buffer.from(file.content, 'base64').toString('base64') !== file.content
     ) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
-        message: `The exported public asset ${file.path} is not valid base64.`,
+        message: `The exported file ${file.path} is not valid base64.`,
       });
     }
 
@@ -107,8 +143,36 @@ export const parsePullFiles = ({
     }
 
     paths.add(file.path.toLowerCase());
-    files.push({ folder: file.folder, path: file.path, content: file.content });
+    files.push({
+      folder: file.folder,
+      path: file.path,
+      content: file.content,
+      ...(file.encoding === 'base64' ? { encoding: 'base64' as const } : {}),
+    });
   }
 
+  for (const [path, checksum] of inventory) {
+    const file = files.find((file) => file.path === path);
+    if (
+      !file ||
+      (file.folder !== FileFolder.Source &&
+        file.folder !== FileFolder.PublicAsset) ||
+      createHash('md5')
+        .update(
+          Buffer.from(
+            file.content,
+            file.encoding === 'base64' || file.folder === FileFolder.PublicAsset
+              ? 'base64'
+              : 'utf8',
+          ),
+        )
+        .digest('hex') !== checksum
+    ) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message: `Source file ${path} is missing or does not match its checksum. No local files were changed.`,
+      });
+    }
+  }
   return files;
 };

@@ -682,6 +682,9 @@ describe('app apply', () => {
       applicationUniversalIdentifier: APPLICATION.universalIdentifier,
       manifest: EXPORTED_MANIFEST,
       sourceFingerprints: {
+        'test-tooling.cjs': createHash('sha256')
+          .update(await readFile(join(appPath, 'test-tooling.cjs')))
+          .digest('hex'),
         'package.json': createHash('sha256')
           .update(await readFile(join(appPath, 'package.json')))
           .digest('hex'),
@@ -701,6 +704,7 @@ describe('app apply', () => {
     ).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
       shouldIncludeSourceFiles: true,
+      shouldIncludeSourceDependencies: true,
     });
     expect((await readdir(join(appPath, '.twenty/cli'))).sort()).toEqual([
       'pull-base.json',
@@ -711,6 +715,7 @@ describe('app apply', () => {
   it('fingerprints the source files as they were built, not as edited during the build', async () => {
     await mkdir(join(appPath, 'src'), { recursive: true });
     await writeFile(join(appPath, 'src/role.ts'), 'applied role');
+    await writeFile(join(appPath, 'src/style.css'), '.card { color: red; }');
     await mkdir(join(appPath, 'locales'), { recursive: true });
     await writeFile(join(appPath, 'locales/fr-FR.json'), '{"Pet":"Animal"}');
     await writeTooling({
@@ -729,6 +734,9 @@ describe('app apply', () => {
         await readFile(join(appPath, '.twenty/cli/pull-base.json'), 'utf8'),
       ).sourceFingerprints,
     ).toEqual({
+      'test-tooling.cjs': createHash('sha256')
+        .update(await readFile(join(appPath, 'test-tooling.cjs')))
+        .digest('hex'),
       'package.json': createHash('sha256')
         .update(await readFile(join(appPath, 'package.json')))
         .digest('hex'),
@@ -736,6 +744,9 @@ describe('app apply', () => {
         .update('{"Pet":"Animal"}')
         .digest('hex'),
       'src/role.ts': createHash('sha256').update('applied role').digest('hex'),
+      'src/style.css': createHash('sha256')
+        .update('.card { color: red; }')
+        .digest('hex'),
     });
     expect(await readFile(join(appPath, 'src/role.ts'), 'utf8')).toBe(
       'edited during the build',

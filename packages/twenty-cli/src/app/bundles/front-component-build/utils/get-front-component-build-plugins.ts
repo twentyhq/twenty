@@ -12,7 +12,7 @@ import { createPreactAliasPlugin } from '../preact-alias-plugin';
 
 type GetFrontComponentBuildPluginsOptions = {
   usePreact?: boolean;
-  onSourceFiles?: (paths: string[]) => void;
+  onSourceFiles?: (paths: string[], entryPath: string) => void;
   getSharedDependenciesBuildContext?: () => SharedDependenciesBuildContext | null;
 };
 

@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+import { type Manifest } from 'twenty-shared/application';
+import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
 import { Readable } from 'node:stream';
 import { Test } from '@nestjs/testing';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
@@ -39,14 +42,23 @@ const component = {
 const maps = createEmptyAllFlatEntityMaps();
 
 describe('ApplicationFrontComponentExportService', () => {
-  const storage = { checkFileExists: jest.fn(), readFile: jest.fn() };
+  const storage = {
+    checkFileExists: jest.fn(),
+    readFile: jest.fn(),
+    writeFile: jest.fn(),
+  };
   let service: ApplicationFrontComponentExportService;
+  let sourceService: ApplicationFrontComponentSourceService;
   const run = ({
     shouldIncludeSourceFiles = true,
+    shouldIncludeSourceDependencies = true,
     frontComponent = component,
+    frontComponents = [frontComponent],
   }: {
     shouldIncludeSourceFiles?: boolean;
+    shouldIncludeSourceDependencies?: boolean;
     frontComponent?: FlatFrontComponent;
+    frontComponents?: FlatFrontComponent[];
   } = {}) =>
     service.exportFrontComponents({
       workspaceId: identifier,
@@ -54,28 +66,207 @@ describe('ApplicationFrontComponentExportService', () => {
       applicationAllFlatEntityMaps: {
         ...maps,
         flatFrontComponentMaps: addAllFlatEntitiesToFlatEntityMaps({
-          flatEntities: [frontComponent],
+          flatEntities: frontComponents,
           flatEntityMaps: maps.flatFrontComponentMaps,
         }),
       },
       shouldIncludeSourceFiles,
+      shouldIncludeSourceDependencies,
     });
   beforeEach(async () => {
     jest.useRealTimers();
     const module = await Test.createTestingModule({
       providers: [
         ApplicationFrontComponentExportService,
+        ApplicationFrontComponentSourceService,
         { provide: FileStorageService, useValue: storage },
       ],
     }).compile();
     service = module.get(ApplicationFrontComponentExportService);
+    sourceService = module.get(ApplicationFrontComponentSourceService);
+    storage.writeFile.mockReset();
     storage.checkFileExists.mockReset();
     storage.readFile.mockReset();
-    storage.checkFileExists.mockResolvedValue(true);
+    storage.checkFileExists.mockImplementation(
+      async ({ fileFolder }) => fileFolder === FileFolder.Source,
+    );
     storage.readFile.mockImplementation(async () =>
       Readable.from([Buffer.from(source)]),
     );
   });
+  const sourceFiles = {
+    [sourcePath]: Buffer.from(source),
+    'src/helper.ts': Buffer.from('export const message = "Hello";'),
+    'src/logo.png': Buffer.from([0, 255, 128, 1]),
+    'tsconfig.json': Buffer.from('{"compilerOptions":{"jsx":"react-jsx"}}'),
+  };
+  const inventoryManifest = {
+    application: { universalIdentifier: identifier },
+    frontComponents: [
+      {
+        ...frontComponentManifest,
+        sourceFiles: Object.entries(sourceFiles).map(([filePath, content]) => ({
+          filePath,
+          checksum: createHash('md5').update(content).digest('hex'),
+        })),
+      },
+    ],
+  } as Manifest;
+  const prepareInventory = async () => {
+    const stored = new Map(
+      Object.entries(sourceFiles).map(([path, content]) => [
+        `source/${path}`,
+        content,
+      ]),
+    );
+    stored.set('source/private/logic.ts', Buffer.from('not exported'));
+    stored.set('source/stale.ts', Buffer.from('not inventoried'));
+    stored.set('attachment/record.pdf', Buffer.from('not exported'));
+    storage.checkFileExists.mockImplementation(
+      async ({ fileFolder, resourcePath }) =>
+        stored.has(`${fileFolder}/${resourcePath}`),
+    );
+    storage.readFile.mockImplementation(async ({ fileFolder, resourcePath }) =>
+      Readable.from([stored.get(`${fileFolder}/${resourcePath}`)]),
+    );
+    storage.writeFile.mockImplementation(
+      async ({ fileFolder, resourcePath, sourceFile }) => {
+        stored.set(`${fileFolder}/${resourcePath}`, Buffer.from(sourceFile));
+      },
+    );
+    sourceService.validate(inventoryManifest);
+    await sourceService.store({
+      workspaceId: identifier,
+      manifest: inventoryManifest,
+    });
+    return stored;
+  };
+  it('exports only the deployed FE inventory with exact text and binary contents', async () => {
+    await prepareInventory();
+    const result = await run();
+    expect(result.coverage[0].status).toBe('EXPORTED');
+    expect(result.frontComponents[0].sourceFiles).toEqual(
+      inventoryManifest.frontComponents[0].sourceFiles,
+    );
+    expect(result.files.map((file) => file.path)).toEqual(
+      Object.keys(sourceFiles),
+    );
+    for (const file of result.files) {
+      expect(
+        Buffer.from(
+          file.content,
+          file.encoding === 'base64' ? 'base64' : 'utf8',
+        ),
+      ).toEqual(sourceFiles[file.path as keyof typeof sourceFiles]);
+    }
+  });
+  it('exports shared files once and reads them once across components', async () => {
+    const stored = await prepareInventory();
+    const secondIdentifier = '22222222-2222-4222-8222-222222222222';
+    const secondPath = 'src/components/second.tsx';
+    const secondSource = Buffer.from(
+      source.replace(identifier, secondIdentifier),
+    );
+    stored.set(`source/${secondPath}`, secondSource);
+    const secondManifest = {
+      ...inventoryManifest.frontComponents[0],
+      universalIdentifier: secondIdentifier,
+      sourceComponentPath: secondPath,
+      sourceFiles: inventoryManifest.frontComponents[0].sourceFiles?.map(
+        (file) =>
+          file.filePath === sourcePath
+            ? {
+                filePath: secondPath,
+                checksum: createHash('md5').update(secondSource).digest('hex'),
+              }
+            : file,
+      ),
+    };
+    await sourceService.store({
+      workspaceId: identifier,
+      manifest: { ...inventoryManifest, frontComponents: [secondManifest] },
+    });
+    const result = await run({
+      frontComponents: [
+        component,
+        {
+          ...component,
+          id: secondIdentifier,
+          universalIdentifier: secondIdentifier,
+          sourceComponentPath: secondPath,
+        },
+      ],
+    });
+    expect(result.frontComponents).toHaveLength(2);
+    expect(
+      result.files.filter((file) => file.path === 'src/helper.ts'),
+    ).toHaveLength(1);
+    expect(
+      storage.readFile.mock.calls.filter(
+        ([location]) => location.resourcePath === 'src/helper.ts',
+      ),
+    ).toHaveLength(1);
+    expect(result.files).toHaveLength(5);
+  });
+
+  it.each(['missing', 'changed', 'stale inventory'])(
+    'reports %s sources as unsupported without exporting a partial component',
+    async (failure) => {
+      const stored = await prepareInventory();
+      if (failure === 'missing') {
+        stored.delete('source/src/helper.ts');
+      }
+      if (failure === 'changed') {
+        stored.set('source/src/helper.ts', Buffer.from('changed'));
+      }
+      const result = await run({
+        frontComponent:
+          failure === 'stale inventory'
+            ? { ...component, builtComponentChecksum: 'new bundle' }
+            : component,
+      });
+      expect(result.coverage[0].status).toBe('UNSUPPORTED');
+      expect(result.frontComponents).toEqual([]);
+      expect(result.files).toEqual([]);
+    },
+  );
+  it('keeps entry-only exports compatible for clients that did not request dependencies', async () => {
+    await prepareInventory();
+    const result = await run({ shouldIncludeSourceDependencies: false });
+    expect(result.frontComponents[0].sourceFiles).toBeUndefined();
+    expect(result.files).toEqual([
+      { folder: FileFolder.Source, path: sourcePath, content: source },
+    ]);
+  });
+  it('clears a previous inventory when a legacy client resyncs the component', async () => {
+    await prepareInventory();
+    await sourceService.store({
+      workspaceId: identifier,
+      manifest: {
+        ...inventoryManifest,
+        frontComponents: [frontComponentManifest],
+      },
+    });
+    expect((await run()).files).toEqual([
+      { folder: FileFolder.Source, path: sourcePath, content: source },
+    ]);
+  });
+  it('rejects unsafe inventories before sync', () => {
+    expect(() =>
+      sourceService.validate({
+        ...inventoryManifest,
+        frontComponents: [
+          {
+            ...frontComponentManifest,
+            sourceFiles: [
+              { filePath: '../outside.ts', checksum: '0'.repeat(32) },
+            ],
+          },
+        ],
+      }),
+    ).toThrow('Invalid source inventory');
+  });
+
   it('returns exact authorable source only from the component source path', async () => {
     const result = await run();
     expect(result.frontComponents).toEqual([frontComponentManifest]);
