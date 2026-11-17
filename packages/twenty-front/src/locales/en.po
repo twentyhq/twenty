@@ -343,6 +343,12 @@ msgstr "{0, plural, one {seat} other {seats}}"
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
 msgstr "{0, plural, one {Send invite} other {Send # invites}}"
 
+#. js-lingui-id: xpxT5R
+#. placeholder {0}: tools.length
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
+msgstr "{0, plural, one {Synced # tool} other {Synced # tools}}"
+
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
@@ -1243,6 +1249,11 @@ msgstr "{stepNumber}. Calendar"
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (not available to you)"
 
+#. js-lingui-id: RIjnws
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
+msgid "{toolCount, plural, one {# tool} other {# tools}}"
+msgstr "{toolCount, plural, one {# tool} other {# tools}}"
+
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 msgid "{totalFieldsCount} visible fields"
@@ -1773,6 +1784,7 @@ msgstr "Abort"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -1968,6 +1980,7 @@ msgstr "Actions users can perform on this object"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
@@ -2411,6 +2424,11 @@ msgstr "Add Item"
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 msgid "Add link"
 msgstr "Add link"
+
+#. js-lingui-id: LGXpWE
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Add MCP server"
+msgstr "Add MCP server"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
@@ -3045,6 +3063,7 @@ msgstr "Aggregate Chart"
 #. js-lingui-id: jsQZMk
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3057,7 +3076,6 @@ msgstr "Aggregate Chart"
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "AI"
 msgstr "AI"
@@ -4238,6 +4256,11 @@ msgstr "Are you sure you want to delete {sourceHandle}? Inbound mail forwarded t
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Are you sure you want to delete {topicName}? Recipients will no longer be able to opt out of this category."
 msgstr "Are you sure you want to delete {topicName}? Recipients will no longer be able to opt out of this category."
+
+#. js-lingui-id: njO+Zl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
+msgstr "Are you sure you want to delete this MCP server? This action cannot be undone."
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -7498,6 +7521,11 @@ msgstr "Connect email, WhatsApp or LinkedIn to see your conversations with {reco
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 
+#. js-lingui-id: +RyxXW
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Connect remote MCP servers so agents can use their tools"
+msgstr "Connect remote MCP servers so agents can use their tools"
+
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
@@ -7551,6 +7579,7 @@ msgstr "Connected"
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -9274,6 +9303,7 @@ msgstr "Daily, kept 30 days"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9540,6 +9570,7 @@ msgstr "Days between triggers"
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9561,6 +9592,11 @@ msgstr "Deactivate field"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Deactivate object"
 msgstr "Deactivate object"
+
+#. js-lingui-id: ujOIgb
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Deactivate or delete this MCP server"
+msgstr "Deactivate or delete this MCP server"
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9742,6 +9778,8 @@ msgstr "delete"
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9968,6 +10006,11 @@ msgstr "Delete level"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Delete limit"
+
+#. js-lingui-id: u+Hoy8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Delete MCP server"
+msgstr "Delete MCP server"
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10235,6 +10278,7 @@ msgstr "Describe what you want the AI to do..."
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
@@ -13041,6 +13085,11 @@ msgstr "Failed to create agent"
 msgid "Failed to create calendar event"
 msgstr "Failed to create calendar event"
 
+#. js-lingui-id: 8qnNWI
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "Failed to create MCP server"
+msgstr "Failed to create MCP server"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -13227,6 +13276,16 @@ msgstr "Failed to load front component: {0}"
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Failed to load front component: {errorMessage}"
 
+#. js-lingui-id: wEebE8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
+msgid "Failed to load MCP server"
+msgstr "Failed to load MCP server"
+
+#. js-lingui-id: rte0QY
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "Failed to load MCP servers"
+msgstr "Failed to load MCP servers"
+
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "Failed to load server administrators."
@@ -13370,6 +13429,11 @@ msgstr "Failed to set maintenance mode."
 msgid "Failed to start the export. {0}"
 msgstr "Failed to start the export. {0}"
 
+#. js-lingui-id: 22o02r
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "Failed to sync tools"
+msgstr "Failed to sync tools"
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -13395,6 +13459,11 @@ msgstr "Failed to update default model"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Failed to update feature flag. {0}"
 msgstr "Failed to update feature flag. {0}"
+
+#. js-lingui-id: mwx+OD
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "Failed to update MCP server"
+msgstr "Failed to update MCP server"
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -15362,6 +15431,11 @@ msgstr "How records are shown and navigated."
 msgid "How this rule appears in settings."
 msgstr "How this rule appears in settings."
 
+#. js-lingui-id: HuGZWl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "How this server is named for your team and for agents"
+msgstr "How this server is named for your team and for agents"
+
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
@@ -15456,6 +15530,11 @@ msgstr "https://example.com/embed"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
+
+#. js-lingui-id: U0G31R
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "https://mcp.example.com/mcp"
+msgstr "https://mcp.example.com/mcp"
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15867,6 +15946,7 @@ msgstr "In-Reply-To"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Inactive"
 msgstr "Inactive"
 
@@ -16853,6 +16933,8 @@ msgstr "Korean"
 
 #. js-lingui-id: 87a/t/
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -16872,6 +16954,7 @@ msgid "Label is not transliterable"
 msgstr "Label is not transliterable"
 
 #. js-lingui-id: w8Rv8T
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Label is required"
@@ -17140,6 +17223,17 @@ msgstr "Last seen"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Last signed in"
 msgstr "Last signed in"
+
+#. js-lingui-id: ElUyt8
+#. placeholder {0}: mcpServer.toolsSyncError
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last sync failed: {0}"
+msgstr "Last sync failed: {0}"
+
+#. js-lingui-id: Ip8UbZ
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last synced {lastSynced}"
+msgstr "Last synced {lastSynced}"
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17558,6 +17652,16 @@ msgstr "Line Chart"
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr "Line height"
+
+#. js-lingui-id: vQ2Ad9
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "linear"
+msgstr "linear"
+
+#. js-lingui-id: ih+n6S
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+msgid "Linear"
+msgstr "Linear"
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -18469,8 +18573,24 @@ msgstr "MCP server"
 msgid "MCP Server"
 msgstr "MCP Server"
 
+#. js-lingui-id: 8uHtaz
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "MCP server {label} created successfully"
+msgstr "MCP server {label} created successfully"
+
+#. js-lingui-id: IbSocu
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "MCP server {label} updated successfully"
+msgstr "MCP server {label} updated successfully"
+
+#. js-lingui-id: bbaHGM
+#: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
+msgid "MCP server deleted successfully"
+msgstr "MCP server deleted successfully"
+
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "MCP servers"
 
@@ -19313,6 +19433,8 @@ msgstr "N/A"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -19374,6 +19496,16 @@ msgstr "Name details"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+
+#. js-lingui-id: 8/brI5
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name is required"
+msgstr "Name is required"
+
+#. js-lingui-id: Kq5f+c
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
+msgstr "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19509,6 +19641,7 @@ msgstr "Never, by Twenty or providers"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -19661,6 +19794,11 @@ msgstr "New Key"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
 msgstr "New limit"
+
+#. js-lingui-id: p/TT/2
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
+msgid "New MCP server"
+msgstr "New MCP server"
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20422,6 +20560,11 @@ msgstr "No matching conversations"
 msgid "No matching people or roles"
 msgstr "No matching people or roles"
 
+#. js-lingui-id: c/bX1U
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "No MCP servers yet"
+msgstr "No MCP servers yet"
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members"
@@ -20773,6 +20916,11 @@ msgstr "No text content"
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
 msgstr "No tools match your search"
+
+#. js-lingui-id: SCvh4h
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
+msgid "No tools synced yet"
+msgstr "No tools synced yet"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -22991,6 +23139,11 @@ msgstr "Please check your cron expression syntax."
 msgid "Please check your email for a verification link."
 msgstr "Please check your email for a verification link."
 
+#. js-lingui-id: vYumai
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Please enter a valid http(s) URL"
+msgstr "Please enter a valid http(s) URL"
+
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
@@ -23138,6 +23291,11 @@ msgstr "Prefilling your <0>workspace data</0>..."
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
 msgstr "Prefix"
+
+#. js-lingui-id: HR5Lti
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Prefix of the tool names agents see. Cannot be changed later."
+msgstr "Prefix of the tool names agents see. Cannot be changed later."
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -28286,6 +28444,7 @@ msgstr "Statistics"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -28852,6 +29011,7 @@ msgstr "Sync every message"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Sync failed"
 msgstr "Sync failed"
 
@@ -28869,6 +29029,11 @@ msgstr "Sync lost with mailbox {mailboxHandle}. Please reconnect for updates:"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sync paused"
+
+#. js-lingui-id: cxRmVd
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Sync tools"
+msgstr "Sync tools"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30589,9 +30754,15 @@ msgstr "Tool not found"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
 msgstr "Tools"
+
+#. js-lingui-id: OGOaH+
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Tools have not been synced yet"
+msgstr "Tools have not been synced yet"
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -32121,6 +32292,8 @@ msgstr "URI is required"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "URL"
 msgstr "URL"
@@ -32133,6 +32306,7 @@ msgstr "URL copied to clipboard"
 
 #. js-lingui-id: HtrFfw
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "URL is required"
 msgstr "URL is required"
 
@@ -32266,6 +32440,11 @@ msgstr "Use indexes sparingly"
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Use letter, number and dash only. Start and finish with a letter or a number"
+
+#. js-lingui-id: cW4z4t
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "Use lowercase letters, digits and underscores, starting with a letter"
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33402,6 +33581,11 @@ msgstr "Where AI providers process your requests"
 msgid "Where records of this object open"
 msgstr "Where records of this object open"
 
+#. js-lingui-id: jQ8/hg
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Where the server lives"
+msgstr "Where the server lives"
+
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
@@ -33643,6 +33827,7 @@ msgstr "Working hours start"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
@@ -33669,7 +33854,6 @@ msgstr "Working hours start"
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
