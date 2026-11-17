@@ -55,10 +55,7 @@ const downloadAttachmentsWithinTotalSizeLimitOrThrow = async ({
       deadlineAtMs,
     });
 
-    remainingSizeBytes -= Buffer.byteLength(
-      unipileAttachment.content,
-      'base64',
-    );
+    remainingSizeBytes -= unipileAttachment.content.byteLength;
     unipileAttachments.push(unipileAttachment);
   }
 

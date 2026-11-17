@@ -74,8 +74,8 @@ describe('linkedinSendMessageHandler', () => {
 
   it('downloads each attachment and sends it with the reply', async () => {
     mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
-      content: 'cmVwb3J0',
-      content_type: 'application/pdf',
+      content: Buffer.from('report'),
+      contentType: 'application/pdf',
       filename: 'deck.pdf',
     });
 
@@ -98,8 +98,8 @@ describe('linkedinSendMessageHandler', () => {
       text: '',
       attachments: [
         {
-          content: 'cmVwb3J0',
-          content_type: 'application/pdf',
+          content: Buffer.from('report'),
+          contentType: 'application/pdf',
           filename: 'deck.pdf',
         },
       ],
@@ -124,8 +124,8 @@ describe('linkedinSendMessageHandler', () => {
 
   it('limits each later download to what is left of the total size limit', async () => {
     mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
-      content: Buffer.alloc(1024).toString('base64'),
-      content_type: 'application/pdf',
+      content: Buffer.alloc(1024),
+      contentType: 'application/pdf',
       filename: 'deck.pdf',
     });
 

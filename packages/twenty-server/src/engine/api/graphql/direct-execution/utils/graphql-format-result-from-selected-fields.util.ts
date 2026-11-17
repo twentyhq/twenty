@@ -119,6 +119,10 @@ export const graphQLFormatResultFromSelectedFields = (
   );
 };
 
+// The selection collector stores a field's arguments under __arguments, which is not a requested field
+const getRequestedFieldEntries = (selectedFields: Record<string, object>) =>
+  Object.entries(selectedFields).filter(([key]) => key !== '__arguments');
+
 const backfillNullValuesAndComputeTypeNameForObjectRecord = (
   record: ObjectRecord,
   selectedFields: Record<string, object>,
@@ -127,7 +131,7 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
 ): Record<string, unknown> => {
   const formatted: Record<string, unknown> = {};
 
-  for (const [key, subFields] of Object.entries(selectedFields)) {
+  for (const [key, subFields] of getRequestedFieldEntries(selectedFields)) {
     if (key === '__typename') {
       formatted.__typename = getNodeTypename(objectNameSingular);
       continue;
@@ -278,7 +282,7 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
   const connectionValues: Record<string, unknown> = connection;
   const pageInfoValues: Record<string, unknown> = connection.pageInfo;
 
-  for (const [key, subFields] of Object.entries(selectedFields)) {
+  for (const [key, subFields] of getRequestedFieldEntries(selectedFields)) {
     if (key === '__typename') {
       formatted.__typename = getConnectionTypename(objectNameSingular);
       continue;
