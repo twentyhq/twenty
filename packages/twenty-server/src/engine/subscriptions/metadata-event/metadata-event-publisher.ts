@@ -7,6 +7,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
@@ -21,6 +22,8 @@ type BroadcastEventRecord = {
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
   viewId?: string | null;
+  overrides?: unknown;
+  applicationUniversalIdentifier?: string;
 };
 
 const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
@@ -34,13 +37,25 @@ const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
     : undefined;
 
 const getViewRecipientUserWorkspaceIds = (
-  view: Pick<BroadcastEventRecord, 'visibility' | 'createdByUserWorkspaceId'>,
+  view: Pick<
+    BroadcastEventRecord,
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
+    | 'overrides'
+    | 'applicationUniversalIdentifier'
+  >,
 ): string[] | undefined => {
-  if (view.visibility === ViewVisibility.WORKSPACE) {
+  const visibility = resolveEffectiveFlatEntityProperty({
+    metadataName: 'view',
+    flatEntity: view,
+    property: 'visibility',
+  });
+
+  if (visibility === ViewVisibility.WORKSPACE) {
     return undefined;
   }
 
-  return view.visibility === ViewVisibility.UNLISTED &&
+  return visibility === ViewVisibility.UNLISTED &&
     isNonEmptyString(view.createdByUserWorkspaceId)
     ? [view.createdByUserWorkspaceId]
     : [];
