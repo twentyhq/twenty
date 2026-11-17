@@ -65,6 +65,8 @@ export const buildMorphRelationHeadViewFieldCopies = ({
           : null,
         overrides: null,
         universalOverrides: null,
+        // The copied row reads null until the 2.59 instance command adds the column
+        isCanonical: true,
         id: v4(),
         universalIdentifier: v4(),
         fieldMetadataId: head.id,
