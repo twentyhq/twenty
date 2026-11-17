@@ -29,7 +29,7 @@ export const upsertRowLevelPermissionRules = async ({
     token,
   );
 
-  if (expectToFail === true) {
+  if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
@@ -37,7 +37,7 @@ export const upsertRowLevelPermissionRules = async ({
     });
   }
 
-  if (expectToFail === false) {
+  if (!expectToFail) {
     warnIfErrorButNotExpectedToFail({
       response,
       errorMessage:

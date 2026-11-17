@@ -165,27 +165,25 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       },
     });
 
-  const setMemberRowRule = (predicates: { value: string }[]) =>
-    upsertRowLevelPermissionRules({
+  const setMemberRowRule = (predicates: { value: string }[]) => {
+    const memberRowRule = {
+      canReadRecords: true,
+      predicates: predicates.map(({ value }) => ({
+        fieldMetadataId: nameFieldMetadataId,
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value,
+      })),
+    };
+
+    return upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
-        rules:
-          predicates.length === 0
-            ? []
-            : [
-                {
-                  canReadRecords: true,
-                  predicates: predicates.map(({ value }) => ({
-                    fieldMetadataId: nameFieldMetadataId,
-                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                    value,
-                  })),
-                },
-              ],
+        rules: predicates.length === 0 ? [] : [memberRowRule],
       },
     });
+  };
 
   const setMemberToolAccess = (canAccessAllTools: boolean) =>
     updateOneRole({

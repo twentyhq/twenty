@@ -231,9 +231,22 @@ export class RowLevelPermissionPredicateService {
         rule.universalIdentifier,
       ]),
     );
-    const getRuleUniversalIdentifier = (rowLevelPermissionRuleId: string) =>
-      ruleUniversalIdentifierById.get(rowLevelPermissionRuleId) ??
-      rowLevelPermissionRuleId;
+    const getRuleUniversalIdentifierOrThrow = (
+      rowLevelPermissionRuleId: string,
+    ) => {
+      const ruleUniversalIdentifier = ruleUniversalIdentifierById.get(
+        rowLevelPermissionRuleId,
+      );
+
+      if (!isDefined(ruleUniversalIdentifier)) {
+        throw new RowLevelPermissionPredicateException(
+          `Rule ${rowLevelPermissionRuleId} is not part of this upsert`,
+          RowLevelPermissionPredicateExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return ruleUniversalIdentifier;
+    };
 
     const groupsToCreate: FlatRowLevelPermissionPredicateGroup[] = [];
     const groupsToUpdate: FlatRowLevelPermissionPredicateGroup[] = [];
@@ -244,7 +257,9 @@ export class RowLevelPermissionPredicateService {
         ({ id }) => id === predicateGroup.id,
       );
       const rowLevelPermissionRuleUniversalIdentifier =
-        getRuleUniversalIdentifier(predicateGroup.rowLevelPermissionRuleId);
+        getRuleUniversalIdentifierOrThrow(
+          predicateGroup.rowLevelPermissionRuleId,
+        );
 
       if (isDefined(existingGroup)) {
         groupsToUpdate.push(
@@ -292,7 +307,7 @@ export class RowLevelPermissionPredicateService {
         ({ id }) => id === predicate.id,
       );
       const rowLevelPermissionRuleUniversalIdentifier =
-        getRuleUniversalIdentifier(predicate.rowLevelPermissionRuleId);
+        getRuleUniversalIdentifierOrThrow(predicate.rowLevelPermissionRuleId);
 
       if (isDefined(existingPredicate)) {
         predicatesToUpdate.push(
@@ -345,25 +360,29 @@ export class RowLevelPermissionPredicateService {
     )
       .filter(isDefined)
       .flatMap((fieldPermission) => {
-        const rowLevelPermissionRuleId = isDefined(
-          fieldPermission.rowLevelPermissionPredicateGroupId,
-        )
-          ? ruleIdByGroupId.get(
-              fieldPermission.rowLevelPermissionPredicateGroupId,
-            )
-          : undefined;
+        if (!isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
+          return [];
+        }
 
-        return isDefined(rowLevelPermissionRuleId) &&
-          rowLevelPermissionRuleId !== fieldPermission.rowLevelPermissionRuleId
-          ? [
-              {
-                ...fieldPermission,
-                rowLevelPermissionRuleId,
-                rowLevelPermissionRuleUniversalIdentifier:
-                  getRuleUniversalIdentifier(rowLevelPermissionRuleId),
-              },
-            ]
-          : [];
+        const rowLevelPermissionRuleId = ruleIdByGroupId.get(
+          fieldPermission.rowLevelPermissionPredicateGroupId,
+        );
+
+        if (
+          !isDefined(rowLevelPermissionRuleId) ||
+          rowLevelPermissionRuleId === fieldPermission.rowLevelPermissionRuleId
+        ) {
+          return [];
+        }
+
+        return [
+          {
+            ...fieldPermission,
+            rowLevelPermissionRuleId,
+            rowLevelPermissionRuleUniversalIdentifier:
+              getRuleUniversalIdentifierOrThrow(rowLevelPermissionRuleId),
+          },
+        ];
       });
 
     await this.runUpsertMigration({

@@ -2,8 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
-  type RowLevelPermissionPredicateGroupLogicalOperator,
-  type RowLevelPermissionPredicateOperand,
   type RowLevelPermissionRuleInput,
   type RowLevelPermissionRulePredicateGroupInput,
   type RowLevelPermissionRulePredicateInput,
@@ -33,7 +31,7 @@ export const buildRowLevelPermissionRulesInput = ({
     id: predicate.id,
     fieldMetadataId: predicate.fieldMetadataId,
     relationFieldMetadataId: predicate.relationFieldMetadataId,
-    operand: predicate.operand as RowLevelPermissionPredicateOperand,
+    operand: predicate.operand,
     value: predicate.value,
     subFieldName: predicate.subFieldName,
     workspaceMemberFieldMetadataId: predicate.workspaceMemberFieldMetadataId,
@@ -45,8 +43,7 @@ export const buildRowLevelPermissionRulesInput = ({
     predicateGroup: RowLevelPermissionPredicateGroup,
   ): RowLevelPermissionRulePredicateGroupInput => ({
     id: predicateGroup.id,
-    logicalOperator:
-      predicateGroup.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
+    logicalOperator: predicateGroup.logicalOperator,
     position: predicateGroup.positionInRowLevelPermissionPredicateGroup,
     predicates: predicates
       .filter(
@@ -78,14 +75,16 @@ export const buildRowLevelPermissionRulesInput = ({
       !isDefined(rowLevelPermissionPredicateGroupId),
   );
 
-  return ungroupedPredicates.length > 0
-    ? [
-        ...groupedRules,
-        {
-          id: ungroupedPredicates[0].rowLevelPermissionRuleId ?? undefined,
-          ...ruleOperations,
-          predicates: ungroupedPredicates.map(toPredicateInput),
-        },
-      ]
-    : groupedRules;
+  if (ungroupedPredicates.length === 0) {
+    return groupedRules;
+  }
+
+  return [
+    ...groupedRules,
+    {
+      id: ungroupedPredicates[0].rowLevelPermissionRuleId ?? undefined,
+      ...ruleOperations,
+      predicates: ungroupedPredicates.map(toPredicateInput),
+    },
+  ];
 };
