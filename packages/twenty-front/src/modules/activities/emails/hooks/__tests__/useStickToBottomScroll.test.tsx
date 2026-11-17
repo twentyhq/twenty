@@ -4,14 +4,22 @@ import { useStickToBottomScroll } from '@/activities/emails/hooks/useStickToBott
 
 const originalResizeObserver = globalThis.ResizeObserver;
 
-let triggerResize = () => {};
+let resizeElement = (_element: Element) => {};
 
 class ResizeObserverStub implements ResizeObserver {
+  private observedElements = new Set<Element>();
+
   constructor(callback: ResizeObserverCallback) {
-    triggerResize = () => callback([], this);
+    resizeElement = (element) => {
+      if (this.observedElements.has(element)) {
+        callback([], this);
+      }
+    };
   }
 
-  observe() {}
+  observe(element: Element) {
+    this.observedElements.add(element);
+  }
 
   unobserve() {}
 
@@ -23,7 +31,7 @@ const ScrollContainer = () => {
 
   return (
     <div role="log" ref={scrollContainerRef}>
-      <div ref={scrollContentRef} />
+      <div ref={scrollContentRef}>messages</div>
     </div>
   );
 };
@@ -32,19 +40,28 @@ const renderScrollContainer = () => {
   render(<ScrollContainer />);
 
   const scrollContainer = screen.getByRole('log');
+  const scrollContent = screen.getByText('messages');
   let scrollHeight = 500;
+  let clientHeight = 100;
 
-  Object.defineProperty(scrollContainer, 'clientHeight', { value: 100 });
   Object.defineProperty(scrollContainer, 'scrollHeight', {
     get: () => scrollHeight,
+  });
+  Object.defineProperty(scrollContainer, 'clientHeight', {
+    get: () => clientHeight,
   });
 
   const growContentTo = (height: number) => {
     scrollHeight = height;
-    triggerResize();
+    resizeElement(scrollContent);
   };
 
-  return { scrollContainer, growContentTo };
+  const shrinkViewportTo = (height: number) => {
+    clientHeight = height;
+    resizeElement(scrollContainer);
+  };
+
+  return { scrollContainer, growContentTo, shrinkViewportTo };
 };
 
 describe('useStickToBottomScroll', () => {
@@ -64,12 +81,22 @@ describe('useStickToBottomScroll', () => {
     expect(scrollContainer.scrollTop).toBe(800);
   });
 
+  it('follows the bottom when the composer takes space from the thread', () => {
+    const { scrollContainer, shrinkViewportTo } = renderScrollContainer();
+
+    shrinkViewportTo(60);
+
+    expect(scrollContainer.scrollTop).toBe(500);
+  });
+
   it('leaves the position alone once the reader scrolled up', () => {
-    const { scrollContainer, growContentTo } = renderScrollContainer();
+    const { scrollContainer, growContentTo, shrinkViewportTo } =
+      renderScrollContainer();
 
     scrollContainer.scrollTop = 0;
     fireEvent.scroll(scrollContainer);
     growContentTo(800);
+    shrinkViewportTo(60);
 
     expect(scrollContainer.scrollTop).toBe(0);
   });
