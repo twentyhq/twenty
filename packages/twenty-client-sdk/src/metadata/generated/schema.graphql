@@ -3887,6 +3887,8 @@ enum NavigationMenuItemType {
   OBJECT
   PAGE_LAYOUT
   RECORD
+  SECTION
+  TAB
   VIEW
   WORKFLOW
 }

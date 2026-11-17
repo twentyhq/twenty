@@ -9,4 +9,6 @@ export enum NavigationMenuItemType {
   NATIVE_PAGE = 'NATIVE_PAGE',
   WORKFLOW = 'WORKFLOW',
   AGENT = 'AGENT',
+  TAB = 'TAB',
+  SECTION = 'SECTION',
 }

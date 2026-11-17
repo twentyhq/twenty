@@ -7,6 +7,7 @@ import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/
 import { buildGoogleMeetCallRecordingSyncFields } from 'src/logic-functions/utils/build-google-meet-call-recording-sync-fields.util';
 import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
 import { findGoogleMeetCalendarEvent } from 'src/logic-functions/utils/find-google-meet-calendar-event.util';
+import { findGoogleMeetConferenceTitle } from 'src/logic-functions/utils/find-google-meet-conference-title.util';
 import { getGoogleMeetSpace } from 'src/logic-functions/utils/get-google-meet-space.util';
 import { listGoogleMeetParticipants } from 'src/logic-functions/utils/list-google-meet-participants.util';
 import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
@@ -69,6 +70,11 @@ export const syncGoogleMeetConferenceOrThrow = async ({
     ),
     fields: buildGoogleMeetCallRecordingSyncFields({
       conferenceRecord,
+      title: await findGoogleMeetConferenceTitle({
+        accessToken,
+        calendarEvent,
+        transcripts,
+      }),
       transcriptEntries: mapGoogleMeetTranscriptEntries({
         conferenceRecord,
         participants,
