@@ -45,14 +45,14 @@ export class NavigationMenuItemService {
     workspaceId,
     userWorkspaceId,
     scope = 'all',
-    folderId,
+    parentId,
     type,
     limit,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     scope?: 'all' | 'workspace' | 'user';
-    folderId?: string;
+    parentId?: string;
     type?: NavigationMenuItemType;
     limit?: number;
   }): Promise<NavigationMenuItemDTO[]> {
@@ -86,7 +86,7 @@ export class NavigationMenuItemService {
         // scope === 'user'
         return itemIsUserScoped && item.userWorkspaceId === userWorkspaceId;
       })
-      .filter((item) => !isDefined(folderId) || item.folderId === folderId)
+      .filter((item) => !isDefined(parentId) || item.parentId === parentId)
       .filter((item) => !isDefined(type) || item.type === type)
       .sort((a, b) => a.position - b.position);
 
@@ -541,7 +541,7 @@ export class NavigationMenuItemService {
         const userWorkspaceIdKey =
           flatNavigationMenuItemRoot.userWorkspaceId ?? 'null';
         const folderChildren =
-          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
             userWorkspaceIdKey
           ]?.[requestedId] ?? [];
         flatEntitiesForRoot.unshift(...folderChildren);

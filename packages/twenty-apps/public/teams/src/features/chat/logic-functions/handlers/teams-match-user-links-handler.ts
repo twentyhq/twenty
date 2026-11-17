@@ -13,7 +13,7 @@ export const teamsMatchUserLinksHandler =
         success: false,
         message: 'Chat is disabled',
         error:
-          'Enable chat in the Microsoft Teams app settings before matching Teams users.',
+          'Enable chat in the Teams app settings before matching Teams users.',
       };
     }
 

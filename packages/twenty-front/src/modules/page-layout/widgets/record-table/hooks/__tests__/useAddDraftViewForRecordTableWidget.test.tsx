@@ -77,10 +77,10 @@ describe('useAddDraftViewForRecordTableWidget', () => {
     );
 
     act(() => {
-      result.current.addDraftViewForRecordTableWidget(
-        WIDGET_ID,
-        getMockObjectMetadataItemOrThrow('company'),
-      );
+      result.current.addDraftViewForRecordTableWidget({
+        widgetId: WIDGET_ID,
+        objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      });
     });
 
     act(() => {
