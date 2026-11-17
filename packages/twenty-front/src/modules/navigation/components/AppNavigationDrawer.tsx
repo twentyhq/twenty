@@ -1,6 +1,7 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
+import { MainNavigationDrawerFixedRows } from '@/navigation/components/MainNavigationDrawerFixedRows';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
 import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
@@ -31,6 +32,7 @@ export const AppNavigationDrawer = ({
       {!isMobile && (
         <NavigationDrawerFixedContent>
           <MainNavigationDrawerTabSwitcher />
+          <MainNavigationDrawerFixedRows />
         </NavigationDrawerFixedContent>
       )}
 

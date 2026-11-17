@@ -352,7 +352,7 @@ msgstr "{0, plural, other {傳送 # 個邀請}}"
 #. placeholder {0}: tools.length
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
-msgstr ""
+msgstr "{0, plural, other {已同步 # 個工具}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
@@ -560,10 +560,11 @@ msgstr "{0} 位工作區成員"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: relationFieldMetadataItem.label
 #. placeholder {0}: selectedField.label
-#. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -713,7 +714,7 @@ msgstr "{countNonRelation, plural, other {# 個欄位}}"
 #. js-lingui-id: 0Iz7tg
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{credits} credits/month"
-msgstr ""
+msgstr "{credits} 點數/月"
 
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
@@ -1167,7 +1168,7 @@ msgstr "來自席位的 {seatCreditsDisplay} 點數，每年重設 · 來自您�
 #. js-lingui-id: X/yTAr
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
-msgstr ""
+msgstr "{seats, plural, other {{formattedSeats} 個席位}}"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1257,7 +1258,7 @@ msgstr "{storedToolName}（您無法使用）"
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "{toolCount, plural, one {# tool} other {# tools}}"
-msgstr ""
+msgstr "{toolCount, plural, other {# 個工具}}"
 
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -1820,7 +1821,7 @@ msgstr "關於您的應用程式"
 #. js-lingui-id: g/S81Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Above the commitment"
-msgstr ""
+msgstr "超出承諾席位數"
 
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -2235,7 +2236,7 @@ msgstr "添加已批准的訪問域"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Add arrangement"
-msgstr ""
+msgstr "新增安排"
 
 #. js-lingui-id: U76pXW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -2433,7 +2434,7 @@ msgstr "新增連結"
 #. js-lingui-id: LGXpWE
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
-msgstr ""
+msgstr "新增 MCP 伺服器"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
@@ -2613,6 +2614,11 @@ msgstr "添加排序"
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份提供者"
 
+#. js-lingui-id: O6B1gJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes."
+msgstr "新增顯示相關記錄欄位的資料表欄，例如人員所屬公司的產業。請在執行個體升級完成後啟用。"
+
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
@@ -2778,12 +2784,12 @@ msgstr "已將<0>續約日期</0>新增至<1>{companiesLabel}</1>"
 #. js-lingui-id: NxahIk
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added by"
-msgstr ""
+msgstr "新增者"
 
 #. js-lingui-id: z1dTLo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added on"
-msgstr ""
+msgstr "新增日期"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -4265,7 +4271,7 @@ msgstr "您確定要刪除 {topicName} 嗎？收件人將無法再選擇不接�
 #. js-lingui-id: njO+Zl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
-msgstr ""
+msgstr "您確定要刪除此 MCP 伺服器嗎？此操作無法復原。"
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -4341,17 +4347,17 @@ msgstr "亞美尼亞語"
 #. js-lingui-id: T1TSIx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Arrangement added."
-msgstr ""
+msgstr "安排已新增。"
 
 #. js-lingui-id: EboPKL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangement ended."
-msgstr ""
+msgstr "安排已結束。"
 
 #. js-lingui-id: We0TcM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangements"
-msgstr ""
+msgstr "安排"
 
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -4634,7 +4640,7 @@ msgstr "必須設定至少一個通訊協定"
 #. js-lingui-id: QAlSoU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
-msgstr ""
+msgstr "在結束日期前，至少會針對這麼多席位計費。硬性上限也會阻止超過此數量的新成員加入。"
 
 #. js-lingui-id: tqMllA
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -7085,12 +7091,12 @@ msgstr "留言"
 #. js-lingui-id: As9mhp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Commercial exceptions to the plan, with why and until when."
-msgstr ""
+msgstr "方案的商務例外情況，包含原因與截止時間。"
 
 #. js-lingui-id: 1JmJ2B
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Committed seats"
-msgstr ""
+msgstr "承諾席位數"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7529,7 +7535,7 @@ msgstr "請先連結 Google、Microsoft 或 CalDAV 並啟用日曆同步，然�
 #. js-lingui-id: +RyxXW
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Connect remote MCP servers so agents can use their tools"
-msgstr ""
+msgstr "連線遠端 MCP 伺服器，讓代理可使用其工具"
 
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -8703,7 +8709,7 @@ msgstr "OAuth 授權流程的憑證與範圍"
 #. js-lingui-id: x8lB6y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit allowance"
-msgstr ""
+msgstr "點數額度"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8723,7 +8729,7 @@ msgstr "隨時間變化的點數消耗。"
 #. js-lingui-id: OeJw5Y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit grant"
-msgstr ""
+msgstr "點數授予"
 
 #. js-lingui-id: zH6NZT
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -8844,7 +8850,7 @@ msgstr "每日免費積分"
 #. js-lingui-id: 30XINA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Credits per month"
-msgstr ""
+msgstr "每月點數"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9196,7 +9202,7 @@ msgstr "自訂 {objectLabelSingular} 檢視中可用的欄位，以及它們在 
 #. js-lingui-id: 5GgtFa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Customizable sidebar"
-msgstr ""
+msgstr "可自訂側邊欄"
 
 #. js-lingui-id: qqLY+j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9601,7 +9607,7 @@ msgstr "停用對象"
 #. js-lingui-id: ujOIgb
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Deactivate or delete this MCP server"
-msgstr ""
+msgstr "停用或刪除此 MCP 伺服器"
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10015,7 +10021,7 @@ msgstr "刪除上限"
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
-msgstr ""
+msgstr "刪除 MCP 伺服器"
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10539,7 +10545,7 @@ msgstr "已中斷 {totalCount} 個連線中的 {successfulCount} 個。無法中
 #. js-lingui-id: H6Ma8Z
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Discount"
-msgstr ""
+msgstr "折扣"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11720,12 +11726,12 @@ msgstr "加密金鑰輪替"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End"
-msgstr ""
+msgstr "結束"
 
 #. js-lingui-id: VhdLE7
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End arrangement"
-msgstr ""
+msgstr "結束安排"
 
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -11757,12 +11763,12 @@ msgstr "結束試用期以繼續使用工作流程或 AI 功能。"
 #. js-lingui-id: 237hSL
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "Ended"
-msgstr ""
+msgstr "已結束"
 
 #. js-lingui-id: eNtnOy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Ended by"
-msgstr ""
+msgstr "結束者"
 
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -13093,7 +13099,7 @@ msgstr "建立日曆活動失敗"
 #. js-lingui-id: 8qnNWI
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "Failed to create MCP server"
-msgstr ""
+msgstr "建立 MCP 伺服器失敗"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
@@ -13262,7 +13268,7 @@ msgstr "無法載入代理詳細資料。"
 #. js-lingui-id: dQLWeE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Failed to load billing arrangements."
-msgstr ""
+msgstr "無法載入計費安排。"
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13284,12 +13290,12 @@ msgstr "載入 Front 元件失敗：{errorMessage}"
 #. js-lingui-id: wEebE8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
 msgid "Failed to load MCP server"
-msgstr ""
+msgstr "載入 MCP 伺服器失敗"
 
 #. js-lingui-id: rte0QY
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "Failed to load MCP servers"
-msgstr ""
+msgstr "載入 MCP 伺服器失敗"
 
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13437,7 +13443,7 @@ msgstr "無法開始匯出。{0}"
 #. js-lingui-id: 22o02r
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "Failed to sync tools"
-msgstr ""
+msgstr "同步工具失敗"
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -13468,7 +13474,7 @@ msgstr "更新功能旗標失敗。{0}"
 #. js-lingui-id: mwx+OD
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "Failed to update MCP server"
-msgstr ""
+msgstr "更新 MCP 伺服器失敗"
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13936,7 +13942,7 @@ msgstr "以下列來源填入範例輸入"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -14068,7 +14074,7 @@ msgstr "完成版面配置編輯以開啟設定"
 #. js-lingui-id: 1yKuEJ
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open this tab"
-msgstr ""
+msgstr "完成版面配置編輯以開啟此分頁"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14372,7 +14378,7 @@ msgstr "已賺取的免費點數"
 #. js-lingui-id: x2qGE3
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Free seats"
-msgstr ""
+msgstr "免費席位"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -15069,7 +15075,7 @@ msgstr "開心"
 #. js-lingui-id: 4OOUC8
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Hard cap"
-msgstr ""
+msgstr "硬性上限"
 
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
@@ -15439,7 +15445,7 @@ msgstr "此規則在設定中的顯示方式。"
 #. js-lingui-id: HuGZWl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "How this server is named for your team and for agents"
-msgstr ""
+msgstr "此伺服器在您的團隊和代理中的名稱"
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15539,7 +15545,7 @@ msgstr "https://example.com/webhook"
 #. js-lingui-id: U0G31R
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "https://mcp.example.com/mcp"
-msgstr ""
+msgstr "https://mcp.example.com/mcp"
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -16384,6 +16390,16 @@ msgstr "無效的 Cron 運算式。預期 4 至 6 個欄位，實際為 {0}"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "無效的 cron 格式：{errorMessage}"
+
+#. js-lingui-id: DQm/44
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE."
+msgstr "無效的日期部分。請使用 YEAR、QUARTER、MONTH、WEEK、DAY、DAY_OF_WEEK、HOUR 或 MINUTE。"
+
+#. js-lingui-id: UAtSd1
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR."
+msgstr "無效的日期單位。請使用 MINUTE、HOUR、DAY、WEEK、MONTH、QUARTER 或 YEAR。"
 
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -17233,12 +17249,12 @@ msgstr "上次登入時間"
 #. placeholder {0}: mcpServer.toolsSyncError
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last sync failed: {0}"
-msgstr ""
+msgstr "上次同步失敗：{0}"
 
 #. js-lingui-id: Ip8UbZ
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last synced {lastSynced}"
-msgstr ""
+msgstr "上次同步於 {lastSynced}"
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17598,12 +17614,12 @@ msgstr ""
 #. js-lingui-id: cF6iqz
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Limit override"
-msgstr ""
+msgstr "覆寫限制"
 
 #. js-lingui-id: BDi/z7
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "Limit removed"
-msgstr ""
+msgstr "限制已移除"
 
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -17661,12 +17677,12 @@ msgstr "行高"
 #. js-lingui-id: vQ2Ad9
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "linear"
-msgstr ""
+msgstr "線性"
 
 #. js-lingui-id: ih+n6S
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
 msgid "Linear"
-msgstr ""
+msgstr "線性"
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -18182,6 +18198,11 @@ msgstr "經度"
 msgid "Look up"
 msgstr "查詢"
 
+#. js-lingui-id: PJeBuo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Lookup columns"
+msgstr "查閱欄"
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -18581,17 +18602,17 @@ msgstr "MCP伺服器"
 #. js-lingui-id: 8uHtaz
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "MCP server {label} created successfully"
-msgstr ""
+msgstr "MCP 伺服器 {label} 建立成功"
 
 #. js-lingui-id: IbSocu
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "MCP server {label} updated successfully"
-msgstr ""
+msgstr "MCP 伺服器 {label} 更新成功"
 
 #. js-lingui-id: bbaHGM
 #: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
 msgid "MCP server deleted successfully"
-msgstr ""
+msgstr "MCP 伺服器刪除成功"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19505,12 +19526,12 @@ msgstr "名稱需包含單數（例如，'發票'）和複數（例如，'發票
 #. js-lingui-id: 8/brI5
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name is required"
-msgstr ""
+msgstr "名稱為必填"
 
 #. js-lingui-id: Kq5f+c
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
-msgstr ""
+msgstr "名稱最多只能有 {MCP_SERVER_NAME_MAX_LENGTH} 個字元"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19677,6 +19698,7 @@ msgid "New Agent"
 msgstr "新代理"
 
 #. js-lingui-id: JLx7YM
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "新的 AI 聊天"
@@ -19803,7 +19825,7 @@ msgstr "新增上限"
 #. js-lingui-id: p/TT/2
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 msgid "New MCP server"
-msgstr ""
+msgstr "新增 MCP 伺服器"
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20568,7 +20590,7 @@ msgstr "沒有相符的人員或角色"
 #. js-lingui-id: c/bX1U
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "No MCP servers yet"
-msgstr ""
+msgstr "尚無 MCP 伺服器"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -20795,6 +20817,7 @@ msgstr "伺服器沒有回應"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
@@ -20925,7 +20948,7 @@ msgstr "沒有工具符合您的搜尋"
 #. js-lingui-id: SCvh4h
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 msgid "No tools synced yet"
-msgstr ""
+msgstr "尚未同步工具"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21712,6 +21735,11 @@ msgstr "認領後，請在其擁有者工作區上安裝此應用程式，以啟
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "一或多個篩選器參照了已停用或已刪除的欄位，儲存時會自動移除。"
 
+#. js-lingui-id: zTzoj2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE."
+msgstr "日期中以 UTC 表示的其中一個數字部分：YEAR、QUARTER、MONTH、WEEK、DAY、DAY_OF_WEEK（1 為星期一）、HOUR 或 MINUTE。"
+
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
@@ -21725,7 +21753,7 @@ msgstr "一份訂閱提供一組組織金鑰，可供一個正式環境執行個
 #. js-lingui-id: YO4da4
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "One-time"
-msgstr ""
+msgstr "一次性"
 
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -23019,7 +23047,7 @@ msgstr "挑選記錄"
 #. js-lingui-id: 48B257
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Pick the end date"
-msgstr ""
+msgstr "選擇結束日期"
 
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -23147,7 +23175,7 @@ msgstr "請檢查您的電子郵件以獲取驗證鏈接。"
 #. js-lingui-id: vYumai
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Please enter a valid http(s) URL"
-msgstr ""
+msgstr "請輸入有效的 http(s) URL"
 
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
@@ -23300,7 +23328,7 @@ msgstr "前綴"
 #. js-lingui-id: HR5Lti
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Prefix of the tool names agents see. Cannot be changed later."
-msgstr ""
+msgstr "代理可看到的工具名稱前綴。之後無法變更。"
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -24026,6 +24054,7 @@ msgstr "接收包含密碼更新鏈接的電子郵件"
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "最近"
 
@@ -24426,7 +24455,7 @@ msgstr "重新整理狀態"
 #. js-lingui-id: J0LAHU
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Refund"
-msgstr ""
+msgstr "退款"
 
 #. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -24936,7 +24965,7 @@ msgstr "取代小工具"
 #. js-lingui-id: JsTqK9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
-msgstr ""
+msgstr "從現在起，以每月固定數量取代方案內含的工作區點數。付費與授予的點數仍會額外累加。"
 
 #. js-lingui-id: uFEgGd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25920,6 +25949,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26168,6 +26198,8 @@ msgstr "搜尋欄位中繼資料"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -26525,7 +26557,7 @@ msgstr "查看已安裝的應用程式"
 #. js-lingui-id: uPo3PQ
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
-msgstr ""
+msgstr "顯示較少"
 
 #. js-lingui-id: V1fa9u
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
@@ -27648,7 +27680,7 @@ msgstr "僅顯示有錯誤的行"
 #. js-lingui-id: KefbEP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show sidebar tabs and sections."
-msgstr ""
+msgstr "顯示側邊欄分頁和區段。"
 
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27736,7 +27768,7 @@ msgstr "簽署人職稱"
 #. js-lingui-id: +Ou1Pl
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Signed a 2-year deal for 25 seats"
-msgstr ""
+msgstr "已簽訂 25 個席位、為期 2 年的合約"
 
 #. js-lingui-id: Lz4j8Q
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
@@ -28041,7 +28073,7 @@ msgstr "服務組織控制 2"
 #. js-lingui-id: mbsiG9
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
-msgstr ""
+msgstr "軟性上限"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -28146,7 +28178,7 @@ msgstr "抱歉，我們無法判斷此相關記錄的正確物件類型。若問
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Sort"
@@ -29038,7 +29070,7 @@ msgstr "同步已暫停"
 #. js-lingui-id: cxRmVd
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Sync tools"
-msgstr ""
+msgstr "同步工具"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29394,7 +29426,7 @@ msgstr "這約為 {formattedNewlyEarnedAiActions} 次 AI 動作。點數永不�
 #. js-lingui-id: XOno1Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
-msgstr ""
+msgstr "{pendingEndTypeLabel}安排將立即停止套用，並保留在歷程記錄中。無法重新啟動：請改為新增一個安排。"
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -29475,6 +29507,11 @@ msgstr "無法載入資料處理協議。請再試一次。"
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
 msgstr "正在檢查的寫入作業日期與時間。"
+
+#. js-lingui-id: ny+Evg
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month."
+msgstr "日期在 UTC 中按整數單位移動。將一個月加到 31 日會落在該月的最後一天。"
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -29618,15 +29655,15 @@ msgstr "收件人在收件匣中於您的地址旁邊看到的名稱，而不只
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "收件人在您的地址旁邊看到的名稱。此名稱會在建立頻道時設定。"
 
-#. js-lingui-id: op7R9r
-#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
-msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr "從該日期到今天的天數（以 UTC 計）。若日期在未來，則為負數。"
-
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "清單中的項目數量；若不是清單則為 0。"
+
+#. js-lingui-id: SpoTRx
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
+msgstr "從第一個日期到第二個日期的完整單位數；若第二個日期較早則為負數。分鐘和小時為經過時間；較長的單位在 UTC 中按日曆日和月份計算。"
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -29682,6 +29719,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "您要使用的共用電子郵件。"
+
+#. js-lingui-id: XWiOdK
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr "包含該日期的單位之起始時間，採用 UTC。每週從星期一開始。"
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30147,7 +30189,7 @@ msgstr "此鍵應透過主體輸入設定"
 #. js-lingui-id: 3Xb+Zj
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "This many members are not billed. Seats are synced right away."
-msgstr ""
+msgstr "這麼多成員不會被計費。席位會立即同步。"
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30765,7 +30807,7 @@ msgstr "工具"
 #. js-lingui-id: OGOaH+
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Tools have not been synced yet"
-msgstr ""
+msgstr "工具尚未同步"
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -30954,7 +30996,7 @@ msgstr "試用期已過期。請更新您的結算詳情。"
 #. js-lingui-id: SyzXYh
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Trial extension"
-msgstr ""
+msgstr "延長試用期"
 
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -32447,7 +32489,7 @@ msgstr "只能使用字母、數字和連字號。必須以字母或數字開頭
 #. js-lingui-id: cW4z4t
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Use lowercase letters, digits and underscores, starting with a letter"
-msgstr ""
+msgstr "請使用小寫字母、數字和底線，並以字母開頭"
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33587,7 +33629,7 @@ msgstr "此物件記錄的開啟位置"
 #. js-lingui-id: jQ8/hg
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Where the server lives"
-msgstr ""
+msgstr "伺服器所在位置"
 
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
