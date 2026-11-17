@@ -10,7 +10,9 @@
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/twentyhq/twenty.git",
