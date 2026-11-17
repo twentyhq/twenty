@@ -466,7 +466,7 @@ describe('Computed field permissions (e2e)', () => {
     });
   });
 
-  it('empties a filtered relation whose source relation or filter the member cannot read', async () => {
+  it('empties a filtered relation whose own field, source relation or filter the member cannot read', async () => {
     const findBigTasksAsMember = async () =>
       (
         await findOneAsMember({
@@ -483,6 +483,41 @@ describe('Computed field permissions (e2e)', () => {
     expect(await findBigTasksAsMember()).toEqual({
       edges: [{ node: { id: BIG_TASK_ID } }],
     });
+
+    const [{ id: bigTasksFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'bigTasks'`,
+      [projectObjectMetadataId],
+    );
+
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: bigTasksFieldMetadataId,
+      isReadable: false,
+    });
+
+    try {
+      expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+      expect(
+        (
+          await findOneAsMember({
+            objectMetadataSingularName: 'permProject',
+            recordId: PROJECT_ID,
+            gqlFields: 'tasks { edges { node { id } } }',
+          })
+        ).tasks,
+      ).toEqual({
+        edges: expect.arrayContaining([
+          { node: { id: BIG_TASK_ID } },
+          { node: { id: SMALL_TASK_ID } },
+        ]),
+      });
+    } finally {
+      await setFieldReadable({
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: bigTasksFieldMetadataId,
+        isReadable: true,
+      });
+    }
 
     await setFieldReadable({
       objectMetadataId: taskObjectMetadataId,

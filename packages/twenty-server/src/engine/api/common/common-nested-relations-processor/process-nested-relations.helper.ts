@@ -224,14 +224,18 @@ export class ProcessNestedRelationsHelper {
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
-    const isLoadedRelationUnreadable =
-      targetObjectRepository.recordReadRestrictions.unreadableFieldMetadataIds.has(
+    const { unreadableFieldMetadataIds } =
+      targetObjectRepository.recordReadRestrictions;
+    // A filtered relation has no inverse field to carry its own restriction, so both fields are checked
+    const isRelationUnreadable =
+      unreadableFieldMetadataIds.has(sourceFieldMetadata.id) ||
+      unreadableFieldMetadataIds.has(
         fieldMaps.fieldIdByName[loadedRelationFieldName],
       );
 
     // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
     if (
-      isLoadedRelationUnreadable ||
+      isRelationUnreadable ||
       (await targetObjectRepository.isReadDisabled())
     ) {
       this.assignRelationResults({
