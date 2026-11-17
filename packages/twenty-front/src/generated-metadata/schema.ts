@@ -2955,6 +2955,7 @@ export type GetAuthorizationUrlForSso = {
 export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['UUID']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type GettingStartedProgress = {

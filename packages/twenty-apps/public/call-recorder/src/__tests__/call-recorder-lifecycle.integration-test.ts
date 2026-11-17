@@ -32,6 +32,8 @@ import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { startPostInstallBackfillsHandler } from 'src/logic-functions/start-post-install-backfills';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
+import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS } from 'src/logic-functions/constants/call-recording-request-follow-up-delay-ms';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
@@ -335,6 +337,7 @@ class FakeRecallApi {
   failVideoDownload = false;
   mediaContentLengthBytes: number | undefined = undefined;
   deletedBotIds: string[] = [];
+  botUpdateRequests: { botId: string; body: Record<string, unknown> }[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
   activeArtifactJobIds = new Set<string>();
@@ -357,6 +360,7 @@ class FakeRecallApi {
   failCalendarEventUpdates = false;
   failCallRecordingReads = false;
   failRecallRemovals = false;
+  failBotUpdates = false;
   failingRecallRemovalBotIds = new Set<string>();
 
   seedBot(bot: FakeRecallBot): void {
@@ -649,6 +653,15 @@ class FakeRecallApi {
       if (bot === undefined) {
         return jsonResponse(404, {});
       }
+
+      if (this.failBotUpdates) {
+        return jsonResponse(400, {});
+      }
+
+      this.botUpdateRequests.push({
+        botId: bot.id,
+        body: JSON.parse(requestInit?.body ?? '{}'),
+      });
 
       return jsonResponse(200, { id: bot.id });
     }
@@ -1903,7 +1916,9 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.get(botId)?.metadata).toEqual(
         buildBotMetadata(callRecordingId, workspaceId),
       );
-      expect(recall.creditCheckRequests).toEqual([{ callRecordingId }]);
+      expect(recall.creditCheckRequests).toEqual([
+        { callRecordingId, bookedJoinAt: expect.any(String) },
+      ]);
     });
 
     it('creates nothing for a meeting without a conference link', async () => {
@@ -2066,7 +2081,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.botScheduleIdempotencyKey).toBeFalsy();
     });
 
-    it('leaves the bot alone when the workspace can spend credits', async () => {
+    it('keeps the bot and sends it only the current settings when the workspace can spend credits', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
       recall.creditAvailability = { hasAvailableCredits: true };
@@ -2078,6 +2093,70 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(result).toEqual({ status: 'allowed' });
       expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+      expect(recall.botUpdateRequests).toHaveLength(1);
+      const [{ botId: updatedBotId, body }] = recall.botUpdateRequests;
+      expect(updatedBotId).toBe(botId);
+      expect(Object.keys(body).sort()).toEqual([
+        'automatic_leave',
+        'automatic_video_output',
+        'bot_name',
+        'chat',
+        'recording_config',
+      ]);
+      expect(body.chat).toEqual({
+        on_bot_join: { send_to: 'everyone', message: expect.any(String) },
+      });
+      expect(body.automatic_video_output).toBeNull();
+    });
+
+    it('clears the recording notice on the bot once the notice is turned off', async () => {
+      await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+      vi.stubEnv(CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME, 'false');
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.botUpdateRequests).toHaveLength(1);
+      expect(recall.botUpdateRequests[0].body.chat).toBeNull();
+    });
+
+    it('sends no settings update once the join early setting changed after the bot was booked', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+      vi.stubEnv(CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME, '5');
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.botUpdateRequests).toEqual([]);
+      expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('still allows the recording and keeps the bot when the settings update fails', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+      recall.failBotUpdates = true;
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.deletedBotIds).toEqual([]);
+      expect(recall.bots.has(botId)).toBe(true);
       expect(callRecording.status).toBe('SCHEDULED');
       expect(callRecording.externalBotId).toBe(botId);
     });
@@ -2108,12 +2187,13 @@ describe('call recorder app lifecycle (integration)', () => {
       const joinAt = new Date(
         Date.now() + PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000,
       ).toISOString();
-      const jobId = `credit-check.${callRecordingId}.${botId}.${new Date(joinAt).getTime()}`;
+      const jobId = `credit-check.${callRecordingId}.${botId}.${new Date(joinAt).getTime()}.${new Date(joinAt).getTime() - PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000}`;
 
       await enqueuePreJoinCreditCheck({
         callRecordingId,
         externalBotId: botId,
         joinAt,
+        bookedJoinAt: undefined,
       });
 
       await expect

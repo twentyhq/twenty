@@ -103,6 +103,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         selectedFields: args.selectedFieldsResult.select,
+        nestedRelationQueryArgsByFieldName:
+          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }

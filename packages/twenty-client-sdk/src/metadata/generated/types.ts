@@ -5844,6 +5844,9 @@ export default {
             "workspaceInviteHash": [
                 4
             ],
+            "workspacePersonalInviteToken": [
+                4
+            ],
             "__typename": [
                 4
             ]
