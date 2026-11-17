@@ -1,10 +1,8 @@
 import { type MouseEvent } from 'react';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-const FIELD_INTERACTIVE_ELEMENT_SELECTOR = doNotTranslate(
-  '[data-inline-cell-display-mode], button, a, input, textarea, [role]',
-);
+const FIELD_INTERACTIVE_ELEMENT_SELECTOR =
+  '[data-inline-cell-display-mode], button, a, input, textarea, [role]';
 
 export const isClickOnRecordBoardCardFieldBackground = (
   event: MouseEvent<HTMLElement>,
@@ -22,15 +20,11 @@ export const isClickOnRecordBoardCardFieldBackground = (
     return false;
   }
 
-  for (
-    let element: Element | null = target;
-    isDefined(element) && element !== fieldContainer;
-    element = element.parentElement
-  ) {
-    if (element.matches(FIELD_INTERACTIVE_ELEMENT_SELECTOR)) {
-      return false;
-    }
-  }
+  // The card's drag wrapper is itself role="button", so only matches inside the field count.
+  const interactiveElement = target.closest(FIELD_INTERACTIVE_ELEMENT_SELECTOR);
 
-  return true;
+  return (
+    !isDefined(interactiveElement) ||
+    !fieldContainer.contains(interactiveElement)
+  );
 };
