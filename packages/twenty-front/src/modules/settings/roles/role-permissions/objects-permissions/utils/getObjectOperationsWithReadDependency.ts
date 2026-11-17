@@ -8,10 +8,12 @@ export const getObjectOperationsWithReadDependency = ({
   previousOperations: SettingsRoleObjectPermissionKey[];
   nextOperations: SettingsRoleObjectPermissionKey[];
 }): SettingsRoleObjectPermissionKey[] => {
-  const hadReadOperation = previousOperations.includes('canReadObjectRecords');
-  const hasReadOperation = nextOperations.includes('canReadObjectRecords');
+  const hasPreviousReadOperation = previousOperations.includes(
+    'canReadObjectRecords',
+  );
+  const hasNextReadOperation = nextOperations.includes('canReadObjectRecords');
 
-  if (hadReadOperation && !hasReadOperation) {
+  if (hasPreviousReadOperation && !hasNextReadOperation) {
     return [];
   }
 
