@@ -24,7 +24,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { type AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -181,30 +181,26 @@ const countThreadTargets = async (threadId: string) => {
 };
 
 const attachThroughRegistry = async ({
-  execution,
+  execution: { workspaceId, threadId, persona, executionContext },
   record,
 }: {
   execution: AgentRunExecution;
   record: { objectNameSingular: string; recordId: string };
 }) => {
-  const registryAccess = await getAppProviderByClassName<AgentRunTurnService>(
-    'AgentRunTurnService',
-  ).buildAgentRegistryAccess({
-    ...execution,
-    additionalExcludedToolNames: execution.additionalExcludedToolNames ?? [],
-    toolLoadingStrategy: execution.toolLoadingStrategy ?? 'preload',
+  const authContext = await getAppProviderByClassName<AgentRunPersonaService>(
+    'AgentRunPersonaService',
+  ).resolveRunAuthContext({
+    workspaceId,
+    persona,
+    authContext: executionContext.authContext,
   });
-
-  if (registryAccess.type === 'none') {
-    throw new Error('Expected the run to reach the tool registry');
-  }
 
   return getAppProviderByClassName<ToolRegistryService>(
     'ToolRegistryService',
   ).resolveAndExecute(
     ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
     { records: [record] },
-    registryAccess.toolContext,
+    { workspaceId, threadId, authContext },
   );
 };
 

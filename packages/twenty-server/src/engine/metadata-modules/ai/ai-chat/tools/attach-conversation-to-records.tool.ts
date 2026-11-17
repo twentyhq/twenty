@@ -29,7 +29,7 @@ const recordToAttachSchema = z.object({
     ),
 });
 
-export const attachConversationToRecordsInputSchema = z.object({
+const attachConversationToRecordsInputSchema = z.object({
   records: z
     .array(recordToAttachSchema)
     .min(1)
@@ -68,7 +68,6 @@ const buildOutputMessage = ({
 @DefineTool({
   name: ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   category: ToolCategory.ACTION,
-  // a conversation is attached by the member it runs for, in the app or through an application
   accessPolicy: {
     authPrincipals: {
       userSession: {

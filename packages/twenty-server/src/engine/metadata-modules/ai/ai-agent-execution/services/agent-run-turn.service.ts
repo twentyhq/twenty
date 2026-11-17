@@ -17,6 +17,7 @@ import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   type AgentResponseFormat,
   type AgentResponseSchema,
+  ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   type ExtendedUIMessage,
   ToolCategory,
 } from 'twenty-shared/ai';
@@ -461,7 +462,7 @@ export class AgentRunTurnService {
     return output;
   }
 
-  async buildAgentRegistryAccess({
+  private async buildAgentRegistryAccess({
     persona,
     workspaceId,
     threadId,
@@ -509,6 +510,9 @@ export class AgentRunTurnService {
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...AGENT_RUN_EXCLUDED_TOOL_NAMES,
       ...additionalExcludedToolNames,
+      ...(isDefined(threadId)
+        ? []
+        : [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]),
     ];
 
     const isScoped = isDefined(persona.permissions.scope);

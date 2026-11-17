@@ -148,6 +148,31 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     });
   });
 
+  it('keeps the records it could attach when others fail, and warns about the rest', async () => {
+    const missingRecordId = randomUUID();
+
+    await expect(
+      attach([
+        { objectNameSingular: 'company', recordId: companyId },
+        { objectNameSingular: 'company', recordId: missingRecordId },
+      ]),
+    ).resolves.toMatchObject({
+      success: true,
+      message: 'Attached this conversation to 1 of 2 records',
+      result: {
+        attached: [{ objectNameSingular: 'company', recordId: companyId }],
+        failed: [
+          {
+            objectNameSingular: 'company',
+            recordId: missingRecordId,
+            error: 'Record not found',
+          },
+        ],
+      },
+      warnings: [`company ${missingRecordId}: Record not found`],
+    });
+  });
+
   it('reports an object conversations cannot be attached to', async () => {
     await expect(
       attach([{ objectNameSingular: 'unknownObject', recordId: companyId }]),
