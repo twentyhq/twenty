@@ -1,4 +1,8 @@
-import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  type ApplicationConnectionProviderFragmentFragment,
+  ConnectionProviderScope,
+  type McpServerFragmentFragment,
+} from '~/generated-metadata/graphql';
 
 export const mockedMcpServer: McpServerFragmentFragment = {
   __typename: 'McpServer',
@@ -30,4 +34,22 @@ export const mockedMcpServer: McpServerFragmentFragment = {
       annotations: { destructiveHint: true },
     },
   ],
+};
+
+export const mockedMcpServerSignInConnectionProvider: ApplicationConnectionProviderFragmentFragment =
+  {
+    __typename: 'ApplicationConnectionProvider',
+    id: '20202020-6d63-4070-8000-000000000003',
+    applicationId: mockedMcpServer.applicationId,
+    type: 'oauth-discovery',
+    name: 'mcp-server-linear-sign-in',
+    displayName: 'Linear',
+    scope: ConnectionProviderScope.USER,
+    logoUrl: null,
+    oauth: null,
+  };
+
+export const mockedMcpServerWithSignIn: McpServerFragmentFragment = {
+  ...mockedMcpServer,
+  connectionProviderId: mockedMcpServerSignInConnectionProvider.id,
 };

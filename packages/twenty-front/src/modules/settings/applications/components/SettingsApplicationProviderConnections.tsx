@@ -51,14 +51,16 @@ export const SettingsApplicationProviderConnections = ({
     );
   }
 
+  if (!canStartAuthorization) {
+    return null;
+  }
+
   return (
-    canStartAuthorization && (
-      <SettingsApplicationConnectCard
-        applicationId={applicationId}
-        connectionProvider={connectionProvider}
-        title={connectTitle}
-        redirectLocation={redirectLocation}
-      />
-    )
+    <SettingsApplicationConnectCard
+      applicationId={applicationId}
+      connectionProvider={connectionProvider}
+      title={connectTitle}
+      redirectLocation={redirectLocation}
+    />
   );
 };
