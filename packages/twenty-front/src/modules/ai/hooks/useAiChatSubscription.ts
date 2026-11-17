@@ -1,3 +1,4 @@
+import { dispatchAiChatRefetchMessagesEvent } from '@/ai/utils/dispatchAiChatRefetchMessagesEvent';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -19,7 +20,6 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
 import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AiChatStreamLivenessCheckIntervalInMs';
 import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai/constants/AiChatStreamLivenessTimeoutInMs';
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
@@ -42,7 +42,6 @@ import { getAiChatMessageThreadTitle } from '@/ai/utils/getAiChatMessageThreadTi
 import { upsertAiChatMessage } from '@/ai/utils/upsertAiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
@@ -227,8 +226,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
     const chunkSequencer = createStreamChunkSequencer({
       onApply: applyChunk,
-      onGapStalled: () =>
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME),
+      onGapStalled: () => dispatchAiChatRefetchMessagesEvent(threadId),
     });
 
     const resetStreamProcessing = () => {
@@ -259,13 +257,13 @@ export const useAiChatSubscription = (threadId: string | null) => {
         case 'message-persisted': {
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchAiChatRefetchMessagesEvent(threadId);
           break;
         }
 
         case 'message-added':
         case 'tool-call-resolved': {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchAiChatRefetchMessagesEvent(threadId);
           break;
         }
 
@@ -291,7 +289,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
         }
 
         case 'queue-updated': {
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchAiChatRefetchMessagesEvent(threadId);
           break;
         }
 
@@ -333,7 +331,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchAiChatRefetchMessagesEvent(threadId);
           store.set(isStreamingAtom, false);
           break;
         }
@@ -409,7 +407,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
               isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)
             ) {
               store.set(errorAtom, null);
-              dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+              dispatchAiChatRefetchMessagesEvent(threadId);
             }
             handleEvent(event);
           }
@@ -467,7 +465,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
       store.set(aiChatStreamRecoveryAttemptsState.atom, recoveryAttempts + 1);
       setResubscribeNonce((nonce) => nonce + 1);
-      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchAiChatRefetchMessagesEvent(threadId);
     }, AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => {

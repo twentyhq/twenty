@@ -1,4 +1,5 @@
 import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { resetClosingInboxThread } from '@/inbox/utils/resetClosingInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -28,8 +29,10 @@ export const useOpenAskAiPageInSidePanel = () => {
 
   const openAskAiPage = useCallback(
     ({
+      threadId,
       resetNavigationStack,
     }: {
+      threadId?: string;
       resetNavigationStack?: boolean;
     } = {}) => {
       if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
@@ -48,11 +51,18 @@ export const useOpenAskAiPageInSidePanel = () => {
           aiChatUISessionStartTime ?? Temporal.Now.instant(),
       );
 
+      const pageId = v4();
+
+      store.set(
+        askAiSidePanelThreadIdComponentState.atomFamily({ instanceId: pageId }),
+        threadId ?? null,
+      );
+
       navigateSidePanelMenu({
         page: SidePanelPages.AskAI,
         pageTitle: t`Ask AI`,
         pageIcon: IconSparkles,
-        pageId: v4(),
+        pageId,
         resetNavigationStack: shouldReset,
       });
     },

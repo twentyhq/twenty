@@ -66,7 +66,9 @@ export class RoleService {
       );
 
     return this.findManyWithRelationsFromCache(
-      Object.values(flatRoleMaps.byUniversalIdentifier).filter(isDefined),
+      Object.values(flatRoleMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter((flatRole) => !flatRole.isSystemSideEffect),
       workspaceId,
     );
   }
@@ -662,8 +664,9 @@ export class RoleService {
         isDefined(flatRoleTarget) && roleIds.includes(flatRoleTarget.roleId),
     );
 
-    const flatRoleTargetsToCreate = flatRoleTargetsToDelete.flatMap(
-      (flatRoleTarget) =>
+    const flatRoleTargetsToCreate = flatRoleTargetsToDelete
+      .filter(({ isSystemSideEffect }) => !isSystemSideEffect)
+      .flatMap((flatRoleTarget) =>
         ROLE_TARGET_FOREIGN_KEY_PROPERTIES.flatMap(
           (targetMetadataForeignKey) => {
             const targetId = flatRoleTarget[targetMetadataForeignKey];
@@ -693,7 +696,7 @@ export class RoleService {
             ];
           },
         ),
-    );
+      );
 
     return { flatRoleTargetsToCreate, flatRoleTargetsToDelete };
   }

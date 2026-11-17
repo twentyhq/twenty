@@ -6,7 +6,7 @@ import {
 
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -20,7 +20,7 @@ export const aiChatThreadMemberStateFamilySelector = createAtomFamilySelector<
     (threadId) =>
     ({ get }) => {
       const participants = get(aiChatThreadParticipantsState);
-      const visit = get(aiChatThreadVisitState);
+      const visit = get(aiChatThreadVisitFamilyState, { threadId });
       const thread = get(aiChatThreadRecordFamilySelector, threadId);
       const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
       const status = getAgentChatThreadInboxStatus({
@@ -31,7 +31,7 @@ export const aiChatThreadMemberStateFamilySelector = createAtomFamilySelector<
       // Before the rows load every thread would read as unread. The thread
       // on screen is being read, so it never shows as unread while its read
       // mark is on its way
-      const isOnScreen = visit?.threadId === threadId && !visit.isKeptUnread;
+      const isOnScreen = isDefined(visit) && !visit.isKeptUnread;
 
       return {
         ...status,

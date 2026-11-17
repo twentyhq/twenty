@@ -19,7 +19,7 @@ Workspace members then only connect their Google account.
    | --------------------------------------------------------- | ----------------------------------------------------------- |
    | `openid`, `email`                                         | Identify the connected Google account                       |
    | `https://www.googleapis.com/auth/meetings.space.readonly` | Read conferences and transcripts, and subscribe to events   |
-   | `https://www.googleapis.com/auth/documents.readonly`      | Read the call's name from the document Meet writes for it   |
+   | `https://www.googleapis.com/auth/documents.readonly`      | Read the call's name and Gemini notes from Meet's documents |
 
    The Meet and Docs scopes are sensitive: an app used outside your own Google
    Workspace organization needs Google's verification before members can
@@ -36,7 +36,8 @@ Workspace members then only connect their Google account.
 
 ## Pub/Sub topic
 
-Google publishes a message to this topic each time a transcript is ready.
+Google publishes a message to this topic each time a transcript or Gemini notes
+are ready.
 
 1. Create the topic in the same project as the OAuth client:
 
@@ -104,9 +105,9 @@ its owner workspace.
 
 - A member connects their Google account from the app's settings. Twenty
   subscribes to that account's Meet events.
-- When a transcript is ready, Google publishes an event, Pub/Sub pushes it to
-  Twenty, and the call is imported as a Call Recording in the member's
-  workspace.
+- When a transcript or Gemini notes are ready, Google publishes an event,
+  Pub/Sub pushes it to Twenty, and the call is imported as a Call Recording in
+  the member's workspace, with the notes as its summary.
 - Once a day, Twenty renews each subscription (Google expires them after 7
   days) and imports the calls of the last two days whose event was missed.
 - When a member removes their connection, the subscription is deleted.
@@ -114,6 +115,6 @@ its owner workspace.
 ## Limits
 
 - Only calls the member organized are imported, and only when transcription
-  was on. Google keeps conference data for 30 days.
+  or Gemini notes were on. Google keeps conference data for 30 days.
 - A Google account delivers events to one workspace per Twenty server. A second
   workspace connecting the same account only gets the daily import.

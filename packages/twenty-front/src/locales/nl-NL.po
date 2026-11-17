@@ -19445,7 +19445,7 @@ msgstr "Nieuw bedrijf"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
-#: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
+#: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "Nieuw gesprek"
 
@@ -26117,6 +26117,7 @@ msgstr "sectie"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Sectie"
 
@@ -28770,6 +28771,7 @@ msgid "System skills"
 msgstr "Systeemvaardigheden"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Tabblad"

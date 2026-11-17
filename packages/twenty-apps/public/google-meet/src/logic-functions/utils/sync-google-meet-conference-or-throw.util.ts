@@ -8,8 +8,10 @@ import { buildGoogleMeetCallRecordingSyncFields } from 'src/logic-functions/util
 import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
 import { findGoogleMeetCalendarEvent } from 'src/logic-functions/utils/find-google-meet-calendar-event.util';
 import { findGoogleMeetConferenceTitle } from 'src/logic-functions/utils/find-google-meet-conference-title.util';
+import { findGoogleMeetSmartNotesMarkdown } from 'src/logic-functions/utils/find-google-meet-smart-notes-markdown.util';
 import { getGoogleMeetSpace } from 'src/logic-functions/utils/get-google-meet-space.util';
 import { listGoogleMeetParticipants } from 'src/logic-functions/utils/list-google-meet-participants.util';
+import { listGoogleMeetSmartNotes } from 'src/logic-functions/utils/list-google-meet-smart-notes.util';
 import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
 import { listGoogleMeetTranscripts } from 'src/logic-functions/utils/list-google-meet-transcripts.util';
 import { mapGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/map-google-meet-transcript-entries.util';
@@ -27,16 +29,22 @@ export const syncGoogleMeetConferenceOrThrow = async ({
     'name' | 'startTime' | 'endTime' | 'space'
   >;
 }): Promise<GoogleMeetConferenceSyncOutcome> => {
-  const transcripts = await listGoogleMeetTranscripts({
-    accessToken,
-    conferenceRecordName: conferenceRecord.name,
-  });
+  const [transcripts, smartNotes] = await Promise.all([
+    listGoogleMeetTranscripts({
+      accessToken,
+      conferenceRecordName: conferenceRecord.name,
+    }),
+    listGoogleMeetSmartNotes({
+      accessToken,
+      conferenceRecordName: conferenceRecord.name,
+    }),
+  ]);
 
-  if (!isNonEmptyArray(transcripts)) {
-    return 'NO_TRANSCRIPT';
+  if (!isNonEmptyArray(transcripts) && !isNonEmptyArray(smartNotes)) {
+    return 'NO_ARTIFACT';
   }
 
-  const [participants, transcriptEntriesByTranscript, space] =
+  const [participants, transcriptEntriesByTranscript, space, summaryMarkdown] =
     await Promise.all([
       listGoogleMeetParticipants({
         accessToken,
@@ -53,6 +61,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       isNonEmptyString(conferenceRecord.space)
         ? getGoogleMeetSpace({ accessToken, spaceName: conferenceRecord.space })
         : undefined,
+      findGoogleMeetSmartNotesMarkdown({ accessToken, smartNotes }),
     ]);
 
   const calendarEvent = isDefined(space)
@@ -73,8 +82,9 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       title: await findGoogleMeetConferenceTitle({
         accessToken,
         calendarEvent,
-        transcripts,
+        artifacts: [...transcripts, ...smartNotes],
       }),
+      summaryMarkdown,
       transcriptEntries: mapGoogleMeetTranscriptEntries({
         conferenceRecord,
         participants,

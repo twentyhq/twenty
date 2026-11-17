@@ -1,3 +1,4 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -7,9 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
 import { useAiChatPendingToolCalls } from '@/ai/hooks/useAiChatPendingToolCalls';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { isAiChatPendingRecordApproval } from '@/ai/utils/isAiChatPendingRecordApproval';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
   display: flex;
@@ -41,7 +40,7 @@ export const AiChatPendingAskGate = ({
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
   const pendingToolCalls = useAiChatPendingToolCalls();
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const [selection, setSelection] = useState<RequestSelection>({
     threadId: null,
     toolCallId: null,
@@ -84,7 +83,7 @@ export const AiChatPendingAskGate = ({
   // a selection made in another conversation or for an earlier batch does not carry over, so
   // each new set of requests opens on its oldest one
   const isSameBatch =
-    selection.threadId === aiChatDisplayedThread &&
+    selection.threadId === threadId &&
     pendingToolCalls.some((pendingToolCall) =>
       selection.batchToolCallIds.includes(pendingToolCall.toolCallId),
     );
@@ -97,7 +96,7 @@ export const AiChatPendingAskGate = ({
 
   const selectRequest = (index: number) =>
     setSelection({
-      threadId: aiChatDisplayedThread,
+      threadId,
       toolCallId: pendingToolCalls[index].toolCallId,
       index,
       batchToolCallIds: pendingToolCalls.map(

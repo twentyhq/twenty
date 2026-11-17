@@ -61,82 +61,77 @@ const rowLevelPermissionPredicateSchema = z.object({
     .describe(
       'Sub-field of the workspace member field when it is a composite field',
     ),
-  rowLevelPermissionPredicateGroupId: z
-    .uuid()
-    .nullable()
-    .optional()
-    .describe('Id of the predicate group this predicate belongs to'),
-  positionInRowLevelPermissionPredicateGroup: z
+  position: z
     .number()
     .nullable()
     .optional()
-    .describe('Position of this predicate within its group'),
+    .describe('Position of this predicate within its rule or group'),
 });
 
-const rowLevelPermissionPredicateGroupSchema = z.object({
+const rowLevelPermissionPredicateGroupFields = {
   id: z
     .uuid()
     .optional()
-    .describe(
-      'Group id. Pass an existing id to update a group, or a new client-generated UUID so predicates can reference the group via rowLevelPermissionPredicateGroupId.',
-    ),
+    .describe('Id of an existing group to update. Omit to create a new one.'),
   logicalOperator: z
     .enum(RowLevelPermissionPredicateGroupLogicalOperator)
-    .describe('How predicates inside this group are combined (AND / OR)'),
-  parentRowLevelPermissionPredicateGroupId: z
-    .uuid()
-    .nullable()
-    .optional()
-    .describe('Parent group id for nested groups'),
-  positionInRowLevelPermissionPredicateGroup: z
+    .describe('How the predicates and groups inside this group are combined'),
+  position: z
     .number()
     .nullable()
     .optional()
-    .describe('Position of this group within its parent'),
+    .describe('Position of this group within its rule or parent group'),
+  predicates: z.array(rowLevelPermissionPredicateSchema).optional(),
+};
+
+const rowLevelPermissionPredicateGroupSchema = z.object({
+  ...rowLevelPermissionPredicateGroupFields,
+  predicateGroups: z
+    .array(z.object(rowLevelPermissionPredicateGroupFields))
+    .optional()
+    .describe('Nested groups'),
+});
+
+const operationSchema = (description: string) =>
+  z.boolean().optional().describe(description);
+
+const rowLevelPermissionRuleSchema = z.object({
+  id: z
+    .uuid()
+    .optional()
+    .describe('Id of an existing rule to update. Omit to create a new one.'),
+  canReadRecords: operationSchema(
+    'Whether members with this role can read the records the rule matches',
+  ),
+  canCreateRecords: operationSchema(
+    'Whether members with this role can create records the rule matches. Defaults to canUpdateRecords.',
+  ),
+  canUpdateRecords: operationSchema(
+    'Whether members with this role can update the records the rule matches',
+  ),
+  canSoftDeleteRecords: operationSchema(
+    'Whether members with this role can soft delete the records the rule matches',
+  ),
+  canDestroyRecords: operationSchema(
+    'Whether members with this role can permanently delete the records the rule matches',
+  ),
+  predicates: z
+    .array(rowLevelPermissionPredicateSchema)
+    .optional()
+    .describe('Predicates of the rule, combined with AND'),
+  predicateGroups: z
+    .array(rowLevelPermissionPredicateGroupSchema)
+    .optional()
+    .describe('Groups of predicates, to combine conditions with AND or OR'),
 });
 
 const upsertRowLevelPermissionRulesInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role the rules apply to'),
   objectMetadataId: z.uuid().describe('Id of the object the rules restrict'),
-  predicates: z
-    .array(rowLevelPermissionPredicateSchema)
+  rules: z
+    .array(rowLevelPermissionRuleSchema)
     .describe(
-      'The complete list of predicates to keep for this role and object. Existing predicates omitted from the list are deleted; pass an empty array to remove all rules.',
-    ),
-  predicateGroups: z
-    .array(rowLevelPermissionPredicateGroupSchema)
-    .describe(
-      'The complete list of predicate groups to keep for this role and object. Existing groups omitted from the list are deleted.',
-    ),
-  canReadRecords: z
-    .boolean()
-    .optional()
-    .describe(
-      'Whether members with this role can read the records the rules match',
-    ),
-  canCreateRecords: z
-    .boolean()
-    .optional()
-    .describe(
-      'Whether members with this role can create records the rules match',
-    ),
-  canUpdateRecords: z
-    .boolean()
-    .optional()
-    .describe(
-      'Whether members with this role can update the records the rules match',
-    ),
-  canSoftDeleteRecords: z
-    .boolean()
-    .optional()
-    .describe(
-      'Whether members with this role can soft delete the records the rules match',
-    ),
-  canDestroyRecords: z
-    .boolean()
-    .optional()
-    .describe(
-      'Whether members with this role can permanently delete the records the rules match',
+      'The complete list of rules to keep for this role and object. A record is open for an operation when any rule matching it grants that operation. Existing rules omitted from the list are deleted; pass an empty array to remove all rules.',
     ),
 });
 
@@ -148,9 +143,9 @@ const upsertRowLevelPermissionRulesInputSchema = z.object({
 
 Example, "members with this role only see records where the owner field matches the current user": pass one predicate with fieldMetadataId = the owner field on the object, operand = IS, and workspaceMemberFieldMetadataId = the "id" field of the workspaceMember object (resolved to the current user at query time). Use metadata tools to look up field ids.
 The same works between relations: for "only records in my region", pass fieldMetadataId = a many-to-one relation on the object and workspaceMemberFieldMetadataId = a many-to-one relation on workspaceMember pointing at the same object, with operand IS.
-Combine several predicates with predicateGroups (AND / OR): give each new group a client-generated UUID and reference it from predicates via rowLevelPermissionPredicateGroupId.
-Grants: the rules only open access through canReadRecords, canUpdateRecords, etc. An object-level permission granting all records on this object wins over the rules, so turn it off for the operations the rules should restrict.
-IMPORTANT: this replaces the full rule set for the role + object. Predicates or groups omitted from the lists are deleted; empty lists clear all rules. System-managed roles (like Admin) cannot be changed.`,
+Each rule has its own operations (canReadRecords, canUpdateRecords, ...) and its own conditions. Combine conditions with predicateGroups (AND / OR) nested in the rule.
+An object-level permission granting all records on this object wins over the rules, so turn it off for the operations the rules should restrict.
+IMPORTANT: this replaces the full rule set for the role + object. Rules, groups or predicates omitted are deleted; an empty rules list clears them all. System-managed roles (like Admin) cannot be changed.`,
 })
 export class UpsertRowLevelPermissionRulesTool extends BaseTool<
   typeof upsertRowLevelPermissionRulesInputSchema
@@ -169,31 +164,15 @@ export class UpsertRowLevelPermissionRulesTool extends BaseTool<
   }: ToolExecuteArgs<
     typeof upsertRowLevelPermissionRulesInputSchema
   >): Promise<ToolOutput> {
-    const { predicates, predicateGroups } =
-      await this.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
-        {
-          workspaceId,
-          input: {
-            roleId: input.roleId,
-            objectMetadataId: input.objectMetadataId,
-            predicates: input.predicates,
-            predicateGroups: input.predicateGroups.map((predicateGroup) => ({
-              ...predicateGroup,
-              objectMetadataId: input.objectMetadataId,
-            })),
-            canCreateRecords: input.canCreateRecords,
-            canReadRecords: input.canReadRecords,
-            canUpdateRecords: input.canUpdateRecords,
-            canSoftDeleteRecords: input.canSoftDeleteRecords,
-            canDestroyRecords: input.canDestroyRecords,
-          },
-        },
+    const { rules, predicates, predicateGroups } =
+      await this.rowLevelPermissionPredicateService.upsertRowLevelPermissionRules(
+        { workspaceId, input },
       );
 
     return {
       success: true,
-      message: `Row-level permission rules updated (${predicates.length} predicate${predicates.length === 1 ? '' : 's'}, ${predicateGroups.length} group${predicateGroups.length === 1 ? '' : 's'})`,
-      result: { predicates, predicateGroups },
+      message: `Row-level permission rules updated (${rules.length} rule${rules.length === 1 ? '' : 's'})`,
+      result: { rules, predicates, predicateGroups },
     };
   }
 }

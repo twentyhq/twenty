@@ -10,7 +10,10 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  isSourceFileManifestList,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import { buildApplication } from '@/app/bundles/build-application';
@@ -83,7 +86,8 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       }),
       'package.json': '{"name":"source-fixture"}',
       'src/function.ts':
-        "import { greeting } from './helper'; export const main = () => greeting;",
+        "import { greeting } from './helper'; import { secret } from './function-helper'; export const main = () => greeting + secret;",
+      'src/function-helper.ts': 'export const secret = "logic function only";',
       'src/component.tsx':
         "import './style.css'; import { greeting } from './helper'; export const Component = () => greeting;",
       'src/helper.ts':
@@ -140,11 +144,13 @@ describe('application source inventory', { timeout: 30_000 }, () => {
     const updated = manifestUpdateChecksums({
       manifest,
       builtFileInfos: result.builtFileInfos,
+      frontComponentSourcePaths: result.frontComponentSourcePaths,
     });
     expect(updated.sourceFiles?.map((file) => file.filePath)).toEqual([
       'config/base.json',
       'public/logo.svg',
       'src/component.tsx',
+      'src/function-helper.ts',
       'src/function.ts',
       'src/helper.ts',
       'src/logo.png',
@@ -153,6 +159,14 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       'src/types.ts',
       'tsconfig.json',
     ]);
+    expect(updated.frontComponents[0].sourceFiles).toEqual(
+      updated.sourceFiles?.filter(
+        (file) =>
+          !['src/function.ts', 'src/function-helper.ts'].includes(
+            file.filePath,
+          ),
+      ),
+    );
     expect(
       await readFile(join(appPath, '.twenty/output/src/logo.png')),
     ).toEqual(image);
@@ -184,6 +198,53 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       builtFileInfos: new Map(),
     });
     expect(rebuilt.sourceFiles).toEqual([]);
+  });
+
+  it('builds deployable inventories for imported generated files and root package.json', async () => {
+    const appPath = await fixture({
+      'package.json': '{"name":"generated-fixture"}',
+      'src/component.tsx':
+        "import { message } from './generated/dist/helper.js'; import pkg from '../package.json'; export const Component = () => message + pkg.name;",
+      'src/generated/dist/helper.js': 'export const message = "generated";',
+    });
+    const manifest = {
+      ...BASE_MANIFEST,
+      frontComponents: [
+        {
+          universalIdentifier: 'component-id',
+          sourceComponentPath: 'src/component.tsx',
+          builtComponentPath: 'src/component.mjs',
+          builtComponentChecksum: '',
+          componentName: 'Component',
+        },
+      ],
+    };
+    const built = await buildApplication({
+      appPath,
+      manifest,
+      filePaths: {
+        logicFunctions: [],
+        frontComponents: ['src/component.tsx'],
+        publicAssets: [],
+      },
+    });
+    const updated = manifestUpdateChecksums({ manifest, ...built });
+    expect(
+      isSourceFileManifestList(updated.frontComponents[0].sourceFiles),
+    ).toBe(true);
+    expect(
+      updated.frontComponents[0].sourceFiles?.map((file) => file.filePath),
+    ).toEqual([
+      'src/component.tsx',
+      'src/generated/dist/helper.js',
+      'tsconfig.json',
+    ]);
+    expect([...built.builtFileInfos.values()]).toContainEqual(
+      expect.objectContaining({
+        fileFolder: FileFolder.Dependencies,
+        sourcePath: 'package.json',
+      }),
+    );
   });
 
   it('rejects source paths colliding with a bundle before overwriting it', async () => {

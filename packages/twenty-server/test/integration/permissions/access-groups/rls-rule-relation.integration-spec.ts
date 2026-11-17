@@ -6,7 +6,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -111,30 +111,32 @@ describe('RLS rules through a relation (integration)', () => {
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
-        canCreateRecords: true,
-        canReadRecords: true,
-        canUpdateRecords: true,
-        predicateGroups: [
+        rules: [
           {
-            id: ruleId,
-            objectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          },
-        ],
-        predicates: [
-          {
-            id: v4(),
-            fieldMetadataId,
-            relationFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value,
-            rowLevelPermissionPredicateGroupId: ruleId,
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicateGroups: [
+              {
+                id: ruleId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId,
+                    relationFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

@@ -11,6 +11,7 @@ import { readLocalContainer } from '@/local/read-local-container';
 import { readLocalImageVersion } from '@/local/read-local-image-version';
 import { getLocalEngineRange } from '@/local/get-local-engine-range';
 import { getLocalImage } from '@/local/get-local-image';
+import { getLocalLoginHint } from '@/local/get-local-login-hint';
 import { resolveLocalImage } from '@/local/resolve-local-image';
 import { runDocker } from '@/local/run-docker';
 import { waitForLocalEnvironment } from '@/local/wait-for-local-environment';
@@ -91,9 +92,13 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     environment: { ...environment, port },
     signal,
   });
+  const loginHint = await getLocalLoginHint({
+    apiUrl: data.url,
+    remoteName: options.test ? 'local-test' : 'local',
+  });
 
   return {
     data,
-    human: `Local Twenty is ready at ${data.url}\nSign in: twenty auth login --url ${data.url} --name ${options.test ? 'local-test' : 'local'}`,
+    human: `Local Twenty is ready at ${data.url}\n${loginHint}`,
   };
 };

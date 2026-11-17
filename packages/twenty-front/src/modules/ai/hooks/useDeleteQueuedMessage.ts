@@ -1,11 +1,15 @@
+import { dispatchAiChatRefetchMessagesEvent } from '@/ai/utils/dispatchAiChatRefetchMessagesEvent';
+import { isDefined } from 'twenty-shared/utils';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { DeleteQueuedChatMessageDocument } from '~/generated-metadata/graphql';
 
-export const useDeleteQueuedMessage = () => {
+export const useDeleteQueuedMessage = ({
+  threadId,
+}: {
+  threadId: string | null;
+}) => {
   const apolloClient = useApolloClient();
 
   const deleteQueuedMessage = useCallback(
@@ -15,11 +19,11 @@ export const useDeleteQueuedMessage = () => {
         variables: { messageId },
       });
 
-      if (data?.deleteQueuedChatMessage) {
-        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      if (data?.deleteQueuedChatMessage && isDefined(threadId)) {
+        dispatchAiChatRefetchMessagesEvent(threadId);
       }
     },
-    [apolloClient],
+    [apolloClient, threadId],
   );
 
   return { deleteQueuedMessage };

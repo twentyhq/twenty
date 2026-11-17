@@ -5,7 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -45,7 +45,9 @@ const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatTypingParticipants />
+        <AiChatTestInstance>
+          <AiChatTypingParticipants />
+        </AiChatTestInstance>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -56,7 +58,6 @@ describe('AiChatTypingParticipants', () => {
     resetJotaiStore();
 
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
       aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
