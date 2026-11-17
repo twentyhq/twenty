@@ -193,6 +193,16 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     ]);
   });
 
+  it('should accept a built-in section without a name or target', () => {
+    expect(
+      validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.FAVORITES,
+        }),
+      }),
+    ).toEqual([]);
+  });
+
   it('should return an error when type is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({

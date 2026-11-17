@@ -18,7 +18,10 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuSectionMenuProps = {
-  section: Pick<NavigationMenuItem, 'id' | 'name' | 'icon' | 'parentId'>;
+  section: Pick<
+    NavigationMenuItem,
+    'id' | 'name' | 'icon' | 'parentId' | 'type'
+  >;
 };
 
 export const NavigationMenuSectionMenu = ({
@@ -61,12 +64,16 @@ export const NavigationMenuSectionMenu = ({
         align="start"
         width={GenericDropdownContentWidth.Large}
       >
-        <NavigationMenuItemContainerNameEditor
-          item={section}
-          placeholder={t`Section name`}
-          onSubmit={() => closeDropdown(dropdownId)}
-        />
-        <Dropdown.Separator />
+        {section.type === NavigationMenuItemType.SECTION && (
+          <>
+            <NavigationMenuItemContainerNameEditor
+              item={section}
+              placeholder={t`Section name`}
+              onSubmit={() => closeDropdown(dropdownId)}
+            />
+            <Dropdown.Separator />
+          </>
+        )}
         <Dropdown.Section>
           {reorderOptions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />

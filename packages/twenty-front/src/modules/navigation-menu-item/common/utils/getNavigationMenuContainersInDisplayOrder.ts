@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -16,7 +17,9 @@ export const getNavigationMenuContainersInDisplayOrder = ({
   navigationMenuItems
     .filter(
       (item): item is NamedNavigationMenuItem =>
-        item.type === type &&
+        (item.type === type ||
+          (type === NavigationMenuItemType.SECTION &&
+            isNavigationMenuItemBuiltInSection(item))) &&
         isNonEmptyString(item.name) &&
         (item.parentId ?? null) === containerId,
     )

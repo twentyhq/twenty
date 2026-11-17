@@ -35,5 +35,17 @@ export const useCreateNavigationMenuTabOrSection = () => {
     setNavigationMenuItemIdToRename(sectionId);
   };
 
-  return { createTab, createSection };
+  const createBuiltInSection = ({
+    containerId,
+    type,
+    name,
+  }: {
+    containerId: string | null;
+    type: NavigationMenuItemType;
+    name: string;
+  }) => {
+    createItem({ type, name }, { targetFolderId: containerId });
+  };
+
+  return { createTab, createSection, createBuiltInSection };
 };

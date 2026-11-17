@@ -1,12 +1,25 @@
 import { useLingui } from '@lingui/react/macro';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
+import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 type NavigationMenuAddSectionButtonProps = {
   containerId: string | null;
@@ -19,22 +32,86 @@ export const NavigationMenuAddSectionButton = ({
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const { createSection } = useCreateNavigationMenuTabOrSection();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const { createSection, createBuiltInSection } =
+    useCreateNavigationMenuTabOrSection();
+  const { closeDropdown } = useCloseDropdown();
+  const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
   if (!isCustomizableSidebarEnabled) {
     return null;
   }
 
+  const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
+    (builtInSection) =>
+      (!builtInSection.isAi || (hasAiPermission && isAiChatInboxEnabled)) &&
+      !workspaceNavigationMenuItems.some(
+        (item) =>
+          item.type === builtInSection.type &&
+          (item.parentId ?? null) === containerId,
+      ),
+  );
+
+  const add = (create: () => void) => {
+    create();
+    closeDropdown(dropdownId);
+  };
+
   return (
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
-        <NavigationDrawerItem
-          Icon={IconPlus}
-          label={t`Add section`}
-          triggerEvent="CLICK"
-          variant="tertiary"
-          onClick={() => createSection(containerId)}
-        />
+        <DropdownRoot dropdownId={dropdownId} type="menu">
+          <Dropdown.Trigger
+            nativeButton={false}
+            render={
+              <div tabIndex={-1}>
+                <NavigationDrawerItem
+                  Icon={IconPlus}
+                  label={t`Add section`}
+                  triggerEvent="CLICK"
+                  variant="tertiary"
+                />
+              </div>
+            }
+          />
+          <DropdownContent
+            side="right"
+            align="start"
+            width={GenericDropdownContentWidth.Large}
+          >
+            <Dropdown.Section>
+              <NavigationMenuItemSelectableItem
+                item={{
+                  id: NavigationMenuItemType.SECTION,
+                  label: t`Custom section`,
+                  Icon: IconPlus,
+                  onClick: () => add(() => createSection(containerId)),
+                }}
+              />
+              {builtInSectionsToOffer.map((builtInSection) => (
+                <NavigationMenuItemSelectableItem
+                  key={builtInSection.type}
+                  item={{
+                    id: builtInSection.type,
+                    label: t(builtInSection.label),
+                    onClick: () =>
+                      add(() =>
+                        createBuiltInSection({
+                          containerId,
+                          type: builtInSection.type,
+                          name: t(builtInSection.label),
+                        }),
+                      ),
+                  }}
+                />
+              ))}
+            </Dropdown.Section>
+          </DropdownContent>
+        </DropdownRoot>
       </NavigationMenuItemEntrance>
     </NavigationDrawerSection>
   );
