@@ -14,7 +14,6 @@ export type RelationTargetFieldMetadataViolation =
   | 'INACTIVE'
   | 'IS_RELATION';
 
-// Shared by view fields and view sorts that show or sort by one field of the related record
 export const getRelationTargetFieldMetadataViolation = ({
   flatFieldMetadata,
   relationTargetFieldMetadataUniversalIdentifier,
