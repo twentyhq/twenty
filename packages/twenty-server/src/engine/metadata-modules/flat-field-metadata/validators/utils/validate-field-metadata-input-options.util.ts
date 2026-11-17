@@ -37,9 +37,13 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   return errors;
 };
 
-const validateDuplicates = (
-  options: FieldMetadataOptions<EnumFieldMetadataType>,
-) => {
+const validateDuplicates = ({
+  options,
+  shouldCheckPositions,
+}: {
+  options: FieldMetadataOptions<EnumFieldMetadataType>;
+  shouldCheckPositions: boolean;
+}) => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   const fieldsToCheckForDuplicates = [
@@ -52,6 +56,10 @@ const validateDuplicates = (
   )[number])[];
 
   for (const field of fieldsToCheckForDuplicates) {
+    if (field === 'position' && !shouldCheckPositions) {
+      continue;
+    }
+
     const hasDuplicates =
       new Set(options.map((option) => option[field])).size !== options.length;
 
@@ -68,9 +76,17 @@ const validateDuplicates = (
   return errors;
 };
 
-export const validateFieldMetadataInputOptions = (
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
-): FlatFieldMetadataValidationError[] => {
+// Positions of different applications' options can tie, so only options being written must have distinct positions.
+export const validateFieldMetadataInputOptions = ({
+  universalFlatFieldMetadata,
+  isWritingOptions = true,
+}: {
+  universalFlatFieldMetadata: Pick<
+    UniversalFlatFieldMetadata<EnumFieldMetadataType>,
+    'options'
+  >;
+  isWritingOptions?: boolean;
+}): FlatFieldMetadataValidationError[] => {
   const { options } = universalFlatFieldMetadata;
 
   if (!isDefined(options) || options.length === 0) {
@@ -92,7 +108,10 @@ export const validateFieldMetadataInputOptions = (
     ].flat(),
   );
 
-  const duplicatedValidationErrors = validateDuplicates(options);
+  const duplicatedValidationErrors = validateDuplicates({
+    options,
+    shouldCheckPositions: isWritingOptions,
+  });
 
   return [...optionsValidationErrors, ...duplicatedValidationErrors];
 };

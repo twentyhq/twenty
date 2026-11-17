@@ -70,14 +70,14 @@ export const useNavigationMenuItemEditController = (
     input: NewNavigationMenuItemInput,
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
-    const folderId = targetFolderId ?? null;
+    const parentId = targetFolderId ?? null;
     const itemsInFolder = currentItems.filter(
-      (item) => (item.folderId ?? null) === folderId,
+      (item) => (item.parentId ?? null) === parentId,
     );
     const index = targetIndex ?? itemsInFolder.length;
     const { flatIndex, position } = computeInsertIndexAndPosition(
       currentItems,
-      folderId,
+      parentId,
       index,
     );
 
@@ -88,7 +88,7 @@ export const useNavigationMenuItemEditController = (
       type: input.type,
       position,
       userWorkspaceId: targetUserWorkspaceId,
-      folderId: folderId ?? undefined,
+      parentId: parentId ?? undefined,
       targetObjectMetadataId: input.targetObjectMetadataId ?? undefined,
       targetRecordId: input.targetRecordId ?? undefined,
       targetRecordIdentifier: input.targetRecordIdentifier,

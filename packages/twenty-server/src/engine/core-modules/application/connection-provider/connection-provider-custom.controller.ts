@@ -31,6 +31,7 @@ import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Controller(`${ApiPath.Auth}/apps/custom`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -38,6 +39,7 @@ export class ConnectionProviderCustomController {
   constructor(
     private readonly customFlowService: ConnectionProviderCustomFlowService,
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Get('callback')
@@ -128,6 +130,9 @@ export class ConnectionProviderCustomController {
         requestHeaders: req.headers,
         forwardedRequestHeaders: [],
         forwardAllHeaders: true,
+        identityAssertionHeaderName: this.twentyConfigService.get(
+          'SERVER_ADMIN_IDENTITY_ASSERTION_HEADER',
+        ),
       }),
     };
   }

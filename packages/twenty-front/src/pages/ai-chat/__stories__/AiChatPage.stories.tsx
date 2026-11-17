@@ -5,7 +5,7 @@ import {
 } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -14,9 +14,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
+import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -30,7 +29,6 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
-const EXISTING_THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const NEXT_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
 const RETURNED_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
 const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
@@ -90,13 +88,12 @@ const initializeChatPageStory = () => {
   jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
     [draftThreadId]: serializePlainTextAsAdvancedTextEditorDocument(DRAFT_TEXT),
   });
-  jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
 };
 
 const allowSelectedConversationUpdates = () => {
   const workspace = jotaiStore.get(currentWorkspaceState.atom);
   const workspaceMember = jotaiStore.get(currentWorkspaceMemberState.atom);
-  const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
   const objectMetadataTemplate = jotaiStore
     .get(flatObjectMetadataItemsSelector.atom)
     .find(
@@ -190,15 +187,10 @@ export const NewChatDraftSelection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const editor = await canvas.findByRole('textbox');
-    const draftThreadId = jotaiStore.get(newAiChatThreadIdState.atom);
 
     await expect(editor).toHaveTextContent(DRAFT_TEXT);
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      draftThreadId,
-    );
 
     allowSelectedConversationUpdates();
-    jotaiStore.set(newAiChatThreadIdState.atom, NEXT_DRAFT_THREAD_ID);
 
     await userEvent.click(editor);
     const selection = editor.ownerDocument.getSelection();
@@ -208,9 +200,6 @@ export const NewChatDraftSelection: Story = {
     await userEvent.type(editor, CONTINUED_DRAFT_TEXT, { skipClick: true });
     await expect(editor).toHaveTextContent(
       `${DRAFT_TEXT}${CONTINUED_DRAFT_TEXT}`,
-    );
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(draftThreadId),
     );
   },
 };
@@ -224,7 +213,6 @@ export const NewChatRouteHistory: Story = {
   ],
   beforeEach: () => {
     initializeChatPageStory();
-    jotaiStore.set(currentAiChatThreadState.atom, null);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -246,9 +234,6 @@ export const NewChatRouteHistory: Story = {
     await expect(await canvas.findByRole('textbox')).toHaveTextContent(
       NEXT_DRAFT_TEXT,
     );
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      NEXT_DRAFT_THREAD_ID,
-    );
 
     await userEvent.click(canvas.getByRole('button', { name: 'Leave chat' }));
     await expect(await canvas.findByText('Outside chat')).toBeVisible();
@@ -265,9 +250,6 @@ export const NewChatRouteHistory: Story = {
     );
     await expect(await canvas.findByRole('textbox')).toHaveTextContent(
       RETURNED_DRAFT_TEXT,
-    );
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      RETURNED_DRAFT_THREAD_ID,
     );
 
     await userEvent.click(

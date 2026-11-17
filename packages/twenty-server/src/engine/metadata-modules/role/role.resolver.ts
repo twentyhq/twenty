@@ -58,11 +58,11 @@ import {
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
-import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
+import { UpsertRowLevelPermissionRulesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-rules-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { AccessGroupPropagationProgressReadService } from 'src/engine/permissions/access-group-propagation-progress-read.service';
@@ -240,12 +240,10 @@ export class RoleResolver {
       return undefined;
     }
 
-    return [
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
-        workspaceId,
-        userWorkspaceId: actingUserWorkspaceId,
-      }),
-    ];
+    return this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
+      workspaceId,
+      userWorkspaceId: actingUserWorkspaceId,
+    });
   }
 
   @Mutation(() => [ObjectPermissionDTO])
@@ -310,14 +308,14 @@ export class RoleResolver {
     );
   }
 
-  @Mutation(() => UpsertRowLevelPermissionPredicatesResultDTO)
+  @Mutation(() => UpsertRowLevelPermissionRulesResultDTO)
   @UseGuards(AccessPolicyGuard(ROLE_WRITE_ACCESS_POLICY))
-  async upsertRowLevelPermissionPredicates(
+  async upsertRowLevelPermissionRules(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
-    input: UpsertRowLevelPermissionPredicatesInput,
-  ): Promise<UpsertRowLevelPermissionPredicatesResultDTO> {
-    return this.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
+    input: UpsertRowLevelPermissionRulesInput,
+  ): Promise<UpsertRowLevelPermissionRulesResultDTO> {
+    return this.rowLevelPermissionPredicateService.upsertRowLevelPermissionRules(
       {
         workspaceId: workspace.id,
         input,

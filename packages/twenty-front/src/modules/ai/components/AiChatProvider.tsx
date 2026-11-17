@@ -1,10 +1,8 @@
 import { type ReactNode, Suspense } from 'react';
 
-import { InboxChannelsEffect } from '@/ai/components/InboxChannelsEffect';
 import { AiChatRuntimeEffects } from '@/ai/components/AiChatRuntimeEffects';
-import { AiChatThreadInitializationEffect } from '@/ai/components/AiChatThreadInitializationEffect';
 import { AiChatThreadParticipantOperationsEffect } from '@/ai/components/AiChatThreadParticipantOperationsEffect';
-import { AiChatThreadRecordOperationsEffect } from '@/ai/components/AiChatThreadRecordOperationsEffect';
+import { AiChatRuntimeContext } from '@/ai/contexts/AiChatRuntimeContext';
 import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AiChatToolIndexInvalidationEffect';
 
 type AiChatProviderProps = {
@@ -13,12 +11,11 @@ type AiChatProviderProps = {
 
 export const AiChatProvider = ({ children }: AiChatProviderProps) => (
   <Suspense fallback={null}>
-    <AiChatThreadInitializationEffect />
-    <AiChatThreadRecordOperationsEffect />
     <AiChatThreadParticipantOperationsEffect />
-    <InboxChannelsEffect />
     <AiChatRuntimeEffects />
     <AiChatToolIndexInvalidationEffect />
-    {children}
+    <AiChatRuntimeContext.Provider value={true}>
+      {children}
+    </AiChatRuntimeContext.Provider>
   </Suspense>
 );

@@ -20,24 +20,20 @@ export const useAiChatThreadClick = (
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   const handleThreadClick = (thread: Pick<AiChatThreadRecord, 'id'>) => {
-    selectAiChatThread(thread.id);
-
     const isOnChatPage =
       isCurrentPathAiChatPage() || isInboxPath(window.location.pathname);
 
-    if (isOnChatPage) {
+    if (!isOnChatPage && !shouldOpenInFullPage) {
+      openAskAiPage({ threadId: thread.id, resetNavigationStack });
+
       return;
     }
 
-    if (shouldOpenInFullPage) {
+    selectAiChatThread(thread.id);
+
+    if (!isOnChatPage) {
       navigateToAiChatPage({ threadId: thread.id });
-
-      return;
     }
-
-    openAskAiPage({
-      resetNavigationStack,
-    });
   };
 
   return { handleThreadClick };

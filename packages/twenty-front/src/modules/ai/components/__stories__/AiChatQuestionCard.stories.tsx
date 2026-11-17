@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
@@ -5,8 +6,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 import { styled } from '@linaria/react';
@@ -90,8 +90,7 @@ const StoreSeederEffect = () => {
   const store = useStore();
 
   useEffect(() => {
-    store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(aiChatDisplayedThreadState.atom, 'thread-1');
+    store.set(aiChatTestInstanceThreadIdState.atom, 'thread-1');
   }, [store]);
 
   return null;
@@ -101,6 +100,7 @@ const meta: Meta<typeof AiChatQuestionCard> = {
   title: 'Modules/AiChat/AiChatQuestionCard',
   component: AiChatQuestionCard,
   decorators: [
+    AiChatInstanceDecorator,
     (Story) => (
       <StyledContainer>
         <StoreSeederEffect />

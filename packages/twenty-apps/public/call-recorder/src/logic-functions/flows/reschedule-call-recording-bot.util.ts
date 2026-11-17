@@ -58,6 +58,7 @@ export const rescheduleCallRecordingBot = async (
       callRecordingId: callRecording.id,
       externalBotId,
       joinAt,
+      bookedJoinAt: joinAt,
     });
 
     return;

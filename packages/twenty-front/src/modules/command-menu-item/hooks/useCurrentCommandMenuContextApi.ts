@@ -1,6 +1,6 @@
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
+import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';

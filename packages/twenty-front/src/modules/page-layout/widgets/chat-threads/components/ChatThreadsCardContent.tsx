@@ -6,7 +6,7 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadList } from '@/ai/components/InboxThreadList';
+import { InboxThreadList } from '@/inbox/components/InboxThreadList';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';

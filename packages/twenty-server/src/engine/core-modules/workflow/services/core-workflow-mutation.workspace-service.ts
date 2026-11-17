@@ -36,7 +36,7 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -67,7 +67,7 @@ export class CoreWorkflowMutationWorkspaceService {
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly coreWorkflowListService: CoreWorkflowListService,
@@ -590,7 +590,7 @@ export class CoreWorkflowMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersion(
         {
           workspaceId,
-          coreWorkflowId: coreWorkflow.id,
+          coreWorkflowUniversalIdentifier: coreWorkflow.universalIdentifier,
           workspaceWorkflowId: null,
           trigger: null,
           steps: null,
@@ -739,7 +739,7 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     });
 
-    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+    await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
 

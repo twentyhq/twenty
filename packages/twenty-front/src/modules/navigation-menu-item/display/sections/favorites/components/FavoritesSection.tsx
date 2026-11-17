@@ -58,7 +58,7 @@ export const FavoritesSection = () => {
   );
 
   const allTopLevelItems = useMemo(
-    () => navigationMenuItemsSorted.filter((item) => !item.folderId),
+    () => navigationMenuItemsSorted.filter((item) => !item.parentId),
     [navigationMenuItemsSorted],
   );
 

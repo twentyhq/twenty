@@ -8,8 +8,10 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 
@@ -19,6 +21,52 @@ const FIELD_UID = '33333333-3333-4333-8333-333333333333';
 const TARGET_OBJECT_UID = '44444444-4444-4444-8444-444444444444';
 const TARGET_FIELD_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-03T10:00:00.000Z';
+const OPEN_OPTION_UID = '77777777-7777-4777-8777-777777777771';
+const CLOSED_OPTION_UID = '77777777-7777-4777-8777-777777777772';
+const ARCHIVED_OPTION_UID = '77777777-7777-4777-8777-777777777773';
+
+const APPLICATION_FLAT_FIELD_METADATA_OPTION_MAPS = {
+  byUniversalIdentifier: {
+    [OPEN_OPTION_UID]: getFlatFieldMetadataOptionMock({
+      universalIdentifier: OPEN_OPTION_UID,
+      value: 'OPEN',
+      label: 'Open',
+      position: 0,
+    }),
+    [CLOSED_OPTION_UID]: getFlatFieldMetadataOptionMock({
+      universalIdentifier: CLOSED_OPTION_UID,
+      value: 'CLOSED',
+      label: 'Closed',
+      position: 1,
+    }),
+  },
+};
+
+const exportFieldWithWorkspaceAddedOption = ({
+  type,
+  defaultValue,
+}: {
+  type: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
+  defaultValue: string | string[];
+}) =>
+  fromFlatFieldMetadataToFieldManifest({
+    flatFieldMetadata: getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      objectMetadataUniversalIdentifier: OBJECT_UID,
+      applicationUniversalIdentifier: APP_UID,
+      type,
+      name: 'status',
+      label: 'Status',
+      fieldMetadataOptionUniversalIdentifiers: [
+        OPEN_OPTION_UID,
+        CLOSED_OPTION_UID,
+        ARCHIVED_OPTION_UID,
+      ],
+      defaultValue,
+    }),
+    flatFieldMetadataOptionMaps: APPLICATION_FLAT_FIELD_METADATA_OPTION_MAPS,
+  });
 
 const TEXT_FIELD_MANIFEST: Required<
   RegularFieldManifest<FieldMetadataType.TEXT>
@@ -78,6 +126,7 @@ const roundTripFlatFieldMetadata = (
     toUniversalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
       fieldManifest: fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
       applicationUniversalIdentifier: APP_UID,
       now: NOW,
@@ -97,6 +146,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(
       fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toEqual(TEXT_FIELD_MANIFEST);
   });
@@ -112,6 +162,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(
       fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toEqual(RELATION_FIELD_MANIFEST);
   });
@@ -144,6 +195,46 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
   });
 
+  it('should export the base values of an option a workspace overrides', () => {
+    const optionUniversalIdentifier = '77777777-7777-4777-8777-777777777777';
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      type: FieldMetadataType.SELECT,
+      fieldMetadataOptionUniversalIdentifiers: [optionUniversalIdentifier],
+    });
+
+    const fieldManifest = fromFlatFieldMetadataToFieldManifest({
+      flatFieldMetadata,
+      flatFieldMetadataOptionMaps: {
+        ...createEmptyFlatEntityMaps(),
+        byUniversalIdentifier: {
+          [optionUniversalIdentifier]: getFlatFieldMetadataOptionMock({
+            universalIdentifier: optionUniversalIdentifier,
+            value: 'SCREENING',
+            label: 'Screening',
+            color: 'blue',
+            position: 0,
+            applicationId: flatFieldMetadata.applicationId,
+            overrides: {
+              [APP_UID]: { label: 'Workspace screening', color: 'red' },
+            },
+          }),
+        },
+      },
+    });
+
+    expect(fieldManifest.options).toEqual([
+      {
+        id: optionUniversalIdentifier,
+        value: 'SCREENING',
+        label: 'Screening',
+        color: 'blue',
+        position: 0,
+      },
+    ]);
+  });
+
   it('should copy the universal settings of a junction relation', () => {
     const flatFieldMetadata = getFlatFieldMetadataMock({
       universalIdentifier: FIELD_UID,
@@ -162,8 +253,10 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     expect(
-      fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata })
-        .universalSettings,
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }).universalSettings,
     ).toEqual({
       relationType: RelationType.ONE_TO_MANY,
       junctionTargetFieldUniversalIdentifier: TARGET_FIELD_UID,
@@ -183,5 +276,45 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
+  });
+
+  it('should drop a select default that points at a workspace-added option', () => {
+    const fieldManifest = exportFieldWithWorkspaceAddedOption({
+      type: FieldMetadataType.SELECT,
+      defaultValue: "'ARCHIVED'",
+    });
+
+    expect(fieldManifest.options?.map(({ value }) => value)).toEqual([
+      'OPEN',
+      'CLOSED',
+    ]);
+    expect(fieldManifest.defaultValue).toBeNull();
+  });
+
+  it('should keep a select default that points at an exported option', () => {
+    expect(
+      exportFieldWithWorkspaceAddedOption({
+        type: FieldMetadataType.SELECT,
+        defaultValue: "'CLOSED'",
+      }).defaultValue,
+    ).toBe("'CLOSED'");
+  });
+
+  it('should keep only the multi-select defaults that point at exported options', () => {
+    expect(
+      exportFieldWithWorkspaceAddedOption({
+        type: FieldMetadataType.MULTI_SELECT,
+        defaultValue: ["'OPEN'", "'ARCHIVED'"],
+      }).defaultValue,
+    ).toEqual(["'OPEN'"]);
+  });
+
+  it('should drop a multi-select default whose values all point at workspace-added options', () => {
+    expect(
+      exportFieldWithWorkspaceAddedOption({
+        type: FieldMetadataType.MULTI_SELECT,
+        defaultValue: ["'ARCHIVED'"],
+      }).defaultValue,
+    ).toBeNull();
   });
 });

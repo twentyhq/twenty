@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
-import { dirname, extname, relative, resolve, sep } from 'node:path';
+import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
-import { APPLICATION_SOURCE_FILE_EXTENSIONS } from 'twenty-shared/application';
+import { isRestorableApplicationSourcePath } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isInsideDirectory } from '@/utils/is-inside-directory';
@@ -42,11 +42,7 @@ export const collectApplicationSourceFiles = ({
     if (
       !isInsideDirectory({ filePath: absolutePath, directory: root }) ||
       !isInsideDirectory({ filePath: realPath, directory: root }) ||
-      localPath.split(sep).some((part) => part.startsWith('.')) ||
-      localPath === 'manifest.json' ||
-      !APPLICATION_SOURCE_FILE_EXTENSIONS.some(
-        (extension) => extension === extname(localPath).toLowerCase(),
-      ) ||
+      !isRestorableApplicationSourcePath(localPath.split(sep).join('/')) ||
       !statSync(absolutePath).isFile()
     ) {
       return;

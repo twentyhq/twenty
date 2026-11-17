@@ -1,3 +1,5 @@
+import { type AiChatThreadEventDetail } from '@/ai/types/AiChatThreadEventDetail';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -8,7 +10,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
@@ -16,9 +17,8 @@ import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessa
 import { aiChatFirstLiveSeqFamilyState } from '@/ai/states/aiChatFirstLiveSeqFamilyState';
 import { aiChatHandleEventCallbackFamilyState } from '@/ai/states/aiChatHandleEventCallbackFamilyState';
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/aiChatIsAwaitingPersistedRefetchFamilyState';
-import { aiChatMessagesLoadingState } from '@/ai/states/aiChatMessagesLoadingState';
+import { aiChatMessagesLoadingFamilyState } from '@/ai/states/aiChatMessagesLoadingFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai/states/aiChatQueuedMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
@@ -31,13 +31,22 @@ import {
 } from '~/generated-metadata/graphql';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-export const AiChatMessagesFetchEffect = () => {
+type AiChatMessagesFetchEffectProps = {
+  threadId: string;
+};
+
+export const AiChatMessagesFetchEffect = ({
+  threadId,
+}: AiChatMessagesFetchEffectProps) => {
   const store = useStore();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
-  const isNewThread = useIsOnNewAiChatSlot() || currentAiChatThread === null;
+  const isNewThread = threadId === newAiChatThreadId;
 
-  const setAiChatMessagesLoading = useSetAtomState(aiChatMessagesLoadingState);
+  const setAiChatMessagesLoading = useSetAtomFamilyState(
+    aiChatMessagesLoadingFamilyState,
+    { threadId },
+  );
 
   const setSkipMessagesSkeletonUntilLoaded = useSetAtomState(
     skipMessagesSkeletonUntilLoadedState,
@@ -45,17 +54,17 @@ export const AiChatMessagesFetchEffect = () => {
 
   const setAiChatFetchedMessages = useSetAtomFamilyState(
     aiChatFetchedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setAiChatQueuedMessages = useSetAtomFamilyState(
     aiChatQueuedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setAiChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
     aiChatIsAwaitingPersistedRefetchFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const handleFirstLoad = useCallback(
@@ -67,9 +76,7 @@ export const AiChatMessagesFetchEffect = () => {
 
   const handleDataLoaded = useCallback(
     (data: GetChatMessagesQuery) => {
-      const error = store.get(
-        aiChatErrorFamilyState.atomFamily({ threadId: currentAiChatThread }),
-      );
+      const error = store.get(aiChatErrorFamilyState.atomFamily({ threadId }));
       if (isGraphqlErrorOfType(error, 'NOT_FOUND')) {
         return;
       }
@@ -77,7 +84,7 @@ export const AiChatMessagesFetchEffect = () => {
       // A live snapshot is at least as recent as a fetch, which may have been read before it
       const liveReactionRevisions = store.get(
         aiChatLiveReactionRevisionsFamilyState.atomFamily({
-          threadId: currentAiChatThread,
+          threadId,
         }),
       );
 
@@ -104,12 +111,6 @@ export const AiChatMessagesFetchEffect = () => {
       const catchup = data.chatStreamCatchupChunks;
 
       if (!isDefined(catchup)) {
-        return;
-      }
-
-      const threadId = store.get(currentAiChatThreadState.atom);
-
-      if (!isDefined(threadId)) {
         return;
       }
 
@@ -144,7 +145,7 @@ export const AiChatMessagesFetchEffect = () => {
       }
     },
     [
-      currentAiChatThread,
+      threadId,
       setAiChatFetchedMessages,
       setAiChatQueuedMessages,
       setAiChatIsAwaitingPersistedRefetch,
@@ -166,7 +167,7 @@ export const AiChatMessagesFetchEffect = () => {
   const { refetch: refetchAiChatMessages } = useQueryWithCallbacks(
     GetChatMessagesDocument,
     {
-      variables: { threadId: currentAiChatThread ?? '' },
+      variables: { threadId },
       fetchPolicy: 'network-only',
       skip: isNewThread,
       onFirstLoad: handleFirstLoad,
@@ -183,20 +184,29 @@ export const AiChatMessagesFetchEffect = () => {
     refetchAiChatMessages();
   }, [refetchAiChatMessages, isNewThread]);
 
-  useListenToBrowserEvent({
+  const handleRefetchMessagesEvent = useCallback(
+    (detail?: AiChatThreadEventDetail) => {
+      if (detail?.threadId === threadId) {
+        handleRefetchMessages();
+      }
+    },
+    [threadId, handleRefetchMessages],
+  );
+
+  useListenToBrowserEvent<AiChatThreadEventDetail>({
     eventName: AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-    onBrowserEvent: handleRefetchMessages,
+    onBrowserEvent: handleRefetchMessagesEvent,
   });
 
   const handleSseClientReconnected = useCallback(() => {
     store.set(
       aiChatLiveReactionRevisionsFamilyState.atomFamily({
-        threadId: currentAiChatThread,
+        threadId,
       }),
       {},
     );
     handleRefetchMessages();
-  }, [currentAiChatThread, handleRefetchMessages, store]);
+  }, [threadId, handleRefetchMessages, store]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,

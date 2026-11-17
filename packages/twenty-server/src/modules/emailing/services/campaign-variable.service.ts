@@ -12,6 +12,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
@@ -36,6 +37,7 @@ const MAX_VARIABLES_IN_ERROR_MESSAGE = 40;
 const PERSON_FIELD_CACHE_KEYS = [
   'flatObjectMetadataMaps',
   'flatFieldMetadataMaps',
+  'flatFieldMetadataOptionMaps',
 ] as const;
 
 const MAX_CACHED_WORKSPACE_SCHEMAS = 100;
@@ -86,7 +88,18 @@ export class CampaignVariableService {
         ...definitions.map((definition) => definition.name),
         ...COMPUTED_VARIABLE_NAMES,
       ]),
-      fieldsByName: new Map(fields.map((field) => [field.name, field])),
+      fieldsByName: new Map(
+        fields.map((field) => [
+          field.name,
+          {
+            ...field,
+            options: resolveFlatFieldMetadataOptions({
+              flatFieldMetadata: field,
+              flatFieldMetadataOptionMaps: data.flatFieldMetadataOptionMaps,
+            }),
+          },
+        ]),
+      ),
     };
 
     writeLruEntry({

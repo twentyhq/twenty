@@ -128,6 +128,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24 óra"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr ""
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -220,6 +226,11 @@ msgstr "Egy irányítópult"
 msgid "A database event trigger in this application is invalid."
 msgstr "Az alkalmazásban található adatbázis-eseményindító érvénytelen."
 
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr "A deaktivált mező nem jeleníthető meg oszlopban"
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -309,6 +320,18 @@ msgstr "Névütközés történt."
 msgid "A name is required for FOLDER type"
 msgstr "A FOLDER típushoz a név megadása kötelező."
 
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr ""
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr ""
+
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
@@ -327,7 +350,7 @@ msgstr "Hálózati hiba történt a naptár elérése közben."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Nem kanonikus nézetmező nem használhatja a címkeazonosító mezőt"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -404,6 +427,16 @@ msgstr "Már létezik ilyen értékű rekord."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Egy megbeszélés felvétele"
+
+#. js-lingui-id: p5HHUZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field"
+msgstr "A kapcsolódó rekord mezője csak több-az-egyhez kapcsolati mezőn jeleníthető meg"
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr "A kapcsolódó rekord kapcsolata nem jeleníthető meg oszlopban"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -583,10 +616,20 @@ msgstr "Hiba történt a nézetmezőnél."
 msgid "A view field group error occurred."
 msgstr "Hiba történt a nézetmező-csoportnál."
 
+#. js-lingui-id: syBxwN
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter cannot stay in a view filter group that is being removed"
+msgstr "Egy nézetszűrő nem maradhat eltávolítás alatt álló nézetszűrőcsoportban"
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
 msgstr "Hiba történt a nézetszűrőnél."
+
+#. js-lingui-id: yPKHXO
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter group cannot stay under a parent group that is being removed"
+msgstr "Egy nézetszűrőcsoport nem maradhat eltávolítás alatt álló szülőcsoport alatt"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -618,12 +661,6 @@ msgstr "Nem található widgetfejléc-művelet."
 msgctxt "objectMetadata.description"
 msgid "A workflow run"
 msgstr "Egy munkafolyamat futása"
-
-#. js-lingui-id: W6HvkH
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow version"
-msgstr "Egy munkafolyamat verziója"
 
 #. js-lingui-id: sDZaHF
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -699,11 +736,10 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Fióktulajdonos cégek esetén"
 
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "Fiókok"
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "Az adminisztrációs panelhez vagy megszemélyesítéshez hozzáféréssel rendelkező fiókok SSO-n keresztül nem csatlakozhatnak munkaterülethez. Fogadja el a meghívást más bejelentkezési móddal."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -726,12 +762,6 @@ msgstr "Aktiválás"
 msgctxt "commandMenuItem.label"
 msgid "Activate Workflow"
 msgstr "Munkafolyamat aktiválása"
-
-#. js-lingui-id: AnKsxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Active"
-msgstr "Aktív"
 
 #. js-lingui-id: DWczfI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -1221,7 +1251,7 @@ msgstr "Egy külső szolgáltatás túl sokáig válaszolt."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Egy extra oszlop nem jelenítheti meg a rekord nevét"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1314,6 +1344,11 @@ msgstr "Váratlan hiba történt."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "Ismeretlen naptárhiba történt."
+
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "Ehhez az e-mail-címhez már létezik egy nem ellenőrzött fiók. Az SSO-n keresztüli meghívás elfogadása előtt erősítse meg az e-mail-címét, vagy állítsa vissza a jelszavát."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1536,6 +1571,14 @@ msgstr "Az alkalmazásváltozó hatóköre a létrehozás után nem módosíthat
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Az alkalmazások nem frissíthetik ezeket a mezőket: {fieldsList}."
 
+#. js-lingui-id: irwO8L
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+msgid "Apply or publish the application again to restore its frontend component sources."
+msgstr ""
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1573,6 +1616,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "Alkalmazások"
 
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "Alkalmazásbeállítások"
+
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
@@ -1583,12 +1632,6 @@ msgstr "Április"
 msgctxt "fieldMetadata.label"
 msgid "Archive"
 msgstr "Archiválás"
-
-#. js-lingui-id: 5rUZb3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Archived"
-msgstr "Archivált"
 
 #. js-lingui-id: okfXhQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -2420,12 +2463,6 @@ msgstr "A naptárnézetnek rendelkeznie kell egy naptári mezővel"
 msgid "Calendar view must have a calendar layout"
 msgstr "A naptárnézetnek rendelkeznie kell egy naptárelrendezéssel"
 
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "Naptárak"
-
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -2735,7 +2772,7 @@ msgstr "Az utolsó admin nem távolítható el a munkaterületről."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Nem távolítható el az utolsó szerveradminisztrátor. Először adjon szerveradminisztrátori hozzáférést egy másik felhasználónak az Adminisztrációs panelen."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -3393,6 +3430,7 @@ msgstr "A \"{connectedAccountId}\" csatlakoztatott fiókhoz nincs engedélyezett
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "Csatlakoztatott fiók nem található."
 
@@ -3614,8 +3652,8 @@ msgid "Core workflow id"
 msgstr "Alap munkafolyamat azonosítója"
 
 #. js-lingui-id: WkctC4
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
 msgstr "Alap munkafolyamat-verzió azonosítója"
@@ -3856,7 +3894,6 @@ msgstr "Létrehozta"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created by"
@@ -3902,7 +3939,6 @@ msgstr "Privát objektum rekordjának létrehozásához szükség van a shareWit
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Creation date"
@@ -3938,7 +3974,6 @@ msgstr "Létrehozás dátuma"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Creation date"
@@ -4026,7 +4061,6 @@ msgstr "Az egyéni objektumból hiányzik a címkeazonosító mező."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/permissions/permissions.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Az egyéni szerepkörök az Organization csomag részét képezik."
 
@@ -4160,7 +4194,6 @@ msgstr "Dátumformátum"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Date when the record was deleted"
@@ -4183,12 +4216,6 @@ msgstr "Deaktiválás"
 msgctxt "commandMenuItem.label"
 msgid "Deactivate Workflow"
 msgstr "Munkafolyamat deaktiválása"
-
-#. js-lingui-id: GuGzWG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Deactivated"
-msgstr "Deaktiválva"
 
 #. js-lingui-id: 3jX0AP
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -4361,8 +4388,8 @@ msgid "Default Task Layout"
 msgstr "Alapértelmezett feladat elrendezés"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Az alapértelmezett érték \"{defaultValue}\" egyik opciónak kell lennie"
 
@@ -4482,7 +4509,6 @@ msgstr "Törlés időpontja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted at"
@@ -4686,7 +4712,6 @@ msgstr "Pontok és vessző"
 
 #. js-lingui-id: Hw0zHo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Draft"
 msgstr "Piszkozat"
@@ -4971,12 +4996,6 @@ msgstr "Az e-mail ellenőrzése nem szükséges."
 msgid "Email verification not required."
 msgstr "E-mail ellenőrzés nem szükséges."
 
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "E-mailek"
-
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5104,6 +5123,11 @@ msgstr "Adatbővítés"
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Adjon meg 1 és {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter közötti nevet és támogatott asszisztensmegjelenési beállításokat."
+
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "Adja meg az API-kulcsot."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5247,7 +5271,6 @@ msgstr "Esemény résztvevői"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Esemény célpontja"
@@ -5376,7 +5399,7 @@ msgstr "Külső felvételazonosító"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Az extra oszlopok itt nem támogatottak"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5516,7 +5539,7 @@ msgstr "Február"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "A(z) „{fieldName}” mező nem hasonlítható össze a(z) „{workspaceMemberFieldName}” munkaterületi tagmezővel, mert a típusaik nem kompatibilisek"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5794,7 +5817,6 @@ msgstr "Teljes szöveges keresésre felhasznált mező"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Field used for full-text search"
@@ -6034,7 +6056,6 @@ msgstr "Folyamat"
 
 #. js-lingui-id: wMVBTa
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
@@ -6291,7 +6312,6 @@ msgstr "Általános"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
@@ -6320,12 +6340,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Ugrás a(z) {objectLabelPlural} oldalára"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "Ugrás a Fiókok beállításaihoz"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6338,6 +6352,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "Ugrás az MI beállításaihoz"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "Ugrás az alkalmazásbeállításokhoz"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6349,12 +6369,6 @@ msgstr "Ugrás az Alkalmazások beállításaihoz"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "Ugrás a Számlázás beállításaihoz"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "Ugrás a Naptárak beállításaihoz"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6379,12 +6393,6 @@ msgstr "Ugrás a fejlesztői beállításokhoz"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "Ugrás a Domainek beállításaihoz"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "Ugrás az E-mailek beállításaihoz"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6583,7 +6591,6 @@ msgstr "iCal azonosító"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "ID"
@@ -6627,7 +6634,6 @@ msgstr "Azonosító"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "ID"
@@ -7898,18 +7904,6 @@ msgctxt "fieldMetadata.label"
 msgid "Joining"
 msgstr "Csatlakozás folyamatban"
 
-#. js-lingui-id: SPutbd
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide steps"
-msgstr "JSON objektum a lépések megadásához"
-
-#. js-lingui-id: aXjVR4
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide trigger"
-msgstr "JSON objektum a trigger megadásához"
-
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
@@ -8147,7 +8141,6 @@ msgstr "A hivatkozás utolsó módosításának időpontja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last time the record was changed"
@@ -8182,7 +8175,6 @@ msgstr "Utolsó módosítás időpontja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last update"
@@ -9243,7 +9235,6 @@ msgstr "Első irányítópultom"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Name"
@@ -9555,7 +9546,7 @@ msgstr "Ehhez a feladói címhez nem tartozik ellenőrzött küldői domain."
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "A nem kanonikus nézetmezők nem támogatottak a widgetnézetekben"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10028,6 +10019,11 @@ msgstr "Egy vagy több átirányítási URI érvénytelen."
 msgid "One or more requested scopes are invalid."
 msgstr "Egy vagy több kért hatókör érvénytelen."
 
+#. js-lingui-id: A69o8a
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record can show a field of that record"
+msgstr "Csak egy rekordhoz kapcsolódó oszlop jelenítheti meg annak a rekordnak egy mezőjét"
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
@@ -10051,7 +10047,12 @@ msgstr "Csak egy kiszolgáló-rendszergazda kezelheti ennek a tagnak a helyreál
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Csak egy munkaterület-tag módosíthatja, hogy ki láthat egy munkafolyamatot"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr "Csak hozzáadott oszlopok jeleníthetik meg a kapcsolódó rekord egy mezőjét"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10082,6 +10083,11 @@ msgstr "Egyetlen hiba"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Csak mezőkorlátozások engedélyezettek."
+
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr "Csak nem kanonikus nézetmezők jeleníthetnek meg a kapcsolódó rekord egy mezőjét"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -10262,6 +10268,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Lehetőség szakasza"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "A „{optionLabel}” lehetőség a mező része, ezért nem távolítható el. Ehelyett kapcsolja ki."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10278,12 +10290,6 @@ msgstr "Opció azonosító érvénytelen"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Opció azonosító szükséges"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "Az opcióazonosítónak kisbetűs, 4-es vagy újabb verziójú UUID-nek kell lennie"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -10572,6 +10578,11 @@ msgstr "A szülő sorszintű jogosultsági predikátumcsoport nem található"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "A szülő nézet szűrő csoport nem található"
+
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "parentId és folderId értékének egyeznie kell. folderId elavult, használd helyette a parentId-t."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -10992,7 +11003,6 @@ msgstr "Kapcsolattartó"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Position"
@@ -11317,6 +11327,11 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Olvasás és írás"
 
+#. js-lingui-id: qYjUEb
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Read File"
+msgstr "Fájl beolvasása"
+
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11491,8 +11506,8 @@ msgid "Reference to the core workflow row"
 msgstr "Hivatkozás az alap munkafolyamat sorára"
 
 #. js-lingui-id: avBuTv
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
 msgstr "Hivatkozás az alap munkafolyamat-verzió sorára"
@@ -11914,6 +11929,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Szerepkör"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr ""
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11954,6 +11974,11 @@ msgstr "A(z) „{roleLabel}” szerep nem rendelhető webhookokhoz"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "A \"{roleLabel}\" szerepkör nem rendelhető hozzá: az egyéni szerepkörökhöz az Organization csomag szükséges"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr ""
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -12226,6 +12251,11 @@ msgstr "A módosítandó sorszintű jogosultsági szabály nem található"
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Ezzel az univerzális azonosítóval rendelkező sorszintű jogosultsági szabály már létezik"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "A mezőket elrejtő vagy zároló rekordszintű jogosultságokhoz legalább egy predikátumcsoport szükséges."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12242,12 +12272,6 @@ msgstr "A kapcsolaton keresztüli szabályok nincsenek engedélyezve ehhez a mun
 msgctxt "fieldMetadata.label"
 msgid "Running"
 msgstr "Fut"
-
-#. js-lingui-id: 6ZqFBn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Runs"
-msgstr "Futtatások"
 
 #. js-lingui-id: smyL3I
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-run-views.util.ts
@@ -12413,7 +12437,6 @@ msgstr "Kereső vektor"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Search vector"
@@ -12459,13 +12482,11 @@ msgstr "Törölt {objectLabelPlural} megtekintése"
 
 #. js-lingui-id: VGVS7x
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Runs"
 msgstr "Futtatások megtekintése"
 
 #. js-lingui-id: iWhqvt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
@@ -12473,13 +12494,11 @@ msgstr "Futtatások megtekintése"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Versions"
 msgstr "Verziók megtekintése"
 
 #. js-lingui-id: VsCNJG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Versions History"
@@ -12487,13 +12506,11 @@ msgstr "Verziótörténet megtekintése"
 
 #. js-lingui-id: gIacCF
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Workflow"
 msgstr "Munkafolyamat megtekintése"
 
 #. js-lingui-id: kRmDjY
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
@@ -13390,7 +13407,6 @@ msgstr "Rendszer"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
@@ -13769,6 +13785,12 @@ msgstr "Nem található az ügynök, amelyet ennek a lépésnek kell futtatnia."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Az ügynök, amit keres, nem található. Lehet, hogy törölték, vagy Ön nem férhet hozzá."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "A „{optionLabel}” lehetőség API-értéke a mező része, ezért nem módosítható."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13937,7 +13959,6 @@ msgstr "A hivatkozás létrehozója"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The creator of the record"
@@ -13948,6 +13969,12 @@ msgstr "A rekord létrehozója"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "Az üzenet fogadásának dátuma"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "Az alapértelmezett lehetőség nem deaktiválható"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14027,6 +14054,11 @@ msgstr "A(z) \"{field}\" mező nem frissíthető. Kérjük, lépjen kapcsolatba 
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The field configured for this widget could not be found."
 msgstr "A widgethez beállított mező nem található."
+
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr "A mezőnek a kapcsolódó objektumhoz kell tartoznia"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14297,6 +14329,26 @@ msgstr "A szolgáltató átmenetileg nem érhető el. Kérjük, próbálja meg k
 msgid "The received email content is no longer available."
 msgstr "A fogadott e-mail tartalma már nem érhető el."
 
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr "A kapcsolódó rekord mezője nem lehet kapcsolat"
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr "A kapcsolódó rekord mezőjének aktívnak kell lennie"
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr "A kapcsolódó rekord mezőjének a kapcsolat célobjektumához kell tartoznia"
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr "Az alkalmazás tulajdonában lévő oszlop kapcsolódó rekordmezője nem módosítható"
+
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
@@ -14478,18 +14530,6 @@ msgstr "A munkafolyamat kiválasztási mezőjének létező mezőre kell hivatko
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
 msgstr "A munkafolyamat a {handle} csatlakoztatott fiókot használja, amely nincs csatlakoztatva és megosztva ebben a munkaterületen."
 
-#. js-lingui-id: 3uACdY
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version name"
-msgstr "A munkafolyamat verziójának neve"
-
-#. js-lingui-id: KJxGJb
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version status"
-msgstr "A munkafolyamat verziójának státusza"
-
 #. js-lingui-id: VyvnL/
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The Workspace app dependencies changed during the build. Try creating the component again."
@@ -14523,7 +14563,6 @@ msgstr "A Workspace alkalmazás függőségei megváltoztak a létrehozás sorá
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The workspace member who last updated the record"
@@ -14758,6 +14797,11 @@ msgstr "Ez a csevegés nincs csatornában."
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "Ez a kód egy közzétett munkafolyamat-verzióhoz tartozik. Szerkessze egy piszkozatból."
 
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr "Ez az oszlop egy alkalmazásból származik, ezért az általa megjelenített kapcsolódó rekordmező nem módosítható"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -14866,7 +14910,7 @@ msgstr "Ez a funkció nincs engedélyezve."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Ez a mező nem hasonlítható össze ezzel a munkaterületi tagmezővel"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -15591,12 +15635,6 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the task."
 msgstr "A feladathoz kapcsolódó idővonal-tevékenységek."
 
-#. js-lingui-id: klDmCR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Timeline activities linked to the version"
-msgstr "A verzióhoz kapcsolódó idővonal-tevékenységek"
-
 #. js-lingui-id: ApXfXx
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -16312,7 +16350,6 @@ msgstr "Frissítés időpontja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated by"
@@ -16353,18 +16390,6 @@ msgstr "A felhasználási adatokat nem sikerült beolvasni. Kérjük, próbálja
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
 msgstr "Az erre az időszakra vonatkozó használati kvóta kimerült."
-
-#. js-lingui-id: xwq0b4
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Use as Draft"
-msgstr "Vázlatként használása"
-
-#. js-lingui-id: 4Pp2U8
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Use as Draft"
-msgstr "Vázlatként használása"
 
 #. js-lingui-id: on4haJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -16675,30 +16700,6 @@ msgstr "Az engedély által olvasott tagmezők értékei, amelyek a csoport mind
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Verify your two-factor authentication before impersonating users in another workspace."
 msgstr "Ellenőrizze a kétfaktoros hitelesítést, mielőtt más munkaterületen lévő felhasználókat személyesít meg."
-
-#. js-lingui-id: q1On37
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version status"
-msgstr "Verzió státusza"
-
-#. js-lingui-id: txhQne
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version steps"
-msgstr "Verzió lépései"
-
-#. js-lingui-id: FhKIiF
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version trigger"
-msgstr "Verzió kiváltója"
-
-#. js-lingui-id: tH32bu
-#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util.ts
-msgctxt "view.name"
-msgid "Versions"
-msgstr "Verziók"
 
 #. js-lingui-id: j8p0F8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -17127,6 +17128,11 @@ msgstr "Nem sikerült elküldeni az üzenetét. Kérjük, próbálja meg újra."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Nem sikerült elindítani a kapcsolatot. Kérjük, próbálja meg újra."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "Nem sikerült ellenőriznünk ezt a kulcsot. Ellenőrizze, vagy próbálja meg később, ha a szolgáltatás nem működik."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17569,29 +17575,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Workflow Runs"
 msgstr "Munkafolyamat-futtatások"
 
-#. js-lingui-id: KO7j/3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow runs linked to the version."
-msgstr "A verzióhoz kapcsolódó munkafolyamat-futtatások."
-
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Workflow step not found."
 msgstr "Munkafolyamat-lépés nem található."
-
-#. js-lingui-id: sjVenv
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow version"
-msgstr "Munkafolyamat verziója"
-
-#. js-lingui-id: 0w608/
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Workflow Version"
-msgstr "Munkafolyamat verziója"
 
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -17635,12 +17623,6 @@ msgstr "A munkafolyamat verzió nem vázlatos állapotban van"
 msgid "Workflow version is required for workflow trigger items"
 msgstr "A munkafolyamat-verzió megadása kötelező a munkafolyamatot indító elemeknél."
 
-#. js-lingui-id: uVOjgA
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version linked to the run."
-msgstr "A futtatáshoz kapcsolódó munkafolyamat-verzió."
-
 #. js-lingui-id: LrPIBF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for front component renderer items"
@@ -17669,22 +17651,10 @@ msgstr "A munkafolyamat-verzió nem található"
 msgid "Workflow version not found."
 msgstr "A munkafolyamat-verzió nem található."
 
-#. js-lingui-id: XoKTtx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version position"
-msgstr "Munkafolyamat-verzió pozíciója"
-
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
 msgstr "A másolandó munkafolyamat-verzió nem található"
-
-#. js-lingui-id: lrTHGl
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflow Versions"
-msgstr "Munkafolyamat verziói"
 
 #. js-lingui-id: oxqc8m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -17697,12 +17667,6 @@ msgstr "WorkflowRun"
 msgctxt "navigationMenuItem.name"
 msgid "Workflows"
 msgstr "Munkafolyamatok"
-
-#. js-lingui-id: W5Wgz6
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "WorkflowVersion"
-msgstr "WorkflowVersion"
 
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -18371,7 +18335,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "A szerepköröd nem törölhet néhányat ezek közül a rekordok közül, ezért nem egyesíthetők."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "A szerepköre ebben a munkaterületen nem található. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával."

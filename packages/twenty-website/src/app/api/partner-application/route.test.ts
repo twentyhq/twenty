@@ -18,6 +18,7 @@ const VALID_PAYLOAD = {
   twentyExperience: ['WORKFLOWS'],
   twentyExperienceNotes: VALID_EXPERIENCE_NOTES,
   twentyExperienceProofLink: 'https://www.loom.com/share/example',
+  acceptsTerms: true,
 };
 
 const VALID_BODY = JSON.stringify(VALID_PAYLOAD);

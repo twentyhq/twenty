@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Two-factor authentication sign-in with an unverified email should fail when an authenticator is provisioned from the sign-up login token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Two-factor authentication sign-in with an unverified email should fail when the sign-up login token is exchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Two-factor authentication sign-in with an unverified email should fail when the sign-up login token is exchanged with a backup code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Two-factor authentication sign-in with an unverified email should fail when the sign-up login token is exchanged with the OTP of a pending authenticator 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Two-factor authentication sign-in with an unverified email should fail when the sign-up login token is exchanged with the OTP of an enrolled authenticator 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;

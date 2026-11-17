@@ -103,7 +103,7 @@ const resolve = ({
       workspaceId: 'workspace-id',
       mainPrincipal: {
         type: 'workspaceMember',
-        roleId: MEMBER_ROLE_ID,
+        roleIds: [MEMBER_ROLE_ID],
         workspaceMemberId: 'member-id',
       },
       limitingPrincipal: {
@@ -119,6 +119,7 @@ const resolve = ({
         flatEntityMaps: createEmptyFlatEntityMaps(),
       }),
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: {},
       rolesPermissions: {
         [MEMBER_ROLE_ID]: {

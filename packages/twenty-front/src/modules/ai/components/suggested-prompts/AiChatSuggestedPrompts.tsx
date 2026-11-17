@@ -9,6 +9,7 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
 
@@ -66,6 +67,7 @@ export const AiChatSuggestedPrompts = ({
   const { t } = useLingui();
   const { t: resolveMessage } = useLingui();
   const { stageAiChatPreprompt } = useStageAiChatPreprompt();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
 
   const suggestedPrompts = getAiChatSuggestedPrompts(
@@ -74,6 +76,7 @@ export const AiChatSuggestedPrompts = ({
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {
     stageAiChatPreprompt({
+      threadId,
       serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
         resolveMessage(pickRandom(suggestedPrompt.prompts)),
       ),

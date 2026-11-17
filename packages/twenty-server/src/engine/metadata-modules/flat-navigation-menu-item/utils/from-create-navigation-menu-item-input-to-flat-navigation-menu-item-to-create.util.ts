@@ -42,12 +42,12 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     if (!isDefined(position)) {
       const userWorkspaceIdKey =
         createNavigationMenuItemInput.userWorkspaceId ?? 'null';
-      const folderIdKey = createNavigationMenuItemInput.folderId ?? 'null';
+      const parentIdKey = createNavigationMenuItemInput.parentId ?? 'null';
 
       const existingItems =
-        flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+        flatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId[
           userWorkspaceIdKey
-        ]?.[folderIdKey] ?? [];
+        ]?.[parentIdKey] ?? [];
 
       const maxPosition = existingItems.reduce(
         (max, item) => Math.max(max, item.position),
@@ -60,7 +60,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     const {
       targetObjectMetadataUniversalIdentifier,
       viewUniversalIdentifier,
-      folderUniversalIdentifier,
+      parentUniversalIdentifier,
       pageLayoutUniversalIdentifier,
       agentChatChannelUniversalIdentifier,
       workflowUniversalIdentifier,
@@ -71,7 +71,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         targetObjectMetadataId:
           createNavigationMenuItemInput.targetObjectMetadataId,
         viewId: createNavigationMenuItemInput.viewId,
-        folderId: createNavigationMenuItemInput.folderId,
+        parentId: createNavigationMenuItemInput.parentId,
         pageLayoutId: createNavigationMenuItemInput.pageLayoutId,
         agentChatChannelId: createNavigationMenuItemInput.agentChatChannelId,
         workflowId: createNavigationMenuItemInput.workflowId,
@@ -99,8 +99,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       targetObjectMetadataUniversalIdentifier,
       viewId: createNavigationMenuItemInput.viewId ?? null,
       viewUniversalIdentifier,
-      folderId: createNavigationMenuItemInput.folderId ?? null,
-      folderUniversalIdentifier,
+      parentId: createNavigationMenuItemInput.parentId ?? null,
+      parentUniversalIdentifier,
       pageLayoutId: createNavigationMenuItemInput.pageLayoutId ?? null,
       pageLayoutUniversalIdentifier,
       agentChatChannelId:

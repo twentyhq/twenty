@@ -30,7 +30,6 @@ const FOLDERS = [
     itemNames: [
       'workflowsFolderAllWorkflows',
       'workflowsFolderAllWorkflowRuns',
-      'workflowsFolderAllWorkflowVersions',
     ],
   },
   {
@@ -54,7 +53,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 }): FlatNavigationMenuItemMaps => {
   const flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps = {
     ...createEmptyFlatEntityMaps(),
-    byUserWorkspaceIdAndFolderId: {},
+    byUserWorkspaceIdAndParentId: {},
   };
 
   for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
