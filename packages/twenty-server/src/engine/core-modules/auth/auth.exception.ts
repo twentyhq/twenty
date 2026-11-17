@@ -18,6 +18,7 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   INVALID_INPUT: 'INVALID_INPUT',
   FORBIDDEN_EXCEPTION: 'FORBIDDEN_EXCEPTION',
+  IDENTITY_ASSERTION_REQUIRED: 'IDENTITY_ASSERTION_REQUIRED',
   INSUFFICIENT_SCOPES: 'INSUFFICIENT_SCOPES',
   UNAUTHENTICATED: 'UNAUTHENTICATED',
   SESSION_SUPERSEDED: 'SESSION_SUPERSEDED',
@@ -59,6 +60,7 @@ const getAuthExceptionUserFriendlyMessage = (
     case AuthExceptionCode.INVALID_INPUT:
       return msg`Invalid input provided.`;
     case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+    case AuthExceptionCode.IDENTITY_ASSERTION_REQUIRED:
       return msg`You do not have permission to perform this action.`;
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
       return msg`Insufficient permissions.`;
@@ -107,6 +109,7 @@ const getAuthExceptionStatusCode = (
     case AuthExceptionCode.INVALID_INPUT:
       return 400;
     case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+    case AuthExceptionCode.IDENTITY_ASSERTION_REQUIRED:
     case AuthExceptionCode.WORKSPACE_SUSPENDED:
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
     case AuthExceptionCode.OAUTH_ACCESS_DENIED:

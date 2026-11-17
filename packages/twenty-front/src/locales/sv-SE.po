@@ -8326,11 +8326,6 @@ msgstr "Skapa en uppgift för den här posten: "
 msgid "Create a workflow"
 msgstr "Skapa ett arbetsflöde"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Skapa ett arbetsflöde och återvänd hit för att se dess versioner"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20755,11 +20750,6 @@ msgstr "Ingen version rapporterades under den här perioden"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Inga arbetsflödeskörningar än"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Inga arbetsflödesversioner än"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
