@@ -44,7 +44,7 @@ const isDue = (
     thread: channelThread,
     participant: unreadFollowedParticipant,
     currentWorkspaceMemberId: ME,
-    inboxNotificationLevel: INBOX_NOTIFICATION_LEVEL.ALL,
+    inboxNotificationLevel: INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
     ...overrides,
   });
 

@@ -59,6 +59,7 @@ export const isInboxNotificationDue = ({
   }
 
   return (
-    inboxNotificationLevel === INBOX_NOTIFICATION_LEVEL.ALL && scope === 'INBOX'
+    inboxNotificationLevel === INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED &&
+    scope === 'INBOX'
   );
 };

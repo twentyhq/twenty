@@ -9,7 +9,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const inboxNotificationLevelOptions = [
   {
-    value: INBOX_NOTIFICATION_LEVEL.ALL,
+    value: INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
     title: msg`All chats you follow`,
     description: msg`Every new message in a chat you take part in or follow`,
     cardMedia: <SettingsOptionIconCustomizer Icon={IconBell} />,

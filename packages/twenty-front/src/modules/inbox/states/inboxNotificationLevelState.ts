@@ -5,7 +5,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export const inboxNotificationLevelState =
   createAtomState<InboxNotificationLevel>({
     key: 'inboxNotificationLevelState',
-    defaultValue: INBOX_NOTIFICATION_LEVEL.ALL,
+    defaultValue: INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
     validateInitFn: (level) =>
