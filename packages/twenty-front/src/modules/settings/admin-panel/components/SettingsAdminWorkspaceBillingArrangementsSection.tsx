@@ -16,9 +16,11 @@ import { SettingsAdminWorkspaceBillingArrangementRowDropdownMenu } from '@/setti
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_STATUS_TAGS } from '@/settings/admin-panel/constants/BillingArrangementStatusTags';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
+import { END_BILLING_ARRANGEMENT_DIALOG_ID } from '@/settings/admin-panel/constants/EndBillingArrangementDialogId';
 import { END_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/endWorkspaceBillingArrangement';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/queries/workspaceBillingArrangements';
+import { adminPanelBillingArrangementIdPendingEndState } from '@/settings/admin-panel/states/adminPanelBillingArrangementIdPendingEndState';
 import { type AdminBillingArrangement } from '@/settings/admin-panel/types/AdminBillingArrangement';
 import { formatAdminBillingArrangementDetails } from '@/settings/admin-panel/utils/formatAdminBillingArrangementDetails';
 import { formatAdminBillingArrangementEndDate } from '@/settings/admin-panel/utils/formatAdminBillingArrangementEndDate';
@@ -28,6 +30,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
   BillingArrangementStatus,
   BillingArrangementType,
@@ -42,7 +45,6 @@ type SettingsAdminWorkspaceBillingArrangementsSectionProps = {
 const BILLING_ARRANGEMENTS_GRID_AUTO_COLUMNS = '1fr 1fr 1fr 1fr 1fr 1fr 36px';
 const ADD_BILLING_ARRANGEMENT_MODAL_ID =
   'settings-admin-add-workspace-billing-arrangement';
-const END_BILLING_ARRANGEMENT_MODAL_ID = 'end-billing-arrangement-modal';
 const BILLING_ARRANGEMENT_DETAILS_MODAL_ID =
   'settings-admin-workspace-billing-arrangement-details';
 
@@ -61,8 +63,10 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
   const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
-  const [arrangementPendingEnd, setArrangementPendingEnd] =
-    useState<AdminBillingArrangement | null>(null);
+  const [
+    adminPanelBillingArrangementIdPendingEnd,
+    setAdminPanelBillingArrangementIdPendingEnd,
+  ] = useAtomState(adminPanelBillingArrangementIdPendingEndState);
   const [isEnding, setIsEnding] = useState(false);
   const [selectedArrangementId, setSelectedArrangementId] = useState<
     string | null
@@ -94,13 +98,13 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
     (arrangement) => arrangement.id === selectedArrangementId,
   );
 
+  const arrangementPendingEnd = billingArrangements.find(
+    (arrangement) =>
+      arrangement.id === adminPanelBillingArrangementIdPendingEnd,
+  );
+
   const isEndable = (arrangement: AdminBillingArrangement) =>
     arrangement.isManageable && ENDABLE_STATUSES.includes(arrangement.status);
-
-  const handleEndClick = (arrangement: AdminBillingArrangement) => {
-    setArrangementPendingEnd(arrangement);
-    openDialog(END_BILLING_ARRANGEMENT_MODAL_ID);
-  };
 
   const handleRowClick = (arrangement: AdminBillingArrangement) => {
     setSelectedArrangementId(arrangement.id);
@@ -127,7 +131,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
       enqueueToast(getToastOptionsFromError({ error: endError }));
     } finally {
       setIsEnding(false);
-      setArrangementPendingEnd(null);
+      setAdminPanelBillingArrangementIdPendingEnd(null);
     }
   };
 
@@ -197,12 +201,9 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
             align: 'right',
             Cell: ({ item }) =>
               isEndable(item) ? (
-                <div onClick={(event) => event.stopPropagation()}>
-                  <SettingsAdminWorkspaceBillingArrangementRowDropdownMenu
-                    billingArrangementId={item.id}
-                    onEnd={() => handleEndClick(item)}
-                  />
-                </div>
+                <SettingsAdminWorkspaceBillingArrangementRowDropdownMenu
+                  billingArrangementId={item.id}
+                />
               ) : null,
           },
         ]}
@@ -228,7 +229,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
       )}
 
       <ConfirmationDialog
-        dialogId={END_BILLING_ARRANGEMENT_MODAL_ID}
+        dialogId={END_BILLING_ARRANGEMENT_DIALOG_ID}
         title={t`End arrangement`}
         subtitle={t`The ${pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead.`}
         confirmButtonText={t`End`}
@@ -238,7 +239,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
             handleEnd(arrangementPendingEnd);
           }
         }}
-        onClose={() => setArrangementPendingEnd(null)}
+        onClose={() => setAdminPanelBillingArrangementIdPendingEnd(null)}
       />
     </Section.Root>
   );
