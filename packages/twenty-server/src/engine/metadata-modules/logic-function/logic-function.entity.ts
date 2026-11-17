@@ -17,7 +17,6 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
-import { ADD_JOB_GROUPS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-job-groups-upgrade-command-name.constant';
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -105,15 +104,9 @@ export class LogicFunctionEntity
     upgradeCommandName:
       ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
   })
-  // Unused since 2.60. Kept because servers started before the 2.60 command still select it; drop it in a later release.
+  // Unused since 2.60. Servers still on 2.59 select it during an upgrade, so the drop waits for 2.61.
   @Column({ nullable: true, type: 'jsonb' })
   jobConfig: WasRemovedInUpgrade<JsonbProperty<MessageQueueJobConfig> | null>;
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_JOB_GROUPS_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ type: 'text', array: true, nullable: false, default: '{}' })
-  jobGroupKeys: string[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

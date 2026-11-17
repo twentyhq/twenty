@@ -63,7 +63,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       workflowActionTriggerSettings:
         createLogicFunctionFromSourceInput.workflowActionTriggerSettings ??
         null,
-      jobGroupKeys: [],
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

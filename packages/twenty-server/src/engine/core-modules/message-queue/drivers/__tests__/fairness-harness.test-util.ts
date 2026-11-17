@@ -8,11 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import {
-  type QueueJobLimiter,
   type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 
 export type ScenarioJobData = { label: string; workspaceId?: string };
 
@@ -321,7 +322,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'limiters'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'groupKey'
   >;
 
 const buildScenarioJobScope = ({
@@ -341,8 +342,15 @@ const buildScenarioJobScope = ({
 
 export const createFairnessHarness = async ({
   isGroupLimiterEnabled = false,
-}: { isGroupLimiterEnabled?: boolean } = {}) => {
+  groupRateLimit,
+}: {
+  isGroupLimiterEnabled?: boolean;
+  groupRateLimit?: MessageQueueLimiter;
+} = {}) => {
   const redis: Redis = new RedisMock();
+
+  MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions.groupRateLimit =
+    groupRateLimit;
 
   await redis.flushall();
   mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
@@ -457,7 +465,7 @@ export const createFairnessHarness = async ({
       labels,
       workspaceId,
       applicationUniversalIdentifier,
-      limiters,
+      groupKey,
       delay,
       jobIds,
     }: {
@@ -465,7 +473,7 @@ export const createFairnessHarness = async ({
       jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
-      limiters?: QueueJobLimiter[];
+      groupKey?: string;
       delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
@@ -474,7 +482,7 @@ export const createFairnessHarness = async ({
         labels.map((label, index) => ({
           data: { label, workspaceId },
           jobId: jobIds?.[index],
-          limiters,
+          groupKey,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,
@@ -539,6 +547,22 @@ export const createFairnessHarness = async ({
       weight: number;
     }) => {
       await redis.hset(`${QUEUE_KEY_PREFIX}fair:weights`, groupKey, weight);
+    },
+    reservePaceSlot: async ({
+      slotKey,
+      delayMs,
+    }: {
+      slotKey: string;
+      delayMs: number;
+    }) => {
+      const [seconds, microseconds] = await redis.time();
+
+      await redis.set(
+        `${QUEUE_KEY_PREFIX}fair:slot:${slotKey}`,
+        Number(seconds) * 1_000 +
+          Math.floor(Number(microseconds) / 1_000) +
+          delayMs,
+      );
     },
     setVirtualTime: async ({ value }: { value: number }) => {
       await redis.set(VIRTUAL_TIME_KEY, value);

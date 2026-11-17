@@ -5,7 +5,7 @@ import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workfl
 const WORKSPACE_ID = 'workspace-id';
 
 const buildFlatWorkflowMaps = (
-  workflows: { id: string; applicationId: string; jobGroupKeys: string[] }[],
+  workflows: { id: string; applicationId: string }[],
 ) => ({
   byUniversalIdentifier: Object.fromEntries(
     workflows.map((workflow) => [`${workflow.id}-universal-id`, workflow]),
@@ -22,8 +22,8 @@ const buildService = (
   const workspaceCacheService = {
     getOrRecompute: jest.fn().mockResolvedValue({
       flatWorkflowMaps: buildFlatWorkflowMaps([
-        { id: 'workflow-a', applicationId: 'application-a', jobGroupKeys: [] },
-        { id: 'workflow-b', applicationId: 'application-b', jobGroupKeys: [] },
+        { id: 'workflow-a', applicationId: 'application-a' },
+        { id: 'workflow-b', applicationId: 'application-b' },
       ]),
       flatApplicationMaps: {
         byId: {
@@ -97,7 +97,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-a-universal-id',
-        limiters: [],
+        groupKey: 'workflow',
       },
     );
     expect(messageQueueService.add).toHaveBeenCalledWith(
@@ -108,7 +108,7 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-b-universal-id',
-        limiters: [],
+        groupKey: 'workflow',
       },
     );
   });
@@ -132,12 +132,14 @@ describe('WorkflowRunEnqueueWorkspaceService', () => {
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
+        groupKey: 'workflow',
       },
       {
         id: 'run-of-deleted-workflow',
         doNotCheckDuplicatesBasedOnPrefix: true,
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
+        groupKey: 'workflow',
       },
     ]);
   });
