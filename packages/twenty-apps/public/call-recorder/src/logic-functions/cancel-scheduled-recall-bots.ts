@@ -67,9 +67,11 @@ const parseScheduledRecallBotCancellations = (
     const callRecordingId = getString(record?.callRecordingId);
     const externalBotId = getString(record?.externalBotId);
 
-    return isUndefined(callRecordingId) || isUndefined(externalBotId)
-      ? []
-      : [{ callRecordingId, externalBotId }];
+    if (isUndefined(callRecordingId) || isUndefined(externalBotId)) {
+      return [];
+    }
+
+    return [{ callRecordingId, externalBotId }];
   });
 
 export default defineLogicFunction({

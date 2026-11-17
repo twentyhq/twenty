@@ -56,19 +56,21 @@ export const findCanceledCallRecordingsWithBot = async (
       canceledCallRecordingNode.externalBotId,
     );
 
-    return isUndefined(externalBotId)
-      ? []
-      : [
-          {
-            callRecordingId: canceledCallRecordingNode.id,
-            externalBotId,
-            meetingStartsAt: normalizeOptionalString(
-              canceledCallRecordingNode.calendarEvent?.startsAt,
-            ),
-            meetingEndsAt: normalizeOptionalString(
-              canceledCallRecordingNode.calendarEvent?.endsAt,
-            ),
-          },
-        ];
+    if (isUndefined(externalBotId)) {
+      return [];
+    }
+
+    return [
+      {
+        callRecordingId: canceledCallRecordingNode.id,
+        externalBotId,
+        meetingStartsAt: normalizeOptionalString(
+          canceledCallRecordingNode.calendarEvent?.startsAt,
+        ),
+        meetingEndsAt: normalizeOptionalString(
+          canceledCallRecordingNode.calendarEvent?.endsAt,
+        ),
+      },
+    ];
   });
 };
