@@ -3,6 +3,7 @@ import { defineApplication } from 'twenty-sdk/define';
 import {
   GOOGLE_CLIENT_ID_SERVER_VARIABLE_NAME,
   GOOGLE_CLIENT_SECRET_SERVER_VARIABLE_NAME,
+  GOOGLE_MEET_PUBSUB_TOPIC_SERVER_VARIABLE_NAME,
 } from 'src/constants/google-meet.constant';
 import {
   APP_DESCRIPTION,
@@ -30,6 +31,12 @@ export default defineApplication({
     [GOOGLE_CLIENT_SECRET_SERVER_VARIABLE_NAME]: {
       description: 'OAuth client secret from the Google Cloud project.',
       isSecret: true,
+      isRequired: true,
+    },
+    [GOOGLE_MEET_PUBSUB_TOPIC_SERVER_VARIABLE_NAME]: {
+      description:
+        'Pub/Sub topic Google publishes Meet events to, such as projects/my-project/topics/twenty-google-meet.',
+      isSecret: false,
       isRequired: true,
     },
   },
