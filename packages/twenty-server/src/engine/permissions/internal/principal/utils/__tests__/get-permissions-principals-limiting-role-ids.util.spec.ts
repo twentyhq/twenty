@@ -1,16 +1,9 @@
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 
-const mainPrincipal = {
-  type: 'workspaceMember' as const,
-  roleIds: ['user-role', 'extra-role'],
-  workspaceMemberId: 'member-1',
-};
-
 describe('getPermissionsPrincipalsLimitingRoleIds', () => {
   it('lists the agent and application roles', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal,
         limitingPrincipal: {
           type: 'agent',
           roleId: 'agent-role',
@@ -25,42 +18,33 @@ describe('getPermissionsPrincipalsLimitingRoleIds', () => {
     ).toEqual(['agent-role', 'application-role']);
   });
 
-  it('keeps an agent holding the same role as the main principal', () => {
+  it('keeps an application acting with one of the main roles', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal,
-        limitingPrincipal: {
-          type: 'agent',
+        applicationPrincipal: {
+          type: 'application',
           roleId: 'user-role',
-          agentId: 'agent-1',
+          applicationId: 'application-1',
         },
-        applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(['user-role']);
   });
 
-  it('leaves out an application acting with the main role', () => {
+  it('leaves out an application without a role of its own', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal,
         applicationPrincipal: {
           type: 'application',
-          roleId: 'user-role',
           applicationId: 'application-1',
         },
       }),
     ).toEqual([]);
   });
 
-  it('leaves out an application acting with any of the main roles', () => {
+  it('leaves out the custom application', () => {
     expect(
       getPermissionsPrincipalsLimitingRoleIds({
-        mainPrincipal,
-        applicationPrincipal: {
-          type: 'application',
-          roleId: 'extra-role',
-          applicationId: 'application-1',
-        },
+        applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual([]);
   });

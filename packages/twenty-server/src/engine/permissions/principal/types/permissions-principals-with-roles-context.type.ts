@@ -27,8 +27,9 @@ export type PermissionsMainPrincipalWithRole = WithRoleIds<
 export type PermissionsLimitingPrincipalWithRole =
   WithRoleId<PermissionsAgentPrincipal>;
 
+// an OAuth-only application without a role of its own has no roleId and adds no limit
 export type PermissionsApplicationPrincipalWithRole =
-  | WithRoleId<PermissionsApplicationIdPrincipal>
+  | (PermissionsApplicationIdPrincipal & { roleId?: string })
   | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {

@@ -21,6 +21,7 @@ import {
   type PermissionsPrincipalsWithRolesContext,
 } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveApplicationRoleId } from 'src/engine/permissions/internal/principal/utils/resolve-application-role-id.util';
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -28,6 +29,11 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
+
+type PermissionsPrincipalsFlatApplication = Pick<
+  FlatApplication,
+  'id' | 'defaultRoleId' | 'sourceType' | 'deletedAt'
+>;
 
 export type PermissionsPrincipalsRoleMaps = {
   flatWorkspaceMemberMaps?: {
@@ -40,15 +46,7 @@ export type PermissionsPrincipalsRoleMaps = {
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
   >;
   flatApplicationMaps: {
-    byId: Partial<
-      Record<
-        string,
-        Pick<
-          FlatApplication,
-          'id' | 'defaultRoleId' | 'sourceType' | 'deletedAt'
-        >
-      >
-    >;
+    byId: Partial<Record<string, PermissionsPrincipalsFlatApplication>>;
   };
   flatRoleTargetByApplicationIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
@@ -57,32 +55,36 @@ export type PermissionsPrincipalsRoleMaps = {
   flatRoleTargetMaps?: AllFlatEntityMaps['flatRoleTargetMaps'];
 };
 
-const findApplicationRoleId = ({
+const findActiveFlatApplication = ({
   applicationId,
-  userRoleId,
-  workspaceId,
   roleMaps,
 }: {
   applicationId: string;
-  userRoleId?: string;
-  workspaceId: string;
-  roleMaps: PermissionsPrincipalsRoleMaps;
-}): string | undefined => {
+  roleMaps: Pick<PermissionsPrincipalsRoleMaps, 'flatApplicationMaps'>;
+}): PermissionsPrincipalsFlatApplication | undefined => {
   const flatApplication = roleMaps.flatApplicationMaps.byId[applicationId];
 
-  if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
-    return undefined;
-  }
+  return isDefined(flatApplication) && !isDefined(flatApplication.deletedAt)
+    ? flatApplication
+    : undefined;
+};
 
-  return resolveApplicationRoleId({
+const findApplicationRoleId = ({
+  flatApplication,
+  workspaceId,
+  roleMaps,
+}: {
+  flatApplication: PermissionsPrincipalsFlatApplication;
+  workspaceId: string;
+  roleMaps: PermissionsPrincipalsRoleMaps;
+}): string | undefined =>
+  resolveApplicationRoleId({
     application: flatApplication,
-    userRoleId,
     workspaceId,
     workspaceCustomApplicationId: roleMaps.workspaceCustomApplicationId,
     flatRoleTargetByApplicationIdMaps:
       roleMaps.flatRoleTargetByApplicationIdMaps,
   });
-};
 
 const findWorkspaceMemberUserWorkspaceId = ({
   workspaceMemberId,
@@ -139,14 +141,18 @@ const findMainPrincipalRoleIds = ({
       return [
         roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]?.roleId,
       ].filter(isDefined);
-    case 'application':
+    case 'application': {
+      const flatApplication = findActiveFlatApplication({
+        applicationId: mainPrincipal.applicationId,
+        roleMaps,
+      });
+
       return [
-        findApplicationRoleId({
-          applicationId: mainPrincipal.applicationId,
-          workspaceId,
-          roleMaps,
-        }),
+        isDefined(flatApplication)
+          ? findApplicationRoleId({ flatApplication, workspaceId, roleMaps })
+          : undefined,
       ].filter(isDefined);
+    }
     case 'webhook':
       return [
         isDefined(roleMaps.flatRoleTargetMaps)
@@ -190,23 +196,36 @@ const resolveApplicationPrincipal = ({
     return applicationPrincipal;
   }
 
-  const applicationRoleId = findApplicationRoleId({
+  const flatApplication = findActiveFlatApplication({
     applicationId: applicationPrincipal.applicationId,
-    // any main role works: an application acting with one adds no limit
-    userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
-      ? mainPrincipal.roleIds[0]
-      : undefined,
+    roleMaps,
+  });
+
+  if (!isDefined(flatApplication)) {
+    return undefined;
+  }
+
+  const applicationRoleId = findApplicationRoleId({
+    flatApplication,
     workspaceId,
     roleMaps,
   });
 
-  return isDefined(applicationRoleId)
-    ? {
-        type: 'application',
-        roleId: applicationRoleId,
-        applicationId: applicationPrincipal.applicationId,
-      }
-    : undefined;
+  if (
+    !isDefined(applicationRoleId) &&
+    !(
+      isOAuthOnlyApplication(flatApplication) &&
+      isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
+    )
+  ) {
+    return undefined;
+  }
+
+  return {
+    type: 'application',
+    roleId: applicationRoleId,
+    applicationId: applicationPrincipal.applicationId,
+  };
 };
 
 type PermissionsIdentities = {

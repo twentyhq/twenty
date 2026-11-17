@@ -86,6 +86,24 @@ describe('getPermissionsPrincipalsActingApplication', () => {
     ).toBeUndefined();
   });
 
+  it('ignores an application without a role of its own', () => {
+    expect(
+      getPermissionsPrincipalsActingApplication({
+        principals: {
+          mainPrincipal: {
+            type: 'workspaceMember',
+            roleIds: ['user-role'],
+            workspaceMemberId: 'member-1',
+          },
+          applicationPrincipal: {
+            type: 'application',
+            applicationId: APPLICATION_ID,
+          },
+        },
+      }),
+    ).toBeUndefined();
+  });
+
   describe('for a member holding Admin acting through twenty-standard', () => {
     const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
     const ADMIN_ROLE_ID = 'admin-role-id';
