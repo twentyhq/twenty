@@ -28,20 +28,12 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
-  flatWorkflowVersion: {
-    workspaceId: _workspaceId,
-    applicationId: _applicationId,
-    coreWorkflowId: _coreWorkflowId,
-    ...universalFlatWorkflowVersion
-  },
-  coreWorkflowUniversalIdentifier,
-}: {
-  flatWorkflowVersion: FlatWorkflowVersion;
-  coreWorkflowUniversalIdentifier: string;
-}): UniversalFlatWorkflowVersion & { id: string } => ({
-  ...universalFlatWorkflowVersion,
-  coreWorkflowUniversalIdentifier,
-});
+  workspaceId: _workspaceId,
+  applicationId: _applicationId,
+  coreWorkflowId: _coreWorkflowId,
+  ...universalFlatWorkflowVersion
+}: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
+  universalFlatWorkflowVersion;
 
 const buildPublishedFlatUniversalWorkflowVersion = ({
   trigger,
@@ -116,10 +108,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
       : undefined;
   // Each changed definition of a builder-published workflow is a new version, so runs keep what they ran
   const flatUniversalWorkflowVersion = isDefined(keptActiveVersion)
-    ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion({
-        flatWorkflowVersion: keptActiveVersion,
-        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
-      })
+    ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion(keptActiveVersion)
     : buildPublishedFlatUniversalWorkflowVersion({
         id: existingVersion?.id ?? v4(),
         universalIdentifier: isWorkspaceCustomApplication
