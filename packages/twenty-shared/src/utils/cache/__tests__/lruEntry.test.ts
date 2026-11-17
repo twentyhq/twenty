@@ -3,6 +3,16 @@ import { readLruEntry } from '@/utils/cache/readLruEntry';
 import { writeLruEntry } from '@/utils/cache/writeLruEntry';
 
 describe('readLruEntry', () => {
+  it('refreshes a cached null value', () => {
+    const map = new Map<string, number | null>([
+      ['a', null],
+      ['b', 2],
+    ]);
+
+    expect(readLruEntry({ map, key: 'a' })).toBeNull();
+    expect([...map.keys()]).toEqual(['b', 'a']);
+  });
+
   it('returns undefined for a missing key', () => {
     expect(
       readLruEntry({ map: new Map<string, number>(), key: 'a' }),
@@ -56,6 +66,34 @@ describe('writeLruEntry', () => {
 });
 
 describe('evictLeastRecentlyUsed', () => {
+  it.each([2, 3])(
+    'does not scan entries for insertion-order eviction with a cap of %i',
+    (maxEntries) => {
+      const map = new Map([
+        ['a', 1],
+        ['b', 2],
+        ['c', 3],
+      ]);
+      const iterateEntries = jest.spyOn(map, Symbol.iterator);
+
+      expect(evictLeastRecentlyUsed({ map, maxEntries })).toBe(3 - maxEntries);
+      expect(iterateEntries).not.toHaveBeenCalled();
+      expect([...map.keys()]).toEqual(
+        maxEntries === 2 ? ['b', 'c'] : ['a', 'b', 'c'],
+      );
+    },
+  );
+
+  it('evicts an undefined key rather than treating it as an exhausted iterator', () => {
+    const map = new Map<string | undefined, number>([
+      [undefined, 1],
+      ['b', 2],
+    ]);
+
+    expect(evictLeastRecentlyUsed({ map, maxEntries: 1 })).toBe(1);
+    expect([...map.keys()]).toEqual(['b']);
+  });
+
   const mapOf = (...keys: string[]) =>
     new Map(keys.map((key, index) => [key, index]));
 

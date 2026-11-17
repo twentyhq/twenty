@@ -3,7 +3,7 @@ import { memoizeLeastRecentlyUsed } from '@/utils/cache/memoizeLeastRecentlyUsed
 describe('memoizeLeastRecentlyUsed', () => {
   it('caches falsy values', () => {
     const compute = jest.fn(() => false);
-    const memoized = memoizeLeastRecentlyUsed(compute, 2);
+    const memoized = memoizeLeastRecentlyUsed({ compute, maxEntries: 2 });
 
     expect(memoized('a')).toBe(false);
     expect(memoized('a')).toBe(false);
@@ -12,7 +12,7 @@ describe('memoizeLeastRecentlyUsed', () => {
 
   it('refreshes a cached entry before evicting the least recently used one', () => {
     const compute = jest.fn((key: string) => ({ key }));
-    const memoized = memoizeLeastRecentlyUsed(compute, 2);
+    const memoized = memoizeLeastRecentlyUsed({ compute, maxEntries: 2 });
     const first = memoized('a');
     const second = memoized('b');
 
@@ -35,7 +35,7 @@ describe('memoizeLeastRecentlyUsed', () => {
         throw new Error('invalid expression');
       })
       .mockReturnValue('valid');
-    const memoized = memoizeLeastRecentlyUsed(compute, 2);
+    const memoized = memoizeLeastRecentlyUsed({ compute, maxEntries: 2 });
 
     expect(() => memoized('a')).toThrow('invalid expression');
     expect(memoized('a')).toBe('valid');

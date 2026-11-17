@@ -2,10 +2,13 @@ import { readLruEntry } from '@/utils/cache/readLruEntry';
 import { writeLruEntry } from '@/utils/cache/writeLruEntry';
 import { isDefined } from '@/utils/validation/isDefined';
 
-export const memoizeLeastRecentlyUsed = <TValue extends NonNullable<unknown>>(
-  compute: (key: string) => TValue,
-  maxEntries: number,
-): ((key: string) => TValue) => {
+export const memoizeLeastRecentlyUsed = <TValue extends NonNullable<unknown>>({
+  compute,
+  maxEntries,
+}: {
+  compute: (key: string) => TValue;
+  maxEntries: number;
+}): ((key: string) => TValue) => {
   const map = new Map<string, TValue>();
 
   return (key) => {

@@ -22,6 +22,32 @@ export const evictLeastRecentlyUsed = <TKey, TValue>({
   // maxEntries nor get evicted. Omit to apply to the whole map.
   matches?: (key: TKey) => boolean;
 }): number => {
+  if (!isDefined(matches)) {
+    if (map.size <= maxEntries) {
+      return 0;
+    }
+
+    if (!isDefined(recencyOf)) {
+      const evictCount = Math.min(
+        map.size,
+        Math.max(minEvict, map.size - maxEntries),
+      );
+      const keys = map.keys();
+
+      for (let index = 0; index < evictCount; index += 1) {
+        const entry = keys.next();
+
+        if (entry.done) {
+          break;
+        }
+
+        map.delete(entry.value);
+      }
+
+      return evictCount;
+    }
+  }
+
   const candidates: [TKey, TValue][] = [];
 
   for (const keyEntry of map) {

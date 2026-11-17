@@ -3,7 +3,7 @@ import { validationRuleParser } from '@/utils/validation-rule/validationRulePars
 
 const PARSED_EXPRESSION_CACHE_MAX_SIZE = 500;
 
-export const parseValidationRuleExpression = memoizeLeastRecentlyUsed(
-  (source) => validationRuleParser.parse(source),
-  PARSED_EXPRESSION_CACHE_MAX_SIZE,
-);
+export const parseValidationRuleExpression = memoizeLeastRecentlyUsed({
+  compute: (source) => validationRuleParser.parse(source),
+  maxEntries: PARSED_EXPRESSION_CACHE_MAX_SIZE,
+});
