@@ -30,52 +30,62 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
     flatObjectMetadata.id,
   ];
 
-  return findRelatedRecordPathsExtendingAccess(request).flatMap(
-    ({ isInherent, sourceFlatObjectMetadata, hops }) => {
-      const sourceRequest = {
-        ...request,
-        flatObjectMetadata: sourceFlatObjectMetadata,
-      };
-
-      if (
+  const resolvedPaths = findRelatedRecordPathsExtendingAccess(request);
+  // a record's groups do not say which path copied them, so a hidden path blocks every path from its source object
+  const sourceObjectMetadataIdsWithHiddenPath = new Set(
+    resolvedPaths
+      .filter(({ sourceFlatObjectMetadata, hops }) =>
         isRelationFieldUnreadableByPrincipals({
-          ...sourceRequest,
+          principals,
+          metadataMaps,
+          flatObjectMetadata: sourceFlatObjectMetadata,
           relationFieldMetadataId: hops[0].relationFieldMetadataId,
-        }) ||
-        !canRelatedRecordPathExtendAccessToObject(sourceRequest)
-      ) {
-        return [];
-      }
+        }),
+      )
+      .map(({ sourceFlatObjectMetadata }) => sourceFlatObjectMetadata.id),
+  );
 
-      return [
-        ...(areRecordIdsReadableByPrincipals(sourceRequest)
-          ? mainRoleIds.flatMap((roleId) =>
-              buildRoleAccessGroupsOrThrow({
-                roleId,
-                objectMetadataId: sourceFlatObjectMetadata.id,
-                objectRecordsPermissions:
-                  metadataMaps.rolesPermissions[roleId]?.objects[
-                    sourceFlatObjectMetadata.id
-                  ],
-                operationTypes: [request.operationType],
-                workspaceMembers,
-                flatFieldMetadataMaps,
-                isRelationHopEnabled: isRlsRelationHopEnabled(
-                  metadataMaps.featureFlagsMap,
-                ),
-              }),
-            )
-          : []),
-        ...(isInherent &&
-        !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
-          ? buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
-              request: sourceRequest,
+  return resolvedPaths.flatMap(({ isInherent, sourceFlatObjectMetadata }) => {
+    const sourceRequest = {
+      ...request,
+      flatObjectMetadata: sourceFlatObjectMetadata,
+    };
+
+    if (
+      sourceObjectMetadataIdsWithHiddenPath.has(sourceFlatObjectMetadata.id) ||
+      !canRelatedRecordPathExtendAccessToObject(sourceRequest)
+    ) {
+      return [];
+    }
+
+    return [
+      ...(areRecordIdsReadableByPrincipals(sourceRequest)
+        ? mainRoleIds.flatMap((roleId) =>
+            buildRoleAccessGroupsOrThrow({
+              roleId,
+              objectMetadataId: sourceFlatObjectMetadata.id,
+              objectRecordsPermissions:
+                metadataMaps.rolesPermissions[roleId]?.objects[
+                  sourceFlatObjectMetadata.id
+                ],
+              operationTypes: [request.operationType],
               workspaceMembers,
               flatFieldMetadataMaps,
-              visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
-            })
-          : []),
-      ];
-    },
-  );
+              isRelationHopEnabled: isRlsRelationHopEnabled(
+                metadataMaps.featureFlagsMap,
+              ),
+            }),
+          )
+        : []),
+      ...(isInherent &&
+      !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
+        ? buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+            request: sourceRequest,
+            workspaceMembers,
+            flatFieldMetadataMaps,
+            visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
+          })
+        : []),
+    ];
+  });
 };

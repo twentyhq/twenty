@@ -39,10 +39,12 @@ const buildPath = ({
   source,
   target,
   isInherent,
+  relationFieldMetadataId = `${source.id}-to-${target.id}-field-id`,
 }: {
   source: FlatObjectMetadata;
   target: FlatObjectMetadata;
   isInherent: boolean;
+  relationFieldMetadataId?: string;
 }): ResolvedRelatedRecordPath => ({
   isInherent,
   sourceFlatObjectMetadata: source,
@@ -50,7 +52,7 @@ const buildPath = ({
   hops: [
     {
       flatObjectMetadata: source,
-      relationFieldMetadataId: `${source.id}-to-${target.id}-field-id`,
+      relationFieldMetadataId,
       sourceColumnName: 'id',
       targetColumnName: 'sourceId',
     },
@@ -88,7 +90,9 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
   isAccessGroupsEnabled = true,
   operationType = 'read',
   principals = salesMember,
+  hiddenCompanyRelationFieldIds = [],
 }: {
+  hiddenCompanyRelationFieldIds?: string[];
   isCompanyAttachmentsPathInherent?: boolean;
   objectNamesWithRlsRule?: string[];
   isAccessGroupsEnabled?: boolean;
@@ -101,10 +105,16 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
       target: ATTACHMENT,
       isInherent: isCompanyAttachmentsPathInherent,
     }),
+    buildPath({
+      source: COMPANY,
+      target: ATTACHMENT,
+      isInherent: false,
+      relationFieldMetadataId: 'company-other-attachments-field-id',
+    }),
     buildPath({ source: OPPORTUNITY, target: COMPANY, isInherent: false }),
   ]);
 
-  return buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+  const accessGroups = buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
     request: {
       principals,
       flatObjectMetadata: ATTACHMENT,
@@ -117,7 +127,10 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
           sales: {
             ...NO_ROLE_RECORDS_PERMISSIONS,
             objects: {
-              company: READ_ALL_RECORDS,
+              company: {
+                ...READ_ALL_RECORDS,
+                unreadableFields: hiddenCompanyRelationFieldIds,
+              },
               opportunity: READ_ALL_RECORDS,
             },
           },
@@ -138,7 +151,11 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
     },
     workspaceMembers: [],
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-  }).map(({ objectMetadataId }) => objectMetadataId);
+  });
+
+  return [
+    ...new Set(accessGroups.map(({ objectMetadataId }) => objectMetadataId)),
+  ];
 };
 
 const limitedByManagerRole: PermissionsPrincipalsWithRolesContext = {
@@ -153,6 +170,14 @@ const limitedByManagerRole: PermissionsPrincipalsWithRolesContext = {
 describe('buildPrincipalsRelatedRecordPathAccessGroupsOrThrow', () => {
   it('should hold the groups of the caller on the source object of a path', () => {
     expect(buildPrincipalsAccessGroupObjectMetadataIds()).toEqual(['company']);
+  });
+
+  it('should hold no group from a source object one of whose paths is hidden', () => {
+    expect(
+      buildPrincipalsAccessGroupObjectMetadataIds({
+        hiddenCompanyRelationFieldIds: ['company-other-attachments-field-id'],
+      }),
+    ).toEqual([]);
   });
 
   it('should also hold the groups reaching the source of an inherent path', () => {
