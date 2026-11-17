@@ -117,21 +117,22 @@ export class BillingArrangementService {
     arrangement,
     revokedByUserId,
   }: {
-    arrangement: BillingArrangementEntity;
+    arrangement: Pick<
+      BillingArrangementEntity,
+      'id' | 'workspaceId' | 'endsAt' | 'revokedAt'
+    >;
     revokedByUserId: string | null;
   }): Promise<BillingArrangementEntity> {
     const now = new Date();
     const endDate = getBillingArrangementEndDate(arrangement);
 
-    if (isDefined(endDate) && endDate <= now) {
-      return arrangement;
+    if (!isDefined(endDate) || endDate > now) {
+      await this.billingArrangementRepository.update(
+        arrangement.workspaceId,
+        { id: arrangement.id, revokedAt: IsNull() },
+        { revokedAt: now, revokedByUserId },
+      );
     }
-
-    await this.billingArrangementRepository.update(
-      arrangement.workspaceId,
-      { id: arrangement.id, revokedAt: IsNull() },
-      { revokedAt: now, revokedByUserId },
-    );
 
     return await this.billingArrangementRepository.findOneOrFail(
       arrangement.workspaceId,

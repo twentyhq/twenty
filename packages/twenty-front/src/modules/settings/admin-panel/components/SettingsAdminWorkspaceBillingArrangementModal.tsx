@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -20,6 +19,8 @@ import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constant
 import { CREATE_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceBillingArrangement';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/queries/workspaceBillingArrangements';
+import { parseAdminBillingArrangementCreditAllowance } from '@/settings/admin-panel/utils/parseAdminBillingArrangementCreditAllowance';
+import { parseAdminBillingArrangementSeats } from '@/settings/admin-panel/utils/parseAdminBillingArrangementSeats';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -60,26 +61,6 @@ const TYPE_DESCRIPTIONS: Partial<
   [BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE]: msg`Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top.`,
 };
 
-const parseSeats = (value: string): number | null => {
-  const parsed = Number(value);
-
-  return Number.isInteger(parsed) && parsed >= 1 ? parsed : null;
-};
-
-const parseCreditAllowance = (value: string): number | null => {
-  if (!isNonEmptyString(value.trim())) {
-    return null;
-  }
-
-  const parsed = Number(value);
-
-  if (!Number.isFinite(parsed) || parsed < 0) {
-    return null;
-  }
-
-  return parsed;
-};
-
 export const SettingsAdminWorkspaceBillingArrangementModal = ({
   modalInstanceId,
   workspaceId,
@@ -117,8 +98,9 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
   const isCreditAllowance =
     type === BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE;
 
-  const parsedSeats = parseSeats(seats);
-  const parsedCreditAllowance = parseCreditAllowance(creditAllowance);
+  const parsedSeats = parseAdminBillingArrangementSeats(seats);
+  const parsedCreditAllowance =
+    parseAdminBillingArrangementCreditAllowance(creditAllowance);
 
   const isEndsAtValid = isDefined(endsAt)
     ? endsAt.getTime() > Date.now()

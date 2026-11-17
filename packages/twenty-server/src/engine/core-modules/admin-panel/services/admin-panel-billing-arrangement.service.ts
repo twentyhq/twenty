@@ -123,16 +123,19 @@ export class AdminPanelBillingArrangementService {
               workspaceId,
             );
 
-          await this.billingSeatService.assertHardSeatCapCoversBilledMembers({
-            workspaceId,
-            seatArrangements: [
-              { ...draft, revokedAt: null },
-              ...activeSeatArrangements.filter(
-                (activeArrangement) =>
-                  activeArrangement.type === BillingArrangementType.FREE_SEATS,
-              ),
-            ],
-          });
+          await this.billingSeatService.assertHardSeatCapCoversBilledMembersOrThrow(
+            {
+              workspaceId,
+              seatArrangements: [
+                { ...draft, revokedAt: null },
+                ...activeSeatArrangements.filter(
+                  (activeArrangement) =>
+                    activeArrangement.type ===
+                    BillingArrangementType.FREE_SEATS,
+                ),
+              ],
+            },
+          );
         }
 
         return await this.billingArrangementService.insertArrangement({
@@ -185,12 +188,14 @@ export class AdminPanelBillingArrangementService {
               workspaceId,
             );
 
-          await this.billingSeatService.assertHardSeatCapCoversBilledMembers({
-            workspaceId,
-            seatArrangements: activeSeatArrangements.filter(
-              (activeArrangement) => activeArrangement.id !== arrangement.id,
-            ),
-          });
+          await this.billingSeatService.assertHardSeatCapCoversBilledMembersOrThrow(
+            {
+              workspaceId,
+              seatArrangements: activeSeatArrangements.filter(
+                (activeArrangement) => activeArrangement.id !== arrangement.id,
+              ),
+            },
+          );
         }
 
         return await this.billingArrangementService.endArrangement({

@@ -93,7 +93,7 @@ export class BillingSeatService {
     });
   }
 
-  async assertHardSeatCapCoversBilledMembers({
+  async assertHardSeatCapCoversBilledMembersOrThrow({
     workspaceId,
     seatArrangements,
   }: {
