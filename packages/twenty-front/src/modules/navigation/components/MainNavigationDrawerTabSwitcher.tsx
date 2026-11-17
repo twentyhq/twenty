@@ -96,7 +96,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
     <StyledSwitcher
       isExpanded={isExpanded}
       role="group"
-      aria-label={t`Navigation drawerTabs`}
+      aria-label={t`Navigation modes`}
     >
       {drawerTabs.map(({ Icon, label, tab: drawerTab }) => {
         const isActive =
