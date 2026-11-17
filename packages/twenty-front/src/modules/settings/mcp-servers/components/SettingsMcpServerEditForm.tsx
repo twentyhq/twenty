@@ -1,8 +1,10 @@
+import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionsSection';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
@@ -14,7 +16,11 @@ import {
   getMcpServerFormSchema,
   type McpServerFormValues,
 } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
-import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  ApplicationConnectionProvidersDocument,
+  ConnectionProviderScope,
+  type McpServerFragmentFragment,
+} from '~/generated-metadata/graphql';
 
 type SettingsMcpServerEditFormProps = {
   mcpServer: McpServerFragmentFragment;
@@ -33,6 +39,20 @@ export const SettingsMcpServerEditForm = ({
   });
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
+
+  const { data: connectionProvidersData } = useQuery(
+    ApplicationConnectionProvidersDocument,
+    {
+      variables: { applicationId: mcpServer.applicationId },
+      skip: !isDefined(mcpServer.connectionProviderId),
+    },
+  );
+  const perMemberConnectionProvider =
+    connectionProvidersData?.applicationConnectionProviders.find(
+      (connectionProvider) =>
+        connectionProvider.id === mcpServer.connectionProviderId &&
+        connectionProvider.scope === ConnectionProviderScope.USER,
+    );
 
   const handleSave = async ({ label, url }: McpServerFormValues) => {
     const savedFormValues = getMcpServerFormValues(mcpServer);
@@ -73,6 +93,12 @@ export const SettingsMcpServerEditForm = ({
         }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
+        {isDefined(perMemberConnectionProvider) && (
+          <SettingsMcpServerConnectionsSection
+            mcpServerId={mcpServer.id}
+            connectionProvider={perMemberConnectionProvider}
+          />
+        )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />
       </SettingsMcpServerFormLayout>
