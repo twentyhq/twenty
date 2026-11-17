@@ -1,40 +1,51 @@
-import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
-import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
-import { doNotTranslate } from 'twenty-shared/i18n';
+import { Injectable } from '@nestjs/common';
 import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import {
   isSourceFileManifestList,
-  type FrontComponentManifest,
+  type SourceFileManifest,
   type Manifest,
 } from 'twenty-shared/application';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isPlainObject, parseJson } from 'twenty-shared/utils';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
+import { fromFlatLogicFunctionToLogicFunctionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-logic-function-to-logic-function-manifest.util';
 import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { type ApplicationSourceResource } from 'src/engine/core-modules/application/application-manifest/types/application-source-resource.type';
+import { getApplicationSourceResources } from 'src/engine/core-modules/application/application-manifest/utils/get-application-source-resources.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
-export class ApplicationFrontComponentSourceService {
-  constructor(private readonly fileStorageService: FileStorageService) {}
+export class ApplicationSourceService {
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {}
 
-  validateOrThrow(manifest: Pick<Manifest, 'frontComponents'>): void {
-    for (const component of manifest.frontComponents ?? []) {
+  validateOrThrow(
+    manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>>,
+  ): void {
+    for (const resource of getApplicationSourceResources(manifest)) {
       if (
-        isDefined(component.sourceFiles) &&
-        (!isSourceFileManifestList(component.sourceFiles) ||
-          !component.sourceFiles.some(
-            (file) => file.filePath === component.sourceComponentPath,
+        isDefined(resource.sourceFiles) &&
+        (!isSourceFileManifestList(resource.sourceFiles) ||
+          !resource.sourceFiles.some(
+            (file) => file.filePath === resource.sourcePath,
           ))
       ) {
         throw new ApplicationException(
           doNotTranslate(
-            `Invalid source inventory for front component ${component.universalIdentifier}`,
+            `Invalid source inventory for ${resource.universalIdentifier}`,
           ),
           ApplicationExceptionCode.INVALID_INPUT,
         );
@@ -47,19 +58,46 @@ export class ApplicationFrontComponentSourceService {
     manifest,
   }: {
     workspaceId: string;
-    manifest: Pick<Manifest, 'frontComponents'> & {
+    manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>> & {
       application: Pick<Manifest['application'], 'universalIdentifier'>;
     };
   }): Promise<void> {
-    for (const component of manifest.frontComponents ?? []) {
+    const resources = getApplicationSourceResources(manifest);
+    const logicFunctions = resources.filter(
+      (resource) =>
+        resource.kind === 'logicFunction' && isDefined(resource.sourceFiles),
+    );
+    if (logicFunctions.length > 0) {
+      const { flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+        ]);
+      for (const resource of logicFunctions) {
+        const logicFunction = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatLogicFunctionMaps,
+          universalIdentifier: resource.universalIdentifier,
+        });
+        if (!isDefined(logicFunction)) {
+          throw new ApplicationException(
+            doNotTranslate(
+              `Logic function ${resource.universalIdentifier} was not synchronized`,
+            ),
+            ApplicationExceptionCode.INVALID_INPUT,
+          );
+        }
+        resource.metadata.definition =
+          fromFlatLogicFunctionToLogicFunctionManifest(logicFunction);
+      }
+    }
+    for (const resource of resources) {
       if (
-        !isDefined(component.sourceFiles) &&
+        !isDefined(resource.sourceFiles) &&
         !(await this.fileStorageService.checkFileExists({
           workspaceId,
           applicationUniversalIdentifier:
             manifest.application.universalIdentifier,
           fileFolder: FileFolder.Dependencies,
-          resourcePath: `front-component-sources/${component.universalIdentifier}.json`,
+          resourcePath: resource.inventoryPath,
         }))
       ) {
         continue;
@@ -69,11 +107,10 @@ export class ApplicationFrontComponentSourceService {
         applicationUniversalIdentifier:
           manifest.application.universalIdentifier,
         fileFolder: FileFolder.Dependencies,
-        resourcePath: `front-component-sources/${component.universalIdentifier}.json`,
+        resourcePath: resource.inventoryPath,
         sourceFile: JSON.stringify({
-          sourceComponentPath: component.sourceComponentPath,
-          builtComponentChecksum: component.builtComponentChecksum,
-          sourceFiles: component.sourceFiles ?? null,
+          ...resource.metadata,
+          sourceFiles: resource.sourceFiles ?? null,
         }),
         settings: { isTemporaryFile: false, toDelete: false },
       });
@@ -83,18 +120,18 @@ export class ApplicationFrontComponentSourceService {
   async read({
     workspaceId,
     applicationUniversalIdentifier,
-    component,
+    resource,
     remainingBytes,
     exportedFiles = [],
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    component: FrontComponentManifest;
+    resource: ApplicationSourceResource;
     remainingBytes: number;
     exportedFiles?: ApplicationExportFile[];
   }): Promise<
     | {
-        sourceFiles: NonNullable<FrontComponentManifest['sourceFiles']>;
+        sourceFiles: SourceFileManifest[];
         files: ApplicationExportFile[];
       }
     | undefined
@@ -103,7 +140,7 @@ export class ApplicationFrontComponentSourceService {
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Dependencies,
-      resourcePath: `front-component-sources/${component.universalIdentifier}.json`,
+      resourcePath: resource.inventoryPath,
     };
     if (!(await this.fileStorageService.checkFileExists(location))) {
       return undefined;
@@ -118,7 +155,7 @@ export class ApplicationFrontComponentSourceService {
     );
     if (!isPlainObject(inventory)) {
       throw new ApplicationException(
-        doNotTranslate('Stored front component source inventory is invalid'),
+        doNotTranslate('Stored application source inventory is invalid'),
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }
@@ -126,20 +163,21 @@ export class ApplicationFrontComponentSourceService {
       return undefined;
     }
     if (
-      inventory.builtComponentChecksum !== component.builtComponentChecksum ||
-      inventory.sourceComponentPath !== component.sourceComponentPath ||
+      Object.entries(resource.metadata).some(
+        ([key, value]) => !isDeepStrictEqual(inventory[key], value),
+      ) ||
       !isSourceFileManifestList(inventory.sourceFiles) ||
       !inventory.sourceFiles.some(
-        (file) => file.filePath === component.sourceComponentPath,
+        (file) => file.filePath === resource.sourcePath,
       )
     ) {
       throw new ApplicationException(
         doNotTranslate(
-          'Source inventory does not match the deployed front component; apply or publish again',
+          'Source inventory does not match the deployed application definition; apply or publish again',
         ),
         ApplicationExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+          userFriendlyMessage: msg`Apply or publish the application again to restore its application sources.`,
         },
       );
     }
@@ -158,12 +196,12 @@ export class ApplicationFrontComponentSourceService {
             ),
             ApplicationExceptionCode.INVALID_INPUT,
             {
-              userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+              userFriendlyMessage: msg`Apply or publish the application again to restore its application sources.`,
             },
           );
         }
         files.push(
-          filePath === component.sourceComponentPath
+          filePath === resource.sourcePath
             ? {
                 folder: FileFolder.Source,
                 path: filePath,
@@ -185,7 +223,7 @@ export class ApplicationFrontComponentSourceService {
           ),
           ApplicationExceptionCode.INVALID_INPUT,
           {
-            userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+            userFriendlyMessage: msg`Apply or publish the application again to restore its application sources.`,
           },
         );
       }
@@ -201,7 +239,7 @@ export class ApplicationFrontComponentSourceService {
           ),
           ApplicationExceptionCode.INVALID_INPUT,
           {
-            userFriendlyMessage: msg`Apply or publish the application again to restore its frontend component sources.`,
+            userFriendlyMessage: msg`Apply or publish the application again to restore its application sources.`,
           },
         );
       }
@@ -209,10 +247,10 @@ export class ApplicationFrontComponentSourceService {
         folder: FileFolder.Source,
         path: filePath,
         content:
-          filePath === component.sourceComponentPath
+          filePath === resource.sourcePath
             ? content.toString('utf8')
             : content.toString('base64'),
-        ...(filePath !== component.sourceComponentPath
+        ...(filePath !== resource.sourcePath
           ? { encoding: 'base64' as const }
           : {}),
       });

@@ -18,6 +18,7 @@ export type ManifestBuildResult = {
 export type UpdateManifestChecksumParams = {
   outputDir?: string;
   frontComponentSourcePaths?: Map<string, string[]>;
+  logicFunctionSourcePaths?: Map<string, string[]>;
   manifest: Manifest;
   builtFileInfos: Map<
     string,
@@ -35,6 +36,7 @@ export const manifestUpdateChecksums = ({
   builtFileInfos,
   outputDir = OUTPUT_DIR,
   frontComponentSourcePaths,
+  logicFunctionSourcePaths,
 }: UpdateManifestChecksumParams): Manifest => {
   const sourceFiles: SourceFileManifest[] = [];
   let result = { ...structuredClone(manifest), sourceFiles };
@@ -151,6 +153,24 @@ export const manifestUpdateChecksums = ({
       }
       return {
         ...component,
+        sourceFiles: result.sourceFiles.filter(
+          (file) =>
+            paths.includes(file.filePath) &&
+            !['package.json', 'yarn.lock'].includes(file.filePath),
+        ),
+      };
+    });
+  }
+  if (isDefined(logicFunctionSourcePaths)) {
+    result.logicFunctions = result.logicFunctions.map((logicFunction) => {
+      const paths = logicFunctionSourcePaths.get(
+        logicFunction.sourceHandlerPath,
+      );
+      if (!isDefined(paths)) {
+        return logicFunction;
+      }
+      return {
+        ...logicFunction,
         sourceFiles: result.sourceFiles.filter(
           (file) =>
             paths.includes(file.filePath) &&

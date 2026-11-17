@@ -5,6 +5,7 @@ import {
   isSourceFileManifestList,
   isRestorableFrontComponentSourcePath,
   type FrontComponentManifest,
+  type LogicFunctionManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -23,8 +24,13 @@ const isPackageJsonObject = (content: string): boolean => {
 export const parsePullFiles = ({
   value,
   frontComponents = [],
+  logicFunctions = [],
 }: {
   value: unknown;
+  logicFunctions?: Pick<
+    LogicFunctionManifest,
+    'sourceHandlerPath' | 'sourceFiles'
+  >[];
   frontComponents?: Pick<
     FrontComponentManifest,
     'sourceComponentPath' | 'sourceFiles'
@@ -38,23 +44,32 @@ export const parsePullFiles = ({
   }
 
   const inventory = new Map<string, string>();
-  for (const component of frontComponents) {
-    if (!isDefined(component.sourceFiles)) {
+  const definitions = [
+    ...frontComponents.map((component) => ({
+      sourcePath: component.sourceComponentPath,
+      sourceFiles: component.sourceFiles,
+    })),
+    ...logicFunctions.map((logicFunction) => ({
+      sourcePath: logicFunction.sourceHandlerPath,
+      sourceFiles: logicFunction.sourceFiles,
+    })),
+  ];
+  for (const definition of definitions) {
+    if (!isDefined(definition.sourceFiles)) {
       continue;
     }
     if (
-      !isSourceFileManifestList(component.sourceFiles) ||
-      !component.sourceFiles.some(
-        (file) => file.filePath === component.sourceComponentPath,
+      !isSourceFileManifestList(definition.sourceFiles) ||
+      !definition.sourceFiles.some(
+        (file) => file.filePath === definition.sourcePath,
       )
     ) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
-        message:
-          'The server returned an invalid front component source inventory.',
+        message: 'The server returned an invalid application source inventory.',
       });
     }
-    for (const file of component.sourceFiles) {
+    for (const file of definition.sourceFiles) {
       if (
         inventory.has(file.filePath) &&
         inventory.get(file.filePath) !== file.checksum
@@ -86,7 +101,7 @@ export const parsePullFiles = ({
       });
     }
 
-    const isFrontComponentSource =
+    const isApplicationSource =
       file.folder === FileFolder.Source &&
       (inventory.has(file.path) ||
         (frontComponents.some(
@@ -97,14 +112,14 @@ export const parsePullFiles = ({
 
     if (
       !isPublicAsset &&
-      !isFrontComponentSource &&
+      !isApplicationSource &&
       (file.folder !== FileFolder.Dependencies ||
         !['package.json', 'yarn.lock'].includes(file.path))
     ) {
       throw new CliError({
         code: 'TOOLING_UNSUPPORTED',
         message:
-          'This CLI can only pull dependency files, public assets and declared front component sources. No local files were changed.',
+          'This CLI can only pull dependency files, public assets and declared frontend component and logic function sources. No local files were changed.',
       });
     }
 
@@ -145,7 +160,7 @@ export const parsePullFiles = ({
       });
     }
 
-    if (isFrontComponentSource || isPublicAsset) {
+    if (isApplicationSource || isPublicAsset) {
       sourceChecksums.set(
         file.path,
         createHash('md5').update(content).digest('hex'),

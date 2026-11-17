@@ -5,13 +5,14 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { pathExists } from '@/app/fs-utils';
+import { getPullSourceDefinitions } from '@/app/pull/get-pull-source-definitions';
 import { type PullWrite, type PullDeletion } from '@/app/pull/plan-pull-writes';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 import { type AppExportFile } from '@/app/types/app-export.type';
 import { CliError } from '@/output/cli-error';
 import { hashContent } from '@/utils/hash-content';
 
-export const planFrontComponentWrites = async ({
+export const planSourceDefinitionWrites = async ({
   appPath,
   manifest,
   baseManifest,
@@ -38,29 +39,30 @@ export const planFrontComponentWrites = async ({
   const fingerprints: Record<string, string> = {};
   const unchangedSourceFingerprints: Record<string, string> = {};
   const usedPaths = new Set(reservedPaths);
-  for (const component of manifest.frontComponents ?? []) {
-    const { universalIdentifier, sourceComponentPath } = component;
+  const definitions = getPullSourceDefinitions(manifest);
+  const previousDefinitions = getPullSourceDefinitions(baseManifest);
+  for (const resource of definitions) {
+    const { universalIdentifier, sourcePath } = resource;
     const file = files.find(
-      (file) =>
-        file.folder === FileFolder.Source && file.path === sourceComponentPath,
+      (file) => file.folder === FileFolder.Source && file.path === sourcePath,
     );
     const existing = scannedFiles.find(
       (file) =>
-        file.entityKey === 'frontComponents' &&
+        file.entityKey === resource.entityKey &&
         file.universalIdentifier?.toLowerCase() ===
           universalIdentifier.toLowerCase(),
     );
     if (
-      isDefined(component.sourceFiles) &&
+      isDefined(resource.sourceFiles) &&
       isDefined(existing) &&
-      existing.relativePath.split('\\').join('/') !== sourceComponentPath
+      existing.relativePath.split('\\').join('/') !== sourcePath
     ) {
       throw new CliError({
         code: 'CONFLICT',
-        message: `Front component ${universalIdentifier} moved locally. Restore it to ${sourceComponentPath} before pulling its imported files.`,
+        message: `${resource.label} ${universalIdentifier} moved locally. Restore it to ${sourcePath} before pulling its imported files.`,
       });
     }
-    const relativePath = (existing?.relativePath ?? sourceComponentPath)
+    const relativePath = (existing?.relativePath ?? sourcePath)
       .split('\\')
       .join('/');
     const pathKey = relativePath.toLowerCase();
@@ -75,8 +77,8 @@ export const planFrontComponentWrites = async ({
       throw new CliError({
         code: 'CONFLICT',
         message: !isDefined(file)
-          ? `Source for front component ${universalIdentifier} was not exported. No local files were changed.`
-          : `Cannot restore front component ${universalIdentifier}: ${relativePath} is occupied by another local file or definition. No local files were changed.`,
+          ? `Source for ${resource.label.toLowerCase()} ${universalIdentifier} was not exported. No local files were changed.`
+          : `Cannot restore ${resource.label.toLowerCase()} ${universalIdentifier}: ${relativePath} is occupied by another local file or definition. No local files were changed.`,
       });
     }
     usedPaths.add(pathKey);
@@ -85,18 +87,18 @@ export const planFrontComponentWrites = async ({
       file.encoding === 'base64' ? 'base64' : 'utf8',
     ).toString('utf8');
     const fingerprint = hashContent(content);
-    fingerprints[sourceComponentPath] = fingerprint;
+    fingerprints[sourcePath] = fingerprint;
     if (existingContent === content) {
       unchangedSourceFingerprints[relativePath] = fingerprint;
     }
-    const previous = baseManifest?.frontComponents?.find(
+    const previous = previousDefinitions.find(
       (entry) =>
         entry.universalIdentifier.toLowerCase() ===
         universalIdentifier.toLowerCase(),
     );
     const previousFingerprint =
       (isDefined(previous)
-        ? remoteSourceFingerprints[previous.sourceComponentPath]
+        ? remoteSourceFingerprints[previous.sourcePath]
         : undefined) ?? sourceFingerprints[relativePath];
     if (
       existingContent === content ||
@@ -104,40 +106,40 @@ export const planFrontComponentWrites = async ({
         isDefined(previous) &&
         (isDefined(previousFingerprint)
           ? previousFingerprint === fingerprint
-          : JSON.stringify(previous) === JSON.stringify(component)))
+          : JSON.stringify(previous.definition) ===
+            JSON.stringify(resource.definition)))
     ) {
       unchangedCount++;
       continue;
     }
     writes.push({
-      kind: 'frontComponent',
+      kind: resource.kind,
       universalIdentifier,
       relativePath,
       content,
-      requiredSdkExports: ['defineFrontComponent'],
+      requiredSdkExports: resource.requiredSdkExports,
       isRegeneration: isDefined(existingContent),
     });
   }
-  for (const previous of baseManifest?.frontComponents ?? []) {
+  for (const previous of previousDefinitions) {
     if (protectedIdentifiers.has(previous.universalIdentifier.toLowerCase())) {
-      const previousFingerprint =
-        remoteSourceFingerprints[previous.sourceComponentPath];
+      const previousFingerprint = remoteSourceFingerprints[previous.sourcePath];
       if (
         !isDefined(previousFingerprint) ||
-        manifest.frontComponents?.some(
-          (component) =>
-            component.universalIdentifier.toLowerCase() ===
+        definitions.some(
+          (resource) =>
+            resource.universalIdentifier.toLowerCase() ===
             previous.universalIdentifier.toLowerCase(),
         )
       ) {
         continue;
       }
-      fingerprints[previous.sourceComponentPath] = previousFingerprint;
+      fingerprints[previous.sourcePath] = previousFingerprint;
       continue;
     }
     const existing = scannedFiles.find(
       (file) =>
-        file.entityKey === 'frontComponents' &&
+        file.entityKey === previous.entityKey &&
         file.universalIdentifier?.toLowerCase() ===
           previous.universalIdentifier.toLowerCase(),
     );
