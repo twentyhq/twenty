@@ -21,7 +21,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -41,7 +41,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -372,7 +372,7 @@ export class ApplicationManifestMigrationService {
         inferDeletionFromMissingEntities,
       });
 
-      await this.workflowVersionCoreSyncService.publishCronTriggerCacheEntries(
+      await this.coreWorkflowTriggerService.publishCronTriggerCacheEntries(
         buildApplicationWorkflowCronTriggerCacheEntries({
           workspaceId,
           workflows: applicationWorkflows,
