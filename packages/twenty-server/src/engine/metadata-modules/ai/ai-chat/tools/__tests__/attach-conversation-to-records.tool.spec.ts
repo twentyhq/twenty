@@ -4,10 +4,11 @@ import {
   type UserWorkspaceAuthContext,
   type WorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import {
   attachConversationToRecordsInputSchema,
-  createAttachConversationToRecordsTool,
+  AttachConversationToRecordsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import {
   AiException,
@@ -29,23 +30,26 @@ const buildUserAuthContext = (workspaceMemberId: string) =>
     workspaceMember: { id: workspaceMemberId },
   }) as UserWorkspaceAuthContext;
 
-const buildToolContext = (overrides: Partial<ToolContext> = {}) =>
-  ({
-    workspaceId: WORKSPACE_ID,
-    threadId: THREAD_ID,
-    authContext: buildUserAuthContext('member-at-turn-start'),
-    ...overrides,
-  }) as ToolContext;
+const buildToolContext = (
+  overrides: Partial<ToolProviderContext> = {},
+): ToolProviderContext => ({
+  workspaceId: WORKSPACE_ID,
+  threadId: THREAD_ID,
+  authContext: buildUserAuthContext('member'),
+  ...overrides,
+});
 
-const buildTool = (toolContext: ToolContext) => {
+const buildTool = (context: ToolProviderContext = buildToolContext()) => {
   const attachThreadToRecord = jest.fn(async () => undefined);
+  const tool = new AttachConversationToRecordsTool({
+    attachThreadToRecord,
+  } as unknown as AgentChatThreadTargetService);
 
-  const tool = createAttachConversationToRecordsTool({
-    agentChatThreadTargetService: { attachThreadToRecord },
-    toolContext,
-  });
-
-  return { tool, attachThreadToRecord };
+  return {
+    attach: (records: { objectNameSingular: string; recordId: string }[]) =>
+      tool.execute({ input: { records }, context }),
+    attachThreadToRecord,
+  };
 };
 
 describe('attach_conversation_to_records tool', () => {
@@ -69,23 +73,14 @@ describe('attach_conversation_to_records tool', () => {
     ).toBe(false);
   });
 
-  it('attaches every record in one call, as the member the turn runs for, judged at call time', async () => {
-    const { tool, attachThreadToRecord } = buildTool(
-      buildToolContext({
-        resolveExecutionContext: async () =>
-          buildToolContext({
-            authContext: buildUserAuthContext('member-at-call-time'),
-          }),
-      }),
-    );
+  it('attaches every record in one call, as the member the turn runs for', async () => {
+    const { attach, attachThreadToRecord } = buildTool();
 
-    const output = await tool.execute({
-      records: [
-        { objectNameSingular: 'company', recordId: COMPANY_ID },
-        { objectNameSingular: 'person', recordId: PERSON_ID },
-        { objectNameSingular: 'company', recordId: COMPANY_ID },
-      ],
-    });
+    const output = await attach([
+      { objectNameSingular: 'company', recordId: COMPANY_ID },
+      { objectNameSingular: 'person', recordId: PERSON_ID },
+      { objectNameSingular: 'company', recordId: COMPANY_ID },
+    ]);
 
     expect(attachThreadToRecord).toHaveBeenCalledTimes(2);
     expect(attachThreadToRecord).toHaveBeenCalledWith({
@@ -95,7 +90,7 @@ describe('attach_conversation_to_records tool', () => {
       recordId: PERSON_ID,
       authContext: expect.objectContaining({
         type: 'user',
-        workspaceMemberId: 'member-at-call-time',
+        workspaceMemberId: 'member',
       }),
     });
     expect(output).toEqual({
@@ -112,7 +107,7 @@ describe('attach_conversation_to_records tool', () => {
   });
 
   it('refuses a turn that does not run for a workspace member', async () => {
-    const { tool, attachThreadToRecord } = buildTool(
+    const { attach, attachThreadToRecord } = buildTool(
       buildToolContext({
         authContext: {
           type: 'system',
@@ -121,27 +116,25 @@ describe('attach_conversation_to_records tool', () => {
       }),
     );
 
-    const output = await tool.execute({
-      records: [{ objectNameSingular: 'company', recordId: COMPANY_ID }],
-    });
+    const output = await attach([
+      { objectNameSingular: 'company', recordId: COMPANY_ID },
+    ]);
 
     expect(attachThreadToRecord).not.toHaveBeenCalled();
     expect(output.success).toBe(false);
   });
 
   it('keeps the records it could attach when others fail, and warns about the rest', async () => {
-    const { tool, attachThreadToRecord } = buildTool(buildToolContext());
+    const { attach, attachThreadToRecord } = buildTool();
 
     attachThreadToRecord.mockRejectedValueOnce(
       new AiException('Record not found', AiExceptionCode.RECORD_NOT_FOUND),
     );
 
-    const output = await tool.execute({
-      records: [
-        { objectNameSingular: 'company', recordId: COMPANY_ID },
-        { objectNameSingular: 'person', recordId: PERSON_ID },
-      ],
-    });
+    const output = await attach([
+      { objectNameSingular: 'company', recordId: COMPANY_ID },
+      { objectNameSingular: 'person', recordId: PERSON_ID },
+    ]);
 
     expect(output).toEqual({
       success: true,
@@ -161,15 +154,15 @@ describe('attach_conversation_to_records tool', () => {
   });
 
   it('reports why nothing was attached instead of throwing', async () => {
-    const { tool, attachThreadToRecord } = buildTool(buildToolContext());
+    const { attach, attachThreadToRecord } = buildTool();
 
     attachThreadToRecord.mockRejectedValueOnce(
       new AiException('Record not found', AiExceptionCode.RECORD_NOT_FOUND),
     );
 
-    const output = await tool.execute({
-      records: [{ objectNameSingular: 'company', recordId: COMPANY_ID }],
-    });
+    const output = await attach([
+      { objectNameSingular: 'company', recordId: COMPANY_ID },
+    ]);
 
     expect(output).toMatchObject({
       success: false,

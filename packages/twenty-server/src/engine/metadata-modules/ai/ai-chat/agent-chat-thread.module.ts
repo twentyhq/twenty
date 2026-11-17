@@ -24,6 +24,7 @@ import { AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modul
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
@@ -73,6 +74,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatThreadParticipantEventService,
     AgentChatThreadParticipantService,
     AgentChatThreadService,
+    AgentChatThreadTargetService,
     AgentChatThreadTriageService,
     AgentInboxService,
     EndAgentChatChannelSnoozeJob,
@@ -93,6 +95,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatSharingService,
     AgentChatThreadParticipantService,
     AgentChatThreadService,
+    AgentChatThreadTargetService,
     AgentChatThreadTriageService,
     AgentInboxService,
   ],

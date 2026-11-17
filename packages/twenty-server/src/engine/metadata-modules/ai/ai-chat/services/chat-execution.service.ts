@@ -36,9 +36,7 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
-import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -121,7 +119,6 @@ export class ChatExecutionService {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly messagePruningService: MessagePruningService,
     private readonly chatActorService: AgentChatActorService,
-    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
@@ -372,7 +369,12 @@ export class ChatExecutionService {
         registryAccess: {
           type: 'assistant',
           toolContext,
-          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
+          excludedToolNames: canAttachConversationToRecords
+            ? AI_CHAT_EXCLUDED_TOOL_NAMES
+            : new Set([
+                ...AI_CHAT_EXCLUDED_TOOL_NAMES,
+                ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+              ]),
           preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
         },
         canAskHumans: true,
@@ -382,16 +384,6 @@ export class ChatExecutionService {
             ? {
                 [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
                   createCompleteWorkspaceSetupTool(),
-              }
-            : {}),
-          ...(canAttachConversationToRecords
-            ? {
-                [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]:
-                  createAttachConversationToRecordsTool({
-                    agentChatThreadTargetService:
-                      this.agentChatThreadTargetService,
-                    toolContext,
-                  }),
               }
             : {}),
           ...(isAiChatInboxEnabled && isDefined(latestUserMessage)

@@ -1,4 +1,6 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
@@ -14,17 +16,22 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -163,6 +170,44 @@ const disownThread = async (threadId: string) => {
   );
 };
 
+const countThreadTargets = async (threadId: string) => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."agentChatThreadTarget"
+     WHERE "threadId" = $1`,
+    [threadId],
+  );
+
+  return count;
+};
+
+const attachThroughRegistry = async ({
+  execution,
+  record,
+}: {
+  execution: AgentRunExecution;
+  record: { objectNameSingular: string; recordId: string };
+}) => {
+  const registryAccess = await getAppProviderByClassName<AgentRunTurnService>(
+    'AgentRunTurnService',
+  ).buildAgentRegistryAccess({
+    ...execution,
+    additionalExcludedToolNames: execution.additionalExcludedToolNames ?? [],
+    toolLoadingStrategy: execution.toolLoadingStrategy ?? 'preload',
+  });
+
+  if (registryAccess.type === 'none') {
+    throw new Error('Expected the run to reach the tool registry');
+  }
+
+  return getAppProviderByClassName<ToolRegistryService>(
+    'ToolRegistryService',
+  ).resolveAndExecute(
+    ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+    { records: [record] },
+    registryAccess.toolContext,
+  );
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -200,6 +245,16 @@ describe('Agent run conversation should be recorded for the caller', () => {
   beforeAll(async () => {
     application = await setupApplicationWithResources({
       name: 'Agent Run Conversation Probe',
+      objectPermissions: [
+        {
+          universalIdentifier: randomUUID(),
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
+      shouldAssignDefaultRoleToAgent: true,
     });
 
     const [{ universalIdentifier: agentUniversalIdentifier }] =
@@ -384,6 +439,54 @@ describe('Agent run conversation should be recorded for the caller', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       deletedAt: null,
     });
+  });
+
+  it('should let the member a conversation continues as file it only under records the agent can read', async () => {
+    const execution = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    await expect(
+      attachThroughRegistry({
+        execution,
+        record: {
+          objectNameSingular: 'person',
+          recordId: PERSON_DATA_SEED_IDS.ID_1,
+        },
+      }),
+    ).resolves.toMatchObject({ success: false });
+    expect(await countThreadTargets(execution.threadId)).toBe(0);
+
+    await expect(
+      attachThroughRegistry({
+        execution,
+        record: {
+          objectNameSingular: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_1,
+        },
+      }),
+    ).resolves.toMatchObject({ success: true });
+    expect(await countThreadTargets(execution.threadId)).toBe(1);
+  });
+
+  it('should give the application continuing a conversation as itself no record to file it under', async () => {
+    const execution = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+    });
+
+    await expect(
+      attachThroughRegistry({
+        execution,
+        record: {
+          objectNameSingular: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_1,
+        },
+      }),
+    ).resolves.toMatchObject({ success: false });
+    expect(await countThreadTargets(execution.threadId)).toBe(0);
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {

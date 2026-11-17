@@ -53,13 +53,13 @@ export const captureAgentRunExecution = async ({
 
     const execution = startTurnSpy.mock.calls[0]?.[0];
 
-    if (!isDefined(execution)) {
+    if (!isDefined(execution) || !isDefined(execution.threadId)) {
       throw new Error(
-        `Expected the agent to run: ${JSON.stringify(response.body.errors ?? response.body.data)}`,
+        `Expected the agent to run in a thread: ${JSON.stringify(response.body.errors ?? response.body.data)}`,
       );
     }
 
-    return { ...execution, threadId: response.body.data.runAgent.threadId };
+    return { ...execution, threadId: execution.threadId };
   } finally {
     jest.restoreAllMocks();
   }
