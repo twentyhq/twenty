@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
+import { fetchUpcomingCalendarEvents } from 'src/logic-functions/data/fetch-upcoming-calendar-events.util';
 
 const queryMock = vi.fn();
 
@@ -15,27 +15,34 @@ const CLIENT: CoreApiClient = Object.assign(
 
 const NOW = new Date('2026-07-04T12:00:00.000Z');
 
-const buildPage = (
-  calendarEventIds: string[],
-  { hasNextPage = false, endCursor = null as string | null } = {},
-) => ({
+const buildPage = ({
+  calendarEventNodes,
+  hasNextPage = false,
+  endCursor = null,
+}: {
+  calendarEventNodes: Array<{ id: string; startsAt?: string | null }>;
+  hasNextPage?: boolean;
+  endCursor?: string | null;
+}) => ({
   calendarEvents: {
     pageInfo: { hasNextPage, endCursor },
-    edges: calendarEventIds.map((calendarEventId) => ({
-      node: { id: calendarEventId },
+    edges: calendarEventNodes.map((calendarEventNode) => ({
+      node: calendarEventNode,
     })),
   },
 });
 
-describe('fetchUpcomingCalendarEventIds', () => {
+describe('fetchUpcomingCalendarEvents', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('filters to non-canceled events starting within the scheduling horizon and not yet ended, closest first', async () => {
-    queryMock.mockResolvedValue(buildPage(['calendar-event-1']));
+    queryMock.mockResolvedValue(
+      buildPage({ calendarEventNodes: [{ id: 'calendar-event-1' }] }),
+    );
 
-    await fetchUpcomingCalendarEventIds(CLIENT, NOW);
+    await fetchUpcomingCalendarEvents(CLIENT, NOW);
 
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -61,41 +68,49 @@ describe('fetchUpcomingCalendarEventIds', () => {
             },
             orderBy: [{ startsAt: 'AscNullsLast' }],
           }),
+          edges: { node: { id: true, startsAt: true } },
         }),
       }),
     );
   });
 
-  it('pages through every result and returns unique sorted ids', async () => {
+  it('pages through every result and returns each event with its start time in query order', async () => {
     queryMock
       .mockResolvedValueOnce(
-        buildPage(['calendar-event-2', 'calendar-event-1'], {
+        buildPage({
+          calendarEventNodes: [
+            { id: 'calendar-event-2', startsAt: '2026-07-04T13:00:00.000Z' },
+            { id: 'calendar-event-1', startsAt: '2026-07-04T14:00:00.000Z' },
+          ],
           hasNextPage: true,
           endCursor: 'cursor-1',
         }),
       )
       .mockResolvedValueOnce(
-        buildPage(['calendar-event-3', 'calendar-event-2']),
+        buildPage({
+          calendarEventNodes: [{ id: 'calendar-event-3', startsAt: null }],
+        }),
       );
 
-    const calendarEventIds = await fetchUpcomingCalendarEventIds(CLIENT, NOW);
+    const upcomingCalendarEvents = await fetchUpcomingCalendarEvents(
+      CLIENT,
+      NOW,
+    );
 
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock.mock.calls[1][0].calendarEvents.__args.after).toBe(
       'cursor-1',
     );
-    expect(calendarEventIds).toEqual([
-      'calendar-event-1',
-      'calendar-event-2',
-      'calendar-event-3',
+    expect(upcomingCalendarEvents).toEqual([
+      { id: 'calendar-event-2', startsAt: '2026-07-04T13:00:00.000Z' },
+      { id: 'calendar-event-1', startsAt: '2026-07-04T14:00:00.000Z' },
+      { id: 'calendar-event-3', startsAt: undefined },
     ]);
   });
 
   it('returns an empty list when no upcoming events exist', async () => {
-    queryMock.mockResolvedValue(buildPage([]));
+    queryMock.mockResolvedValue(buildPage({ calendarEventNodes: [] }));
 
-    await expect(fetchUpcomingCalendarEventIds(CLIENT, NOW)).resolves.toEqual(
-      [],
-    );
+    await expect(fetchUpcomingCalendarEvents(CLIENT, NOW)).resolves.toEqual([]);
   });
 });
