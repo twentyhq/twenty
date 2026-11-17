@@ -5,7 +5,10 @@ export const canRenewGoogleMeetEventSubscription = ({
   subscription,
   pubsubTopic,
 }: {
-  subscription: GoogleMeetEventSubscription;
+  subscription: Pick<
+    GoogleMeetEventSubscription,
+    'notificationEndpoint' | 'state' | 'eventTypes'
+  >;
   pubsubTopic: string;
 }): boolean =>
   subscription.notificationEndpoint?.pubsubTopic === pubsubTopic &&

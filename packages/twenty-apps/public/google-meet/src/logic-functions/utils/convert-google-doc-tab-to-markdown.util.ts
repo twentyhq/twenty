@@ -5,10 +5,13 @@ import { convertGoogleDocParagraphToMarkdown } from 'src/logic-functions/utils/c
 
 type MarkdownBlock = { markdown: string; isListItem: boolean };
 
-const getBlockSeparator = (
-  previousBlock: MarkdownBlock | undefined,
-  block: MarkdownBlock,
-): string => {
+const getBlockSeparator = ({
+  previousBlock,
+  block,
+}: {
+  previousBlock: MarkdownBlock | undefined;
+  block: MarkdownBlock;
+}): string => {
   if (!isDefined(previousBlock)) {
     return '';
   }
@@ -40,7 +43,7 @@ export const convertGoogleDocTabToMarkdown = (tab: GoogleDocTab): string => {
   return blocks
     .map(
       (block, index) =>
-        `${getBlockSeparator(blocks[index - 1], block)}${block.markdown}`,
+        `${getBlockSeparator({ previousBlock: blocks[index - 1], block })}${block.markdown}`,
     )
     .join('');
 };

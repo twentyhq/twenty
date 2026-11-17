@@ -4,7 +4,8 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GOOGLE_DOC_ORDERED_GLYPH_TYPES } from 'src/logic-functions/constants/google-docs-api.constant';
 import { type GoogleDocLists } from 'src/logic-functions/types/google-doc-lists.type';
 import { type GoogleDocParagraph } from 'src/logic-functions/types/google-doc-paragraph.type';
-import { convertGoogleDocParagraphElementToMarkdown } from 'src/logic-functions/utils/convert-google-doc-paragraph-element-to-markdown.util';
+import { buildGoogleDocMarkdownSegment } from 'src/logic-functions/utils/build-google-doc-markdown-segment.util';
+import { joinGoogleDocMarkdownSegments } from 'src/logic-functions/utils/join-google-doc-markdown-segments.util';
 
 const HEADING_STYLE_PATTERN = /^HEADING_([1-6])$/;
 
@@ -30,7 +31,7 @@ const getBulletPrefix = ({
   }
 
   const nestingLevel = bullet.nestingLevel ?? 0;
-  const indentation = '  '.repeat(nestingLevel);
+  const indentation = '    '.repeat(nestingLevel);
   const glyphType =
     lists[bullet.listId]?.listProperties?.nestingLevels?.[nestingLevel]
       ?.glyphType;
@@ -49,10 +50,9 @@ export const convertGoogleDocParagraphToMarkdown = ({
   paragraph: GoogleDocParagraph;
   lists: GoogleDocLists;
 }): string | undefined => {
-  const text = (paragraph.elements ?? [])
-    .map(convertGoogleDocParagraphElementToMarkdown)
-    .join('')
-    .trim();
+  const text = joinGoogleDocMarkdownSegments(
+    (paragraph.elements ?? []).map(buildGoogleDocMarkdownSegment),
+  ).trim();
 
   if (!isNonEmptyString(text)) {
     return undefined;

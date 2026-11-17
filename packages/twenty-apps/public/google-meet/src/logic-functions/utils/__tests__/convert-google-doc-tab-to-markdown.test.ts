@@ -57,17 +57,22 @@ describe('convertGoogleDocTabToMarkdown', () => {
         },
       }),
     ).toBe(
-      '## Summary\n\nAlice Martin presented the roadmap.\n\n- Pricing: agreed on annual plans.\n  - Starts in January.\n\n## Next steps',
+      '## Summary\n\nAlice Martin presented the roadmap.\n\n- Pricing: agreed on annual plans.\n    - Starts in January.\n\n## Next steps',
     );
   });
 
-  it('should number items of an ordered list', () => {
+  it('should number items of an ordered list and nest numbered children', () => {
     expect(
       convertGoogleDocTabToMarkdown({
         documentTab: {
           lists: {
             numbered: {
-              listProperties: { nestingLevels: [{ glyphType: 'DECIMAL' }] },
+              listProperties: {
+                nestingLevels: [
+                  { glyphType: 'DECIMAL' },
+                  { glyphType: 'ALPHA' },
+                ],
+              },
             },
           },
           body: {
@@ -80,6 +85,12 @@ describe('convertGoogleDocTabToMarkdown', () => {
               },
               {
                 paragraph: {
+                  elements: [text('Draft the terms\n')],
+                  bullet: { listId: 'numbered', nestingLevel: 1 },
+                },
+              },
+              {
+                paragraph: {
                   elements: [text('Book the kickoff\n')],
                   bullet: { listId: 'numbered' },
                 },
@@ -88,7 +99,7 @@ describe('convertGoogleDocTabToMarkdown', () => {
           },
         },
       }),
-    ).toBe('1. Send the contract\n1. Book the kickoff');
+    ).toBe('1. Send the contract\n    1. Draft the terms\n1. Book the kickoff');
   });
 
   it('should keep bold, italic, links and smart chips', () => {
@@ -136,8 +147,79 @@ describe('convertGoogleDocTabToMarkdown', () => {
         },
       }),
     ).toBe(
-      '**Owner** _maybe_ see [the deck](https://example.com/deck) and [Transcript](https://docs.google.com/document/d/first)',
+      '**Owner** *maybe* see [the deck](https://example.com/deck) and [Transcript](https://docs.google.com/document/d/first)',
     );
+  });
+
+  it('should keep one emphasis span across pieces Google styles separately', () => {
+    expect(
+      convertGoogleDocTabToMarkdown({
+        documentTab: {
+          body: {
+            content: [
+              {
+                paragraph: {
+                  elements: [
+                    {
+                      textRun: {
+                        content: 'Please ',
+                        textStyle: { italic: true },
+                      },
+                    },
+                    {
+                      textRun: {
+                        content: 'rate the notes',
+                        textStyle: { italic: true, bold: true },
+                      },
+                    },
+                    {
+                      textRun: {
+                        content: ' in a ',
+                        textStyle: { italic: true },
+                      },
+                    },
+                    {
+                      textRun: {
+                        content: 'short survey',
+                        textStyle: {
+                          italic: true,
+                          link: { url: 'https://example.com/survey' },
+                        },
+                      },
+                    },
+                    {
+                      textRun: { content: '.\n', textStyle: { italic: true } },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      }),
+    ).toBe(
+      '*Please **rate the notes** in a [short survey](https://example.com/survey).*',
+    );
+  });
+
+  it('should escape characters that Markdown would read as formatting', () => {
+    expect(
+      convertGoogleDocTabToMarkdown({
+        documentTab: {
+          body: {
+            content: [
+              {
+                paragraph: {
+                  elements: [
+                    text('Use *value* or [name] as the_placeholder\n'),
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      }),
+    ).toBe('Use \\*value\\* or \\[name\\] as the\\_placeholder');
   });
 
   it('should return an empty string for a tab without text', () => {
