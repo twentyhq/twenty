@@ -2477,8 +2477,8 @@ msgid "Add payment method"
 msgstr "Ajouter un mode de paiement"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Ajouter des personnes ou un canal"
 
@@ -23763,7 +23763,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -25923,11 +25923,6 @@ msgstr "Rechercher des opérations"
 msgid "Search options"
 msgstr "Options de recherche"
 
-#. js-lingui-id: /iXEpl
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
-msgid "Search recipients"
-msgstr "Rechercher des destinataires"
-
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -26551,7 +26546,7 @@ msgid "Select options"
 msgstr "Sélectionnez des options"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Sélectionner des destinataires"
 

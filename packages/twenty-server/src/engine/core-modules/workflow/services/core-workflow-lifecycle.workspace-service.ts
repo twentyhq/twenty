@@ -31,7 +31,6 @@ import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -163,7 +162,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     assertVersionCanBeActivated(
       {
         id: coreWorkflowVersion.id,
-        status: this.toWorkspaceVersionStatus(coreWorkflowVersion.status),
+        status: coreWorkflowVersion.status,
         trigger,
         steps,
       },
@@ -761,11 +760,5 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     return { availabilityType, availabilityObjectMetadataId };
-  }
-
-  private toWorkspaceVersionStatus(
-    status: CoreWorkflowVersionStatus,
-  ): WorkflowVersionStatus {
-    return WorkflowVersionStatus[status];
   }
 }
