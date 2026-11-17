@@ -112,32 +112,6 @@ describe('buildRowLevelPermissionRulesInput', () => {
     });
   });
 
-  it('puts predicates in no group in a rule of their own', () => {
-    const rules = buildRowLevelPermissionRulesInput({
-      predicateGroups: [],
-      predicates: [
-        buildPredicate({
-          id: 'ungrouped-predicate',
-          rowLevelPermissionPredicateGroupId: null,
-          rowLevelPermissionRuleId: 'ungrouped-rule',
-          positionInRowLevelPermissionPredicateGroup: 2,
-        }),
-      ],
-      ruleOperations: RULE_OPERATIONS,
-    });
-
-    expect(rules).toEqual([
-      {
-        id: 'ungrouped-rule',
-        ...RULE_OPERATIONS,
-        predicates: [
-          expect.objectContaining({ id: 'ungrouped-predicate', position: 2 }),
-        ],
-        predicateGroups: [],
-      },
-    ]);
-  });
-
   it('keeps a rule with several groups as one rule', () => {
     const rules = buildRowLevelPermissionRulesInput({
       predicateGroups: [
@@ -171,6 +145,7 @@ describe('buildRowLevelPermissionRulesInput', () => {
           id: 'owner-predicate',
           rowLevelPermissionPredicateGroupId: null,
           rowLevelPermissionRuleId: 'owner-rule',
+          positionInRowLevelPermissionPredicateGroup: 2,
         }),
         buildPredicate({
           id: 'team-predicate',
@@ -184,7 +159,9 @@ describe('buildRowLevelPermissionRulesInput', () => {
     expect(rules).toEqual([
       expect.objectContaining({
         id: 'owner-rule',
-        predicates: [expect.objectContaining({ id: 'owner-predicate' })],
+        predicates: [
+          expect.objectContaining({ id: 'owner-predicate', position: 2 }),
+        ],
       }),
       expect.objectContaining({
         id: 'team-rule',

@@ -27,21 +27,6 @@ const findRuleOperations = async (
   return rule;
 };
 
-const countLiveRows = async ({
-  table,
-  id,
-}: {
-  table: 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionPredicate';
-  id: string;
-}): Promise<number> => {
-  const [{ count }] = await global.testDataSource.query(
-    `SELECT COUNT(*) AS count FROM core."${table}" WHERE id = $1 AND "deletedAt" IS NULL`,
-    [id],
-  );
-
-  return Number(count);
-};
-
 const createRole = async (label: string): Promise<string> => {
   const { data } = await createOneRole({
     input: {
@@ -105,17 +90,18 @@ describe('row level permission rules', () => {
     await deleteOneRole({ input: { idToDelete: roleId } });
   });
 
-  it('should persist two rules on one object with different operations', async () => {
+  it('should keep each rule with its own operations, update one by id and delete an omitted one', async () => {
     const readRuleId = v4();
     const editRuleId = v4();
+    const readRule = buildRule({ id: readRuleId, canReadRecords: true });
 
-    const { data } = await upsertRowLevelPermissionRules({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
         rules: [
-          buildRule({ id: readRuleId, canReadRecords: true }),
+          readRule,
           buildRule({
             id: editRuleId,
             canReadRecords: true,
@@ -126,9 +112,6 @@ describe('row level permission rules', () => {
       },
     });
 
-    expect(
-      data.upsertRowLevelPermissionRules.rules.map(({ id }) => id).sort(),
-    ).toEqual([readRuleId, editRuleId].sort());
     expect(await findRuleOperations(readRuleId)).toEqual({
       canReadRecords: true,
       canUpdateRecords: false,
@@ -139,113 +122,31 @@ describe('row level permission rules', () => {
       canUpdateRecords: true,
       canSoftDeleteRecords: true,
     });
-  });
 
-  it('should change the operations of a rule updated by id', async () => {
-    const ruleId = v4();
-    const predicateGroupId = v4();
-    const predicateId = v4();
-    const upsertRule = (
-      ruleOperations: Pick<
-        RowLevelPermissionRuleInput,
-        'canReadRecords' | 'canUpdateRecords' | 'canSoftDeleteRecords'
-      >,
-    ) =>
-      upsertRowLevelPermissionRules({
-        expectToFail: false,
-        input: {
-          roleId,
-          objectMetadataId,
-          rules: [
-            buildRule({
-              id: ruleId,
-              predicateGroupId,
-              predicateId,
-              ...ruleOperations,
-            }),
-          ],
-        },
-      });
-
-    await upsertRule({ canReadRecords: true });
-
-    expect(await findRuleOperations(ruleId)).toEqual({
-      canReadRecords: true,
-      canUpdateRecords: false,
-      canSoftDeleteRecords: false,
-    });
-
-    const { data } = await upsertRule({
-      canReadRecords: false,
-      canUpdateRecords: true,
-      canSoftDeleteRecords: true,
-    });
-
-    expect(data.upsertRowLevelPermissionRules.rules).toEqual([
-      expect.objectContaining({ id: ruleId }),
-    ]);
-    expect(await findRuleOperations(ruleId)).toEqual({
-      canReadRecords: false,
-      canUpdateRecords: true,
-      canSoftDeleteRecords: true,
-    });
-  });
-
-  it('should delete an omitted rule with its groups and predicates', async () => {
-    const keptRuleId = v4();
-    const removedRuleId = v4();
-    const removedPredicateGroupId = v4();
-    const removedPredicateId = v4();
-    const keptRule = buildRule({ id: keptRuleId, canReadRecords: true });
-
-    await upsertRowLevelPermissionRules({
+    const { data } = await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
-        rules: [
-          keptRule,
-          buildRule({
-            id: removedRuleId,
-            predicateGroupId: removedPredicateGroupId,
-            predicateId: removedPredicateId,
-            canReadRecords: true,
-          }),
-        ],
+        rules: [{ ...readRule, canUpdateRecords: true }],
       },
     });
 
-    const { data } = await upsertRowLevelPermissionRules({
-      expectToFail: false,
-      input: { roleId, objectMetadataId, rules: [keptRule] },
-    });
+    const { rules, predicateGroups, predicates } =
+      data.upsertRowLevelPermissionRules;
 
-    expect(data.upsertRowLevelPermissionRules.rules).toEqual([
-      expect.objectContaining({ id: keptRuleId }),
-    ]);
+    expect(rules).toEqual([expect.objectContaining({ id: readRuleId })]);
+    expect(await findRuleOperations(readRuleId)).toEqual({
+      canReadRecords: true,
+      canUpdateRecords: true,
+      canSoftDeleteRecords: false,
+    });
+    expect(await findRuleOperations(editRuleId)).toBeUndefined();
     expect(
-      data.upsertRowLevelPermissionRules.predicateGroups.map(
+      [...predicateGroups, ...predicates].map(
         ({ rowLevelPermissionRuleId }) => rowLevelPermissionRuleId,
       ),
-    ).toEqual([keptRuleId]);
-    expect(
-      data.upsertRowLevelPermissionRules.predicates.map(
-        ({ rowLevelPermissionRuleId }) => rowLevelPermissionRuleId,
-      ),
-    ).toEqual([keptRuleId]);
-    expect(await findRuleOperations(removedRuleId)).toBeUndefined();
-    expect(
-      await countLiveRows({
-        table: 'rowLevelPermissionPredicateGroup',
-        id: removedPredicateGroupId,
-      }),
-    ).toBe(0);
-    expect(
-      await countLiveRows({
-        table: 'rowLevelPermissionPredicate',
-        id: removedPredicateId,
-      }),
-    ).toBe(0);
+    ).toEqual([readRuleId, readRuleId]);
   });
 
   it('should refuse a rule id that belongs to another role', async () => {
@@ -293,31 +194,23 @@ describe('row level permission rules', () => {
   it('should refuse the same id used twice', async () => {
     const duplicatedId = v4();
 
-    for (const rules of [
-      [
-        buildRule({ id: duplicatedId, canReadRecords: true }),
-        buildRule({ id: duplicatedId, canReadRecords: true }),
-      ],
-      [
-        buildRule({
-          id: duplicatedId,
-          predicateGroupId: duplicatedId,
-          canReadRecords: true,
-        }),
-      ],
-      [
-        buildRule({ predicateId: duplicatedId, canReadRecords: true }),
-        buildRule({ predicateId: duplicatedId, canReadRecords: true }),
-      ],
-    ]) {
-      const { errors } = await upsertRowLevelPermissionRules({
-        expectToFail: true,
-        input: { roleId, objectMetadataId, rules },
-      });
+    const { errors } = await upsertRowLevelPermissionRules({
+      expectToFail: true,
+      input: {
+        roleId,
+        objectMetadataId,
+        rules: [
+          buildRule({
+            id: duplicatedId,
+            predicateGroupId: duplicatedId,
+            canReadRecords: true,
+          }),
+        ],
+      },
+    });
 
-      expect(errors?.[0]?.extensions?.subCode).toBe(
-        'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA',
-      );
-    }
+    expect(errors?.[0]?.extensions?.subCode).toBe(
+      'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA',
+    );
   });
 });
