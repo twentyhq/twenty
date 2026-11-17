@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsUUID,
   Max,
   ValidateIf,
   type ValidationError,
@@ -20,7 +21,7 @@ import {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { IsLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/decorators/is-lambda-resource-tags.decorator';
@@ -60,6 +61,7 @@ import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/d
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { getMissingServerAdminIdentityAssertionVariables } from 'src/engine/core-modules/twenty-config/utils/get-missing-server-admin-identity-assertion-variables.util';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
   ConfigVariableException,
@@ -610,6 +612,63 @@ export class ConfigVariables {
   @IsOptional()
   @IsEnum(DpaRegion)
   DPA_DEPLOYMENT_REGION: DpaRegion = DpaRegion.EU;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Id of the only workspace server admin privileges (admin panel, server-level impersonation) can be used from. Leave unset to allow them from any workspace.',
+    type: ConfigVariableType.STRING,
+    // Env-only: the admin panel must not be able to lift its own restriction.
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUUID()
+  SERVER_ADMIN_WORKSPACE_ID: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Request header carrying the signed identity assertion (a JWT) that an identity-aware proxy adds in front of the server admin workspace, for example Cf-Access-Jwt-Assertion. Setting it requires the three other SERVER_ADMIN_IDENTITY_ASSERTION variables and SERVER_ADMIN_WORKSPACE_ID: every request into that workspace must then carry an assertion issued to the email of its user.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_HEADER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'URL of the JSON Web Key Set the server admin identity assertions are signed with',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Issuer the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Audience the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -1648,7 +1707,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
+      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: one job every durationMs / max with no initial burst, per workspace and application. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -2804,6 +2863,19 @@ export const validate = (config: Record<string, unknown>): ConfigVariables => {
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
+    throw new ConfigVariableException(
+      'Config variables validation failed',
+      ConfigVariableExceptionCode.VALIDATION_FAILED,
+    );
+  }
+
+  const missingServerAdminIdentityAssertionVariables =
+    getMissingServerAdminIdentityAssertionVariables(validatedConfig);
+
+  if (isNonEmptyArray(missingServerAdminIdentityAssertionVariables)) {
+    Logger.error(
+      `The server admin identity assertion is partially configured, missing: ${missingServerAdminIdentityAssertionVariables.join(', ')}`,
+    );
     throw new ConfigVariableException(
       'Config variables validation failed',
       ConfigVariableExceptionCode.VALIDATION_FAILED,

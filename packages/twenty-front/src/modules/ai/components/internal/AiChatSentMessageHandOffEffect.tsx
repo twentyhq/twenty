@@ -1,3 +1,5 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
+import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
 import { type Editor } from '@tiptap/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
@@ -18,8 +20,13 @@ export const AiChatSentMessageHandOffEffect = ({
   isComposerCentered,
 }: AiChatSentMessageHandOffEffectProps) => {
   const store = useStore();
+  const { instanceId } = useAiChatInstanceOrThrow();
 
-  const handOffSentMessage = () => {
+  const handOffSentMessage = (detail?: AiChatInstanceEventDetail) => {
+    if (detail?.instanceId !== instanceId) {
+      return;
+    }
+
     if (!isComposerCentered) {
       store.set(aiChatSentMessageHandOffState.atom, null);
       return;
@@ -39,7 +46,7 @@ export const AiChatSentMessageHandOffEffect = ({
     });
   };
 
-  useListenToBrowserEvent({
+  useListenToBrowserEvent<AiChatInstanceEventDetail>({
     eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handOffSentMessage,
   });

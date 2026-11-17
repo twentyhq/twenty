@@ -6,7 +6,7 @@ import { AiChatMessagesFetchEffect } from '@/ai/components/AiChatMessagesFetchEf
 import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessagesFamilyState';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { GetChatMessagesDocument } from '~/generated-metadata/graphql';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -69,7 +69,7 @@ describe('AiChatMessagesFetchEffect', () => {
       },
     ];
 
-    store.set(currentAiChatThreadState.atom, THREAD_ID);
+    store.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     store.set(
       aiChatLiveReactionRevisionsFamilyState.atomFamily({
         threadId: THREAD_ID,
@@ -86,7 +86,7 @@ describe('AiChatMessagesFetchEffect', () => {
     render(
       <JotaiProvider store={store}>
         <MockedProvider mocks={[CHAT_MESSAGES_MOCK]}>
-          <AiChatMessagesFetchEffect />
+          <AiChatMessagesFetchEffect threadId={THREAD_ID} />
         </MockedProvider>
       </JotaiProvider>,
     );

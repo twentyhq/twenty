@@ -9,17 +9,14 @@ const resolve = ({
   defaultRoleId,
   sourceType,
   grantRoleId,
-  userRoleId,
 }: {
   applicationId?: string;
   defaultRoleId: string | null;
   sourceType: ApplicationRegistrationSourceType;
   grantRoleId?: string;
-  userRoleId?: string;
 }) =>
   resolveApplicationRoleId({
     application: { id: applicationId, defaultRoleId, sourceType },
-    userRoleId,
     workspaceId: 'workspace-id',
     workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
     flatRoleTargetByApplicationIdMaps:
@@ -39,7 +36,6 @@ describe('resolveApplicationRoleId', () => {
         defaultRoleId: 'application-role-id',
         sourceType,
         grantRoleId: 'grant-role-id',
-        userRoleId: 'user-role-id',
       }),
     ).toBe('grant-role-id');
   });
@@ -77,17 +73,7 @@ describe('resolveApplicationRoleId', () => {
     ).toBe('application-role-id');
   });
 
-  it('lends the member role to an OAuth-only application without a role', () => {
-    expect(
-      resolve({
-        defaultRoleId: null,
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        userRoleId: 'user-role-id',
-      }),
-    ).toBe('user-role-id');
-  });
-
-  it('denies an OAuth-only application without a role when no member role backs it', () => {
+  it('gives no role to an OAuth-only application without one', () => {
     expect(
       resolve({
         defaultRoleId: null,

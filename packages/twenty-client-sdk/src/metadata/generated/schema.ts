@@ -580,8 +580,9 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content: Scalars['String']
+    encoding?: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
     __typename: 'ApplicationExportFile'
@@ -1669,7 +1670,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2282,6 +2283,7 @@ export interface McpServer {
     isActive: Scalars['Boolean']
     label: Scalars['String']
     name: Scalars['String']
+    signInScope?: ConnectionProviderScope
     tools: McpServerTool[]
     toolsSyncError?: Scalars['String']
     toolsSyncedAt?: Scalars['DateTime']
@@ -2750,7 +2752,6 @@ export interface Mutation {
     updateWorkspaceIframeMediaPermissions: Workspace
     updateWorkspaceMemberRole: WorkspaceMember
     updateWorkspaceMemberSettings: Scalars['Boolean']
-    upgradeApplication: Scalars['Boolean']
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball: ApplicationRegistration
     /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -2767,7 +2768,7 @@ export interface Mutation {
     upsertFieldsWidget: View
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
-    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -2789,6 +2790,7 @@ export interface NavigationMenuItem {
     applicationId?: Scalars['UUID']
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
+    /** @deprecated Use parentId instead. */
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
     id: Scalars['UUID']
@@ -2796,6 +2798,7 @@ export interface NavigationMenuItem {
     name?: Scalars['String']
     nativePageKey?: Scalars['String']
     pageLayoutId?: Scalars['UUID']
+    parentId?: Scalars['UUID']
     position: Scalars['Float']
     targetObjectMetadataId?: Scalars['UUID']
     targetRecordId?: Scalars['UUID']
@@ -2808,7 +2811,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW' | 'WORKFLOW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -3556,6 +3559,7 @@ export interface RowLevelPermissionPredicate {
     relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     subFieldName?: Scalars['String']
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
@@ -3574,6 +3578,7 @@ export interface RowLevelPermissionPredicateGroup {
     parentRowLevelPermissionPredicateGroupId?: Scalars['String']
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
     roleId: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     __typename: 'RowLevelPermissionPredicateGroup'
 }
 
@@ -3947,10 +3952,11 @@ export interface UnsubscribeTopic {
 
 export type UnsubscribeTopicVisibility = 'PRIVATE' | 'PUBLIC'
 
-export interface UpsertRowLevelPermissionPredicatesResult {
+export interface UpsertRowLevelPermissionRulesResult {
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
-    __typename: 'UpsertRowLevelPermissionPredicatesResult'
+    rules: RowLevelPermissionRule[]
+    __typename: 'UpsertRowLevelPermissionRulesResult'
 }
 
 export interface UsageAnalytics {
@@ -5170,8 +5176,9 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content?: boolean | number
+    encoding?: boolean | number
     folder?: boolean | number
     path?: boolean | number
     __typename?: boolean | number
@@ -6142,11 +6149,11 @@ export interface CreateIndexInput {fields: CreateIndexFieldInput[],indexType: In
 
 export interface CreateLogicFunctionFromSourceInput {cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),id?: (Scalars['UUID'] | null),name: Scalars['String'],serverRouteTriggerSettings?: (Scalars['JSON'] | null),source?: (Scalars['JSON'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),universalIdentifier?: (Scalars['UUID'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],url: Scalars['String']}
+export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],signInScope?: (ConnectionProviderScope | null),url: Scalars['String']}
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -6726,7 +6733,7 @@ export interface GetAuthorizationUrlForSSOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
+export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null),workspacePersonalInviteToken?: (Scalars['String'] | null)}
 
 export interface GettingStartedProgressGenqlSelection{
     completedStepActionKeys?: boolean | number
@@ -7177,6 +7184,7 @@ export interface McpServerGenqlSelection{
     isActive?: boolean | number
     label?: boolean | number
     name?: boolean | number
+    signInScope?: boolean | number
     tools?: McpServerToolGenqlSelection
     toolsSyncError?: boolean | number
     toolsSyncedAt?: boolean | number
@@ -7631,7 +7639,6 @@ export interface MutationGenqlSelection{
     updateWorkspaceIframeMediaPermissions?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceIframeMediaPermissionsInput} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {roleId: Scalars['UUID'], workspaceMemberId: Scalars['UUID']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -7648,7 +7655,7 @@ export interface MutationGenqlSelection{
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
-    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertRowLevelPermissionRules?: (UpsertRowLevelPermissionRulesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionRulesInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -7672,6 +7679,7 @@ export interface NavigationMenuItemGenqlSelection{
     applicationId?: boolean | number
     color?: boolean | number
     createdAt?: boolean | number
+    /** @deprecated Use parentId instead. */
     folderId?: boolean | number
     icon?: boolean | number
     id?: boolean | number
@@ -7679,6 +7687,7 @@ export interface NavigationMenuItemGenqlSelection{
     name?: boolean | number
     nativePageKey?: boolean | number
     pageLayoutId?: boolean | number
+    parentId?: boolean | number
     position?: boolean | number
     targetObjectMetadataId?: boolean | number
     targetRecordId?: boolean | number
@@ -8191,7 +8200,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8509,6 +8518,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     subFieldName?: boolean | number
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
@@ -8528,13 +8538,10 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     parentRowLevelPermissionPredicateGroupId?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
-
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelPermissionRuleGenqlSelection{
     canCreateRecords?: boolean | number
@@ -8547,6 +8554,12 @@ export interface RowLevelPermissionRuleGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -9033,7 +9046,7 @@ export interface UpdateLogicFunctionFromSourceInputUpdates {cronTriggerSettings?
 
 export interface UpdateMcpServerInput {id: Scalars['UUID'],update: UpdateMcpServerInputUpdates}
 
-export interface UpdateMcpServerInputUpdates {connectionProviderId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),url?: (Scalars['String'] | null)}
+export interface UpdateMcpServerInputUpdates {connectionProviderId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),signInScope?: (ConnectionProviderScope | null),url?: (Scalars['String'] | null)}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
@@ -9045,7 +9058,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -9179,11 +9192,12 @@ export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissi
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
 
-export interface UpsertRowLevelPermissionPredicatesInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
+export interface UpsertRowLevelPermissionRulesInput {objectMetadataId: Scalars['UUID'],roleId: Scalars['UUID'],rules: RowLevelPermissionRuleInput[]}
 
-export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
+export interface UpsertRowLevelPermissionRulesResultGenqlSelection{
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    rules?: RowLevelPermissionRuleGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12494,10 +12508,10 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    const UpsertRowLevelPermissionRulesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionRulesResult']
+    export const isUpsertRowLevelPermissionRulesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionRulesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionRulesResult"')
+      return UpsertRowLevelPermissionRulesResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13272,6 +13286,7 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
+   IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
@@ -13502,6 +13517,8 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
+   SECTION: 'SECTION' as const,
+   TAB: 'TAB' as const,
    VIEW: 'VIEW' as const,
    WORKFLOW: 'WORKFLOW' as const
 }

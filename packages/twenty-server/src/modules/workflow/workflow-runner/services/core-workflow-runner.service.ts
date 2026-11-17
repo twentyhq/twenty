@@ -10,7 +10,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { buildWorkflowRunCreatedBy } from 'src/modules/workflow/workflow-executor/utils/build-workflow-run-created-by.util';
 import {
@@ -36,7 +36,7 @@ export class CoreWorkflowRunnerService {
 
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
@@ -173,7 +173,7 @@ export class CoreWorkflowRunnerService {
     coreWorkflowVersionId: string;
   }) {
     const workflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
+      await this.coreWorkflowTriggerService.findCoreVersionById(
         workspaceId,
         coreWorkflowVersionId,
       );

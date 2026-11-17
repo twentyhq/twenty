@@ -128,6 +128,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24 ORE"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr ""
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -313,6 +319,18 @@ msgstr "Si è verificato un conflitto di nomi."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
 msgstr "Il nome è obbligatorio per il tipo FOLDER"
+
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr ""
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr ""
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -644,12 +662,6 @@ msgctxt "objectMetadata.description"
 msgid "A workflow run"
 msgstr "Un'esecuzione del workflow"
 
-#. js-lingui-id: W6HvkH
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow version"
-msgstr "Una versione del workflow"
-
 #. js-lingui-id: sDZaHF
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -724,6 +736,11 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Proprietario dell'account per le aziende"
 
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "Gli account con accesso al pannello di amministrazione o con possibilità di impersonare altri utenti non possono unirsi a uno spazio di lavoro tramite SSO. Accetta l'invito con un altro metodo di accesso."
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -745,12 +762,6 @@ msgstr "Attiva"
 msgctxt "commandMenuItem.label"
 msgid "Activate Workflow"
 msgstr "Attiva workflow"
-
-#. js-lingui-id: AnKsxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Active"
-msgstr "Attivo"
 
 #. js-lingui-id: DWczfI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -1334,6 +1345,11 @@ msgstr "Si è verificato un errore imprevisto."
 msgid "An unknown calendar error occurred."
 msgstr "Si è verificato un errore sconosciuto del calendario."
 
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "Esiste già un account non verificato per questa email. Verifica l'email o reimposta la password prima di accettare l'invito tramite SSO."
+
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1555,6 +1571,14 @@ msgstr "L'ambito della variabile dell'applicazione non può essere modificato do
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Le applicazioni non possono aggiornare questi campi: {fieldsList}."
 
+#. js-lingui-id: irwO8L
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+msgid "Apply or publish the application again to restore its frontend component sources."
+msgstr ""
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1608,12 +1632,6 @@ msgstr "Aprile"
 msgctxt "fieldMetadata.label"
 msgid "Archive"
 msgstr "Archivio"
-
-#. js-lingui-id: 5rUZb3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Archived"
-msgstr "Archiviato"
 
 #. js-lingui-id: okfXhQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -3412,6 +3430,7 @@ msgstr "L'account connesso \"{connectedAccountId}\" non dispone di un canale cal
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "Account collegato non trovato."
 
@@ -3633,8 +3652,8 @@ msgid "Core workflow id"
 msgstr "ID del workflow principale"
 
 #. js-lingui-id: WkctC4
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
 msgstr "ID della versione del workflow principale"
@@ -3875,7 +3894,6 @@ msgstr "Creato da"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created by"
@@ -3921,7 +3939,6 @@ msgstr "La creazione di un record di un oggetto privato richiede l'argomento sha
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Creation date"
@@ -3957,7 +3974,6 @@ msgstr "Data di creazione"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Creation date"
@@ -4178,7 +4194,6 @@ msgstr "Formato della data"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Date when the record was deleted"
@@ -4201,12 +4216,6 @@ msgstr "Disattiva"
 msgctxt "commandMenuItem.label"
 msgid "Deactivate Workflow"
 msgstr "Disattiva workflow"
-
-#. js-lingui-id: GuGzWG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Deactivated"
-msgstr "Disattivato"
 
 #. js-lingui-id: 3jX0AP
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -4500,7 +4509,6 @@ msgstr "Eliminato il"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted at"
@@ -4704,7 +4712,6 @@ msgstr "Punti e virgola"
 
 #. js-lingui-id: Hw0zHo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Draft"
 msgstr "Bozza"
@@ -5264,7 +5271,6 @@ msgstr "Partecipanti all'evento"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Destinazione dell'evento"
@@ -5811,7 +5817,6 @@ msgstr "Campo utilizzato per la ricerca full-text"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Field used for full-text search"
@@ -6051,7 +6056,6 @@ msgstr "Flusso"
 
 #. js-lingui-id: wMVBTa
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
@@ -6308,7 +6312,6 @@ msgstr "Generale"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
@@ -6588,7 +6591,6 @@ msgstr "UID iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "ID"
@@ -6632,7 +6634,6 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "ID"
@@ -7903,18 +7904,6 @@ msgctxt "fieldMetadata.label"
 msgid "Joining"
 msgstr "Partecipazione"
 
-#. js-lingui-id: SPutbd
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide steps"
-msgstr "Oggetto JSON per fornire i passaggi"
-
-#. js-lingui-id: aXjVR4
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide trigger"
-msgstr "Oggetto JSON per fornire il trigger"
-
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
@@ -8152,7 +8141,6 @@ msgstr "Ultima modifica del link"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last time the record was changed"
@@ -8187,7 +8175,6 @@ msgstr "Ultima modifica del record"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last update"
@@ -9248,7 +9235,6 @@ msgstr "La mia prima dashboard"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Name"
@@ -10593,6 +10579,11 @@ msgstr "Gruppo padre di predicati di autorizzazione a livello di record non trov
 msgid "Parent view filter group not found"
 msgstr "Gruppo filtro vista principale non trovato"
 
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "parentId e folderId devono corrispondere. folderId è deprecato, usa parentId."
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11012,7 +11003,6 @@ msgstr "Punto di contatto"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Position"
@@ -11516,8 +11506,8 @@ msgid "Reference to the core workflow row"
 msgstr "Riferimento alla riga del workflow principale"
 
 #. js-lingui-id: avBuTv
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
 msgstr "Riferimento alla riga della versione del workflow principale"
@@ -11939,6 +11929,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Ruolo"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr ""
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11979,6 +11974,11 @@ msgstr "Il ruolo \"{roleLabel}\" non può essere assegnato ai webhook"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Impossibile assegnare il ruolo \"{roleLabel}\": i ruoli personalizzati richiedono il piano Organization"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr ""
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -12273,12 +12273,6 @@ msgctxt "fieldMetadata.label"
 msgid "Running"
 msgstr "In esecuzione"
 
-#. js-lingui-id: 6ZqFBn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Runs"
-msgstr "Esecuzioni"
-
 #. js-lingui-id: smyL3I
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-run-views.util.ts
 msgctxt "view.name"
@@ -12443,7 +12437,6 @@ msgstr "Vettore di ricerca"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Search vector"
@@ -12489,13 +12482,11 @@ msgstr "Vedi {objectLabelPlural} eliminati"
 
 #. js-lingui-id: VGVS7x
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Runs"
 msgstr "Vedi esecuzioni"
 
 #. js-lingui-id: iWhqvt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
@@ -12503,13 +12494,11 @@ msgstr "Vedi esecuzioni"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Versions"
 msgstr "Vedi versioni"
 
 #. js-lingui-id: VsCNJG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Versions History"
@@ -12517,13 +12506,11 @@ msgstr "Vedi cronologia delle versioni"
 
 #. js-lingui-id: gIacCF
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Workflow"
 msgstr "Vedi workflow"
 
 #. js-lingui-id: kRmDjY
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
@@ -13420,7 +13407,6 @@ msgstr "Sistema"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
@@ -13973,7 +13959,6 @@ msgstr "Il creatore del link"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The creator of the record"
@@ -14545,18 +14530,6 @@ msgstr "Il campo di selezione del workflow deve fare riferimento a un campo esis
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
 msgstr "Il flusso di lavoro usa l'account connesso {handle}, che non è connesso e condiviso in questo spazio di lavoro."
 
-#. js-lingui-id: 3uACdY
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version name"
-msgstr "Il nome della versione del workflow"
-
-#. js-lingui-id: KJxGJb
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version status"
-msgstr "Lo stato della versione del workflow"
-
 #. js-lingui-id: VyvnL/
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The Workspace app dependencies changed during the build. Try creating the component again."
@@ -14590,7 +14563,6 @@ msgstr "Le dipendenze dell'app Workspace sono cambiate durante la compilazione. 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The workspace member who last updated the record"
@@ -15663,12 +15635,6 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the task."
 msgstr "Attività della timeline collegate all'attività."
 
-#. js-lingui-id: klDmCR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Timeline activities linked to the version"
-msgstr "Attività della timeline legate alla versione"
-
 #. js-lingui-id: ApXfXx
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -16384,7 +16350,6 @@ msgstr "Aggiornato il"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated by"
@@ -16425,18 +16390,6 @@ msgstr "Impossibile leggere l'utilizzo. Per favore riprova più tardi."
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
 msgstr "Quota di utilizzo esaurita per questo periodo."
-
-#. js-lingui-id: xwq0b4
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Use as Draft"
-msgstr "Usa come bozza"
-
-#. js-lingui-id: 4Pp2U8
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Use as Draft"
-msgstr "Usa come bozza"
 
 #. js-lingui-id: on4haJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -16747,30 +16700,6 @@ msgstr "Valori dei campi membro letti dalla concessione, condivisi da tutti i me
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Verify your two-factor authentication before impersonating users in another workspace."
 msgstr "Verifica la tua autenticazione a due fattori prima di impersonare utenti in un altro spazio di lavoro."
-
-#. js-lingui-id: q1On37
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version status"
-msgstr "Stato della versione"
-
-#. js-lingui-id: txhQne
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version steps"
-msgstr "Fasi della versione"
-
-#. js-lingui-id: FhKIiF
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version trigger"
-msgstr "Attivatore della versione"
-
-#. js-lingui-id: tH32bu
-#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util.ts
-msgctxt "view.name"
-msgid "Versions"
-msgstr "Versioni"
 
 #. js-lingui-id: j8p0F8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -17646,29 +17575,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Workflow Runs"
 msgstr "Esecuzioni del workflow"
 
-#. js-lingui-id: KO7j/3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow runs linked to the version."
-msgstr "Esecuzioni del workflow legate alla versione."
-
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Workflow step not found."
 msgstr "Passaggio del flusso di lavoro non trovato."
-
-#. js-lingui-id: sjVenv
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow version"
-msgstr "Versione del workflow"
-
-#. js-lingui-id: 0w608/
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Workflow Version"
-msgstr "Versione del workflow"
 
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -17712,12 +17623,6 @@ msgstr "La versione del flusso di lavoro non è in stato di bozza"
 msgid "Workflow version is required for workflow trigger items"
 msgstr "La versione del flusso di lavoro è obbligatoria per gli elementi di attivazione del flusso di lavoro"
 
-#. js-lingui-id: uVOjgA
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version linked to the run."
-msgstr "Versione del workflow collegata all'esecuzione."
-
 #. js-lingui-id: LrPIBF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for front component renderer items"
@@ -17746,22 +17651,10 @@ msgstr "Versione del flusso di lavoro non trovata"
 msgid "Workflow version not found."
 msgstr "Versione del flusso di lavoro non trovata."
 
-#. js-lingui-id: XoKTtx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version position"
-msgstr "Posizione della versione del workflow"
-
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
 msgstr "Versione del flusso di lavoro da copiare non trovata"
-
-#. js-lingui-id: lrTHGl
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflow Versions"
-msgstr "Versioni del workflow"
 
 #. js-lingui-id: oxqc8m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -17774,12 +17667,6 @@ msgstr "WorkflowRun"
 msgctxt "navigationMenuItem.name"
 msgid "Workflows"
 msgstr "Flussi di lavoro"
-
-#. js-lingui-id: W5Wgz6
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "WorkflowVersion"
-msgstr "Versione del workflow"
 
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -18448,7 +18335,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Il tuo ruolo non può eliminare alcuni di questi record, quindi non possono essere uniti."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Il tuo ruolo in questo workspace non è stato trovato. Si prega di contattare l'amministratore del tuo workspace."

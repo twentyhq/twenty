@@ -20,7 +20,7 @@ const buildFlatNavigationMenuItem = (
     position: 0,
     targetRecordId: null,
     userWorkspaceId: null,
-    folderUniversalIdentifier: null,
+    parentUniversalIdentifier: null,
     viewUniversalIdentifier: null,
     pageLayoutUniversalIdentifier: null,
     targetObjectMetadataUniversalIdentifier: null,
@@ -46,6 +46,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.FOLDER,
       expectedMessages: ['A name is required for FOLDER type'],
+    },
+    {
+      type: NavigationMenuItemType.TAB,
+      expectedMessages: ['A name is required for TAB type'],
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      expectedMessages: ['A name is required for SECTION type'],
     },
     {
       type: NavigationMenuItemType.OBJECT,
@@ -109,6 +117,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.FOLDER,
       overrides: { name: 'My folder' },
+    },
+    {
+      type: NavigationMenuItemType.TAB,
+      overrides: { name: 'My tab' },
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      overrides: { name: 'My section' },
     },
     {
       type: NavigationMenuItemType.OBJECT,

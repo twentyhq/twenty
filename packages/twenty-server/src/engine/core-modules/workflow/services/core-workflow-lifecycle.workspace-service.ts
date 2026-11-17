@@ -24,14 +24,13 @@ import {
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -73,7 +72,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
     private readonly commandMenuItemService: CommandMenuItemService,
@@ -163,7 +162,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     assertVersionCanBeActivated(
       {
         id: coreWorkflowVersion.id,
-        status: this.toWorkspaceVersionStatus(coreWorkflowVersion.status),
+        status: coreWorkflowVersion.status,
         trigger,
         steps,
       },
@@ -300,7 +299,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           resolved,
         });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },
@@ -357,7 +356,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
         await this.deleteCommandMenuItem({ workspaceId, resolved });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },
@@ -761,11 +760,5 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     return { availabilityType, availabilityObjectMetadataId };
-  }
-
-  private toWorkspaceVersionStatus(
-    status: CoreWorkflowVersionStatus,
-  ): WorkflowVersionStatus {
-    return WorkflowVersionStatus[status];
   }
 }

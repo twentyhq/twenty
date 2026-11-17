@@ -1,17 +1,17 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
-import { aiChatThreadOpenViewCountState } from '@/ai/states/aiChatThreadOpenViewCountState';
+import { aiChatThreadOpenViewCountFamilyState } from '@/ai/states/aiChatThreadOpenViewCountFamilyState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitState,
-} from '@/ai/states/aiChatThreadVisitState';
+  aiChatThreadVisitFamilyState,
+} from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatThreadSettledForMember } from '@/ai/utils/isAiChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -23,13 +23,8 @@ const isDocumentVisible = () => document.visibilityState === 'visible';
 
 export const AiChatThreadMarkAsReadEffect = () => {
   const store = useStore();
-  // The displayed thread rather than the selected one, which can still be
-  // loading or fail to load
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
-  const threadId =
-    isDefined(aiChatDisplayedThread) && isValidUuid(aiChatDisplayedThread)
-      ? aiChatDisplayedThread
-      : null;
+  const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
+  const threadId = isValidUuid(aiChatThreadId) ? aiChatThreadId : null;
   const lastActivityAt = useAtomFamilySelectorValue(
     aiChatThreadRecordFamilySelector,
     threadId ?? '',
@@ -54,18 +49,20 @@ export const AiChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(aiChatThreadOpenViewCountState.atom, (count) => count + 1);
+    const openViewCountAtom = aiChatThreadOpenViewCountFamilyState.atomFamily({
+      threadId,
+    });
+
+    store.set(openViewCountAtom, (count) => count + 1);
 
     return () => {
-      store.set(aiChatThreadOpenViewCountState.atom, (count) => count - 1);
+      store.set(openViewCountAtom, (count) => count - 1);
 
-      if (store.get(aiChatThreadOpenViewCountState.atom) !== 0) {
+      if (store.get(openViewCountAtom) !== 0) {
         return;
       }
 
-      store.set(aiChatThreadVisitState.atom, (visit) =>
-        visit?.threadId === threadId ? null : visit,
-      );
+      store.set(aiChatThreadVisitFamilyState.atomFamily({ threadId }), null);
 
       // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
@@ -111,7 +108,8 @@ export const AiChatThreadMarkAsReadEffect = () => {
       lastActivityAt,
       participant,
     });
-    const storedVisit = store.get(aiChatThreadVisitState.atom);
+    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({ threadId });
+    const storedVisit = store.get(visitAtom);
 
     // Taken once per visit, before the read mark, so it sees where the member
     // left off
@@ -124,7 +122,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
     const visit = storedVisit?.threadId === threadId ? storedVisit : newVisit;
 
     if (visit !== storedVisit) {
-      store.set(aiChatThreadVisitState.atom, visit);
+      store.set(visitAtom, visit);
     }
 
     const isReadRequested =
@@ -141,7 +139,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(aiChatThreadVisitState.atom, {
+    store.set(visitAtom, {
       ...visit,
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,

@@ -2477,8 +2477,8 @@ msgid "Add payment method"
 msgstr "Добавить способ оплаты"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Добавить людей или канал"
 
@@ -5908,7 +5908,7 @@ msgstr "Оплата картой сейчас недоступна. Прове�
 #. js-lingui-id: VbL9yf
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Cards grouped by a Select field"
-msgstr ""
+msgstr "Карточки, сгруппированные по полю выбора"
 
 #. js-lingui-id: M1RLfx
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -6069,7 +6069,6 @@ msgstr "Каналы"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "Диаграмма"
 
@@ -6077,6 +6076,11 @@ msgstr "Диаграмма"
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
 msgstr "Тип диаграммы"
+
+#. js-lingui-id: A4tHrb
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
+msgid "Charts"
+msgstr "Диаграммы"
 
 #. js-lingui-id: rlwve5
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -7028,7 +7032,7 @@ msgstr "Сообщество - Настройки"
 #. js-lingui-id: SScVmJ
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Compact list"
-msgstr ""
+msgstr "Компактный список"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -8321,11 +8325,6 @@ msgstr "Создать задачу для этой записи: "
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Создать рабочий процесс"
-
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Создайте рабочий процесс и вернитесь сюда, чтобы просмотреть его версии"
 
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
@@ -13673,7 +13672,6 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Файл \"{fileName}\" превышает {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
-#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
@@ -15296,11 +15294,6 @@ msgstr "HTTP-запрос"
 msgid "HTTP request failed"
 msgstr "HTTP‑запрос не выполнен"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "HTTP-запросы в среде выполнения логических функций"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15647,7 +15640,7 @@ msgstr "Импортировать новые события из этой уч�
 #. js-lingui-id: 4Ljmum
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr ""
+msgstr "Импортируйте вхождения повторяющихся встреч Google Calendar только на 90 дней вперёд, а более поздние вхождения импортируйте по мере того, как они будут попадать в 90-дневный период."
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -15662,7 +15655,7 @@ msgstr "Импортируйте или добавьте конфигураци�
 #. js-lingui-id: 8zGGat
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import recurring meetings 90 days ahead"
-msgstr ""
+msgstr "Импортировать повторяющиеся встречи на 90 дней вперёд"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -17086,11 +17079,11 @@ msgstr "макет"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -19447,7 +19440,7 @@ msgstr "Новая компания"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
-#: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
+#: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "Новый диалог"
 
@@ -20756,11 +20749,6 @@ msgstr "За этот период не сообщалось о версиях"
 msgid "No workflow runs yet"
 msgstr "Пока нет запусков Workflow"
 
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Пока нет версий Workflow"
-
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No Workflows found"
@@ -21994,6 +21982,7 @@ msgstr "Исходное сообщение недоступно"
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23764,7 +23753,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -23952,11 +23941,6 @@ msgstr "Выбор записей"
 msgid "Record sharing"
 msgstr "Общий доступ к записи"
 
-#. js-lingui-id: J9Cfll
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Record Table"
-msgstr "Таблица записей"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -24037,7 +24021,7 @@ msgstr "Записи"
 #. js-lingui-id: wgYk8q
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
-msgstr ""
+msgstr "Записи по дате"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24199,7 +24183,7 @@ msgstr "Связанные записи"
 #. js-lingui-id: ZwRDRN
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Related Records Widget"
-msgstr ""
+msgstr "Виджет связанных записей"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -25219,7 +25203,7 @@ msgstr "строки"
 #. js-lingui-id: cXIbmh
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Rows and columns"
-msgstr ""
+msgstr "Строки и столбцы"
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -25929,11 +25913,6 @@ msgstr "Поиск операций"
 msgid "Search options"
 msgstr "Поиск вариантов"
 
-#. js-lingui-id: /iXEpl
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
-msgid "Search recipients"
-msgstr "Поиск получателей"
-
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -26128,6 +26107,7 @@ msgstr "секция"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Секция"
 
@@ -26557,7 +26537,7 @@ msgid "Select options"
 msgstr "Выберите параметры"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Выберите получателей"
 
@@ -26773,11 +26753,6 @@ msgstr "Отправить тестовое письмо"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "Отправить во входящие"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "Отправляйте HTTP-запросы рабочих процессов, тестовые запросы и HTTP-инструмент ИИ-агента через драйвер логических функций, который выполняет их в изолированной Lambda, когда логические функции выполняются в Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -28004,11 +27979,6 @@ msgstr "Автономный"
 msgid "Standard"
 msgstr "Стандартный"
 
-#. js-lingui-id: 9oJdah
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Standard widgets"
-msgstr "Стандартные виджеты"
-
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription to re-enable premium features."
@@ -28791,6 +28761,7 @@ msgid "System skills"
 msgstr "Системные навыки"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Вкладка"
@@ -29910,7 +29881,7 @@ msgstr "Этот провайдер встроен. Установите его 
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "This record"
-msgstr ""
+msgstr "Эта запись"
 
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -32469,7 +32440,6 @@ msgstr "представление"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "View"
 msgstr "Представление"
@@ -32612,6 +32582,7 @@ msgstr "Наблюдатель"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "Представления"

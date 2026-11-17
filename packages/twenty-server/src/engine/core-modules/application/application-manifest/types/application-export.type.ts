@@ -22,6 +22,7 @@ export type ApplicationExportFile = {
   folder: string;
   path: string;
   content: string;
+  encoding?: 'base64';
 };
 
 export type ApplicationExport = {

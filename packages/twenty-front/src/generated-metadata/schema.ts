@@ -748,8 +748,9 @@ export enum ApplicationExportCoverageStatus {
 
 export type ApplicationExportFile = {
   __typename?: 'ApplicationExportFile';
-  /** Base64 for public-asset files, UTF-8 text for other folders. */
+  /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
   content: Scalars['String']['output'];
+  encoding?: Maybe<Scalars['String']['output']>;
   folder: Scalars['String']['output'];
   path: Scalars['String']['output'];
 };
@@ -1919,6 +1920,7 @@ export type CreateMcpServerInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
+  signInScope?: InputMaybe<ConnectionProviderScope>;
   url: Scalars['String']['input'];
 };
 
@@ -1931,13 +1933,13 @@ export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   agentId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
-  folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nativePageKey?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
+  parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   targetRecordId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2646,6 +2648,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
@@ -2955,6 +2958,7 @@ export type GetAuthorizationUrlForSso = {
 export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['UUID']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type GettingStartedProgress = {
@@ -3471,6 +3475,7 @@ export type McpServer = {
   isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  signInScope?: Maybe<ConnectionProviderScope>;
   tools: Array<McpServerTool>;
   toolsSyncError?: Maybe<Scalars['String']['output']>;
   toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -4016,7 +4021,6 @@ export type Mutation = {
   updateWorkspaceIframeMediaPermissions: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
-  upgradeApplication: Scalars['Boolean']['output'];
   /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -4033,7 +4037,7 @@ export type Mutation = {
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
-  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -5507,12 +5511,6 @@ export type MutationUpdateWorkspaceMemberSettingsArgs = {
 };
 
 
-export type MutationUpgradeApplicationArgs = {
-  appRegistrationId: Scalars['String']['input'];
-  targetVersion: Scalars['String']['input'];
-};
-
-
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
 };
@@ -5568,8 +5566,8 @@ export type MutationUpsertPermissionFlagsArgs = {
 };
 
 
-export type MutationUpsertRowLevelPermissionPredicatesArgs = {
-  input: UpsertRowLevelPermissionPredicatesInput;
+export type MutationUpsertRowLevelPermissionRulesArgs = {
+  input: UpsertRowLevelPermissionRulesInput;
 };
 
 
@@ -5620,6 +5618,7 @@ export type NavigationMenuItem = {
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  /** @deprecated Use parentId instead. */
   folderId?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
@@ -5627,6 +5626,7 @@ export type NavigationMenuItem = {
   name?: Maybe<Scalars['String']['output']>;
   nativePageKey?: Maybe<Scalars['String']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
+  parentId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   targetRecordId?: Maybe<Scalars['UUID']['output']>;
@@ -5647,6 +5647,8 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
+  SECTION = 'SECTION',
+  TAB = 'TAB',
   VIEW = 'VIEW',
   WORKFLOW = 'WORKFLOW'
 }
@@ -6495,6 +6497,7 @@ export type QueryEventLogsArgs = {
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeSourceDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
@@ -7105,6 +7108,7 @@ export type RowLevelPermissionPredicate = {
   relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
@@ -7123,37 +7127,13 @@ export type RowLevelPermissionPredicateGroup = {
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
   roleId: Scalars['String']['output'];
-};
-
-export type RowLevelPermissionPredicateGroupInput = {
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['UUID']['input'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND = 'AND',
   OR = 'OR'
 }
-
-export type RowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['JSON']['input']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
-};
 
 export enum RowLevelPermissionPredicateOperand {
   CONTAINS = 'CONTAINS',
@@ -7183,6 +7163,37 @@ export type RowLevelPermissionRule = {
   canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+};
+
+export type RowLevelPermissionRuleInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateGroupInput = {
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateInput = {
+  fieldMetadataId: Scalars['UUID']['input'];
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  operand: RowLevelPermissionPredicateOperand;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['JSON']['input']>;
+  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RowLevelRecordsPermissions = {
@@ -7955,6 +7966,7 @@ export type UpdateMcpServerInputUpdates = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  signInScope?: InputMaybe<ConnectionProviderScope>;
   url?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -7989,11 +8001,11 @@ export type UpdateMessageFoldersInput = {
 
 export type UpdateNavigationMenuItemInput = {
   color?: InputMaybe<Scalars['String']['input']>;
-  folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
+  parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
 };
 
@@ -8368,22 +8380,17 @@ export type UpsertPermissionFlagsInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type UpsertRowLevelPermissionPredicatesInput = {
-  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+export type UpsertRowLevelPermissionRulesInput = {
   objectMetadataId: Scalars['UUID']['input'];
-  predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
-  predicates: Array<RowLevelPermissionPredicateInput>;
   roleId: Scalars['UUID']['input'];
+  rules: Array<RowLevelPermissionRuleInput>;
 };
 
-export type UpsertRowLevelPermissionPredicatesResult = {
-  __typename?: 'UpsertRowLevelPermissionPredicatesResult';
+export type UpsertRowLevelPermissionRulesResult = {
+  __typename?: 'UpsertRowLevelPermissionRulesResult';
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+  rules: Array<RowLevelPermissionRule>;
 };
 
 export type UpsertViewWidgetInput = {

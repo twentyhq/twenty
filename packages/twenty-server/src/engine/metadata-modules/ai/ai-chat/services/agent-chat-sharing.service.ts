@@ -357,12 +357,12 @@ export class AgentChatSharingService {
       workspaceId,
       workspaceMemberId,
     });
-    const roleIdByMemberId = await this.findParticipantRoleIdsWithAiAccess({
+    const memberIdsWithAiAccess = await this.findParticipantIdsWithAiAccess({
       workspaceId,
       memberIds: candidateMemberIds,
     });
 
-    if (roleIdByMemberId.size === 0) {
+    if (memberIdsWithAiAccess.size === 0) {
       return [];
     }
 
@@ -383,7 +383,7 @@ export class AgentChatSharingService {
     const replyingMemberIds = new Set(
       (
         await Promise.all(
-          [...roleIdByMemberId.keys()].map(async (memberId) => {
+          [...memberIdsWithAiAccess].map(async (memberId) => {
             const principals =
               await this.principalPermissionsReadService.resolvePermissionsPrincipals(
                 {
@@ -853,15 +853,15 @@ export class AgentChatSharingService {
     return keptMemberIds.filter(isDefined);
   }
 
-  private async findParticipantRoleIdsWithAiAccess({
+  private async findParticipantIdsWithAiAccess({
     workspaceId,
     memberIds,
   }: {
     workspaceId: string;
     memberIds: string[];
-  }): Promise<Map<string, string>> {
+  }): Promise<Set<string>> {
     const [
-      roleIds,
+      roleIdsByMember,
       { flatWorkspaceMemberMaps, flatRoleMaps, flatRolePermissionFlagMaps },
     ] = await Promise.all([
       this.rolePermissionsService.findWorkspaceMemberRoleIds({
@@ -883,32 +883,29 @@ export class AgentChatSharingService {
       }),
     });
 
-    return new Map(
-      memberIds.flatMap((memberId, index) => {
-        const roleId = roleIds[index];
+    return new Set(
+      memberIds.filter((memberId, index) => {
         const userId = flatWorkspaceMemberMaps.byId[memberId]?.userId;
 
-        if (
-          !isDefined(roleId) ||
-          !isDefined(userId) ||
-          !activeUserIds.has(userId)
-        ) {
-          return [];
-        }
+        return (
+          isDefined(userId) &&
+          activeUserIds.has(userId) &&
+          (roleIdsByMember[index] ?? []).some((roleId) => {
+            const flatRole = findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: roleId,
+              flatEntityMaps: flatRoleMaps,
+            });
 
-        const flatRole = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: roleId,
-          flatEntityMaps: flatRoleMaps,
-        });
-        const hasAiAccess =
-          isDefined(flatRole) &&
-          isPermissionFlagGrantedToFlatRole({
-            flatRole,
-            permissionFlag: PermissionFlagType.AI,
-            flatRolePermissionFlagMaps,
-          });
-
-        return hasAiAccess ? [[memberId, roleId] as const] : [];
+            return (
+              isDefined(flatRole) &&
+              isPermissionFlagGrantedToFlatRole({
+                flatRole,
+                permissionFlag: PermissionFlagType.AI,
+                flatRolePermissionFlagMaps,
+              })
+            );
+          })
+        );
       }),
     );
   }

@@ -92,7 +92,11 @@ export const fetchAppExport = async ({
   shouldIncludePublicAssets?: boolean;
 }): Promise<AppExport> => {
   const client = createMetadataClient({ target, signal });
-  const fileOptions = { shouldIncludeSourceFiles, shouldIncludePublicAssets };
+  const fileOptions = {
+    shouldIncludeSourceFiles,
+    shouldIncludePublicAssets,
+    shouldIncludeSourceDependencies: shouldIncludeSourceFiles,
+  };
   const fileOptionKeys = typedObjectEntries(fileOptions).map(([key]) => key);
   const query = () =>
     client.query({
@@ -119,7 +123,14 @@ export const fetchAppExport = async ({
           status: true,
           reason: true,
         },
-        files: { folder: true, path: true, content: true },
+        files: {
+          folder: true,
+          path: true,
+          content: true,
+          ...(fileOptions.shouldIncludeSourceDependencies
+            ? { encoding: true as const }
+            : {}),
+        },
       },
     });
   try {
@@ -143,6 +154,16 @@ export const fetchAppExport = async ({
               return false;
             }
             const message = entry.message;
+            if (
+              fileOptions.shouldIncludeSourceDependencies &&
+              isString(message) &&
+              message.startsWith(
+                'Cannot query field "encoding" on type "ApplicationExportFile".',
+              )
+            ) {
+              unsupportedOptions.add('shouldIncludeSourceDependencies');
+              return true;
+            }
             const option = fileOptionKeys.find(
               (key) =>
                 fileOptions[key] &&
