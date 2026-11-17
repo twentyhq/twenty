@@ -49,7 +49,7 @@ const meta: Meta<PageDecoratorArgs> = {
               findOneApplication: {
                 __typename: 'Application',
                 id: APPLICATION_ID,
-                name: 'Microsoft Teams',
+                name: 'Teams',
                 description: 'Imports meeting transcripts',
                 logoUrl: null,
                 version: '1.0.0',
@@ -86,7 +86,7 @@ const meta: Meta<PageDecoratorArgs> = {
                   applicationId: APPLICATION_ID,
                   type: 'oauth',
                   name: 'microsoft-teams',
-                  displayName: 'Microsoft Teams',
+                  displayName: 'Teams',
                   scope: 'WORKSPACE',
                   logoUrl: null,
                   oauth: {
@@ -113,7 +113,7 @@ const meta: Meta<PageDecoratorArgs> = {
                   scopes: GRANTED_SCOPES,
                   lastSignedInAt: null,
                   connectionProviderId: CONNECTION_PROVIDER_ID,
-                  name: 'Microsoft Teams #2',
+                  name: 'Teams #2',
                   scope: 'WORKSPACE',
                   lastCredentialsRefreshedAt: '2026-11-13T12:03:30.000Z',
                   createdAt: '2026-11-13T12:03:30.000Z',

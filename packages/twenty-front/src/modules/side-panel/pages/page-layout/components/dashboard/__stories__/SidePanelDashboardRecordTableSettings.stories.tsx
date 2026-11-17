@@ -1,10 +1,8 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { RecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/RecordTableWidgetSettingsStory';
 import { initializeRecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/initializeRecordTableWidgetSettingsStory';
 import { RECORD_TABLE_WIDGET_SETTINGS_STORY_DATA } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/recordTableWidgetSettingsStoryData';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
@@ -46,38 +44,23 @@ type Story = StoryObj<typeof meta>;
 export const LayoutAndCalendarSelection: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', { name: /^Layout/ });
-    trigger.focus();
-    await userEvent.keyboard('{Enter}');
-    expect(await body.findByRole('option', { name: 'Table' })).toHaveAttribute(
-      'aria-selected',
-      'true',
+    const layoutGroup = within(
+      await body.findByRole('group', { name: 'Layout' }),
     );
     expect(
-      body.getAllByRole('option').map((option) => option.textContent),
+      layoutGroup
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
     ).toEqual(['Table', 'Kanban', 'List', 'Calendar']);
+    expect(layoutGroup.getByRole('button', { name: 'Table' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    const calendar = layoutGroup.getByRole('button', { name: 'Calendar' });
+    calendar.focus();
+    await userEvent.keyboard('{Enter}');
     await waitFor(() => {
-      const popupBounds = body.getByRole('dialog').getBoundingClientRect();
-      const triggerBounds = trigger.getBoundingClientRect();
-      expect(popupBounds.width).toBeCloseTo(200);
-      expect(
-        Math.abs(popupBounds.right - triggerBounds.right),
-      ).toBeLessThanOrEqual(1);
-      expect(
-        Math.abs(popupBounds.top - triggerBounds.bottom),
-      ).toBeLessThanOrEqual(1);
-    });
-    expect(
-      jotaiStore.get(
-        selectedItemIdComponentState.atomFamily({
-          instanceId: SIDE_PANEL_SELECTABLE_LIST_ID,
-        }),
-      ),
-    ).toBe('object-view-layout');
-    await userEvent.click(body.getByRole('option', { name: 'Calendar' }));
-    await waitFor(() => {
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-      expect(trigger).toHaveFocus();
+      expect(calendar).toHaveAttribute('aria-pressed', 'true');
       expect(getWidgetViewSnapshot().view.type).toBe(ViewType.CALENDAR_WIDGET);
     });
     const dateFieldTrigger = body.getByRole('button', { name: /^Date field/ });
@@ -229,17 +212,14 @@ export const ReorderHideAndShowFields: Story = {
   },
 };
 
-export const LayoutWithoutViewIsDisabled: Story = {
+export const LayoutWithoutViewIsHidden: Story = {
   beforeEach: () =>
     initializeRecordTableWidgetSettingsStory({ hasView: false }),
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', { name: /^Layout/ });
-    expect(trigger).toBeDisabled();
-    await userEvent.click(trigger);
-    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await body.findByRole('button', { name: /^Source/ });
     expect(
-      body.queryByRole('option', { name: 'Table' }),
+      body.queryByRole('group', { name: 'Layout' }),
     ).not.toBeInTheDocument();
   },
 };
