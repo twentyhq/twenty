@@ -24,20 +24,24 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
     });
   });
 
-  it('keeps nested objects editable while their optional leaves stay null', () => {
+  it('seeds nested required values only under a required object', () => {
+    const nestedObject = {
+      type: 'object' as const,
+      required: ['status'],
+      properties: {
+        status: { type: 'string' as const, enum: ['open', 'closed'] },
+        labels: { type: 'array' as const, items: { type: 'string' as const } },
+      },
+    };
+
     expect(
       getDefaultMcpToolInputFromJsonSchema({
-        properties: {
-          filter: {
-            type: 'object',
-            required: ['status'],
-            properties: {
-              status: { type: 'string', enum: ['open', 'closed'] },
-              labels: { type: 'array', items: { type: 'string' } },
-            },
-          },
-        },
+        required: ['sort'],
+        properties: { filter: nestedObject, sort: nestedObject },
       }),
-    ).toEqual({ filter: { status: 'open', labels: null } });
+    ).toEqual({
+      filter: { status: null, labels: null },
+      sort: { status: 'open', labels: null },
+    });
   });
 });
