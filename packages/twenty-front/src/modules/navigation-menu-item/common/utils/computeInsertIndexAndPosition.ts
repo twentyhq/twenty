@@ -5,9 +5,12 @@ export const computeInsertIndexAndPosition = (
   items: NavigationMenuItem[],
   targetFolderId: string | null,
   targetIndex: number,
+  isSibling: (item: NavigationMenuItem) => boolean = () => true,
 ) => {
   const itemsInFolder = items
-    .filter((item) => (item.parentId ?? null) === targetFolderId)
+    .filter(
+      (item) => (item.parentId ?? null) === targetFolderId && isSibling(item),
+    )
     .sort((a, b) => a.position - b.position);
   const insertRef = itemsInFolder[targetIndex];
   const lastInFolder = itemsInFolder[itemsInFolder.length - 1];
