@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { type FindOptionsWhere, In, Repository } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -16,6 +16,7 @@ import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/cale
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
+import { fromCalendarChannelEntityToCalendarChannelDto } from 'src/engine/metadata-modules/calendar-channel/utils/from-calendar-channel-entity-to-calendar-channel-dto.util';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -29,7 +30,7 @@ export class CalendarChannelMetadataService {
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
-    return this.repository.find({ where: { workspaceId } });
+    return this.findWithOwner({ workspaceId });
   }
 
   async findByUserWorkspaceId({
@@ -76,9 +77,7 @@ export class CalendarChannelMetadataService {
     connectedAccountId: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO[]> {
-    return this.repository.find({
-      where: { connectedAccountId, workspaceId },
-    });
+    return this.findWithOwner({ connectedAccountId, workspaceId });
   }
 
   async findByConnectedAccountIds({
@@ -92,8 +91,9 @@ export class CalendarChannelMetadataService {
       return [];
     }
 
-    return this.repository.find({
-      where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+    return this.findWithOwner({
+      connectedAccountId: In(connectedAccountIds),
+      workspaceId,
     });
   }
 
@@ -104,7 +104,9 @@ export class CalendarChannelMetadataService {
     id: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO | null> {
-    return this.repository.findOne({ where: { id, workspaceId } });
+    const [calendarChannel] = await this.findWithOwner({ id, workspaceId });
+
+    return calendarChannel ?? null;
   }
 
   async verifyOwnership({
@@ -151,7 +153,7 @@ export class CalendarChannelMetadataService {
       visibility: CalendarChannelVisibility;
       syncStage: CalendarChannelSyncStage;
     },
-  ): Promise<CalendarChannelDTO> {
+  ): Promise<CalendarChannelEntity> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -171,7 +173,12 @@ export class CalendarChannelMetadataService {
       data as Record<string, unknown>,
     );
 
-    return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    const calendarChannel = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+      relations: { connectedAccount: true },
+    });
+
+    return fromCalendarChannelEntityToCalendarChannelDto(calendarChannel);
   }
 
   async delete({
@@ -180,7 +187,7 @@ export class CalendarChannelMetadataService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<CalendarChannelDTO> {
+  }): Promise<CalendarChannelEntity> {
     const calendarChannel = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
@@ -194,5 +201,16 @@ export class CalendarChannelMetadataService {
     );
 
     return calendarChannel;
+  }
+
+  private async findWithOwner(
+    where: FindOptionsWhere<CalendarChannelEntity>,
+  ): Promise<CalendarChannelDTO[]> {
+    const calendarChannels = await this.repository.find({
+      where,
+      relations: { connectedAccount: true },
+    });
+
+    return calendarChannels.map(fromCalendarChannelEntityToCalendarChannelDto);
   }
 }

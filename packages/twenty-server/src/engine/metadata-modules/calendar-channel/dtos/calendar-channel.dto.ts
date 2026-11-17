@@ -85,6 +85,11 @@ export class CalendarChannelDTO {
   @Field(() => UUIDScalarType)
   connectedAccountId: string;
 
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  userWorkspaceId: string;
+
   @HideField()
   workspaceId: string;
 
