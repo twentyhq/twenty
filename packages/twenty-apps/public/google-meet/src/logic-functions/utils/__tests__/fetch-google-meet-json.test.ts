@@ -92,6 +92,23 @@ describe('fetchGoogleMeetJson', () => {
     expect(fetchMock).toHaveBeenCalledTimes(4);
   });
 
+  it('should not send a request that creates something a second time', async () => {
+    fetchMock.mockImplementation(
+      async () => new Response('{}', { status: 503 }),
+    );
+
+    await expect(
+      fetchGoogleMeetJson({
+        accessToken: 'token',
+        url: REQUEST_URL,
+        method: 'POST',
+        body: {},
+      }),
+    ).rejects.toMatchObject({ httpStatus: 503 });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should not retry a refused request and report the Google status', async () => {
     fetchMock.mockResolvedValue(
       new Response(

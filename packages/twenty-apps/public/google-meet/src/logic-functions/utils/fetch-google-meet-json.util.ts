@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   GOOGLE_MEET_REQUEST_MAX_ATTEMPTS,
@@ -7,6 +8,7 @@ import {
   GOOGLE_MEET_RETRYABLE_STATUSES,
 } from 'src/logic-functions/constants/google-meet-api.constant';
 import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
+import { type GoogleRequestMethod } from 'src/logic-functions/types/google-request-method.type';
 import { parseRetryAfterMilliseconds } from 'src/logic-functions/utils/parse-retry-after-milliseconds.util';
 import { sleepForMilliseconds } from 'src/logic-functions/utils/sleep-for-milliseconds.util';
 
@@ -17,11 +19,15 @@ type GoogleMeetErrorBody = {
 type GoogleMeetRequest = {
   accessToken: string;
   url: string;
+  method?: GoogleRequestMethod;
+  body?: object;
 };
 
 const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
   accessToken,
   url,
+  method,
+  body,
   attempt,
   waitedMilliseconds,
 }: GoogleMeetRequest & {
@@ -29,11 +35,14 @@ const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
   waitedMilliseconds: number;
 }): Promise<Response> => {
   const response = await fetch(url, {
+    method,
     redirect: 'error',
     headers: {
       Authorization: `Bearer ${accessToken}`,
       Accept: 'application/json',
+      ...(isDefined(body) ? { 'Content-Type': 'application/json' } : {}),
     },
+    body: isDefined(body) ? JSON.stringify(body) : undefined,
   });
 
   if (response.ok) {
@@ -47,6 +56,7 @@ const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
     }) ?? GOOGLE_MEET_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
 
   if (
+    method !== 'POST' &&
     GOOGLE_MEET_RETRYABLE_STATUSES.has(response.status) &&
     attempt + 1 < GOOGLE_MEET_REQUEST_MAX_ATTEMPTS &&
     waitedMilliseconds + retryDelayMilliseconds <=
@@ -57,6 +67,8 @@ const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
     return fetchGoogleMeetResponseWithRetriesOrThrow({
       accessToken,
       url,
+      method,
+      body,
       attempt: attempt + 1,
       waitedMilliseconds: waitedMilliseconds + retryDelayMilliseconds,
     });
@@ -80,13 +92,11 @@ const fetchGoogleMeetResponseWithRetriesOrThrow = async ({
   });
 };
 
-export const fetchGoogleMeetJson = async <TResponse>({
-  accessToken,
-  url,
-}: GoogleMeetRequest): Promise<TResponse> => {
+export const fetchGoogleMeetJson = async <TResponse>(
+  request: GoogleMeetRequest,
+): Promise<TResponse> => {
   const response = await fetchGoogleMeetResponseWithRetriesOrThrow({
-    accessToken,
-    url,
+    ...request,
     attempt: 0,
     waitedMilliseconds: 0,
   });
