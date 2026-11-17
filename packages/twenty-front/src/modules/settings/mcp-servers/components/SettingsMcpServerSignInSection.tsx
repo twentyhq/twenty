@@ -7,48 +7,54 @@ import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/comp
 import {
   ApplicationConnectionProvidersDocument,
   ConnectionProviderScope,
+  type McpServerFragmentFragment,
 } from '~/generated-metadata/graphql';
 
 type SettingsMcpServerSignInSectionProps = {
-  mcpServerId: string;
-  applicationId: string;
-  connectionProviderId: string;
+  mcpServer: Pick<
+    McpServerFragmentFragment,
+    'id' | 'applicationId' | 'connectionProviderId'
+  >;
 };
 
 export const SettingsMcpServerSignInSection = ({
-  mcpServerId,
-  applicationId,
-  connectionProviderId,
+  mcpServer,
 }: SettingsMcpServerSignInSectionProps) => {
   const { t } = useLingui();
   const { data, error, refetch } = useQuery(
     ApplicationConnectionProvidersDocument,
     {
-      variables: { applicationId },
+      variables: { applicationId: mcpServer.applicationId },
+      skip: !isDefined(mcpServer.connectionProviderId),
       // Every server of an application shares this list, so a cached copy can
       // predate the provider created with this server.
       fetchPolicy: 'cache-and-network',
     },
   );
-  const perMemberConnectionProvider = data?.applicationConnectionProviders.find(
-    (connectionProvider) =>
-      connectionProvider.id === connectionProviderId &&
-      connectionProvider.scope === ConnectionProviderScope.USER,
-  );
 
-  if (isDefined(perMemberConnectionProvider)) {
+  if (isDefined(error)) {
     return (
-      <SettingsMcpServerConnectionsSection
-        mcpServerId={mcpServerId}
-        connectionProvider={perMemberConnectionProvider}
+      <SettingsApplicationLoadErrorBanner
+        message={t`The sign-in for this server could not be loaded. Check your connection and try again.`}
+        onRetry={() => refetch().catch(() => undefined)}
       />
     );
   }
 
-  return isDefined(error) ? (
-    <SettingsApplicationLoadErrorBanner
-      message={t`The sign-in for this server could not be loaded. Check your connection and try again.`}
-      onRetry={() => refetch().catch(() => undefined)}
+  const perMemberConnectionProvider = data?.applicationConnectionProviders.find(
+    (connectionProvider) =>
+      connectionProvider.id === mcpServer.connectionProviderId &&
+      connectionProvider.scope === ConnectionProviderScope.USER,
+  );
+
+  if (!isDefined(perMemberConnectionProvider)) {
+    return null;
+  }
+
+  return (
+    <SettingsMcpServerConnectionsSection
+      mcpServerId={mcpServer.id}
+      connectionProvider={perMemberConnectionProvider}
     />
-  ) : null;
+  );
 };

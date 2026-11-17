@@ -3,10 +3,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsMcpServerSignInSection } from '@/settings/mcp-servers/components/SettingsMcpServerSignInSection';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
-import { SettingsMcpServerSignInSection } from '@/settings/mcp-servers/components/SettingsMcpServerSignInSection';
 import { SettingsMcpServerToolsSection } from '@/settings/mcp-servers/components/SettingsMcpServerToolsSection';
 import { useNavigateToMcpServersList } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersList';
 import { useUpdateMcpServer } from '@/settings/mcp-servers/hooks/useUpdateMcpServer';
@@ -74,13 +74,7 @@ export const SettingsMcpServerEditForm = ({
         }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
-        {isDefined(mcpServer.connectionProviderId) && (
-          <SettingsMcpServerSignInSection
-            mcpServerId={mcpServer.id}
-            applicationId={mcpServer.applicationId}
-            connectionProviderId={mcpServer.connectionProviderId}
-          />
-        )}
+        <SettingsMcpServerSignInSection mcpServer={mcpServer} />
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />
       </SettingsMcpServerFormLayout>
