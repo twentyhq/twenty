@@ -42,7 +42,29 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
     return { newRecordFilter };
   };
 
+  const createEmptyRelationTargetRecordFilter = ({
+    sourceFieldMetadataItem,
+    relationTargetFieldMetadataItem,
+  }: {
+    sourceFieldMetadataItem: FieldMetadataItem;
+    relationTargetFieldMetadataItem: FieldMetadataItem;
+  }) => {
+    const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
+      relationTargetFieldMetadataItem,
+    );
+
+    return {
+      newRecordFilter: {
+        ...newRecordFilter,
+        fieldMetadataId: sourceFieldMetadataItem.id,
+        relationTargetFieldMetadataId: relationTargetFieldMetadataItem.id,
+        label: `${sourceFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`,
+      } satisfies RecordFilter,
+    };
+  };
+
   return {
     createEmptyRecordFilterFromFieldMetadataItem,
+    createEmptyRelationTargetRecordFilter,
   };
 };

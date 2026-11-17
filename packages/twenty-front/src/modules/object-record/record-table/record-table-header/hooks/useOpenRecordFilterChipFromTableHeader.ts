@@ -1,3 +1,4 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
@@ -17,8 +18,10 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { createEmptyRecordFilterFromFieldMetadataItem } =
-    useCreateEmptyRecordFilterFromFieldMetadataItem();
+  const {
+    createEmptyRecordFilterFromFieldMetadataItem,
+    createEmptyRelationTargetRecordFilter,
+  } = useCreateEmptyRecordFilterFromFieldMetadataItem();
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
@@ -27,7 +30,13 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
 
-  const openRecordFilterChipFromTableHeader = (fieldMetadataItemId: string) => {
+  const openRecordFilterChipFromTableHeader = ({
+    fieldMetadataItemId,
+    relationTargetFieldMetadataItem,
+  }: {
+    fieldMetadataItemId: string;
+    relationTargetFieldMetadataItem?: FieldMetadataItem;
+  }) => {
     const correspondingFieldMetadataItem = filterableFieldMetadataItems.find(
       (fieldMetadataItemToFind) =>
         fieldMetadataItemToFind.id === fieldMetadataItemId,
@@ -44,6 +53,8 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     const existingNonAdvancedRecordFilter = currentRecordFilters.find(
       (recordFilter) =>
         recordFilter.fieldMetadataId === fieldMetadataItemId &&
+        (recordFilter.relationTargetFieldMetadataId ?? undefined) ===
+          relationTargetFieldMetadataItem?.id &&
         !isDefined(recordFilter.recordFilterGroupId),
     );
 
@@ -57,9 +68,14 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       return;
     }
 
-    const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-      correspondingFieldMetadataItem,
-    );
+    const { newRecordFilter } = isDefined(relationTargetFieldMetadataItem)
+      ? createEmptyRelationTargetRecordFilter({
+          sourceFieldMetadataItem: correspondingFieldMetadataItem,
+          relationTargetFieldMetadataItem,
+        })
+      : createEmptyRecordFilterFromFieldMetadataItem(
+          correspondingFieldMetadataItem,
+        );
 
     upsertRecordFilter(newRecordFilter);
 
