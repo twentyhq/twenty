@@ -1,25 +1,31 @@
 import 'reflect-metadata';
 
+import { type Equal, type Expect } from 'twenty-shared/testing';
+import {
+  type BrandedType,
+  type HasBrandedType,
+} from 'twenty-shared/types';
+
 import { defineUpgradeMetadataOnClassOrProperty } from 'src/engine/core-modules/upgrade/decorators/upgrade-decorator-metadata.util';
 
 export type WasRemovedInUpgradeOptions = {
   upgradeCommandName: string;
 };
 
-declare const wasRemovedInUpgradeBrand: unique symbol;
+export type WasRemovedInUpgrade<T> = BrandedType<T, 'wasRemovedInUpgrade'>;
 
-export type WasRemovedInUpgrade<T> = T & {
-  readonly [wasRemovedInUpgradeBrand]?: true;
-};
-
-export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
+export type UnwrapWasRemovedInUpgrade<T> = [NonNullable<T>] extends [
   WasRemovedInUpgrade<infer TUnwrapped>,
 ]
-  ? TUnwrapped
+  ? TUnwrapped | Extract<T, null | undefined>
   : T;
 
+// NonNullable first: a brand is intersected with the non-null type, so a nullable property carries it on that member only
 type WasRemovedInUpgradeKeys<TEntity> = {
-  [K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
+  [K in keyof TEntity]: HasBrandedType<
+    NonNullable<TEntity[K]>,
+    'wasRemovedInUpgrade'
+  > extends true
     ? K
     : never;
 }[keyof TEntity];
@@ -63,3 +69,27 @@ export const getWasRemovedInUpgradePropertyMetadata = (
 ): WasRemovedInUpgradePropertyMap =>
   Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY, target) ??
   {};
+
+// oxlint-disable-next-line unused-imports/no-unused-vars
+type WasRemovedInUpgradeTests = [
+  Expect<
+    Equal<
+      MakeWasRemovedInUpgradePropertiesOptional<{
+        kept: string;
+        dropped: WasRemovedInUpgrade<string>;
+      }>,
+      { kept: string } & { dropped?: WasRemovedInUpgrade<string> }
+    >
+  >,
+
+  Expect<Equal<UnwrapWasRemovedInUpgrade<WasRemovedInUpgrade<string>>, string>>,
+  Expect<
+    Equal<
+      UnwrapWasRemovedInUpgrade<WasRemovedInUpgrade<string> | null>,
+      string | null
+    >
+  >,
+  Expect<Equal<UnwrapWasRemovedInUpgrade<string | null>, string | null>>,
+
+  Expect<null extends WasRemovedInUpgrade<string> | null ? true : false>,
+];

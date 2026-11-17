@@ -69,7 +69,7 @@ export class TimelineActivityTypeEntity
       DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'varchar' })
-  renderer: WasRemovedInUpgrade<string | null>;
+  renderer: WasRemovedInUpgrade<string> | null;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
