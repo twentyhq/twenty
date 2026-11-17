@@ -132,7 +132,7 @@ msgstr "24 tim"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
-msgstr ""
+msgstr "Ett navigeringsmenyalternativ av typen {type} kan inte placeras inuti en {parentType}"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -324,13 +324,13 @@ msgstr "Ett namn krävs för typen FOLDER"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for SECTION type"
-msgstr ""
+msgstr "Ett namn krävs för typen SECTION"
 
 #. js-lingui-id: yA/goz
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for TAB type"
-msgstr ""
+msgstr "Ett namn krävs för typen TAB"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1577,7 +1577,7 @@ msgstr "Applikationer kan inte uppdatera dessa fält: {fieldsList}."
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr ""
+msgstr "Tillämpa eller publicera applikationen igen för att återställa dess källor för frontendkomponenter."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1958,7 +1958,7 @@ msgstr "Fakturering"
 #. js-lingui-id: HhE4nB
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing arrangement not found."
-msgstr ""
+msgstr "Faktureringsarrangemang hittades inte."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11939,7 +11939,7 @@ msgstr "Roll"
 #. js-lingui-id: hYcnrj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" cannot be assigned"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" kan inte tilldelas"
 
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11985,7 +11985,7 @@ msgstr "Rollen \"{roleLabel}\" kan inte tilldelas: anpassade roller kräver Orga
 #. js-lingui-id: aMDMRk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" innehas av systemet och kan inte tilldelas"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14739,7 +14739,7 @@ msgstr "Denna omfattning för applikationsvariabel stöds inte."
 #. js-lingui-id: akCeIt
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
-msgstr ""
+msgstr "Det här faktureringsarrangemanget har ogiltiga inställningar."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14785,7 +14785,7 @@ msgstr "Den här kampanjens lista ligger i papperskorgen. Återställ den eller 
 #. js-lingui-id: wicYT+
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This change would bill more members than the hard seat cap allows."
-msgstr ""
+msgstr "Den här ändringen skulle fakturera fler medlemmar än den hårda platsgränsen tillåter."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -15038,7 +15038,7 @@ msgstr "Det här jobbet är för stort för att läggas i kö."
 #. js-lingui-id: wU/+Ok
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of billing arrangement cannot be created or ended by hand."
-msgstr ""
+msgstr "Den här typen av faktureringsarrangemang kan inte skapas eller avslutas manuellt."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15489,7 +15489,7 @@ msgstr "Denna arbetsyta har redan en prenumeration."
 #. js-lingui-id: tLPjQC
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has an arrangement of this type over that period."
-msgstr ""
+msgstr "Den här arbetsytan har redan ett arrangemang av den här typen under den perioden."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts

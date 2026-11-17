@@ -5,7 +5,6 @@ import IORedis from 'ioredis';
 import { v4 as generateUuid } from 'uuid';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { type QueueJobLimiter } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -13,12 +12,9 @@ type LimiterTestJobData = { label: string };
 
 const QUEUE = MessageQueue.workflowQueue;
 const JOB_NAME = 'LimiterTestJob';
-const LIMITER: QueueJobLimiter = {
-  key: 'workflow:limiter-test',
-  max: 2,
-  durationMs: 2_000,
-};
-const INTERVAL_MS = LIMITER.durationMs / LIMITER.max;
+const GROUP_KEY = 'limiter-test';
+const GROUP_LIMITER = { max: 2, durationMs: 2_000 };
+const INTERVAL_MS = GROUP_LIMITER.durationMs / GROUP_LIMITER.max;
 // Redis TIME and the enqueue round trips drift the delays by a few ms.
 const TOLERANCE_MS = 150;
 
@@ -58,7 +54,7 @@ describe('BullMQDriver limiter (integration)', () => {
       labels.map((label, index) => ({
         data: { label },
         jobId: jobIds?.[index],
-        limiter: LIMITER,
+        groupKey: GROUP_KEY,
         workspaceId,
         applicationUniversalIdentifier,
       })),
@@ -66,6 +62,11 @@ describe('BullMQDriver limiter (integration)', () => {
     );
 
   beforeEach(() => {
+    jest.replaceProperty(
+      MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions,
+      'groupLimiter',
+      GROUP_LIMITER,
+    );
     connection = new IORedis(
       process.env.REDIS_QUEUE_URL ??
         process.env.REDIS_URL ??
@@ -91,6 +92,7 @@ describe('BullMQDriver limiter (integration)', () => {
   });
 
   afterEach(async () => {
+    jest.restoreAllMocks();
     await driver.onModuleDestroy();
     await inspectionQueue.obliterate({ force: true });
     await inspectionQueue.close();
@@ -179,7 +181,7 @@ describe('BullMQDriver limiter (integration)', () => {
     });
   });
 
-  it('gives each workspace and each application its own slots for the same key', async () => {
+  it('gives each workspace its own slots and shares them between its applications', async () => {
     for (const [prefix, workspaceId, applicationUniversalIdentifier] of [
       ['A', 'A', 'H'],
       ['B', 'B', 'H'],
@@ -192,7 +194,11 @@ describe('BullMQDriver limiter (integration)', () => {
       });
     }
 
-    expect(Object.values(await readDelayByLabel())).toEqual([0, 0, 0]);
+    const delayByLabel = await readDelayByLabel();
+
+    expect(delayByLabel.A1).toBe(0);
+    expect(delayByLabel.B1).toBe(0);
+    expectDelayNear({ delayMs: delayByLabel.Q1, expectedDelayMs: INTERVAL_MS });
   });
 
   it('does not let an idle period build up a burst', async () => {

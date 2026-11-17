@@ -132,7 +132,7 @@ msgstr "24 h"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
-msgstr ""
+msgstr "{type}-tyyppistä navigointivalikon kohdetta ei voi sijoittaa kohteen {parentType} sisään"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -324,13 +324,13 @@ msgstr "FOLDER-tyypille vaaditaan nimi"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for SECTION type"
-msgstr ""
+msgstr "SECTION-tyypille vaaditaan nimi"
 
 #. js-lingui-id: yA/goz
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for TAB type"
-msgstr ""
+msgstr "TAB-tyypille vaaditaan nimi"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1577,7 +1577,7 @@ msgstr "Sovellukset eivät voi päivittää näitä kenttiä: {fieldsList}."
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr ""
+msgstr "Ota sovellus uudelleen käyttöön tai julkaise se uudelleen palauttaaksesi sen käyttöliittymäkomponenttien lähteet."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1958,7 +1958,7 @@ msgstr "Laskutus"
 #. js-lingui-id: HhE4nB
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing arrangement not found."
-msgstr ""
+msgstr "Laskutusjärjestelyä ei löytynyt."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11937,7 +11937,7 @@ msgstr "Rooli"
 #. js-lingui-id: hYcnrj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" cannot be assigned"
-msgstr ""
+msgstr "Roolia \"{roleLabel}\" ei voi määrittää"
 
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11983,7 +11983,7 @@ msgstr "Roolia \"{roleLabel}\" ei voi määrittää: mukautetut roolit edellytt�
 #. js-lingui-id: aMDMRk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
-msgstr ""
+msgstr "Järjestelmä pitää roolia \"{roleLabel}\", eikä sitä voi määrittää"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14733,7 +14733,7 @@ msgstr "Tätä sovellusmuuttujan laajuutta ei tueta."
 #. js-lingui-id: akCeIt
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
-msgstr ""
+msgstr "Tämän laskutusjärjestelyn asetukset ovat virheelliset."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14779,7 +14779,7 @@ msgstr "Tämän kampanjan lista on roskakorissa. Palauta se tai valitse toinen l
 #. js-lingui-id: wicYT+
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This change would bill more members than the hard seat cap allows."
-msgstr ""
+msgstr "Tämä muutos laskuttaisi useammasta jäsenestä kuin kiinteä paikkaraja sallii."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -15032,7 +15032,7 @@ msgstr "Tämä työ on liian suuri asetettavaksi jonoon."
 #. js-lingui-id: wU/+Ok
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of billing arrangement cannot be created or ended by hand."
-msgstr ""
+msgstr "Tällaista laskutusjärjestelyä ei voi luoda tai päättää käsin."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15483,7 +15483,7 @@ msgstr "Tällä työtilalla on jo tilaus."
 #. js-lingui-id: tLPjQC
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has an arrangement of this type over that period."
-msgstr ""
+msgstr "Tällä työtilalla on jo tämän tyyppinen järjestely kyseiselle ajanjaksolle."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts

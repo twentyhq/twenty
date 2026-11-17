@@ -73,10 +73,17 @@ To make a field required, use `not isEmpty(fieldName)`. This also works for comp
 
 | Function                                               | Use                                                                                                                                                                                                                                    |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `daysSince(date)`                                      | Get the number of days from a date to today, in UTC. A date in the future gives a negative number.                                                                                                                                     |
+| `dateDiff(from, to, unit)` | Get the number of whole units from one date to another. Minutes and hours are elapsed time; days, weeks, months, quarters and years count calendar days and months, in UTC. Negative when `to` is earlier. |
+| `dateAdd(date, amount, unit)` | Move a date by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month. |
+| `dateTrunc(date, unit)` | Get the start of the unit that contains the date, in UTC. Weeks start on Monday. |
+| `datePart(date, part)` | Get one part of the date as a number, in UTC: `"YEAR"`, `"QUARTER"`, `"MONTH"`, `"WEEK"`, `"DAY"`, `"DAY_OF_WEEK"` (1 is Monday), `"HOUR"` or `"MINUTE"`. |
 | `isInRelativeDateRange(date, direction, amount, unit)` | Check whether a date falls in a period counted from today, in UTC. `direction` is `"PAST"`, `"NEXT"` or `"THIS"`, `unit` is `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` or `"YEAR"`. `"PAST"` and `"NEXT"` leave out the current period. |
 
-For example, `daysSince(closeDate) >= 0 and daysSince(closeDate) <= 30` allows a save only on the close date or in the 30 days after it.
+`daysSince(date)` has been removed. Use `dateDiff(date, now, 'DAY')` instead.
+
+Date comparisons use the UTC calendar day when a date has no time. Two date-times compare as instants, so equivalent offsets and fractional-second spellings compare equally. This also changes existing expressions that compared those values as text.
+
+Units are `"MINUTE"`, `"HOUR"`, `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` or `"YEAR"`. For example, `dateDiff(closeDate, now, "DAY") >= 0 and dateDiff(closeDate, now, "DAY") <= 30` allows a save only on the close date or in the 30 days after it.
 
 ### Reference Composite and Related Fields
 
