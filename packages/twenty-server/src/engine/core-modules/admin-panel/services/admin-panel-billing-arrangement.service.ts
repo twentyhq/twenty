@@ -18,7 +18,6 @@ import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
-import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import {
   ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES,
   BillingArrangementType,
@@ -30,8 +29,8 @@ import {
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
+import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
-import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -98,40 +97,47 @@ export class AdminPanelBillingArrangementService {
 
     const trimmedComment = comment?.trim();
 
+    const draft: BillingArrangementDraft = {
+      type,
+      label,
+      comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
+      startsAt: new Date(),
+      endsAt: endsAt ?? null,
+      seats: seats ?? null,
+      seatCapMode: seatCapMode ?? null,
+      stripePriceId: null,
+      stripeDiscountId: null,
+      creditAllowanceMicro: isDefined(creditAllowance)
+        ? Math.round(creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
+        : null,
+      stripeCreditNoteId: null,
+      creditGrantId: null,
+      usageLimitId: null,
+    };
+
     const arrangement = await this.cacheLockService.withLock(
       async () => {
-        if (
-          type === BillingArrangementType.COMMITTED_SEATS &&
-          seatCapMode === BillingArrangementSeatCapMode.HARD &&
-          isDefined(seats)
-        ) {
-          await this.assertHardSeatCapCoversBilledMembers({
+        if (type === BillingArrangementType.COMMITTED_SEATS) {
+          const activeSeatArrangements =
+            await this.billingSeatService.findActiveSeatArrangements(
+              workspaceId,
+            );
+
+          await this.billingSeatService.assertHardSeatCapCoversBilledMembers({
             workspaceId,
-            seats,
+            seatArrangements: [
+              { ...draft, revokedAt: null },
+              ...activeSeatArrangements.filter(
+                (activeArrangement) =>
+                  activeArrangement.type === BillingArrangementType.FREE_SEATS,
+              ),
+            ],
           });
         }
 
         return await this.billingArrangementService.insertArrangement({
           workspaceId,
-          arrangement: {
-            type,
-            label,
-            comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
-            startsAt: new Date(),
-            endsAt: endsAt ?? null,
-            seats: seats ?? null,
-            seatCapMode: seatCapMode ?? null,
-            stripePriceId: null,
-            stripeDiscountId: null,
-            creditAllowanceMicro: isDefined(creditAllowance)
-              ? Math.round(
-                  creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-                )
-              : null,
-            stripeCreditNoteId: null,
-            creditGrantId: null,
-            usageLimitId: null,
-          },
+          arrangement: draft,
           grantedByUserId,
         });
       },
@@ -163,19 +169,38 @@ export class AdminPanelBillingArrangementService {
   }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
     this.assertBillingIsEnabled();
 
-    const arrangement =
-      await this.billingArrangementService.findArrangementOrThrow({
-        workspaceId,
-        arrangementId: billingArrangementId,
-      });
+    const endedArrangement = await this.cacheLockService.withLock(
+      async () => {
+        const arrangement =
+          await this.billingArrangementService.findArrangementOrThrow({
+            workspaceId,
+            arrangementId: billingArrangementId,
+          });
 
-    this.assertBillingArrangementIsManageable(arrangement.type);
+        this.assertBillingArrangementIsManageable(arrangement.type);
 
-    const endedArrangement =
-      await this.billingArrangementService.endArrangement({
-        arrangement,
-        revokedByUserId,
-      });
+        if (arrangement.type === BillingArrangementType.FREE_SEATS) {
+          const activeSeatArrangements =
+            await this.billingSeatService.findActiveSeatArrangements(
+              workspaceId,
+            );
+
+          await this.billingSeatService.assertHardSeatCapCoversBilledMembers({
+            workspaceId,
+            seatArrangements: activeSeatArrangements.filter(
+              (activeArrangement) => activeArrangement.id !== arrangement.id,
+            ),
+          });
+        }
+
+        return await this.billingArrangementService.endArrangement({
+          arrangement,
+          revokedByUserId,
+        });
+      },
+      buildBillingSeatLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
 
     await this.applyBillingArrangementChange(endedArrangement);
 
@@ -269,33 +294,6 @@ export class AdminPanelBillingArrangementService {
       throw new BillingException(
         `Cannot create or end a ${type} arrangement by hand`,
         BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE,
-      );
-    }
-  }
-
-  private async assertHardSeatCapCoversBilledMembers({
-    workspaceId,
-    seats,
-  }: {
-    workspaceId: string;
-    seats: number;
-  }): Promise<void> {
-    const [memberCount, activeSeatArrangements] = await Promise.all([
-      this.billingSeatService.countWorkspaceMembers(workspaceId),
-      this.billingSeatService.findActiveSeatArrangements(workspaceId),
-    ]);
-
-    const billedSeatsWithoutCommitment = computeBilledSeats({
-      memberCount,
-      seatArrangements: activeSeatArrangements.filter(
-        (arrangement) => arrangement.type === BillingArrangementType.FREE_SEATS,
-      ),
-    });
-
-    if (billedSeatsWithoutCommitment > seats) {
-      throw new BillingException(
-        `Hard cap of ${seats} seats is below the ${billedSeatsWithoutCommitment} billed members of workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS,
       );
     }
   }

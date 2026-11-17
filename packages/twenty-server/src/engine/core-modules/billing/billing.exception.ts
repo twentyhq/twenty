@@ -119,7 +119,7 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE:
       return msg`This kind of billing arrangement cannot be created or ended by hand.`;
     case BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS:
-      return msg`A hard seat cap cannot be below the current number of billed members.`;
+      return msg`This change would bill more members than the hard seat cap allows.`;
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return msg`Your purchased credits could not be added. Please contact support.`;
     case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:

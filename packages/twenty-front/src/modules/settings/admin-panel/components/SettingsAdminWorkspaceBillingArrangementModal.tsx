@@ -13,6 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from '@/settings/admin-panel/constants/BillingArrangementCommentMaxLength';
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_SEAT_CAP_MODE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
@@ -45,8 +46,6 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const COMMENT_MAX_LENGTH = 500;
-
 const CREATABLE_ARRANGEMENT_TYPES: BillingArrangementType[] = [
   BillingArrangementType.FREE_SEATS,
   BillingArrangementType.COMMITTED_SEATS,
@@ -68,13 +67,17 @@ const parseSeats = (value: string): number | null => {
 };
 
 const parseCreditAllowance = (value: string): number | null => {
+  if (!isNonEmptyString(value.trim())) {
+    return null;
+  }
+
   const parsed = Number(value);
 
-  return isNonEmptyString(value.trim()) &&
-    Number.isFinite(parsed) &&
-    parsed >= 0
-    ? parsed
-    : null;
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return parsed;
 };
 
 export const SettingsAdminWorkspaceBillingArrangementModal = ({
@@ -281,7 +284,7 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
                 placeholder={t`Signed a 2-year deal for 25 seats`}
                 value={comment}
                 onChange={setComment}
-                maxLength={COMMENT_MAX_LENGTH}
+                maxLength={BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH}
                 fullWidth
               />
             </StyledFields>
