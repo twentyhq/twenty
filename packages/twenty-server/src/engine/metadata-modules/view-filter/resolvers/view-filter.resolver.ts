@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
@@ -26,22 +27,37 @@ export class ViewFilterResolver {
   @Query(() => [ViewFilterDTO])
   async getViewFilters(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewFilterDTO[]> {
     if (viewId) {
-      return this.viewFilterService.findByViewId(workspace.id, viewId);
+      return this.viewFilterService.findByViewId({
+        workspaceId: workspace.id,
+        viewId,
+        userWorkspaceId,
+      });
     }
 
-    return this.viewFilterService.findByWorkspaceId(workspace.id);
+    return this.viewFilterService.findByWorkspaceId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Query(() => ViewFilterDTO, { nullable: true })
   async getViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFilterDTO | null> {
-    return this.viewFilterService.findById(id, workspace.id);
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewFilterDTO> {
+    return this.viewFilterService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewFilterDTO)

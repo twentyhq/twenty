@@ -17,7 +17,7 @@ const resolveEffectiveEntityIsActive = (entity: {
   return typeof overrideValue === 'boolean' ? overrideValue : entity.isActive;
 };
 
-// isUnique lives in IndexMetadata, so callers needing it pass the precomputed field id set
+// isUnique lives in IndexMetadata and options in their rows, so callers pass what was derived from them
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
   derivedFieldMetadataIds?: DerivedFieldMetadataIds,
@@ -44,7 +44,10 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     derivedFieldMetadataIds?.searchableFieldMetadataIds.has(entity.id) ?? false,
   isAuditLogged: entity.isAuditLogged,
   defaultValue: entity.defaultValue ?? undefined,
-  options: entity.options ?? undefined,
+  options:
+    derivedFieldMetadataIds?.optionsByFieldMetadataId.get(entity.id) ??
+    entity.options ??
+    undefined,
   settings: entity.settings ?? undefined,
   workspaceId: entity.workspaceId,
   objectMetadataId: entity.objectMetadataId,

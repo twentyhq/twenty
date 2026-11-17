@@ -70,7 +70,7 @@ Per il tuo server di sviluppo, `twenty app logs` trasmette in streaming i log de
 
 * **Gli errori aumentano subito dopo una versione**: confronta le versioni nella tabella **Versioni**, quindi correggi e pubblica una versione successiva. Consulta [Pubblicazione](/it/developers/extend/apps/operations/publishing).
 * **Le richieste API sono soggette a limiti di frequenza**: la tua app chiama l'API troppo spesso. Raggruppa in batch le letture e le scritture ed evita di chiamare l'API in cicli stretti.
-* **I job sono soggetti a limiti di frequenza**: i trigger di eventi del database o cron si attivano più velocemente di quanto i job possano essere accodati. Restringi il trigger, ad esempio con `updatedFields` su un trigger `databaseEvent`, oppure esegui il lavoro in meno esecuzioni, ma più grandi. Vedi [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions).
+* **I job sono soggetti a limiti di frequenza**: i trigger di eventi del database o cron si attivano più velocemente di quanto i job possano essere accodati. Restringi il trigger, ad esempio con `watchedFieldUniversalIdentifiers` in `eventTriggerSettings`, oppure esegui il lavoro in un numero minore di esecuzioni più grandi. Vedi [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions).
 * **Errori di installazione o aggiornamento**: controlla i tuoi [hook di installazione](/it/developers/extend/apps/config/install-hooks). Il messaggio di errore viene registrato con l'errore.
 * **Funzioni lente**: una durata elevata del 95° percentile indica una funzione che vale la pena profilare o suddividere.
 

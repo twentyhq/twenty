@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import {
   PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-  type ProposeToolCallToolResult,
   type ProposedToolCall,
   type ToolCallApprovalResponse,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
+import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 
 export const useAnswerToolCallApproval = ({
   toolCallId,
@@ -18,7 +18,7 @@ export const useAnswerToolCallApproval = ({
   proposal: ProposedToolCall;
 }) => {
   const { refreshFrontComponents } = useRefreshFrontComponents();
-  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
+  const { answerAiChatToolCall } = useAnswerAiChatToolCall();
   const [pendingResponse, setPendingResponse] =
     useState<ToolCallApprovalResponse | null>(null);
   const [isFeedbackShown, setIsFeedbackShown] = useState(false);
@@ -27,22 +27,16 @@ export const useAnswerToolCallApproval = ({
   const answerToolCallApproval = async (response: ToolCallApprovalResponse) => {
     setPendingResponse(response);
 
-    const isAnswered = await answerAgentChatToolCall({
+    const isAnswered = await answerAiChatToolCall({
       toolCallId,
       response,
       // Only a rejection is certain before the server answers: the approved call can still fail.
       optimisticToolOutput:
         response.decision === 'reject'
-          ? {
-              success: true,
-              result: {
-                status: 'rejected',
-                proposal,
-                ...(isDefined(response.feedback)
-                  ? { feedback: response.feedback }
-                  : {}),
-              } satisfies ProposeToolCallToolResult,
-            }
+          ? buildRejectedToolCallOutput({
+              proposal,
+              feedback: response.feedback,
+            })
           : undefined,
     });
 

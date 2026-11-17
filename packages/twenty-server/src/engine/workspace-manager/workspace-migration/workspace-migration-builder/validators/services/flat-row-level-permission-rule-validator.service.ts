@@ -13,8 +13,10 @@ import {
   type FailedFlatEntityValidation,
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 type RuleRelatedFlatEntityMaps = UniversalFlatEntityValidationArgs<
@@ -26,6 +28,7 @@ export class FlatRowLevelPermissionRuleValidatorService {
   validateFlatRowLevelPermissionRuleCreation({
     flatEntityToValidate: flatRuleToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionRule
   >): FailedFlatEntityValidation<'rowLevelPermissionRule', 'create'> {
@@ -55,6 +58,7 @@ export class FlatRowLevelPermissionRuleValidatorService {
       ...this.getRoleAndObjectErrors({
         flatRule: flatRuleToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        buildOptions,
       }),
     );
 
@@ -96,6 +100,7 @@ export class FlatRowLevelPermissionRuleValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionRule
   >): FailedFlatEntityValidation<'rowLevelPermissionRule', 'update'> {
@@ -125,6 +130,7 @@ export class FlatRowLevelPermissionRuleValidatorService {
       ...this.getRoleAndObjectErrors({
         flatRule: { ...existingRule, ...flatEntityUpdate },
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        buildOptions,
       }),
     );
 
@@ -137,12 +143,23 @@ export class FlatRowLevelPermissionRuleValidatorService {
       flatRoleMaps,
       flatObjectMetadataMaps,
     },
+    buildOptions,
   }: {
     flatRule: Pick<
       UniversalFlatRowLevelPermissionRule,
-      'roleUniversalIdentifier' | 'objectMetadataUniversalIdentifier'
+      | 'roleUniversalIdentifier'
+      | 'objectMetadataUniversalIdentifier'
+      | 'canReadRecords'
+      | 'canUpdateRecords'
+      | 'canSoftDeleteRecords'
+      | 'canDestroyRecords'
     >;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RuleRelatedFlatEntityMaps;
+    buildOptions: Pick<
+      WorkspaceMigrationValidationBuildOptions,
+      | 'applicationDefaultRoleUniversalIdentifier'
+      | 'workspaceCustomApplicationUniversalIdentifier'
+    >;
   }): FlatEntityValidationError[] {
     const errors: FlatEntityValidationError[] = [];
 
@@ -172,6 +189,25 @@ export class FlatRowLevelPermissionRuleValidatorService {
         userFriendlyMessage: msg`Object metadata not found`,
       });
     }
+
+    errors.push(
+      ...validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: {
+          objectMetadataUniversalIdentifier:
+            flatRule.objectMetadataUniversalIdentifier,
+          canReadObjectRecords: flatRule.canReadRecords,
+          canUpdateObjectRecords: flatRule.canUpdateRecords,
+          canSoftDeleteObjectRecords: flatRule.canSoftDeleteRecords,
+          canDestroyObjectRecords: flatRule.canDestroyRecords,
+        },
+        flatObjectMetadata: objectMetadata,
+        flatRole: role,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      }),
+    );
 
     return errors;
   }

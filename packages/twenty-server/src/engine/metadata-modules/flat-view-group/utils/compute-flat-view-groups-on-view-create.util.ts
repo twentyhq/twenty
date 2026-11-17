@@ -1,5 +1,5 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -8,17 +8,22 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 
 type ComputeFlatViewGroupsOnViewCreateArgs = {
   flatViewToCreateUniversalIdentifier: string;
   mainGroupByFieldMetadataId: string;
-} & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatFieldMetadataOptionMaps'
+>;
 
 export const computeFlatViewGroupsOnViewCreate = ({
   flatViewToCreateUniversalIdentifier,
   mainGroupByFieldMetadataId,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
 }: ComputeFlatViewGroupsOnViewCreateArgs): UniversalFlatViewGroup[] => {
   const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: mainGroupByFieldMetadataId,
@@ -35,19 +40,24 @@ export const computeFlatViewGroupsOnViewCreate = ({
   const createdAt = new Date().toISOString();
 
   const flatViewGroupsFromOptions: UniversalFlatViewGroup[] = (
-    mainGroupByFieldMetadata.options ?? []
-  ).map((option, index) => ({
-    viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
-    createdAt,
-    updatedAt: createdAt,
-    deletedAt: null,
-    universalIdentifier: v4(),
-    isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
-    fieldValue: option.value,
-    position: index,
-    applicationUniversalIdentifier:
-      mainGroupByFieldMetadata.applicationUniversalIdentifier,
-  }));
+    resolveFlatFieldMetadataOptions({
+      flatFieldMetadata: mainGroupByFieldMetadata,
+      flatFieldMetadataOptionMaps,
+    }) ?? []
+  )
+    .filter(isFieldMetadataOptionActive)
+    .map((option, index) => ({
+      viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
+      createdAt,
+      updatedAt: createdAt,
+      deletedAt: null,
+      universalIdentifier: v4(),
+      isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
+      fieldValue: option.value,
+      position: index,
+      applicationUniversalIdentifier:
+        mainGroupByFieldMetadata.applicationUniversalIdentifier,
+    }));
 
   const flatViewGroups: UniversalFlatViewGroup[] = [
     ...flatViewGroupsFromOptions,

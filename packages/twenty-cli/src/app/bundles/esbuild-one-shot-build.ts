@@ -19,7 +19,7 @@ export const esbuildOneShotBuild = async ({
   fileFolder,
   buildOptions,
   onFileBuilt,
-}: EsbuildOneShotBuildOptions): Promise<void> => {
+}: EsbuildOneShotBuildOptions): Promise<esbuild.Metafile | undefined> => {
   if (sourcePaths.length === 0) {
     return;
   }
@@ -51,4 +51,6 @@ export const esbuildOneShotBuild = async ({
     lastChecksums: new Map(),
     onFileBuilt,
   });
+
+  return result.metafile;
 };

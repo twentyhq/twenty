@@ -19,7 +19,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   capitalize,
   isDefined,
 } from 'twenty-shared/utils';
@@ -103,7 +103,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
       );
 
       const isReadable = (objectMetadataItem: EnrichedObjectMetadataItem) =>
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: getObjectPermissionsForObject(
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,

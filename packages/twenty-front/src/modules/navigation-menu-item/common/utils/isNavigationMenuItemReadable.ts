@@ -1,6 +1,9 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
@@ -61,7 +64,7 @@ export const isNavigationMenuItemReadable = ({
 
     return (
       isDefined(objectMetadataItem) &&
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,

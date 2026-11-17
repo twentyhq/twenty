@@ -1,3 +1,4 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
@@ -5,16 +6,14 @@ import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
-import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
-import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
-import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
+import { AiChatHasBeenOpenedEffect } from '@/ai/components/AiChatHasBeenOpenedEffect';
+import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AiChatThreadMarkAsReadEffect';
+import { AiChatStreamingPartsDiffSyncEffect } from '@/ai/components/AiChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
@@ -33,10 +32,10 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    aiChatThreadIsDirectMessageFamilySelector,
+    threadId,
   );
 
   const { uploadFiles } = useAiChatFileUpload();
@@ -66,13 +65,13 @@ export const AiChatTab = () => {
       onDrop={handleDrop}
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
-      <AgentChatHasBeenOpenedEffect />
-      <AgentChatThreadMarkAsReadEffect />
-      <AgentChatStreamingPartsDiffSyncEffect />
+      <AiChatHasBeenOpenedEffect />
+      <AiChatThreadMarkAsReadEffect />
+      <AiChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
-          onUploadFiles={uploadFiles}
+          onUploadFiles={(files) => uploadFiles({ files, threadId })}
         />
       )}
       {!isDraggingFile && (
@@ -81,7 +80,7 @@ export const AiChatTab = () => {
           <AiChatTabMessageList />
           <AiChatTypingParticipants />
           <AiChatQueuedMessages />
-          <AiChatEditorSection key={currentAiChatThread} />
+          <AiChatEditorSection key={threadId} />
         </>
       )}
     </StyledContainer>

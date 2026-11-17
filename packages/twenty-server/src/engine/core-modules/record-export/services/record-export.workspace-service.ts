@@ -66,6 +66,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
@@ -93,6 +94,7 @@ export class RecordExportWorkspaceService {
 
   constructor(
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -653,17 +655,16 @@ export class RecordExportWorkspaceService {
         RECORD_EXPORT_PERMISSION_CACHE_KEYS,
       );
 
-    if (!isDefined(applicationId)) {
-      return permissionsHash;
-    }
+    const { flatApplication, grantRoleId } =
+      await this.applicationGrantRoleLookupService.findApplicationAndGrantRoleIdOrThrow(
+        { workspaceId, applicationId },
+      );
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-    const application = flatApplicationMaps.byId[applicationId];
-
-    return computeRecordExportPermissionsHash({ permissionsHash, application });
+    return computeRecordExportPermissionsHash({
+      permissionsHash,
+      application: flatApplication,
+      grantRoleId,
+    });
   }
 
   async assertPermissionsUnchanged(

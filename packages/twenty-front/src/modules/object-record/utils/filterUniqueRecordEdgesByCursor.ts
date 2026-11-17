@@ -8,8 +8,12 @@ export const filterUniqueRecordEdgesByCursor = (
   return arrayToFilter.filter((item) => {
     const currentCursor = item.cursor;
 
-    return seenCursors.has(currentCursor)
-      ? false
-      : Boolean(seenCursors.add(currentCursor));
+    if (seenCursors.has(currentCursor)) {
+      return false;
+    }
+
+    seenCursors.add(currentCursor);
+
+    return true;
   });
 };

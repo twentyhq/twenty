@@ -1,4 +1,5 @@
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -6,7 +7,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -25,7 +26,9 @@ jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
 }));
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>{children}</I18nProvider>
+    <I18nProvider i18n={i18n}>
+      <AiChatTestInstance>{children}</AiChatTestInstance>
+    </I18nProvider>
   </JotaiProvider>
 );
 
@@ -33,13 +36,13 @@ describe('Shared conversation composer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(currentAiChatThreadState.atom, 'shared-thread');
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'shared-thread');
   });
 
   it.each([false, undefined])(
     'keeps the composer read-only without update permission (%s)',
     (canUpdate) => {
-      setAgentChatThreadPermissions({
+      setAiChatThreadPermissions({
         store: jotaiStore,
         threadId: 'shared-thread',
         permissions:
@@ -63,7 +66,7 @@ describe('Shared conversation composer', () => {
     },
   );
   it('shows unavailable rather than loading after access is revoked in either chat surface', () => {
-    setAgentChatThreadPermissions({
+    setAiChatThreadPermissions({
       store: jotaiStore,
       threadId: 'shared-thread',
       permissions: {

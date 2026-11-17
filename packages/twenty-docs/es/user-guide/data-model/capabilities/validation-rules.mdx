@@ -69,6 +69,15 @@ Coloque el texto entre comillas simples o dobles y use paréntesis para agrupar 
 
 Para hacer que un campo sea obligatorio, use `not isEmpty(fieldName)`. Esto también funciona para campos compuestos, como correos electrónicos y direcciones.
 
+### Comparar fechas
+
+| Función                                                | Usar                                                                                                                                                                                                                                              |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `daysSince(date)`                                      | Obtiene el número de días desde una fecha hasta hoy, en UTC. Una fecha futura devuelve un número negativo.                                                                                                                                        |
+| `isInRelativeDateRange(date, direction, amount, unit)` | Comprueba si una fecha se encuentra dentro de un período contado desde hoy, en UTC. `direction` es `"PAST"`, `"NEXT"` o `"THIS"`; `unit` es `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` o `"YEAR"`. `"PAST"` y `"NEXT"` excluyen el período actual. |
+
+Por ejemplo, `daysSince(closeDate) >= 0 and daysSince(closeDate) \<= 30` permite guardar solo en la fecha de cierre o durante los 30 días posteriores.
+
 ### Hacer referencia a campos compuestos y relacionados
 
 Use un punto para leer una parte de un campo compuesto, como `name.firstName` o `amount.amountMicros`. También puede leer un campo mediante una relación de varios a uno, como `company.name` en una persona. Seleccione campos en el asistente para encontrar las rutas disponibles.

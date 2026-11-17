@@ -71,6 +71,7 @@ export const convertRecordFilterToPredicate = (
       __typename: 'RowLevelPermissionPredicate',
       id: filter.id,
       fieldMetadataId: filter.fieldMetadataId,
+      relationFieldMetadataId: null,
       objectMetadataId,
       operand: filter.operand as unknown as RowLevelPermissionPredicateOperand,
       value: null,
@@ -90,6 +91,7 @@ export const convertRecordFilterToPredicate = (
     __typename: 'RowLevelPermissionPredicate',
     id: filter.id,
     fieldMetadataId: filter.fieldMetadataId,
+    relationFieldMetadataId: null,
     objectMetadataId,
     operand: filter.operand as unknown as RowLevelPermissionPredicateOperand,
     value: filter.value || null,
@@ -135,6 +137,7 @@ export const convertRecordFilterGroupToPredicateGroup = ({
     | 'canUpdateRecords'
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
+    | 'rowLevelPermissionRuleId'
   >;
 }): RowLevelPermissionPredicateGroup => {
   return {
@@ -152,6 +155,8 @@ export const convertRecordFilterGroupToPredicateGroup = ({
     canUpdateRecords: existingPredicateGroup?.canUpdateRecords ?? false,
     canSoftDeleteRecords: existingPredicateGroup?.canSoftDeleteRecords ?? false,
     canDestroyRecords: existingPredicateGroup?.canDestroyRecords ?? false,
+    rowLevelPermissionRuleId:
+      existingPredicateGroup?.rowLevelPermissionRuleId ?? null,
     roleId,
     objectMetadataId,
   };

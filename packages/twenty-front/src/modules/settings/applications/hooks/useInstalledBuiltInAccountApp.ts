@@ -1,9 +1,9 @@
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 
 export const useInstalledBuiltInAccountApp = (
   builtInAccountAppId: string | undefined,
 ) =>
-  useInstalledBuiltInAccountApps().find(
-    (installedBuiltInAccountApp) =>
-      installedBuiltInAccountApp.id === builtInAccountAppId,
+  useEnabledBuiltInAccountApps().enabledBuiltInAccountApps.find(
+    (enabledBuiltInAccountApp) =>
+      enabledBuiltInAccountApp.id === builtInAccountAppId,
   );

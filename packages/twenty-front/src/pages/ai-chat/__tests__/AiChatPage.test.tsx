@@ -7,8 +7,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
@@ -36,12 +36,8 @@ jest.mock('@/ai/components/AiChatPageHeader', () => ({
   AiChatPageHeader: () => <div>Chat header</div>,
 }));
 
-jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
-  AiChatPageThreadUrlSyncEffect: () => null,
-}));
-
-jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
-  AiChatPageCloseSidePanelChatEffect: () => null,
+jest.mock('@/ai/components/AiChatPageThreadLoadEffect', () => ({
+  AiChatPageThreadLoadEffect: () => null,
 }));
 
 let mockIsMobile = false;
@@ -115,16 +111,6 @@ describe('AiChatPage', () => {
     },
   );
 
-  it('renders the current chat as its record page when the URL has no chat', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-
-    const { getByText } = renderAt('/chat');
-
-    expect(
-      getByText(`Record page agentChatThread ${THREAD_ID}`),
-    ).toBeInTheDocument();
-  });
-
   it('renders a saved chat as its record page', () => {
     const { getByText, queryByText } = renderAt(`/chat/${THREAD_ID}`);
 
@@ -149,17 +135,25 @@ describe('AiChatPage', () => {
     expect(getByRole('button', { name: 'Close chat' })).toBeInTheDocument();
   });
 
-  it('should mark the chat for side panel continuation while mounted', () => {
-    const { unmount } = renderAt('/chat');
+  it('marks the shown chat for side panel continuation while mounted', () => {
+    const { unmount } = renderAt(`/chat/${THREAD_ID}`);
 
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      true,
+    expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
+      THREAD_ID,
     );
 
     unmount();
 
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      false,
+    expect(
+      jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom),
+    ).toBeNull();
+  });
+
+  it('marks the new chat for side panel continuation on /chat', () => {
+    renderAt('/chat');
+
+    expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
+      jotaiStore.get(newAiChatThreadIdState.atom),
     );
   });
 });

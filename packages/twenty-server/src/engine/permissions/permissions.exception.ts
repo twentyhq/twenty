@@ -16,6 +16,7 @@ export enum PermissionsExceptionCode {
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   CANNOT_UNASSIGN_LAST_ADMIN = 'CANNOT_UNASSIGN_LAST_ADMIN',
   CANNOT_DELETE_LAST_ADMIN_USER = 'CANNOT_DELETE_LAST_ADMIN_USER',
+  CANNOT_DELETE_LAST_SERVER_ADMIN = 'CANNOT_DELETE_LAST_SERVER_ADMIN',
   UNKNOWN_OPERATION_NAME = 'UNKNOWN_OPERATION_NAME_PERMISSIONS',
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
   CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
@@ -85,6 +86,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Cannot remove the last admin from the workspace.`;
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
       return msg`Cannot delete the last admin user.`;
+    case PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN:
+      return msg`Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first.`;
     case PermissionsExceptionCode.UNKNOWN_OPERATION_NAME:
       return msg`Unknown operation.`;
     case PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION:
@@ -194,6 +197,7 @@ export enum PermissionsExceptionMessage {
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
   CANNOT_DELETE_LAST_ADMIN_USER = 'Cannot delete account: user is the unique admin of a workspace',
+  CANNOT_DELETE_LAST_SERVER_ADMIN = 'Cannot remove the last server admin',
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
   CANNOT_DELETE_OWN_ROLE = 'Cannot delete a role assigned to the acting user',
@@ -208,7 +212,6 @@ export enum PermissionsExceptionMessage {
   ROLE_NOT_EDITABLE = 'Role is not editable',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
-  CUSTOM_ROLES_NOT_ENTITLED = 'Custom roles require the Organization plan',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',
   CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add field permission on system object',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'Cannot give update permission to non-readable object',

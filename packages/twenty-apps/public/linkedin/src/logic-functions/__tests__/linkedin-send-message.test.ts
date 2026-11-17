@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   sendUnipileChatMessage: vi.fn(),
+  downloadSendMessageAttachmentOrThrow: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -13,10 +15,19 @@ vi.mock('src/unipile/utils/send-unipile-chat-message.util', () => ({
   sendUnipileChatMessage: mocks.sendUnipileChatMessage,
 }));
 
+vi.mock(
+  'src/logic-functions/utils/download-send-message-attachment.util',
+  () => ({
+    downloadSendMessageAttachmentOrThrow:
+      mocks.downloadSendMessageAttachmentOrThrow,
+  }),
+);
+
 const { linkedinSendMessageHandler } =
   await import('src/logic-functions/linkedin-send-message');
 
-const PAYLOAD = {
+const PAYLOAD: SendAppMessagePayload = {
+  conversationStyle: 'chat',
   messagingProviderName: 'linkedin-messaging',
   connectedAccountId: 'connected-account-id',
   messageChannelId: 'channel-id',
@@ -29,6 +40,14 @@ const PAYLOAD = {
       displayName: 'Grace Hopper',
     },
   ],
+  attachments: [],
+};
+
+const ATTACHMENT = {
+  filename: 'deck.pdf',
+  contentType: 'application/pdf',
+  size: 1024,
+  downloadUrl: 'https://twenty.example/file/email-attachment/file-1?token=t',
 };
 
 describe('linkedinSendMessageHandler', () => {
@@ -50,7 +69,87 @@ describe('linkedinSendMessageHandler', () => {
       accountId: 'acc_1',
       chatId: 'chat-1',
       text: 'Thanks, talk soon',
+      attachments: [],
     });
+    expect(mocks.downloadSendMessageAttachmentOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('downloads each attachment and sends it with the reply', async () => {
+    mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
+      content: Buffer.from('report'),
+      contentType: 'application/pdf',
+      filename: 'deck.pdf',
+    });
+
+    await linkedinSendMessageHandler({
+      ...PAYLOAD,
+      text: '',
+      attachments: [ATTACHMENT],
+    });
+
+    expect(
+      mocks.downloadSendMessageAttachmentOrThrow,
+    ).toHaveBeenCalledExactlyOnceWith({
+      attachment: ATTACHMENT,
+      maxSizeBytes: 25 * 1024 * 1024,
+      deadlineAtMs: expect.any(Number),
+    });
+    expect(mocks.sendUnipileChatMessage).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: '',
+      attachments: [
+        {
+          content: Buffer.from('report'),
+          contentType: 'application/pdf',
+          filename: 'deck.pdf',
+        },
+      ],
+    });
+  });
+
+  it('refuses attachments announced above the total size limit without downloading them', async () => {
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          { ...ATTACHMENT, size: 20 * 1024 * 1024 },
+          { ...ATTACHMENT, filename: 'photo.png', size: 10 * 1024 * 1024 },
+        ],
+      }),
+    ).rejects.toThrow(
+      'Attachments of a reply are larger than 26214400 bytes in total',
+    );
+    expect(mocks.downloadSendMessageAttachmentOrThrow).not.toHaveBeenCalled();
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  it('limits each later download to what is left of the total size limit', async () => {
+    mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
+      content: Buffer.alloc(1024),
+      contentType: 'application/pdf',
+      filename: 'deck.pdf',
+    });
+
+    await linkedinSendMessageHandler({
+      ...PAYLOAD,
+      attachments: [ATTACHMENT, { ...ATTACHMENT, filename: 'photo.png' }],
+    });
+
+    expect(mocks.downloadSendMessageAttachmentOrThrow).toHaveBeenLastCalledWith(
+      expect.objectContaining({ maxSizeBytes: 25 * 1024 * 1024 - 1024 }),
+    );
+  });
+
+  it('sends nothing when an attachment cannot be downloaded', async () => {
+    mocks.downloadSendMessageAttachmentOrThrow.mockRejectedValue(
+      new Error('Attachment deck.pdf is larger than 26214400 bytes'),
+    );
+
+    await expect(
+      linkedinSendMessageHandler({ ...PAYLOAD, attachments: [ATTACHMENT] }),
+    ).rejects.toThrow('Attachment deck.pdf is larger than 26214400 bytes');
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
   });
 
   it('refuses to send through a connection without a Unipile account', async () => {

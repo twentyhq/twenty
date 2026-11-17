@@ -1,6 +1,7 @@
 import { posix } from 'node:path';
 import ts from 'typescript';
 import { isDefined } from '../utils/validation/isDefined';
+import { FRONT_COMPONENT_REACT_IMPORTS } from './front-component-react-imports';
 
 export const getFrontComponentTypeDiagnostics = ({
   source,
@@ -36,6 +37,13 @@ export const getFrontComponentTypeDiagnostics = ({
     allowSyntheticDefaultImports: true,
     noEmit: true,
     types: [],
+    // Cached untyped app fallbacks must not shadow the collected React declarations.
+    paths: Object.fromEntries(
+      FRONT_COMPONENT_REACT_IMPORTS.map((specifier) => [
+        specifier,
+        [`/node_modules/@types/${specifier}`],
+      ]),
+    ),
   };
   const host: ts.CompilerHost = {
     fileExists: (path) => isDefined(sources[posix.resolve('/', path)]),

@@ -27,6 +27,7 @@ import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/res
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
+import { AgentFilePartService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-part.service';
 import {
   getCacheProviderOptions,
   injectCacheBreakpoint,
@@ -90,7 +91,7 @@ const METRICS_CONFIG_BY_SCOPE: Record<
 
 export type AgentStepLoopInput = {
   registeredModel: RegisteredAiModel;
-  modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modelFamily'>;
+  modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modelFamily' | 'modalities'>;
   systemPrompt: string;
   contextMessages?: SystemModelMessage[];
   messages: ModelMessage[];
@@ -121,6 +122,8 @@ export type AgentStepLoopInput = {
 export type AgentStepLoop = {
   stream: ReturnType<typeof streamText<ToolSet, Context, AgentStepLoopOutput>>;
   getStopReason: () => StepDebitResult['stopReason'];
+  // what a loop that ended early, such as a stopped one, did before it ended
+  getFinishedSteps: () => StepResult<ToolSet>[];
 };
 
 const sumSteps = (
@@ -142,6 +145,7 @@ export class AgentStepLoopService {
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly agentFilePartService: AgentFilePartService,
   ) {}
 
   start({
@@ -175,6 +179,18 @@ export class AgentStepLoopService {
     let stepStartedAt = startedAt;
     let isUsageRecorded = false;
     let isFirstTokenRecorded = !recordsTurnMetrics;
+    const {
+      model: modelWithFileDelivery,
+      prepareFileParts,
+      downloadFiles,
+    } = this.agentFilePartService.createFileDelivery({
+      model: registeredModel.model,
+      modelConfig,
+      modelId: registeredModel.modelId,
+      workspaceId: billing.workspaceId,
+      operationType: billing.operationType,
+      spenders: billing.spenders,
+    });
 
     const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
       if (
@@ -252,7 +268,7 @@ export class AgentStepLoopService {
     };
 
     const stream = streamText<ToolSet, Context, AgentStepLoopOutput>({
-      model: registeredModel.model,
+      model: modelWithFileDelivery,
       instructions: [systemMessage, ...contextMessages],
       messages,
       tools,
@@ -270,6 +286,7 @@ export class AgentStepLoopService {
         (await (shouldStopAfterStep?.(step) ?? false)),
       ...buildAiTelemetry(telemetry),
       providerOptions,
+      experimental_download: downloadFiles,
       // keys are sorted and the last message carries the cache point, so the prompt prefix stays cacheable
       prepareStep: async ({ messages: stepMessages }) => {
         await beforeStep?.();
@@ -277,7 +294,7 @@ export class AgentStepLoopService {
 
         return {
           messages: injectCacheBreakpoint(
-            stepMessages.map(sortKeysDeeply),
+            await prepareFileParts(stepMessages.map(sortKeysDeeply)),
             modelConfig,
           ),
         };
@@ -389,6 +406,7 @@ export class AgentStepLoopService {
     return {
       stream,
       getStopReason: () => stopReason,
+      getFinishedSteps: () => [...finishedSteps],
     };
   }
 

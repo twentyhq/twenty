@@ -71,7 +71,7 @@ export const SettingsListCard = <
 }: SettingsListCardProps<ListItem>) => {
   const theme = useTheme();
 
-  if (isLoading === true) {
+  if (isLoading) {
     return <SettingsListSkeletonCard />;
   }
 

@@ -1,3 +1,7 @@
+import {
+  AI_CHAT_TEST_INSTANCE_ID,
+  AiChatTestInstance,
+} from '@/ai/testing/AiChatTestInstance';
 import { render } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
@@ -7,8 +11,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
-import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { aiChatSentMessageHandOffState } from '@/ai/states/aiChatSentMessageHandOffState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import {
   jotaiStore,
@@ -21,7 +25,9 @@ const PENDING_HAND_OFF = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  <JotaiProvider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </JotaiProvider>
 );
 
 describe('AiChatSentMessageHandOffEffect', () => {
@@ -29,7 +35,7 @@ describe('AiChatSentMessageHandOffEffect', () => {
 
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatSentMessageHandOffState.atom, PENDING_HAND_OFF);
+    jotaiStore.set(aiChatSentMessageHandOffState.atom, PENDING_HAND_OFF);
     editor = new Editor({
       element: document.createElement('div'),
       extensions: [Document, Paragraph, Text],
@@ -68,9 +74,11 @@ describe('AiChatSentMessageHandOffEffect', () => {
         { wrapper: Wrapper },
       );
 
-      dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
+      dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME, {
+        instanceId: AI_CHAT_TEST_INSTANCE_ID,
+      });
 
-      expect(jotaiStore.get(agentChatSentMessageHandOffState.atom)).toEqual(
+      expect(jotaiStore.get(aiChatSentMessageHandOffState.atom)).toEqual(
         expectedHandOff,
       );
     },

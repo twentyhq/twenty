@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -47,7 +47,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       objectMetadataItem.id,
     );
     if (
-      !canReachSomeRecords({
+      !canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermission,
         operationType: 'read',
       })

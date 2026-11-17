@@ -21,18 +21,22 @@ export const resolveEffectiveUniversalFlatEntity = <
     OverrideAuthorReadContext,
     'workspaceCustomApplicationUniversalIdentifier'
   >;
-}): TUniversalFlatEntity =>
-  ALL_OVERRIDABLE_UNIVERSAL_PROPERTIES_BY_METADATA_NAME[
+}): TUniversalFlatEntity => {
+  const indexableUniversalFlatEntity: OverridableUniversalFlatEntity &
+    Record<string, unknown> = universalFlatEntity;
+
+  return ALL_OVERRIDABLE_UNIVERSAL_PROPERTIES_BY_METADATA_NAME[
     metadataName
   ].reduce<TUniversalFlatEntity>(
     (effectiveUniversalFlatEntity, property) => ({
       ...effectiveUniversalFlatEntity,
       [property]: resolveEffectiveUniversalFlatEntityProperty({
         metadataName,
-        universalFlatEntity,
-        property: property as never,
+        universalFlatEntity: indexableUniversalFlatEntity,
+        property,
         authorContext,
       }),
     }),
     universalFlatEntity,
   );
+};

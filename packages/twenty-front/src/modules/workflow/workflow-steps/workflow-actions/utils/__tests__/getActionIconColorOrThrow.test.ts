@@ -10,6 +10,7 @@ describe('getActionIconColorOrThrow', () => {
       'SEND_EMAIL',
       'DRAFT_EMAIL',
       'LOGIC_FUNCTION',
+      'MCP_TOOL',
       'CREATE_CALENDAR_EVENT',
     ];
     redActions.forEach((actionType) => {

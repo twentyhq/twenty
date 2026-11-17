@@ -100,6 +100,32 @@ describe('doesUsageLimitRowSuppressDefault', () => {
     ).toBe(false);
   });
 
+  it('suppresses a default over several operations from an ALL row', () => {
+    expect(
+      doesUsageLimitRowSuppressDefault({
+        scope: buildScope({
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.ALL,
+          spenderType: 'userWorkspace',
+          limitKind: 'quota',
+          periodUnit: 'week',
+          unit: UsageUnit.USER_CREDIT,
+        }),
+        usageLimitDefault: buildDefault({
+          resourceType: UsageResourceType.AI,
+          operationTypes: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+          spenderType: 'userWorkspace',
+          limitKind: 'quota',
+          periodUnit: 'week',
+          unit: UsageUnit.USER_CREDIT,
+        }),
+      }),
+    ).toBe(true);
+  });
+
   it('ignores the period count, which a speed window can change', () => {
     expect(
       doesUsageLimitRowSuppressDefault({

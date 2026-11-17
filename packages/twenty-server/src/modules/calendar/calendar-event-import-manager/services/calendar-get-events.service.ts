@@ -14,6 +14,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 export type GetCalendarEventsResponse = {
   calendarEventIds: string[];
   calendarEventIdsToDelete: string[];
+  recurringEventExternalIdsBeyondHorizon: string[];
   nextSyncCursor: string;
 };
 
@@ -25,7 +26,11 @@ export class CalendarGetCalendarEventsService {
     private readonly caldavCalendarGetEventsService: CalDavGetEventsService,
   ) {}
 
-  public async getCalendarEvents(
+  public async getCalendarEvents({
+    connectedAccount,
+    syncCursor,
+    recurringEventHorizon,
+  }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
       | 'provider'
@@ -35,15 +40,17 @@ export class CalendarGetCalendarEventsService {
       | 'connectionParameters'
       | 'handle'
       | 'workspaceId'
-    >,
-    syncCursor?: string,
-  ): Promise<GetCalendarEventsResponse> {
+    >;
+    syncCursor?: string;
+    recurringEventHorizon?: Date;
+  }): Promise<GetCalendarEventsResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-        return this.googleCalendarGetEventsService.getCalendarEvents(
+        return this.googleCalendarGetEventsService.getCalendarEvents({
           connectedAccount,
           syncCursor,
-        );
+          recurringEventHorizon,
+        });
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftCalendarGetEventsService.getCalendarEvents(
           connectedAccount,

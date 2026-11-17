@@ -1,10 +1,10 @@
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
@@ -14,14 +14,15 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <Provider store={jotaiStore}>{children}</Provider>
+  <Provider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </Provider>
 );
 
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread');
-    jotaiStore.set(currentAiChatThreadState.atom, 'thread');
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',
     } as never);
@@ -35,7 +36,7 @@ describe('Shared chat execution controls', () => {
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
     (canUpdate, senderWorkspaceMemberId, expected) => {
-      setAgentChatThreadPermissions({
+      setAiChatThreadPermissions({
         store: jotaiStore,
         threadId: 'thread',
         permissions: {
@@ -46,7 +47,7 @@ describe('Shared chat execution controls', () => {
         },
       });
       jotaiStore.set(
-        agentChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
+        aiChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
         [
           {
             id: 'message',

@@ -190,7 +190,8 @@ export class MatchParticipantService<
         personHandleField,
         handles: uniqueParticipantsHandles,
       })
-        .orderBy('person.createdAt', 'ASC')
+        .orderBy('person.deletedAt', 'ASC', 'NULLS FIRST')
+        .addOrderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
 
       const workspaceMembers = shouldMatchWithWorkspaceMember

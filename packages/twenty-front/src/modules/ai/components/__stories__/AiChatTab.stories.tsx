@@ -1,25 +1,27 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -28,6 +30,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 const StyledPageChat = styled.div`
   display: flex;
@@ -39,7 +42,6 @@ const NewChatStory = () => (
   <StyledPageChat>
     <Suspense fallback={null}>
       <AiChatNewThreadPageContent showInformationBanner={false} />
-      <AgentChatPrepromptEffect />
     </Suspense>
   </StyledPageChat>
 );
@@ -72,6 +74,7 @@ const meta = {
   title: 'Modules/AI/AiChatTab',
   component: AiChatTab,
   decorators: [
+    AiChatInstanceDecorator,
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
@@ -154,7 +157,21 @@ const focusRecipientRemoval = async ({
 
 export const InboxNewChat: Story = {
   ...FullPageNewChat,
-  beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: true }),
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+    jotaiStore.set(currentWorkspaceMembersState.atom, [
+      ...jotaiStore.get(currentWorkspaceMembersState.atom),
+      ...Array.from(
+        { length: AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE + 10 },
+        (_, index) => ({
+          ...mockedWorkspaceMemberData,
+          id: `20202020-7c1e-4a0f-9d2b-${String(index).padStart(12, '0')}`,
+          name: { firstName: 'Teammate', lastName: String(index + 1) },
+          userEmail: `teammate${index + 1}@example.com`,
+        }),
+      ),
+    ]);
+  },
   parameters: {
     ...newChatParameters,
     container: { width: 660, height: 784 },
@@ -163,7 +180,11 @@ export const InboxNewChat: Story = {
     await expectNewChatWelcome(canvasElement);
 
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
     const recipients = canvas.getByRole('group', { name: 'Recipients' });
+    const addRecipients = within(recipients).getByRole('combobox', {
+      name: 'Add people or a channel',
+    });
 
     await userEvent.click(
       await focusRecipientRemoval({ recipients, label: 'Ada' }),
@@ -173,32 +194,53 @@ export const InboxNewChat: Story = {
     ).not.toBeInTheDocument();
     await expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(
+        aiChatNewThreadRecipientsFamilyState.atomFamily(
           jotaiStore.get(newAiChatThreadIdState.atom),
         ),
       ).isAssistantParticipant,
     ).toBe(false);
+    await expect(addRecipients).toHaveFocus();
 
-    await userEvent.click(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    );
-    const popup = await within(canvasElement.ownerDocument.body).findByRole(
-      'dialog',
-      { name: 'Select recipients' },
-    );
+    await userEvent.click(addRecipients);
+    const suggestionList = await body.findByRole('listbox', {
+      name: 'Select recipients',
+    });
 
-    await userEvent.click(within(popup).getByRole('button', { name: 'Ada' }));
-    await expect(within(recipients).getByText('Ada')).toBeVisible();
-    await userEvent.type(
-      within(popup).getByRole('searchbox', { name: 'Search recipients' }),
-      'Jane',
+    await expect(within(suggestionList).getAllByRole('option')).toHaveLength(
+      AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
     );
-    await userEvent.click(
-      within(popup).getByRole('button', { name: /Jane Doe/ }),
+    fireEvent.scroll(suggestionList, {
+      target: { scrollTop: suggestionList.scrollHeight },
+    });
+    await waitFor(() =>
+      expect(
+        within(suggestionList).getAllByRole('option').length,
+      ).toBeGreaterThan(AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE),
     );
+    await userEvent.type(addRecipients, 'Jane');
+    const janeOption = await body.findByRole('option', { name: /Jane Doe/ });
+
+    await expect(
+      body.queryByRole('option', { name: 'Ada' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(janeOption).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await expect(within(recipients).getByText('Jane Doe')).toBeVisible();
+    await expect(addRecipients).toHaveValue('');
+    await expect(addRecipients).toHaveFocus();
+    await userEvent.click(addRecipients);
+    await userEvent.click(await body.findByRole('option', { name: 'Ada' }));
+    await expect(within(recipients).getByText('Ada')).toBeVisible();
+    await userEvent.type(addRecipients, 'Nobody');
+    await waitFor(() =>
+      expect(body.getByText('No recipients found')).toBeVisible(),
+    );
+    await userEvent.clear(addRecipients);
+    await waitFor(() =>
+      expect(body.getAllByRole('option')).toHaveLength(
+        AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE,
+      ),
+    );
     await userEvent.keyboard('{Escape}');
     await userEvent.click(
       await focusRecipientRemoval({ recipients, label: 'Jane Doe' }),
@@ -206,44 +248,23 @@ export const InboxNewChat: Story = {
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
-    const removeAda = await focusRecipientRemoval({
-      recipients,
-      label: 'Ada',
+    await expect(addRecipients).toHaveValue('');
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
     });
 
-    await userEvent.click(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    );
-    const pendingPopup = await within(
-      canvasElement.ownerDocument.body,
-    ).findByRole('dialog', { name: 'Select recipients' });
-    const isSendingMessageAtom =
-      agentChatIsSendingMessageFamilyState.atomFamily({
-        threadId: jotaiStore.get(newAiChatThreadIdState.atom),
-      });
-
     jotaiStore.set(isSendingMessageAtom, true);
-    await waitFor(() => expect(removeAda).toBeDisabled());
-    await expect(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    ).toBeDisabled();
-    await expect(
-      within(pendingPopup).getByRole('searchbox', {
-        name: 'Search recipients',
-      }),
-    ).toBeDisabled();
-
-    for (const option of within(pendingPopup).getAllByRole('button')) {
-      await expect(option).toBeDisabled();
-    }
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('group', { name: 'Recipients' }),
+      ).not.toBeInTheDocument(),
+    );
 
     jotaiStore.set(isSendingMessageAtom, false);
-    await waitFor(() => expect(removeAda).toBeEnabled());
-    await userEvent.keyboard('{Escape}');
+    await focusRecipientRemoval({
+      recipients: await canvas.findByRole('group', { name: 'Recipients' }),
+      label: 'Ada',
+    });
   },
 };
 
@@ -278,7 +299,7 @@ export const NewChatSuggestedPrompt: Story = {
 
     await waitFor(() =>
       expect(
-        jotaiStore.get(agentChatDraftsByThreadIdState.atom)[
+        jotaiStore.get(aiChatDraftsByThreadIdState.atom)[
           jotaiStore.get(newAiChatThreadIdState.atom)
         ],
       ).toContain('A new partner'),
@@ -320,7 +341,7 @@ export const WorkspaceSetupCompletion: Story = {
 const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
   const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
 
-  jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+  jotaiStore.set(aiChatMessagesFamilyState.atomFamily({ threadId }), [
     {
       id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
       role: 'user',
@@ -328,7 +349,7 @@ const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
     },
   ]);
   jotaiStore.set(
-    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
     typingWorkspaceMemberIds,
   );
 };
@@ -373,6 +394,94 @@ export const MemberTypingInSidePanel: Story = {
   play: async ({ canvasElement }) => {
     await expect(
       await within(canvasElement).findByText('Jane Doe is typing…'),
+    ).toBeVisible();
+  },
+};
+
+const initializeInboxChatWithTeammate = (
+  getMessages: (teammateId: string | undefined) => ExtendedUIMessage[],
+) => {
+  initializeNewAiChatStory({ isInboxEnabled: true });
+
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+  const teammate = jotaiStore
+    .get(currentWorkspaceMembersState.atom)
+    .find(({ name }) => name.firstName === 'Jane');
+
+  jotaiStore.set(
+    aiChatMessagesFamilyState.atomFamily({ threadId }),
+    getMessages(teammate?.id),
+  );
+};
+
+export const ReplyToTeammate: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeInboxChatWithTeammate((teammateId) => [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const reply = await canvas.findByRole('button', { name: 'Reply' });
+
+    reply.focus();
+    await userEvent.click(reply);
+    await expect(await canvas.findByText('Replying to')).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole('textbox')).toHaveFocus());
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove quote' }));
+    await expect(canvas.queryByText('Replying to')).not.toBeInTheDocument();
+  },
+};
+
+export const OpenOriginalFromReply: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeInboxChatWithTeammate((teammateId) => [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+      {
+        id: '20202020-8d2f-4b1a-8e3c-4a5b6c7d8e92',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: '> **Jane Doe:** On it. Their procurement asked for a security review.\n\nThanks, I will loop in our security lead.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const quote = await canvas.findByRole('button', {
+      name: 'View original message',
+    });
+
+    await userEvent.click(quote);
+    await expect(
+      await canvas.findByText('Thanks, I will loop in our security lead.'),
     ).toBeVisible();
   },
 };

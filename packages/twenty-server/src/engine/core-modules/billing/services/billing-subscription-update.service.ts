@@ -55,6 +55,7 @@ import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-ph
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { buildBillingSubscriptionUpdateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-update-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -223,7 +224,13 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async syncSeats(workspaceId: string) {
+  async syncSeats({
+    workspaceId,
+    renewalDate,
+  }: {
+    workspaceId: string;
+    renewalDate?: Date;
+  }) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
@@ -250,6 +257,7 @@ export class BillingSubscriptionUpdateService {
             type: SubscriptionUpdateType.SEATS,
             newSeats: billedSeats,
           },
+          renewalDate,
         });
       },
     });
@@ -289,10 +297,12 @@ export class BillingSubscriptionUpdateService {
     workspaceId,
     subscriptionId,
     subscriptionUpdate,
+    renewalDate,
   }: {
     workspaceId: string;
     subscriptionId: string;
     subscriptionUpdate: SubscriptionUpdate;
+    renewalDate?: Date;
   }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
@@ -420,9 +430,23 @@ export class BillingSubscriptionUpdateService {
       }
     }
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      subscription.workspaceId,
-      subscription.stripeSubscriptionId,
+    const syncSubscriptionToDatabase = () =>
+      this.billingSubscriptionService.syncSubscriptionToDatabase({
+        workspaceId: subscription.workspaceId,
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
+        renewalDate,
+      });
+
+    if (!isDefined(renewalDate)) {
+      await syncSubscriptionToDatabase();
+
+      return;
+    }
+
+    await this.cacheLockService.withLock(
+      syncSubscriptionToDatabase,
+      buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
   }
 

@@ -11,10 +11,13 @@ import {
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import type * as TwentyIcons from 'twenty-ui/icon';
+import type * as RecordTableWidgetLayoutPickerOptions from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import { ViewType } from '~/generated-metadata/graphql';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
@@ -38,6 +41,29 @@ jest.mock(
     useFieldWidgetEligibleFields: () => [],
   }),
 );
+
+const mockCreateRecordPageRelatedRecordsWidget = jest.fn(() => ({
+  id: 'new-related-records',
+}));
+
+jest.mock('@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget', () => {
+  const { getRecordTableWidgetLayoutPickerOptions } = jest.requireActual<
+    typeof RecordTableWidgetLayoutPickerOptions
+  >(
+    '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions',
+  );
+
+  return {
+    useCreateRecordPageRelatedRecordsWidget: () => ({
+      createRecordPageRelatedRecordsWidget:
+        mockCreateRecordPageRelatedRecordsWidget,
+      relatedRecordsLayoutOptions: getRecordTableWidgetLayoutPickerOptions({
+        isKanbanAvailable: true,
+        isCalendarAvailable: false,
+      }),
+    }),
+  };
+});
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
@@ -82,12 +108,14 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
     label,
     onClick,
     Icon,
+    disabled,
   }: {
     label: string;
     onClick: () => void;
     Icon: IconComponent;
+    disabled?: boolean;
   }) => (
-    <button aria-label={label} onClick={onClick}>
+    <button aria-label={label} onClick={onClick} disabled={disabled}>
       <Icon />
       {label}
     </button>
@@ -97,7 +125,7 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
 describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('labels standard widgets and distinguishes a fields group from a single field', () => {
+  const renderWidgetTypeSelect = () => {
     const store = createStore();
     store.set(
       pageLayoutDraftComponentState.atomFamily({
@@ -127,9 +155,13 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
         </PageLayoutSidePanelTargetContext.Provider>
       </PageLayoutTestWrapper>,
     );
+  };
+
+  it('groups the widgets of this record apart from its related records', () => {
+    renderWidgetTypeSelect();
 
     expect(
-      screen.getByRole('heading', { name: 'Standard widgets' }),
+      screen.getByRole('heading', { name: 'This record' }),
     ).toBeInTheDocument();
     expect(screen.queryByText('Widget type')).not.toBeInTheDocument();
     expect(
@@ -140,5 +172,26 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       screen.getByRole('img', { name: 'Fields group icon' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Related records' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Table' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'List' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Calendar' })).toBeDisabled();
+  });
+
+  it('creates related records in the picked layout', async () => {
+    renderWidgetTypeSelect();
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'Kanban' }));
+
+    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledTimes(1);
+    expect(mockCreateRecordPageRelatedRecordsWidget).toHaveBeenCalledWith({
+      tabId: 'tab-1',
+      positionIndex: undefined,
+      layoutViewType: ViewType.KANBAN_WIDGET,
+    });
   });
 });

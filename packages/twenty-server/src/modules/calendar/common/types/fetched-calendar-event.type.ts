@@ -23,6 +23,7 @@ export type FetchedCalendarEvent = {
   conferenceSolution: string;
   recurringEventExternalId?: string;
   organizerHandle: string;
+  resourceHandles: string[];
   participants: FetchedCalendarEventParticipant[];
   status: string;
 };

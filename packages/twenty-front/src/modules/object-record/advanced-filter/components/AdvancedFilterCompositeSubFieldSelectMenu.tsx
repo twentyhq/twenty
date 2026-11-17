@@ -47,7 +47,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     filterType
   ].subFields
-    .filter((subField) => subField.isFilterable === true)
+    .filter((subField) => subField.isFilterable)
     .map((subField) => subField.subFieldName);
   const subFieldsAreFilterable = areCompositeTypeSubFieldsFilterable(
     fieldMetadataItem.type,

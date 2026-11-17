@@ -148,14 +148,14 @@ export const SignInUpGlobalScopeForm = () => {
       { email: form.getValues('email') },
     );
 
-    return buildWorkspaceUrl(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+    return buildWorkspaceUrl({
+      endpoint: getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
-      {
+      searchParams: {
         ...searchParams,
         ...(isNonEmptyString(returnToPath) ? { returnToPath } : {}),
       },
-    );
+    });
   };
 
   const availableWorkspacesList = [

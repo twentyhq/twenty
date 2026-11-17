@@ -1,3 +1,5 @@
+import { planFrontComponentSourceWrites } from '@/app/pull/plan-front-component-source-writes';
+import { planPublicAssetWrites } from '@/app/pull/plan-public-asset-writes';
 import { FileFolder } from 'twenty-shared/types';
 import { planFrontComponentWrites } from '@/app/pull/plan-front-component-writes';
 import { join } from 'node:path';
@@ -123,6 +125,14 @@ export const pullApplication = async (
       sourceFingerprints: base.sourceFingerprints,
       dependencyFingerprints: base.dependencyFingerprints,
     });
+    const publicAssetPlan = await planPublicAssetWrites({
+      appPath,
+      files: applicationExport.files.filter(
+        ({ folder }) => folder === FileFolder.PublicAsset,
+      ),
+      sourceFingerprints: base.sourceFingerprints,
+      publicAssetFingerprints: base.publicAssetFingerprints,
+    });
     const frontComponentPlan = await planFrontComponentWrites({
       appPath,
       manifest,
@@ -137,6 +147,24 @@ export const pullApplication = async (
           ...safePlan.writes,
           ...translationPlan.writes,
           ...dependencyPlan.writes,
+          ...publicAssetPlan.writes,
+        ].map((write) => write.relativePath.toLowerCase()),
+      ),
+    });
+    const frontComponentSourcePlan = await planFrontComponentSourceWrites({
+      appPath,
+      manifest,
+      files: applicationExport.files,
+      remoteSourceFingerprints: base.remoteSourceFingerprints,
+      sourceFingerprints: base.sourceFingerprints,
+      reservedPaths: new Set(
+        [
+          ...safePlan.writes,
+          ...translationPlan.writes,
+          ...dependencyPlan.writes,
+          ...publicAssetPlan.writes,
+          ...frontComponentPlan.writes,
+          ...safePlan.deletions,
         ].map((write) => write.relativePath.toLowerCase()),
       ),
     });
@@ -144,7 +172,9 @@ export const pullApplication = async (
       ...safePlan.writes,
       ...translationPlan.writes,
       ...dependencyPlan.writes,
+      ...publicAssetPlan.writes,
       ...frontComponentPlan.writes,
+      ...frontComponentSourcePlan.writes,
     ];
     const deletions = [
       ...safePlan.deletions,
@@ -168,7 +198,14 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
-      remoteSourceFingerprints: frontComponentPlan.fingerprints,
+      remoteSourceFingerprints: {
+        ...frontComponentPlan.fingerprints,
+        ...frontComponentSourcePlan.fingerprints,
+      },
+      publicAssetFingerprints: {
+        ...base.publicAssetFingerprints,
+        ...publicAssetPlan.fingerprints,
+      },
       dependencyFingerprints: {
         ...base.dependencyFingerprints,
         ...dependencyPlan.fingerprints,
@@ -177,7 +214,9 @@ export const pullApplication = async (
         sourceFingerprints: {
           ...base.sourceFingerprints,
           ...dependencyPlan.unchangedSourceFingerprints,
+          ...publicAssetPlan.unchangedSourceFingerprints,
           ...frontComponentPlan.unchangedSourceFingerprints,
+          ...frontComponentSourcePlan.unchangedSourceFingerprints,
         },
         writes,
         deletions,
@@ -231,7 +270,9 @@ export const pullApplication = async (
         unchangedCount:
           plan.unchanged.length +
           dependencyPlan.unchangedCount +
-          frontComponentPlan.unchangedCount,
+          publicAssetPlan.unchangedCount +
+          frontComponentPlan.unchangedCount +
+          frontComponentSourcePlan.unchangedCount,
         localOnlyRelativePaths: plan.localOnlyRelativePaths,
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)

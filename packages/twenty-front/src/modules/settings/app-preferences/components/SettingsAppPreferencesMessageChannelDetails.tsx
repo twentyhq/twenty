@@ -11,6 +11,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { SettingsAccountsChannelSyncSection } from '@/settings/accounts/components/SettingsAccountsChannelSyncSection';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
@@ -39,6 +40,7 @@ type MessageChannelUpdateInput = Partial<{
   excludeGroupEmails: boolean;
   excludeNonProfessionalEmails: boolean;
   messageFolderImportPolicy: MessageFolderImportPolicy;
+  isSyncEnabled: boolean;
 }>;
 
 const StyledDetailsContainer = styled.div`
@@ -83,6 +85,10 @@ export const SettingsAppPreferencesMessageChannelDetails = ({
     updateChannel({ messageFolderImportPolicy: value });
   };
 
+  const handleIsSyncEnabledToggle = (value: boolean) => {
+    updateChannel({ isSyncEnabled: value });
+  };
+
   const supportsFolderImportPolicy =
     messageChannel.type === MessageChannelType.EMAIL;
 
@@ -90,6 +96,13 @@ export const SettingsAppPreferencesMessageChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
+      <SettingsAccountsChannelSyncSection
+        sectionDescription={t`Pause or resume importing emails from this account`}
+        switchTitle={t`Sync emails`}
+        switchDescription={t`Import new emails from this account`}
+        isSyncEnabled={messageChannel.isSyncEnabled}
+        onIsSyncEnabledChange={handleIsSyncEnabledToggle}
+      />
       {supportsFolderImportPolicy && (
         <Section.Root>
           <Section.Header

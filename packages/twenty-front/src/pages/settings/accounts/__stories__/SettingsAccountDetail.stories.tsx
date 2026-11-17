@@ -10,13 +10,17 @@ import {
 import { SettingsAccountDetail } from '~/pages/settings/accounts/SettingsAccountDetail';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+  CALENDAR_CHANNELS,
   CONNECTED_ACCOUNTS,
   FATHOM_ONLY_ACCOUNT_ID,
   FATHOM_USER_SETTINGS_FRONT_COMPONENT_ID,
   FATHOM_USER_SETTINGS_MENU_ITEM_ID,
   GOOGLE_ACCOUNT_ID,
+  GOOGLE_CALENDAR_CHANNEL_ID,
+  GOOGLE_MESSAGE_CHANNEL_ID,
   GRANOLA_APPLICATION_ID,
   GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
+  MESSAGE_CHANNELS,
   MY_USER_WORKSPACE_ID,
   USER_SETTINGS_APPLICATION_PREFERENCES_GRAPHQL_HANDLER,
   buildConnectedAccount,
@@ -99,6 +103,92 @@ export const EmailsAndCalendarTabs: Story = {
     await userEvent.click(canvas.getByTestId('tab-calendar'));
 
     expect(await canvas.findByText('Event visibility')).toBeVisible();
+  },
+};
+
+const updateMessageChannel = fn();
+const updateCalendarChannel = fn();
+
+const UPDATE_CHANNEL_GRAPHQL_HANDLERS = [
+  graphql.mutation('UpdateMessageChannel', ({ variables }) => {
+    updateMessageChannel(variables.input);
+
+    return HttpResponse.json({
+      data: {
+        updateMessageChannel: {
+          ...MESSAGE_CHANNELS.find(({ id }) => id === variables.input.id),
+          ...variables.input.update,
+        },
+      },
+    });
+  }),
+  graphql.mutation('UpdateCalendarChannel', ({ variables }) => {
+    updateCalendarChannel(variables.input);
+
+    return HttpResponse.json({
+      data: {
+        updateCalendarChannel: {
+          ...CALENDAR_CHANNELS.find(({ id }) => id === variables.input.id),
+          ...variables.input.update,
+        },
+      },
+    });
+  }),
+];
+
+export const SyncSwitchesPauseEmailAndCalendarSync: Story = {
+  beforeEach: () => {
+    updateMessageChannel.mockClear();
+    updateCalendarChannel.mockClear();
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        ...UPDATE_CHANNEL_GRAPHQL_HANDLERS,
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
+    );
+
+    const emailSyncSwitch = await canvas.findByRole('switch', {
+      name: 'Sync emails',
+    });
+
+    expect(emailSyncSwitch).toBeChecked();
+
+    await userEvent.click(emailSyncSwitch);
+
+    await waitFor(() =>
+      expect(updateMessageChannel).toHaveBeenCalledWith({
+        id: GOOGLE_MESSAGE_CHANNEL_ID,
+        update: { isSyncEnabled: false },
+      }),
+    );
+    await waitFor(() => expect(emailSyncSwitch).not.toBeChecked());
+    expect(updateMessageChannel).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(canvas.getByTestId('tab-calendar'));
+
+    const calendarSyncSwitch = await canvas.findByRole('switch', {
+      name: 'Sync calendar',
+    });
+
+    await userEvent.click(calendarSyncSwitch);
+
+    await waitFor(() =>
+      expect(updateCalendarChannel).toHaveBeenCalledWith({
+        id: GOOGLE_CALENDAR_CHANNEL_ID,
+        update: { isSyncEnabled: false },
+      }),
+    );
+    await waitFor(() => expect(calendarSyncSwitch).not.toBeChecked());
+    expect(updateCalendarChannel).toHaveBeenCalledTimes(1);
   },
 };
 

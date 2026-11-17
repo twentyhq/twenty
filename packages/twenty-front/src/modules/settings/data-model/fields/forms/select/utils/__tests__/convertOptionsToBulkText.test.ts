@@ -87,4 +87,20 @@ describe('convertOptionsToBulkText', () => {
       'Option with spaces\nOption-with-dashes\nOption_with_underscores',
     );
   });
+
+  it('leaves inactive options out of the text', () => {
+    const options: FieldMetadataItemOption[] = [
+      { id: '1', label: 'New', value: 'NEW', color: 'blue', position: 0 },
+      {
+        id: '2',
+        label: 'Lost',
+        value: 'LOST',
+        color: 'red',
+        position: 1,
+        isActive: false,
+      },
+    ];
+
+    expect(convertOptionsToBulkText(options)).toBe('New');
+  });
 });

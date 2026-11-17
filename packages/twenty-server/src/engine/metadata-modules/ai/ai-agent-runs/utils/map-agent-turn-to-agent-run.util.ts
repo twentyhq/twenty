@@ -70,7 +70,7 @@ const toCredits = (
 
 export const mapAgentTurnToAgentRun = (
   turn: AgentRunSourceTurn,
-): AgentRunDTO => {
+): Omit<AgentRunDTO, 'canReadThread'> => {
   // the ORM returns timestamps as dates although the entity types them as strings
   const messages = [...(turn.messages ?? [])].sort(
     (left, right) =>

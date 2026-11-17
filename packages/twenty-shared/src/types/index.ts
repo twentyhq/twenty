@@ -19,6 +19,7 @@ export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
 export type { AssertUnreachable } from './AssertUnreachable';
 export { BlocklistScope } from './BlocklistScope';
+export type { BrandedType, HasBrandedType } from './BrandedType';
 export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
@@ -304,6 +305,7 @@ export type {
   OrObjectRecordFilter,
   NotObjectRecordFilter,
   LeafObjectRecordFilter,
+  RelationObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
@@ -346,6 +348,7 @@ export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrate
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleDatabaseEventAction } from './ValidationRuleDatabaseEventAction';
 export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
 export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';

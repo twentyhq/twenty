@@ -4,6 +4,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -28,9 +29,11 @@ export const useChangeRecordFieldVisibility = (
 
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
+    recordFieldId,
     isVisible,
   }: {
     fieldMetadataId: string;
+    recordFieldId?: string;
     isVisible: boolean;
   }) => {
     const lastPosition =
@@ -38,10 +41,14 @@ export const useChangeRecordFieldVisibility = (
         ?.position ?? 0;
 
     const shouldShowFieldMetadataItem = isVisible === true;
-    const correspondingRecordField = currentRecordFields.find(
-      (recordFieldToFind) =>
-        recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
-    );
+    const correspondingRecordField = isDefined(recordFieldId)
+      ? currentRecordFields.find(
+          (recordFieldToFind) => recordFieldToFind.id === recordFieldId,
+        )
+      : findCanonicalRecordField({
+          recordFields: currentRecordFields,
+          fieldMetadataItemId: fieldMetadataId,
+        });
 
     const noExistingRecordField = !isDefined(correspondingRecordField);
 
@@ -58,7 +65,7 @@ export const useChangeRecordFieldVisibility = (
 
       await saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
     } else {
-      updateRecordField(fieldMetadataId, {
+      updateRecordField(correspondingRecordField.id, {
         isVisible: shouldShowFieldMetadataItem,
       });
 

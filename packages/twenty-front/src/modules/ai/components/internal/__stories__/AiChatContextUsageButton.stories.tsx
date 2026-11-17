@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
@@ -7,10 +8,10 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import {
-  agentChatUsageFamilyState,
-  type AgentChatUsageState,
-} from '@/ai/states/agentChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+  aiChatUsageFamilyState,
+  type AiChatUsageState,
+} from '@/ai/states/aiChatUsageFamilyState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -19,7 +20,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
-const USAGE: AgentChatUsageState = {
+const USAGE: AiChatUsageState = {
   conversationSize: 200000,
   contextWindowTokens: 1000000,
   inputTokens: 200000,
@@ -47,7 +48,7 @@ const UsageStory = ({
   userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
   children,
 }: {
-  usage?: AgentChatUsageState | null;
+  usage?: AiChatUsageState | null;
   limit?: number | null;
   consumed?: number | null;
   kind?: string;
@@ -59,51 +60,53 @@ const UsageStory = ({
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
-    storyStore.set(currentAiChatThreadState.atom, 'story-thread');
+    storyStore.set(aiChatTestInstanceThreadIdState.atom, 'story-thread');
     storyStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
     });
     storyStore.set(
-      agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
+      aiChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,
     );
     return storyStore;
   });
   return (
     <Provider store={store}>
-      <MockedProvider
-        mocks={[
-          {
-            request: { query: GetAiChatUsageDocument },
-            maxUsageCount: Infinity,
-            delay: loading ? Infinity : 0,
-            ...(error
-              ? { error: new Error('Usage unavailable') }
-              : {
-                  result: {
-                    data: {
-                      aiChatUsage:
-                        limit === null
-                          ? null
-                          : {
-                              limitValue: limit,
-                              consumedValue: consumed,
-                              periodEnd: null,
-                              kind,
-                            },
-                      aiChatUserCreditsUsage: userCreditsUsage && {
-                        __typename: 'AiChatUserCreditsUsage',
-                        ...userCreditsUsage,
+      <AiChatTestInstance>
+        <MockedProvider
+          mocks={[
+            {
+              request: { query: GetAiChatUsageDocument },
+              maxUsageCount: Infinity,
+              delay: loading ? Infinity : 0,
+              ...(error
+                ? { error: new Error('Usage unavailable') }
+                : {
+                    result: {
+                      data: {
+                        aiChatUsage:
+                          limit === null
+                            ? null
+                            : {
+                                limitValue: limit,
+                                consumedValue: consumed,
+                                periodEnd: null,
+                                kind,
+                              },
+                        aiChatUserCreditsUsage: userCreditsUsage && {
+                          __typename: 'AiChatUserCreditsUsage',
+                          ...userCreditsUsage,
+                        },
                       },
                     },
-                  },
-                }),
-          },
-        ]}
-      >
-        {children ?? <AiChatContextUsageButton />}
-      </MockedProvider>
+                  }),
+            },
+          ]}
+        >
+          {children ?? <AiChatContextUsageButton />}
+        </MockedProvider>
+      </AiChatTestInstance>
     </Provider>
   );
 };

@@ -155,9 +155,11 @@ export class AgentRunnerService {
   // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
   async runInRequest({
     streamChannelId,
+    abortSignal,
     ...input
   }: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'> & {
     streamChannelId?: string;
+    abortSignal?: AbortSignal;
   }): Promise<InRequestAgentRun> {
     const persona = await this.agentRunPersonaService.resolveOrThrow({
       workspaceId: input.workspaceId,
@@ -183,6 +185,7 @@ export class AgentRunnerService {
           suspension: null,
           stream: null,
           streamChannelId,
+          abortSignal,
           openedTurn,
         }).then(
           (result): AgentRunnerOutcome => result.outcome,
@@ -1080,6 +1083,8 @@ export class AgentRunnerService {
     suspension,
     stream,
     streamChannelId,
+    // a claimed run is stopped through its thread; an unclaimed one only by the signal its caller passes
+    abortSignal = stream?.abortSignal,
     continuationWakeUpId,
     openedTurn: { turnId, priorMessages },
   }: {
@@ -1087,11 +1092,11 @@ export class AgentRunnerService {
     suspension: AgentRunSuspension | null;
     stream: AgentRunStream | null;
     streamChannelId?: string;
+    abortSignal?: AbortSignal;
     continuationWakeUpId?: string;
     openedTurn: OpenedAgentRunTurn;
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
-    const abortSignal = stream?.abortSignal;
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();

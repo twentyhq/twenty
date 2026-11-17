@@ -89,7 +89,7 @@ export const RecordBoardCardBody = () => {
 
         return (
           <StopPropagationContainer
-            key={recordField.fieldMetadataItemId}
+            key={recordField.id}
             shouldLetBackgroundClicksThrough
           >
             <FieldContext.Provider

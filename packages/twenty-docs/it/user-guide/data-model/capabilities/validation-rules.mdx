@@ -69,6 +69,15 @@ Racchiudi il testo tra virgolette singole o doppie e usa le parentesi per raggru
 
 Per rendere obbligatorio un campo, usa `not isEmpty(fieldName)`. Funziona anche per i campi compositi, come email e indirizzi.
 
+### Confronta date
+
+| Funzione                                               | Usa                                                                                                                                                                                                                                            |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `daysSince(date)`                                      | Ottiene il numero di giorni da una data a oggi, in UTC. Una data futura restituisce un numero negativo.                                                                                                                                        |
+| `isInRelativeDateRange(date, direction, amount, unit)` | Verifica se una data rientra in un periodo calcolato a partire da oggi, in UTC. `direction` è `"PAST"`, `"NEXT"` o `"THIS"`, `unit` è `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` o `"YEAR"`. `"PAST"` e `"NEXT"` escludono il periodo corrente. |
+
+Ad esempio, `daysSince(closeDate) >= 0 and daysSince(closeDate) \<= 30` consente un salvataggio solo alla data di chiusura o nei 30 giorni successivi.
+
 ### Fai riferimento a campi compositi e correlati
 
 Usa un punto per leggere una parte di un campo composito, come `name.firstName` o `amount.amountMicros`. Puoi anche leggere un campo tramite una relazione molti-a-uno, come `company.name` per una persona. Seleziona i campi dall'assistente per trovare i percorsi disponibili.

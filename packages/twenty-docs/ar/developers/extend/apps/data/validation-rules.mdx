@@ -61,7 +61,7 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 * تقارن `eq` و`notEq` و`gt` و`gte` و`lt` و`lte` القيم.
 * تحسب `add` و`subtract` و`multiply` و`divide` القيم.
 * تتحقق `isIn(field('stage'), ['NEW', 'WON'])` من قيمة مقابل قائمة.
-* دوال مثل `isNonEmptyString` و`isDefined`.
+* دوال مثل `isNonEmptyString` و`isDefined`، ودوال التاريخ `daysSince(date)` (الأيام الكاملة منذ التاريخ، وتكون سالبة لتاريخ مستقبلي) و`isInRelativeDateRange(date, direction, amount, unit)`، مع الاتجاه `'PAST'` أو `'NEXT'` أو `'THIS'` والوحدة `'DAY'` أو `'WEEK'` أو `'MONTH'` أو `'QUARTER'` أو `'YEAR'`، مثل `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 ينتج المُنشئ سلسلة نصية عادية، وهي ما يكتبه [`twenty app pull`](/ar/developers/extend/apps/operations/cli) مجددًا. يمكنك كتابة تلك السلسلة النصية مباشرةً:
 

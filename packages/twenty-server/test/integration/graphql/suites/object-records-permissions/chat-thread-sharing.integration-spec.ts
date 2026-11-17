@@ -296,7 +296,8 @@ describe('Conversation sharing through the authenticated API', () => {
           'userWorkspaceRoleMap',
           'flatObjectMetadataMaps',
         ]);
-      const roleId = userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      const roleId =
+        userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY]?.[0];
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
@@ -465,7 +466,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] };
+          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId]?.[0] };
       const threadId = randomUUID();
       const target = {
         objectMetadataId:

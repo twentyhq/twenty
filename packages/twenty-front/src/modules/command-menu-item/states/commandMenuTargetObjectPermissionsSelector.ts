@@ -4,7 +4,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 export const commandMenuTargetObjectPermissionsSelector = createAtomSelector<
   Pick<
@@ -29,12 +29,12 @@ export const commandMenuTargetObjectPermissionsSelector = createAtomSelector<
       );
 
       targetObjectReadPermissions[objectMetadataItem.nameSingular] =
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermissions,
           operationType: 'read',
         });
       targetObjectWritePermissions[objectMetadataItem.nameSingular] =
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermissions,
           operationType: 'update',
         });

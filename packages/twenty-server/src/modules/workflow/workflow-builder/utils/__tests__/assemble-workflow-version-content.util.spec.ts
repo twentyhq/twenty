@@ -93,19 +93,16 @@ describe('assembleWorkflowVersionContent', () => {
     expect(stepById.get('inside-loop')?.nextStepIds).toEqual(['iterator']);
   });
 
-  it('should lay out every node instead of keeping the given positions', () => {
+  it('should drop the given positions so the diagram is laid out automatically', () => {
     const content = assembleWorkflowVersionContent({
       trigger,
-      steps,
+      steps: steps.map((step) => ({ ...step, position: { x: 1, y: 1 } })),
       edges: [{ source: TRIGGER_STEP_ID, target: 'iterator' }],
     });
 
-    expect(content.trigger?.position).not.toEqual(trigger.position);
+    expect(content.trigger?.position).toBeUndefined();
     content.steps?.forEach((step) => {
-      expect(step.position).toEqual({
-        x: expect.any(Number),
-        y: expect.any(Number),
-      });
+      expect(step.position).toBeUndefined();
     });
   });
 

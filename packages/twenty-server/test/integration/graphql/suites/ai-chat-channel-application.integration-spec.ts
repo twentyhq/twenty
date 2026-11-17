@@ -5,6 +5,7 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
+import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -17,7 +18,6 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -87,21 +87,18 @@ const setupApplicationUnderTestOrThrow = async ({
     {
       applicationAccessToken: { token },
     },
-    { defaultRoleId },
+    { grantRoleId },
   ] = await Promise.all([
     generateApplicationTokenPair({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       applicationId: application.id,
     }),
-    getCoreRepository<ApplicationEntity>(ApplicationEntity).findOneOrFail({
-      select: { defaultRoleId: true },
-      where: { id: application.id, workspaceId: SEED_APPLE_WORKSPACE_ID },
-    }),
+    findApplicationRoleIds({ input: { id: application.id } }),
   ]);
 
-  assertIsDefinedOrThrow(defaultRoleId);
+  assertIsDefinedOrThrow(grantRoleId);
 
-  return { application, token, roleId: defaultRoleId };
+  return { application, token, roleId: grantRoleId };
 };
 
 const readChannelsWithUniversalIdentifier = async (

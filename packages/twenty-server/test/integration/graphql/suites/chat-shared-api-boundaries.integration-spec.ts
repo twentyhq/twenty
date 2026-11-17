@@ -428,7 +428,7 @@ describe('Shared conversation API boundaries', () => {
     });
   });
 
-  it('does not let ownership bypass a revoked update permission', async () => {
+  it('lets the owner keep writing in their thread after their role loses the update permission', async () => {
     const threadId = context.registerThread();
 
     await setRecordSharingEnabled(false);
@@ -450,13 +450,7 @@ describe('Shared conversation API boundaries', () => {
           });
 
           expect(readable.body.errors).toBeUndefined();
-          expect(sent.body.errors).toBeDefined();
-          expect(
-            await context.chatService.hasMessages({
-              threadId,
-              workspaceId: context.workspaceId,
-            }),
-          ).toBe(false);
+          expect(sent.body.errors).toBeUndefined();
         },
       });
     } finally {

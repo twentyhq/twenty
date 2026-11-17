@@ -84,7 +84,7 @@ export const useSettingsSubdomain = () => {
         enqueueToast({ status: 'success', children: t`Subdomain updated` });
         setIsSubmitting(false);
 
-        await redirectToWorkspaceDomain(currentUrl.toString());
+        await redirectToWorkspaceDomain({ baseUrl: currentUrl.toString() });
       },
     });
   };

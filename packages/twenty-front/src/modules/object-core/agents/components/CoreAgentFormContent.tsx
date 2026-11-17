@@ -1,10 +1,18 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
-import { IconCancel, IconDeviceFloppy, IconTrash } from 'twenty-ui/icon';
+import {
+  IconCancel,
+  IconDeviceFloppy,
+  IconLayoutDashboard,
+  IconSettings,
+  IconTerminal,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
+import { CoreObjectShowPageTabList } from '@/object-core/components/CoreObjectShowPageTabList';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -24,27 +32,41 @@ import {
 } from '~/generated-metadata/graphql';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
 import { CoreAgentAvatarPicker } from '@/object-core/agents/components/CoreAgentAvatarPicker';
+import { CoreAgentOverviewTab } from '@/object-core/agents/components/CoreAgentOverviewTab';
 import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/CoreAgentNewRoleDraftEffect';
 import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
 import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
 import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
 import { CoreAgentSettingsContent } from '@/object-core/agents/components/CoreAgentSettingsContent';
 import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
+import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
 import { useRenameCoreAgent } from '@/object-core/agents/hooks/useRenameCoreAgent';
 import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
-import { coreAgentIsRunsViewFamilyState } from '@/object-core/agents/states/coreAgentIsRunsViewFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
+import { useCoreAgentShowPageActiveTab } from '@/object-core/agents/hooks/useCoreAgentShowPageActiveTab';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentShowPageTabListComponentInstanceId } from '@/object-core/agents/utils/getCoreAgentShowPageTabListComponentInstanceId';
+import { type CoreAgentRunInsights } from '@/object-core/agents/types/CoreAgentRunInsights';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
 type CoreAgentFormContentProps = {
   agent: FindOneAgentQuery['findOneAgent'];
+  runInsights: CoreAgentRunInsights | null;
+  hasRuns: boolean;
+  isLoadingRunInsights: boolean;
+  hasRunInsightsError: boolean;
 };
 
-export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+export const CoreAgentFormContent = ({
+  agent,
+  runInsights,
+  hasRuns,
+  isLoadingRunInsights,
+  hasRunInsightsError,
+}: CoreAgentFormContentProps) => {
   const { t } = useLingui();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -52,10 +74,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { openDialog } = useDialog();
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
-  const coreAgentIsRunsView = useAtomFamilyStateValue(
-    coreAgentIsRunsViewFamilyState,
-    agent.id,
-  );
+  const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
+  const activeTabId = useCoreAgentShowPageActiveTab({
+    agentId: agent.id,
+    hasRuns,
+  });
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);
   const { isDirty } = useCoreAgentDirtyState(agent);
@@ -80,7 +103,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   );
 
   const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
-  const isShowingRuns = isAiChatInboxEnabled && coreAgentIsRunsView;
 
   return (
     <>
@@ -156,10 +178,47 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
               size={24}
             />
           }
+          tabList={
+            <CoreObjectShowPageTabList
+              aria-label={t`Agent sections`}
+              activeTabId={activeTabId}
+              componentInstanceId={getCoreAgentShowPageTabListComponentInstanceId(
+                agent.id,
+              )}
+              tabs={[
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW,
+                  title: t`Overview`,
+                  Icon: IconLayoutDashboard,
+                  hide: !canReadCoreAgentRuns,
+                },
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS,
+                  title: t`Settings`,
+                  Icon: IconSettings,
+                },
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS,
+                  title: t`Turns`,
+                  Icon: IconTerminal,
+                  hide: !isAiChatInboxEnabled,
+                },
+              ]}
+            />
+          }
         />
-        {isShowingRuns ? (
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW && (
+          <CoreAgentOverviewTab
+            agentId={agent.id}
+            insights={runInsights}
+            isLoading={isLoadingRunInsights}
+            hasError={hasRunInsightsError}
+          />
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS && (
           <CoreAgentRunsContent agentId={agent.id} />
-        ) : (
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS && (
           <SettingsPageContainer>
             <CoreAgentSettingsContent
               agent={agent}

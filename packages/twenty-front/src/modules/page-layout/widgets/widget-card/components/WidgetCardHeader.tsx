@@ -1,8 +1,4 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
-import { WidgetCardHeaderActionsRenderer } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionsRenderer';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
@@ -18,10 +14,11 @@ import { useLingui } from '@lingui/react/macro';
 
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
-  widgetId: string;
   isInEditMode: boolean;
   isEmpty?: boolean;
-  hasAccess?: boolean;
+  isHovered?: boolean;
+  count?: number | null;
+  actions?: ReactNode;
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
@@ -77,10 +74,11 @@ const StyledIconButtonContainer = motion.create(StyledIconButtonContainerBase);
 
 export const WidgetCardHeader = ({
   variant,
-  widgetId,
   isEmpty = false,
   isInEditMode = false,
-  hasAccess = true,
+  isHovered = false,
+  count,
+  actions,
   isResizing = false,
   title,
   onRemove,
@@ -90,15 +88,6 @@ export const WidgetCardHeader = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
-  const widgetCardHovered = useAtomComponentFamilyStateValue(
-    widgetCardHoveredComponentFamilyState,
-    widgetId,
-  );
-
-  const widgetHeaderCount = useAtomComponentFamilyStateValue(
-    widgetHeaderCountComponentFamilyState,
-    widgetId,
-  );
 
   const shouldInset = variant === 'flush';
   return (
@@ -108,38 +97,32 @@ export const WidgetCardHeader = ({
       </AnimatePresence>
       <StyledTitleContainer>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
-        {isDefined(widgetHeaderCount) && (
-          <StyledCount>{formatNumber(widgetHeaderCount)}</StyledCount>
-        )}
+        {isDefined(count) && <StyledCount>{formatNumber(count)}</StyledCount>}
       </StyledTitleContainer>
       <StyledRightContainer>
-        {hasAccess && <WidgetCardHeaderActionsRenderer />}
+        {actions}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>
-          {!isResizing &&
-            !isEmpty &&
-            isInEditMode &&
-            onRemove &&
-            widgetCardHovered && (
-              <StyledIconButtonContainer
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 'auto', opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{
-                  duration: theme.animation.duration.fast,
-                  ease: 'easeInOut',
-                }}
+          {!isResizing && !isEmpty && isInEditMode && onRemove && isHovered && (
+            <StyledIconButtonContainer
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 'auto', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{
+                duration: theme.animation.duration.fast,
+                ease: 'easeInOut',
+              }}
+            >
+              <IconButton
+                aria-label={t`Remove widget`}
+                onClick={onRemove}
+                variant="ghost"
+                size="sm"
               >
-                <IconButton
-                  aria-label={t`Remove widget`}
-                  onClick={onRemove}
-                  variant="ghost"
-                  size="sm"
-                >
-                  <IconTrash />
-                </IconButton>
-              </StyledIconButtonContainer>
-            )}
+                <IconTrash />
+              </IconButton>
+            </StyledIconButtonContainer>
+          )}
         </AnimatePresence>
       </StyledRightContainer>
     </StyledWidgetCardHeader>

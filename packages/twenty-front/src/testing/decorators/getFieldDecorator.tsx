@@ -85,7 +85,7 @@ export const getFieldDecorator =
         ? [{ ...tasksMock[0], [fieldName]: fieldValue }, ...tasksMock.slice(1)]
         : tasksMock;
 
-    const record =
+    const record: ObjectRecord =
       objectNameSingular === 'company'
         ? companies[0]
         : objectNameSingular === 'person'
@@ -93,7 +93,7 @@ export const getFieldDecorator =
           : tasks[0];
 
     if (isDefined(fieldValue)) {
-      (record as any)[fieldName] = fieldValue;
+      record[fieldName] = fieldValue;
     }
 
     const objectMetadataItem =

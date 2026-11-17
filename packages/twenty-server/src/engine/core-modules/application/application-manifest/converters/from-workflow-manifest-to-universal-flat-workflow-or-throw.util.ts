@@ -30,6 +30,7 @@ import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/co
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   workspaceId: _workspaceId,
   applicationId: _applicationId,
+  coreWorkflowId: _coreWorkflowId,
   ...universalFlatWorkflowVersion
 }: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
   universalFlatWorkflowVersion;
@@ -41,7 +42,7 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   UniversalFlatWorkflowVersion,
   | 'universalIdentifier'
   | 'applicationUniversalIdentifier'
-  | 'coreWorkflowId'
+  | 'coreWorkflowUniversalIdentifier'
   | 'workflowId'
   | 'steps'
   | 'createdAt'
@@ -88,8 +89,8 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   const definition = parsed.data;
   const workflowId = existingWorkflow?.id ?? v4();
 
-  const steps = definition.version.steps.map((step, index) =>
-    fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
+  const steps = definition.version.steps.map((step) =>
+    fromWorkflowStepManifestToActionOrThrow({ step, references }),
   );
 
   const trigger = fromWorkflowTriggerManifestToTriggerOrThrow({
@@ -117,7 +118,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
               workflowUniversalIdentifier: definition.universalIdentifier,
             }),
         applicationUniversalIdentifier,
-        coreWorkflowId: workflowId,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
         workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
         trigger,
         steps,

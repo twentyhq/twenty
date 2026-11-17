@@ -70,7 +70,7 @@ Para tu propio servidor de desarrollo, `twenty app logs` transmite los registros
 
 * **Los errores aumentan justo después de una versión**: compara las versiones en la tabla **Versiones** y, a continuación, corrige y publica una versión superior. Consulta [Publicación](/es/developers/extend/apps/operations/publishing).
 * **Las solicitudes a la API tienen límite de tasa**: tu aplicación llama a la API con demasiada frecuencia. Agrupa las lecturas y escrituras por lotes, y evita llamar a la API en bucles ajustados.
-* **Los trabajos tienen límite de tasa**: los desencadenadores de eventos de base de datos o cron se activan más rápido de lo que los trabajos pueden ponerse en cola. Restringe el desencadenador; por ejemplo, con `updatedFields` en un desencadenador `databaseEvent`, o realiza el trabajo en menos ejecuciones y de mayor tamaño. Consulta [Funciones de lógica](/es/developers/extend/apps/logic/logic-functions).
+* **Los trabajos tienen límite de tasa**: los desencadenadores de eventos de base de datos o cron se activan más rápido de lo que los trabajos pueden ponerse en cola. Limita el desencadenador, por ejemplo con `watchedFieldUniversalIdentifiers` en `eventTriggerSettings`, o realiza el trabajo en menos ejecuciones más grandes. Consulta [Funciones de lógica](/es/developers/extend/apps/logic/logic-functions).
 * **Fallos de instalación o actualización**: revisa tus [hooks de instalación](/es/developers/extend/apps/config/install-hooks). El mensaje de error se registra junto con el fallo.
 * **Funciones lentas**: una duración elevada del percentil 95 indica una función que conviene perfilar o dividir.
 

@@ -1,5 +1,8 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -19,6 +22,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
     typeof getObjectPermissionsForObject
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
+  containerId?: string | null;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -28,9 +32,15 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   views,
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
+  containerId = null,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.folderId))
+    .filter(
+      (item) =>
+        (item.parentId ?? null) === containerId &&
+        item.type !== NavigationMenuItemType.TAB &&
+        item.type !== NavigationMenuItemType.SECTION,
+    )
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
@@ -76,7 +86,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       }
 
       if (
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: getObjectPermissionsForObject(
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,

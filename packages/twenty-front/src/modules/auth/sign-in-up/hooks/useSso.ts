@@ -4,7 +4,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
 import { useApolloClient } from '@apollo/client/react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useToast } from 'twenty-ui/components/feedback';
 import { GetAuthorizationUrlForSsoDocument } from '~/generated-metadata/graphql';
@@ -12,6 +12,9 @@ import { GetAuthorizationUrlForSsoDocument } from '~/generated-metadata/graphql'
 export const useSso = () => {
   const apolloClient = useApolloClient();
   const workspaceInviteHash = useParams().workspaceInviteHash;
+  const [searchParams] = useSearchParams();
+  const workspacePersonalInviteToken =
+    searchParams.get('inviteToken') ?? undefined;
 
   const { enqueueToast } = useToast();
   const { redirect } = useRedirect();
@@ -24,6 +27,7 @@ export const useSso = () => {
           input: {
             identityProviderId,
             workspaceInviteHash,
+            workspacePersonalInviteToken,
           },
         },
       });

@@ -229,7 +229,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
         <StyledFieldsContainer>
           {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
             <RecordListRowField
-              key={recordField.fieldMetadataItemId}
+              key={recordField.id}
               recordId={recordId}
               recordField={recordField}
               fieldDefinition={fieldDefinition}

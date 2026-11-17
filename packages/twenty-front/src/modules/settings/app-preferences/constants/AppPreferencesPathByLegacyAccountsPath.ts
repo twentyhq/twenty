@@ -1,18 +1,19 @@
 import { SettingsPath } from 'twenty-shared/types';
 
-// TODO(@ehconitin): drop AccountDetail, BuiltInAccountApp and ApplicationPreferences after 2027-01-14, the rest with IS_APP_PREFERENCES_ENABLED.
+// TODO(@ehconitin): remove these legacy redirects after 2027-02-16, once the published apps and companion stop linking here.
 export const APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH = {
-  [SettingsPath.Accounts]: SettingsPath.AppPreferences,
-  [SettingsPath.AccountsEmails]: SettingsPath.AppPreferences,
-  [SettingsPath.AccountsCalendars]: SettingsPath.AppPreferences,
-  [SettingsPath.AccountDetail]: SettingsPath.AppPreferencesAccountDetail,
-  [SettingsPath.BuiltInAccountApp]: SettingsPath.AppPreferencesApp,
-  [SettingsPath.ApplicationPreferences]: SettingsPath.AppPreferencesApp,
-  [SettingsPath.NewAccount]: SettingsPath.AppPreferencesNewAccount,
-  [SettingsPath.AccountsConfiguration]:
+  accounts: SettingsPath.AppPreferences,
+  'accounts/emails': SettingsPath.AppPreferences,
+  'accounts/calendars': SettingsPath.AppPreferences,
+  'accounts/detail/:connectedAccountId':
+    SettingsPath.AppPreferencesAccountDetail,
+  'accounts/apps/:applicationId': SettingsPath.AppPreferencesApp,
+  'accounts/applications/:applicationId': SettingsPath.AppPreferencesApp,
+  'accounts/new': SettingsPath.AppPreferencesNewAccount,
+  'accounts/configuration/:connectedAccountId':
     SettingsPath.AppPreferencesAccountConfiguration,
-  [SettingsPath.NewImapSmtpCaldavConnection]:
+  'accounts/new-imap-smtp-caldav-connection':
     SettingsPath.AppPreferencesNewImapSmtpCaldavConnection,
-  [SettingsPath.EditImapSmtpCaldavConnection]:
+  'accounts/edit-imap-smtp-caldav-connection/:connectedAccountId':
     SettingsPath.AppPreferencesEditImapSmtpCaldavConnection,
 } as const;

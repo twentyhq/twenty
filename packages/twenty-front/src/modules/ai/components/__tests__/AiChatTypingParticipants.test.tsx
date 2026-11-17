@@ -5,10 +5,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -36,7 +36,7 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   jotaiStore.set(
-    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
       threadId: THREAD_ID,
     }),
     typingWorkspaceMemberIds,
@@ -45,7 +45,9 @@ const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatTypingParticipants />
+        <AiChatTestInstance>
+          <AiChatTypingParticipants />
+        </AiChatTestInstance>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -55,10 +57,9 @@ describe('AiChatTypingParticipants', () => {
   beforeEach(() => {
     resetJotaiStore();
 
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
         {
           id: 'message-id',

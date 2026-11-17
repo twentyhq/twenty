@@ -7,6 +7,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownSearchInput = () => {
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
@@ -29,9 +30,9 @@ export const ObjectFilterDropdownSearchInput = () => {
 
   const handleInputRef = useCallback(
     (node: HTMLInputElement | null) => {
-      if (Boolean(node) && !hasFocused) {
-        node?.focus();
-        node?.select();
+      if (isDefined(node) && !hasFocused) {
+        node.focus();
+        node.select();
         setHasFocused(true);
       }
     },

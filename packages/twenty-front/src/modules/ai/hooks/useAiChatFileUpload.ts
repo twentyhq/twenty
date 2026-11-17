@@ -1,40 +1,38 @@
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const setAgentChatSelectedFiles = useSetAtomState(
-    agentChatSelectedFilesState,
-  );
-  const setAgentChatUploadedFiles = useSetAtomState(
-    agentChatUploadedFilesState,
-  );
   const store = useStore();
 
-  const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
+  const sendFile = async ({
+    file,
+    threadId,
+  }: {
+    file: File;
+    threadId: string;
+  }): Promise<AiChatFileUIPart | null> => {
+    const selectedFilesAtom = aiChatSelectedFilesFamilyState.atomFamily({
+      threadId,
+    });
     const abortController = new AbortController();
-    const unsubscribeFromSelectedFiles = store.sub(
-      agentChatSelectedFilesState.atom,
-      () => {
-        if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
-          abortController.abort();
-        }
-      },
-    );
+    const unsubscribeFromSelectedFiles = store.sub(selectedFilesAtom, () => {
+      if (!store.get(selectedFilesAtom).includes(file)) {
+        abortController.abort();
+      }
+    });
 
     try {
       const uploadedFile = await directUploadFile(file, {
@@ -42,7 +40,7 @@ export const useAiChatFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+      if (!store.get(selectedFilesAtom).includes(file)) {
         return null;
       }
 
@@ -66,18 +64,21 @@ export const useAiChatFileUpload = () => {
       return null;
     } finally {
       unsubscribeFromSelectedFiles();
-      setAgentChatSelectedFiles((previousSelectedFiles) =>
+      store.set(selectedFilesAtom, (previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
 
-  const uploadFiles = async (files: File[]) => {
-    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
+  const uploadFiles = async ({
+    files,
+    threadId,
+  }: {
+    files: File[];
+    threadId: string;
+  }) => {
     const currentThread = store.get(
-      agentChatThreadRecordFamilySelector.selectorFamily(
-        currentAiChatThread ?? '',
-      ),
+      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
 
     if (
@@ -87,20 +88,23 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
-    setAgentChatSelectedFiles((previousSelectedFiles) => [
-      ...previousSelectedFiles,
-      ...files,
-    ]);
-
-    const successfulUploads = (await Promise.all(files.map(sendFile))).filter(
-      isDefined,
+    store.set(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
+      (previousSelectedFiles) => [...previousSelectedFiles, ...files],
     );
 
+    const successfulUploads = (
+      await Promise.all(files.map((file) => sendFile({ file, threadId })))
+    ).filter(isDefined);
+
     if (isNonEmptyArray(successfulUploads)) {
-      setAgentChatUploadedFiles((previousUploadedFiles) => [
-        ...previousUploadedFiles,
-        ...successfulUploads,
-      ]);
+      store.set(
+        aiChatUploadedFilesFamilyState.atomFamily({ threadId }),
+        (previousUploadedFiles) => [
+          ...previousUploadedFiles,
+          ...successfulUploads,
+        ],
+      );
     }
 
     return successfulUploads;

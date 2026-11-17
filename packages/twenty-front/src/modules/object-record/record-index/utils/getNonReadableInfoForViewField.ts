@@ -1,7 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
@@ -54,7 +57,7 @@ export const getNonReadableFieldInfoForViewField = ({
   );
 
   if (
-    !canReachSomeRecords({
+    !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: targetObjectPermissions,
       operationType: 'read',
     })

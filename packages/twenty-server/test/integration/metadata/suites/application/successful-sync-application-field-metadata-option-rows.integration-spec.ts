@@ -178,7 +178,7 @@ describe('Sync application keeps field option rows in step with its manifest', (
     ]);
   }, 60000);
 
-  it('syncs two fields of one manifest that share an option id, the second without its row', async () => {
+  it('rejects two fields of one manifest that share an option id', async () => {
     const sharedOption: SelectFieldOptions[number] = {
       id: OPEN_OPTION_ID,
       value: 'OPEN',
@@ -200,21 +200,11 @@ describe('Sync application keeps field option rows in step with its manifest', (
           },
         ],
       }),
-      expectToFail: false,
+      expectToFail: true,
     });
 
-    expect(errors).toBeUndefined();
-    expect(await findOptionRowsOwnedByTestApp()).toEqual([
-      {
-        universalIdentifier: OPEN_OPTION_ID,
-        value: 'OPEN',
-        label: 'Open',
-        color: 'green',
-        position: 0,
-      },
-    ]);
-    expect(await findOptionRowsOwnedByTestApp(SECOND_SELECT_FIELD_ID)).toEqual(
-      [],
+    expect(JSON.stringify(errors)).toContain(
+      `Option id ${OPEN_OPTION_ID} of field priority is already used by another option`,
     );
   }, 60000);
 
@@ -240,7 +230,7 @@ describe('Sync application keeps field option rows in step with its manifest', (
     );
   }, 60000);
 
-  it('keeps syncing a manifest with legacy option ids, without rows for that field', async () => {
+  it('rejects a manifest whose option id is not a universal identifier', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({
         options: [
@@ -253,10 +243,9 @@ describe('Sync application keeps field option rows in step with its manifest', (
           },
         ],
       }),
-      expectToFail: false,
+      expectToFail: true,
     });
 
-    expect(errors).toBeUndefined();
-    expect(await findOptionRowsOwnedByTestApp()).toEqual([]);
+    expect(JSON.stringify(errors)).toContain('must be lowercase');
   }, 60000);
 });

@@ -26,9 +26,7 @@ export const SettingsAccountsConfigurationStepEmail = ({
   onAddAccount,
 }: SettingsAccountsConfigurationStepEmailProps) => {
   const { t } = useLingui();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(
-    <Trans>Account</Trans>,
-  );
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
 
   return (
     <SettingsPageLayout

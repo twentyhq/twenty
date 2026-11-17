@@ -19,7 +19,7 @@ export const planDependencyWrites = async ({
   sourceFingerprints?: Record<string, string>;
   dependencyFingerprints?: Record<string, string>;
 }) => {
-  const writes: PullWrite[] = [];
+  const writes: PullWrite<string>[] = [];
   const fingerprints: Record<string, string> = {};
   const unchangedSourceFingerprints: Record<string, string> = {};
 

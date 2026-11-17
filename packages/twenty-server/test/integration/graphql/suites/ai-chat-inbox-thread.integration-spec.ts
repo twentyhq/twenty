@@ -7,12 +7,13 @@ import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -263,10 +264,12 @@ describe('Inbox thread mutations for members and applications', () => {
       })
     ).applicationAccessToken.token;
 
-    [{ defaultRoleId: applicationRoleId }] = await global.testDataSource.query(
-      `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
-      [application.id],
-    );
+    const { grantRoleId } = await findApplicationRoleIds({
+      input: { id: application.id },
+    });
+
+    assertIsDefinedOrThrow(grantRoleId);
+    applicationRoleId = grantRoleId;
   });
 
   afterAll(async () => {

@@ -154,12 +154,13 @@ export const Corners: Story = {
         ).getPropertyValue('corner-shape'),
       ).toBe('superellipse(2.2)');
 
+      // Newer Chromium serializes `round` as its superellipse(1) equivalent
       for (const name of Object.keys(radii)) {
-        await expect(
+        await expect(['round', 'superellipse(1)']).toContain(
           getComputedStyle(canvas.getByTestId(name)).getPropertyValue(
             'corner-shape',
           ),
-        ).toBe('round');
+        );
       }
     }
   },

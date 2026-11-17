@@ -1,9 +1,9 @@
 // @ts-nocheck
 export type Scalars = {
-    String: string,
     Boolean: boolean,
-    Float: number,
     Int: number,
+    String: string,
+    Float: number,
     ID: string,
     BigInt: any,
     ConnectionCursor: any,
@@ -12,6 +12,13 @@ export type Scalars = {
     JSONObject: any,
     UUID: string,
     Upload: File,
+}
+
+export interface AccessGroupPropagationProgress {
+    isInProgress: Scalars['Boolean']
+    remainingRecordCount: Scalars['Int']
+    totalRecordCount: Scalars['Int']
+    __typename: 'AccessGroupPropagationProgress'
 }
 
 export interface Agent {
@@ -140,6 +147,17 @@ export interface AgentChatThreadParticipant {
     __typename: 'AgentChatThreadParticipant'
 }
 
+export interface AgentDailyRunCount {
+    completedRunCount: Scalars['Int']
+    credits: Scalars['Float']
+    /** Day in the requested time zone, as YYYY-MM-DD */
+    day: Scalars['String']
+    failedRunCount: Scalars['Int']
+    /** Runs neither completed nor failed, such as running or cancelled */
+    otherRunCount: Scalars['Int']
+    __typename: 'AgentDailyRunCount'
+}
+
 export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -196,7 +214,15 @@ export interface AgentMessageReactionSummary {
     __typename: 'AgentMessageReactionSummary'
 }
 
+export interface AgentRecentRun {
+    createdAt: Scalars['DateTime']
+    id: Scalars['UUID']
+    status: AgentTurnStatus
+    __typename: 'AgentRecentRun'
+}
+
 export interface AgentRun {
+    canReadThread: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     creatorName: Scalars['String']
     creatorSource: Scalars['String']
@@ -215,6 +241,29 @@ export interface AgentRun {
     threadTitle?: Scalars['String']
     toolNames: Scalars['String'][]
     __typename: 'AgentRun'
+}
+
+export interface AgentRunInsights {
+    agentId: Scalars['UUID']
+    /** Average duration of completed runs over the same 14 days */
+    averageDurationInMs?: Scalars['Float']
+    /** Credits spent over the same 14 days */
+    credits: Scalars['Float']
+    /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+    dailyRunCounts: AgentDailyRunCount[]
+    /** Runs over the last 14 days, the same window as the agents list run count */
+    runCount: Scalars['Int']
+    /** Input and output tokens used over the same 14 days */
+    tokenCount: Scalars['Float']
+    __typename: 'AgentRunInsights'
+}
+
+export interface AgentRunSummary {
+    agentId: Scalars['UUID']
+    /** Most recent runs first */
+    recentRuns: AgentRecentRun[]
+    runCountLast14Days: Scalars['Int']
+    __typename: 'AgentRunSummary'
 }
 
 export type AgentTurnStatus = 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'RUNNING' | 'WAITING_FOR_INPUT'
@@ -376,6 +425,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantRoleId?: Scalars['UUID']
     grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
@@ -388,7 +438,7 @@ export interface Application {
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     requestedIframeMediaPermissions: IframeMediaPermission[]
-    runOnUserPreferences: Scalars['Boolean']
+    runHealthCheckOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
     universalIdentifier: Scalars['String']
@@ -406,7 +456,9 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
+    marketplaceAppUniversalIdentifier?: Scalars['String']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -528,7 +580,9 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content: Scalars['String']
+    encoding?: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
     __typename: 'ApplicationExportFile'
@@ -648,7 +702,6 @@ export interface ApplicationMonitoringVersion {
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
     connectionProviders: ApplicationConnectionProvider[]
-    hasUserHealthCheck: Scalars['Boolean']
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -1617,7 +1670,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2134,6 +2187,7 @@ export interface LoginToken {
 export interface MarketplaceApp {
     author: Scalars['String']
     category: Scalars['String']
+    connectUrl?: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
@@ -2148,6 +2202,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    connectUrl?: Scalars['String']
     content?: ApplicationContent
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
@@ -2228,6 +2283,7 @@ export interface McpServer {
     isActive: Scalars['Boolean']
     label: Scalars['String']
     name: Scalars['String']
+    signInScope?: ConnectionProviderScope
     tools: McpServerTool[]
     toolsSyncError?: Scalars['String']
     toolsSyncedAt?: Scalars['DateTime']
@@ -2429,6 +2485,7 @@ export interface Mutation {
     completeNewWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
+    connectApplicationWithApiKey: Scalars['UUID']
     createAgentChatChannel: AgentChatChannel
     createApiKey: ApiKey
     createAppMessageChannel: MessageChannel
@@ -2566,6 +2623,7 @@ export interface Mutation {
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
+    markAppChannelThreadAsRead: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
     openDirectMessage: Scalars['UUID']
     prepareGettingStartedWorkflow: GettingStartedWorkflow
@@ -2593,6 +2651,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationAuthorization: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -2621,6 +2680,7 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
+    stopGenerate: Scalars['Boolean']
     stopImpersonation: StopImpersonation
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
@@ -2692,7 +2752,6 @@ export interface Mutation {
     updateWorkspaceIframeMediaPermissions: Workspace
     updateWorkspaceMemberRole: WorkspaceMember
     updateWorkspaceMemberSettings: Scalars['Boolean']
-    upgradeApplication: Scalars['Boolean']
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball: ApplicationRegistration
     /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -2709,7 +2768,7 @@ export interface Mutation {
     upsertFieldsWidget: View
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
-    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -2731,6 +2790,7 @@ export interface NavigationMenuItem {
     applicationId?: Scalars['UUID']
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
+    /** @deprecated Use parentId instead. */
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
     id: Scalars['UUID']
@@ -2738,6 +2798,7 @@ export interface NavigationMenuItem {
     name?: Scalars['String']
     nativePageKey?: Scalars['String']
     pageLayoutId?: Scalars['UUID']
+    parentId?: Scalars['UUID']
     position: Scalars['Float']
     targetObjectMetadataId?: Scalars['UUID']
     targetRecordId?: Scalars['UUID']
@@ -2750,7 +2811,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW' | 'WORKFLOW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -3100,6 +3161,8 @@ export interface PreviewMessageCampaignSendOutputDTO {
 
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
+    isClaimingVerifiedClientName: Scalars['Boolean']
+    isVerified: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
@@ -3163,11 +3226,14 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    accessGroupPropagationProgress: AccessGroupPropagationProgress
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
     agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
+    agentRunInsights: AgentRunInsights
+    agentRunSummaries: AgentRunSummary[]
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     aiChatUserCreditsUsage?: AiChatUserCreditsUsage
@@ -3321,6 +3387,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -3492,6 +3559,7 @@ export interface RowLevelPermissionPredicate {
     relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     subFieldName?: Scalars['String']
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
@@ -3510,6 +3578,7 @@ export interface RowLevelPermissionPredicateGroup {
     parentRowLevelPermissionPredicateGroupId?: Scalars['String']
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
     roleId: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     __typename: 'RowLevelPermissionPredicateGroup'
 }
 
@@ -3883,10 +3952,11 @@ export interface UnsubscribeTopic {
 
 export type UnsubscribeTopicVisibility = 'PRIVATE' | 'PUBLIC'
 
-export interface UpsertRowLevelPermissionPredicatesResult {
+export interface UpsertRowLevelPermissionRulesResult {
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
-    __typename: 'UpsertRowLevelPermissionPredicatesResult'
+    rules: RowLevelPermissionRule[]
+    __typename: 'UpsertRowLevelPermissionRulesResult'
 }
 
 export interface UsageAnalytics {
@@ -4069,11 +4139,7 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermission[]
     objectRecordsPermissions?: ObjectRecordsPermissions[]
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermission[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -4187,11 +4253,13 @@ export interface ViewField {
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
+    isCanonical: Scalars['Boolean']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     isVisible: Scalars['Boolean']
     position: Scalars['Float']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     size: Scalars['Float']
     universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -4308,7 +4376,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDA
 
 export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
-export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
+export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'MCP_TOOL' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -4363,6 +4431,8 @@ export interface Workspace {
     isCustomDomainEnabled: Scalars['Boolean']
     isGoogleAuthBypassEnabled: Scalars['Boolean']
     isGoogleAuthEnabled: Scalars['Boolean']
+    isInternalImportEnabled: Scalars['Boolean']
+    /** @deprecated Use isInternalImportEnabled */
     isInternalMessagesImportEnabled: Scalars['Boolean']
     isMicrosoftAuthBypassEnabled: Scalars['Boolean']
     isMicrosoftAuthEnabled: Scalars['Boolean']
@@ -4500,6 +4570,14 @@ export interface WorkspaceUrlsAndId {
     __typename: 'WorkspaceUrlsAndId'
 }
 
+export interface AccessGroupPropagationProgressGenqlSelection{
+    isInProgress?: boolean | number
+    remainingRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
@@ -4633,6 +4711,18 @@ export interface AgentChatThreadParticipantGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentDailyRunCountGenqlSelection{
+    completedRunCount?: boolean | number
+    credits?: boolean | number
+    /** Day in the requested time zone, as YYYY-MM-DD */
+    day?: boolean | number
+    failedRunCount?: boolean | number
+    /** Runs neither completed nor failed, such as running or cancelled */
+    otherRunCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
@@ -4696,7 +4786,16 @@ export interface AgentMessageReactionSummaryGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentRecentRunGenqlSelection{
+    createdAt?: boolean | number
+    id?: boolean | number
+    status?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentRunGenqlSelection{
+    canReadThread?: boolean | number
     createdAt?: boolean | number
     creatorName?: boolean | number
     creatorSource?: boolean | number
@@ -4714,6 +4813,31 @@ export interface AgentRunGenqlSelection{
     threadId?: boolean | number
     threadTitle?: boolean | number
     toolNames?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunInsightsGenqlSelection{
+    agentId?: boolean | number
+    /** Average duration of completed runs over the same 14 days */
+    averageDurationInMs?: boolean | number
+    /** Credits spent over the same 14 days */
+    credits?: boolean | number
+    /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+    dailyRunCounts?: AgentDailyRunCountGenqlSelection
+    /** Runs over the last 14 days, the same window as the agents list run count */
+    runCount?: boolean | number
+    /** Input and output tokens used over the same 14 days */
+    tokenCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunSummaryGenqlSelection{
+    agentId?: boolean | number
+    /** Most recent runs first */
+    recentRuns?: AgentRecentRunGenqlSelection
+    runCountLast14Days?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4888,6 +5012,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantRoleId?: boolean | number
     grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
@@ -4900,7 +5025,7 @@ export interface ApplicationGenqlSelection{
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
-    runOnUserPreferences?: boolean | number
+    runHealthCheckOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     universalIdentifier?: boolean | number
@@ -4919,7 +5044,9 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
+    marketplaceAppUniversalIdentifier?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5049,7 +5176,9 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content?: boolean | number
+    encoding?: boolean | number
     folder?: boolean | number
     path?: boolean | number
     __typename?: boolean | number
@@ -5182,7 +5311,6 @@ export interface ApplicationMonitoringVersionGenqlSelection{
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
     connectionProviders?: ApplicationConnectionProviderGenqlSelection
-    hasUserHealthCheck?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number
@@ -5921,6 +6049,8 @@ export interface CompleteApplicationFileUploadsResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ConnectApplicationWithApiKeyInput {apiKey: Scalars['String'],applicationId: Scalars['UUID'],providerName: Scalars['String'],reconnectingConnectedAccountId?: (Scalars['UUID'] | null)}
+
 export interface ConnectedAccountPublicDTOGenqlSelection{
     applicationId?: boolean | number
     archivedAt?: boolean | number
@@ -6019,11 +6149,11 @@ export interface CreateIndexInput {fields: CreateIndexFieldInput[],indexType: In
 
 export interface CreateLogicFunctionFromSourceInput {cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),id?: (Scalars['UUID'] | null),name: Scalars['String'],serverRouteTriggerSettings?: (Scalars['JSON'] | null),source?: (Scalars['JSON'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),universalIdentifier?: (Scalars['UUID'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],url: Scalars['String']}
+export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],signInScope?: (ConnectionProviderScope | null),url: Scalars['String']}
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -6061,7 +6191,7 @@ export interface CreateValidationRuleInput {description?: (Scalars['String'] | n
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -6603,7 +6733,7 @@ export interface GetAuthorizationUrlForSSOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
+export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null),workspacePersonalInviteToken?: (Scalars['String'] | null)}
 
 export interface GettingStartedProgressGenqlSelection{
     completedStepActionKeys?: boolean | number
@@ -6947,9 +7077,12 @@ export interface LoginTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MarkAppChannelThreadAsReadInput {messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID']}
+
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
@@ -6965,6 +7098,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     content?: ApplicationContentGenqlSelection
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
@@ -7050,6 +7184,7 @@ export interface McpServerGenqlSelection{
     isActive?: boolean | number
     label?: boolean | number
     name?: boolean | number
+    signInScope?: boolean | number
     tools?: McpServerToolGenqlSelection
     toolsSyncError?: boolean | number
     toolsSyncedAt?: boolean | number
@@ -7221,7 +7356,7 @@ export interface MutationGenqlSelection{
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     attachRecordToInboxThread?: { __args: {input: InboxThreadRecordInput} }
-    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
+    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], resource?: (Scalars['String'] | null), scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
@@ -7237,6 +7372,7 @@ export interface MutationGenqlSelection{
     completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String'], workspaceId: Scalars['String']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
+    connectApplicationWithApiKey?: { __args: {input: ConnectApplicationWithApiKeyInput} }
     createAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
     createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
     createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })
@@ -7374,6 +7510,7 @@ export interface MutationGenqlSelection{
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
+    markAppChannelThreadAsRead?: { __args: {input: MarkAppChannelThreadAsReadInput} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     openDirectMessage?: { __args: {workspaceMemberId: Scalars['UUID']} }
     prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })
@@ -7401,6 +7538,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -7429,6 +7567,7 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    stopGenerate?: { __args: {input: StopGenerateInput} }
     stopImpersonation?: StopImpersonationGenqlSelection
     switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
@@ -7500,7 +7639,6 @@ export interface MutationGenqlSelection{
     updateWorkspaceIframeMediaPermissions?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceIframeMediaPermissionsInput} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {roleId: Scalars['UUID'], workspaceMemberId: Scalars['UUID']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
@@ -7517,7 +7655,7 @@ export interface MutationGenqlSelection{
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
-    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertRowLevelPermissionRules?: (UpsertRowLevelPermissionRulesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionRulesInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -7541,6 +7679,7 @@ export interface NavigationMenuItemGenqlSelection{
     applicationId?: boolean | number
     color?: boolean | number
     createdAt?: boolean | number
+    /** @deprecated Use parentId instead. */
     folderId?: boolean | number
     icon?: boolean | number
     id?: boolean | number
@@ -7548,6 +7687,7 @@ export interface NavigationMenuItemGenqlSelection{
     name?: boolean | number
     nativePageKey?: boolean | number
     pageLayoutId?: boolean | number
+    parentId?: boolean | number
     position?: boolean | number
     targetObjectMetadataId?: boolean | number
     targetRecordId?: boolean | number
@@ -7941,6 +8081,8 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    isClaimingVerifiedClientName?: boolean | number
+    isVerified?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     oAuthScopes?: boolean | number
@@ -8012,11 +8154,16 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    accessGroupPropagationProgress?: AccessGroupPropagationProgressGenqlSelection
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
+    agentRunInsights?: (AgentRunInsightsGenqlSelection & { __args: {agentId: Scalars['UUID'], 
+    /** IANA time zone the days are counted in */
+    timeZone: Scalars['String']} })
+    agentRunSummaries?: AgentRunSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     aiChatUserCreditsUsage?: AiChatUserCreditsUsageGenqlSelection
@@ -8053,7 +8200,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8182,6 +8329,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8370,6 +8518,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     subFieldName?: boolean | number
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
@@ -8389,13 +8538,10 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     parentRowLevelPermissionPredicateGroupId?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
-
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelPermissionRuleGenqlSelection{
     canCreateRecords?: boolean | number
@@ -8408,6 +8554,12 @@ export interface RowLevelPermissionRuleGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -8481,9 +8633,11 @@ export interface SearchFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendAppChannelMessageAttachmentInput {id: Scalars['UUID'],name: Scalars['String']}
+
 export interface SendAppChannelMessageEmailInput {bcc?: (Scalars['String'] | null),body: Scalars['String'],cc?: (Scalars['String'] | null),inReplyTo?: (Scalars['String'] | null),subject: Scalars['String'],to: Scalars['String']}
 
-export interface SendAppChannelMessageInput {email?: (SendAppChannelMessageEmailInput | null),idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text?: (Scalars['String'] | null)}
+export interface SendAppChannelMessageInput {attachments?: (SendAppChannelMessageAttachmentInput[] | null),email?: (SendAppChannelMessageEmailInput | null),idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text?: (Scalars['String'] | null)}
 
 export interface SendAppChannelMessageOutputGenqlSelection{
     messageId?: boolean | number
@@ -8632,6 +8786,8 @@ export interface StartWorkspaceSetupChatResultGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StopGenerateInput {runId: Scalars['UUID']}
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
@@ -8890,7 +9046,7 @@ export interface UpdateLogicFunctionFromSourceInputUpdates {cronTriggerSettings?
 
 export interface UpdateMcpServerInput {id: Scalars['UUID'],update: UpdateMcpServerInputUpdates}
 
-export interface UpdateMcpServerInputUpdates {connectionProviderId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),url?: (Scalars['String'] | null)}
+export interface UpdateMcpServerInputUpdates {connectionProviderId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),signInScope?: (ConnectionProviderScope | null),url?: (Scalars['String'] | null)}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
@@ -8902,7 +9058,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -8966,7 +9122,7 @@ id: Scalars['UUID'],
 /** The view field to update */
 update: UpdateViewFieldInputUpdates}
 
-export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
+export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
 export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
@@ -9010,7 +9166,7 @@ export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars
 
 export interface UpdateWorkspaceIframeMediaPermissionsInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantProfile?: (AiChatAssistantProfileInput | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantProfile?: (AiChatAssistantProfileInput | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalImportEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -9036,11 +9192,12 @@ export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissi
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
 
-export interface UpsertRowLevelPermissionPredicatesInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
+export interface UpsertRowLevelPermissionRulesInput {objectMetadataId: Scalars['UUID'],roleId: Scalars['UUID'],rules: RowLevelPermissionRuleInput[]}
 
-export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
+export interface UpsertRowLevelPermissionRulesResultGenqlSelection{
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    rules?: RowLevelPermissionRuleGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9267,11 +9424,7 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermissionGenqlSelection
     objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -9394,11 +9547,13 @@ export interface ViewFieldGenqlSelection{
     fieldMetadataId?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
+    isCanonical?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     isSystemSideEffect?: boolean | number
     isVisible?: boolean | number
     position?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     size?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
@@ -9591,6 +9746,8 @@ export interface WorkspaceGenqlSelection{
     isCustomDomainEnabled?: boolean | number
     isGoogleAuthBypassEnabled?: boolean | number
     isGoogleAuthEnabled?: boolean | number
+    isInternalImportEnabled?: boolean | number
+    /** @deprecated Use isInternalImportEnabled */
     isInternalMessagesImportEnabled?: boolean | number
     isMicrosoftAuthBypassEnabled?: boolean | number
     isMicrosoftAuthEnabled?: boolean | number
@@ -9719,6 +9876,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
 }
 
 
+    const AccessGroupPropagationProgress_possibleTypes: string[] = ['AccessGroupPropagationProgress']
+    export const isAccessGroupPropagationProgress = (obj?: { __typename?: any } | null): obj is AccessGroupPropagationProgress => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAccessGroupPropagationProgress"')
+      return AccessGroupPropagationProgress_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Agent_possibleTypes: string[] = ['Agent']
     export const isAgent = (obj?: { __typename?: any } | null): obj is Agent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgent"')
@@ -9791,6 +9956,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AgentDailyRunCount_possibleTypes: string[] = ['AgentDailyRunCount']
+    export const isAgentDailyRunCount = (obj?: { __typename?: any } | null): obj is AgentDailyRunCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentDailyRunCount"')
+      return AgentDailyRunCount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentMessage_possibleTypes: string[] = ['AgentMessage']
     export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
@@ -9815,10 +9988,34 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AgentRecentRun_possibleTypes: string[] = ['AgentRecentRun']
+    export const isAgentRecentRun = (obj?: { __typename?: any } | null): obj is AgentRecentRun => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRecentRun"')
+      return AgentRecentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentRun_possibleTypes: string[] = ['AgentRun']
     export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
       return AgentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunInsights_possibleTypes: string[] = ['AgentRunInsights']
+    export const isAgentRunInsights = (obj?: { __typename?: any } | null): obj is AgentRunInsights => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunInsights"')
+      return AgentRunInsights_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunSummary_possibleTypes: string[] = ['AgentRunSummary']
+    export const isAgentRunSummary = (obj?: { __typename?: any } | null): obj is AgentRunSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunSummary"')
+      return AgentRunSummary_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12311,10 +12508,10 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    const UpsertRowLevelPermissionRulesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionRulesResult']
+    export const isUpsertRowLevelPermissionRulesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionRulesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionRulesResult"')
+      return UpsertRowLevelPermissionRulesResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13084,14 +13281,17 @@ export const enumFeatureFlagKey = {
    IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_DATA_POLICY_ENABLED: 'IS_AI_DATA_POLICY_ENABLED' as const,
-   IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
+   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
+   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
+   IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
-   IS_HTTP_EGRESS_LAMBDA_ENABLED: 'IS_HTTP_EGRESS_LAMBDA_ENABLED' as const,
+   IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
+   IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
@@ -13317,6 +13517,8 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
+   SECTION: 'SECTION' as const,
+   TAB: 'TAB' as const,
    VIEW: 'VIEW' as const,
    WORKFLOW: 'WORKFLOW' as const
 }
@@ -13691,6 +13893,7 @@ export const enumWorkflowActionType = {
    IF_ELSE: 'IF_ELSE' as const,
    ITERATOR: 'ITERATOR' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   MCP_TOOL: 'MCP_TOOL' as const,
    PICK_RECORD: 'PICK_RECORD' as const,
    SEND_CHAT_MESSAGE: 'SEND_CHAT_MESSAGE' as const,
    SEND_EMAIL: 'SEND_EMAIL' as const,
