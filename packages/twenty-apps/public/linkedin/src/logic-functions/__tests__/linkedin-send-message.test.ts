@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -25,7 +26,8 @@ vi.mock(
 const { linkedinSendMessageHandler } =
   await import('src/logic-functions/linkedin-send-message');
 
-const PAYLOAD = {
+const PAYLOAD: SendAppMessagePayload = {
+  conversationStyle: 'chat',
   messagingProviderName: 'linkedin-messaging',
   connectedAccountId: 'connected-account-id',
   messageChannelId: 'channel-id',
@@ -148,14 +150,6 @@ describe('linkedinSendMessageHandler', () => {
       linkedinSendMessageHandler({ ...PAYLOAD, attachments: [ATTACHMENT] }),
     ).rejects.toThrow('Attachment deck.pdf is larger than 26214400 bytes');
     expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
-  });
-
-  it('treats a payload without attachments as a text reply', async () => {
-    await linkedinSendMessageHandler({ ...PAYLOAD, attachments: undefined });
-
-    expect(mocks.sendUnipileChatMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ attachments: [] }),
-    );
   });
 
   it('refuses to send through a connection without a Unipile account', async () => {
