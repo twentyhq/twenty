@@ -98,12 +98,6 @@ type ValidatedAppReply = {
     | null;
 };
 
-type AppMessageSplitAttachmentDelivery = {
-  externalId: string;
-  sentAt: string;
-  attachment: SendAppChannelMessageAttachmentInput;
-};
-
 type AppMessageDelivery = Conversation & {
   externalId: string;
   text: string;
@@ -112,8 +106,6 @@ type AppMessageDelivery = Conversation & {
   cc: AppMessageReplyRecipient[];
   bcc: AppMessageReplyRecipient[];
   attachments?: SendAppChannelMessageAttachmentInput[];
-  splitAttachments?: AppMessageSplitAttachmentDelivery[];
-  rejectedAttachments?: SendAppChannelMessageAttachmentInput[];
 };
 
 type DeliveryArguments = {
@@ -229,11 +221,7 @@ export class ApplicationMessageSendService {
           );
 
         if (isDefined(sentMessage)) {
-          // entries cached before rejected attachments were reported lack the field
-          return {
-            ...sentMessage,
-            rejectedAttachmentNames: sentMessage.rejectedAttachmentNames ?? [],
-          };
+          return sentMessage;
         }
 
         const delivery =
@@ -252,55 +240,12 @@ export class ApplicationMessageSendService {
             deliveryKey,
           }));
 
-        const messageAttachments = delivery.attachments ?? [];
-        const splitAttachments = delivery.splitAttachments ?? [];
-        const rejectedAttachments = delivery.rejectedAttachments ?? [];
-        const deliveredAttachments = [
-          ...messageAttachments,
-          ...splitAttachments.map(({ attachment }) => attachment),
-        ];
+        const deliveredAttachments = delivery.attachments ?? [];
 
         const copiedAttachments =
           await this.applicationMessageSendAttachmentsService.copyIntoAttachmentFileFieldOrThrow(
             { attachments: deliveredAttachments, workspaceId },
           );
-
-        const participants = [
-          {
-            role: MessageParticipantRole.FROM,
-            handle: messageChannel.handle,
-            displayName: messageChannel.displayName ?? undefined,
-            workspaceMemberId:
-              flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId],
-          },
-          ...delivery.recipients.map((recipient) => ({
-            role: MessageParticipantRole.TO,
-            ...recipient,
-          })),
-          ...(delivery.cc ?? []).map((recipient) => ({
-            role: MessageParticipantRole.CC,
-            ...recipient,
-          })),
-          ...(delivery.bcc ?? []).map((recipient) => ({
-            role: MessageParticipantRole.BCC,
-            ...recipient,
-          })),
-        ];
-
-        const sentMessages = [
-          {
-            externalId: delivery.externalId,
-            text: delivery.text,
-            sentAt: delivery.sentAt,
-            attachments: copiedAttachments.slice(0, messageAttachments.length),
-          },
-          ...splitAttachments.map(({ externalId, sentAt }, index) => ({
-            externalId,
-            text: '',
-            sentAt,
-            attachments: [copiedAttachments[messageAttachments.length + index]],
-          })),
-        ];
 
         try {
           const {
@@ -310,23 +255,44 @@ export class ApplicationMessageSendService {
             workspaceId,
             requestUserWorkspaceId: userWorkspaceId,
             messageChannelId,
-            messages: sentMessages.map((sentMessage) => ({
-              externalId: sentMessage.externalId,
-              threadExternalId: delivery.threadExternalId,
-              subject: delivery.subject ?? undefined,
-              text: sentMessage.text,
-              receivedAt: new Date(sentMessage.sentAt),
-              attachments: sentMessage.attachments,
-              participants,
-            })),
+            messages: [
+              {
+                externalId: delivery.externalId,
+                threadExternalId: delivery.threadExternalId,
+                subject: delivery.subject ?? undefined,
+                text: delivery.text,
+                receivedAt: new Date(delivery.sentAt),
+                attachments: copiedAttachments,
+                participants: [
+                  {
+                    role: MessageParticipantRole.FROM,
+                    handle: messageChannel.handle,
+                    displayName: messageChannel.displayName ?? undefined,
+                    workspaceMemberId:
+                      flatWorkspaceMemberMaps.idByUserWorkspaceId[
+                        userWorkspaceId
+                      ],
+                  },
+                  ...delivery.recipients.map((recipient) => ({
+                    role: MessageParticipantRole.TO,
+                    ...recipient,
+                  })),
+                  ...(delivery.cc ?? []).map((recipient) => ({
+                    role: MessageParticipantRole.CC,
+                    ...recipient,
+                  })),
+                  ...(delivery.bcc ?? []).map((recipient) => ({
+                    role: MessageParticipantRole.BCC,
+                    ...recipient,
+                  })),
+                ],
+              },
+            ],
           });
 
           const ingestedSentMessage = {
             messageId: ingestedMessage.messageId,
             messageThreadId: ingestedMessage.messageThreadId,
-            rejectedAttachmentNames: rejectedAttachments.map(
-              ({ name }) => name,
-            ),
           };
 
           await this.cacheStorageService.set(
@@ -336,24 +302,20 @@ export class ApplicationMessageSendService {
           );
 
           await this.fileEmailAttachmentService.deleteFiles({
-            fileIds: [...deliveredAttachments, ...rejectedAttachments].map(
-              ({ id }) => id,
-            ),
+            fileIds: deliveredAttachments.map(({ id }) => id),
             workspaceId,
           });
 
           return ingestedSentMessage;
         } finally {
-          for (const sentMessage of sentMessages) {
-            await this.applicationMessageSendAttachmentsService.deleteUnreferencedCopies(
-              {
-                copiedAttachments: sentMessage.attachments,
-                workspaceId,
-                messageChannelId,
-                messageExternalId: sentMessage.externalId,
-              },
-            );
-          }
+          await this.applicationMessageSendAttachmentsService.deleteUnreferencedCopies(
+            {
+              copiedAttachments,
+              workspaceId,
+              messageChannelId,
+              messageExternalId: delivery.externalId,
+            },
+          );
         }
       },
       deliveryKey,
@@ -578,35 +540,16 @@ export class ApplicationMessageSendService {
           : { ...payloadBase, conversationStyle: 'chat' },
       });
 
-    const sentAt = sentMessage.sentAt ?? new Date().toISOString();
-    const splitAttachments = sentMessage.splitAttachments ?? [];
-    const rejectedAttachmentIndexes =
-      sentMessage.rejectedAttachmentIndexes ?? [];
-    const attachmentIndexesOutsideMessage = new Set([
-      ...splitAttachments.map(({ attachmentIndex }) => attachmentIndex),
-      ...rejectedAttachmentIndexes,
-    ]);
-
     return {
       externalId: sentMessage.externalId,
       threadExternalId: conversation.threadExternalId,
       text: reply.text,
-      sentAt,
+      sentAt: sentMessage.sentAt ?? new Date().toISOString(),
       recipients,
       subject: reply.email?.subject ?? null,
       cc,
       bcc,
-      attachments: attachments.filter(
-        (_attachment, index) => !attachmentIndexesOutsideMessage.has(index),
-      ),
-      splitAttachments: splitAttachments.map((splitAttachment) => ({
-        externalId: splitAttachment.externalId,
-        sentAt: splitAttachment.sentAt ?? sentAt,
-        attachment: attachments[splitAttachment.attachmentIndex],
-      })),
-      rejectedAttachments: rejectedAttachmentIndexes.map(
-        (attachmentIndex) => attachments[attachmentIndex],
-      ),
+      attachments,
     };
   }
 

@@ -300,7 +300,6 @@ export type {
   SendAppMessageAttachment,
   SendAppMessageEmail,
   SendAppMessagePayload,
-  SendAppMessageSplitAttachment,
   SendAppMessageResult,
 } from './sendAppMessageType';
 export type { SendInboxMessageInput } from './sendInboxMessageInputType';

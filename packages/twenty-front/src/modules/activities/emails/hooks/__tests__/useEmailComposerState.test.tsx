@@ -128,7 +128,6 @@ const createSendAppChannelMessageMock = (
         __typename: 'SendAppChannelMessageOutput',
         messageId: 'message-1',
         messageThreadId: 'message-thread-1',
-        rejectedAttachmentNames: [],
       },
     },
   },
@@ -425,41 +424,6 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
-  });
-
-  it('tells which attachments the app could not send with the reply', async () => {
-    const onSent = jest.fn();
-
-    const { result } = renderAppComposerState({
-      mocks: [
-        {
-          ...createSendAppChannelMessageMock(() => true),
-          result: {
-            data: {
-              sendAppChannelMessage: {
-                __typename: 'SendAppChannelMessageOutput',
-                messageId: 'message-1',
-                messageThreadId: 'message-thread-1',
-                rejectedAttachmentNames: ['archive.zip', 'setup.exe'],
-              },
-            },
-          },
-        } satisfies SendAppChannelMessageMockedResponse,
-      ],
-      onSent,
-    });
-
-    await act(async () => {
-      await result.current.handleSend();
-    });
-
-    expect(onSent).toHaveBeenCalledWith('message-thread-1');
-    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
-    expect(mockEnqueueToast).toHaveBeenCalledWith({
-      status: 'error',
-      children:
-        'Message sent, but these files could not be sent: archive.zip, setup.exe',
-    });
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

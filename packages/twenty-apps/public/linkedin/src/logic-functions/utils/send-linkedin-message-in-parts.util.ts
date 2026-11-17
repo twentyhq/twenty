@@ -1,13 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type SendAppMessageResult } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { type LinkedinSendMessageResult } from 'src/types/linkedin-send-message-result.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { isUnipileUnsupportedMediaTypeError } from 'src/unipile/utils/is-unipile-unsupported-media-type-error.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
 // Unipile does not say which attachment LinkedIn refused, so each one goes in
-// its own message and the refused ones are reported instead of sent.
+// its own message and the ones that fail are left out of the reply.
 export const sendLinkedinMessageInParts = async ({
   accountId,
   chatId,
@@ -20,9 +20,9 @@ export const sendLinkedinMessageInParts = async ({
   text: string;
   attachments: UnipileOutgoingAttachment[];
   deadlineAtMs: number;
-}): Promise<LinkedinSendMessageResult> => {
+}): Promise<SendAppMessageResult> => {
   const chat = { accountId, chatId, deadlineAtMs };
-  let sentMessage = isNonEmptyString(text)
+  let sentMessage: SendAppMessageResult | undefined = isNonEmptyString(text)
     ? {
         externalId: await sendUnipileChatMessage({
           ...chat,
@@ -32,12 +32,8 @@ export const sendLinkedinMessageInParts = async ({
         sentAt: new Date().toISOString(),
       }
     : undefined;
-  const splitAttachments: NonNullable<
-    LinkedinSendMessageResult['splitAttachments']
-  > = [];
-  const rejectedAttachmentIndexes: number[] = [];
 
-  for (const [attachmentIndex, attachment] of attachments.entries()) {
+  for (const attachment of attachments) {
     try {
       if (Date.now() >= deadlineAtMs) {
         throw new Error('No time left to send it');
@@ -52,11 +48,7 @@ export const sendLinkedinMessageInParts = async ({
         sentAt: new Date().toISOString(),
       };
 
-      if (isDefined(sentMessage)) {
-        splitAttachments.push({ attachmentIndex, ...attachmentMessage });
-      } else {
-        sentMessage = attachmentMessage;
-      }
+      sentMessage ??= attachmentMessage;
     } catch (error) {
       // Once a part is sent, failing the reply would make a retry send it twice
       if (
@@ -69,7 +61,6 @@ export const sendLinkedinMessageInParts = async ({
       console.log(
         `[linkedin] attachment ${attachment.filename} not sent: ${error instanceof Error ? error.message : String(error)}`,
       );
-      rejectedAttachmentIndexes.push(attachmentIndex);
     }
   }
 
@@ -77,5 +68,5 @@ export const sendLinkedinMessageInParts = async ({
     throw new Error('LinkedIn refused every attachment of the reply');
   }
 
-  return { ...sentMessage, splitAttachments, rejectedAttachmentIndexes };
+  return sentMessage;
 };

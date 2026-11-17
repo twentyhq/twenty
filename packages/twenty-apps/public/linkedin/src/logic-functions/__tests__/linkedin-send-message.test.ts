@@ -208,7 +208,7 @@ describe('linkedinSendMessageHandler', () => {
       vi.useRealTimers();
     });
 
-    it('sends the text, then each attachment on its own, and reports the refused ones', async () => {
+    it('sends the text, then each attachment on its own, leaving out the refused ones', async () => {
       mocks.sendUnipileChatMessage
         .mockImplementationOnce(refuseAfter(1, UNSUPPORTED_MEDIA_TYPE_ERROR))
         .mockImplementationOnce(sendAfter(2, 'message-text'))
@@ -223,14 +223,6 @@ describe('linkedinSendMessageHandler', () => {
       ).resolves.toEqual({
         externalId: 'message-text',
         sentAt: '2026-01-01T10:00:03.000Z',
-        splitAttachments: [
-          {
-            attachmentIndex: 0,
-            externalId: 'message-deck',
-            sentAt: '2026-01-01T10:00:08.000Z',
-          },
-        ],
-        rejectedAttachmentIndexes: [1],
       });
 
       expect(mocks.sendUnipileChatMessage.mock.calls).toEqual([
@@ -256,12 +248,10 @@ describe('linkedinSendMessageHandler', () => {
       ).resolves.toEqual({
         externalId: 'message-archive',
         sentAt: '2026-01-01T10:00:04.000Z',
-        splitAttachments: [],
-        rejectedAttachmentIndexes: [0],
       });
     });
 
-    it('stops sending attachments once the deadline has passed and reports them', async () => {
+    it('stops sending attachments once the deadline has passed', async () => {
       mocks.sendUnipileChatMessage
         .mockImplementationOnce(refuseAfter(1, UNSUPPORTED_MEDIA_TYPE_ERROR))
         .mockImplementationOnce(sendAfter(2, 'message-text'))
@@ -275,14 +265,6 @@ describe('linkedinSendMessageHandler', () => {
       ).resolves.toEqual({
         externalId: 'message-text',
         sentAt: '2026-01-01T10:00:03.000Z',
-        splitAttachments: [
-          {
-            attachmentIndex: 0,
-            externalId: 'message-deck',
-            sentAt: '2026-01-01T10:00:50.000Z',
-          },
-        ],
-        rejectedAttachmentIndexes: [1],
       });
       expect(mocks.sendUnipileChatMessage).toHaveBeenCalledTimes(3);
     });
@@ -318,7 +300,7 @@ describe('linkedinSendMessageHandler', () => {
       expect(mocks.sendUnipileChatMessage).toHaveBeenCalledTimes(2);
     });
 
-    it('reports an attachment that fails after the text was sent instead of failing the reply', async () => {
+    it('leaves out an attachment that fails after the text was sent instead of failing the reply', async () => {
       mocks.sendUnipileChatMessage
         .mockRejectedValueOnce(UNSUPPORTED_MEDIA_TYPE_ERROR)
         .mockResolvedValueOnce('message-text')
@@ -335,14 +317,6 @@ describe('linkedinSendMessageHandler', () => {
       ).resolves.toEqual({
         externalId: 'message-text',
         sentAt: STARTED_AT.toISOString(),
-        splitAttachments: [
-          {
-            attachmentIndex: 1,
-            externalId: 'message-archive',
-            sentAt: STARTED_AT.toISOString(),
-          },
-        ],
-        rejectedAttachmentIndexes: [0],
       });
     });
 

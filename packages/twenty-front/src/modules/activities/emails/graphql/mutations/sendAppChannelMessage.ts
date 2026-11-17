@@ -5,7 +5,6 @@ export const SEND_APP_CHANNEL_MESSAGE = gql`
     sendAppChannelMessage(input: $input) {
       messageId
       messageThreadId
-      rejectedAttachmentNames
     }
   }
 `;

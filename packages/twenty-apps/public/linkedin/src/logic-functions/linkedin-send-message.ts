@@ -4,6 +4,7 @@ import {
   getConnection,
   type SendAppMessageAttachment,
   type SendAppMessagePayload,
+  type SendAppMessageResult,
 } from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
@@ -13,7 +14,6 @@ import { LINKEDIN_SEND_MESSAGE_TIMEOUT_SECONDS } from 'src/constants/linkedin-se
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { downloadSendMessageAttachmentOrThrow } from 'src/logic-functions/utils/download-send-message-attachment.util';
 import { sendLinkedinMessageInParts } from 'src/logic-functions/utils/send-linkedin-message-in-parts.util';
-import { type LinkedinSendMessageResult } from 'src/types/linkedin-send-message-result.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { isUnipileUnsupportedMediaTypeError } from 'src/unipile/utils/is-unipile-unsupported-media-type-error.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
@@ -65,7 +65,7 @@ export const linkedinSendMessageHandler = async ({
   threadExternalId,
   text,
   attachments,
-}: SendAppMessagePayload): Promise<LinkedinSendMessageResult> => {
+}: SendAppMessagePayload): Promise<SendAppMessageResult> => {
   const connection = await getConnection(connectedAccountId);
   const unipileAccountId = connection.externalAccountId;
 

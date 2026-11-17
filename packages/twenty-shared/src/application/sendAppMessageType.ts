@@ -40,17 +40,7 @@ export type SendAppMessagePayload =
       email: SendAppMessageEmail;
     });
 
-export type SendAppMessageSplitAttachment = {
-  attachmentIndex: number;
-  externalId: string;
-  sentAt?: string;
-};
-
-// Attachments are referenced by their index in the payload. One listed in
-// neither field was carried by the message identified by externalId.
 export type SendAppMessageResult = {
   externalId: string;
   sentAt?: string;
-  splitAttachments?: SendAppMessageSplitAttachment[];
-  rejectedAttachmentIndexes?: number[];
 };

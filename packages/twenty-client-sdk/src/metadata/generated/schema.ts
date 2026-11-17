@@ -3658,7 +3658,6 @@ export interface SearchField {
 export interface SendAppChannelMessageOutput {
     messageId: Scalars['UUID']
     messageThreadId: Scalars['UUID']
-    rejectedAttachmentNames: Scalars['String'][]
     __typename: 'SendAppChannelMessageOutput'
 }
 
@@ -8632,7 +8631,6 @@ export interface SendAppChannelMessageInput {attachments?: (SendAppChannelMessag
 export interface SendAppChannelMessageOutputGenqlSelection{
     messageId?: boolean | number
     messageThreadId?: boolean | number
-    rejectedAttachmentNames?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

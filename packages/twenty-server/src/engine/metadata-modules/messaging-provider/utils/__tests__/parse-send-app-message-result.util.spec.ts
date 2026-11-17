@@ -1,12 +1,9 @@
 import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 
-const parseResultWithoutAttachments = (data: unknown) =>
-  parseSendAppMessageResult({ data, attachmentCount: 0 });
-
 describe('parseSendAppMessageResult', () => {
   it('returns the trimmed external id with the send time', () => {
     expect(
-      parseResultWithoutAttachments({
+      parseSendAppMessageResult({
         externalId: ' message-a ',
         sentAt: '2026-10-23T09:30:00.000Z',
       }),
@@ -27,7 +24,7 @@ describe('parseSendAppMessageResult', () => {
   ])(
     'accepts %s as the send time, or leaves it out',
     (_label, sentAt, isKept) => {
-      const result = parseResultWithoutAttachments({
+      const result = parseSendAppMessageResult({
         externalId: 'message-a',
         sentAt,
       });
@@ -39,7 +36,7 @@ describe('parseSendAppMessageResult', () => {
 
   it('reads an epoch in seconds as seconds', () => {
     expect(
-      parseResultWithoutAttachments({
+      parseSendAppMessageResult({
         externalId: 'message-a',
         sentAt: 1792747800,
       }),
@@ -54,7 +51,7 @@ describe('parseSendAppMessageResult', () => {
 
   it('leaves the send time out when it is absent or null', () => {
     expect(
-      parseResultWithoutAttachments({ externalId: 'message-a', sentAt: null }),
+      parseSendAppMessageResult({ externalId: 'message-a', sentAt: null }),
     ).toEqual({ isValid: true, sentMessage: { externalId: 'message-a' } });
   });
 
@@ -65,97 +62,9 @@ describe('parseSendAppMessageResult', () => {
     ['a blank id', { externalId: '  ' }],
     ['an id over 512 characters', { externalId: 'a'.repeat(513) }],
   ])('rejects %s', (_label, data) => {
-    expect(parseResultWithoutAttachments(data)).toEqual({
+    expect(parseSendAppMessageResult(data)).toEqual({
       isValid: false,
       reason: expect.any(String),
     });
-  });
-
-  it('returns the attachments sent in their own message and the rejected ones', () => {
-    expect(
-      parseSendAppMessageResult({
-        data: {
-          externalId: 'message-a',
-          splitAttachments: [
-            {
-              attachmentIndex: 1,
-              externalId: ' message-b ',
-              sentAt: 1792747800,
-            },
-            { attachmentIndex: 2, externalId: 'message-c' },
-          ],
-          rejectedAttachmentIndexes: [0],
-        },
-        attachmentCount: 3,
-      }),
-    ).toEqual({
-      isValid: true,
-      sentMessage: {
-        externalId: 'message-a',
-        splitAttachments: [
-          {
-            attachmentIndex: 1,
-            externalId: 'message-b',
-            sentAt: new Date(1792747800000).toISOString(),
-          },
-          { attachmentIndex: 2, externalId: 'message-c' },
-        ],
-        rejectedAttachmentIndexes: [0],
-      },
-    });
-  });
-
-  it('leaves empty or null attachment reports out', () => {
-    expect(
-      parseSendAppMessageResult({
-        data: {
-          externalId: 'message-a',
-          splitAttachments: [],
-          rejectedAttachmentIndexes: null,
-        },
-        attachmentCount: 2,
-      }),
-    ).toEqual({ isValid: true, sentMessage: { externalId: 'message-a' } });
-  });
-
-  it.each([
-    [
-      'a rejected attachment that was not sent',
-      { rejectedAttachmentIndexes: [2] },
-    ],
-    [
-      'a split attachment that was not sent',
-      { splitAttachments: [{ attachmentIndex: 2, externalId: 'message-b' }] },
-    ],
-    ['a fractional attachment index', { rejectedAttachmentIndexes: [0.5] }],
-    ['a negative attachment index', { rejectedAttachmentIndexes: [-1] }],
-    [
-      'an attachment both split and rejected',
-      {
-        splitAttachments: [{ attachmentIndex: 0, externalId: 'message-b' }],
-        rejectedAttachmentIndexes: [0],
-      },
-    ],
-    ['an attachment rejected twice', { rejectedAttachmentIndexes: [1, 1] }],
-    [
-      'a split attachment reusing the external id of the message',
-      { splitAttachments: [{ attachmentIndex: 0, externalId: 'message-a' }] },
-    ],
-    [
-      'two split attachments sharing an external id',
-      {
-        splitAttachments: [
-          { attachmentIndex: 0, externalId: 'message-b' },
-          { attachmentIndex: 1, externalId: 'message-b' },
-        ],
-      },
-    ],
-  ])('rejects %s', (_label, attachmentReport) => {
-    expect(
-      parseSendAppMessageResult({
-        data: { externalId: 'message-a', ...attachmentReport },
-        attachmentCount: 2,
-      }),
-    ).toEqual({ isValid: false, reason: expect.any(String) });
   });
 });

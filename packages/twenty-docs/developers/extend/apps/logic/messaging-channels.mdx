@@ -279,7 +279,7 @@ The payload carries the `messagingProviderName`, the conversation's `threadExter
 
 The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
-When the workspace has message attachments enabled, a member can attach files to a reply, and the reply may then have an empty `text`. The mutation then also takes `attachments`, at most 20, each with the `id` of a file uploaded as an email attachment and its `name`. The payload's `attachments` lists them, and is an empty array for a text-only reply. Each one has a `filename`, a `contentType`, a `size` in bytes and a `downloadUrl`: a signed link your function fetches to get the file, so the bytes never travel in the payload. Check `size` against your provider's limit before downloading:
+When the workspace has message attachments enabled, a member can attach files to a reply, and the reply may then have an empty `text`. The mutation then also takes `attachments`, at most 20, each with the `id` of a file uploaded as an email attachment and its `name`. The payload's `attachments` lists them, and is an empty array for a text-only reply. Each one has a `filename`, a `contentType`, a `size` in bytes and a `downloadUrl`: a signed link your function fetches to get the file, so the bytes never travel in the payload. Check `size` against your provider's limit before downloading, and throw when the provider cannot deliver a file rather than sending the text alone, so the member sees the reply fail:
 
 ```ts
 const files = await Promise.all(
@@ -292,20 +292,6 @@ const files = await Promise.all(
 ```
 
 `attachments` requires `"engines": { "twenty": ">=2.59.0" }`.
-
-When the provider cannot deliver every file, send what it accepts and report the rest in the result instead of failing the whole reply. Both fields are optional and refer to a file by its index in the payload's `attachments`:
-
-```ts
-return {
-  externalId: sent.messageUrn,
-  // files the provider sent in a message of their own
-  splitAttachments: [{ attachmentIndex: 1, externalId: photoMessage.messageUrn }],
-  // files that were not sent
-  rejectedAttachmentIndexes: [2],
-};
-```
-
-A file listed in neither was carried by the message `externalId` identifies. Twenty records each `splitAttachments` message in the thread with its file (it also takes an optional `sentAt`), and tells the member which files were rejected. Throw only when nothing was sent, so the member sees the reply fail and can retry it. These two fields require `"engines": { "twenty": ">=2.60.0" }`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients and its attachments, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
