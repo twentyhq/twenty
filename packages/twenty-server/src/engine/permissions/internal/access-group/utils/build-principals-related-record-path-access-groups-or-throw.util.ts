@@ -7,6 +7,7 @@ import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/ac
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
+import { findFieldMetadataIdsUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/find-field-metadata-ids-unreadable-by-principals.util';
 import { findSourceObjectMetadataIdsWithHiddenPath } from 'src/engine/permissions/internal/related-record-path/utils/find-source-object-metadata-ids-with-hidden-path.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
@@ -17,11 +18,15 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   workspaceMembers,
   flatFieldMetadataMaps,
   visitedObjectMetadataIds = [],
+  unreadableFieldMetadataIds = findFieldMetadataIdsUnreadableByPrincipals(
+    request,
+  ),
 }: {
   request: PermissionsObjectAccessRequest;
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   visitedObjectMetadataIds?: string[];
+  unreadableFieldMetadataIds?: Set<string>;
 }): AccessGroupWithoutCompactId[] => {
   const { principals, metadataMaps, flatObjectMetadata } = request;
   const mainRoleIds = principals.mainPrincipal.roleIds;
@@ -32,7 +37,10 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
 
   // a record's groups do not say which path copied them, so a source object with a hidden path is read through its paths one by one instead
   const sourceObjectMetadataIdsWithHiddenPath =
-    findSourceObjectMetadataIdsWithHiddenPath(request);
+    findSourceObjectMetadataIdsWithHiddenPath({
+      request,
+      unreadableFieldMetadataIds,
+    });
 
   return findRelatedRecordPathsExtendingAccess(request).flatMap(
     ({ isInherent, sourceFlatObjectMetadata }) => {
@@ -76,6 +84,7 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
               workspaceMembers,
               flatFieldMetadataMaps,
               visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
+              unreadableFieldMetadataIds,
             })
           : []),
       ];

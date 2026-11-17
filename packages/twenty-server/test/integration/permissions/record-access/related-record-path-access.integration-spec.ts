@@ -289,6 +289,21 @@ describe('Record access through related record paths', () => {
     isProjectRuleRoleDeleted = true;
   };
 
+  const setProjectTasksReadability = async (canReadFieldValue: false | null) =>
+    upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId: (await findOneRoleByLabel({ label: 'Member' })).id,
+        fieldPermissions: [
+          {
+            objectMetadataId: projectObjectMetadataId,
+            fieldMetadataId: projectTasksFieldMetadataId,
+            canReadFieldValue,
+          },
+        ],
+      },
+    });
+
   const runAndWaitForJobs = async (operation: {
     query: DocumentNode;
     variables: Record<string, unknown>;
@@ -661,22 +676,6 @@ describe('Record access through related record paths', () => {
   });
 
   it('should not follow the path from a relation the reader cannot read', async () => {
-    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-    const setProjectTasksReadability = (canReadFieldValue: false | null) =>
-      upsertFieldPermissions({
-        expectToFail: false,
-        input: {
-          roleId: memberRoleId,
-          fieldPermissions: [
-            {
-              objectMetadataId: projectObjectMetadataId,
-              fieldMetadataId: projectTasksFieldMetadataId,
-              canReadFieldValue,
-            },
-          ],
-        },
-      });
-
     await setProjectTasksReadability(false);
 
     try {
@@ -689,21 +688,6 @@ describe('Record access through related record paths', () => {
   });
 
   it('should still grant through another path from the same source object when one is hidden', async () => {
-    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-    const setProjectTasksReadability = (canReadFieldValue: false | null) =>
-      upsertFieldPermissions({
-        expectToFail: false,
-        input: {
-          roleId: memberRoleId,
-          fieldPermissions: [
-            {
-              objectMetadataId: projectObjectMetadataId,
-              fieldMetadataId: projectTasksFieldMetadataId,
-              canReadFieldValue,
-            },
-          ],
-        },
-      });
     const projectReviewTasksField = await createRelationBetweenObjects({
       objectMetadataId: projectObjectMetadataId,
       targetObjectMetadataId: taskObjectMetadataId,

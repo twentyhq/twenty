@@ -26,7 +26,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   buildEntrySQLCondition,
   canRelatedRecordPathExtendAccessToObject,
   arePrivateRecordsApplicable,
-  isRelatedRecordPathHidden,
+  unreadableFieldMetadataIds,
   isUncorrelated = false,
 }: {
   workspaceId: string;
@@ -40,9 +40,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   arePrivateRecordsApplicable: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
-  isRelatedRecordPathHidden: (
-    resolvedPath: ResolvedRelatedRecordPath,
-  ) => boolean;
+  unreadableFieldMetadataIds: Set<string>;
   isUncorrelated?: boolean;
 }): SQLCondition | boolean => {
   const resolvedRelatedRecordPaths = isAccessGroupsEnabled({
@@ -63,7 +61,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     targetTableAlias: string;
     visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
-    if (isRelatedRecordPathHidden(resolvedPath)) {
+    if (unreadableFieldMetadataIds.has(resolvedPath.hops[0].relationFieldMetadataId)) {
       return false;
     }
 

@@ -53,7 +53,7 @@ import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/rel
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
-import { isRelationFieldUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/is-relation-field-unreadable-by-principals.util';
+import { findFieldMetadataIdsUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/find-field-metadata-ids-unreadable-by-principals.util';
 import { findSourceObjectMetadataIdsWithHiddenPath } from 'src/engine/permissions/internal/related-record-path/utils/find-source-object-metadata-ids-with-hidden-path.util';
 import {
   type BuildEntrySQLCondition,
@@ -371,8 +371,13 @@ export class RecordPermissionsReadService {
       return sqlCondition;
     }
 
+    const unreadableFieldMetadataIds =
+      findFieldMetadataIdsUnreadableByPrincipals(objectAccessRequest);
     const sourceObjectMetadataIdsWithHiddenPath =
-      findSourceObjectMetadataIdsWithHiddenPath(objectAccessRequest);
+      findSourceObjectMetadataIdsWithHiddenPath({
+        request: objectAccessRequest,
+        unreadableFieldMetadataIds,
+      });
 
     return combineSQLConditionOutcomesWithOr([
       sqlCondition,
@@ -380,20 +385,16 @@ export class RecordPermissionsReadService {
         ...objectAccessRequest,
         tableAlias,
         isUncorrelated: true,
-        // the stored groups skip a source object with a hidden path, so its other paths grant through the full source condition
+        unreadableFieldMetadataIds,
         buildEntrySQLCondition: (entry) =>
           entry.tableAlias !== tableAlias &&
-          (sourceObjectMetadataIdsWithHiddenPath.has(
-            entry.flatObjectMetadata.id,
-          )
-            ? this.buildEntrySQLCondition({
-                ...objectAccessRequest,
-                ...entry,
-              })
-            : this.buildRecordShareOrCreatorEntrySQLCondition({
-                ...objectAccessRequest,
-                ...entry,
-              })),
+          this.buildUncorrelatedPathEntrySQLCondition({
+            ...objectAccessRequest,
+            ...entry,
+            hasHiddenPath: sourceObjectMetadataIdsWithHiddenPath.has(
+              entry.flatObjectMetadata.id,
+            ),
+          }),
       }),
     ]);
   }
@@ -755,10 +756,15 @@ export class RecordPermissionsReadService {
     tableAlias,
     buildEntrySQLCondition,
     isUncorrelated,
+    unreadableFieldMetadataIds = findFieldMetadataIdsUnreadableByPrincipals({
+      principals,
+      metadataMaps,
+    }),
   }: PermissionsObjectAccessRequest & {
     tableAlias: string;
     buildEntrySQLCondition: BuildEntrySQLCondition;
     isUncorrelated?: boolean;
+    unreadableFieldMetadataIds?: Set<string>;
   }): SQLCondition | boolean {
     return buildRelatedRecordPathJoinSQLCondition({
       workspaceId: principals.workspaceId,
@@ -767,13 +773,7 @@ export class RecordPermissionsReadService {
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
-      isRelatedRecordPathHidden: ({ sourceFlatObjectMetadata, hops }) =>
-        isRelationFieldUnreadableByPrincipals({
-          principals,
-          metadataMaps,
-          flatObjectMetadata: sourceFlatObjectMetadata,
-          relationFieldMetadataId: hops[0].relationFieldMetadataId,
-        }),
+      unreadableFieldMetadataIds,
       canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
         canRelatedRecordPathExtendAccessToObject({
           principals,
@@ -788,6 +788,19 @@ export class RecordPermissionsReadService {
           operationType,
         }),
     });
+  }
+
+  // the stored groups skip a source object with a hidden path, so its readable paths need the full source condition
+  private buildUncorrelatedPathEntrySQLCondition({
+    hasHiddenPath,
+    ...request
+  }: PermissionsObjectAccessRequest & {
+    tableAlias: string;
+    hasHiddenPath: boolean;
+  }): SQLCondition | boolean {
+    return hasHiddenPath
+      ? this.buildEntrySQLCondition(request)
+      : this.buildRecordShareOrCreatorEntrySQLCondition(request);
   }
 
   private buildRecordShareOrCreatorEntrySQLCondition({

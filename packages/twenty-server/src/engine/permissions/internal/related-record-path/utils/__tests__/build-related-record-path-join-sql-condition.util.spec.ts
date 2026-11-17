@@ -194,8 +194,7 @@ const buildAttachmentCondition = ({
     tableAlias: 'attachment',
     metadataMaps: buildMetadataMaps(metadataMapsArgs),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
-    isRelatedRecordPathHidden: ({ hops }) =>
-      hiddenRelationFieldIds.includes(hops[0].relationFieldMetadataId),
+    unreadableFieldMetadataIds: new Set(hiddenRelationFieldIds),
     canRelatedRecordPathExtendAccessToObject: (flatObjectMetadata) =>
       !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
     arePrivateRecordsApplicable: (flatObjectMetadata) =>
@@ -415,7 +414,7 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
         buildEntrySQLCondition: buildEntrySQLConditionFrom({
           company: true,
         }),
-        isRelatedRecordPathHidden: () => false,
+        unreadableFieldMetadataIds: new Set(),
         canRelatedRecordPathExtendAccessToObject: () => true,
         arePrivateRecordsApplicable: () => false,
       }),
