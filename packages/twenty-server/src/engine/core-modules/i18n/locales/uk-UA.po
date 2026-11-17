@@ -724,6 +724,11 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "Власник облікового запису для компаній"
 
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "Облікові записи з доступом до панелі адміністратора або можливістю видавати себе за іншого користувача не можуть приєднатися до робочого простору через SSO. Прийміть запрошення за допомогою іншого способу входу."
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -1333,6 +1338,11 @@ msgstr "Сталася несподівана помилка."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "Сталася невідома помилка календаря."
+
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "Для цієї електронної адреси вже існує непідтверджений обліковий запис. Підтвердьте його електронну адресу або скиньте пароль, перш ніж прийняти запрошення через SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10592,6 +10602,11 @@ msgstr "Батьківську групу предикатів дозволів 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "Батьківську групу фільтрів перегляду не знайдено"
+
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "parentId і folderId мають збігатися. folderId застарілий, використовуйте parentId."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

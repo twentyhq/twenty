@@ -5908,7 +5908,7 @@ msgstr "Kortbetaling er for øyeblikket utilgjengelig. Kontroller Stripe-konfigu
 #. js-lingui-id: VbL9yf
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Cards grouped by a Select field"
-msgstr ""
+msgstr "Kort gruppert etter et valgfelt"
 
 #. js-lingui-id: M1RLfx
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -6069,7 +6069,6 @@ msgstr "Kanaler"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "Diagram"
 
@@ -6077,6 +6076,11 @@ msgstr "Diagram"
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
 msgstr "Diagramtype"
+
+#. js-lingui-id: A4tHrb
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
+msgid "Charts"
+msgstr "Diagrammer"
 
 #. js-lingui-id: rlwve5
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -7028,7 +7032,7 @@ msgstr "Fellesskap - Innstillinger"
 #. js-lingui-id: SScVmJ
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Compact list"
-msgstr ""
+msgstr "Kompakt liste"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -15296,11 +15300,6 @@ msgstr "HTTP-forespørsel"
 msgid "HTTP request failed"
 msgstr "HTTP-forespørsel mislyktes"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "HTTP-forespørsler i kjøretiden for logikkfunksjoner"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15647,7 +15646,7 @@ msgstr "Importer nye hendelser fra denne kontoen"
 #. js-lingui-id: 4Ljmum
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr ""
+msgstr "Importer forekomster av gjentakende Google Kalender-møter bare opptil 90 dager frem i tid, og importer senere forekomster når de kommer innenfor 90 dager."
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -15662,7 +15661,7 @@ msgstr "Importer eller legg til MCP-konfigurasjonen fra JetBrains-innstillingene
 #. js-lingui-id: 8zGGat
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import recurring meetings 90 days ahead"
-msgstr ""
+msgstr "Importer gjentakende møter 90 dager frem i tid"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -17086,11 +17085,11 @@ msgstr "oppsett"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -21994,6 +21993,7 @@ msgstr "Opprinnelig melding er ikke tilgjengelig"
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23952,11 +23952,6 @@ msgstr "Velg oppføringer"
 msgid "Record sharing"
 msgstr "Deling av oppføringer"
 
-#. js-lingui-id: J9Cfll
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Record Table"
-msgstr "Oppføringstabell"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -24037,7 +24032,7 @@ msgstr "Poster"
 #. js-lingui-id: wgYk8q
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
-msgstr ""
+msgstr "Oppføringer etter dato"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24199,7 +24194,7 @@ msgstr "Relaterte oppføringer"
 #. js-lingui-id: ZwRDRN
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Related Records Widget"
-msgstr ""
+msgstr "Widget for relaterte oppføringer"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -25219,7 +25214,7 @@ msgstr "rader"
 #. js-lingui-id: cXIbmh
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Rows and columns"
-msgstr ""
+msgstr "Rader og kolonner"
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -26774,11 +26769,6 @@ msgstr "Send test-e-post"
 msgid "Send to Inbox"
 msgstr "Send til innboks"
 
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "Send HTTP-forespørsler for arbeidsflyter, testforespørsler og HTTP-verktøyet for KI-agenten gjennom driveren for logikkfunksjoner, som kjører dem i en isolert Lambda når logikkfunksjoner kjøres i Lambda."
-
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -28003,11 +27993,6 @@ msgstr "Frittstående"
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Standard"
-
-#. js-lingui-id: 9oJdah
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Standard widgets"
-msgstr "Standardwidgeter"
 
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -29910,7 +29895,7 @@ msgstr "Denne leverandøren er innebygd. Angi API-nøkkelen fra siden dens."
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "This record"
-msgstr ""
+msgstr "Denne oppføringen"
 
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -32469,7 +32454,6 @@ msgstr "vis"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "View"
 msgstr "Vis"
@@ -32612,6 +32596,7 @@ msgstr "Leser"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "Visninger"
