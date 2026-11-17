@@ -84,7 +84,6 @@ export type QueryBuilderContext = {
     queryBuilder: WorkspaceSelectQueryBuilder,
   ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
-  // Compiles an expression of the computed field language, evaluated on the records of the builder's table
   buildComputedFieldExpressionSql: (args: {
     expression: string;
     alias: string;
@@ -353,8 +352,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
   }
 
-  // Keeps, per parent record, the records the filter, order and limit select.
-  // Whatever else the statement asks for applies inside them.
+  // Other conditions of the statement apply within each parent's selected records
   async whereInRecordsPerParent({
     filter,
     orderBy,
