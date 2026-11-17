@@ -1,9 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import {
-  validateNavigationMenuItemParentType,
-  validateNavigationMenuItemTypeChange,
-} from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
+import { validateNavigationMenuItemHierarchy } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
 
 const isAllowed = ({
   type,
@@ -11,12 +8,12 @@ const isAllowed = ({
 }: {
   type: NavigationMenuItemType;
   parentType: NavigationMenuItemType;
-}) => validateNavigationMenuItemParentType({ type, parentType }).length === 0;
+}) => validateNavigationMenuItemHierarchy({ type, parentType }).length === 0;
 
-describe('validateNavigationMenuItemParentType', () => {
+describe('validateNavigationMenuItemHierarchy', () => {
   it('should allow any item at the root', () => {
     expect(
-      validateNavigationMenuItemParentType({
+      validateNavigationMenuItemHierarchy({
         type: NavigationMenuItemType.TAB,
         parentType: undefined,
       }),
@@ -106,12 +103,10 @@ describe('validateNavigationMenuItemParentType', () => {
       }),
     ).toBe(false);
   });
-});
 
-describe('validateNavigationMenuItemTypeChange', () => {
   it('should accept a new type that fits its parent and children', () => {
     expect(
-      validateNavigationMenuItemTypeChange({
+      validateNavigationMenuItemHierarchy({
         type: NavigationMenuItemType.SECTION,
         parentType: NavigationMenuItemType.TAB,
         childTypes: [
@@ -124,7 +119,7 @@ describe('validateNavigationMenuItemTypeChange', () => {
 
   it('should refuse a new type its parent cannot hold', () => {
     expect(
-      validateNavigationMenuItemTypeChange({
+      validateNavigationMenuItemHierarchy({
         type: NavigationMenuItemType.TAB,
         parentType: NavigationMenuItemType.TAB,
         childTypes: [],
@@ -134,7 +129,7 @@ describe('validateNavigationMenuItemTypeChange', () => {
 
   it('should refuse a new type that cannot hold its children', () => {
     expect(
-      validateNavigationMenuItemTypeChange({
+      validateNavigationMenuItemHierarchy({
         type: NavigationMenuItemType.SECTION,
         parentType: undefined,
         childTypes: [NavigationMenuItemType.SECTION],

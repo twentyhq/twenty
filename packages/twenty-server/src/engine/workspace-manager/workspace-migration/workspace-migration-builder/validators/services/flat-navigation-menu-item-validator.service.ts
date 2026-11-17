@@ -6,10 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NAVIGATION_MENU_ITEM_CONTAINER_TYPES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/navigation-menu-item-container-types.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import {
-  validateNavigationMenuItemParentType,
-  validateNavigationMenuItemTypeChange,
-} from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
+import { validateNavigationMenuItemHierarchy } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
@@ -62,7 +59,7 @@ export class FlatNavigationMenuItemValidatorService {
       )
       .map((navigationMenuItem) => navigationMenuItem.type);
 
-    return validateNavigationMenuItemTypeChange({
+    return validateNavigationMenuItemHierarchy({
       type: toFlatNavigationMenuItem.type,
       parentType: parentNavigationMenuItem?.type,
       childTypes,
@@ -249,7 +246,7 @@ export class FlatNavigationMenuItemValidatorService {
       }
 
       validationResult.errors.push(
-        ...validateNavigationMenuItemParentType({
+        ...validateNavigationMenuItemHierarchy({
           type: flatNavigationMenuItem.type,
           parentType: (
             referencedParentInOptimistic ?? referencedParentInRemaining
@@ -400,7 +397,7 @@ export class FlatNavigationMenuItemValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateNavigationMenuItemParentType({
+      ...validateNavigationMenuItemHierarchy({
         type: toFlatNavigationMenuItem.type,
         parentType: referencedParentNavigationMenuItem?.type,
       }),

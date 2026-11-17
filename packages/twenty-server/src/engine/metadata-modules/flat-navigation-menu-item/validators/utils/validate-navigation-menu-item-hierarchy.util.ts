@@ -17,7 +17,7 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
   ],
 };
 
-export const validateNavigationMenuItemParentType = ({
+const getParentTypeErrors = ({
   type,
   parentType,
 }: {
@@ -44,18 +44,18 @@ export const validateNavigationMenuItemParentType = ({
   ];
 };
 
-export const validateNavigationMenuItemTypeChange = ({
+export const validateNavigationMenuItemHierarchy = ({
   type,
   parentType,
-  childTypes,
+  childTypes = [],
 }: {
-  type: NavigationMenuItemType;
+  type: NavigationMenuItemType | undefined;
   parentType: NavigationMenuItemType | undefined;
-  childTypes: NavigationMenuItemType[];
+  childTypes?: NavigationMenuItemType[];
 }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] => [
-  ...validateNavigationMenuItemParentType({ type, parentType }),
+  ...getParentTypeErrors({ type, parentType }),
   ...childTypes.flatMap((childType) =>
-    validateNavigationMenuItemParentType({
+    getParentTypeErrors({
       type: childType,
       parentType: type,
     }),
