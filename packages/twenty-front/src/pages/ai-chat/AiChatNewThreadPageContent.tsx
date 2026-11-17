@@ -1,6 +1,8 @@
+import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { AiChatCurrentThreadInstance } from '@/ai/components/AiChatCurrentThreadInstance';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
@@ -27,12 +29,19 @@ export const AiChatNewThreadPageContent = ({
   showInformationBanner = true,
 }: AiChatNewThreadPageContentProps) => (
   <PageCardLayout
-    header={<AiChatPageHeader actionButton={headerActions} />}
+    header={
+      <AiChatPageHeader
+        icon={<InboxNewThreadListToggle />}
+        actionButton={headerActions}
+      />
+    }
     showInformationBanner={showInformationBanner}
   >
     <StyledChatContainer>
       <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-        <AiChatTab />
+        <AiChatCurrentThreadInstance>
+          <AiChatTab />
+        </AiChatCurrentThreadInstance>
       </AiChatSurfaceContext.Provider>
     </StyledChatContainer>
   </PageCardLayout>

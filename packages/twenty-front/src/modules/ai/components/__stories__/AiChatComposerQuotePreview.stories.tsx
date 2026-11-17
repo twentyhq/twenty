@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -11,12 +10,8 @@ import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const quotedSource: AiChatQuotedMessageSource = {
   status: 'available',
-  messageId: 'security-review',
   authorName: 'Marco Rossi',
-  authorAvatar: (
-    <Avatar name="Marco Rossi" colorSeed="marco" size="sm" shape="circle" />
-  ),
-  excerpt: 'Their procurement asked for a **security review**.',
+  excerpt: 'On it. Their procurement asked for a security review too.',
 };
 
 const meta: Meta<typeof AiChatComposerQuotePreview> = {

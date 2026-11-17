@@ -99,12 +99,14 @@ export const useSignUpInNewWorkspace = () => {
         return true;
       }
 
-      await redirectToWorkspaceDomain(
-        getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
-        AppPath.Verify,
-        { loginToken },
-        '_self',
-      );
+      await redirectToWorkspaceDomain({
+        baseUrl: getWorkspaceUrl(
+          data.signUpInNewWorkspace.workspace.workspaceUrls,
+        ),
+        pathname: AppPath.Verify,
+        searchParams: { loginToken },
+        target: '_self',
+      });
 
       return true;
     } catch (error) {

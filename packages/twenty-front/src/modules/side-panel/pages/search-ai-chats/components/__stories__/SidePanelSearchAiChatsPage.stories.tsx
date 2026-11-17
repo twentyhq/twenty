@@ -1,3 +1,4 @@
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -13,16 +14,18 @@ import {
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -170,6 +173,7 @@ const getChatPageResponse = ({
           hasPreviousPage: false,
           startCursor: threads.at(0)?.id ?? null,
           endCursor: nextPageCursor ?? threads.at(-1)?.id ?? null,
+          lastLoadedActivityAt: null,
         },
         totalCount: threads.length,
       },
@@ -360,12 +364,18 @@ const meta = {
       });
     }
 
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: RECENT_THREAD_IDS,
-      hasNextPage: true,
-      endCursor: RECENT_CHATS_CURSOR,
-    });
-    jotaiStore.set(agentChatThreadParticipantsState.atom, {});
+    jotaiStore.set(
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: RECENT_THREAD_IDS,
+        hasNextPage: true,
+        endCursor: RECENT_CHATS_CURSOR,
+        lastLoadedActivityAt: null,
+      },
+    );
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,
@@ -405,7 +415,7 @@ const meta = {
       }),
     );
     jotaiStore.set(currentAiChatThreadState.atom, CURRENT_THREAD_ID);
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
     jotaiStore.set(sidePanelSearchState.atom, '');
@@ -614,16 +624,26 @@ export const OpenChatWithKeyboard: Story = {
     await expect(
       await canvas.findByText('Conversation opened in the side panel'),
     ).toBeVisible();
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        SECOND_THREAD_ID,
-      ),
-    );
+    await waitFor(() => {
+      const askAiPageId = jotaiStore
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.pageId;
+
+      assertIsDefinedOrThrow(askAiPageId);
+
+      expect(
+        jotaiStore.get(
+          askAiSidePanelThreadIdComponentState.atomFamily({
+            instanceId: askAiPageId,
+          }),
+        ),
+      ).toBe(SECOND_THREAD_ID);
+    });
     await expect(
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);
     await expect(
-      jotaiStore.get(agentChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
+      jotaiStore.get(aiChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
     ).toBe(PRESERVED_DRAFT);
   },
 };
@@ -672,7 +692,7 @@ export const LeaveWhileOpening: Story = {
     await waitFor(() =>
       expect(
         jotaiStore.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
+          aiChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
         ),
       ).toMatchObject({
         id: FIRST_THREAD_ID,
@@ -797,7 +817,12 @@ export const FailedSearch: Story = {
 
 export const NoChatsYet: Story = {
   beforeEach: () => {
-    jotaiStore.set(agentChatThreadListState.atom, null);
+    jotaiStore.set(
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
+      ),
+      null,
+    );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -806,11 +831,17 @@ export const NoChatsYet: Story = {
       await canvas.findByRole('status', { name: 'Loading chats...' }),
     ).toBeVisible();
 
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: [],
-      hasNextPage: false,
-      endCursor: null,
-    });
+    jotaiStore.set(
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: [],
+        hasNextPage: false,
+        endCursor: null,
+        lastLoadedActivityAt: null,
+      },
+    );
 
     await expect(await canvas.findByText('No chats yet')).toBeVisible();
 

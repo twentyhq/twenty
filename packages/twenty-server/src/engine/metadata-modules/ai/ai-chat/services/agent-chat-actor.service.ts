@@ -194,17 +194,22 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    const { sender } = await this.resolveMessage({
-      workspaceId,
-      threadId,
-      turnId: toolCallMessage.turnId,
+    const turnPromptMessage = await this.messages.findOne(workspaceId, {
+      where: {
+        threadId,
+        turnId: toolCallMessage.turnId,
+        role: AgentMessageRole.USER,
+      },
+      select: ['senderApplicationId'],
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
     const request = workspaceAuthContextStorage.getStore();
     if (
       !isDefined(request) ||
       !isUserAuthContext(request) ||
       request.workspace.id !== workspaceId ||
-      (request.application?.id ?? null) !== sender.applicationId
+      (request.application?.id ?? null) !==
+        (turnPromptMessage?.senderApplicationId ?? null)
     ) {
       throw new AiException(
         'Resolving this tool call requires the original application context',

@@ -6,9 +6,10 @@ import {
   APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
   buildApplicationGrantRoleFromToFlatEntityMaps,
 } from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-from-to-flat-entity-maps.util';
-import { findApplicationGrantRoleFlatRoleTarget } from 'src/engine/core-modules/application/application-grant-role/utils/find-application-grant-role-flat-role-target.util';
 import { canApplicationHaveGrantRole } from 'src/engine/core-modules/application/application-grant-role/utils/can-application-have-grant-role.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -30,9 +31,11 @@ export class ApplicationGrantRoleService {
   async upsertGrantRole({
     workspaceId,
     applicationId,
+    isRequestedRoleDeclaredWithLegacyProperties,
   }: {
     workspaceId: string;
     applicationId: string;
+    isRequestedRoleDeclaredWithLegacyProperties: boolean;
   }): Promise<void> {
     const grantRoleSources = await this.findGrantRoleSources({
       workspaceId,
@@ -56,6 +59,14 @@ export class ApplicationGrantRoleService {
       this.logger.log(
         `Application ${flatApplication.universalIdentifier} has no default role in workspace ${workspaceId}, it gets no grant role`,
       );
+
+      if (isDefined(grantFlatRole)) {
+        await this.deleteFlatGrantRole({
+          workspaceId,
+          grantFlatRole,
+          workspaceCustomFlatApplication,
+        });
+      }
 
       return;
     }
@@ -94,6 +105,11 @@ export class ApplicationGrantRoleService {
               workspaceCustomApplicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               flatEntityMaps,
+              // TODO(@charlesBochet): remove with the legacy role properties
+              flatRowLevelPermissionRuleMaps:
+                isRequestedRoleDeclaredWithLegacyProperties
+                  ? flatEntityMaps.flatRowLevelPermissionRuleMaps
+                  : undefined,
               now: new Date().toISOString(),
             }),
           // The builder mutates these maps, so it must not get the cache's own
@@ -128,8 +144,26 @@ export class ApplicationGrantRoleService {
       return;
     }
 
-    const { grantFlatRole, workspaceCustomFlatApplication } = grantRoleSources;
+    await this.deleteFlatGrantRole({
+      workspaceId,
+      grantFlatRole: grantRoleSources.grantFlatRole,
+      workspaceCustomFlatApplication:
+        grantRoleSources.workspaceCustomFlatApplication,
+    });
+  }
 
+  private async deleteFlatGrantRole({
+    workspaceId,
+    grantFlatRole,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    grantFlatRole: FlatRole;
+    workspaceCustomFlatApplication: Pick<
+      FlatApplication,
+      'universalIdentifier'
+    >;
+  }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -167,17 +201,22 @@ export class ApplicationGrantRoleService {
         { workspaceId },
       );
 
-    const { flatApplicationMaps, ...flatEntityMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-        'flatRoleMaps',
-        'flatRoleTargetMaps',
-        'flatObjectPermissionMaps',
-        'flatFieldPermissionMaps',
-        'flatRolePermissionFlagMaps',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-      ]);
+    const {
+      flatApplicationMaps,
+      flatRoleTargetByApplicationIdMaps,
+      ...flatEntityMaps
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatApplicationMaps',
+      'flatRoleTargetByApplicationIdMaps',
+      'flatRoleMaps',
+      'flatRoleTargetMaps',
+      'flatObjectPermissionMaps',
+      'flatFieldPermissionMaps',
+      'flatRolePermissionFlagMaps',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'flatRowLevelPermissionRuleMaps',
+    ]);
 
     const flatApplication = findActiveFlatApplicationById(
       flatApplicationMaps,
@@ -194,10 +233,8 @@ export class ApplicationGrantRoleService {
       return undefined;
     }
 
-    const grantFlatRoleTarget = findApplicationGrantRoleFlatRoleTarget({
-      flatRoleTargetMaps: flatEntityMaps.flatRoleTargetMaps,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    });
+    const grantFlatRoleTarget =
+      flatRoleTargetByApplicationIdMaps[flatApplication.id];
 
     const grantFlatRole = isDefined(grantFlatRoleTarget)
       ? findFlatEntityByUniversalIdentifier({

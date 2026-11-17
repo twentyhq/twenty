@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { type MessagingProviderConversationStyle } from 'twenty-shared/application';
 
+import { ADD_MARK_THREAD_AS_READ_TO_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-mark-thread-as-read-to-messaging-provider-upgrade-command-name.constant';
 import { ADD_MESSAGING_PROVIDER_CONVERSATION_STYLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-messaging-provider-conversation-style-upgrade-command-name.constant';
 import { ADD_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-messaging-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -41,6 +42,13 @@ export class MessagingProviderEntity
 
   @Column({ nullable: true, type: 'uuid' })
   sendMessageLogicFunctionUniversalIdentifier: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_MARK_THREAD_AS_READ_TO_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  markThreadAsReadLogicFunctionUniversalIdentifier: string | null;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

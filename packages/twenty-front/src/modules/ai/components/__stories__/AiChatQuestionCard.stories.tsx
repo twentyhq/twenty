@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
@@ -5,9 +6,8 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 import { styled } from '@linaria/react';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -33,7 +33,7 @@ const EMAIL_TYPE_QUESTION = {
   ],
 };
 
-const singleQuestion: AgentChatPendingQuestion = {
+const singleQuestion: AiChatPendingQuestion = {
   toolCallId: 'call-1',
   kind: 'question',
   question: EMAIL_TYPE_QUESTION,
@@ -46,13 +46,13 @@ const TONE_QUESTION = {
 };
 
 // calls asked before ask_question took one question at a time
-const multipleQuestions: AgentChatPendingQuestion = {
+const multipleQuestions: AiChatPendingQuestion = {
   toolCallId: 'call-2',
   kind: 'questions',
   questions: [EMAIL_TYPE_QUESTION, TONE_QUESTION],
 };
 
-const longQuestion: AgentChatPendingQuestion = {
+const longQuestion: AiChatPendingQuestion = {
   toolCallId: 'call-3',
   kind: 'questions',
   questions: [
@@ -71,7 +71,7 @@ const longQuestion: AgentChatPendingQuestion = {
   ],
 };
 
-const multiSelectQuestion: AgentChatPendingQuestion = {
+const multiSelectQuestion: AiChatPendingQuestion = {
   toolCallId: 'call-4',
   kind: 'question',
   question: {
@@ -91,7 +91,6 @@ const StoreSeederEffect = () => {
 
   useEffect(() => {
     store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
   }, [store]);
 
   return null;
@@ -101,6 +100,7 @@ const meta: Meta<typeof AiChatQuestionCard> = {
   title: 'Modules/AiChat/AiChatQuestionCard',
   component: AiChatQuestionCard,
   decorators: [
+    AiChatInstanceDecorator,
     (Story) => (
       <StyledContainer>
         <StoreSeederEffect />

@@ -1,13 +1,16 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { aiChatNonLastMessageIdsFamilySelector } from '@/ai/states/selectors/aiChatNonLastMessageIdsFamilySelector';
 
 export const AiChatNonLastMessageIdsList = () => {
-  const agentChatNonLastMessageIds = useAtomStateValue(
-    agentChatNonLastMessageIdsSelector,
+  const { threadId } = useAiChatInstanceOrThrow();
+  const aiChatNonLastMessageIds = useAtomFamilySelectorValue(
+    aiChatNonLastMessageIdsFamilySelector,
+    threadId,
   );
 
-  return agentChatNonLastMessageIds.map((messageId) => (
+  return aiChatNonLastMessageIds.map((messageId) => (
     <AiChatMessage key={messageId} messageId={messageId} />
   ));
 };

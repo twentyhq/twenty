@@ -97,15 +97,6 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 1,
   },
-  workflowsFolderAllWorkflowVersions: {
-    universalIdentifier: '20202020-b00a-4b0a-8b0a-c0aba11c000a',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.views.allWorkflowVersions
-        .universalIdentifier,
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
-    position: 2,
-  },
 } as const;
 
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
@@ -123,5 +114,4 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',
-  workflowsFolderAllWorkflowVersions: 'gray',
 };

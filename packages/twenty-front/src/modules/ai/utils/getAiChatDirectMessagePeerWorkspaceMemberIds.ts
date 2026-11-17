@@ -1,0 +1,23 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+
+export const getAiChatDirectMessagePeerWorkspaceMemberIds = ({
+  thread,
+  currentWorkspaceMemberId,
+}: {
+  thread: Pick<
+    AiChatThreadRecord,
+    | 'directMessageFirstWorkspaceMemberId'
+    | 'directMessageSecondWorkspaceMemberId'
+  >;
+  currentWorkspaceMemberId: string | undefined;
+}) =>
+  [
+    thread.directMessageFirstWorkspaceMemberId,
+    thread.directMessageSecondWorkspaceMemberId,
+  ].filter(
+    (workspaceMemberId): workspaceMemberId is string =>
+      isDefined(workspaceMemberId) &&
+      workspaceMemberId !== currentWorkspaceMemberId,
+  );

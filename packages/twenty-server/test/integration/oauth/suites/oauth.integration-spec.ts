@@ -279,11 +279,13 @@ describe('OAuth (integration)', () => {
         $clientId: String!
         $redirectUrl: String!
         $state: String
+        $resource: String
       ) {
         authorizeApp(
           clientId: $clientId
           redirectUrl: $redirectUrl
           state: $state
+          resource: $resource
         ) {
           redirectUrl
         }
@@ -326,6 +328,159 @@ describe('OAuth (integration)', () => {
       );
 
       createdEntityIds.tokens.push(issuedToken.id);
+    });
+
+    describe('resource indicator', () => {
+      const authorizeForResource = (resource: string) =>
+        makeMetadataApiRequest({
+          query: authorizeAppMutation,
+          variables: {
+            clientId: testRegistration.oAuthClientId,
+            redirectUrl: testRegistration.oAuthRedirectUris[0],
+            resource,
+          },
+        });
+
+      const exchangeCodeForResource = ({
+        code,
+        resource,
+      }: {
+        code: string;
+        resource: string;
+      }) =>
+        postToken({
+          grant_type: 'authorization_code',
+          code,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+          redirect_uri: testRegistration.oAuthRedirectUris[0],
+          resource,
+        });
+
+      const authorizeForOwnMcpServer = async (): Promise<string> => {
+        const response = await authorizeForResource(`${baseUrl}/mcp`);
+
+        expect(response.body.errors).toBeUndefined();
+
+        const code = new URL(
+          response.body.data.authorizeApp.redirectUrl,
+        ).searchParams.get('code');
+
+        assertIsDefinedOrThrow(code);
+
+        const [issuedToken] = await ds.query(
+          `SELECT id FROM core."appToken" WHERE value = $1`,
+          [crypto.createHash('sha256').update(code).digest('hex')],
+        );
+
+        createdEntityIds.tokens.push(issuedToken.id);
+
+        return code;
+      };
+
+      it('should refuse to authorize a client for a resource this server does not serve', async () => {
+        const response = await authorizeForResource(
+          'https://mcp.attacker.example.com/mcp',
+        );
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors?.[0]?.message).toContain(
+          'Unknown resource',
+        );
+      });
+
+      it('should exchange a code for the resource it was authorized for', async () => {
+        const code = await authorizeForOwnMcpServer();
+
+        await exchangeCodeForResource({
+          code,
+          resource: `${baseUrl}/mcp`,
+        }).expect(200);
+      });
+
+      it('should refuse to exchange a code for another resource than it was authorized for', async () => {
+        const code = await authorizeForOwnMcpServer();
+
+        const response = await exchangeCodeForResource({
+          code,
+          resource: baseUrl,
+        }).expect(400);
+
+        expect(response.body.error).toBe('invalid_target');
+      });
+    });
+  });
+
+  describe('Client verification on the consent lookup', () => {
+    const findApplicationRegistrationByClientIdQuery = gql`
+      query FindApplicationRegistrationByClientId($clientId: String!) {
+        findApplicationRegistrationByClientId(clientId: $clientId) {
+          name
+          logoUrl
+          isVerified
+          isClaimingVerifiedClientName
+        }
+      }
+    `;
+
+    const lookUp = async (clientId: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: findApplicationRegistrationByClientIdQuery,
+          variables: { clientId },
+        },
+        null,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.findApplicationRegistrationByClientId;
+    };
+
+    it('should verify the Twenty CLI', async () => {
+      const metadata = await request(baseUrl)
+        .get('/.well-known/oauth-authorization-server')
+        .expect(200);
+
+      expect(await lookUp(metadata.body.cli_client_id)).toEqual({
+        name: 'Twenty CLI',
+        logoUrl: '/images/oauth-clients/twenty-cli.svg',
+        isVerified: true,
+        isClaimingVerifiedClientName: false,
+      });
+    });
+
+    it('should flag a self-registered client that calls itself the Twenty CLI', async () => {
+      const registration = await request(baseUrl)
+        .post('/oauth/register')
+        .send({
+          client_name: 'Twenty CLI',
+          redirect_uris: ['https://cli.example.com/callback'],
+        })
+        .expect(201);
+
+      const [createdRegistration] = await ds.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+        [registration.body.client_id],
+      );
+
+      createdEntityIds.registrations.push(createdRegistration.id);
+
+      expect(await lookUp(registration.body.client_id)).toEqual({
+        name: 'Twenty CLI',
+        logoUrl: null,
+        isVerified: false,
+        isClaimingVerifiedClientName: true,
+      });
+    });
+
+    it('should neither verify nor flag any other client', async () => {
+      expect(await lookUp(testRegistration.oAuthClientId)).toEqual({
+        name: testRegistration.name,
+        logoUrl: null,
+        isVerified: false,
+        isClaimingVerifiedClientName: false,
+      });
     });
   });
 
@@ -966,9 +1121,10 @@ describe('OAuth (integration)', () => {
   });
 
   describe('Per-user authorizations', () => {
-    const exchangeForTokens = async (
+    const exchangeForTokens = async ({
       scope = 'read write',
-    ): Promise<{
+      userId = TEST_USER_ID,
+    }: { scope?: string; userId?: string } = {}): Promise<{
       accessToken: string;
       refreshToken: string;
     }> => {
@@ -978,7 +1134,7 @@ describe('OAuth (integration)', () => {
       const tokenId = await insertAppToken(ds, {
         value: hashedCode,
         type: AppTokenType.AuthorizationCode,
-        userId: TEST_USER_ID,
+        userId,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
         context: {
@@ -1022,6 +1178,9 @@ describe('OAuth (integration)', () => {
         [TEST_USER_ID, testApplication.id],
       );
 
+    const waitForNextSecond = () =>
+      new Promise((resolve) => setTimeout(resolve, 1100));
+
     const revokeRefreshToken = (refreshToken: string) =>
       request(baseUrl)
         .post('/oauth/revoke')
@@ -1034,7 +1193,7 @@ describe('OAuth (integration)', () => {
 
     // 'read' alone, so the assertion fails if the declared scope is used instead of the granted one.
     it('should record the authorization with the scopes the user granted', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findAuthorization();
 
@@ -1060,10 +1219,11 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    it('should let the user authorize again after revoking', async () => {
+    it('should let the user authorize again after revoking, without reviving the revoked refresh token', async () => {
       const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
 
       await revokeRefreshToken(revokedRefreshToken);
+      await waitForNextSecond();
 
       const { refreshToken } = await exchangeForTokens();
 
@@ -1075,11 +1235,45 @@ describe('OAuth (integration)', () => {
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);
+
+      const revokedRefresh = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: revokedRefreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(revokedRefresh.body.error).toBe('invalid_grant');
+    });
+
+    it('should keep an earlier refresh token working when the user authorizes again without revoking', async () => {
+      const { refreshToken: earlierRefreshToken } = await exchangeForTokens();
+      const earlierAuthorization = await findAuthorization();
+
+      await waitForNextSecond();
+
+      const { refreshToken } = await exchangeForTokens({ scope: 'read' });
+
+      const authorization = await findAuthorization();
+
+      expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.lastAuthorizedAt).toEqual(
+        earlierAuthorization.lastAuthorizedAt,
+      );
+
+      for (const token of [earlierRefreshToken, refreshToken]) {
+        await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: token,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        }).expect(200);
+      }
     });
 
     // Deleting the row recreates the state of tokens minted before this table existed.
     it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
-      const { refreshToken } = await exchangeForTokens('read write');
+      const { refreshToken } = await exchangeForTokens({ scope: 'read write' });
 
       await deleteAuthorization();
 
@@ -1169,7 +1363,7 @@ describe('OAuth (integration)', () => {
       );
 
     it('should list the authorization to the user who granted it', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findListedAuthorization();
 
@@ -1222,6 +1416,120 @@ describe('OAuth (integration)', () => {
       );
 
       expect(secondRevoke.body.data.revokeApplicationAuthorization).toBe(false);
+    });
+
+    const LIST_WORKSPACE_AUTHORIZATIONS_OPERATION = {
+      query: gql`
+        query WorkspaceApplicationAuthorizations {
+          workspaceApplicationAuthorizations {
+            id
+            applicationId
+            userId
+            marketplaceAppUniversalIdentifier
+          }
+        }
+      `,
+    };
+
+    const revokeWorkspaceAuthorizationOperation = (
+      applicationAuthorizationId: string,
+    ) => ({
+      query: gql`
+        mutation RevokeWorkspaceApplicationAuthorization(
+          $applicationAuthorizationId: UUID!
+        ) {
+          revokeWorkspaceApplicationAuthorization(
+            applicationAuthorizationId: $applicationAuthorizationId
+          )
+        }
+      `,
+      variables: { applicationAuthorizationId },
+    });
+
+    const OTHER_MEMBER_USER_ID = USER_DATA_SEED_IDS.JONY;
+
+    const findOtherMemberAuthorization = async () => {
+      const response = await makeMetadataApiRequest(
+        LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.workspaceApplicationAuthorizations.find(
+        (authorization: { applicationId: string; userId: string }) =>
+          authorization.applicationId === testApplication.id &&
+          authorization.userId === OTHER_MEMBER_USER_ID,
+      );
+    };
+
+    afterEach(() =>
+      ds.query(
+        `DELETE FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [OTHER_MEMBER_USER_ID, testApplication.id],
+      ),
+    );
+
+    it('should list another member authorization to a user who manages applications', async () => {
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+
+      expect(await findOtherMemberAuthorization()).toEqual({
+        id: expect.any(String),
+        applicationId: testApplication.id,
+        userId: OTHER_MEMBER_USER_ID,
+        marketplaceAppUniversalIdentifier: null,
+      });
+      expect(await findListedAuthorization()).toBeUndefined();
+    });
+
+    it('should let a user who manages applications revoke another member authorization', async () => {
+      const { refreshToken } = await exchangeForTokens({
+        userId: OTHER_MEMBER_USER_ID,
+      });
+
+      const { id } = await findOtherMemberAuthorization();
+
+      const revokeResponse = await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeUndefined();
+      expect(
+        revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
+      ).toBe(true);
+
+      const tokenResponse = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(tokenResponse.body.error).toBe('invalid_grant');
+      expect(await findOtherMemberAuthorization()).toBeUndefined();
+    });
+
+    it('should refuse the workspace list and revoke to a member who does not manage applications', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      const listResponse = await makeMetadataApiRequest(
+        LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(listResponse.body.errors).toBeDefined();
+
+      const revokeResponse = await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeDefined();
+      expect(await findListedAuthorization()).toBeDefined();
     });
 
     it('should not let another user see or revoke the authorization', async () => {

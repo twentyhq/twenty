@@ -8,24 +8,40 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
+import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK } from '@/page-layout/constants/PageLayoutRecordIdentifierBarSideTrack';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledBar = styled.div`
+const StyledBar = styled.div<{ hasTabList: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   box-sizing: border-box;
-  display: flex;
+  column-gap: ${themeCssVariables.spacing[2]};
+  display: grid;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: ${({ hasTabList }) =>
+    hasTabList
+      ? `${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK} minmax(0, 1fr) ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK}`
+      : 'minmax(0, 1fr) auto'};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
-  justify-content: space-between;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
+`;
+
+const StyledTabsCell = styled.div`
+  align-self: stretch;
+  display: flex;
+  min-width: 0;
+`;
+
+const StyledCreatedAtCell = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
 `;
 
 const StyledIdentifier = styled.div`
@@ -42,6 +58,7 @@ type CoreObjectIdentifierBarProps = {
   namePlaceholder: string;
   onRename: (name: string) => Promise<boolean>;
   avatar?: ReactNode;
+  tabList?: ReactNode;
 };
 
 export const CoreObjectIdentifierBar = ({
@@ -51,6 +68,7 @@ export const CoreObjectIdentifierBar = ({
   onRename,
   isReadOnly = false,
   avatar,
+  tabList,
 }: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -85,7 +103,7 @@ export const CoreObjectIdentifierBar = ({
       };
 
   return (
-    <StyledBar>
+    <StyledBar hasTabList={isDefined(tabList)}>
       <StyledIdentifier>
         {avatar}
         <HeaderIdentifier
@@ -113,7 +131,10 @@ export const CoreObjectIdentifierBar = ({
           }
         />
       </StyledIdentifier>
-      <RecordIdentifierBarCreatedAt objectRecordId={recordId} />
+      {isDefined(tabList) && <StyledTabsCell>{tabList}</StyledTabsCell>}
+      <StyledCreatedAtCell>
+        <RecordIdentifierBarCreatedAt objectRecordId={recordId} />
+      </StyledCreatedAtCell>
     </StyledBar>
   );
 };

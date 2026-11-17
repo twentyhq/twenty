@@ -8,7 +8,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 import {
@@ -28,7 +28,7 @@ export class WorkflowTriggerJob {
   constructor(
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -63,7 +63,7 @@ export class WorkflowTriggerJob {
     payload: object;
   }): Promise<void> {
     const coreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
+      await this.coreWorkflowTriggerService.findCoreVersionById(
         workspaceId,
         coreWorkflowVersionId,
       );
@@ -97,11 +97,8 @@ export class WorkflowTriggerJob {
 
     if (
       isDefined(workspaceWorkflowVersionId) &&
-      (coreWorkflowVersion.workspaceWorkflowVersionId ??
-        (await this.workflowVersionCoreSyncService.findWorkspaceVersionIdByCoreVersionId(
-          workspaceId,
-          coreWorkflowVersionId,
-        ))) !== workspaceWorkflowVersionId
+      coreWorkflowVersion.workspaceWorkflowVersionId !==
+        workspaceWorkflowVersionId
     ) {
       this.captureDroppedDispatch(
         `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
@@ -125,14 +122,13 @@ export class WorkflowTriggerJob {
         data.workspaceId,
         data.workflowId,
       );
-    const coreWorkflowVersionId = isDefined(data.workspaceWorkflowVersionId)
-      ? (
-          await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
-            data.workspaceId,
-            data.workspaceWorkflowVersionId,
-          )
-        )?.id
-      : coreWorkflow?.lastPublishedCoreWorkflowVersionId;
+    const coreWorkflowVersionId =
+      await this.coreWorkflowTriggerService.resolveDispatchedCoreVersionId({
+        workspaceId: data.workspaceId,
+        workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
+        lastPublishedCoreWorkflowVersionId:
+          coreWorkflow?.lastPublishedCoreWorkflowVersionId,
+      });
 
     if (!isDefined(coreWorkflowVersionId)) {
       this.captureDroppedDispatch(

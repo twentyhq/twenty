@@ -11,9 +11,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
-} from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+} from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 
 const RELATION_TARGET_TABLE_ALIAS = 'relationTarget';
 
@@ -91,7 +91,7 @@ export const resolveRelationsInRecordFilter = async ({
           targetFlatObjectMetadata,
           targetColumnName,
           tableAlias: RELATION_TARGET_TABLE_ALIAS,
-          sqlCondition: renderRowLevelPermissionFilterToSql({
+          sqlCondition: renderRlsRecordFilterToSql({
             recordFilter: filterValue as RecordGqlOperationFilter,
             tableAlias: RELATION_TARGET_TABLE_ALIAS,
             objectMetadata: targetFlatObjectMetadata,

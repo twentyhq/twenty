@@ -1,5 +1,4 @@
 import { type EmailAttachment } from 'twenty-shared/types';
-import { type EmailDocument } from 'twenty-shared/utils';
 
 export type ComposeEmailParams = {
   recipients: {
@@ -8,7 +7,8 @@ export type ComposeEmailParams = {
     bcc?: string;
   };
   subject: string;
-  body: string | EmailDocument;
+  // An email document, validated by composeEmail: approved tool calls reach it unvalidated
+  body: unknown;
   connectedAccountId?: string;
   fromHandle?: string;
   files?: Array<EmailAttachment>;

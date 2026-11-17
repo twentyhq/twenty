@@ -10,7 +10,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SettingsValidationRuleExpressionEditor } from '@/validation-rules/components/SettingsValidationRuleExpressionEditor';
+import { ValidationRuleExpressionEditor } from '@/validation-rules/components/ValidationRuleExpressionEditor';
 import { SettingsValidationRuleNameForm } from '@/validation-rules/components/SettingsValidationRuleNameForm';
 import { SettingsValidationRulePreview } from '@/validation-rules/components/SettingsValidationRulePreview';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
@@ -89,7 +89,7 @@ export const SettingsValidationRuleForm = ({
             />
           }
           form={
-            <SettingsValidationRuleExpressionEditor
+            <ValidationRuleExpressionEditor
               value={values.expression}
               fields={fields}
               editorFields={editorFields}

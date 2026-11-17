@@ -2,10 +2,11 @@ import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
@@ -27,7 +28,7 @@ export const SidePanelAskAiHandoffEffect = ({
 
     // The inbox shows its own chat, which keeps the handoff pending; only the
     // onboarding chat ends there
-    if (isAiChatInboxPath(pathname)) {
+    if (isInboxPath(pathname)) {
       store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       return;
     }
@@ -44,7 +45,10 @@ export const SidePanelAskAiHandoffEffect = ({
     }
 
     onContinueChatFromFullWidth();
-    openAskAiPage({ resetNavigationStack: true });
+    openAskAiPage({
+      threadId: store.get(currentAiChatThreadState.atom) ?? undefined,
+      resetNavigationStack: true,
+    });
   }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
 
   return null;

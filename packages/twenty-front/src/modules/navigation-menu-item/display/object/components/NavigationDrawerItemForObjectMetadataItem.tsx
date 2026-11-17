@@ -24,7 +24,10 @@ import {
   StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -64,7 +67,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
-  const canReadSomeRecords = canReachSomeRecords({
+  const canReadSomeRecords = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,

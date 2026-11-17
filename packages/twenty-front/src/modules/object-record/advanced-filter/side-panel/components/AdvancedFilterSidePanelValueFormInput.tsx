@@ -239,7 +239,7 @@ export const AdvancedFilterSidePanelValueFormInput = ({
     );
   }
 
-  const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
+  const shouldUseUTCTimeZone = isWorkflowFindRecords;
   const timeZone = shouldUseUTCTimeZone ? WORKFLOW_TIMEZONE : undefined;
 
   return (

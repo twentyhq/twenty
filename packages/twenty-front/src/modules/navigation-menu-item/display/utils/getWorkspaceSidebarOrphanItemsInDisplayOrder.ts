@@ -1,5 +1,8 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -30,7 +33,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   includeInaccessibleObjectBackedItems = false,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.folderId))
+    .filter((item) => !isDefined(item.parentId))
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
@@ -76,7 +79,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       }
 
       if (
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: getObjectPermissionsForObject(
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,

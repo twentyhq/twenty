@@ -3,11 +3,11 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
+import { aiChatIsLoadingFamilySelector } from '@/ai/states/selectors/aiChatIsLoadingFamilySelector';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
@@ -19,19 +19,23 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatStandaloneError = () => {
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
-
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
+  const { threadId } = useAiChatInstanceOrThrow();
+  const aiChatIsLoading = useAtomFamilySelectorValue(
+    aiChatIsLoadingFamilySelector,
+    threadId,
   );
-  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+
+  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
+    threadId,
   });
 
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const aiChatHasMessage = useAtomFamilySelectorValue(
+    aiChatHasMessageFamilySelector,
+    threadId,
+  );
 
   const shouldRender =
-    !agentChatHasMessage && isDefined(agentChatError) && !agentChatIsLoading;
+    !aiChatHasMessage && isDefined(aiChatError) && !aiChatIsLoading;
 
   if (!shouldRender) {
     return null;
@@ -39,7 +43,7 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer error={agentChatError} />
+      <AiChatErrorRenderer error={aiChatError} />
     </StyledErrorContainer>
   );
 };

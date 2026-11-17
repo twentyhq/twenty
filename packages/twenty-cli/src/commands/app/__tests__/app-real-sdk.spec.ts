@@ -15,7 +15,7 @@ import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
-import { isArray } from '@sniptt/guards';
+import { isArray, isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
   afterAll,
@@ -73,9 +73,15 @@ const readManifestIdentifier = (variables: Record<string, unknown>) => {
 };
 
 let syncedManifest: unknown;
+const sourceUploadPaths = new Map<string, string>();
+const uploadedSources = new Map<string, string>();
 
 const server = await startTestServer((request, response) => {
   if (request.method === 'PUT') {
+    const path = sourceUploadPaths.get(request.path);
+    if (isDefined(path)) {
+      uploadedSources.set(path, request.body);
+    }
     return sendJson(response, 200, {});
   }
 
@@ -124,6 +130,12 @@ const server = await startTestServer((request, response) => {
 
   if (query.includes('createApplicationFileUploads')) {
     const files = isArray(variables.files) ? variables.files : [];
+    sourceUploadPaths.clear();
+    files.filter(isPlainObject).forEach((file, index) => {
+      if (file.fileFolder === 'Source' && isString(file.filePath)) {
+        sourceUploadPaths.set(`/upload/file-${index}`, file.filePath);
+      }
+    });
 
     return sendJson(response, 200, {
       data: {
@@ -155,6 +167,21 @@ const server = await startTestServer((request, response) => {
   }
 
   if (query.includes('exportApplication')) {
+    const components =
+      isPlainObject(syncedManifest) && isArray(syncedManifest.frontComponents)
+        ? syncedManifest.frontComponents
+        : [];
+    const sourcePaths = new Set(
+      components.filter(isPlainObject).flatMap((component) => {
+        if (!isArray(component.sourceFiles)) {
+          return [];
+        }
+        return component.sourceFiles
+          .filter(isPlainObject)
+          .map((file) => file.filePath)
+          .filter(isString);
+      }),
+    );
     return sendJson(response, 200, {
       data: {
         exportApplication: {
@@ -167,7 +194,11 @@ const server = await startTestServer((request, response) => {
           },
           manifest: syncedManifest,
           coverage: [],
-          files: [],
+          files: [...sourcePaths].map((path) => ({
+            folder: 'source',
+            path,
+            content: uploadedSources.get(path),
+          })),
         },
       },
     });
@@ -210,6 +241,8 @@ describe('app commands with CLI snapshots', () => {
     vi.stubEnv('TWENTY_REMOTE', '');
     vi.stubEnv('CI', '');
     server.requests.length = 0;
+    uploadedSources.clear();
+    sourceUploadPaths.clear();
   });
 
   afterEach(() => vi.unstubAllEnvs());

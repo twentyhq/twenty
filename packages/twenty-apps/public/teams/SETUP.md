@@ -1,4 +1,4 @@
-# Microsoft Teams setup
+# Teams setup
 
 ## Microsoft application
 
@@ -8,21 +8,24 @@
 2. Add a **Web** redirect URI:
    `https://<your-twenty-host>/auth/apps/callback`.
 3. Create a client secret. Set `MICROSOFT_CLIENT_ID` and
-   `MICROSOFT_CLIENT_SECRET` on the Microsoft Teams application registration in
+   `MICROSOFT_CLIENT_SECRET` on the Teams application registration in
    Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
 
-| Permission                         | Purpose                                                        |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `User.Read`                        | Identify the connected Microsoft account                       |
-| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes              |
-| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting and its subject |
-| `OnlineMeetingTranscript.Read.All` | List and download the transcripts of those meetings            |
+| Permission                         | Purpose                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| `User.Read`                        | Identify the connected Microsoft account                                            |
+| `User.ReadBasic.All`               | List and search the organization directory to link Teams users to workspace members |
+| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes                                   |
+| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting and its subject                      |
+| `OnlineMeetingTranscript.Read.All` | List and download the transcripts of those meetings                                 |
 
 The connection also requests `openid`, `profile`, `email`, and `offline_access`
 for account identity and refresh tokens. It uses the authorization code flow
-with PKCE through Twenty's connection provider.
+with PKCE through Twenty's connection provider. A permission added after a
+connection was created, such as `User.ReadBasic.All`, only takes effect once
+that connection is reconnected.
 
 These OAuth credentials are separate from the `TEAMS_BOT_*` credentials used by
 the chat Bot Connector. They are optional at registration so Teams can be
@@ -82,16 +85,22 @@ setting.
    `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
 3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
    Adding it claims the connection's Microsoft tenant for this workspace, so
-   activities from that tenant route here. Personal connections do not claim a
-   tenant, and a tenant can only be claimed by one workspace.
+   activities from that tenant route here, and links every directory user whose
+   email matches a workspace member. Personal connections do not claim a tenant,
+   and a tenant can only be claimed by one workspace. When another workspace
+   already holds the tenant, the connection is kept for transcripts and the app
+   settings page shows an error banner until that workspace disconnects and
+   this one reconnects.
 
 The route verifies the Bot Framework token on every activity and ignores
 activities from tenants no workspace has claimed. The bot answers direct
 messages, and channel or group messages that mention it. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
-member matches. Members who can manage roles can remove a link there; an
-account matched on email is linked again on its next message.
+member matches. Members who can manage roles can remove a link there, link a
+directory user by hand, or press **Auto-link by email** to match the whole
+directory again; an account matched on email is linked again on its next
+message or on the next auto-link run.
 
 ## Twenty registration and shared webhook
 
@@ -121,13 +130,12 @@ setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#sett
 
 ## Connect
 
-Open **Settings > Applications > Microsoft Teams > Settings**, select
+Open **Settings > Applications > Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 This adds a workspace-shared connection.
 
-Members can also add a personal connection from **Settings > App preferences**,
-which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. Each
-personal connection imports the meetings its account organizes, so every
+Members can also add a personal connection from **Settings > App preferences**.
+Each personal connection imports the meetings its account organizes, so every
 organizer connects their own account. Members can only finish connecting once
 a Microsoft 365 admin has consented to `OnlineMeetingTranscript.Read.All` for
 the organization. Personal connections do not claim a tenant for chat.
@@ -154,7 +162,7 @@ Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
 AI summaries are off by default. Turn on **Enable transcript summaries** in
-**Settings > Applications > Microsoft Teams > Settings** to summarize each Call
+**Settings > Applications > Teams > Settings** to summarize each Call
 Recording that Microsoft Teams imports, including the 31-day import on connect.
 Each summary uses AI credits. Run **Generate call summary** on selected Call
 Recordings, or on calendar events for the latest Teams recording of each, to
@@ -194,7 +202,7 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   `src/features/transcripts` respectively.
 - **Settings** are workspace choices. `TEAMS_CHAT_ENABLED`,
   `TEAMS_TRANSCRIPTS_ENABLED` and `TEAMS_TRANSCRIPT_SUMMARY_ENABLED` are Boolean
-  application variables. **Settings → Applications → Microsoft Teams →
+  application variables. **Settings → Applications → Teams →
   Settings** manages chat and transcript summaries; transcripts are on by
   default and have no switch, and summaries are off by default. Updates use the
   metadata API, which requires permission to manage applications.
@@ -291,6 +299,10 @@ workspace. Public apps use the monorepo CI workflows.
   were disabled.
 - `Microsoft Teams is not connected`: the requesting user has no personal
   connection and the workspace has no shared one.
+- `Microsoft Teams chat is taken by another workspace`: another workspace on
+  this Twenty instance claimed the same Microsoft tenant first, so chat
+  activities route there. Disconnect Microsoft Teams in that workspace, then
+  remove and add the workspace connection here to claim the tenant.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
 - Call Recording without speaker names: the organization has **Include speaker

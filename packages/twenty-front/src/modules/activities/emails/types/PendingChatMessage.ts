@@ -3,4 +3,5 @@ export type PendingChatMessage = {
   text: string;
   files: File[];
   status: 'sending' | 'sent' | 'failed';
+  errorMessage?: string;
 };

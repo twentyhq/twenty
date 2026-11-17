@@ -52,7 +52,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
   }
 
-  protected override getDeferredAction({
+  protected override getDeferredOperation({
     flatAction,
     allFlatEntityMaps,
   }: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>) {

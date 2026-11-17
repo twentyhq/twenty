@@ -64,6 +64,7 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]>;
   reconcileJobMemory?(): Promise<JobMemoryReconciliation>;
+  removeJob?(queueName: MessageQueue, jobId: string): Promise<boolean>;
   getJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],

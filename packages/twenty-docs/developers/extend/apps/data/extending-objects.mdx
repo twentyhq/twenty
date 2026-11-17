@@ -42,7 +42,7 @@ export default defineField({
 
 - When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
 - `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
-- `SELECT` and `MULTI_SELECT` follow the same [option validation and color rules](/developers/extend/apps/data/objects#select-options) as inline fields. An omitted or null color defaults to `gray`; unsupported colors are rejected.
+- `SELECT` and `MULTI_SELECT` follow the same [option validation and color rules](/developers/extend/apps/data/objects#select-options) as inline fields. An omitted or null color defaults to `gray`; unsupported colors are rejected. A workspace can override and deactivate these options but not remove them, and its changes are [kept across syncs](/developers/extend/apps/data/objects#workspace-changes-to-your-options).
 - File location is up to you. The convention is `src/fields/<name>.field.ts`, but the CLI detects fields anywhere in `src/`.
 - `isSearchable: true` can be set on `defineField()` with the same constraints as inline fields (searchable target object, text-compatible field type), so records of the target object become findable through your field's values in full-text search.
 - `isAuditLogged: false` can be set on `defineField()` to keep the field's changes out of the target record's timeline, which matters most for fields your app rewrites on a schedule.

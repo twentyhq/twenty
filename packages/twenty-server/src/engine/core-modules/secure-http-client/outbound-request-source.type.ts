@@ -4,4 +4,5 @@ export type OutboundRequestSource =
   | 'workflow-http-test'
   | 'ai-http-tool'
   | 'logic-function'
-  | 'mcp-server';
+  | 'mcp-server'
+  | 'connection-provider';

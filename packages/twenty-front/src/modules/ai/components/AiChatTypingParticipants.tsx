@@ -1,3 +1,5 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -6,9 +8,8 @@ import { AiChatTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/aiChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -30,22 +31,25 @@ const StyledContainer = styled(StyledAiChatContentContainer)<{
 
 export const AiChatTypingParticipants = () => {
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const { threadId } = useAiChatInstanceOrThrow();
+  const aiChatHasMessage = useAtomFamilySelectorValue(
+    aiChatHasMessageFamilySelector,
+    threadId,
+  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatTypingWorkspaceMemberIds = useAtomFamilyStateValue(
-    agentChatTypingWorkspaceMemberIdsFamilyState,
-    { threadId: currentAiChatThread },
+  const aiChatTypingWorkspaceMemberIds = useAtomFamilyStateValue(
+    aiChatTypingWorkspaceMemberIdsFamilyState,
+    { threadId },
   );
 
   const participants = currentWorkspaceMembers
     .filter(
       ({ id }) =>
         id !== currentWorkspaceMember?.id &&
-        agentChatTypingWorkspaceMemberIds.includes(id),
+        aiChatTypingWorkspaceMemberIds.includes(id),
     )
     .map((workspaceMember) => ({
       id: workspaceMember.id,
@@ -53,7 +57,7 @@ export const AiChatTypingParticipants = () => {
       avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
     }));
 
-  if (!agentChatHasMessage || !isNonEmptyArray(participants)) {
+  if (!aiChatHasMessage || !isNonEmptyArray(participants)) {
     return null;
   }
 

@@ -61,7 +61,7 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 - `eq`, `notEq`, `gt`, `gte`, `lt` and `lte` compare values.
 - `add`, `subtract`, `multiply` and `divide` compute values.
 - `isIn(field('stage'), ['NEW', 'WON'])` checks a value against a list.
-- Functions such as `isNonEmptyString` and `isDefined`.
+- Functions such as `isNonEmptyString` and `isDefined`, and the date functions `daysSince(date)` (whole days since the date, negative for a future date) and `isInRelativeDateRange(date, direction, amount, unit)`, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 The builder outputs a plain string, which is what [`twenty app pull`](/developers/extend/apps/operations/cli) writes back. You can write that string directly:
 

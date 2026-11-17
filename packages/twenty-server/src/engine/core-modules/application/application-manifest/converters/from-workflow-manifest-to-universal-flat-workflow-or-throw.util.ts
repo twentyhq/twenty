@@ -88,8 +88,8 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   const definition = parsed.data;
   const workflowId = existingWorkflow?.id ?? v4();
 
-  const steps = definition.version.steps.map((step, index) =>
-    fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
+  const steps = definition.version.steps.map((step) =>
+    fromWorkflowStepManifestToActionOrThrow({ step, references }),
   );
 
   const trigger = fromWorkflowTriggerManifestToTriggerOrThrow({

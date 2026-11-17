@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentDatabaseEventTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreAgentTriggerConditionInput } from '@/object-core/agents/components/CoreAgentTriggerConditionInput';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -67,6 +69,8 @@ export const CoreAgentRecordTriggerForm = ({
               ...trigger.settings,
               eventName: `${nextObjectType}.${event}`,
               updatedFields: undefined,
+              condition: undefined,
+              conditionBindings: undefined,
             },
           })
         }
@@ -87,6 +91,27 @@ export const CoreAgentRecordTriggerForm = ({
             actionType="DATABASE_EVENT"
           />
         )}
+      {isDefined(selectedObjectMetadataItem) && (
+        <CoreAgentTriggerConditionInput
+          key={objectType}
+          objectMetadataItem={selectedObjectMetadataItem}
+          condition={trigger.settings.condition ?? ''}
+          conditionBindings={trigger.settings.conditionBindings}
+          onConditionChange={(condition) =>
+            onTriggerUpdate({
+              ...trigger,
+              settings: {
+                ...trigger.settings,
+                condition: isNonEmptyString(condition.trim())
+                  ? condition
+                  : undefined,
+                conditionBindings: undefined,
+              },
+            })
+          }
+          isReadOnly={isReadOnly}
+        />
+      )}
     </WorkflowStepBody>
   );
 };

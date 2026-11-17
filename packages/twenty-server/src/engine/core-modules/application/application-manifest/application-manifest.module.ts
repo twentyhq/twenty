@@ -1,4 +1,7 @@
+import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
 import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
+import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -27,7 +30,11 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      FrontComponentEntity,
+      FileEntity,
+    ]),
     ApplicationGrantRoleModule,
     ApplicationLookupModule,
     ApplicationModule,
@@ -51,6 +58,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     ApplicationManifestExportService,
     ApplicationFrontComponentExportService,
+    ApplicationFrontComponentSourceService,
+    ApplicationPublicAssetExportService,
+    provideWorkspaceScopedRepository(FileEntity),
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

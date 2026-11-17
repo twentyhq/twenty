@@ -4,6 +4,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -30,6 +31,7 @@ export class AgentChatInboxParticipantWriterService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
   ) {}
 
   async writeParticipantInboxState({
@@ -174,7 +176,7 @@ export class AgentChatInboxParticipantWriterService {
         insertedParticipantIds.add(id);
       }
 
-      await this.recordShareSystemWriteService.setRecordsPrivacy({
+      await this.privateRecordSystemWriteService.setRecordsPrivacy({
         workspaceId,
         objectMetadataId: participantObjectMetadata.id,
         recordIds: identifiers.map(({ id }) => id),

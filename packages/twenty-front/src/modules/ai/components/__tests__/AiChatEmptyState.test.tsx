@@ -1,11 +1,12 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {
@@ -20,7 +21,9 @@ jest.mock('@/ai/components/suggested-prompts/AiChatSuggestedPrompts', () => ({
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  <JotaiProvider store={jotaiStore}>
+    <AiChatTestInstance>{children}</AiChatTestInstance>
+  </JotaiProvider>
 );
 
 describe('AiChatEmptyState', () => {
@@ -29,7 +32,7 @@ describe('AiChatEmptyState', () => {
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(hasInitializedAiChatThreadsState.atom, true);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
@@ -42,7 +45,7 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
       true,
@@ -57,7 +60,7 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is streaming', () => {
     jotaiStore.set(
-      agentChatIsStreamingFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatIsStreamingFamilyState.atomFamily({ threadId: THREAD_ID }),
       true,
     );
 

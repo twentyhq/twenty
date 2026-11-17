@@ -333,16 +333,20 @@ export class ApplicationInstallService {
         }),
       ]);
 
-      this.metricsService.incrementCounterBy({
-        key: isVersionUpgrade
-          ? MetricsKeys.AppUpgradeFailed
-          : MetricsKeys.AppInstallFailed,
-        amount: 1,
-        attributes: {
-          ...attributes,
-          error_code: getApplicationErrorCode(error),
-        },
-      });
+      // Unlisted apps (local dev, tarballs) fail for reasons outside our control
+      // and would pollute platform health dashboards and the status page.
+      if (appRegistration.isListed) {
+        this.metricsService.incrementCounterBy({
+          key: isVersionUpgrade
+            ? MetricsKeys.AppUpgradeFailed
+            : MetricsKeys.AppInstallFailed,
+          amount: 1,
+          attributes: {
+            ...attributes,
+            error_code: getApplicationErrorCode(error),
+          },
+        });
+      }
 
       throw error;
     }

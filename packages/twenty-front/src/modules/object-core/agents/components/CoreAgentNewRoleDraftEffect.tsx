@@ -9,7 +9,7 @@ import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { buildCoreAgentNewRole } from '@/object-core/agents/utils/buildCoreAgentNewRole';
 import { getAvailableRoleLabel } from '@/object-core/agents/utils/getAvailableRoleLabel';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -36,8 +36,8 @@ export const CoreAgentNewRoleDraftEffect = ({
     settingsDraftRoleFamilyState,
     coreAgentNewRoleId ?? '',
   );
-  const setSettingsDraftRoleBase = useSetAtomFamilyState(
-    settingsDraftRoleBaseFamilyState,
+  const setSettingsInitialDraftRole = useSetAtomFamilyState(
+    settingsInitialDraftRoleFamilyState,
     coreAgentNewRoleId ?? '',
   );
 
@@ -70,7 +70,7 @@ export const CoreAgentNewRoleDraftEffect = ({
       });
 
       setSettingsDraftRole(newRole);
-      setSettingsDraftRoleBase(newRole);
+      setSettingsInitialDraftRole(newRole);
 
       return;
     }
@@ -84,14 +84,14 @@ export const CoreAgentNewRoleDraftEffect = ({
       label: roleLabel,
       description: roleDescription,
     }));
-    setSettingsDraftRoleBase((currentDraftRoleBase) =>
-      isDefined(currentDraftRoleBase)
+    setSettingsInitialDraftRole((currentInitialDraftRole) =>
+      isDefined(currentInitialDraftRole)
         ? {
-            ...currentDraftRoleBase,
+            ...currentInitialDraftRole,
             label: roleLabel,
             description: roleDescription,
           }
-        : currentDraftRoleBase,
+        : currentInitialDraftRole,
     );
   }, [
     agent,
@@ -99,7 +99,7 @@ export const CoreAgentNewRoleDraftEffect = ({
     settingsDraftRole.label,
     coreAgentNewRoleId,
     setSettingsDraftRole,
-    setSettingsDraftRoleBase,
+    setSettingsInitialDraftRole,
     setCoreAgentNewRoleId,
     roles,
     t,

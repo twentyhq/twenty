@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
@@ -78,13 +78,21 @@ describe('useAiChatFileUpload', () => {
     try {
       act(() => {
         jotaiStore.set(currentAiChatThreadState.atom, NEW_THREAD_ID);
-        upload = result.current.uploadFiles([file]);
+        upload = result.current.uploadFiles({
+          files: [file],
+          threadId: NEW_THREAD_ID,
+        });
       });
 
       await waitFor(() => expect(putFile).toHaveBeenCalled());
 
       await act(async () => {
-        jotaiStore.set(agentChatSelectedFilesState.atom, []);
+        jotaiStore.set(
+          aiChatSelectedFilesFamilyState.atomFamily({
+            threadId: NEW_THREAD_ID,
+          }),
+          [],
+        );
         await upload;
       });
 

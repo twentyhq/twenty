@@ -10,7 +10,6 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
@@ -28,6 +27,8 @@ const CREATED_AT = '2026-09-01T00:00:00.000Z';
 export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
 export const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
 export const GOOGLE_MESSAGE_CHANNEL_ID = '20202020-1a2b-4c3d-8e4f-000000000031';
+export const GOOGLE_CALENDAR_CHANNEL_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000041';
 export const FATHOM_ONLY_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000013';
 export const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
 const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
@@ -208,10 +209,7 @@ export const MESSAGE_CHANNELS = [
 ];
 
 export const CALENDAR_CHANNELS = [
-  buildCalendarChannel(
-    '20202020-1a2b-4c3d-8e4f-000000000041',
-    GOOGLE_ACCOUNT_ID,
-  ),
+  buildCalendarChannel(GOOGLE_CALENDAR_CHANNEL_ID, GOOGLE_ACCOUNT_ID),
   buildCalendarChannel(
     '20202020-1a2b-4c3d-8e4f-000000000042',
     MICROSOFT_ACCOUNT_ID,
@@ -386,6 +384,7 @@ export const seedAccountGroupsStory = async () => {
         description: 'Records, transcribes and summarizes your meetings.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
+        runHealthCheckOnUserPreferences: true,
       },
       {
         id: GRANOLA_APPLICATION_ID,
@@ -394,12 +393,7 @@ export const seedAccountGroupsStory = async () => {
         description: 'Takes notes during your calls.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
-      },
-    ],
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-        value: true,
+        runHealthCheckOnUserPreferences: true,
       },
     ],
   });

@@ -2195,14 +2195,12 @@ __metadata:
   linkType: hard
 
 "@aws-sdk/xml-builder@npm:^3.972.24":
-  version: 3.972.24
-  resolution: "@aws-sdk/xml-builder@npm:3.972.24"
+  version: 3.972.42
+  resolution: "@aws-sdk/xml-builder@npm:3.972.42"
   dependencies:
-    "@nodable/entities": "npm:2.1.0"
-    "@smithy/types": "npm:^4.14.1"
-    fast-xml-parser: "npm:5.7.3"
+    "@smithy/types": "npm:^4.19.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/069d1959e9fbc00244e2e87e02540cf4ead44b8be02012afd029905304c62710b069573be3976c97329efbfb766a228f6f1a93c8fe89cc939b837a8b0fae1550
+  checksum: 10c0/f6d3e827f5c19c97a61217940bb99e8dde6dfa6f9c6dba02cecf8155a5579a4191e1b74a0c3cd266830afe34ca5a039864aabd85db5adbaf0c8b7e035839c21b
   languageName: node
   linkType: hard
 
@@ -7594,11 +7592,11 @@ __metadata:
   linkType: hard
 
 "@hono/node-server@npm:^1.19.9 || ^2.0.5":
-  version: 2.1.5
-  resolution: "@hono/node-server@npm:2.1.5"
+  version: 2.1.8
+  resolution: "@hono/node-server@npm:2.1.8"
   peerDependencies:
     hono: ^4 || ^5.0.0-0
-  checksum: 10c0/3c3d5ffcc4a229e532530729b64db623493171bcda7b40ffbac3a46489884f700c881439d8c0d0413cd18793458ca252acedf6a9c13c8c3a024037e47974cacb
+  checksum: 10c0/16900425ef58e908d2d3e12c44206663165ae07d267e68dbc987ac6c1b3f977bbac6b9566be60171efb60d230aeb7c559f4865cd6ff68c50ca99514320d711eb
   languageName: node
   linkType: hard
 
@@ -11390,13 +11388,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nodable/entities@npm:2.1.0, @nodable/entities@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@nodable/entities@npm:2.1.0"
-  checksum: 10c0/5a4cba2b61a5b6c726328b18b1de6d033cae4a658a118644bf31e0bcbda126ea7b69385043dc556cf1ed859b9ca220e82b81b5e5c48ef1b519fb8ec104575dee
-  languageName: node
-  linkType: hard
-
 "@node-minify/core@npm:^9.0.2":
   version: 9.0.2
   resolution: "@node-minify/core@npm:9.0.2"
@@ -14018,14 +14009,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.60.0":
-  version: 1.60.0
-  resolution: "@playwright/test@npm:1.60.0"
+"@playwright/test@npm:^1.65.0":
+  version: 1.65.0
+  resolution: "@playwright/test@npm:1.65.0"
   dependencies:
-    playwright: "npm:1.60.0"
+    playwright: "npm:1.65.0"
   bin:
     playwright: cli.js
-  checksum: 10c0/86b06e6437933e741c7cd43f362024e857e7bc28a55fcbb0553ef55e01a2a403c64f4786868de8af86a6e303fe99e98a18a42ba19489f43ae122e457f9e2d189
+  checksum: 10c0/137a641e1be8035686a165e69d86d242ee7ed5cbe71e5230f9195cb6e65be37a66ba697f16919b508d04c4d682fd4e167d1a755b64ceb545afac780de72b594b
   languageName: node
   linkType: hard
 
@@ -17125,6 +17116,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/types@npm:^4.19.0":
+  version: 4.20.0
+  resolution: "@smithy/types@npm:4.20.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/dc105f8ca1c3e1475da470a5b442ab73947144282e5d22c57dad22854983979a23725346d6227686f77c7621690ab5f28b3def286acf839258fb93691f7a02ec
+  languageName: node
+  linkType: hard
+
 "@smithy/types@npm:^4.3.1":
   version: 4.3.1
   resolution: "@smithy/types@npm:4.3.1"
@@ -19410,15 +19410,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/235d2fc69741448e853333b7c3d1180a966dd2b8972c8cbcd6b2a0c6cd7f8d582ab2b8e58219dbc62cce8f1b40aa317ff78ea2201cdd8249da5025adebed6f0b
-  languageName: node
-  linkType: hard
-
-"@types/graphql-fields@npm:^1.3.6":
-  version: 1.3.9
-  resolution: "@types/graphql-fields@npm:1.3.9"
-  dependencies:
-    graphql: "npm:*"
-  checksum: 10c0/47cf1b6f8c3e8b16ae79d83632b0721b77ff81bb045642af6633bffb932abf8a67b4cc1872e5ce3ad8fb2972a42ce64f2150c7d3a3c4415d16d8673de8a4113b
   languageName: node
   linkType: hard
 
@@ -29271,30 +29262,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-builder@npm:^1.1.7":
-  version: 1.2.0
-  resolution: "fast-xml-builder@npm:1.2.0"
-  dependencies:
-    path-expression-matcher: "npm:^1.5.0"
-    xml-naming: "npm:^0.1.0"
-  checksum: 10c0/84bb105cd04e91d6dcb746c4dbaeb12903b510e7ab9a06ffde55b5a582e005559a87d84467f18a655c6c4baf098f696fd74cee3cbe1aea9d01385907768ba32d
-  languageName: node
-  linkType: hard
-
-"fast-xml-parser@npm:5.7.3":
-  version: 5.7.3
-  resolution: "fast-xml-parser@npm:5.7.3"
-  dependencies:
-    "@nodable/entities": "npm:^2.1.0"
-    fast-xml-builder: "npm:^1.1.7"
-    path-expression-matcher: "npm:^1.5.0"
-    strnum: "npm:^2.2.3"
-  bin:
-    fxparser: src/cli/cli.js
-  checksum: 10c0/eeb802855e852ce16121396297f04131c6dbc74f863be94f19e26e386656bdb31677af469ddc6627983a48b99d8842888460ac5413063cb648fde547bb579978
-  languageName: node
-  linkType: hard
-
 "fastest-levenshtein@npm:^1.0.7":
   version: 1.0.16
   resolution: "fastest-levenshtein@npm:1.0.16"
@@ -29985,31 +29952,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:2.3.2":
-  version: 2.3.2
-  resolution: "fsevents@npm:2.3.2"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
 "fsevents@npm:2.3.3, fsevents@npm:^2.3.2, fsevents@npm:^2.3.3, fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: "npm:latest"
   checksum: 10c0/a1f0c44595123ed717febbc478aa952e47adfc28e2092be66b8ab1635147254ca6cfe1df792a8997f22716d4cbafc73309899ff7bfac2ac3ad8cf2e4ecc3ec60
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>":
-  version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
-  dependencies:
-    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -30628,13 +30576,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-fields@npm:2.0.3":
-  version: 2.0.3
-  resolution: "graphql-fields@npm:2.0.3"
-  checksum: 10c0/943c6ac8dba1320c1b81873e9e847aaec073d952de988f0d77047aafe7bef60c743ebc5974cf04fe27477e33d9c067a5bd45d95c784d64c37a1e743fd3a23b0d
-  languageName: node
-  linkType: hard
-
 "graphql-language-service@npm:^5.5.1, graphql-language-service@npm:^5.5.2":
   version: 5.5.2
   resolution: "graphql-language-service@npm:5.5.2"
@@ -30817,7 +30758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:*, graphql@npm:16.14.2, graphql@npm:^16.12.0, graphql@npm:^16.3.0, graphql@npm:^16.8.1":
+"graphql@npm:16.14.2, graphql@npm:^16.12.0, graphql@npm:^16.3.0, graphql@npm:^16.8.1":
   version: 16.14.2
   resolution: "graphql@npm:16.14.2"
   checksum: 10c0/a95a96961eaff55cc9fe9d31fae6f33499ac988b972d07ea5085024cb1333f515b902f376e7393a5489aa82200a8aff3eb96580e4d1b69d702ed19b6eb1ce97a
@@ -31357,9 +31298,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.13.13
-  resolution: "hono@npm:4.13.13"
-  checksum: 10c0/c8524e685a59b4f23a9bea15385eeac5622218949db251cb871b20fd9ef673b751b44ccdee6c22b3df56e5ed4c1b1cebad17b518bdc1823039da39b53ef9c1cf
+  version: 4.13.18
+  resolution: "hono@npm:4.13.18"
+  checksum: 10c0/c04462570fe9dcdf820b633e6c22d33d414d7608abbed7daadd3ad7c594b2670b4790a16b613658e952367a12082a21f0b556d021c17ccbbc70758eefd80badc
   languageName: node
   linkType: hard
 
@@ -39373,13 +39314,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-expression-matcher@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "path-expression-matcher@npm:1.5.0"
-  checksum: 10c0/646cb5bc66cd7d809a52288336f3ac1e6223f156fd8e912936e490e590f7f93e8056d4fd25fcbcc7da61bb698fa520112cb050372a3f65e7b79bd4afa0f77610
-  languageName: node
-  linkType: hard
-
 "path-is-absolute@npm:^1.0.0":
   version: 1.0.1
   resolution: "path-is-absolute@npm:1.0.1"
@@ -39918,27 +39852,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.60.0":
-  version: 1.60.0
-  resolution: "playwright-core@npm:1.60.0"
+"playwright-core@npm:1.65.0":
+  version: 1.65.0
+  resolution: "playwright-core@npm:1.65.0"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/99ccd43923b6e9355e0723b7fe221e6326efd4687f8dafff951313662aea11db51f542a9c2122c704c445fb9baae1c9ec9fa6f895126bbddd9fe92313f6942c9
+  checksum: 10c0/ed905c6fc2457a725c3fdb3ad4500f43c7a1bb2c6e4e8c708e1e314930c7dce446a5756ad073425bf3c6e3ca975e5a35fb0221118e2d51ef7b4b6c6d13d0644c
   languageName: node
   linkType: hard
 
-"playwright@npm:1.60.0, playwright@npm:^1.60.0":
-  version: 1.60.0
-  resolution: "playwright@npm:1.60.0"
+"playwright@npm:1.65.0, playwright@npm:^1.65.0":
+  version: 1.65.0
+  resolution: "playwright@npm:1.65.0"
   dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.60.0"
-  dependenciesMeta:
-    fsevents:
-      optional: true
+    playwright-core: "npm:1.65.0"
   bin:
     playwright: cli.js
-  checksum: 10c0/714ad76d85b4865d7e43c0012f9039800c1485373388973ed39d79339cee5ad467052d1e2f1eaeca107a1cb6e65342186a8578a4c3504853d84c3a691250d5db
+  checksum: 10c0/a7d71f3ca5bcad0531b5f3c39ae1a9be0da8e74be6fee8510d99b9f5fc07fd5b3d889aa4ca487c70ca29aba8625f74e3c2c7473b4c8a784dc14fefff80474ac3
   languageName: node
   linkType: hard
 
@@ -44153,19 +44083,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-chain@npm:^3.6.1":
-  version: 3.6.3
-  resolution: "stream-chain@npm:3.6.3"
-  checksum: 10c0/4af869a28a8d55dcfdbdaf25cfc03c3d31860bffabdb649cd82320a12ac9e71440d42078a3441f93dd288cf3b7077c524eceaa6cf2af637c202dea07014e3b96
+"stream-chain@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "stream-chain@npm:4.4.1"
+  checksum: 10c0/130fc6d677f378a223c8fe3e5ee47e10ad898f2551f1e2b2134c2f77d0f8ac98d62d6ba185f99603332ac02f56b4c7b4abc86f23cecfed81b217885a306d410c
   languageName: node
   linkType: hard
 
-"stream-json@npm:2.1.0":
-  version: 2.1.0
-  resolution: "stream-json@npm:2.1.0"
+"stream-json@npm:3.8.0":
+  version: 3.8.0
+  resolution: "stream-json@npm:3.8.0"
   dependencies:
-    stream-chain: "npm:^3.6.1"
-  checksum: 10c0/7ec5f0f7a795d5843c52c2f79383ee1c414d544b69e153b9f60869fee150597143a38e17fcf7ec4a0092732ed062c493559a29763b0f76481e72fde22c847af7
+    stream-chain: "npm:^4.4.1"
+  checksum: 10c0/4c652f988b391477d37ad32a58751e3898b50b132696907d6f407591a42408b4a4bbe7e2f6ef9d27a02a2030637c0c892e7f348cc5ff8f9cfc4d797671873a76
   languageName: node
   linkType: hard
 
@@ -44532,13 +44462,6 @@ __metadata:
     "@types/node":
       optional: true
   checksum: 10c0/c4ca1099d70afd175b27ec1fc83f72230c46a95868b85d615a141a806e63dd6d1896fa239f593aca7ad110bb8a14a5fb136b8091453c1c5db663b07529e0f94b
-  languageName: node
-  linkType: hard
-
-"strnum@npm:^2.2.3":
-  version: 2.3.0
-  resolution: "strnum@npm:2.3.0"
-  checksum: 10c0/8d29ea0789df22dfa6101153573c76ce12fb065ed0807eb99cc64624cd7f3d67a5aa0db507e75ab985ca23908cc4f02c65f3359ad762cb3659e3d6456e76e143
   languageName: node
   linkType: hard
 
@@ -45868,8 +45791,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:^1.60.0"
-    playwright: "npm:^1.60.0"
+    "@playwright/test": "npm:^1.65.0"
+    playwright: "npm:^1.65.0"
   languageName: unknown
   linkType: soft
 
@@ -45921,7 +45844,7 @@ __metadata:
     css-select: "npm:^7.0.0"
     css-what: "npm:^8.0.0"
     monaco-editor: "npm:0.52.2"
-    playwright: "npm:^1.60.0"
+    playwright: "npm:^1.65.0"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -46077,7 +46000,7 @@ __metadata:
     oxlint: "npm:^1.51.0"
     oxlint-tsgolint: "npm:^0.16.0"
     papaparse: "npm:^5.4.1"
-    playwright: "npm:^1.60.0"
+    playwright: "npm:^1.65.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     qs: "npm:^6.15.2"
@@ -46265,7 +46188,6 @@ __metadata:
     "@types/bytes": "npm:^3.1.1"
     "@types/express": "npm:^4.17.13"
     "@types/express-session": "npm:^1.18.0"
-    "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^16.0.7"
     "@types/html-to-text": "npm:^9.0.4"
     "@types/ioredis-mock": "npm:8.2.8"
@@ -46326,7 +46248,6 @@ __metadata:
     gaxios: "npm:8.3.2"
     googleapis: "npm:188.0.0"
     graphql: "npm:16.14.2"
-    graphql-fields: "npm:2.0.3"
     graphql-redis-subscriptions: "npm:2.7.0"
     graphql-scalars: "npm:1.23.0"
     graphql-subscriptions: "npm:2.0.0"
@@ -46388,7 +46309,7 @@ __metadata:
     sanitize-html: "npm:2.18.1"
     semver: "npm:7.6.3"
     sns-payload-validator: "npm:^2.1.0"
-    stream-json: "npm:2.1.0"
+    stream-json: "npm:3.8.0"
     stripe: "npm:20.4.1"
     supertest: "npm:^6.1.3"
     tar: "npm:^7.5.9"
@@ -46608,8 +46529,8 @@ __metadata:
     twenty-shared: "workspace:*"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    zapier-platform-cli: "npm:^19.0.0"
-    zapier-platform-core: "npm:19.0.0"
+    zapier-platform-cli: "npm:^19.3.0"
+    zapier-platform-core: "npm:19.3.0"
     zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
@@ -46629,6 +46550,7 @@ __metadata:
     lodash.startcase: "npm:^4.4.0"
     npm-pick-manifest: "npm:^11.0.1"
     semver: "npm:7.6.3"
+    signal-exit: "npm:^4.1.0"
     string-width: "npm:^8.2.0"
     tinyglobby: "npm:^0.2.15"
     twenty-client-sdk: "workspace:*"
@@ -49094,13 +49016,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-naming@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "xml-naming@npm:0.1.0"
-  checksum: 10c0/8c7614865361bcb7e53e3e091dac21c567e2b92d447919b2f072775aa9dcfc94a5255bd52fbaa0fd53c93513e53a23a6a835218ad2af512451dbc678392f85fe
-  languageName: node
-  linkType: hard
-
 "xml2js@npm:^0.6.2":
   version: 0.6.2
   resolution: "xml2js@npm:0.6.2"
@@ -49472,16 +49387,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zapier-platform-cli@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-cli@npm:19.0.0"
+"zapier-platform-cli@npm:^19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-cli@npm:19.3.0"
   dependencies:
     "@oclif/core": "npm:4.5.2"
     "@oclif/plugin-autocomplete": "npm:3.2.34"
     "@oclif/plugin-help": "npm:6.2.32"
     "@oclif/plugin-not-found": "npm:3.2.62"
     "@oclif/plugin-version": "npm:2.2.32"
-    adm-zip: "npm:0.5.16"
+    adm-zip: "npm:0.6.1"
     archiver: "npm:7.0.1"
     chrono-node: "npm:2.8.3"
     cli-table3: "npm:0.6.5"
@@ -49508,27 +49423,27 @@ __metadata:
     semver: "npm:7.7.2"
     string-length: "npm:4.0.2"
     through2: "npm:4.0.2"
-    tmp: "npm:0.2.5"
+    tmp: "npm:0.2.6"
     traverse: "npm:0.6.11"
     update-notifier: "npm:7.3.1"
     yeoman-environment: "npm:4.4.3"
     yeoman-generator: "npm:7.5.1"
   bin:
     zapier-platform: src/bin/run
-  checksum: 10c0/518e297cf6b82a9fa674a9704c970e4490db744127193b9e82b9e456aec537982ffee4c9d8f0df6206c7cef162749af62f9cc2dc872552701ce968b169f7a110
+  checksum: 10c0/eb28a3c3d8fb276e617db48513efd03b8633cdf2db3bb61b84df5c72328b46f676f93aa2a46030f7ea34479303a42beeb81ab025a6c8b48ccd1338951089a794
   languageName: node
   linkType: hard
 
-"zapier-platform-core@npm:19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-core@npm:19.0.0"
+"zapier-platform-core@npm:19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-core@npm:19.3.0"
   dependencies:
     "@types/node": "npm:^20.3.1"
     "@zapier/secret-scrubber": "npm:^1.1.2"
     content-disposition: "npm:0.5.4"
     dotenv: "npm:17.2.1"
     fernet: "npm:^0.3.3"
-    form-data: "npm:4.0.5"
+    form-data: "npm:4.0.6"
     json-schema-to-ts: "npm:3.1.1"
     lodash: "npm:4.18.1"
     mime-types: "npm:3.0.1"
@@ -49536,7 +49451,7 @@ __metadata:
     node-fetch: "npm:2.7.0"
     oauth-sign: "npm:0.9.0"
     semver: "npm:7.7.2"
-    zapier-platform-schema: "npm:19.0.0"
+    zapier-platform-schema: "npm:19.3.0"
   peerDependencies:
     zapier-platform-legacy-scripting-runner: ">=3"
   dependenciesMeta:
@@ -49545,18 +49460,18 @@ __metadata:
   peerDependenciesMeta:
     zapier-platform-legacy-scripting-runner:
       optional: true
-  checksum: 10c0/e62ef43837bc1de725d096e1425305aba9eff9548671cf720297b3040f7544364b51d580514ea15fdce859756f3bf0df1fc76899e0ade0538c98bfbc4c326167
+  checksum: 10c0/5eb215857d5816d6ce8327e2ecb7aad77647c4e19cd3d9752653b5a66b90eea29e2aa45b8c39a69480dadefff0392d6b5e91438bef3ba38db3cb60431c6f0a44
   languageName: node
   linkType: hard
 
-"zapier-platform-schema@npm:19.0.0":
-  version: 19.0.0
-  resolution: "zapier-platform-schema@npm:19.0.0"
+"zapier-platform-schema@npm:19.3.0":
+  version: 19.3.0
+  resolution: "zapier-platform-schema@npm:19.3.0"
   dependencies:
     json-metaschema: "npm:1.3.0"
     jsonschema: "npm:1.5.0"
     lodash: "npm:4.18.1"
-  checksum: 10c0/353d25e090045d171d940a5250eafed584954e4814f4d02a93677909fd660654d263e685d78756cb8f792caa8077145bad1a9ef1e6c5094fbbb9b85f8362455e
+  checksum: 10c0/cf3f9cb5e77199357c1f7cb2413fc54c6df053311dc96db6e5e9a4e530c4d4a2258d40e800b6f5957f3bccc9212065043ad71b4bd65e756983636a5866835a86
   languageName: node
   linkType: hard
 

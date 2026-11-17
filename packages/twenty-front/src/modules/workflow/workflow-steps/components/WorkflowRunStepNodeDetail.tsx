@@ -25,6 +25,7 @@ import { WorkflowEditActionIfElse } from '@/workflow/workflow-steps/workflow-act
 import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator';
 import { WorkflowEditActionPickRecord } from '@/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord';
 import { WorkflowEditActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction';
+import { WorkflowEditActionMcpTool } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManual } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManual';
@@ -124,6 +125,17 @@ export const WorkflowRunStepNodeDetail = ({
         case 'LOGIC_FUNCTION': {
           return (
             <WorkflowEditActionLogicFunction
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'MCP_TOOL': {
+          return (
+            <WorkflowEditActionMcpTool
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

@@ -4,6 +4,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { galleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
+import { hoverUntilTooltipOpens } from '@/__stories__/twenty-ui-gallery/utils/hoverUntilTooltipOpens';
 
 const OVERFLOW_LABEL = 'A long account name that truncates inside a chip';
 const TOOLTIP_CONTENT = 'Caller supplied details\nFull account name';
@@ -107,16 +108,20 @@ export const chipControlsTest: TwentyUiGalleryPlayFunction = async (
     { timeout: INTERACTION_TIMEOUT },
   );
   await user.unhover(overflowingLabel);
-  await user.hover(overflowingLabel);
-  await waitFor(
-    () => {
-      const tooltip = page.getByRole('tooltip');
-      expect(tooltip.textContent).toBe(TOOLTIP_CONTENT);
-      expect(tooltip).toBeVisible();
-      expect(getComputedStyle(tooltip).whiteSpace).toBe('pre-wrap');
-    },
-    { timeout: INTERACTION_TIMEOUT },
-  );
+  await hoverUntilTooltipOpens({
+    user,
+    hoverTarget: overflowingLabel,
+    expectTooltipOpen: () =>
+      waitFor(
+        () => {
+          const tooltip = page.getByRole('tooltip');
+          expect(tooltip.textContent).toBe(TOOLTIP_CONTENT);
+          expect(tooltip).toBeVisible();
+          expect(getComputedStyle(tooltip).whiteSpace).toBe('pre-wrap');
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      ),
+  });
   button.focus();
   await user.keyboard('{Escape}');
   await waitFor(() =>

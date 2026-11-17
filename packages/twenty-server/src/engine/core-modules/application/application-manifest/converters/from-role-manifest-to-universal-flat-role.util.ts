@@ -11,6 +11,8 @@ export const fromRoleManifestToUniversalFlatRole = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatRole => {
+  const { recordsPermissions } = roleManifest;
+
   return {
     universalIdentifier: roleManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -21,14 +23,18 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canAccessAllTools: roleManifest.canAccessAllTools ?? false,
     canAccessAllAgentChatChannels:
       roleManifest.canAccessAllAgentChatChannels ?? false,
-    canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
-    canCreateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
-    canUpdateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
+    canReadAllObjectRecords: recordsPermissions.canReadAllRecords ?? false,
+    canCreateAllObjectRecords:
+      recordsPermissions.canCreateAllRecords ??
+      recordsPermissions.canUpdateAllRecords ??
+      false,
+    canUpdateAllObjectRecords: recordsPermissions.canUpdateAllRecords ?? false,
     canSoftDeleteAllObjectRecords:
-      roleManifest.canSoftDeleteAllObjectRecords ?? false,
+      recordsPermissions.canSoftDeleteAllRecords ?? false,
     canDestroyAllObjectRecords:
-      roleManifest.canDestroyAllObjectRecords ?? false,
+      recordsPermissions.canDestroyAllRecords ?? false,
     isEditable: true,
+    isSystemSideEffect: false,
     canBeAssignedToUsers: roleManifest.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: roleManifest.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: roleManifest.canBeAssignedToApiKeys ?? true,

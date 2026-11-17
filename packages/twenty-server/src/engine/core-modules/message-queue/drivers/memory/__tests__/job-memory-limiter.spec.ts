@@ -1,6 +1,7 @@
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 
+import { NOT_CHARGED_QUEUES } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JobMemoryLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -577,4 +578,42 @@ describe('JobMemoryLimiter', () => {
       ]);
     });
   });
+});
+
+describe('critical maintenance queues', () => {
+  it.each(NOT_CHARGED_QUEUES)(
+    'admits %s when the workspace has no memory available',
+    async (queueName) => {
+      const { limiter, redis } = await createLimiter({
+        usedMemoryBytes: 10_000,
+      });
+
+      await expect(
+        limiter.admit({
+          queueName,
+          jobName: 'maintenance',
+          jobs: [
+            { jobId: 'maintenance', sizeBytes: 500, groupKeys: [WORKSPACE_1] },
+          ],
+        }),
+      ).resolves.toEqual({ isCharged: false, availableBytes: null });
+      expect(await redis.get(usedKeyOf(WORKSPACE_1))).toBeNull();
+
+      await expect(
+        limiter.admit({
+          queueName: QUEUE,
+          jobName: 'application-job',
+          jobs: [
+            {
+              jobId: 'application-job',
+              sizeBytes: 500,
+              groupKeys: [WORKSPACE_1],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({
+        code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      });
+    },
+  );
 });

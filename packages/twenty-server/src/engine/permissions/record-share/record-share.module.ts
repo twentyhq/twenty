@@ -2,8 +2,9 @@
 
 import { Module } from '@nestjs/common';
 
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
-import { PrivateRecordModule } from 'src/engine/permissions/internal/private-record/private-record.module';
+import { PrivateRecordModule } from 'src/engine/permissions/private-record/private-record.module';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { RecordSharingResolver } from 'src/engine/permissions/record-share/resolvers/record-sharing.resolver';
 import { RecordShareStorageModule } from 'src/engine/permissions/internal/record-share/record-share-storage.module';
@@ -23,6 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PrivateRecordModule,
     PermissionsModule,
     UserWorkspaceSuccessorModule,
+    ApplicationGrantRoleLookupModule,
   ],
   providers: [
     RecordSharePrincipalService,

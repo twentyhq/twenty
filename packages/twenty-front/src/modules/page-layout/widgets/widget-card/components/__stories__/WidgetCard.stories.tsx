@@ -104,7 +104,6 @@ export const EmptyFlush: Story = {
         {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
         <WidgetCard {...args}>
           <WidgetCardHeader
-            widgetId="empty-widget-card"
             variant={args.variant}
             isInEditMode={args.isEditable}
             title="Calendar Event"

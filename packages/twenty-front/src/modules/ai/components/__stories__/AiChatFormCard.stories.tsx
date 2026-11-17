@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
@@ -5,7 +6,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
@@ -23,7 +23,6 @@ const StoreSeederEffect = () => {
 
   useEffect(() => {
     store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
   }, [store]);
 
   return null;
@@ -33,6 +32,7 @@ const meta: Meta<typeof AiChatFormCard> = {
   title: 'Modules/AiChat/AiChatFormCard',
   component: AiChatFormCard,
   decorators: [
+    AiChatInstanceDecorator,
     (Story) => (
       <StyledContainer>
         <StoreSeederEffect />

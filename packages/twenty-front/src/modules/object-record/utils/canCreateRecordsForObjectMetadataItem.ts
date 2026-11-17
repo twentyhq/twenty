@@ -1,7 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type CanCreateRecordsForObjectMetadataItemParams = {
   objectPermissions?: ObjectRecordsPermissions;
@@ -19,7 +22,7 @@ export const canCreateRecordsForObjectMetadataItem = ({
     objectMetadataItem.isUICreatable &&
     !isObjectMetadataReadOnly({ objectMetadataItem }) &&
     (!isDefined(objectPermissions) ||
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'create',
       }))

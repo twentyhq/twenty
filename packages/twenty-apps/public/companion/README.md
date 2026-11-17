@@ -30,7 +30,7 @@ The integration uses existing CLI OAuth, queue job IDs, and KV get/set operation
 
 ## Development
 
-Use Node 24 and Yarn 4. Run `yarn install`, `yarn typecheck`, `yarn test:unit`, and `yarn lint` from this directory. Installation, Recall configuration, and migration instructions are in [SETUP.md](SETUP.md).
+Use Node 26 and Yarn 4. Run `yarn install`, `yarn typecheck`, `yarn test:unit`, and `yarn lint` from this directory. Installation, Recall configuration, and migration instructions are in [SETUP.md](SETUP.md).
 
 Integration tests use `yarn test` with explicit `TWENTY_API_URL` and `TWENTY_API_KEY` environment variables. They read an already installed application and never install, uninstall, or reset it.
 

@@ -4,19 +4,24 @@ import { Injectable } from '@nestjs/common';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
+  type FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
+import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -25,15 +30,13 @@ import {
   type RecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
+import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
-import {
-  type RecordSharingObject,
-  resolveRecordSharingObjectOrThrow,
-} from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
+import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
+import { findRecordSharingFlatObjectMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/find-record-sharing-flat-object-metadata-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
-import { canRolesAccessAllRecords } from 'src/engine/permissions/internal/role/utils/can-roles-access-all-records.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -47,6 +50,7 @@ export class RecordSharingReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
+    private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
@@ -54,25 +58,38 @@ export class RecordSharingReadService {
   async findRecordSharingPanel(
     args: RecordSharingArgs,
   ): Promise<RecordSharingDTO> {
-    const sharingObject = await this.findSharingObjectOrThrow(args);
-    const permissions = await this.findPermissions({ args, sharingObject });
+    const { flatObjectMetadata, featureFlagsMap } =
+      await this.findFlatObjectMetadataAndFeatureFlagsMapOrThrow(args);
+    const permissions = await this.findPermissions({
+      args,
+      flatObjectMetadata,
+    });
 
     if (!permissions.canRead) {
       throw new NotFoundError('Record not found');
     }
 
-    return this.buildSharingResponse({ args, sharingObject, permissions });
+    return this.buildSharingResponse({
+      args,
+      flatObjectMetadata,
+      featureFlagsMap,
+      permissions,
+    });
   }
 
   async findRecordSharingAfterChange(
     args: RecordSharingArgs,
   ): Promise<RecordSharingDTO> {
-    const sharingObject = await this.findSharingObjectOrThrow(args);
-    const permissions = await this.findPermissions({ args, sharingObject });
+    const { flatObjectMetadata, featureFlagsMap } =
+      await this.findFlatObjectMetadataAndFeatureFlagsMapOrThrow(args);
+    const permissions = await this.findPermissions({
+      args,
+      flatObjectMetadata,
+    });
 
     if (!permissions.canRead) {
       return {
-        isShareable: sharingObject.isShareable,
+        isShareable: isRecordSharingEnabled({ featureFlagsMap }),
         isPrivate: false,
         canManageSharing: false,
         permissions,
@@ -82,12 +99,21 @@ export class RecordSharingReadService {
       };
     }
 
-    return this.buildSharingResponse({ args, sharingObject, permissions });
+    return this.buildSharingResponse({
+      args,
+      flatObjectMetadata,
+      featureFlagsMap,
+      permissions,
+    });
   }
 
   async canManageRecordSharing(args: RecordSharingArgs): Promise<boolean> {
-    const sharingObject = await this.findSharingObjectOrThrow(args);
-    const permissions = await this.findPermissions({ args, sharingObject });
+    const { flatObjectMetadata, featureFlagsMap } =
+      await this.findFlatObjectMetadataAndFeatureFlagsMapOrThrow(args);
+    const permissions = await this.findPermissions({
+      args,
+      flatObjectMetadata,
+    });
 
     if (!permissions.canRead) {
       throw new NotFoundError('Record not found');
@@ -95,12 +121,14 @@ export class RecordSharingReadService {
 
     const { viewerAccessLevel } = await this.findRecordShareState({
       ...args,
-      sharingObject,
+      flatObjectMetadata,
+      featureFlagsMap,
     });
 
     return this.resolveCanManageSharing({
       args,
-      sharingObject,
+      flatObjectMetadata,
+      featureFlagsMap,
       permissions,
       viewerAccessLevel,
     });
@@ -114,7 +142,7 @@ export class RecordSharingReadService {
     const { viewerAccessLevel, creatorWorkspaceMemberId } =
       await this.findRecordShareState({
         ...args,
-        sharingObject: await this.findSharingObjectOrThrow(args),
+        ...(await this.findFlatObjectMetadataAndFeatureFlagsMapOrThrow(args)),
       });
 
     return { viewerAccessLevel, creatorWorkspaceMemberId };
@@ -122,22 +150,25 @@ export class RecordSharingReadService {
 
   private async buildSharingResponse({
     args,
-    sharingObject,
+    flatObjectMetadata,
+    featureFlagsMap,
     permissions,
   }: {
     args: RecordSharingArgs;
-    sharingObject: RecordSharingObject;
+    flatObjectMetadata: FlatObjectMetadata;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
-    const { flatObjectMetadata } = sharingObject;
     const { shares, viewerAccessLevel, isPrivate } =
       await this.findRecordShareState({
         ...args,
-        sharingObject,
+        flatObjectMetadata,
+        featureFlagsMap,
       });
     const canManageSharing = await this.resolveCanManageSharing({
       args,
-      sharingObject,
+      flatObjectMetadata,
+      featureFlagsMap,
       permissions,
       viewerAccessLevel,
     });
@@ -148,7 +179,7 @@ export class RecordSharingReadService {
     );
 
     return {
-      isShareable: sharingObject.isShareable,
+      isShareable: isRecordSharingEnabled({ featureFlagsMap }),
       isPrivate,
       canManageSharing,
       permissions,
@@ -176,29 +207,33 @@ export class RecordSharingReadService {
 
   private async resolveCanManageSharing({
     args,
-    sharingObject,
+    flatObjectMetadata,
+    featureFlagsMap,
     permissions,
     viewerAccessLevel,
   }: {
     args: Pick<RecordSharingArgs, 'authContext'>;
-    sharingObject: RecordSharingObject;
+    flatObjectMetadata: FlatObjectMetadata;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     permissions: Pick<RecordPermissionsDTO, 'canUpdate'>;
     viewerAccessLevel: RecordShareAccessLevel | null;
   }): Promise<boolean> {
     return (
-      sharingObject.isShareable &&
+      isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsReadService.canRoleAccessSomeRecords({
-        principals:
-          await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-            {
-              authContext: args.authContext,
-            },
-          ),
-        objectMetadataId: sharingObject.flatObjectMetadata.id,
-        operationType: 'update',
-      }))
+      (await this.recordPermissionsReadService.canAllRecordsOrRlsAccessOperation(
+        {
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          operationType: 'update',
+        },
+      ))
     );
   }
 
@@ -209,28 +244,42 @@ export class RecordSharingReadService {
     workspaceId: string;
     grants: RecordShare[];
   }): Promise<RecordSharingGrantDTO[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+    const { flatWorkspaceMemberMaps, flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
+        'flatRoleTargetMaps',
       ]);
-    const roleIds = resolveRecordSharePrincipalRoleIds({
-      principals: grants,
-      flatWorkspaceMemberMaps,
-      userWorkspaceRoleMap,
-    });
+    const assignedRoleIdByUserWorkspaceId = new Map(
+      Object.values(flatRoleTargetMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatRoleTarget) =>
+            isDefined(flatRoleTarget.userWorkspaceId) &&
+            !flatRoleTarget.isSystemSideEffect,
+        )
+        .map((flatRoleTarget) => [
+          flatRoleTarget.userWorkspaceId,
+          flatRoleTarget.roleId,
+        ]),
+    );
 
-    return grants.map((grant, index) => ({
-      id: grant.id,
-      principalType: grant.principalType,
-      principalId: grant.principalId,
-      principalRoleId:
-        grant.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
-          ? (roleIds[index] ?? null)
+    return grants.map((grant) => {
+      const userWorkspaceId = resolveRecordSharePrincipalUserWorkspaceId({
+        principal: grant,
+        flatWorkspaceMemberMaps,
+      });
+
+      return {
+        id: grant.id,
+        principalType: grant.principalType,
+        principalId: grant.principalId,
+        principalRoleId: isDefined(userWorkspaceId)
+          ? (assignedRoleIdByUserWorkspaceId.get(userWorkspaceId) ?? null)
           : null,
-      accessLevel: grant.accessLevel,
-      rowCause: grant.rowCause,
-    }));
+        accessLevel: grant.accessLevel,
+        rowCause: grant.rowCause,
+      };
+    });
   }
 
   private async buildRoles({
@@ -272,11 +321,11 @@ export class RecordSharingReadService {
         return {
           id,
           label,
-          canRead: canReachSomeRecords({
+          canRead: canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions,
             operationType: 'read',
           }),
-          canUpdate: canReachSomeRecords({
+          canUpdate: canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions,
             operationType: 'update',
           }),
@@ -288,14 +337,15 @@ export class RecordSharingReadService {
     authContext,
     objectMetadataId,
     recordId,
-    sharingObject,
+    flatObjectMetadata,
+    featureFlagsMap,
     transactionScope,
   }: RecordSharingArgs & {
-    sharingObject: RecordSharingObject;
+    flatObjectMetadata: FlatObjectMetadata;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     transactionScope?: RecordPermissionTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const { flatObjectMetadata, canSetRecordPrivacy } = sharingObject;
     const { roleIdsWithAllRecordsAccess } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'roleIdsWithAllRecordsAccess',
@@ -304,12 +354,14 @@ export class RecordSharingReadService {
       await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
+    const canRoleAccessAllRecords = (roleId: string) =>
+      roleIdsWithAllRecordsAccess.includes(roleId);
     const canAccessAllRecords =
       isDefined(principals) &&
-      canRolesAccessAllRecords({
-        roleIds: getPermissionsPrincipalsRoleIds(principals),
-        roleIdsWithAllRecordsAccess,
-      });
+      principals.mainPrincipal.roleIds.some(canRoleAccessAllRecords) &&
+      getPermissionsPrincipalsLimitingRoleIds(principals).every(
+        canRoleAccessAllRecords,
+      );
     const shares = await this.recordPermissionReadRepository.findRecordShares({
       workspaceId,
       objectMetadataId,
@@ -334,15 +386,17 @@ export class RecordSharingReadService {
           ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
-      implicitAccessLevels: canSetRecordPrivacy
-        ? [
-            isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
-            creatorWorkspaceMemberId === authContext.workspaceMemberId ||
-            (canAccessAllRecords && !isPrivate)
-              ? RecordShareAccessLevel.FULL
-              : null,
-          ]
-        : [],
+      implicitAccessLevels:
+        isRecordSharingEnabled({ featureFlagsMap }) ||
+        canSetPrivateRecordState({ featureFlagsMap })
+          ? [
+              isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
+              creatorWorkspaceMemberId === authContext.workspaceMemberId ||
+              (canAccessAllRecords && !isPrivate)
+                ? RecordShareAccessLevel.FULL
+                : null,
+            ]
+          : [],
     });
 
     return {
@@ -369,7 +423,7 @@ export class RecordSharingReadService {
         'flatFieldMetadataMaps',
       ]);
     const privateRecordStates =
-      await this.recordPermissionReadRepository.findPrivateRecordStates({
+      await this.privateRecordRepository.findPrivateRecordStates({
         workspaceId,
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -382,15 +436,15 @@ export class RecordSharingReadService {
 
   private async findPermissions({
     args,
-    sharingObject,
+    flatObjectMetadata,
   }: {
     args: RecordSharingArgs;
-    sharingObject: RecordSharingObject;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
   }): Promise<RecordPermissionsDTO> {
     const permissionsByRecordId =
       await this.recordPermissionsReadService.findRecordsActions({
         authContext: args.authContext,
-        objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
+        objectNameSingular: flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],
         transactionScope: args.transactionScope,
       });
@@ -400,23 +454,25 @@ export class RecordSharingReadService {
     );
   }
 
-  private async findSharingObjectOrThrow({
+  private async findFlatObjectMetadataAndFeatureFlagsMapOrThrow({
     authContext,
     objectMetadataId,
-  }: Pick<
-    RecordSharingArgs,
-    'authContext' | 'objectMetadataId'
-  >): Promise<RecordSharingObject> {
+  }: Pick<RecordSharingArgs, 'authContext' | 'objectMetadataId'>): Promise<{
+    flatObjectMetadata: FlatObjectMetadata;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+  }> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
         authContext.workspace.id,
         ['flatObjectMetadataMaps', 'featureFlagsMap'],
       );
 
-    return resolveRecordSharingObjectOrThrow({
-      objectMetadataId,
-      flatObjectMetadataMaps,
+    return {
+      flatObjectMetadata: findRecordSharingFlatObjectMetadataOrThrow({
+        objectMetadataId,
+        flatObjectMetadataMaps,
+      }),
       featureFlagsMap,
-    });
+    };
   }
 }

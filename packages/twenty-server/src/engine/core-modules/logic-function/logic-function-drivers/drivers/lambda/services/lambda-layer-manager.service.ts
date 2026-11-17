@@ -404,6 +404,7 @@ export class LambdaLayerManagerService {
       await this.awsClient.generatePresignedUploadUrl(s3Key);
 
     await this.toolFunctions.runYarnInstallCreateLayer({
+      tenantId: layerName,
       packageJson,
       yarnLock: yarnLock ?? EMPTY_YARN_LOCK_CONTENT,
       presignedUploadUrl,

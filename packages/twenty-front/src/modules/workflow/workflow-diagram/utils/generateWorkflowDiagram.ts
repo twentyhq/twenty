@@ -2,8 +2,6 @@ import {
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
-import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
-import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
@@ -65,20 +63,13 @@ export const generateWorkflowDiagram = ({
     });
   }
 
-  const xPos = FIRST_NODE_POSITION.x;
-  let levelYPos = FIRST_NODE_POSITION.y;
-
   for (const step of steps) {
-    levelYPos += VERTICAL_DISTANCE_BETWEEN_TWO_NODES;
-
     switch (step.type) {
       case 'ITERATOR': {
         const { nodes: iteratorNodes, edges: iteratorEdges } =
           generateNodesAndEdgesForIteratorNode({
             step,
             steps,
-            xPos,
-            yPos: levelYPos,
             nodes,
             edges,
             workflowContext,
@@ -94,8 +85,6 @@ export const generateWorkflowDiagram = ({
           generateNodesAndEdgesForIfElseNode({
             step,
             steps,
-            xPos,
-            yPos: levelYPos,
             nodes,
             edges,
             workflowContext,
@@ -111,8 +100,6 @@ export const generateWorkflowDiagram = ({
           generateNodesAndEdgesForDefaultNode({
             step,
             steps,
-            xPos,
-            yPos: levelYPos,
             nodes,
             edges,
             workflowContext,

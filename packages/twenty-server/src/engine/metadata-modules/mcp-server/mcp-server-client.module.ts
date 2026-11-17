@@ -7,6 +7,8 @@ import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modul
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
+import { McpServerConnectedAccountService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-connected-account.service';
+import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
@@ -22,8 +24,14 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   providers: [
     provideWorkspaceScopedRepository(McpServerEntity),
     McpServerClientService,
+    McpServerConnectedAccountService,
     McpServerToolSyncService,
+    McpServerToolCallService,
   ],
-  exports: [McpServerClientService, McpServerToolSyncService],
+  exports: [
+    McpServerClientService,
+    McpServerToolSyncService,
+    McpServerToolCallService,
+  ],
 })
 export class McpServerClientModule {}

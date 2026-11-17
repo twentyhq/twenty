@@ -1,37 +1,36 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
+import { aiChatLastMessageIdFamilySelector } from '@/ai/states/selectors/aiChatLastMessageIdFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AiChatLastMessageWithStreamingState = () => {
-  const agentChatLastMessageId = useAtomStateValue(
-    agentChatLastMessageIdSelector,
+  const { threadId } = useAiChatInstanceOrThrow();
+  const aiChatLastMessageId = useAtomFamilySelectorValue(
+    aiChatLastMessageIdFamilySelector,
+    threadId,
   );
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
+    { threadId },
   );
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
-  );
-  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
+    threadId,
   });
 
-  if (!isDefined(agentChatLastMessageId)) {
+  if (!isDefined(aiChatLastMessageId)) {
     return null;
   }
 
   return (
     <AiChatMessage
-      messageId={agentChatLastMessageId}
-      isLastMessageStreaming={agentChatIsStreaming}
-      error={agentChatError ?? undefined}
+      messageId={aiChatLastMessageId}
+      isLastMessageStreaming={aiChatIsStreaming}
+      error={aiChatError ?? undefined}
     />
   );
 };

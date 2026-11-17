@@ -117,7 +117,7 @@ const buildRepository = ({
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
       recordFieldPermissions: {
-        findFieldsHiddenOnMatchingRecords: jest.fn().mockResolvedValue([]),
+        buildUnreadableFieldsSQLConditions: jest.fn().mockResolvedValue([]),
       },
       recordAccessGroupWrite: {
         isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
@@ -153,7 +153,7 @@ const buildRepository = ({
       mainPrincipal: {
         type: 'apiKey',
         apiKeyId: 'api-key-id',
-        roleId: ROLE_ID,
+        roleIds: [ROLE_ID],
       },
       applicationPrincipal: { type: 'customApplication' },
     },

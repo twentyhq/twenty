@@ -137,7 +137,7 @@ describe('buildWorkspaceAccessGroups', () => {
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-      userWorkspaceRoleMap: { 'user-workspace': BROKEN_ROLE_ID },
+      userWorkspaceRoleMap: { 'user-workspace': [BROKEN_ROLE_ID] },
       flatWorkspaceMemberMaps: {
         idByUserWorkspaceId: { 'user-workspace': workspaceMember.id },
         byId: { [workspaceMember.id]: workspaceMember },

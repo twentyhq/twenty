@@ -5,10 +5,15 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { buildPrincipalsRelatedRecordPathAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-principals-related-record-path-access-groups-or-throw.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
+import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { AccessGroupReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-read.repository';
-import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
+import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -19,7 +24,7 @@ export class AccessGroupReadService {
     private readonly accessGroupReadRepository: AccessGroupReadRepository,
   ) {}
 
-  async findCallerCompactIds({
+  async findPrincipalsCompactIds({
     principals,
     objectMetadataId,
     operationType,
@@ -31,42 +36,91 @@ export class AccessGroupReadService {
     objectMetadataId: string;
     operationType: ObjectRecordsOperationType;
   }): Promise<number[]> {
-    const { workspaceId, mainPrincipal } = principals;
-    const {
-      featureFlagsMap,
-      rolesPermissions,
-      flatFieldMetadataMaps,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
-      'rolesPermissions',
-      'flatFieldMetadataMaps',
-      'flatWorkspaceMemberMaps',
-    ]);
-    const workspaceMember = isPermissionMainPrincipalWorkspaceMember(
-      mainPrincipal,
-    )
-      ? flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
-      : undefined;
-    const callerAccessGroups = buildRoleAccessGroupsOrThrow({
-      roleId: mainPrincipal.roleId,
-      objectMetadataId,
-      objectRecordsPermissions:
-        rolesPermissions[mainPrincipal.roleId]?.objects[objectMetadataId],
-      operationTypes: [operationType],
-      workspaceMembers: isDefined(workspaceMember) ? [workspaceMember] : [],
-      flatFieldMetadataMaps,
-      isRelationHopEnabled:
-        isRowLevelPermissionRelationHopEnabled(featureFlagsMap),
-    });
+    const { workspaceId } = principals;
+    const { featureFlagsMap, rolesPermissions, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+        'rolesPermissions',
+        'flatFieldMetadataMaps',
+      ]);
 
-    if (!isNonEmptyArray(callerAccessGroups)) {
+    const workspaceMember = await this.findPrincipalWorkspaceMember(principals);
+    const workspaceMembers = [workspaceMember].filter(isDefined);
+
+    return this.findCompactIds({
+      workspaceId,
+      accessGroups: principals.mainPrincipal.roleIds.flatMap((roleId) =>
+        buildRoleAccessGroupsOrThrow({
+          roleId,
+          objectMetadataId,
+          objectRecordsPermissions:
+            rolesPermissions[roleId]?.objects[objectMetadataId],
+          operationTypes: [operationType],
+          workspaceMembers,
+          flatFieldMetadataMaps,
+          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
+        }),
+      ),
+    });
+  }
+
+  async findPrincipalsRelatedRecordPathCompactIds(
+    request: PermissionsObjectAccessRequest,
+  ): Promise<number[]> {
+    if (!canRelatedRecordPathExtendAccess(request)) {
+      return [];
+    }
+
+    const { workspaceId } = request.principals;
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return this.findCompactIds({
+      workspaceId,
+      accessGroups: buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+        request,
+        workspaceMembers: [
+          await this.findPrincipalWorkspaceMember(request.principals),
+        ].filter(isDefined),
+        flatFieldMetadataMaps,
+      }),
+    });
+  }
+
+  private async findPrincipalWorkspaceMember({
+    workspaceId,
+    mainPrincipal,
+  }: Pick<
+    PermissionsPrincipalsWithRolesContext,
+    'workspaceId' | 'mainPrincipal'
+  >): Promise<RlsWorkspaceMember | undefined> {
+    if (!isPermissionMainPrincipalWorkspaceMember(mainPrincipal)) {
+      return undefined;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    return flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId];
+  }
+
+  private async findCompactIds({
+    workspaceId,
+    accessGroups,
+  }: {
+    workspaceId: string;
+    accessGroups: AccessGroupWithoutCompactId[];
+  }): Promise<number[]> {
+    if (!isNonEmptyArray(accessGroups)) {
       return [];
     }
 
     return this.accessGroupReadRepository.findCompactIdsByGroupHashes({
       workspaceId,
-      groupHashes: callerAccessGroups.map(({ groupHash }) => groupHash),
+      groupHashes: accessGroups.map(({ groupHash }) => groupHash),
     });
   }
 }

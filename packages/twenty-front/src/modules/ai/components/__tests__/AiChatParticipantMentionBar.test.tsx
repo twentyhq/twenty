@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen } from '@testing-library/react';
@@ -11,7 +12,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
@@ -36,7 +37,9 @@ const renderBar = (editor: Editor) => {
   return render(
     <Wrapper>
       <I18nProvider i18n={i18n}>
-        <AiChatParticipantMentionBar editor={editor as ReactEditor} />
+        <AiChatTestInstance>
+          <AiChatParticipantMentionBar editor={editor as ReactEditor} />
+        </AiChatTestInstance>
       </I18nProvider>
     </Wrapper>,
   );
@@ -49,7 +52,7 @@ describe('AiChatParticipantMentionBar', () => {
     editor = new Editor({
       extensions: [Document, Paragraph, Text, MentionTag],
       onUpdate: ({ editor: updatedEditor }) => {
-        jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+        jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
           [THREAD_ID]: serializeAdvancedTextEditorDocument(updatedEditor),
         });
       },

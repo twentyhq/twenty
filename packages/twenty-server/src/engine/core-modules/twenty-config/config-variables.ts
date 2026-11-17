@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsUUID,
   Max,
   ValidateIf,
   type ValidationError,
@@ -610,6 +611,18 @@ export class ConfigVariables {
   @IsOptional()
   @IsEnum(DpaRegion)
   DPA_DEPLOYMENT_REGION: DpaRegion = DpaRegion.EU;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Id of the only workspace server admin privileges (admin panel, server-level impersonation) can be used from. Leave unset to allow them from any workspace.',
+    type: ConfigVariableType.STRING,
+    // Env-only: the admin panel must not be able to lift its own restriction.
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUUID()
+  SERVER_ADMIN_WORKSPACE_ID: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -1257,6 +1270,15 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Additional subdomains no workspace can use when multi-workspace is enabled (status, internal-tools). The built-in reserved list still applies. Exact match, no patterns',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  ADDITIONAL_RESERVED_SUBDOMAINS: string[] = [];
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
     isHiddenInAdminPanel: true,
@@ -1639,7 +1661,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
+      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: one job every durationMs / max with no initial burst, per workspace and application. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -2219,6 +2241,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   AI_PROVIDERS: AiProvidersConfig = {};
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Send AI providers a signed link to files when this server is public. Turn off when the server URL looks public but providers cannot reach it, for example behind a VPN, or when file links must not leave this server. Files are then sent as bytes.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_SIGNED_FILE_URLS_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

@@ -1,7 +1,10 @@
 import { type ReactNode } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -15,16 +18,28 @@ export const AiChatThreadPageContent = ({
   threadId,
   headerActions,
   headerTitlePrefix,
-}: AiChatThreadPageContentProps) => (
-  <RecordShowPageContent
-    parameters={{
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-      objectRecordId: threadId,
-    }}
-    headerActions={headerActions}
-    headerTitlePrefix={headerTitlePrefix}
-    headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
-    headerTitleMode="record-title"
-    isRecordIdentifierBarHidden
-  />
-);
+}: AiChatThreadPageContentProps) => {
+  const isDirectMessage = useAtomFamilySelectorValue(
+    aiChatThreadIsDirectMessageFamilySelector,
+    threadId,
+  );
+
+  return (
+    <RecordShowPageContent
+      parameters={{
+        objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+        objectRecordId: threadId,
+      }}
+      headerActions={headerActions}
+      headerTitle={
+        isDirectMessage ? (
+          <InboxDirectMessageTitle threadId={threadId} />
+        ) : undefined
+      }
+      headerTitlePrefix={headerTitlePrefix}
+      headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
+      headerTitleMode="record-title"
+      isRecordIdentifierBarHidden
+    />
+  );
+};

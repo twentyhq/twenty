@@ -21,7 +21,7 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   combineFilters,
   computeRecordGqlOperationFilter,
   isDefined,
@@ -98,7 +98,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = canReachSomeRecords({
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });

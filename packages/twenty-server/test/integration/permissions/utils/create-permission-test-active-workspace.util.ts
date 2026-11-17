@@ -5,9 +5,15 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createPermissionTestActiveWorkspace = async (): Promise<{
+export const createPermissionTestActiveWorkspace = async ({
+  featureFlagsEnabledBeforeActivation = [],
+}: {
+  featureFlagsEnabledBeforeActivation?: FeatureFlagKey[];
+} = {}): Promise<{
   workspaceId: string;
   workspaceOrigin: string;
   inviteHash: string;
@@ -37,6 +43,15 @@ export const createPermissionTestActiveWorkspace = async (): Promise<{
     loginToken: newWorkspace.loginToken.token,
     expectToFail: false,
   });
+
+  for (const featureFlag of featureFlagsEnabledBeforeActivation) {
+    await updateFeatureFlag({
+      featureFlag,
+      value: true,
+      workspaceId: newWorkspace.workspace.id,
+      expectToFail: false,
+    });
+  }
 
   const {
     data: { activateWorkspace: activatedWorkspace },

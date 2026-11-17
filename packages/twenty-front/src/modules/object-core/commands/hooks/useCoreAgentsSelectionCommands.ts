@@ -6,7 +6,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useSelectedCoreAgentIds } from '@/object-core/agents/hooks/useSelectedCoreAgentIds';
 import { CORE_AGENTS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsDeleteCommandId';
-import { CORE_AGENTS_SEE_RUNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeRunsCommandId';
+import { CORE_AGENTS_SEE_TURNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeTurnsCommandId';
 import { isMatchingSidePanelSearch } from '@/object-core/commands/utils/isMatchingSidePanelSearch';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -26,12 +26,12 @@ export const useCoreAgentsSelectionCommands = () => {
   );
   const selectedCoreAgentIds = useSelectedCoreAgentIds();
 
-  const seeRunsCommandLabel = t`See Runs`;
-  const shouldDisplaySeeRunsCommand =
+  const seeTurnsCommandLabel = t`See Turns`;
+  const shouldDisplaySeeTurnsCommand =
     selectedCoreAgentIds.length === 1 &&
     isAiChatInboxEnabled &&
     !isInPreviewMode &&
-    isMatchingSidePanelSearch({ label: seeRunsCommandLabel, sidePanelSearch });
+    isMatchingSidePanelSearch({ label: seeTurnsCommandLabel, sidePanelSearch });
 
   const deleteCommandLabel =
     selectedCoreAgentIds.length === 1 ? t`Delete Agent` : t`Delete Agents`;
@@ -43,12 +43,14 @@ export const useCoreAgentsSelectionCommands = () => {
 
   return {
     selectedCoreAgentIds,
-    seeRunsCommandLabel,
-    shouldDisplaySeeRunsCommand,
+    seeTurnsCommandLabel,
+    shouldDisplaySeeTurnsCommand,
     deleteCommandLabel,
     shouldDisplayDeleteCommand,
     coreAgentsSelectionCommandIds: [
-      ...(shouldDisplaySeeRunsCommand ? [CORE_AGENTS_SEE_RUNS_COMMAND_ID] : []),
+      ...(shouldDisplaySeeTurnsCommand
+        ? [CORE_AGENTS_SEE_TURNS_COMMAND_ID]
+        : []),
       ...(shouldDisplayDeleteCommand ? [CORE_AGENTS_DELETE_COMMAND_ID] : []),
     ],
   };

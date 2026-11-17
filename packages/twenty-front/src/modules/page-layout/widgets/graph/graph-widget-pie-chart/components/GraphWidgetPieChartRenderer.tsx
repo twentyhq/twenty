@@ -116,6 +116,7 @@ export const GraphWidgetPieChartRenderer = () => {
         objectMetadataItemId={widget.objectMetadataId}
         configuration={widget.configuration}
         showLegend={showLegend}
+        isLegendInteractive={!isPageLayoutInEditMode}
         colorMode={colorMode}
         decimals={chartValueFormatOptions.decimals}
         displayType={chartValueFormatOptions.displayType}

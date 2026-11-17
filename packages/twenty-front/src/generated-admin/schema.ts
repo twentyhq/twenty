@@ -145,6 +145,7 @@ export type AdminPanelUsageLimit = {
   __typename?: 'AdminPanelUsageLimit';
   burstValue?: Maybe<Scalars['BigInt']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
@@ -162,7 +163,7 @@ export type AdminPanelUsageLimitDefault = {
   __typename?: 'AdminPanelUsageLimitDefault';
   isOverridable: Scalars['Boolean']['output'];
   limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
+  limitValue?: Maybe<Scalars['BigInt']['output']>;
   operationType: UsageOperationType;
   overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;
   periodCount: Scalars['Int']['output'];
@@ -423,6 +424,13 @@ export type ApplicationRegistrationVariable = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+/** Why a billing arrangement was granted, used for reporting */
+export enum BillingArrangementLabel {
+  APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
+  COMPENSATION = 'COMPENSATION',
+  OTHER = 'OTHER'
+}
+
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
   COMPENSATION = 'COMPENSATION',
@@ -542,14 +550,16 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
-  IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
+  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
-  IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
+  IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
+  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -689,7 +699,6 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
-  updateWorkspaceUsageLimit: AdminPanelUsageLimit;
 };
 
 
@@ -717,6 +726,9 @@ export type MutationCreateWorkspaceDataExportArgs = {
 
 
 export type MutationCreateWorkspaceUsageLimitArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label?: InputMaybe<BillingArrangementLabel>;
   payload: CreateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
@@ -836,12 +848,6 @@ export type MutationUpdateServerAdminAccessArgs = {
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationUpdateWorkspaceUsageLimitArgs = {
-  payload: UpdateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -1160,11 +1166,6 @@ export type UpdateApplicationRegistrationVariablePayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   resetValue?: InputMaybe<Scalars['Boolean']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateUsageLimitInput = {
-  id: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
 };
 
 export enum UpgradeHealth {

@@ -1,33 +1,26 @@
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTidyUp = () => {
-  const [workflowDiagram, setWorkflowDiagram] = useAtomComponentState(
+  const store = useStore();
+
+  const workflowDiagramState = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
 
   const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
 
   const tidyUp = async () => {
+    const workflowDiagram = store.get(workflowDiagramState);
+
     if (!isDefined(workflowDiagram)) {
       return;
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion();
-
-    const tidiedUpDiagram = await tidyUpWorkflowVersion(
-      workflowVersionId,
-      workflowDiagram,
-    );
-
-    if (isDefined(tidiedUpDiagram)) {
-      setWorkflowDiagram(tidiedUpDiagram);
-    }
+    await tidyUpWorkflowVersion(workflowDiagram);
   };
 
   return { tidyUp };

@@ -6,12 +6,14 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 type FindOneOperationArgs = Parameters<typeof findOneOperationFactory>[0] & {
   expectToFail?: boolean;
+  token?: string;
 };
 export const findOneOperation = async ({
   gqlFields = 'id',
   objectMetadataSingularName,
   expectToFail = false,
   filter,
+  token,
 }: FindOneOperationArgs): CommonResponseBody<{
   findResponse: ObjectRecord;
 }> => {
@@ -21,7 +23,7 @@ export const findOneOperation = async ({
     filter,
   });
 
-  const response = await makeGraphqlApiRequest(graphqlOperation);
+  const response = await makeGraphqlApiRequest(graphqlOperation, token);
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
@@ -32,7 +34,7 @@ export const findOneOperation = async ({
 
   return {
     data: {
-      findResponse: response.body.data[objectMetadataSingularName],
+      findResponse: response.body.data?.[objectMetadataSingularName],
     },
     errors: response.body.errors,
   };

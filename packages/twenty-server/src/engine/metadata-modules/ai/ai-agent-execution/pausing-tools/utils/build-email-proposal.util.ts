@@ -1,12 +1,14 @@
 import { type ProposedToolCall } from 'twenty-shared/ai';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  convertEmailBodyInputToEmailDocument,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 
-// the email tools' own schema decides what can be proposed; the card cannot show attachments,
-// so an email carrying files would send them without the person seeing them
+// the card cannot show attachments, and it renders the body as the document stored here
 export const buildEmailProposal = (
   baseProposal: Omit<ProposedToolCall, 'template'>,
 ): ProposedToolCallResolution => {
@@ -27,5 +29,14 @@ export const buildEmailProposal = (
     };
   }
 
-  return { proposal: { ...baseProposal, template: 'email' } };
+  return {
+    proposal: {
+      ...baseProposal,
+      arguments: {
+        ...baseProposal.arguments,
+        body: convertEmailBodyInputToEmailDocument(parsedArguments.data.body),
+      },
+      template: 'email',
+    },
+  };
 };

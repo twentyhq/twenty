@@ -58,7 +58,7 @@ export const ComposeEmailCommand = () => {
 
   const handleExecute = () => {
     if (!isDefined(connectedAccountId)) {
-      navigateSettings(SettingsPath.NewAccount);
+      navigateSettings(SettingsPath.AppPreferencesNewAccount);
 
       return;
     }

@@ -2,21 +2,25 @@ import {
   type ObjectRecordsPermissions,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { canReachAllRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const unionFields = ({
   objectRecordsPermissionsPerRole,
-  fieldList,
+  inaccessibleFieldsKey,
 }: {
   objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[];
-  fieldList: 'unreadableFields' | 'uneditableFields';
+  inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';
 }): string[] => [
   ...new Set(
     objectRecordsPermissionsPerRole.flatMap(
-      (objectRecordsPermissions) => objectRecordsPermissions?.[fieldList] ?? [],
+      (objectRecordsPermissions) =>
+        objectRecordsPermissions?.[inaccessibleFieldsKey] ?? [],
     ),
   ),
 ];
@@ -50,11 +54,11 @@ const intersectObjectRecordsPermissions = (
     ),
     unreadableFields: unionFields({
       objectRecordsPermissionsPerRole,
-      fieldList: 'unreadableFields',
+      inaccessibleFieldsKey: 'unreadableFields',
     }),
     uneditableFields: unionFields({
       objectRecordsPermissionsPerRole,
-      fieldList: 'uneditableFields',
+      inaccessibleFieldsKey: 'uneditableFields',
     }),
   };
 
@@ -69,7 +73,7 @@ const intersectObjectRecordsPermissions = (
       ) =>
         otherRolesObjectRecordsPermissions.every(
           (otherRoleObjectRecordsPermissions) =>
-            canReachAllRecords({
+            canAccessThroughAllRecordsPermission({
               objectRecordsPermissions: otherRoleObjectRecordsPermissions,
               operationType,
             }),

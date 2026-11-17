@@ -7,7 +7,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
-import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
 const ROLE_ID = 'role-id';
 const flatObjectMetadata = getFlatObjectMetadataMock({
@@ -60,15 +60,15 @@ const buildRequest = ({
     workspaceId: 'workspace-id',
     mainPrincipal: {
       type: 'workspaceMember',
-      roleId: ROLE_ID,
+      roleIds: [ROLE_ID],
       workspaceMemberId: 'member-id',
     },
     applicationPrincipal: { type: 'customApplication' },
   },
   metadataMaps: {
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-    flatApplicationMaps: { byId: {} },
     featureFlagsMap: {
       [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
     },
