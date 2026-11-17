@@ -144,7 +144,11 @@ describe('auth and remote commands', () => {
       isDefault: false,
     });
     expect(refused.exitCode).toBe(2);
-    expect(refused.envelope.error.code).toBe('CONFIRMATION_REQUIRED');
+    expect(refused.envelope.error).toMatchObject({
+      code: 'CONFIRMATION_REQUIRED',
+      message: `Saved remote "default" points to ${server.url}.`,
+      hint: `Pass --replace to point it at ${secondServerUrl}.`,
+    });
     expect(await readConfigFile()).toMatchObject({
       defaultRemote: 'prod',
       remotes: {

@@ -64,7 +64,7 @@ const assertSameUrlOrReplace = ({
   throw new CliError({
     code: 'CONFIRMATION_REQUIRED',
     exitCode: EXIT_CODE.USAGE,
-    message: `Remote ${remoteName} points to ${existingRemote.apiUrl}.`,
+    message: `Saved remote "${remoteName}" points to ${existingRemote.apiUrl}.`,
     hint: `Pass --replace to point it at ${apiUrl}.`,
   });
 };
