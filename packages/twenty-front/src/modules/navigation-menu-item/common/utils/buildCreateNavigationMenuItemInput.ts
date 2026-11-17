@@ -4,6 +4,7 @@ import type {
   NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
@@ -21,7 +22,11 @@ export const buildCreateNavigationMenuItemInput = (
     position: draftItem.position,
   };
 
-  if (isNavigationMenuItemFolder(draftItem)) {
+  if (
+    isNavigationMenuItemFolder(draftItem) ||
+    draftItem.type === NavigationMenuItemType.TAB ||
+    draftItem.type === NavigationMenuItemType.SECTION
+  ) {
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
   } else if (isNavigationMenuItemLink(draftItem)) {

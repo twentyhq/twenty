@@ -1,6 +1,7 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -74,15 +75,13 @@ export const useNavigationMenuItemMoveRemove = (
       return;
     }
 
-    if (isNavigationMenuItemFolder(itemToRemove)) {
-      const childIds = currentItems
-        .filter((item) => item.parentId === navigationMenuItemId)
-        .map((item) => item.id);
-      await deleteItems([navigationMenuItemId, ...childIds]);
-      return;
-    }
-
-    await deleteItems([navigationMenuItemId]);
+    await deleteItems([
+      navigationMenuItemId,
+      ...getNavigationMenuItemDescendantIds({
+        items: currentItems,
+        ancestorId: navigationMenuItemId,
+      }),
+    ]);
   };
 
   const moveToFolder = async (

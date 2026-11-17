@@ -35,6 +35,15 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
+jest.mock(
+  '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection',
+  () => ({
+    useCreateNavigationMenuTabOrSection: () => ({
+      createTab: jest.fn(),
+      createSection: jest.fn(),
+    }),
+  }),
+);
 
 let mockIsInboxEnabled = true;
 
