@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { BrowserNotificationPermissionCard } from '@/settings/experience/components/BrowserNotificationPermissionCard';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
 import { InboxNotificationLevelPicker } from '@/settings/experience/components/InboxNotificationLevelPicker';
 import { InboxNotificationPreviewSwitch } from '@/settings/experience/components/InboxNotificationPreviewSwitch';
@@ -74,6 +75,7 @@ export const SettingsExperience = () => {
               description={t`Get desktop notifications for new messages while Twenty is open but isn't the window you're using`}
             />
             <StyledInterfaceControls>
+              <BrowserNotificationPermissionCard />
               <InboxNotificationLevelPicker />
               <InboxNotificationPreviewSwitch />
             </StyledInterfaceControls>
