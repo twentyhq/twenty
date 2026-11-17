@@ -590,7 +590,7 @@ export class CoreWorkflowMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersion(
         {
           workspaceId,
-          coreWorkflowId: coreWorkflow.id,
+          coreWorkflowUniversalIdentifier: coreWorkflow.universalIdentifier,
           workspaceWorkflowId: null,
           trigger: null,
           steps: null,

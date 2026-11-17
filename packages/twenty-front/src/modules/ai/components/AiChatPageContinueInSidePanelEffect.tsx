@@ -1,20 +1,26 @@
 import { useEffect } from 'react';
 
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const AiChatPageContinueInSidePanelEffect = () => {
-  const setShouldContinueAiChatInSidePanel = useSetAtomState(
-    shouldContinueAiChatInSidePanelState,
+type AiChatPageContinueInSidePanelEffectProps = {
+  threadId: string;
+};
+
+export const AiChatPageContinueInSidePanelEffect = ({
+  threadId,
+}: AiChatPageContinueInSidePanelEffectProps) => {
+  const setAiChatContinueInSidePanelThreadId = useSetAtomState(
+    aiChatContinueInSidePanelThreadIdState,
   );
 
   useEffect(() => {
-    setShouldContinueAiChatInSidePanel(true);
+    setAiChatContinueInSidePanelThreadId(threadId);
 
     return () => {
-      setShouldContinueAiChatInSidePanel(false);
+      setAiChatContinueInSidePanelThreadId(null);
     };
-  }, [setShouldContinueAiChatInSidePanel]);
+  }, [threadId, setAiChatContinueInSidePanelThreadId]);
 
   return null;
 };

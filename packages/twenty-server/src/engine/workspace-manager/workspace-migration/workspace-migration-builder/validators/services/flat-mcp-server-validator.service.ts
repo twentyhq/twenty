@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { isSnakeCaseToolName } from 'twenty-shared/ai';
 import { MCP_SERVER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { McpServerExceptionCode } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import {
   type FailedFlatEntityValidation,

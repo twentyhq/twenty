@@ -1955,6 +1955,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "Hisob‑kitob"
 
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr ""
+
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing customer not found."
@@ -14725,6 +14730,11 @@ msgstr "Ushbu ilova yangilanmoqda. Uni o‘chirib tashlashdan oldin jarayon tuga
 msgid "This application variable scope is not supported."
 msgstr "Ushbu ilova o‘zgaruvchisi doirasi qo‘llab-quvvatlanmaydi."
 
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr ""
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -14765,6 +14775,11 @@ msgstr "Ushbu kampaniyaning elektron pochta xabari mazmuni yaroqsiz."
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "Ushbu kampaniya ro‘yxati chiqindilar qutisida. Uni tiklang yoki Kimga maydonida boshqa ro‘yxatni tanlang."
+
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr ""
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -15013,6 +15028,11 @@ msgstr "Ushbu instansiya server identifikatorini bildirmadi. SERVER_ID ni ushbu 
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "Bu vazifa navbatga qo‘shish uchun juda katta."
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr ""
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15459,6 +15479,11 @@ msgstr "Bu ish jarayoni versiyasi faollashtirishga tayyor emas. {reasons}"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "Bu ish maydoni allaqachon obunaga ega."
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr ""
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
