@@ -15,7 +15,10 @@ const findFlatWorkflowVersionsOfCoreWorkflow = ({
   flatWorkflowVersionMaps,
 }: {
   coreWorkflowId: string | undefined;
-  flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
+  flatWorkflowVersionMaps: Pick<
+    FlatWorkflowVersionMaps,
+    'byUniversalIdentifier'
+  >;
 }): FlatWorkflowVersion[] => {
   if (!isDefined(coreWorkflowId)) {
     return [];

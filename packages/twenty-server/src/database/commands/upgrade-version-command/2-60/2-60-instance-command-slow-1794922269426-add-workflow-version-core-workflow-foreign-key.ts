@@ -11,20 +11,21 @@ export class AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    await dataSource.query(
+    const deletedRows = await dataSource.query<{ workspaceId: string }[]>(
       `DELETE FROM "core"."workflowVersion" "workflowVersion"
         WHERE NOT EXISTS (
           SELECT 1 FROM "core"."workflow" "workflow"
             WHERE "workflow"."id" = "workflowVersion"."coreWorkflowId"
-        )`,
+        )
+        RETURNING "workspaceId"`,
     );
 
-    const workspaces = await dataSource.query<{ id: string }[]>(
-      `SELECT "id" FROM "core"."workspace"`,
+    const affectedWorkspaceIds = new Set(
+      deletedRows.map(({ workspaceId }) => workspaceId),
     );
 
-    for (const workspace of workspaces) {
-      await this.workspaceCacheService.flush(workspace.id, [
+    for (const workspaceId of affectedWorkspaceIds) {
+      await this.workspaceCacheService.flush(workspaceId, [
         'flatWorkflowVersionMaps',
         'workflowAutomatedTriggerMaps',
       ]);

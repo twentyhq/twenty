@@ -28,7 +28,6 @@ const EXTRA_DELETE_AFFECTED_METADATA_NAMES: Partial<
   role: ['fieldMetadata'],
   rowLevelPermissionPredicateGroup: ['fieldMetadata'],
   rowLevelPermissionRule: ['fieldMetadata'],
-  // A workflow's versions CASCADE on it in the database
   workflow: ['workflowVersion'],
 };
 
