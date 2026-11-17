@@ -2783,6 +2783,9 @@ export default {
             ]
         },
         "CalendarChannel": {
+            "connectedAccount": [
+                175
+            ],
             "connectedAccountId": [
                 564
             ],
@@ -2824,9 +2827,6 @@ export default {
             ],
             "updatedAt": [
                 228
-            ],
-            "userWorkspaceId": [
-                564
             ],
             "visibility": [
                 147
