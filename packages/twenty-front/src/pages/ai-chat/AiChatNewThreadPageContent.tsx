@@ -1,5 +1,6 @@
 import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { type ReactNode, useId } from 'react';
 
 import { AiChatInstance } from '@/ai/components/AiChatInstance';
@@ -9,6 +10,7 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -34,6 +36,17 @@ export const AiChatNewThreadPageContent = ({
   const instanceId = useId();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const { selectAiChatThread } = useSelectAiChatThread();
+  const store = useStore();
+
+  const handleThreadChange = (threadId: string) => {
+    const isPageStillOnNewChat =
+      getCurrentAiChatPageThreadId(store) ===
+      store.get(newAiChatThreadIdState.atom);
+
+    if (isPageStillOnNewChat) {
+      selectAiChatThread(threadId);
+    }
+  };
 
   return (
     <PageCardLayout
@@ -50,7 +63,7 @@ export const AiChatNewThreadPageContent = ({
           <AiChatInstance
             instanceId={instanceId}
             threadId={newAiChatThreadId}
-            onThreadChange={selectAiChatThread}
+            onThreadChange={handleThreadChange}
           >
             <AiChatTab />
           </AiChatInstance>

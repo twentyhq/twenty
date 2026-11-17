@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -49,13 +50,18 @@ export const SidePanelAskAiHandoffEffect = ({
       return;
     }
 
+    const isIdleNewChat =
+      aiChatContinueInSidePanelThreadId ===
+        store.get(newAiChatThreadIdState.atom) &&
+      !store.get(
+        aiChatIsSendingMessageFamilyState.atomFamily({
+          threadId: aiChatContinueInSidePanelThreadId,
+        }),
+      );
+
     onContinueChatFromFullWidth();
     openAskAiPage({
-      threadId:
-        aiChatContinueInSidePanelThreadId ===
-        store.get(newAiChatThreadIdState.atom)
-          ? undefined
-          : aiChatContinueInSidePanelThreadId,
+      threadId: isIdleNewChat ? undefined : aiChatContinueInSidePanelThreadId,
       resetNavigationStack: true,
     });
   }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
