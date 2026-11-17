@@ -546,7 +546,7 @@ describe('BullMQDriver job memory scenarios', () => {
             payloadBytes: 2_000,
           }),
         ],
-        { groupKeys: ['logic-function:fn-1'] },
+        { fairnessGroupKeys: ['logic-function:fn-1'] },
       );
 
       expect(await harness.readUsedBytes('logic-function:fn-1')).toBe(0);

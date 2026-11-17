@@ -922,8 +922,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
     workspaceLocalProperties: ['visibility', 'createdByUserWorkspaceId'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      jobConfig:
-        'no manifest slot yet, every application workflow gets the default',
       lastPublishedVersionId:
         'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
