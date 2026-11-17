@@ -14,6 +14,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { computeInitialObjectViewOperationsOnObjectCreation } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-operations-on-object-creation.util';
+import { WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/workspace-navigation-menu-section-universal-identifier.constant';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -668,9 +669,19 @@ export class ObjectMetadataService {
       (item): item is FlatNavigationMenuItem =>
         isDefined(item) && !isDefined(item.userWorkspaceId),
     );
+    const workspaceSection = workspaceLevelItems.find(
+      (item) =>
+        item.universalIdentifier ===
+        WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+    );
+    const siblingItems = isDefined(workspaceSection)
+      ? workspaceLevelItems.filter(
+          (item) => item.parentId === workspaceSection.id,
+        )
+      : workspaceLevelItems;
     const nextPosition =
-      workspaceLevelItems.length > 0
-        ? Math.max(...workspaceLevelItems.map((item) => item.position)) + 1
+      siblingItems.length > 0
+        ? Math.max(...siblingItems.map((item) => item.position)) + 1
         : 0;
 
     const newId = v4();
@@ -687,8 +698,8 @@ export class ObjectMetadataService {
         objectMetadata.universalIdentifier,
       viewId: null,
       viewUniversalIdentifier: null,
-      parentId: null,
-      parentUniversalIdentifier: null,
+      parentId: workspaceSection?.id ?? null,
+      parentUniversalIdentifier: workspaceSection?.universalIdentifier ?? null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
       agentChatChannelId: null,
