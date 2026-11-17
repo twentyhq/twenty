@@ -6,7 +6,7 @@ describe('getPermissionsPrincipalsRoleIds', () => {
       getPermissionsPrincipalsRoleIds({
         mainPrincipal: {
           type: 'workspaceMember',
-          roleId: 'user-role',
+          roleIds: ['user-role'],
           workspaceMemberId: 'member-1',
         },
         limitingPrincipal: {
@@ -28,7 +28,7 @@ describe('getPermissionsPrincipalsRoleIds', () => {
       getPermissionsPrincipalsRoleIds({
         mainPrincipal: {
           type: 'workspaceMember',
-          roleId: 'user-role',
+          roleIds: ['user-role'],
           workspaceMemberId: 'member-1',
         },
         applicationPrincipal: { type: 'customApplication' },

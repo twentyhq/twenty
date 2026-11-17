@@ -44,6 +44,7 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -69,6 +70,7 @@ export class ServerRouteTriggerService {
     private readonly messageQueueService: MessageQueueService,
     private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handle({
@@ -140,6 +142,9 @@ export class ServerRouteTriggerService {
         forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
           ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
           : undefined,
+        identityAssertionHeaderName: this.twentyConfigService.get(
+          'SERVER_ADMIN_IDENTITY_ASSERTION_HEADER',
+        ),
         userWorkspaceId: null,
       });
 

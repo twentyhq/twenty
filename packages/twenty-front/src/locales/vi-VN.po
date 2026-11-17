@@ -8326,11 +8326,6 @@ msgstr "Tạo công việc cho bản ghi này: "
 msgid "Create a workflow"
 msgstr "Tạo một quy trình làm việc"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Tạo một quy trình làm việc và quay lại đây để xem các phiên bản của nó"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -19445,7 +19440,7 @@ msgstr "Doanh nghiệp mới"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
-#: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
+#: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "Cuộc trò chuyện mới"
 
@@ -20753,11 +20748,6 @@ msgstr "Không có phiên bản nào được báo cáo trong giai đoạn này"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Chưa có lần chạy workflows nào"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Chưa có phiên bản workflows nào"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
@@ -26117,6 +26107,7 @@ msgstr "phần"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Phần"
 
@@ -28770,6 +28761,7 @@ msgid "System skills"
 msgstr "Kỹ năng hệ thống"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Tab"

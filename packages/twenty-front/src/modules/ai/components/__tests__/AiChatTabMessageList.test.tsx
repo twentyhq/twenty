@@ -20,6 +20,21 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => mockUseAtomStateValue(),
 }));
 
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
+  () => ({
+    useAtomFamilySelectorValue: () => mockUseAtomStateValue(),
+  }),
+);
+
+jest.mock('@/ai/hooks/useAiChatInstanceOrThrow', () => ({
+  useAiChatInstanceOrThrow: () => ({
+    instanceId: 'chat',
+    threadId: 'thread',
+    onThreadChange: () => {},
+  }),
+}));
+
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
   ScrollWrapper: ({
     children,

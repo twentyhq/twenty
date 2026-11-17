@@ -1,3 +1,4 @@
+import { planFrontComponentSourceWrites } from '@/app/pull/plan-front-component-source-writes';
 import { planPublicAssetWrites } from '@/app/pull/plan-public-asset-writes';
 import { FileFolder } from 'twenty-shared/types';
 import { planFrontComponentWrites } from '@/app/pull/plan-front-component-writes';
@@ -150,12 +151,30 @@ export const pullApplication = async (
         ].map((write) => write.relativePath.toLowerCase()),
       ),
     });
+    const frontComponentSourcePlan = await planFrontComponentSourceWrites({
+      appPath,
+      manifest,
+      files: applicationExport.files,
+      remoteSourceFingerprints: base.remoteSourceFingerprints,
+      sourceFingerprints: base.sourceFingerprints,
+      reservedPaths: new Set(
+        [
+          ...safePlan.writes,
+          ...translationPlan.writes,
+          ...dependencyPlan.writes,
+          ...publicAssetPlan.writes,
+          ...frontComponentPlan.writes,
+          ...safePlan.deletions,
+        ].map((write) => write.relativePath.toLowerCase()),
+      ),
+    });
     const writes = [
       ...safePlan.writes,
       ...translationPlan.writes,
       ...dependencyPlan.writes,
       ...publicAssetPlan.writes,
       ...frontComponentPlan.writes,
+      ...frontComponentSourcePlan.writes,
     ];
     const deletions = [
       ...safePlan.deletions,
@@ -179,7 +198,10 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
-      remoteSourceFingerprints: frontComponentPlan.fingerprints,
+      remoteSourceFingerprints: {
+        ...frontComponentPlan.fingerprints,
+        ...frontComponentSourcePlan.fingerprints,
+      },
       publicAssetFingerprints: {
         ...base.publicAssetFingerprints,
         ...publicAssetPlan.fingerprints,
@@ -194,6 +216,7 @@ export const pullApplication = async (
           ...dependencyPlan.unchangedSourceFingerprints,
           ...publicAssetPlan.unchangedSourceFingerprints,
           ...frontComponentPlan.unchangedSourceFingerprints,
+          ...frontComponentSourcePlan.unchangedSourceFingerprints,
         },
         writes,
         deletions,
@@ -248,7 +271,8 @@ export const pullApplication = async (
           plan.unchanged.length +
           dependencyPlan.unchangedCount +
           publicAssetPlan.unchangedCount +
-          frontComponentPlan.unchangedCount,
+          frontComponentPlan.unchangedCount +
+          frontComponentSourcePlan.unchangedCount,
         localOnlyRelativePaths: plan.localOnlyRelativePaths,
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)

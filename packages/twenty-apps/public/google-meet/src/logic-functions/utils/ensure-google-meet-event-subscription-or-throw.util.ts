@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type GoogleMeetEventSubscription } from 'src/logic-functions/types/google-meet-event-subscription.type';
+import { canRenewGoogleMeetEventSubscription } from 'src/logic-functions/utils/can-renew-google-meet-event-subscription.util';
 import { createGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/create-google-meet-event-subscription-or-throw.util';
 import { deleteGoogleMeetEventSubscription } from 'src/logic-functions/utils/delete-google-meet-event-subscription.util';
 import { renewGoogleMeetEventSubscriptionOrThrow } from 'src/logic-functions/utils/renew-google-meet-event-subscription-or-throw.util';
@@ -25,8 +26,10 @@ export const ensureGoogleMeetEventSubscriptionOrThrow = async ({
   }
 
   if (
-    existingSubscription.notificationEndpoint?.pubsubTopic === pubsubTopic &&
-    existingSubscription.state !== 'SUSPENDED'
+    canRenewGoogleMeetEventSubscription({
+      subscription: existingSubscription,
+      pubsubTopic,
+    })
   ) {
     return renewGoogleMeetEventSubscriptionOrThrow({
       accessToken,
@@ -34,7 +37,7 @@ export const ensureGoogleMeetEventSubscriptionOrThrow = async ({
     });
   }
 
-  // Google does not let a subscription move to another topic, and renewing does not resume a suspended one.
+  // Renewing only extends a subscription: it cannot change its topic or event types, or resume a suspended one.
   await deleteGoogleMeetEventSubscription({
     accessToken,
     subscriptionName: existingSubscription.name,

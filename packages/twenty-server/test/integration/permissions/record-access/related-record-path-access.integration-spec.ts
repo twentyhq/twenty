@@ -31,7 +31,7 @@ import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/relate
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
@@ -247,27 +247,29 @@ describe('Record access through related record paths', () => {
       roleId: projectRuleRoleId,
       objectMetadataId: projectObjectMetadataId,
     });
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: projectRuleRoleId,
         objectMetadataId: projectObjectMetadataId,
-        canReadRecords: true,
-        predicateGroups: [
+        rules: [
           {
-            id: predicateGroupId,
-            objectMetadataId: projectObjectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          },
-        ],
-        predicates: [
-          {
-            id: v4(),
-            fieldMetadataId: nameFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Readable',
-            rowLevelPermissionPredicateGroupId: predicateGroupId,
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                id: predicateGroupId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: nameFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Readable',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

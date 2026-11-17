@@ -56,7 +56,7 @@ export default defineLogicFunction({
   universalIdentifier: GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER,
   name: 'google-meet-import-conference',
   description:
-    'Imports the transcript of one Google Meet conference into a Call Recording.',
+    'Imports the transcript and Gemini notes of one Google Meet conference into a Call Recording.',
   timeoutSeconds: 300,
   handler: googleMeetImportConferenceHandler,
 });

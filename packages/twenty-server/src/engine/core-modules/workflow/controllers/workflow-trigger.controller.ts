@@ -25,7 +25,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import {
   WorkflowTriggerException,
@@ -41,7 +41,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 export class WorkflowTriggerController {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -112,7 +112,7 @@ export class WorkflowTriggerController {
       }
 
       const workflowVersion =
-        await this.workflowVersionCoreSyncService.findCoreVersionById(
+        await this.coreWorkflowTriggerService.findCoreVersionById(
           workspaceId,
           workflow.lastPublishedCoreWorkflowVersionId,
         );

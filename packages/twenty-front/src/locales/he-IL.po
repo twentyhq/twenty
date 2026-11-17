@@ -8326,11 +8326,6 @@ msgstr "צור משימה עבור רשומה זו: "
 msgid "Create a workflow"
 msgstr "צור תהליך עבודה"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "צור זרימת עבודה וחזור לכאן כדי לצפות בגרסאות שלה"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -19445,7 +19440,7 @@ msgstr "חברה חדשה"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
-#: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
+#: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "שיחה חדשה"
 
@@ -20753,11 +20748,6 @@ msgstr "לא דווחה גרסה בתקופה זו"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "עדיין אין הרצות זרימת עבודה"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "עדיין אין גרסאות של זרימת עבודה"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
@@ -26117,6 +26107,7 @@ msgstr "קטע"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "קטע"
 
@@ -28770,6 +28761,7 @@ msgid "System skills"
 msgstr "מיומנויות מערכת"
 
 #. js-lingui-id: HuA3RU
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "כרטיסייה"
