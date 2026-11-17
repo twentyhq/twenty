@@ -37,12 +37,16 @@ export const isFieldMetadataComputation = (
         return true;
       }
 
-      return isDefined(listItemProperty)
-        ? Array.isArray(value) &&
-            value.every(
-              (item) => isPlainObject(item) && isString(item[listItemProperty]),
-            )
-        : isString(value);
+      if (!isDefined(listItemProperty)) {
+        return isString(value);
+      }
+
+      return (
+        Array.isArray(value) &&
+        value.every(
+          (item) => isPlainObject(item) && isString(item[listItemProperty]),
+        )
+      );
     }) &&
     Object.entries(allowedValuesByProperty).every(([property, allowedValues]) =>
       allowedValues.some(
