@@ -108,6 +108,9 @@ its owner workspace.
 - When a transcript or Gemini notes are ready, Google publishes an event,
   Pub/Sub pushes it to Twenty, and the call is imported as a Call Recording in
   the member's workspace, with the notes as its summary.
+- When a call has a transcript but no Gemini notes, an AI agent writes its
+  summary instead. This uses AI credits; turn off the app's AI summaries
+  setting to avoid it.
 - Once a day, Twenty renews each subscription (Google expires them after 7
   days) and imports the calls of the last two days whose event was missed.
 - When a member removes their connection, the subscription is deleted.

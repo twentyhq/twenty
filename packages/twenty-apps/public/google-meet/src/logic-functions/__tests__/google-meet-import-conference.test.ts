@@ -29,7 +29,10 @@ describe('googleMeetImportConferenceHandler', () => {
       id: 'connected-account-id',
       accessToken: 'token',
     });
-    vi.mocked(syncGoogleMeetConferenceOrThrow).mockResolvedValue('CREATED');
+    vi.mocked(syncGoogleMeetConferenceOrThrow).mockResolvedValue({
+      outcome: 'CREATED',
+      needsAiSummary: false,
+    });
   });
 
   it('should import the conference with the token of its connection', async () => {
