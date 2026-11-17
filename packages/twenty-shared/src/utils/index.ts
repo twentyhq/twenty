@@ -23,6 +23,10 @@ export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfOb
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
+export { evictLeastRecentlyUsed } from './cache/evictLeastRecentlyUsed';
+export { memoizeLeastRecentlyUsed } from './cache/memoizeLeastRecentlyUsed';
+export { readLruEntry } from './cache/readLruEntry';
+export { writeLruEntry } from './cache/writeLruEntry';
 export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { canAccessThroughAllRecordsOrRlsPermission } from './canAccessThroughAllRecordsOrRlsPermission';

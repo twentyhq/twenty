@@ -1,34 +1,15 @@
-import { isDefined } from 'twenty-shared/utils';
-
-export const readLruEntry = <Key, Value>({
-  map,
-  key,
-}: {
-  map: Map<Key, Value>;
-  key: Key;
-}): Value | undefined => {
-  const value = map.get(key);
-
-  if (value === undefined) {
-    return undefined;
-  }
-
-  map.delete(key);
-  map.set(key, value);
-
-  return value;
-};
+import { isDefined } from '@/utils/validation/isDefined';
 
 // Insertion-order LRU and timestamp LRU differ only in where the rank comes
 // from, so both go through here rather than each keeping its own eviction loop.
-export const evictLeastRecentlyUsed = <Key, Value>({
+export const evictLeastRecentlyUsed = <TKey, TValue>({
   map,
   maxEntries,
   minEvict = 0,
   recencyOf,
   matches,
 }: {
-  map: Map<Key, Value>;
+  map: Map<TKey, TValue>;
   maxEntries: number;
   // Evict at least this many once over cap, so a periodic sweep drops a batch
   // instead of trimming one entry per call. Defaults to the exact overflow.
@@ -36,12 +17,12 @@ export const evictLeastRecentlyUsed = <Key, Value>({
   // Higher = more recently used. Omit when recency is the map's own insertion
   // order, which readLruEntry and writeLruEntry maintain by re-inserting: with
   // no sort, candidates stay in map order and the oldest are evicted first.
-  recencyOf?: (value: Value) => number;
+  recencyOf?: (value: TValue) => number;
   // Restricts the cap to a subset: non-matching entries neither count towards
   // maxEntries nor get evicted. Omit to apply to the whole map.
-  matches?: (key: Key) => boolean;
+  matches?: (key: TKey) => boolean;
 }): number => {
-  const candidates: [Key, Value][] = [];
+  const candidates: [TKey, TValue][] = [];
 
   for (const keyEntry of map) {
     if (!isDefined(matches) || matches(keyEntry[0])) {
@@ -62,26 +43,9 @@ export const evictLeastRecentlyUsed = <Key, Value>({
     Math.max(minEvict, candidates.length - maxEntries),
   );
 
-  for (let index = 0; index < evictCount; index += 1) {
-    map.delete(candidates[index][0]);
+  for (const [key] of candidates.slice(0, evictCount)) {
+    map.delete(key);
   }
 
   return evictCount;
-};
-
-export const writeLruEntry = <Key, Value>({
-  map,
-  key,
-  value,
-  maxEntries,
-}: {
-  map: Map<Key, Value>;
-  key: Key;
-  value: Value;
-  maxEntries: number;
-}): void => {
-  map.delete(key);
-  map.set(key, value);
-
-  evictLeastRecentlyUsed({ map, maxEntries });
 };
