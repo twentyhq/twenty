@@ -29,6 +29,13 @@ export const useNavigationMenuContainerReorderOptions = ({
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const isHorizontal = type === NavigationMenuItemType.TAB;
 
+  const labels = isHorizontal
+    ? { [-1]: t`Move left`, 1: t`Move right` }
+    : { [-1]: t`Move up`, 1: t`Move down` };
+  const icons = isHorizontal
+    ? { [-1]: IconChevronLeft, 1: IconChevronRight }
+    : { [-1]: IconChevronUp, 1: IconChevronDown };
+
   const buildOption = (offset: -1 | 1): NavigationMenuItemOption => {
     const position = getNavigationMenuItemMovedPosition({
       siblings,
@@ -37,21 +44,9 @@ export const useNavigationMenuContainerReorderOptions = ({
     });
 
     return {
-      id: offset === -1 ? 'move-before' : 'move-after',
-      label: isHorizontal
-        ? offset === -1
-          ? t`Move left`
-          : t`Move right`
-        : offset === -1
-          ? t`Move up`
-          : t`Move down`,
-      Icon: isHorizontal
-        ? offset === -1
-          ? IconChevronLeft
-          : IconChevronRight
-        : offset === -1
-          ? IconChevronUp
-          : IconChevronDown,
+      id: offset === -1 ? 'up' : 'down',
+      label: labels[offset],
+      Icon: icons[offset],
       isDisabled: !isDefined(position),
       onClick: () => {
         if (isDefined(position)) {
