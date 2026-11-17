@@ -180,6 +180,7 @@ describe('buildMessageCampaignFlagRemovalUpdates', () => {
           }),
           `${FLAG} and targetObjectReadPermissions.${nameSingular}`,
           buildNavigationConditionalAvailabilityExpression({
+            universalIdentifier: objectUniversalIdentifier,
             nameSingular,
           }),
         ],

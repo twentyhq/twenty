@@ -1,7 +1,17 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
+
+const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.workflowRun.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
+] as const;
 
 export const isWorkflowRelatedObject = (objectMetadata: {
   universalIdentifier: string;
-}): boolean =>
-  objectMetadata.universalIdentifier ===
-  STANDARD_OBJECTS.workflowRun.universalIdentifier;
+}): boolean => {
+  return WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+    objectMetadata.universalIdentifier as (typeof WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS)[number],
+  );
+};

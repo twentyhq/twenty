@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,11 +22,23 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
 export const NAVIGATION_INTERPOLATED_ICON =
   getMetadataLabelPlaceholder('objectIcon');
 
+const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
+]);
+
 export const buildNavigationConditionalAvailabilityExpression = ({
+  universalIdentifier,
   nameSingular,
 }: {
+  universalIdentifier: string;
   nameSingular: string;
-}): string => `targetObjectReadPermissions.${nameSingular}`;
+}): string => {
+  if (HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS.has(universalIdentifier)) {
+    return 'false';
+  }
+
+  return `targetObjectReadPermissions.${nameSingular}`;
+};
 
 export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   objectMetadata,
@@ -53,6 +66,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
 
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({
+      universalIdentifier: objectMetadata.universalIdentifier,
       nameSingular: objectMetadata.nameSingular,
     });
 

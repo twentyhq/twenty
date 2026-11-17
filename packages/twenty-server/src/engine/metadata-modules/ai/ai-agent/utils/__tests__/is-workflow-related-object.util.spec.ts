@@ -1,12 +1,22 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 
 describe('isWorkflowRelatedObject', () => {
-  it('should return true for workflow runs', () => {
+  it('should return true for workflow-related objects', () => {
     expect(
       isWorkflowRelatedObject({
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
+      }),
+    ).toBe(true);
+
+    expect(
+      isWorkflowRelatedObject({
+        universalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       }),
     ).toBe(true);
   });
