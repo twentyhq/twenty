@@ -4,7 +4,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeMissingStandardPermissionFlags } from 'src/database/commands/upgrade-version-command/2-53/utils/compute-missing-standard-permission-flags.util';
+import { computeMissingStandardPermissionFlags } from 'src/database/commands/upgrade-version-command/2-60/utils/compute-missing-standard-permission-flags.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
