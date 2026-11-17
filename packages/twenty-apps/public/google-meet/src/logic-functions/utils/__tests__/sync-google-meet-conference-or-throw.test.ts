@@ -145,7 +145,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toEqual({ outcome: 'CREATED', needsAiSummary: false });
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
       createCallRecording: {
@@ -189,7 +189,10 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toEqual({ outcome: 'NO_ARTIFACT', needsAiSummary: false });
+    ).resolves.toEqual({
+      outcome: 'NO_ARTIFACT',
+      shouldGenerateAiSummary: false,
+    });
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(coreApiClient.query).not.toHaveBeenCalled();
@@ -208,7 +211,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
           startTime: CONFERENCE_RECORD.startTime,
         },
       }),
-    ).resolves.toEqual({ outcome: 'CREATED', needsAiSummary: false });
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
     expect(fetchMock).toHaveBeenCalledTimes(6);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
@@ -237,7 +240,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toEqual({ outcome: 'CREATED', needsAiSummary: true });
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: true });
 
     expect(
       coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data,
@@ -267,7 +270,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
           startTime: CONFERENCE_RECORD.startTime,
         },
       }),
-    ).resolves.toEqual({ outcome: 'CREATED', needsAiSummary: true });
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: true });
 
     const recordingData =
       coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;

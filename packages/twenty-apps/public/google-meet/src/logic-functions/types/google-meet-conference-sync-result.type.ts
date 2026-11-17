@@ -2,5 +2,5 @@ import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/
 
 export type GoogleMeetConferenceSyncResult = {
   outcome: GoogleMeetConferenceSyncOutcome;
-  needsAiSummary: boolean;
+  shouldGenerateAiSummary: boolean;
 };

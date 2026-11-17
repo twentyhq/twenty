@@ -42,18 +42,19 @@ export const googleMeetImportConferenceHandler = async ({
 
   const connection = await getConnection(connectedAccountId);
 
-  const { outcome, needsAiSummary } = await syncGoogleMeetConferenceOrThrow({
-    accessToken: getConnectionAccessTokenOrThrow(connection),
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
-    conferenceRecord: {
-      name: conferenceRecordName,
-      startTime,
-      ...(isNonEmptyString(endTime) ? { endTime } : {}),
-      ...(isNonEmptyString(spaceName) ? { space: spaceName } : {}),
-    },
-  });
+  const { outcome, shouldGenerateAiSummary } =
+    await syncGoogleMeetConferenceOrThrow({
+      accessToken: getConnectionAccessTokenOrThrow(connection),
+      coreApiClient: new CoreApiClient({ runAs: 'application' }),
+      conferenceRecord: {
+        name: conferenceRecordName,
+        startTime,
+        ...(isNonEmptyString(endTime) ? { endTime } : {}),
+        ...(isNonEmptyString(spaceName) ? { space: spaceName } : {}),
+      },
+    });
 
-  if (needsAiSummary) {
+  if (shouldGenerateAiSummary) {
     const callRecordingId =
       computeCallRecordingIdForGoogleMeetConference(conferenceRecordName);
 

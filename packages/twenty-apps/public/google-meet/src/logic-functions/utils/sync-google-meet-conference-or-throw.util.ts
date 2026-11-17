@@ -42,7 +42,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
   ]);
 
   if (!isNonEmptyArray(transcripts) && !isNonEmptyArray(smartNotes)) {
-    return { outcome: 'NO_ARTIFACT', needsAiSummary: false };
+    return { outcome: 'NO_ARTIFACT', shouldGenerateAiSummary: false };
   }
 
   const [participants, transcriptEntriesByTranscript, space, summaryMarkdown] =
@@ -99,7 +99,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
 
   return {
     outcome,
-    needsAiSummary:
+    shouldGenerateAiSummary:
       outcome !== 'SKIPPED_DELETED' &&
       shouldGenerateGoogleMeetAiSummary({
         transcriptEntries,

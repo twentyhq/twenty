@@ -60,7 +60,7 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
     return { success: true, outcome: 'NOT_FOUND' };
   }
 
-  if (isNonEmptyString(callRecording.summary?.markdown)) {
+  if (isNonEmptyString(callRecording.summaryMarkdown)) {
     return { success: true, outcome: 'ALREADY_SUMMARIZED' };
   }
 
@@ -69,7 +69,7 @@ export const googleMeetSummarizeCallRecordingHandler = async ({
   }
 
   const prompt = buildGoogleMeetCallSummaryPrompt({
-    title: callRecording.title ?? undefined,
+    title: callRecording.title,
     transcriptEntries: callRecording.transcript,
   });
 

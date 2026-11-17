@@ -31,7 +31,7 @@ describe('googleMeetImportConferenceHandler', () => {
     });
     vi.mocked(syncGoogleMeetConferenceOrThrow).mockResolvedValue({
       outcome: 'CREATED',
-      needsAiSummary: false,
+      shouldGenerateAiSummary: false,
     });
   });
 
