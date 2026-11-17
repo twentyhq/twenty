@@ -8,6 +8,8 @@ import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry
 
 export const buildGoogleMeetCallRecordingSyncFields = ({
   conferenceRecord,
+  title,
+  summaryMarkdown,
   transcriptEntries,
   calendarEvent,
 }: {
@@ -15,14 +17,17 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
     GoogleMeetConferenceRecord,
     'name' | 'startTime' | 'endTime'
   >;
+  title: string | undefined;
+  summaryMarkdown: string | undefined;
   transcriptEntries: TranscriptEntry[];
-  calendarEvent: Pick<CalendarEventCandidate, 'id' | 'title'> | undefined;
+  calendarEvent: Pick<CalendarEventCandidate, 'id'> | undefined;
 }): CallRecordingSyncFields => {
-  const title = calendarEvent?.title?.trim();
-
   return {
     ...(isNonEmptyString(title) ? { title } : {}),
-    status: isNonEmptyArray(transcriptEntries) ? 'COMPLETED' : 'PROCESSING',
+    status:
+      isNonEmptyArray(transcriptEntries) || isNonEmptyString(summaryMarkdown)
+        ? 'COMPLETED'
+        : 'PROCESSING',
     externalRecordingId: conferenceRecord.name,
     startedAt: conferenceRecord.startTime,
     ...(isNonEmptyString(conferenceRecord.endTime)
@@ -30,6 +35,9 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
       : {}),
     ...(isNonEmptyArray(transcriptEntries)
       ? { transcript: transcriptEntries }
+      : {}),
+    ...(isNonEmptyString(summaryMarkdown)
+      ? { summary: { blocknote: null, markdown: summaryMarkdown } }
       : {}),
     ...(isDefined(calendarEvent) ? { calendarEventId: calendarEvent.id } : {}),
   };

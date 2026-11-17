@@ -1,4 +1,5 @@
-import { useUpsertRowLevelPermissionPredicatesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
+import { useUpsertRowLevelPermissionRulesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionRulesMutation';
+import { buildRowLevelPermissionRulesInput } from '@/settings/roles/role/utils/buildRowLevelPermissionRulesInput';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
@@ -18,8 +19,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
-  type RowLevelPermissionPredicateGroupLogicalOperator,
-  type RowLevelPermissionPredicateOperand,
   type Role,
   CreateOneRoleDocument,
   GetRolesDocument,
@@ -72,8 +71,8 @@ export const useSaveDraftRoleToDB = ({
     UpsertObjectPermissionsDocument,
   );
   const [upsertFieldPermissions] = useMutation(UpsertFieldPermissionsDocument);
-  const [upsertRowLevelPermissionPredicates] =
-    useUpsertRowLevelPermissionPredicatesMutation();
+  const [upsertRowLevelPermissionRules] =
+    useUpsertRowLevelPermissionRulesMutation();
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
   const { addAgentsToRole } = useUpdateAgentRole(roleId);
   const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
@@ -376,15 +375,13 @@ export const useSaveDraftRoleToDB = ({
     }
 
     if (shouldSyncObjectRecordsGrants) {
-      await upsertRowLevelPermissionPredicatesForRole(roleId);
+      await upsertRowLevelPermissionRulesForRole(roleId);
     }
 
     return roleId;
   };
 
-  const upsertRowLevelPermissionPredicatesForRole = async (
-    targetRoleId: string,
-  ) => {
+  const upsertRowLevelPermissionRulesForRole = async (targetRoleId: string) => {
     const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
     const predicateGroups =
       settingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
@@ -457,41 +454,21 @@ export const useSaveDraftRoleToDB = ({
         settingsPersistedRole?.rowLevelPermissionRules ?? []
       ).find((rule) => rule.objectMetadataId === objectMetadataId);
 
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         variables: {
           input: {
             roleId: targetRoleId,
             objectMetadataId,
-            predicates: objectPredicates.map((predicate) => ({
-              id: predicate.id,
-              fieldMetadataId: predicate.fieldMetadataId,
-              relationFieldMetadataId: predicate.relationFieldMetadataId,
-              operand: predicate.operand as RowLevelPermissionPredicateOperand,
-              value: predicate.value,
-              subFieldName: predicate.subFieldName,
-              workspaceMemberFieldMetadataId:
-                predicate.workspaceMemberFieldMetadataId,
-              workspaceMemberSubFieldName:
-                predicate.workspaceMemberSubFieldName,
-              rowLevelPermissionPredicateGroupId:
-                predicate.rowLevelPermissionPredicateGroupId,
-              positionInRowLevelPermissionPredicateGroup:
-                predicate.positionInRowLevelPermissionPredicateGroup,
-            })),
-            ...objectRecordsGrant,
-            canCreateRecords:
-              persistedRule?.canCreateRecords ??
-              objectRecordsGrant.canUpdateRecords,
-            predicateGroups: objectPredicateGroups.map((group) => ({
-              id: group.id,
-              objectMetadataId,
-              parentRowLevelPermissionPredicateGroupId:
-                group.parentRowLevelPermissionPredicateGroupId,
-              logicalOperator:
-                group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
-              positionInRowLevelPermissionPredicateGroup:
-                group.positionInRowLevelPermissionPredicateGroup,
-            })),
+            rules: buildRowLevelPermissionRulesInput({
+              predicates: objectPredicates,
+              predicateGroups: objectPredicateGroups,
+              ruleOperations: {
+                ...objectRecordsGrant,
+                canCreateRecords:
+                  persistedRule?.canCreateRecords ??
+                  objectRecordsGrant.canUpdateRecords,
+              },
+            }),
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -539,7 +516,7 @@ export const useSaveDraftRoleToDB = ({
     }
 
     if (shouldSyncObjectRecordsGrants) {
-      await upsertRowLevelPermissionPredicatesForRole(targetRoleId);
+      await upsertRowLevelPermissionRulesForRole(targetRoleId);
     }
   };
 

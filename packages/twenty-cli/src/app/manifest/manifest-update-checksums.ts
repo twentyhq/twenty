@@ -17,6 +17,7 @@ export type ManifestBuildResult = {
 
 export type UpdateManifestChecksumParams = {
   outputDir?: string;
+  frontComponentSourcePaths?: Map<string, string[]>;
   manifest: Manifest;
   builtFileInfos: Map<
     string,
@@ -33,6 +34,7 @@ export const manifestUpdateChecksums = ({
   manifest,
   builtFileInfos,
   outputDir = OUTPUT_DIR,
+  frontComponentSourcePaths,
 }: UpdateManifestChecksumParams): Manifest => {
   const sourceFiles: SourceFileManifest[] = [];
   let result = { ...structuredClone(manifest), sourceFiles };
@@ -139,5 +141,23 @@ export const manifestUpdateChecksums = ({
     first.filePath.localeCompare(second.filePath),
   );
 
+  if (isDefined(frontComponentSourcePaths)) {
+    result.frontComponents = result.frontComponents.map((component) => {
+      const paths = frontComponentSourcePaths.get(
+        component.sourceComponentPath,
+      );
+      if (!isDefined(paths)) {
+        return component;
+      }
+      return {
+        ...component,
+        sourceFiles: result.sourceFiles.filter(
+          (file) =>
+            paths.includes(file.filePath) &&
+            !['package.json', 'yarn.lock'].includes(file.filePath),
+        ),
+      };
+    });
+  }
   return result;
 };

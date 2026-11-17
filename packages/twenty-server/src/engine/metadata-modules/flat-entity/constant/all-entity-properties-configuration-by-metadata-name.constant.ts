@@ -933,6 +933,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    isSystemSideEffect: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -949,6 +954,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
+    },
+    isSystemSideEffect: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     userWorkspaceId: {
       toCompare: true,
@@ -1901,6 +1911,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+    },
+    relationTargetFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
     },
     viewId: {
       toCompare: true,

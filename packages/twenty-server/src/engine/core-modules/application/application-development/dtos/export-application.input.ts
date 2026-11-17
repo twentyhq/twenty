@@ -24,5 +24,10 @@ export class ExportApplicationInput {
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsOptional()
   @IsBoolean()
+  shouldIncludeSourceDependencies?: boolean;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
   shouldIncludePublicAssets?: boolean;
 }

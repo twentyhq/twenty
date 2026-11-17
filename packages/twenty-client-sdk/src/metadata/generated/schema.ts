@@ -580,8 +580,9 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content: Scalars['String']
+    encoding?: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
     __typename: 'ApplicationExportFile'
@@ -2767,7 +2768,7 @@ export interface Mutation {
     upsertFieldsWidget: View
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
-    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -2810,7 +2811,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW' | 'WORKFLOW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -3558,6 +3559,7 @@ export interface RowLevelPermissionPredicate {
     relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     subFieldName?: Scalars['String']
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
@@ -3576,6 +3578,7 @@ export interface RowLevelPermissionPredicateGroup {
     parentRowLevelPermissionPredicateGroupId?: Scalars['String']
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
     roleId: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     __typename: 'RowLevelPermissionPredicateGroup'
 }
 
@@ -3949,10 +3952,11 @@ export interface UnsubscribeTopic {
 
 export type UnsubscribeTopicVisibility = 'PRIVATE' | 'PUBLIC'
 
-export interface UpsertRowLevelPermissionPredicatesResult {
+export interface UpsertRowLevelPermissionRulesResult {
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
-    __typename: 'UpsertRowLevelPermissionPredicatesResult'
+    rules: RowLevelPermissionRule[]
+    __typename: 'UpsertRowLevelPermissionRulesResult'
 }
 
 export interface UsageAnalytics {
@@ -4339,6 +4343,7 @@ export interface ViewSort {
     direction: ViewSortDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     subFieldName?: Scalars['String']
     updatedAt: Scalars['DateTime']
     viewId: Scalars['UUID']
@@ -5172,8 +5177,9 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content?: boolean | number
+    encoding?: boolean | number
     folder?: boolean | number
     path?: boolean | number
     __typename?: boolean | number
@@ -6198,7 +6204,7 @@ export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | nul
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
-export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
@@ -7650,7 +7656,7 @@ export interface MutationGenqlSelection{
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
-    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertRowLevelPermissionRules?: (UpsertRowLevelPermissionRulesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionRulesInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -8195,7 +8201,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8513,6 +8519,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     subFieldName?: boolean | number
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
@@ -8532,13 +8539,10 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     parentRowLevelPermissionPredicateGroupId?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
-
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelPermissionRuleGenqlSelection{
     canCreateRecords?: boolean | number
@@ -8551,6 +8555,12 @@ export interface RowLevelPermissionRuleGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -9143,7 +9153,7 @@ id: Scalars['UUID'],
 /** The view sort to update */
 update: UpdateViewSortInputUpdates}
 
-export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),subFieldName?: (Scalars['String'] | null)}
+export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null)}
 
 export interface UpdateWebhookInput {
 /** The id of the webhook to update */
@@ -9183,11 +9193,12 @@ export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissi
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
 
-export interface UpsertRowLevelPermissionPredicatesInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
+export interface UpsertRowLevelPermissionRulesInput {objectMetadataId: Scalars['UUID'],roleId: Scalars['UUID'],rules: RowLevelPermissionRuleInput[]}
 
-export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
+export interface UpsertRowLevelPermissionRulesResultGenqlSelection{
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    rules?: RowLevelPermissionRuleGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9624,6 +9635,7 @@ export interface ViewSortGenqlSelection{
     direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     subFieldName?: boolean | number
     updatedAt?: boolean | number
     viewId?: boolean | number
@@ -12498,10 +12510,10 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    const UpsertRowLevelPermissionRulesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionRulesResult']
+    export const isUpsertRowLevelPermissionRulesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionRulesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionRulesResult"')
+      return UpsertRowLevelPermissionRulesResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13507,6 +13519,8 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
+   SECTION: 'SECTION' as const,
+   TAB: 'TAB' as const,
    VIEW: 'VIEW' as const,
    WORKFLOW: 'WORKFLOW' as const
 }

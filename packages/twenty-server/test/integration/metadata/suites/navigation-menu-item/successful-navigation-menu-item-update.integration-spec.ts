@@ -85,14 +85,11 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update the parentId', async () => {
-    const folderTargetRecordId = faker.string.uuid();
-
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: folderTargetRecordId,
-        targetObjectMetadataId: personObjectMetadataId,
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
       },
     });
 
@@ -118,14 +115,11 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update parentId to null', async () => {
-    const folderTargetRecordId = faker.string.uuid();
-
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: folderTargetRecordId,
-        targetObjectMetadataId: personObjectMetadataId,
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
       },
     });
 
@@ -161,14 +155,11 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update multiple fields at once', async () => {
-    const folderTargetRecordId = faker.string.uuid();
-
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: folderTargetRecordId,
-        targetObjectMetadataId: personObjectMetadataId,
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
       },
     });
 
