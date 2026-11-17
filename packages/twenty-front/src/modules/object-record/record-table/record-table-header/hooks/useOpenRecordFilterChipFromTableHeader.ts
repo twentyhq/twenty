@@ -68,14 +68,20 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       return;
     }
 
-    const { newRecordFilter } = isDefined(relationTargetFieldMetadataItem)
-      ? createEmptyRelationTargetRecordFilter({
+    const createEmptyColumnRecordFilter = () => {
+      if (isDefined(relationTargetFieldMetadataItem)) {
+        return createEmptyRelationTargetRecordFilter({
           sourceFieldMetadataItem: correspondingFieldMetadataItem,
           relationTargetFieldMetadataItem,
-        })
-      : createEmptyRecordFilterFromFieldMetadataItem(
-          correspondingFieldMetadataItem,
-        );
+        });
+      }
+
+      return createEmptyRecordFilterFromFieldMetadataItem(
+        correspondingFieldMetadataItem,
+      );
+    };
+
+    const { newRecordFilter } = createEmptyColumnRecordFilter();
 
     upsertRecordFilter(newRecordFilter);
 

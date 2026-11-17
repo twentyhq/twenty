@@ -7,7 +7,6 @@ import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/obj
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-// A filter through a relation compares a field of the related record
 export const filterValueFieldMetadataItemUsedInDropdownComponentSelector =
   createAtomComponentSelector<FieldMetadataItem | null | undefined>({
     key: 'filterValueFieldMetadataItemUsedInDropdownComponentSelector',

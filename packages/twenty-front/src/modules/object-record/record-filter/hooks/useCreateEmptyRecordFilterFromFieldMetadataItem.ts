@@ -47,7 +47,7 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
     sourceFieldMetadataItem,
     relationTargetFieldMetadataItem,
   }: {
-    sourceFieldMetadataItem: FieldMetadataItem;
+    sourceFieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'label'>;
     relationTargetFieldMetadataItem: FieldMetadataItem;
   }) => {
     const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(

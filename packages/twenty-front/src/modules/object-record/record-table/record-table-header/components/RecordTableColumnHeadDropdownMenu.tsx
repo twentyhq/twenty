@@ -106,7 +106,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  // A lookup column filters on its looked-up field
   const filterableAndSortable = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     {
