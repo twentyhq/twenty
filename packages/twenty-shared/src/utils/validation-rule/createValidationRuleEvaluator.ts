@@ -63,15 +63,19 @@ export const createValidationRuleEvaluator = ({
 
       return result ? { status: 'passed' } : { status: 'failed' };
     } catch (error) {
-      return {
-        status: 'errored',
-        errorMessage: toErrorMessage(error),
-        ...(error instanceof CustomError &&
+      if (
+        error instanceof CustomError &&
         (error.code === 'INVALID_DATE_UNIT' ||
           error.code === 'INVALID_DATE_PART')
-          ? { errorCode: error.code }
-          : {}),
-      };
+      ) {
+        return {
+          status: 'errored',
+          errorMessage: error.message,
+          errorCode: error.code,
+        };
+      }
+
+      return { status: 'errored', errorMessage: toErrorMessage(error) };
     }
   };
 };
