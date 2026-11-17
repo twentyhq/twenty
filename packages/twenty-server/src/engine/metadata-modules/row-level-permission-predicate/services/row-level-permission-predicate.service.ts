@@ -16,7 +16,6 @@ import { fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermission
 import { fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-create-row-level-permission-predicate-input-to-flat-row-level-permission-predicate.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { fromFlatRowLevelPermissionPredicateToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-to-dto.util';
-import { fromFlatRowLevelPermissionRuleToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-rule-to-dto.util';
 import { fromUpdateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group.util';
 import { fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate.util';
 import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
@@ -424,8 +423,7 @@ export class RowLevelPermissionPredicateService {
     return {
       rules: Object.values(updatedRuleMaps.byUniversalIdentifier)
         .filter(isDefined)
-        .filter(isOfRoleAndObject)
-        .map(fromFlatRowLevelPermissionRuleToDto),
+        .filter(isOfRoleAndObject),
       predicateGroups: Object.values(updatedGroupMaps.byUniversalIdentifier)
         .filter(isDefined)
         .filter((group) => group.deletedAt === null && isOfRoleAndObject(group))

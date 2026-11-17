@@ -60,7 +60,6 @@ import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-module
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
-import { fromFlatRowLevelPermissionRuleToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-rule-to-dto.util';
 import { fromFlatRowLevelPermissionPredicateToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-to-dto.util';
 import {
   type ApiKeyForRoleDTO,
@@ -1399,7 +1398,25 @@ export class DataloaderService {
           rowLevelPermissionRules: findManyFlatEntityByIdInFlatEntityMaps({
             flatEntityIds: flatRole.rowLevelPermissionRuleIds,
             flatEntityMaps: flatRowLevelPermissionRuleMaps,
-          }).map(fromFlatRowLevelPermissionRuleToDto),
+          }).map(
+            ({
+              id,
+              objectMetadataId,
+              canCreateRecords,
+              canReadRecords,
+              canUpdateRecords,
+              canSoftDeleteRecords,
+              canDestroyRecords,
+            }) => ({
+              id,
+              objectMetadataId,
+              canCreateRecords,
+              canReadRecords,
+              canUpdateRecords,
+              canSoftDeleteRecords,
+              canDestroyRecords,
+            }),
+          ),
         };
       });
     });
