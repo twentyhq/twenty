@@ -21,4 +21,5 @@ export type NavigationMenuItemSectionContentProps = {
   ) => void;
   readOnly?: boolean;
   orphanIndex?: number;
+  listDroppableId?: string;
 };

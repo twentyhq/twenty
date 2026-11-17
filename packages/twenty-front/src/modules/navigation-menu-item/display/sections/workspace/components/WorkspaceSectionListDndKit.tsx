@@ -63,6 +63,7 @@ export const WorkspaceSectionListDndKit = ({
             index={index}
             compact
             droppableId={listDroppableId}
+            parentId={containerId ?? null}
           />
           <NavigationMenuItemSortableItem
             id={item.id}
@@ -80,7 +81,8 @@ export const WorkspaceSectionListDndKit = ({
               folderCount={folderCount}
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              orphanIndex={isDefined(containerId) ? undefined : index}
+              orphanIndex={index}
+              listDroppableId={listDroppableId}
             />
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
@@ -96,6 +98,7 @@ export const WorkspaceSectionListDndKit = ({
           compact
           highlightPosition="top"
           droppableId={listDroppableId}
+          parentId={containerId ?? null}
         />
         {isAddMenuItemButtonVisible && (
           <WorkspaceSectionAddMenuItemButton

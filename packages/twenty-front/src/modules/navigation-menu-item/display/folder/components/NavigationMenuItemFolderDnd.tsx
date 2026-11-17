@@ -94,6 +94,7 @@ type NavigationMenuItemFolderDndProps = {
   isDragging: boolean;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   orphanIndex?: number;
+  listDroppableId?: string;
 };
 
 export const NavigationMenuItemFolderDnd = ({
@@ -109,6 +110,7 @@ export const NavigationMenuItemFolderDnd = ({
   isDragging: isDraggingProp,
   onNavigationMenuItemClick,
   orphanIndex,
+  listDroppableId,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -246,7 +248,7 @@ export const NavigationMenuItemFolderDnd = ({
     >
       {showInsertBeforeZone && (
         <NavigationMenuItemInsertBeforeDroppableZone
-          orphanDroppableId={config.orphanDroppableId}
+          orphanDroppableId={listDroppableId ?? config.orphanDroppableId}
           orphanIndex={orphanIndex}
           itemId={folderId}
           disabled={dropDisabled}
