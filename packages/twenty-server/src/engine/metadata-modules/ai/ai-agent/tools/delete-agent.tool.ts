@@ -28,6 +28,11 @@ const deleteAgentInputSchema = z.object({
     ...AGENT_WRITE_ACCESS_POLICY,
     requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
   },
+  applicationTarget: {
+    kind: 'applicationOwnedEntity',
+    metadataName: 'agent',
+    idKey: 'id',
+  },
   description: `Delete an AI agent and its triggers, for example once it is no longer useful. Use list_agents first if you don't know the id.`,
 })
 export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
@@ -45,9 +50,9 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
     input,
     context,
   }: ToolExecuteArgs<typeof deleteAgentInputSchema>): Promise<ToolOutput> {
-    await this.manageableAgentService.findManageableAgentOrThrow({
+    await this.manageableAgentService.findAgentDefinedInWorkspaceOrThrow({
       agentId: input.id,
-      context,
+      workspaceId: context.workspaceId,
     });
 
     const { flatWorkflowVersionMaps } =

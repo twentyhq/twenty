@@ -3,9 +3,16 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import {
+  type ApplicationWithVariable,
+  setupApplicationWithVariable,
+} from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 const AGENT_WRITE_TOOL_NAMES = ['create_agent', 'update_agent', 'delete_agent'];
@@ -247,6 +254,62 @@ describe('MCP agent tools (integration)', () => {
         toolName,
         token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
       });
+    });
+  });
+
+  describe('for an installed application', () => {
+    let application: ApplicationWithVariable;
+    let applicationToken: string;
+    let workspaceAgentId: string;
+
+    beforeAll(async () => {
+      application = await setupApplicationWithVariable({
+        name: 'Agent Tools Application',
+        variableKey: 'AGENT_TOOLS_APPLICATION_VARIABLE',
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag.AI,
+          SystemPermissionFlag.AI_SETTINGS,
+        ],
+      });
+
+      const { applicationAccessToken } =
+        await generateAppleAdminApplicationTokenPair({
+          applicationId: application.id,
+        });
+
+      applicationToken = applicationAccessToken.token;
+
+      const created = await executeTool<AgentSummary>('create_agent', {
+        label: `Workspace agent ${randomUUID().slice(0, 8)}`,
+        prompt: 'Answer questions about deals.',
+      });
+
+      jestExpectToBeDefined(created.result);
+      workspaceAgentId = created.result.id;
+      createdAgentIds.push(workspaceAgentId);
+    });
+
+    afterAll(async () => {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier: application.universalIdentifier,
+      });
+    });
+
+    it('should refuse to delete an agent the application does not own', async () => {
+      const result = await callMcpTool({
+        toolName: 'execute_tool',
+        toolArguments: {
+          toolName: 'delete_agent',
+          arguments: { id: workspaceAgentId },
+        },
+        token: applicationToken,
+      });
+
+      expect(JSON.parse(result.content[0].text)).toMatchObject({
+        success: false,
+        message: 'Tool "delete_agent" cannot reach this agent',
+      });
+      expect(await listAgentIds()).toContain(workspaceAgentId);
     });
   });
 

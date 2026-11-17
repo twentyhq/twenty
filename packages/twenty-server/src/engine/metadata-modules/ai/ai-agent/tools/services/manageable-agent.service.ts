@@ -39,9 +39,41 @@ export class ManageableAgentService {
       throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND);
     }
 
+    await this.assertAgentDefinedInWorkspaceOrThrow({
+      agent,
+      workspaceId: context.workspaceId,
+    });
+
+    return agent;
+  }
+
+  async findAgentDefinedInWorkspaceOrThrow({
+    agentId,
+    workspaceId,
+  }: {
+    agentId: string;
+    workspaceId: string;
+  }): Promise<FlatAgentWithRoleId> {
+    const agent = await this.agentService.findOneAgentById({
+      id: agentId,
+      workspaceId,
+    });
+
+    await this.assertAgentDefinedInWorkspaceOrThrow({ agent, workspaceId });
+
+    return agent;
+  }
+
+  private async assertAgentDefinedInWorkspaceOrThrow({
+    agent,
+    workspaceId,
+  }: {
+    agent: FlatAgentWithRoleId;
+    workspaceId: string;
+  }): Promise<void> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: context.workspaceId },
+        { workspaceId },
       );
 
     if (agent.applicationId !== workspaceCustomFlatApplication.id) {
@@ -50,7 +82,5 @@ export class ManageableAgentService {
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }
-
-    return agent;
   }
 }
