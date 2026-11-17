@@ -1,5 +1,5 @@
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { hasInverseRelationField, isDefined } from 'twenty-shared/utils';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
@@ -127,7 +127,11 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   }
 
   if (
-    isFlatFieldMetadataOfType(fromFlatFieldMetadata, FieldMetadataType.RELATION)
+    isFlatFieldMetadataOfType(
+      fromFlatFieldMetadata,
+      FieldMetadataType.RELATION,
+    ) &&
+    hasInverseRelationField(fromFlatFieldMetadata)
   ) {
     const relatedFlatFieldMetadataFrom =
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({

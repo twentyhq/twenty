@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { hasInverseRelationField, isDefined } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -25,6 +25,10 @@ export const resolveRelationFromFlatFieldMetadata = ({
     flatEntityId: sourceFlatFieldMetadata.objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
   });
+
+  if (!hasInverseRelationField(sourceFlatFieldMetadata)) {
+    return null;
+  }
 
   const targetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
