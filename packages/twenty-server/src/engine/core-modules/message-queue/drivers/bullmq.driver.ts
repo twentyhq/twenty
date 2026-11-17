@@ -381,11 +381,11 @@ export class BullMQDriver
       ...(isDefined(options?.maxStalledCount)
         ? { maxStalledCount: options.maxStalledCount }
         : {}),
-      ...(isDefined(options?.rateLimit)
+      ...(isDefined(options?.globalLimiter)
         ? {
             limiter: {
-              max: options.rateLimit.max,
-              duration: options.rateLimit.durationMs,
+              max: options.globalLimiter.max,
+              duration: options.globalLimiter.durationMs,
             },
           }
         : {}),

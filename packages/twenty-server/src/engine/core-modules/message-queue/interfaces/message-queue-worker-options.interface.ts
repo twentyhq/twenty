@@ -3,7 +3,7 @@ import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/
 export interface MessageQueueWorkerOptions {
   concurrency?: number;
   globalConcurrency?: number;
-  rateLimit?: { max: number; durationMs: number };
+  globalLimiter?: { max: number; durationMs: number };
   groupLimiter?: MessageQueueLimiter;
   lockDuration?: number;
   maxStalledCount?: number;
