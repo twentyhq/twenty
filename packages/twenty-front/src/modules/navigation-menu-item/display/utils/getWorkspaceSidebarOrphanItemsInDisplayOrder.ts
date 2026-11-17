@@ -22,6 +22,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
     typeof getObjectPermissionsForObject
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
+  containerId?: string | null;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -31,9 +32,15 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   views,
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
+  containerId = null,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.parentId))
+    .filter(
+      (item) =>
+        (item.parentId ?? null) === containerId &&
+        item.type !== NavigationMenuItemType.TAB &&
+        item.type !== NavigationMenuItemType.SECTION,
+    )
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(

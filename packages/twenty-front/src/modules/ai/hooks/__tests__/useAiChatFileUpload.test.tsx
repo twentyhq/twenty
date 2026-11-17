@@ -7,7 +7,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -55,7 +55,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useAiChatFileUpload', () => {
   it('uploads after leaving a DM and aborts files removed from the selection', async () => {
-    const previousThreadId = jotaiStore.get(currentAiChatThreadState.atom);
+    const previousThreadId = jotaiStore.get(
+      aiChatTestInstanceThreadIdState.atom,
+    );
     const directMessageAtom = recordStoreFamilyState.atomFamily(
       DIRECT_MESSAGE_THREAD_ID,
     );
@@ -65,7 +67,10 @@ describe('useAiChatFileUpload', () => {
       __typename: 'AgentChatThread',
       conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
-    jotaiStore.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
+    jotaiStore.set(
+      aiChatTestInstanceThreadIdState.atom,
+      DIRECT_MESSAGE_THREAD_ID,
+    );
     const { result } = renderHook(() => useAiChatFileUpload(), {
       wrapper: Wrapper,
     });
@@ -77,7 +82,7 @@ describe('useAiChatFileUpload', () => {
 
     try {
       act(() => {
-        jotaiStore.set(currentAiChatThreadState.atom, NEW_THREAD_ID);
+        jotaiStore.set(aiChatTestInstanceThreadIdState.atom, NEW_THREAD_ID);
         upload = result.current.uploadFiles({
           files: [file],
           threadId: NEW_THREAD_ID,
@@ -99,7 +104,7 @@ describe('useAiChatFileUpload', () => {
       expect(putFile.mock.calls[0][1]?.signal?.aborted).toBe(true);
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     } finally {
-      jotaiStore.set(currentAiChatThreadState.atom, previousThreadId);
+      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, previousThreadId);
       jotaiStore.set(directMessageAtom, previousDirectMessage);
     }
   });
