@@ -26,7 +26,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
 import { type AiChatThreadReadPosition } from '@/ai/types/AiChatThreadReadPosition';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
@@ -510,7 +510,9 @@ const AiChatMessagesSetterEffect = ({
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const previousVisit = store.get(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
+    );
     const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
@@ -536,12 +538,15 @@ const AiChatMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(aiChatThreadVisitState.atom, {
-      threadId: currentThreadId,
-      isUnread: true,
-      isKeptUnread: false,
-      lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
-    });
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
+      {
+        threadId: currentThreadId,
+        isUnread: true,
+        isKeptUnread: false,
+        lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
+      },
+    );
     store.set(messagesAtom, messages);
     store.set(reactionsAtom, [
       {
@@ -559,7 +564,10 @@ const AiChatMessagesSetterEffect = ({
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(aiChatThreadVisitState.atom, previousVisit);
+      store.set(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
+        previousVisit,
+      );
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };

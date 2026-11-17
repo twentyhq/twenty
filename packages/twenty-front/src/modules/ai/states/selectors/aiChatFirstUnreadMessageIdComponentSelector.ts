@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { aiChatDisplayedThreadComponentState } from '@/ai/states/aiChatDisplayedThreadComponentState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { AiChatInstanceContext } from '@/ai/states/contexts/AiChatInstanceContext';
 import { aiChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/aiChatDisplayedThreadMessagesComponentSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
@@ -22,13 +22,13 @@ export const aiChatFirstUnreadMessageIdComponentSelector =
         const threadId = get(aiChatDisplayedThreadComponentState, {
           instanceId,
         });
-        const visit = get(aiChatThreadVisitState);
+        if (!isDefined(threadId)) {
+          return null;
+        }
 
-        if (
-          !isDefined(threadId) ||
-          visit?.threadId !== threadId ||
-          !visit.isUnread
-        ) {
+        const visit = get(aiChatThreadVisitFamilyState, { threadId });
+
+        if (!visit?.isUnread) {
           return null;
         }
 

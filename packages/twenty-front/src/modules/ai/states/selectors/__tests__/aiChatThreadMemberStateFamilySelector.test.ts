@@ -1,7 +1,7 @@
 import { createStore } from 'jotai';
 
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 
@@ -70,21 +70,27 @@ describe('aiChatThreadMemberStateFamilySelector', () => {
     const store = buildStore();
 
     store.set(aiChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
-    store.set(aiChatThreadVisitState.atom, {
-      threadId: THREAD_ID,
-      isUnread: true,
-      lastReadAt: null,
-      isKeptUnread: false,
-    });
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      {
+        threadId: THREAD_ID,
+        isUnread: true,
+        lastReadAt: null,
+        isKeptUnread: false,
+      },
+    );
 
     expect(isUnread(store)).toBe(false);
 
-    store.set(aiChatThreadVisitState.atom, {
-      threadId: THREAD_ID,
-      isUnread: true,
-      lastReadAt: null,
-      isKeptUnread: true,
-    });
+    store.set(
+      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      {
+        threadId: THREAD_ID,
+        isUnread: true,
+        lastReadAt: null,
+        isKeptUnread: true,
+      },
+    );
 
     expect(isUnread(store)).toBe(true);
   });

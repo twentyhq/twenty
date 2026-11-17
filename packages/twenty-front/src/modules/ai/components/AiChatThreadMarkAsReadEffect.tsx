@@ -11,8 +11,8 @@ import { aiChatThreadOpenViewCountFamilyState } from '@/ai/states/aiChatThreadOp
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitState,
-} from '@/ai/states/aiChatThreadVisitState';
+  aiChatThreadVisitFamilyState,
+} from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatThreadSettledForMember } from '@/ai/utils/isAiChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -70,9 +70,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
         return;
       }
 
-      store.set(aiChatThreadVisitState.atom, (visit) =>
-        visit?.threadId === threadId ? null : visit,
-      );
+      store.set(aiChatThreadVisitFamilyState.atomFamily({ threadId }), null);
 
       // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
@@ -118,7 +116,8 @@ export const AiChatThreadMarkAsReadEffect = () => {
       lastActivityAt,
       participant,
     });
-    const storedVisit = store.get(aiChatThreadVisitState.atom);
+    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({ threadId });
+    const storedVisit = store.get(visitAtom);
 
     // Taken once per visit, before the read mark, so it sees where the member
     // left off
@@ -131,7 +130,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
     const visit = storedVisit?.threadId === threadId ? storedVisit : newVisit;
 
     if (visit !== storedVisit) {
-      store.set(aiChatThreadVisitState.atom, visit);
+      store.set(visitAtom, visit);
     }
 
     const isReadRequested =
@@ -148,7 +147,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(aiChatThreadVisitState.atom, {
+    store.set(visitAtom, {
       ...visit,
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,

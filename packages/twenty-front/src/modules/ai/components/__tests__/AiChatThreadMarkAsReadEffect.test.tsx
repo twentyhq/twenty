@@ -8,7 +8,7 @@ import {
 } from '@/ai/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   type CurrentWorkspaceMember,
@@ -95,7 +95,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       threadIds: [THREAD_ID],
       action: 'READ',
     });
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toEqual({
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual({
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: '2026-10-01T09:00:00.000Z',
@@ -115,7 +119,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       threadIds: [THREAD_ID],
       action: 'READ',
     });
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toEqual({
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual({
       threadId: THREAD_ID,
       isUnread: false,
       lastReadAt: null,
@@ -130,13 +138,19 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     sidePanelView.unmount();
 
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)?.threadId).toBe(
-      THREAD_ID,
-    );
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      )?.threadId,
+    ).toBe(THREAD_ID);
 
     recordPageView.unmount();
 
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toBeNull();
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toBeNull();
   });
 
   describe('on leaving the chat', () => {

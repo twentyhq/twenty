@@ -11,8 +11,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitState,
-} from '@/ai/states/aiChatThreadVisitState';
+  aiChatThreadVisitFamilyState,
+} from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/aiChatFirstUnreadMessageIdComponentSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -54,10 +54,13 @@ const getFirstUnreadMessageId = (
   visit: Omit<AiChatThreadVisit, 'isKeptUnread'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(aiChatThreadVisitState.atom, {
-    ...visit,
-    isKeptUnread: false,
-  });
+  jotaiStore.set(
+    aiChatThreadVisitFamilyState.atomFamily({ threadId: visit.threadId }),
+    {
+      ...visit,
+      isKeptUnread: false,
+    },
+  );
   jotaiStore.set(
     aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     messages,
