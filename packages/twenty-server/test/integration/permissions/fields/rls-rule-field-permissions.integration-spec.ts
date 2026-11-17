@@ -1,4 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
@@ -171,6 +172,44 @@ describe('field permissions on an RLS rule (integration)', () => {
     expect(await listPeopleAsMember()).toEqual([
       { id: originalPeople[0].id, avatarUrl: '', jobTitle: 'Paris office' },
     ]);
+  });
+
+  it('should not match the hidden value in a filter', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: {
+          id: { in: originalPeople.map(({ id }) => id) },
+          avatarUrl: { eq: 'Secret avatar' },
+        },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.people.edges).toEqual([]);
+  });
+
+  it('should not reveal the hidden value through a group', async () => {
+    const response = await makeGraphqlApiRequest(
+      groupByOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        groupBy: [{ avatarUrl: true }],
+        filter: { id: { in: originalPeople.map(({ id }) => id) } },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.peopleGroupBy.flatMap(
+        ({ groupByDimensionValues }: { groupByDimensionValues: unknown[] }) =>
+          groupByDimensionValues,
+      ),
+    ).not.toContain('Secret avatar');
   });
 
   it('should keep the field on a record reached through a share', async () => {

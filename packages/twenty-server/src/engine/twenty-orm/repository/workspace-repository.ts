@@ -86,6 +86,7 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -1935,13 +1936,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         fieldMetadataIds,
         sqlCondition,
       } of unreadableFieldsSQLConditions) {
+        const hiddenColumnNames = columnEntries
+          .filter(([, fieldMetadataId]) =>
+            fieldMetadataIds.includes(fieldMetadataId),
+          )
+          .map(([columnName]) => columnName);
+
         queryBuilder.nullifyColumnsWhen({
           alias,
-          columnNames: columnEntries
-            .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
-            )
-            .map(([columnName]) => columnName),
+          columnNames: [
+            ...hiddenColumnNames,
+            // the search vector is built from fields that may be hidden, so a search must not match through them
+            ...(isNonEmptyArray(hiddenColumnNames) &&
+            tableShape.columnNames.includes(SEARCH_VECTOR_FIELD.name)
+              ? [SEARCH_VECTOR_FIELD.name]
+              : []),
+          ],
           condition: sqlCondition,
         });
       }
