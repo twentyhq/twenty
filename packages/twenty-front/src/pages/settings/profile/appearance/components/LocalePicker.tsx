@@ -18,6 +18,7 @@ import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { persistLocale } from '~/utils/i18n/persistLocale';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -72,12 +73,7 @@ export const LocalePicker = () => {
     store.set(dateLocaleState.atom, newDateLocale);
 
     await dynamicActivate(value);
-    try {
-      localStorage.setItem('locale', value);
-    } catch (error) {
-      // oxlint-disable-next-line no-console
-      console.log('Failed to save locale to localStorage:', error);
-    }
+    persistLocale(value);
     invalidateMetadataStore();
     // Tool labels are translated server-side in the member's locale
     invalidateToolIndex();
