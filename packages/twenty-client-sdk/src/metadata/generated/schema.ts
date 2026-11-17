@@ -1154,6 +1154,7 @@ export interface CalendarChannel {
     syncedAt?: Scalars['DateTime']
     throttleFailureCount: Scalars['Float']
     updatedAt: Scalars['DateTime']
+    userWorkspaceId: Scalars['UUID']
     visibility: CalendarChannelVisibility
     __typename: 'CalendarChannel'
 }
@@ -5794,6 +5795,7 @@ export interface CalendarChannelGenqlSelection{
     syncedAt?: boolean | number
     throttleFailureCount?: boolean | number
     updatedAt?: boolean | number
+    userWorkspaceId?: boolean | number
     visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

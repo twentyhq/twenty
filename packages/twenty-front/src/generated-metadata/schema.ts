@@ -1394,6 +1394,7 @@ export type CalendarChannel = {
   syncedAt?: Maybe<Scalars['DateTime']['output']>;
   throttleFailureCount: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  userWorkspaceId: Scalars['UUID']['output'];
   visibility: CalendarChannelVisibility;
 };
 

@@ -52,7 +52,9 @@ describe('calendarChannelResolver (e2e)', () => {
           channel.id === CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
       );
 
-      expect(janeChannel.userWorkspaceId).toBe(USER_WORKSPACE_DATA_SEED_IDS.JANE);
+      expect(janeChannel.userWorkspaceId).toBe(
+        USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      );
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
