@@ -9,12 +9,8 @@ export const useCurrentAiChatThreadAccess = () => {
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const permissions = useAtomFamilySelectorValue(
     aiChatThreadPermissionsFamilySelector,
-    threadId ?? '',
+    threadId,
   );
 
-  // Before the chat list picks a chat, the composer writes to the new one
-  return getAiChatThreadAccess({
-    isOnNewAiChatSlot: isOnNewAiChatSlot || threadId === null,
-    permissions,
-  });
+  return getAiChatThreadAccess({ isOnNewAiChatSlot, permissions });
 };
