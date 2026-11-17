@@ -12,7 +12,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const SEE_VERSION_WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
   'cc3a065c-c89e-40ac-9449-4272c55b1bb8';
-const SEE_VERSION_WORKFLOW_RUN_ENGINE_COMPONENT_KEY = 'SEE_VERSION_WORKFLOW_RUN';
+const SEE_VERSION_WORKFLOW_RUN_ENGINE_COMPONENT_KEY: string =
+  'SEE_VERSION_WORKFLOW_RUN';
 
 @RegisteredWorkspaceCommand('2.45.0', 1790860694324)
 @Command({
@@ -45,7 +46,7 @@ export class RemoveSeeVersionWorkflowRunCommandMenuItemCommand extends Provision
 
     if (
       !isDefined(seeVersionWorkflowRun) ||
-      (seeVersionWorkflowRun.engineComponentKey as string | null) !==
+      seeVersionWorkflowRun.engineComponentKey !==
         SEE_VERSION_WORKFLOW_RUN_ENGINE_COMPONENT_KEY
     ) {
       return;
