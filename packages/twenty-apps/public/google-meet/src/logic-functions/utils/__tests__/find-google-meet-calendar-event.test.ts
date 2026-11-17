@@ -32,10 +32,13 @@ const buildCoreApiClient = (
   }),
 });
 
-const findCalendarEvent = (
-  coreApiClient: Pick<CoreApiClient, 'query'>,
-  meetingUri: string | undefined = MEETING_URI,
-) =>
+const findCalendarEvent = ({
+  coreApiClient,
+  meetingUri = MEETING_URI,
+}: {
+  coreApiClient: Pick<CoreApiClient, 'query'>;
+  meetingUri?: string;
+}) =>
   findGoogleMeetCalendarEvent({
     coreApiClient,
     conferenceRecord: { startTime: '2026-11-17T09:02:00.000Z' },
@@ -46,7 +49,7 @@ describe('findGoogleMeetCalendarEvent', () => {
   it('should search live events starting within an hour of the conference', async () => {
     const coreApiClient = buildCoreApiClient([]);
 
-    await findCalendarEvent(coreApiClient);
+    await findCalendarEvent({ coreApiClient });
 
     expect(coreApiClient.query).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -57,6 +60,11 @@ describe('findGoogleMeetCalendarEvent', () => {
                 { startsAt: { gte: '2026-11-17T08:02:00.000Z' } },
                 { startsAt: { lte: '2026-11-17T10:02:00.000Z' } },
                 { isCanceled: { eq: false } },
+                {
+                  conferenceLink: {
+                    primaryLinkUrl: { ilike: '%abc-mnop-xyz%' },
+                  },
+                },
               ],
             },
           }),
@@ -76,7 +84,7 @@ describe('findGoogleMeetCalendarEvent', () => {
       }),
     ]);
 
-    await expect(findCalendarEvent(coreApiClient)).resolves.toEqual({
+    await expect(findCalendarEvent({ coreApiClient })).resolves.toEqual({
       id: 'closest',
       title: 'Title of closest',
     });
@@ -89,7 +97,7 @@ describe('findGoogleMeetCalendarEvent', () => {
       buildCandidate({ id: 'after', startsAt: '2026-11-17T09:04:00.000Z' }),
     ]);
 
-    await expect(findCalendarEvent(coreApiClient)).resolves.toBeUndefined();
+    await expect(findCalendarEvent({ coreApiClient })).resolves.toBeUndefined();
     expect(coreApiClient.query).toHaveBeenCalledTimes(1);
   });
 
@@ -102,14 +110,16 @@ describe('findGoogleMeetCalendarEvent', () => {
       }),
     ]);
 
-    await expect(findCalendarEvent(coreApiClient)).resolves.toBeUndefined();
+    await expect(findCalendarEvent({ coreApiClient })).resolves.toBeUndefined();
     expect(coreApiClient.query).toHaveBeenCalledTimes(1);
   });
 
   it('should not search when the space has no meeting link', async () => {
     const coreApiClient = buildCoreApiClient([]);
 
-    await expect(findCalendarEvent(coreApiClient, '')).resolves.toBeUndefined();
+    await expect(
+      findCalendarEvent({ coreApiClient, meetingUri: '' }),
+    ).resolves.toBeUndefined();
     expect(coreApiClient.query).not.toHaveBeenCalled();
   });
 });

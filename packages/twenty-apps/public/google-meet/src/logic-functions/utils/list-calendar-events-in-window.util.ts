@@ -1,11 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   CALENDAR_EVENT_PAGE_SIZE,
   MAX_CALENDAR_EVENT_PAGES,
 } from 'src/logic-functions/constants/calendar-event-matching.constant';
 import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-event-candidate.type';
+import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
 
 type CalendarEventsPage = {
   calendarEvents?: {
@@ -26,12 +28,14 @@ const listCalendarEventPages = async ({
   coreApiClient,
   earliestStart,
   latestStart,
+  conferenceLinkFragment,
   cursor,
   pageIndex,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   earliestStart: string;
   latestStart: string;
+  conferenceLinkFragment: string;
   cursor: string | undefined;
   pageIndex: number;
 }): Promise<CalendarEventCandidate[] | undefined> => {
@@ -47,6 +51,13 @@ const listCalendarEventPages = async ({
             { startsAt: { gte: earliestStart } },
             { startsAt: { lte: latestStart } },
             { isCanceled: { eq: false } },
+            {
+              conferenceLink: {
+                primaryLinkUrl: {
+                  ilike: `%${escapeSqlLikePattern(conferenceLinkFragment)}%`,
+                },
+              },
+            },
           ],
         },
         first: CALENDAR_EVENT_PAGE_SIZE,
@@ -86,11 +97,11 @@ const listCalendarEventPages = async ({
 
   const pageInfo = queryResult.calendarEvents?.pageInfo;
 
-  if (pageInfo?.hasNextPage !== true) {
+  if (!(pageInfo?.hasNextPage ?? false)) {
     return calendarEvents;
   }
 
-  if (!isNonEmptyString(pageInfo.endCursor)) {
+  if (!isNonEmptyString(pageInfo?.endCursor)) {
     return undefined;
   }
 
@@ -98,28 +109,32 @@ const listCalendarEventPages = async ({
     coreApiClient,
     earliestStart,
     latestStart,
+    conferenceLinkFragment,
     cursor: pageInfo.endCursor,
     pageIndex: pageIndex + 1,
   });
 
-  return followingCalendarEvents === undefined
-    ? undefined
-    : [...calendarEvents, ...followingCalendarEvents];
+  return isDefined(followingCalendarEvents)
+    ? [...calendarEvents, ...followingCalendarEvents]
+    : undefined;
 };
 
 export const listCalendarEventsInWindow = ({
   coreApiClient,
   earliestStart,
   latestStart,
+  conferenceLinkFragment,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   earliestStart: string;
   latestStart: string;
+  conferenceLinkFragment: string;
 }): Promise<CalendarEventCandidate[] | undefined> =>
   listCalendarEventPages({
     coreApiClient,
     earliestStart,
     latestStart,
+    conferenceLinkFragment,
     cursor: undefined,
     pageIndex: 0,
   });

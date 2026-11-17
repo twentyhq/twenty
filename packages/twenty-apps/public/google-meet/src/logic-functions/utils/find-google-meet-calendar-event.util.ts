@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -23,6 +24,12 @@ export const findGoogleMeetCalendarEvent = async ({
     return undefined;
   }
 
+  const meetingCode = meetingUrl.slice(meetingUrl.lastIndexOf('/') + 1);
+
+  if (!isNonEmptyString(meetingCode)) {
+    return undefined;
+  }
+
   const conferenceStartMilliseconds = Date.parse(conferenceRecord.startTime);
   const calendarEvents = await listCalendarEventsInWindow({
     coreApiClient,
@@ -32,6 +39,7 @@ export const findGoogleMeetCalendarEvent = async ({
     latestStart: new Date(
       conferenceStartMilliseconds + CALENDAR_EVENT_MATCHING_WINDOW_MILLISECONDS,
     ).toISOString(),
+    conferenceLinkFragment: meetingCode,
   });
 
   if (!isDefined(calendarEvents)) {

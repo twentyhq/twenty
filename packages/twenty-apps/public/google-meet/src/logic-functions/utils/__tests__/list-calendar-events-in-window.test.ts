@@ -29,6 +29,7 @@ const listCalendarEvents = (query: CoreApiClient['query']) =>
     coreApiClient: { query },
     earliestStart: '2026-11-17T08:00:00.000Z',
     latestStart: '2026-11-17T10:00:00.000Z',
+    conferenceLinkFragment: 'abc_mnop',
   });
 
 describe('listCalendarEventsInWindow', () => {
@@ -48,6 +49,7 @@ describe('listCalendarEventsInWindow', () => {
           { startsAt: { gte: '2026-11-17T08:00:00.000Z' } },
           { startsAt: { lte: '2026-11-17T10:00:00.000Z' } },
           { isCanceled: { eq: false } },
+          { conferenceLink: { primaryLinkUrl: { ilike: '%abc\\_mnop%' } } },
         ],
       },
       first: 200,
