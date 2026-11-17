@@ -677,7 +677,10 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      { ...buildWorkspaceJobScope('ws-1'), groupKeys: ['integration:slack'] },
+      {
+        ...buildWorkspaceJobScope('ws-1'),
+        fairnessGroupKeys: ['integration:slack'],
+      },
     );
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
