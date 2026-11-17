@@ -127,7 +127,6 @@ export const useUpdateAiChatThreadStatus = () => {
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
-        // A newer visit since then is kept
         for (const {
           visitAtom,
           previousVisit,
