@@ -32,8 +32,8 @@ describe('downloadSendMessageAttachmentOrThrow', () => {
     fetchMock.mockResolvedValue(new Response('report'));
 
     await expect(download()).resolves.toEqual({
-      content: Buffer.from('report').toString('base64'),
-      content_type: 'application/pdf',
+      content: Buffer.from('report'),
+      contentType: 'application/pdf',
       filename: 'deck.pdf',
     });
     expect(fetchMock).toHaveBeenCalledExactlyOnceWith(ATTACHMENT.downloadUrl, {

@@ -151,7 +151,9 @@ export class FlatMcpServerValidatorService {
     if (
       isDefined(url) &&
       url !== existingMcpServer.url &&
-      isDefined(nextConnectionProviderUniversalIdentifier)
+      isDefined(nextConnectionProviderUniversalIdentifier) &&
+      nextConnectionProviderUniversalIdentifier ===
+        existingMcpServer.connectionProviderUniversalIdentifier
     ) {
       validationResult.errors.push({
         code: McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED,
