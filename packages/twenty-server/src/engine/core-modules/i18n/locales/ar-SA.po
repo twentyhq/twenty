@@ -724,6 +724,11 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "مالك الحساب للشركات"
 
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "لا يمكن للحسابات التي لديها صلاحية الوصول إلى لوحة الإدارة أو انتحال الهوية الانضمام إلى مساحة عمل عبر SSO. اقبل الدعوة باستخدام طريقة أخرى لتسجيل الدخول."
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -1333,6 +1338,11 @@ msgstr "حدث خطأ غير متوقع."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "حدث خطأ غير معروف في التقويم."
+
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "يوجد بالفعل حساب غير متحقق منه لهذا البريد الإلكتروني. تحقق من بريده الإلكتروني أو أعد تعيين كلمة مروره قبل قبول الدعوة عبر SSO."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10592,6 +10602,11 @@ msgstr "لم يتم العثور على مجموعة شروط الإذن على 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
 msgstr "لم يتم العثور على مجموعة فلتر العرض الأصلية"
+
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "يجب أن يتطابق parentId وfolderId. تم إهمال folderId، استخدم parentId."
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

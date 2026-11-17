@@ -1,0 +1,80 @@
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { type GoogleMeetConferenceRecord } from 'src/logic-functions/types/google-meet-conference-record.type';
+import { type GoogleMeetConferenceSyncOutcome } from 'src/logic-functions/types/google-meet-conference-sync-outcome.type';
+import { buildGoogleMeetCallRecordingSyncFields } from 'src/logic-functions/utils/build-google-meet-call-recording-sync-fields.util';
+import { computeCallRecordingIdForGoogleMeetConference } from 'src/logic-functions/utils/compute-call-recording-id-for-google-meet-conference.util';
+import { findGoogleMeetCalendarEvent } from 'src/logic-functions/utils/find-google-meet-calendar-event.util';
+import { getGoogleMeetSpace } from 'src/logic-functions/utils/get-google-meet-space.util';
+import { listGoogleMeetParticipants } from 'src/logic-functions/utils/list-google-meet-participants.util';
+import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
+import { listGoogleMeetTranscripts } from 'src/logic-functions/utils/list-google-meet-transcripts.util';
+import { mapGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/map-google-meet-transcript-entries.util';
+import { upsertCallRecordingOrThrow } from 'src/logic-functions/utils/upsert-call-recording-or-throw.util';
+
+export const syncGoogleMeetConferenceOrThrow = async ({
+  accessToken,
+  coreApiClient,
+  conferenceRecord,
+}: {
+  accessToken: string;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
+  conferenceRecord: Pick<
+    GoogleMeetConferenceRecord,
+    'name' | 'startTime' | 'endTime' | 'space'
+  >;
+}): Promise<GoogleMeetConferenceSyncOutcome> => {
+  const transcripts = await listGoogleMeetTranscripts({
+    accessToken,
+    conferenceRecordName: conferenceRecord.name,
+  });
+
+  if (!isNonEmptyArray(transcripts)) {
+    return 'NO_TRANSCRIPT';
+  }
+
+  const [participants, transcriptEntriesByTranscript, space] =
+    await Promise.all([
+      listGoogleMeetParticipants({
+        accessToken,
+        conferenceRecordName: conferenceRecord.name,
+      }),
+      Promise.all(
+        transcripts.map(({ name }) =>
+          listGoogleMeetTranscriptEntries({
+            accessToken,
+            transcriptName: name,
+          }),
+        ),
+      ),
+      isNonEmptyString(conferenceRecord.space)
+        ? getGoogleMeetSpace({ accessToken, spaceName: conferenceRecord.space })
+        : undefined,
+    ]);
+
+  const calendarEvent = isDefined(space)
+    ? await findGoogleMeetCalendarEvent({
+        coreApiClient,
+        conferenceRecord,
+        space,
+      })
+    : undefined;
+
+  return upsertCallRecordingOrThrow({
+    coreApiClient,
+    callRecordingId: computeCallRecordingIdForGoogleMeetConference(
+      conferenceRecord.name,
+    ),
+    fields: buildGoogleMeetCallRecordingSyncFields({
+      conferenceRecord,
+      transcriptEntries: mapGoogleMeetTranscriptEntries({
+        conferenceRecord,
+        participants,
+        transcriptEntries: transcriptEntriesByTranscript.flat(),
+      }),
+      calendarEvent,
+    }),
+  });
+};

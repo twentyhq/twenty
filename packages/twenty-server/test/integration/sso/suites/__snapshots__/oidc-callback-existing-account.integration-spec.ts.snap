@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OIDC callback sign-in existing accounts that are not members of the workspace refuses an existing account presenting a personal invite token from another workspace 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`OIDC callback sign-in existing accounts that are not members of the workspace refuses an existing account presenting a personal invite token issued for another email 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`OIDC callback sign-in existing accounts that are not members of the workspace refuses an existing account presenting an expired personal invite token 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`OIDC callback sign-in existing accounts that are not members of the workspace refuses an existing account presenting an unknown personal invite token 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`OIDC callback sign-in existing accounts that are not members of the workspace refuses an existing account with admin panel access, even with its personal invite token 1`] = `
+{
+  "errorMessage": "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`OIDC callback sign-in unverified password accounts refuses an unverified password account presenting its personal invite token and leaves it unverified 1`] = `
+{
+  "errorMessage": "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO.",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
