@@ -337,6 +337,28 @@ describe('app connection OAuth discovery flow', () => {
     expect(await readStoredClients()).toHaveLength(1);
   });
 
+  it('sends a callback that lands on the server host back to the workspace host', async () => {
+    const state = getState(await authorize());
+    const serverHost = new URL(getServerUrl()).host;
+
+    const response = await request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/callback')
+      .set('Host', serverHost)
+      .query({ state, code: 'bounced-code' });
+
+    expect(response.status).toBe(302);
+
+    const workspaceCallbackUrl = new URL(response.headers.location);
+
+    expect(workspaceCallbackUrl.host).not.toBe(serverHost);
+    expect(workspaceCallbackUrl.pathname).toBe('/auth/apps/callback');
+    expect(Object.fromEntries(workspaceCallbackUrl.searchParams)).toEqual({
+      state,
+      code: 'bounced-code',
+    });
+    expect(tokenRequests).toHaveLength(0);
+  });
+
   it('forgets the stored client once the token endpoint rejects it', async () => {
     const state = getState(await authorize());
 

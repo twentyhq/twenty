@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -78,6 +78,47 @@ export class ConnectionProviderFlowRedirectService {
     }
 
     return res.redirect(url.toString());
+  }
+
+  // Providers call back on SERVER_URL, but the browser-binding cookie lives on the workspace host where sign-in started.
+  async findWorkspaceHostCallbackUrl({
+    request,
+    state,
+  }: {
+    request: Request;
+    state: string | undefined;
+  }): Promise<string | null> {
+    const serverHost = new URL(this.twentyConfigService.get('SERVER_URL')).host;
+
+    if (!isNonEmptyString(state) || request.get('host') !== serverHost) {
+      return null;
+    }
+
+    const stateTarget =
+      await this.authorizationStateService.findErrorRedirectTarget(state);
+    const workspace = isDefined(stateTarget)
+      ? await this.workspaceRepository.findOneBy({
+          id: stateTarget.workspaceId,
+        })
+      : null;
+
+    if (!isDefined(workspace)) {
+      return null;
+    }
+
+    const workspaceCallbackUrl = this.workspaceDomainsService.buildWorkspaceURL(
+      {
+        workspace,
+        pathname: request.path,
+        searchParams: Object.fromEntries(
+          new URL(request.originalUrl, `http://${serverHost}`).searchParams,
+        ),
+      },
+    );
+
+    return workspaceCallbackUrl.host === serverHost
+      ? null
+      : workspaceCallbackUrl.toString();
   }
 
   async redirectToErrorFromState({
