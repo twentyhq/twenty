@@ -5,8 +5,8 @@ export const canReadField = ({
   repository,
   flatFieldMetadata,
 }: {
-  repository: WorkspaceRepository;
-  flatFieldMetadata: OrmFlatFieldMetadata;
+  repository: Pick<WorkspaceRepository, 'recordReadRestrictions'>;
+  flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'id'>;
 }): boolean =>
   !repository.recordReadRestrictions.unreadableFieldMetadataIds.has(
     flatFieldMetadata.id,
