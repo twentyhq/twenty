@@ -3,10 +3,12 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+
+const NAVIGATION_ITEM_SKELETON_COUNT = 2;
 
 const StyledAnimatedContainer = styled(motion.div)`
   box-sizing: border-box;
@@ -15,39 +17,53 @@ const StyledAnimatedContainer = styled(motion.div)`
   flex-shrink: 0;
   height: 100%;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
-    ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-const StyledItemsContainer = styled.div`
+const StyledHeader = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-height: 0;
-  overflow-y: auto;
-  width: 100%;
+  flex-shrink: 0;
+  height: ${APP_HEADER_HEIGHT}px;
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-const StyledSkeletonContainer = styled.div`
+// Same box as the expanded tab switcher, so nothing moves when the drawer mounts.
+const StyledTabs = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  gap: 32px;
-  width: 100%;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[10]};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-const StyledSkeletonTitleContainer = styled.div`
-  align-items: flex-start;
+const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 32px;
+  gap: ${themeCssVariables.betweenSiblingsGap};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[1]} 0;
+`;
+
+const StyledSectionLabel = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: ${themeCssVariables.spacing[7]};
   justify-content: center;
-  width: 100%;
 `;
 
 export const LeftPanelSkeletonLoader = () => {
   const theme = useTheme();
   const isMobile = useIsMobile();
+
   return (
     <StyledAnimatedContainer
       initial={false}
@@ -59,20 +75,39 @@ export const LeftPanelSkeletonLoader = () => {
         duration: theme.animation.duration.fast,
       }}
     >
-      <StyledItemsContainer>
-        <StyledSkeletonTitleContainer>
+      <StyledHeader>
+        <SkeletonLine
+          width={88}
+          height={SKELETON_HEIGHT_SIZES.s}
+          baseColor={themeCssVariables.background.quaternary}
+        />
+      </StyledHeader>
+      <StyledTabs>
+        <SkeletonLine
+          width={64}
+          height={SKELETON_HEIGHT_SIZES.s}
+          baseColor={themeCssVariables.background.quaternary}
+        />
+      </StyledTabs>
+      <StyledSection>
+        <StyledSectionLabel>
           <SkeletonLine
-            width={96}
-            height={SKELETON_HEIGHT_SIZES.s}
+            width={48}
+            height={SKELETON_HEIGHT_SIZES.xs}
             baseColor={themeCssVariables.background.quaternary}
           />
-        </StyledSkeletonTitleContainer>
-        <StyledSkeletonContainer>
-          <MainNavigationDrawerItemsSkeletonLoader length={3} />
-          <MainNavigationDrawerItemsSkeletonLoader title length={2} />
-          <MainNavigationDrawerItemsSkeletonLoader title length={3} />
-        </StyledSkeletonContainer>
-      </StyledItemsContainer>
+        </StyledSectionLabel>
+        {Array.from({ length: NAVIGATION_ITEM_SKELETON_COUNT }).map(
+          (_, index) => (
+            <StyledItem key={index}>
+              <SkeletonLine
+                height={SKELETON_HEIGHT_SIZES.s}
+                baseColor={themeCssVariables.background.quaternary}
+              />
+            </StyledItem>
+          ),
+        )}
+      </StyledSection>
     </StyledAnimatedContainer>
   );
 };

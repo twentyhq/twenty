@@ -15,10 +15,9 @@ export const PageContentSkeletonLoader = ({
     <PageCardLayout
       header={
         <PageCardHeader
-          icon={<SkeletonLine width={20} height={20} />}
-          title={<SkeletonLine width={120} height={SKELETON_HEIGHT_SIZES.s} />}
+          title={<SkeletonLine width={104} height={SKELETON_HEIGHT_SIZES.s} />}
           actionButton={
-            <SkeletonLine width={80} height={SKELETON_HEIGHT_SIZES.s} />
+            <SkeletonLine width={132} height={SKELETON_HEIGHT_SIZES.s} />
           }
         />
       }
