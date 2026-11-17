@@ -189,6 +189,28 @@ export type AdminPanelWorkspaceBilling = {
   usage?: Maybe<AdminPanelWorkspaceUsage>;
 };
 
+export type AdminPanelWorkspaceBillingArrangement = {
+  __typename?: 'AdminPanelWorkspaceBillingArrangement';
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  creditAllowance?: Maybe<Scalars['Float']['output']>;
+  creditGrantId?: Maybe<Scalars['UUID']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  grantedBy?: Maybe<UserInfo>;
+  id: Scalars['UUID']['output'];
+  isManageable: Scalars['Boolean']['output'];
+  label: BillingArrangementLabel;
+  revokedBy?: Maybe<UserInfo>;
+  seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
+  seats?: Maybe<Scalars['Int']['output']>;
+  startsAt: Scalars['DateTime']['output'];
+  status: BillingArrangementStatus;
+  stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
+  stripeDiscountId?: Maybe<Scalars['String']['output']>;
+  type: BillingArrangementType;
+  usageLimit?: Maybe<UsageLimit>;
+};
+
 export type AdminPanelWorkspaceCreditGrant = {
   __typename?: 'AdminPanelWorkspaceCreditGrant';
   amount: Scalars['Float']['output'];
@@ -429,6 +451,32 @@ export enum BillingArrangementLabel {
   APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
   COMPENSATION = 'COMPENSATION',
   OTHER = 'OTHER'
+}
+
+/** Whether members above committed seats are billed or blocked */
+export enum BillingArrangementSeatCapMode {
+  HARD = 'HARD',
+  SOFT = 'SOFT'
+}
+
+/** Whether a billing arrangement applies now, later, no longer, or only once */
+export enum BillingArrangementStatus {
+  ACTIVE = 'ACTIVE',
+  ENDED = 'ENDED',
+  ONE_TIME = 'ONE_TIME',
+  SCHEDULED = 'SCHEDULED'
+}
+
+/** The kind of commercial exception a billing arrangement grants */
+export enum BillingArrangementType {
+  COMMITTED_SEATS = 'COMMITTED_SEATS',
+  CREDIT_GRANT = 'CREDIT_GRANT',
+  DISCOUNT = 'DISCOUNT',
+  FREE_SEATS = 'FREE_SEATS',
+  LIMIT_OVERRIDE = 'LIMIT_OVERRIDE',
+  REFUND = 'REFUND',
+  TRIAL_EXTENSION = 'TRIAL_EXTENSION',
+  WORKSPACE_CREDIT_ALLOWANCE = 'WORKSPACE_CREDIT_ALLOWANCE'
 }
 
 /** The origin of a batch of credits granted to a workspace */
@@ -676,11 +724,13 @@ export type Mutation = {
   addModelToProvider: Scalars['Boolean']['output'];
   clearMaintenanceMode: Scalars['Boolean']['output'];
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
+  createWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   createWorkspaceDataExport: WorkspaceDataExport;
   createWorkspaceUsageLimit: AdminPanelUsageLimit;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteJobs: DeleteJobsResponse;
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
+  endWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
@@ -720,6 +770,18 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateWorkspaceBillingArrangementArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  creditAllowance?: InputMaybe<Scalars['Float']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label: BillingArrangementLabel;
+  seatCapMode?: InputMaybe<BillingArrangementSeatCapMode>;
+  seats?: InputMaybe<Scalars['Int']['input']>;
+  type: BillingArrangementType;
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationCreateWorkspaceDataExportArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
@@ -747,6 +809,12 @@ export type MutationDeleteJobsArgs = {
 
 export type MutationDeleteWorkspaceUsageLimitArgs = {
   usageLimitId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationEndWorkspaceBillingArrangementArgs = {
+  billingArrangementId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -891,6 +959,7 @@ export type Query = {
   userLookupAdminPanel: UserLookup;
   versionInfo: VersionInfo;
   workspaceBillingAdminPanel?: Maybe<AdminPanelWorkspaceBilling>;
+  workspaceBillingArrangements: Array<AdminPanelWorkspaceBillingArrangement>;
   workspaceDataExports: Array<WorkspaceDataExport>;
   workspaceLookupAdminPanel: UserLookup;
   workspaceUsageLimits: AdminPanelWorkspaceUsageLimits;
@@ -1010,6 +1079,11 @@ export type QueryUserLookupAdminPanelArgs = {
 
 
 export type QueryWorkspaceBillingAdminPanelArgs = {
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceBillingArrangementsArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -1181,6 +1255,23 @@ export type UsageBreakdownItem = {
   label?: Maybe<Scalars['String']['output']>;
   userCreditsUsed: Scalars['Float']['output'];
   workspaceCreditsUsed: Scalars['Float']['output'];
+};
+
+export type UsageLimit = {
+  __typename?: 'UsageLimit';
+  burstValue?: Maybe<Scalars['BigInt']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  limitKind: Scalars['String']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['output'];
+  periodUnit: Scalars['String']['output'];
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+  unit: UsageUnit;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export enum UsageOperationType {
