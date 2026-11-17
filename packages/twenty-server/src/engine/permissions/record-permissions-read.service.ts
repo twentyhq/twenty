@@ -54,6 +54,7 @@ import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/interna
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { isRelationFieldUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/is-relation-field-unreadable-by-principals.util';
+import { findSourceObjectMetadataIdsWithHiddenPath } from 'src/engine/permissions/internal/related-record-path/utils/find-source-object-metadata-ids-with-hidden-path.util';
 import {
   type BuildEntrySQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
@@ -370,18 +371,29 @@ export class RecordPermissionsReadService {
       return sqlCondition;
     }
 
+    const sourceObjectMetadataIdsWithHiddenPath =
+      findSourceObjectMetadataIdsWithHiddenPath(objectAccessRequest);
+
     return combineSQLConditionOutcomesWithOr([
       sqlCondition,
       this.buildRelatedRecordPathJoinSQLCondition({
         ...objectAccessRequest,
         tableAlias,
         isUncorrelated: true,
+        // the stored groups skip a source object with a hidden path, so its other paths grant through the full source condition
         buildEntrySQLCondition: (entry) =>
           entry.tableAlias !== tableAlias &&
-          this.buildRecordShareOrCreatorEntrySQLCondition({
-            ...objectAccessRequest,
-            ...entry,
-          }),
+          (sourceObjectMetadataIdsWithHiddenPath.has(
+            entry.flatObjectMetadata.id,
+          )
+            ? this.buildEntrySQLCondition({
+                ...objectAccessRequest,
+                ...entry,
+              })
+            : this.buildRecordShareOrCreatorEntrySQLCondition({
+                ...objectAccessRequest,
+                ...entry,
+              })),
       }),
     ]);
   }

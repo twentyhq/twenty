@@ -7,7 +7,7 @@ import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/ac
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
-import { isRelationFieldUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/is-relation-field-unreadable-by-principals.util';
+import { findSourceObjectMetadataIdsWithHiddenPath } from 'src/engine/permissions/internal/related-record-path/utils/find-source-object-metadata-ids-with-hidden-path.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
@@ -30,62 +30,55 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
     flatObjectMetadata.id,
   ];
 
-  const resolvedPaths = findRelatedRecordPathsExtendingAccess(request);
-  // a record's groups do not say which path copied them, so a hidden path blocks every path from its source object
-  const sourceObjectMetadataIdsWithHiddenPath = new Set(
-    resolvedPaths
-      .filter(({ sourceFlatObjectMetadata, hops }) =>
-        isRelationFieldUnreadableByPrincipals({
-          principals,
-          metadataMaps,
-          flatObjectMetadata: sourceFlatObjectMetadata,
-          relationFieldMetadataId: hops[0].relationFieldMetadataId,
-        }),
-      )
-      .map(({ sourceFlatObjectMetadata }) => sourceFlatObjectMetadata.id),
-  );
+  // a record's groups do not say which path copied them, so a source object with a hidden path is read through its paths one by one instead
+  const sourceObjectMetadataIdsWithHiddenPath =
+    findSourceObjectMetadataIdsWithHiddenPath(request);
 
-  return resolvedPaths.flatMap(({ isInherent, sourceFlatObjectMetadata }) => {
-    const sourceRequest = {
-      ...request,
-      flatObjectMetadata: sourceFlatObjectMetadata,
-    };
+  return findRelatedRecordPathsExtendingAccess(request).flatMap(
+    ({ isInherent, sourceFlatObjectMetadata }) => {
+      const sourceRequest = {
+        ...request,
+        flatObjectMetadata: sourceFlatObjectMetadata,
+      };
 
-    if (
-      sourceObjectMetadataIdsWithHiddenPath.has(sourceFlatObjectMetadata.id) ||
-      !canRelatedRecordPathExtendAccessToObject(sourceRequest)
-    ) {
-      return [];
-    }
+      if (
+        sourceObjectMetadataIdsWithHiddenPath.has(
+          sourceFlatObjectMetadata.id,
+        ) ||
+        !canRelatedRecordPathExtendAccessToObject(sourceRequest)
+      ) {
+        return [];
+      }
 
-    return [
-      ...(areRecordIdsReadableByPrincipals(sourceRequest)
-        ? mainRoleIds.flatMap((roleId) =>
-            buildRoleAccessGroupsOrThrow({
-              roleId,
-              objectMetadataId: sourceFlatObjectMetadata.id,
-              objectRecordsPermissions:
-                metadataMaps.rolesPermissions[roleId]?.objects[
-                  sourceFlatObjectMetadata.id
-                ],
-              operationTypes: [request.operationType],
+      return [
+        ...(areRecordIdsReadableByPrincipals(sourceRequest)
+          ? mainRoleIds.flatMap((roleId) =>
+              buildRoleAccessGroupsOrThrow({
+                roleId,
+                objectMetadataId: sourceFlatObjectMetadata.id,
+                objectRecordsPermissions:
+                  metadataMaps.rolesPermissions[roleId]?.objects[
+                    sourceFlatObjectMetadata.id
+                  ],
+                operationTypes: [request.operationType],
+                workspaceMembers,
+                flatFieldMetadataMaps,
+                isRelationHopEnabled: isRlsRelationHopEnabled(
+                  metadataMaps.featureFlagsMap,
+                ),
+              }),
+            )
+          : []),
+        ...(isInherent &&
+        !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
+          ? buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+              request: sourceRequest,
               workspaceMembers,
               flatFieldMetadataMaps,
-              isRelationHopEnabled: isRlsRelationHopEnabled(
-                metadataMaps.featureFlagsMap,
-              ),
-            }),
-          )
-        : []),
-      ...(isInherent &&
-      !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
-        ? buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
-            request: sourceRequest,
-            workspaceMembers,
-            flatFieldMetadataMaps,
-            visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
-          })
-        : []),
-    ];
-  });
+              visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
+            })
+          : []),
+      ];
+    },
+  );
 };

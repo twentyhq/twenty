@@ -688,6 +688,70 @@ describe('Record access through related record paths', () => {
     expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
   });
 
+  it('should still grant through another path from the same source object when one is hidden', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    const setProjectTasksReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: projectObjectMetadataId,
+              fieldMetadataId: projectTasksFieldMetadataId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+    const projectReviewTasksField = await createRelationBetweenObjects({
+      objectMetadataId: projectObjectMetadataId,
+      targetObjectMetadataId: taskObjectMetadataId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.ONE_TO_MANY,
+      name: 'reviewTasks',
+      label: 'Review tasks',
+      targetFieldLabel: 'Review project',
+      targetFieldIcon: 'IconBox',
+    });
+    const reviewPathResponse = await createRelatedRecordPath({
+      objectMetadataId: projectObjectMetadataId,
+      firstFieldMetadataId: projectReviewTasksField.id,
+    });
+
+    expect(reviewPathResponse.body.errors).toBeUndefined();
+
+    const reviewTaskId = await createRecord({
+      objectMetadataSingularName: TASK_NAME,
+      data: {
+        name: 'Review task of the project',
+        [`${projectReviewTasksField.relation.targetFieldMetadata.name}Id`]:
+          projectId,
+      },
+    });
+
+    await waitForAllJobsToFinish();
+    await setProjectTasksReadability(false);
+
+    try {
+      expect(await findTaskIdsListedByJony()).toEqual([reviewTaskId]);
+      expect(await canJonyReadTask(reviewTaskId)).toBe(true);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    } finally {
+      await setProjectTasksReadability(null);
+      await deleteRelatedRecordPath(
+        reviewPathResponse.body.data.createRelatedRecordPath.id,
+      );
+      await runAndWaitForJobs(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: TASK_NAME,
+          gqlFields: 'id',
+          recordId: reviewTaskId,
+        }),
+      );
+    }
+  });
+
   it('should stop granting once the path is deleted and grant again once it is back', async () => {
     await deleteRelatedRecordPath(pathId);
 
