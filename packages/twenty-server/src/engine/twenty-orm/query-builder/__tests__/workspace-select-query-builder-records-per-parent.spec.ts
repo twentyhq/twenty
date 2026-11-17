@@ -30,7 +30,10 @@ const COMPUTATION: FieldMetadataFilteredRelationComputation = {
 };
 
 const restrict = async (
-  computation: FieldMetadataFilteredRelationComputation,
+  computation: Pick<
+    FieldMetadataFilteredRelationComputation,
+    'filter' | 'orderBy' | 'limit'
+  >,
   queryBuilder = buildFilteredRelationQueryBuilder(),
 ) =>
   (
