@@ -13,7 +13,7 @@ import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/f
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { isGrantedToPermissionsPrincipalsRoles } from 'src/engine/permissions/internal/principal/utils/is-granted-to-permissions-principals-roles.util';
+import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { findUserWorkspaceRoleIdsOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -61,12 +61,14 @@ export class SettingPermissionsService {
     const permissionFlags = Object.fromEntries(
       Object.values(PermissionFlagType).map((permissionFlag) => [
         permissionFlag,
-        this.isPermissionFlagGrantedToAnyRole({
-          roleIds,
-          permissionFlag,
-          flatRoleMaps,
-          flatRolePermissionFlagMaps,
-        }),
+        roleIds.some((roleId) =>
+          this.isPermissionFlagGrantedToRole({
+            roleId,
+            permissionFlag,
+            flatRoleMaps,
+            flatRolePermissionFlagMaps,
+          }),
+        ),
       ]),
     ) as Record<PermissionFlagType, boolean>;
 
@@ -128,20 +130,21 @@ export class SettingPermissionsService {
       ]);
 
     const { runtimeLimitingRole } = principals;
+    const isPermissionFlagGrantedToRole = (roleId: string) =>
+      this.isPermissionFlagGrantedToRole({
+        roleId,
+        permissionFlag,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
+      });
 
     return (
       (!isDefined(runtimeLimitingRole) ||
         (runtimeLimitingRole.permissionFlags[permissionFlag] ?? false)) &&
-      isGrantedToPermissionsPrincipalsRoles({
-        principals,
-        isGrantedToRole: (roleId) =>
-          this.isPermissionFlagGrantedToRoles({
-            roleIds: [roleId],
-            permissionFlag,
-            flatRoleMaps,
-            flatRolePermissionFlagMaps,
-          }),
-      })
+      principals.mainPrincipal.roleIds.some(isPermissionFlagGrantedToRole) &&
+      getPermissionsPrincipalsLimitingRoleIds(principals).every(
+        isPermissionFlagGrantedToRole,
+      )
     );
   }
 
@@ -161,12 +164,14 @@ export class SettingPermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    return this.isPermissionFlagGrantedToAnyRole({
-      roleIds: userWorkspaceRoleMap[userWorkspaceId] ?? [],
-      permissionFlag,
-      flatRoleMaps,
-      flatRolePermissionFlagMaps,
-    });
+    return (userWorkspaceRoleMap[userWorkspaceId] ?? []).some((roleId) =>
+      this.isPermissionFlagGrantedToRole({
+        roleId,
+        permissionFlag,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
+      }),
+    );
   }
 
   public async applicationHasPermissionFlag({
@@ -195,70 +200,43 @@ export class SettingPermissionsService {
         })
       : undefined;
 
-    return this.isPermissionFlagGrantedToRoles({
-      roleIds: [grantRoleId],
+    return this.isPermissionFlagGrantedToRole({
+      roleId: grantRoleId,
       permissionFlag,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
     });
   }
 
-  private isPermissionFlagGrantedToAnyRole({
-    roleIds,
+  // Like the ORM, a role missing from the cache grants nothing
+  private isPermissionFlagGrantedToRole({
+    roleId,
     permissionFlag,
     flatRoleMaps,
     flatRolePermissionFlagMaps,
   }: {
-    roleIds: string[];
+    roleId: string | undefined;
     permissionFlag: PermissionFlagType;
     flatRoleMaps: FlatRoleMaps;
     flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
   }): boolean {
-    return roleIds.some((roleId) =>
-      this.isPermissionFlagGrantedToRoles({
-        roleIds: [roleId],
-        permissionFlag,
-        flatRoleMaps,
-        flatRolePermissionFlagMaps,
-      }),
-    );
-  }
+    const flatRole = isDefined(roleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
 
-  // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag
-  private isPermissionFlagGrantedToRoles({
-    roleIds,
-    permissionFlag,
-    flatRoleMaps,
-    flatRolePermissionFlagMaps,
-  }: {
-    roleIds: (string | undefined)[];
-    permissionFlag: PermissionFlagType;
-    flatRoleMaps: FlatRoleMaps;
-    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
-  }): boolean {
     return (
-      roleIds.length > 0 &&
-      roleIds.every((roleId) => {
-        const flatRole = isDefined(roleId)
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: roleId,
-              flatEntityMaps: flatRoleMaps,
-            })
-          : undefined;
-
-        return (
-          isDefined(flatRole) &&
-          isPermissionFlagGrantedToFlatRole({
-            flatRole,
-            permissionFlag,
-            flatRolePermissionFlagMaps,
-          })
-        );
+      isDefined(flatRole) &&
+      isPermissionFlagGrantedToFlatRole({
+        flatRole,
+        permissionFlag,
+        flatRolePermissionFlagMaps,
       })
     );
   }
 
-  // undefined entries are roles a caller should have but does not, which deny
   // The application cache also holds soft-deleted applications
   private findActiveApplication({
     applicationId,

@@ -18,7 +18,7 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { isGrantedToPermissionsPrincipalsRoles } from 'src/engine/permissions/internal/principal/utils/is-granted-to-permissions-principals-roles.util';
+import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
@@ -38,7 +38,6 @@ import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/fl
 import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
 import { findRecordSharingFlatObjectMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/find-record-sharing-flat-object-metadata-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
-import { canRolesAccessAllRecords } from 'src/engine/permissions/internal/role/utils/can-roles-access-all-records.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -347,16 +346,14 @@ export class RecordSharingReadService {
       await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
+    const canRoleAccessAllRecords = (roleId: string) =>
+      roleIdsWithAllRecordsAccess.includes(roleId);
     const canAccessAllRecords =
       isDefined(principals) &&
-      isGrantedToPermissionsPrincipalsRoles({
-        principals,
-        isGrantedToRole: (roleId) =>
-          canRolesAccessAllRecords({
-            roleIds: [roleId],
-            roleIdsWithAllRecordsAccess,
-          }),
-      });
+      principals.mainPrincipal.roleIds.some(canRoleAccessAllRecords) &&
+      getPermissionsPrincipalsLimitingRoleIds(principals).every(
+        canRoleAccessAllRecords,
+      );
     const shares = await this.recordPermissionReadRepository.findRecordShares({
       workspaceId,
       objectMetadataId,
