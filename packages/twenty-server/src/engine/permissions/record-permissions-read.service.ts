@@ -53,6 +53,8 @@ import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/rel
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
+import { buildRelatedRecordPathSourceRequest } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-source-request.util';
+import { isRelationFieldUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/is-relation-field-unreadable-by-principals.util';
 import {
   type BuildEntrySQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
@@ -379,7 +381,8 @@ export class RecordPermissionsReadService {
           entry.tableAlias !== tableAlias &&
           this.buildRecordShareOrCreatorEntrySQLCondition({
             ...objectAccessRequest,
-            ...entry,
+            flatObjectMetadata: entry.flatObjectMetadata,
+            tableAlias: entry.tableAlias,
           }),
       }),
     ]);
@@ -720,17 +723,29 @@ export class RecordPermissionsReadService {
       flatObjectMetadata,
       operationType,
       tableAlias,
-      buildEntrySQLCondition: (entry) =>
-        this.buildEntrySQLCondition({
+      buildEntrySQLCondition: ({ reachedThroughResolvedPath, ...entry }) => {
+        const sourceRequest = isDefined(reachedThroughResolvedPath)
+          ? buildRelatedRecordPathSourceRequest({
+              request: { principals, metadataMaps, flatObjectMetadata },
+              resolvedPath: reachedThroughResolvedPath,
+            })
+          : { metadataMaps };
+
+        if (!isDefined(sourceRequest)) {
+          return false;
+        }
+
+        return this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
+          metadataMaps: sourceRequest.metadataMaps,
           hypotheticalRecordShareAccessLevel:
             entry.flatObjectMetadata.id === flatObjectMetadata.id
               ? hypotheticalRecordShareAccessLevel
               : undefined,
-        }),
+        });
+      },
     });
   }
 
@@ -754,6 +769,13 @@ export class RecordPermissionsReadService {
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
+      isRelatedRecordPathHidden: ({ sourceFlatObjectMetadata, hops }) =>
+        isRelationFieldUnreadableByPrincipals({
+          principals,
+          metadataMaps,
+          flatObjectMetadata: sourceFlatObjectMetadata,
+          relationFieldMetadataId: hops[0].relationFieldMetadataId,
+        }),
       canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
         canRelatedRecordPathExtendAccessToObject({
           principals,

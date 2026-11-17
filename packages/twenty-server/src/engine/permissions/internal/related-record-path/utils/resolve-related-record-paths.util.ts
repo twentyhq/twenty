@@ -57,6 +57,7 @@ const resolveRelatedRecordPath = ({
 
     hops.push({
       flatObjectMetadata,
+      relationFieldMetadataId: flatFieldMetadata.id,
       ...findRelationJoinColumnsOrThrow({
         relationFieldMetadata: flatFieldMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,

@@ -25,6 +25,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { setRecordPrivate } from 'test/integration/metadata/suites/private-record/utils/set-record-private.util';
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
@@ -657,6 +658,34 @@ describe('Record access through related record paths', () => {
     expect(
       (await updateTaskAsJony(taskWithoutProjectId)).body.errors,
     ).toBeDefined();
+  });
+
+  it('should not follow the path from a relation the reader cannot read', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    const setProjectTasksReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: projectObjectMetadataId,
+              fieldMetadataId: projectTasksFieldMetadataId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+
+    await setProjectTasksReadability(false);
+
+    try {
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    } finally {
+      await setProjectTasksReadability(null);
+    }
+
+    expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
   });
 
   it('should stop granting once the path is deleted and grant again once it is back', async () => {

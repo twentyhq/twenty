@@ -32,11 +32,13 @@ const buildNoteQuery = (
 const COMPANY_TO_NOTE_HOPS = [
   {
     flatObjectMetadata: company,
+    relationFieldMetadataId: 'company-note-targets-field-id',
     sourceColumnName: 'id',
     targetColumnName: 'companyId',
   },
   {
     flatObjectMetadata: noteTarget,
+    relationFieldMetadataId: 'note-target-note-field-id',
     sourceColumnName: 'noteId',
     targetColumnName: 'id',
   },
