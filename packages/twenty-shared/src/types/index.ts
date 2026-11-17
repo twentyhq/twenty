@@ -125,6 +125,7 @@ export {
   FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE,
   isFieldMetadataTypeWithDefaultValue,
 } from './FieldMetadataDefaultValue';
+export type { FieldMetadataFilteredRelationComputation } from './FieldMetadataFilteredRelationComputation';
 export type { FieldMetadataFormulaComputation } from './FieldMetadataFormulaComputation';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';

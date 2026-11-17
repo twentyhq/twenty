@@ -29,11 +29,24 @@ export const isFieldMetadataComputation = (
   return (
     (!isDefined(sourceRelationProperty) ||
       isNonEmptyString(computation[sourceRelationProperty])) &&
-    expressionSlots.every(
-      ({ property, isRequired }) =>
-        isString(computation[property]) ||
-        (!isRequired && isUndefined(computation[property])),
-    ) &&
+    expressionSlots.every(({ property, listItemProperty, isRequired }) => {
+      const value = computation[property];
+
+      if (!isRequired && isUndefined(value)) {
+        return true;
+      }
+
+      if (!isDefined(listItemProperty)) {
+        return isString(value);
+      }
+
+      return (
+        Array.isArray(value) &&
+        value.every(
+          (item) => isPlainObject(item) && isString(item[listItemProperty]),
+        )
+      );
+    }) &&
     Object.entries(allowedValuesByProperty).every(([property, allowedValues]) =>
       allowedValues.some(
         (allowedValue) => allowedValue === computation[property],

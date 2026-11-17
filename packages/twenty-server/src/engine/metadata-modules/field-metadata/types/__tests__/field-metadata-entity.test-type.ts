@@ -17,8 +17,8 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type DefinedRelationRecord = {
-  relationTargetFieldMetadataId: string;
-  relationTargetFieldMetadata: TypeOrmRelation<FieldMetadataEntity>;
+  relationTargetFieldMetadataId: string | null;
+  relationTargetFieldMetadata: TypeOrmRelation<FieldMetadataEntity> | null;
   relationTargetObjectMetadataId: string;
   relationTargetObjectMetadata: TypeOrmRelation<ObjectMetadataEntity>;
 };

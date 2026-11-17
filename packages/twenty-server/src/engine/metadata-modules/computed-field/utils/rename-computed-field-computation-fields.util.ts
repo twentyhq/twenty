@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
-import { getComputedFieldSlotExpressions } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-slot-expressions.util';
+import { mapComputedFieldSlotExpressions } from 'src/engine/metadata-modules/computed-field/utils/map-computed-field-slot-expressions.util';
 import { getComputedFieldSourceRelationFieldName } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-source-relation-field-name.util';
 
 export const renameComputedFieldComputationFields = ({
@@ -60,25 +60,21 @@ export const renameComputedFieldComputationFields = ({
   }
 
   return {
-    ...computation,
+    ...mapComputedFieldSlotExpressions({
+      computation,
+      mapExpression: ({ slot, expression }) =>
+        renameValidationRuleExpressionFields({
+          expression,
+          bindings:
+            slot.evaluatedOn === 'RELATED_RECORD'
+              ? relatedRecordBindings
+              : bindings,
+          fieldNameByUniversalIdentifier,
+        }),
+    }),
     ...(isDefined(sourceRelationProperty) && isDefined(sourceRelationFieldName)
       ? { [sourceRelationProperty]: renamePath(sourceRelationFieldName) }
       : {}),
-    ...Object.fromEntries(
-      getComputedFieldSlotExpressions(computation).map(
-        ({ slot, expression }) => [
-          slot.property,
-          renameValidationRuleExpressionFields({
-            expression,
-            bindings:
-              slot.evaluatedOn === 'RELATED_RECORD'
-                ? relatedRecordBindings
-                : bindings,
-            fieldNameByUniversalIdentifier,
-          }),
-        ],
-      ),
-    ),
     bindings: renamedBindings,
   };
 };

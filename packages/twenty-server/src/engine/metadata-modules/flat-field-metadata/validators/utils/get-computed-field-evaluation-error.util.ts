@@ -47,15 +47,14 @@ const assertComputationCanBeEvaluatedOrThrow = ({
     ComputedFieldValueType | undefined
   > = {};
 
-  for (const {
-    slot,
-    expression,
-    evaluatedObject,
-  } of resolveComputedFieldSlotExpressionsOrThrow({
-    computation,
-    object,
-    schemaReader,
-  }).slotExpressions) {
+  const { sourceRelation, slotExpressions } =
+    resolveComputedFieldSlotExpressionsOrThrow({
+      computation,
+      object,
+      schemaReader,
+    });
+
+  for (const { slot, expression, evaluatedObject } of slotExpressions) {
     const resolvePath = (path: string[]) =>
       resolveComputedFieldPathOrThrow({
         path,
@@ -97,7 +96,8 @@ const assertComputationCanBeEvaluatedOrThrow = ({
 
   COMPUTED_FIELD_KIND_DESCRIPTIONS[computation.kind].assertIsValidOrThrow({
     computation,
-    fieldType: field.type,
+    field,
+    sourceRelationField: sourceRelation?.relationField,
     valueTypeBySlotProperty,
   });
 };

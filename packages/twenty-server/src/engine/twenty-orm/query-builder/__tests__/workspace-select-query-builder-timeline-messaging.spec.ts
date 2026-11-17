@@ -173,6 +173,7 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
         shapeByObjectMetadataId[objectMetadataId],
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
+      buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
     });
 
     return { queryBuilder, executedStatements };

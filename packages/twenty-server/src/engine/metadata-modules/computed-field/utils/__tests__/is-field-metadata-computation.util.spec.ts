@@ -12,6 +12,14 @@ describe('isFieldMetadataComputation', () => {
       expression: 'points',
       filter: 'isDone',
     },
+    { kind: 'FILTERED_RELATION', relationFieldName: 'tasks' },
+    {
+      kind: 'FILTERED_RELATION',
+      relationFieldName: 'tasks',
+      filter: 'isDone',
+      orderBy: [{ expression: 'points * 2', direction: 'DescNullsLast' }],
+      limit: 3,
+    },
   ])('accepts %j', (computation) => {
     expect(isFieldMetadataComputation(computation)).toBe(true);
   });
@@ -31,6 +39,17 @@ describe('isFieldMetadataComputation', () => {
       relationFieldName: 'tasks',
       operation: 'COUNT',
       filter: 1,
+    },
+    { kind: 'FILTERED_RELATION' },
+    {
+      kind: 'FILTERED_RELATION',
+      relationFieldName: 'tasks',
+      orderBy: 'points',
+    },
+    {
+      kind: 'FILTERED_RELATION',
+      relationFieldName: 'tasks',
+      orderBy: [{ points: 'DescNullsLast' }],
     },
   ])('refuses %j', (computation) => {
     expect(isFieldMetadataComputation(computation)).toBe(false);

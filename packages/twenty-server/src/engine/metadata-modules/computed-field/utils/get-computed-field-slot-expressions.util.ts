@@ -1,20 +1,21 @@
 import { type FieldMetadataComputation } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import { COMPUTED_FIELD_KIND_DESCRIPTIONS } from 'src/engine/metadata-modules/computed-field/constants/computed-field-kind-descriptions.constant';
 import { type ComputedFieldSlotExpression } from 'src/engine/metadata-modules/computed-field/types/computed-field-slot-expression.type';
-import { getComputedFieldComputationTextProperty } from 'src/engine/metadata-modules/computed-field/utils/get-computed-field-computation-text-property.util';
+import { mapComputedFieldSlotExpressions } from 'src/engine/metadata-modules/computed-field/utils/map-computed-field-slot-expressions.util';
 
 export const getComputedFieldSlotExpressions = (
   computation: FieldMetadataComputation,
-): ComputedFieldSlotExpression[] =>
-  COMPUTED_FIELD_KIND_DESCRIPTIONS[computation.kind].expressionSlots.flatMap(
-    (slot) => {
-      const expression = getComputedFieldComputationTextProperty({
-        computation,
-        property: slot.property,
-      });
+): ComputedFieldSlotExpression[] => {
+  const slotExpressions: ComputedFieldSlotExpression[] = [];
 
-      return isDefined(expression) ? [{ slot, expression }] : [];
+  mapComputedFieldSlotExpressions({
+    computation,
+    mapExpression: (slotExpression) => {
+      slotExpressions.push(slotExpression);
+
+      return slotExpression.expression;
     },
-  );
+  });
+
+  return slotExpressions;
+};

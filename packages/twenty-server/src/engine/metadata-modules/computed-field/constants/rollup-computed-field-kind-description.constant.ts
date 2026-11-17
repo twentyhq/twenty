@@ -28,13 +28,9 @@ export const ROLLUP_COMPUTED_FIELD_KIND_DESCRIPTION: ComputedFieldKindDescriptio
         valueTypes: [FieldMetadataType.BOOLEAN],
       },
     ],
-    assertIsValidOrThrow: ({
-      computation,
-      fieldType,
-      valueTypeBySlotProperty,
-    }) =>
+    assertIsValidOrThrow: ({ computation, field, valueTypeBySlotProperty }) =>
       assertComputedValueFitsFieldTypeOrThrow({
-        fieldType,
+        fieldType: field.type,
         valueType: getRollupComputedValueTypeOrThrow({
           computation,
           expressionValueType: valueTypeBySlotProperty.expression,

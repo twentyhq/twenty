@@ -6,6 +6,7 @@ import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util'
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -275,6 +276,17 @@ describe('Computed field permissions (e2e)', () => {
       });
     }
 
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'bigTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        filter: 'points > 4',
+      },
+    });
+
     projectBudgetFieldMetadataId = await createField({
       objectMetadataId: taskObjectMetadataId,
       name: 'projectBudget',
@@ -400,6 +412,32 @@ describe('Computed field permissions (e2e)', () => {
     expect((await findTaskAsMember()).projectBudget).toBeNull();
   });
 
+  it('nulls the same computed values in the response of a write by the member', async () => {
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: budgetFieldMetadataId,
+      isReadable: false,
+    });
+
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'permProject',
+        gqlFields: `id ${PROJECT_COMPUTED_GQL_FIELDS}`,
+        recordId: PROJECT_ID,
+        data: { name: 'Alpha' },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updatePermProject).toEqual({
+      id: PROJECT_ID,
+      doubleBudget: null,
+      taskCount: 2,
+      totalPoints: 8,
+      bigTaskCount: 1,
+    });
+  });
+
   it('nulls the rollups whose expression or filter reads a related field the member cannot read', async () => {
     await setFieldReadable({
       objectMetadataId: taskObjectMetadataId,
@@ -426,6 +464,89 @@ describe('Computed field permissions (e2e)', () => {
       totalPoints: null,
       bigTaskCount: null,
     });
+  });
+
+  it('empties a filtered relation whose own field, source relation or filter the member cannot read', async () => {
+    const findBigTasksAsMember = async () =>
+      (
+        await findOneAsMember({
+          objectMetadataSingularName: 'permProject',
+          recordId: PROJECT_ID,
+          gqlFields: 'bigTasks { edges { node { id } } }',
+        })
+      ).bigTasks;
+    const [{ id: tasksFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'tasks'`,
+      [projectObjectMetadataId],
+    );
+
+    expect(await findBigTasksAsMember()).toEqual({
+      edges: [{ node: { id: BIG_TASK_ID } }],
+    });
+
+    const [{ id: bigTasksFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'bigTasks'`,
+      [projectObjectMetadataId],
+    );
+
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: bigTasksFieldMetadataId,
+      isReadable: false,
+    });
+
+    try {
+      expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+      expect(
+        (
+          await findOneAsMember({
+            objectMetadataSingularName: 'permProject',
+            recordId: PROJECT_ID,
+            gqlFields: 'tasks { edges { node { id } } }',
+          })
+        ).tasks,
+      ).toEqual({
+        edges: expect.arrayContaining([
+          { node: { id: BIG_TASK_ID } },
+          { node: { id: SMALL_TASK_ID } },
+        ]),
+      });
+    } finally {
+      await setFieldReadable({
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: bigTasksFieldMetadataId,
+        isReadable: true,
+      });
+    }
+
+    await setFieldReadable({
+      objectMetadataId: taskObjectMetadataId,
+      fieldMetadataId: pointsFieldMetadataId,
+      isReadable: false,
+    });
+
+    expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+
+    await setFieldReadable({
+      objectMetadataId: taskObjectMetadataId,
+      fieldMetadataId: pointsFieldMetadataId,
+      isReadable: true,
+    });
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: tasksFieldMetadataId,
+      isReadable: false,
+    });
+
+    try {
+      expect(await findBigTasksAsMember()).toEqual({ edges: [] });
+    } finally {
+      await setFieldReadable({
+        objectMetadataId: projectObjectMetadataId,
+        fieldMetadataId: tasksFieldMetadataId,
+        isReadable: true,
+      });
+    }
   });
 
   it('reads a field that a row-level rule hides on a record as empty on that record', async () => {

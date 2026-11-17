@@ -1,5 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -288,6 +290,30 @@ describe('Computed fields (e2e)', () => {
       });
     }
 
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'upcomingTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        filter: "status != 'DONE' and dueAt >= '2030-01-01'",
+        orderBy: [{ expression: 'dueAt', direction: 'AscNullsLast' }],
+        limit: 1,
+      },
+    });
+    await createField({
+      objectMetadataId: projectObjectMetadataId,
+      name: 'largestTasks',
+      type: FieldMetadataType.RELATION,
+      computation: {
+        kind: 'FILTERED_RELATION',
+        relationFieldName: 'tasks',
+        orderBy: [{ expression: '0 - points', direction: 'AscNullsLast' }],
+        limit: 2,
+      },
+    });
+
     const { data: projectBudgetField } = await createField({
       objectMetadataId: taskObjectMetadataId,
       name: 'projectBudget',
@@ -391,6 +417,263 @@ describe('Computed fields (e2e)', () => {
       ).toBe(1);
 
       await setStatus('TODO');
+    });
+  });
+
+  describe('filtered relations', () => {
+    const findUpcomingTasksByProjectId = async (selection: string) =>
+      Object.fromEntries(
+        (
+          await findProjects({
+            gqlFields: `${selection} { totalCount edges { node { id dueAt } } }`,
+          })
+        ).map((project) => [project.id, project.upcomingTasks]),
+      );
+    const findAlphaLargestTaskIds = async (selection: string) => {
+      const [alphaProject] = await findProjects({
+        gqlFields: `${selection} { edges { node { id } } }`,
+        filter: { id: { eq: ALPHA_PROJECT_ID } },
+      });
+      const { edges } = alphaProject.largestTasks as {
+        edges: { node: { id: string } }[];
+      };
+
+      return edges.map(({ node }) => node.id);
+    };
+
+    it('returns the filtered, sorted and limited related records of each record', async () => {
+      const upcomingTasksByProjectId =
+        await findUpcomingTasksByProjectId('upcomingTasks');
+
+      expect(upcomingTasksByProjectId[ALPHA_PROJECT_ID]).toEqual({
+        totalCount: 1,
+        edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
+      });
+      expect(upcomingTasksByProjectId[BETA_PROJECT_ID]).toEqual({
+        totalCount: 0,
+        edges: [],
+      });
+    });
+
+    it('applies a query filter inside the stored limit, never to pick other records', async () => {
+      const outsideTheLimit = await findUpcomingTasksByProjectId(
+        'upcomingTasks(filter: { points: { eq: 3 } }, first: 10)',
+      );
+      const insideTheLimit = await findUpcomingTasksByProjectId(
+        'upcomingTasks(filter: { points: { eq: 5 } }, first: 10)',
+      );
+
+      expect(outsideTheLimit[ALPHA_PROJECT_ID]).toMatchObject({
+        totalCount: 0,
+        edges: [],
+      });
+      expect(insideTheLimit[ALPHA_PROJECT_ID]).toMatchObject({
+        totalCount: 1,
+        edges: [{ node: { id: TASKS[1].id, dueAt: '2030-01-15' } }],
+      });
+    });
+
+    it('leaves the timeline of a record with a filtered relation readable', async () => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query GetTimelineThreadsFromObjectRecord($recordId: UUID!) {
+            getTimelineThreadsFromObjectRecord(
+              objectNameSingular: "rollupProject"
+              recordId: $recordId
+              page: 1
+              pageSize: 10
+            ) {
+              totalNumberOfThreads
+            }
+          }
+        `,
+        variables: { recordId: ALPHA_PROJECT_ID },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.getTimelineThreadsFromObjectRecord).toEqual({
+        totalNumberOfThreads: 0,
+      });
+    });
+
+    it('keeps the stored order with a limit, and lets a query order inside it', async () => {
+      const [smallestTask, middleTask, largestTask] = TASKS;
+
+      expect(await findAlphaLargestTaskIds('largestTasks')).toEqual([
+        largestTask.id,
+        middleTask.id,
+      ]);
+      expect(await findAlphaLargestTaskIds('largestTasks(first: 1)')).toEqual([
+        largestTask.id,
+      ]);
+      expect(
+        await findAlphaLargestTaskIds(
+          'largestTasks(orderBy: [{ points: AscNullsLast }])',
+        ),
+      ).toEqual([middleTask.id, largestTask.id]);
+      expect(
+        await findAlphaLargestTaskIds(
+          'largestTasks(orderBy: [{ points: AscNullsLast }], first: 1)',
+        ),
+      ).not.toContain(smallestTask.id);
+    });
+
+    it('refuses to delete a field read by a sort expression', async () => {
+      const { data: priorityField } = await createField({
+        objectMetadataId: taskObjectMetadataId,
+        name: 'priority',
+        type: FieldMetadataType.NUMBER,
+      });
+      const priorityFieldId = priorityField.createOneField.id;
+      const { data: prioritizedTasksField } = await createField({
+        objectMetadataId: projectObjectMetadataId,
+        name: 'prioritizedTasks',
+        type: FieldMetadataType.RELATION,
+        computation: {
+          kind: 'FILTERED_RELATION',
+          relationFieldName: 'tasks',
+          orderBy: [
+            { expression: 'coalesce(priority, 0)', direction: 'DescNullsLast' },
+          ],
+        },
+      });
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: priorityFieldId,
+          updatePayload: { isActive: false },
+        },
+      });
+
+      const { errors } = await deleteOneFieldMetadata({
+        expectToFail: true,
+        input: { idToDelete: priorityFieldId },
+      });
+
+      expect(JSON.stringify(errors)).toContain('would stop working');
+
+      await deactivateAndDeleteFields([
+        prioritizedTasksField.createOneField.id,
+        priorityFieldId,
+      ]);
+    });
+
+    it('rejects a sort by an unknown field or direction, and follows the renaming of its sort field', async () => {
+      for (const orderBy of [
+        [{ expression: 'missingField', direction: 'AscNullsLast' }],
+        [{ expression: 'dueAt', direction: 'Upwards' }],
+        [{ dueAt: 'AscNullsLast' }],
+      ]) {
+        const { errors } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name: 'sortedTasks',
+          type: FieldMetadataType.RELATION,
+          computation: {
+            kind: 'FILTERED_RELATION',
+            relationFieldName: 'tasks',
+            orderBy,
+          } as FieldMetadataComputation,
+          expectToFail: true,
+        });
+
+        expect(JSON.stringify(errors)).toContain('Invalid computation');
+      }
+
+      const findField = async (objectMetadataId: string, name: string) =>
+        (
+          await findManyFieldsMetadata({
+            expectToFail: false,
+            input: {
+              filter: { objectMetadataId: { eq: objectMetadataId } },
+              paging: { first: 100 },
+            },
+            gqlFields: 'id name computation',
+          })
+        ).fields.find(
+          ({ node }: { node: { name: string } }) => node.name === name,
+        )?.node;
+      const findUpcomingTasksComputation = async () =>
+        (await findField(projectObjectMetadataId, 'upcomingTasks')).computation;
+      const findUpcomingTasksOrderBy = async () =>
+        (await findUpcomingTasksComputation()).orderBy;
+      const findUpcomingTasksBoundPaths = async () =>
+        Object.keys((await findUpcomingTasksComputation()).bindings).sort();
+
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.status',
+      ]);
+
+      const { id: dueAtFieldId } = await findField(
+        taskObjectMetadataId,
+        'dueAt',
+      );
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: dueAtFieldId, updatePayload: { name: 'dueOn' } },
+      });
+
+      expect(await findUpcomingTasksOrderBy()).toEqual([
+        { expression: 'dueOn', direction: 'AscNullsLast' },
+      ]);
+      expect((await findUpcomingTasksComputation()).filter).toBe(
+        "status != 'DONE' and dueOn >= '2030-01-01'",
+      );
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueOn',
+        'tasks.status',
+      ]);
+
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: dueAtFieldId, updatePayload: { name: 'dueAt' } },
+      });
+
+      expect(await findUpcomingTasksOrderBy()).toEqual([
+        { expression: 'dueAt', direction: 'AscNullsLast' },
+      ]);
+      expect(await findUpcomingTasksBoundPaths()).toEqual([
+        'tasks',
+        'tasks.dueAt',
+        'tasks.status',
+      ]);
+    });
+
+    it('is listed by the metadata API without an inverse relation', async () => {
+      const { fields, errors } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { objectMetadataId: { eq: projectObjectMetadataId } },
+          paging: { first: 100 },
+        },
+        gqlFields: 'name relation { type }',
+      });
+      const relationByFieldName = Object.fromEntries(
+        fields.map(
+          ({
+            node,
+          }: {
+            node: { name: string; relation: { type: string } | null };
+          }) => [node.name, node.relation],
+        ),
+      );
+
+      expect(errors).toBeUndefined();
+      expect(relationByFieldName.upcomingTasks).toBeNull();
+      expect(relationByFieldName.tasks).toEqual({ type: 'ONE_TO_MANY' });
+    });
+
+    it('leaves the relation it derives from untouched', async () => {
+      const [alphaProject] = await findProjects({
+        gqlFields: 'tasks { totalCount }',
+        filter: { id: { eq: ALPHA_PROJECT_ID } },
+      });
+
+      expect(alphaProject.tasks).toEqual({ totalCount: 3 });
     });
   });
 
@@ -510,6 +793,53 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
+    it('returns computed fields of the records a write destroys', async () => {
+      const projectId = '20202020-c0f1-4000-8000-000000000004';
+      const taskId = buildTaskId(TASKS.length + 1);
+
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id',
+          data: [{ id: projectId, name: 'Gamma', budget: 10 }],
+          upsert: false,
+        }),
+      );
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          data: [{ id: taskId, projectId, status: 'TODO', points: 1 }],
+          upsert: false,
+        }),
+      );
+
+      const response = await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id taskCount summary',
+          filter: { id: { eq: projectId } },
+        }),
+      );
+
+      await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          filter: { id: { eq: taskId } },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.destroyRollupProjects).toEqual([
+        { id: projectId, taskCount: 1, summary: 'GAMMA: open' },
+      ]);
+    });
+
     it('updates the records matching a filter on a computed field', async () => {
       const response = await makeGraphqlApiRequest(
         updateManyOperationFactory({
@@ -525,6 +855,48 @@ describe('Computed fields (e2e)', () => {
       expect(response.body.data.updateRollupProjects).toEqual([
         { name: 'Empty' },
       ]);
+    });
+
+    it('writes only the records its filter selects when the filter and the response read different text literals', async () => {
+      const fieldIds: string[] = [];
+
+      for (const [name, expression] of [
+        ['isNamedAlpha', "name == 'Alpha'"],
+        ['isNamedBeta', "name == 'Beta'"],
+      ]) {
+        const { data } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name,
+          type: FieldMetadataType.BOOLEAN,
+          computation: { kind: 'FORMULA', expression },
+        });
+
+        fieldIds.push(data.createOneField.id);
+      }
+
+      try {
+        const response = await makeGraphqlApiRequest(
+          updateManyOperationFactory({
+            objectMetadataSingularName: 'rollupProject',
+            objectMetadataPluralName: 'rollupProjects',
+            gqlFields: 'id budget isNamedBeta',
+            filter: { isNamedAlpha: { eq: true } },
+            data: { budget: 100 },
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.updateRollupProjects).toEqual([
+          { id: ALPHA_PROJECT_ID, budget: 100, isNamedBeta: false },
+        ]);
+        expect(await findProjectValuesById('budget')).toEqual({
+          [ALPHA_PROJECT_ID]: 100,
+          [BETA_PROJECT_ID]: 30,
+          [EMPTY_PROJECT_ID]: 0,
+        });
+      } finally {
+        await deactivateAndDeleteFields(fieldIds);
+      }
     });
 
     it('refuses to write a computed field', async () => {
@@ -1093,9 +1465,9 @@ describe('Computed fields (e2e)', () => {
           },
         });
 
-        expect((await findComputation(discountedBudget)).expression).toBe(
-          'budget - coalesce(rebate, 0)',
-        );
+        expect(await findComputation(discountedBudget)).toMatchObject({
+          expression: 'budget - coalesce(rebate, 0)',
+        });
         expect(await findBoundPaths(discountedBudget)).toEqual([
           'budget',
           'rebate',
@@ -1111,9 +1483,9 @@ describe('Computed fields (e2e)', () => {
           },
         });
 
-        expect((await findComputation(discountedBudget)).expression).toBe(
-          'budget - 1',
-        );
+        expect(await findComputation(discountedBudget)).toMatchObject({
+          expression: 'budget - 1',
+        });
 
         const { errors } = await createField({
           objectMetadataId: projectObjectMetadataId,

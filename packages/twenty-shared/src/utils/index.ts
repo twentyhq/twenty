@@ -86,6 +86,7 @@ export {
   computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
+export { hasInverseRelationField } from './fieldMetadata/hasInverseRelationField';
 export { hasStoredColumn } from './fieldMetadata/hasStoredColumn';
 export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
 export { isComputedField } from './fieldMetadata/isComputedField';

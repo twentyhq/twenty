@@ -201,14 +201,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
-    await this.loadComputedFieldsHelper.loadMissingComputedFields({
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      records,
-      selectedFields: args.selectedFieldsResult.select,
-      repository,
-    });
-
     if (!args.selectedFieldsResult.relations) {
       return;
     }

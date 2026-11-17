@@ -39,6 +39,7 @@ const buildQueryBuilder = () =>
     tableShapeByObjectMetadataId: () => personTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('applyMutationCriteriaToQueryBuilder', () => {

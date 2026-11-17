@@ -24,6 +24,9 @@ import {
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { type ComputedColumnSqlContext } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql-context.type';
 import { type ComputedColumnSql } from 'src/engine/twenty-orm/computed-column/types/computed-column-sql.type';
+import { type ReadableSql } from 'src/engine/twenty-orm/computed-column/types/readable-sql.type';
+import { type ExpressionOrderBy } from 'src/engine/twenty-orm/query-builder/types/expression-order-by.type';
+import { ORDER_BY_SQL_BY_DIRECTION } from 'src/engine/twenty-orm/query-builder/constants/order-by-sql-by-direction.constant';
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
@@ -55,7 +58,9 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type WrittenRows } from 'src/engine/twenty-orm/sql/types/written-rows.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -80,6 +85,11 @@ export type QueryBuilderContext = {
     queryBuilder: WorkspaceSelectQueryBuilder,
   ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
+  buildComputedFieldExpressionSql: (args: {
+    expression: string;
+    alias: string;
+    context: ComputedColumnSqlContext;
+  }) => Promise<ReadableSql<ComputedColumnSql>>;
   // Given to a subquery built to be embedded in another statement, so both bind parameters in one place
   computedColumnSqlContext?: ComputedColumnSqlContext;
 };
@@ -108,6 +118,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private isLockedForUpdate = false;
   private includeDeleted = false;
   private explicitSelection?: string[];
+  private writtenRows?: WrittenRows;
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
@@ -175,6 +186,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       this.explicitSelection === undefined
         ? undefined
         : [...this.explicitSelection];
+    cloned.writtenRows = this.writtenRows;
 
     for (const alias of this.aliasesWithRowLevelPermissionApplied) {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
@@ -341,6 +353,94 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     nulls?: 'NULLS FIRST' | 'NULLS LAST',
   ): this {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
+  }
+
+  // Other conditions of the statement apply within each parent's selected records
+  async whereInRecordsPerParent({
+    filter,
+    orderBy,
+    limit,
+    joinColumnName,
+    parentRecordIds,
+  }: {
+    filter?: string;
+    orderBy?: ExpressionOrderBy[];
+    limit?: number;
+    joinColumnName: string;
+    parentRecordIds: string[];
+  }): Promise<this> {
+    if (!isDefined(limit)) {
+      return isDefined(filter) ? this.andWhereExpression(filter) : this;
+    }
+
+    const memberAlias = buildPostgresSafeAlias(`${this.alias}_member`);
+    const memberQueryBuilder = new WorkspaceSelectQueryBuilder(memberAlias, {
+      ...this.context,
+      computedColumnSqlContext: this.computedColumnSqlContext,
+    })
+      .select(this.quoteColumn(memberAlias, 'id'), 'id')
+      .where(
+        `${this.quoteColumn(memberAlias, joinColumnName)} = "parent"."id"`,
+      );
+
+    memberQueryBuilder.includeDeleted = this.includeDeleted;
+
+    if (isDefined(filter)) {
+      await memberQueryBuilder.andWhereExpression(filter);
+    }
+
+    await memberQueryBuilder.orderByExpressions(orderBy);
+    await memberQueryBuilder.applyRowLevelPermissions();
+
+    // The limit is inlined: a statement has one limit parameter, and it belongs to the outer select
+    return this.andWhere(
+      `${this.quoteColumn(this.alias, 'id')} IN (` +
+        `SELECT "member"."id" FROM unnest(:perParentRecordIds::uuid[]) AS "parent"("id") ` +
+        `CROSS JOIN LATERAL (${memberQueryBuilder.getQuery()} LIMIT ${Number(limit)}) AS "member")`,
+      {
+        ...memberQueryBuilder.getParameters(),
+        perParentRecordIds: parentRecordIds,
+      },
+    );
+  }
+
+  // A sort its reader cannot read is skipped; the id makes the order, and so a limit, deterministic
+  async orderByExpressions(orderBy: ExpressionOrderBy[] = []): Promise<this> {
+    this.orderByClauses = [];
+
+    for (const { expression, direction } of orderBy) {
+      const sql = await this.buildExpressionSql(expression);
+
+      if (isDefined(sql)) {
+        const { direction: sqlDirection, nulls } =
+          ORDER_BY_SQL_BY_DIRECTION[direction];
+
+        this.addOrderBy(`(${sql})`, sqlDirection, nulls);
+      }
+    }
+
+    return this.addOrderBy(this.quoteColumn(this.alias, 'id'), 'ASC');
+  }
+
+  // A filter its reader cannot read keeps no record, as a computed value would be null
+  private async andWhereExpression(expression: string): Promise<this> {
+    return this.andWhere(
+      (await this.buildExpressionSql(expression)) ?? 'FALSE',
+    );
+  }
+
+  private async buildExpressionSql(
+    expression: string,
+  ): Promise<string | undefined> {
+    const expressionSql = await this.context.buildComputedFieldExpressionSql({
+      expression,
+      alias: this.alias,
+      context: this.computedColumnSqlContext,
+    });
+
+    this.setParameters(this.computedColumnSqlContext.parameters);
+
+    return expressionSql?.sql;
   }
 
   distinctOn(columns: string[]): this {
@@ -567,6 +667,15 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       condition: `${this.quoteColumn(alias, foreignKeyColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`,
       foreignKeyColumnName,
     };
+  }
+
+  fromWrittenRows({
+    parameters,
+    ...writtenRows
+  }: WrittenRows & { parameters: Record<string, unknown> }): this {
+    this.writtenRows = writtenRows;
+
+    return this.setParameters(parameters);
   }
 
   withDeleted(): this {
@@ -1411,6 +1520,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return {
       alias: this.alias,
       tableShape: this.tableShape,
+      writtenRows: this.writtenRows,
       findOptions: this.findOptions,
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,

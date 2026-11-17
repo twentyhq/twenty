@@ -92,7 +92,10 @@ const TEXT_FIELD_MANIFEST: Required<
 };
 
 const RELATION_FIELD_MANIFEST: Required<
-  Omit<RelationFieldManifest<FieldMetadataType.RELATION>, 'morphId'>
+  Omit<
+    RelationFieldManifest<FieldMetadataType.RELATION>,
+    'morphId' | 'computation'
+  >
 > = {
   universalIdentifier: FIELD_UID,
   type: FieldMetadataType.RELATION,
@@ -103,13 +106,8 @@ const RELATION_FIELD_MANIFEST: Required<
   options: null,
   defaultValue: null,
   isNullable: true,
-  isUIEditable: false,
+  isUIEditable: true,
   disabledFieldPermissionActions: [],
-  computation: {
-    kind: 'ROLLUP',
-    relationFieldName: 'projects',
-    operation: 'COUNT',
-  },
   isUnique: false,
   isSearchable: false,
   isAuditLogged: true,
@@ -171,6 +169,39 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toEqual(RELATION_FIELD_MANIFEST);
+  });
+
+  it('should reproduce a filtered relation, which has no inverse field', () => {
+    const { relationTargetFieldMetadataUniversalIdentifier: _, ...relation } =
+      RELATION_FIELD_MANIFEST;
+    const filteredRelationFieldManifest: RelationFieldManifest<FieldMetadataType.RELATION> =
+      {
+        ...relation,
+        isUIEditable: false,
+        computation: {
+          kind: 'FILTERED_RELATION',
+          relationFieldName: 'projects',
+          orderBy: [{ expression: 'createdAt', direction: 'DescNullsLast' }],
+        },
+        universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      };
+
+    const universalFlatFieldMetadata =
+      fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: filteredRelationFieldManifest,
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(
+      universalFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+    ).toBeNull();
+    expect(
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toEqual(filteredRelationFieldManifest);
   });
 
   it('should reproduce a select field after an inverse then a forward conversion', () => {

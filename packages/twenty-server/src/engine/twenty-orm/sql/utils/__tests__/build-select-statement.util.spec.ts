@@ -154,6 +154,37 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain('WHERE ("person"."ownerId" = :ownerId)');
   });
 
+  it('should compute the selected computed columns over the rows a write returns', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        findOptions: {},
+        explicitSelection: ['id', 'doubleScore'],
+        includeDeleted: true,
+        writtenRows: {
+          statement: `DELETE FROM "${SCHEMA_NAME}"."person" AS "person" WHERE "person"."id" = :id RETURNING "person"."id" AS "person_id", "person"."score" AS "person_score"`,
+          returnedColumnNames: ['id', 'score'],
+        },
+        columnNullifyConditions: {
+          person: { doubleScore: ['"person"."ownerId" = :ownerId'] },
+        },
+        computedColumnSqlByAlias: {
+          person: {
+            doubleScore: {
+              sql: '"person"."score" * 2',
+              readComputedColumnNames: [],
+            },
+          },
+        },
+      }),
+    );
+
+    expect(sql).toBe(
+      `WITH "written" ("id", "score") AS (DELETE FROM "${SCHEMA_NAME}"."person" AS "person" WHERE "person"."id" = :id RETURNING "person"."id" AS "person_id", "person"."score" AS "person_score") ` +
+        'SELECT "person"."id" AS "person_id", CASE WHEN ("person"."ownerId" = :ownerId) THEN NULL ELSE "person"."doubleScore" END AS "person_doubleScore" ' +
+        'FROM (SELECT "person".*, ("person"."score" * 2) AS "doubleScore" FROM "written" AS "person") AS "person"',
+    );
+  });
+
   it('should keep row access conditions outside a user OR chain in a count', () => {
     const sql = buildCountStatement(
       buildState({

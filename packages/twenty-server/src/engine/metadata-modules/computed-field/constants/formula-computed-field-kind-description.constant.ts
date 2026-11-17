@@ -9,9 +9,9 @@ export const FORMULA_COMPUTED_FIELD_KIND_DESCRIPTION: ComputedFieldKindDescripti
     expressionSlots: [
       { property: 'expression', evaluatedOn: 'RECORD', isRequired: true },
     ],
-    assertIsValidOrThrow: ({ fieldType, valueTypeBySlotProperty }) =>
+    assertIsValidOrThrow: ({ field, valueTypeBySlotProperty }) =>
       assertComputedValueFitsFieldTypeOrThrow({
-        fieldType,
+        fieldType: field.type,
         valueType: valueTypeBySlotProperty.expression,
       }),
   };

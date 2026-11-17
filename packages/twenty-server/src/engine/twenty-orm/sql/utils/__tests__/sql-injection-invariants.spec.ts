@@ -49,6 +49,7 @@ const buildQueryBuilder = (columnNames = ['id', 'name', 'deletedAt']) =>
     tableShapeByObjectMetadataId: () => buildTableShape(columnNames),
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
+    buildComputedFieldExpressionSql: () => Promise.resolve(undefined),
   });
 
 describe('ORM v2 SQL injection invariants', () => {

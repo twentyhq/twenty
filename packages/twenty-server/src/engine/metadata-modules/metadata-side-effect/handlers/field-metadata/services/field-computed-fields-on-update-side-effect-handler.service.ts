@@ -20,7 +20,7 @@ export class FieldComputedFieldsOnUpdateSideEffectHandlerService extends Metadat
     metadataName: 'fieldMetadata',
     name: 'fieldComputedFieldsOnUpdate',
     description:
-      'Keep computed fields in step with a field they read, on any object: a rename rewrites the names used by their formula, rollup expression, rollup filter and rollup relation, and the paths of their bindings.',
+      'Keep computed fields in step with a field they read, on any object: a rename rewrites the names used by their formula, their rollup or filtered relation (relation, expression, filter, sort), and the paths of their bindings.',
   },
 ) {
   buildSideEffects({

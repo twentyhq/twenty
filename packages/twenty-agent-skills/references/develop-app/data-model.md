@@ -117,7 +117,7 @@ Export each field's identifier as a named constant and import it from the other 
 
 ### Computed Fields
 
-A field with a `computation` stores nothing: the database calculates its value on read. It can be selected, filtered and sorted like a stored field, and it cannot be written. The workspace needs the `IS_COMPUTED_FIELDS_ENABLED` feature flag. The field's `type` is `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME`, and the build of the workspace rejects a computation whose value does not fit it.
+A field with a `computation` stores nothing: the database calculates its value on read. It can be selected, filtered and sorted like a stored field, and it cannot be written. The workspace needs the `IS_COMPUTED_FIELDS_ENABLED` feature flag. A formula or rollup field's `type` is `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME`, and the build of the workspace rejects a computation whose value does not fit it. A filtered relation is a `RELATION` field.
 
 ```ts
 // A formula over the record's own fields
@@ -129,6 +129,17 @@ computation: {
   relationFieldName: 'tasks',
   operation: 'COUNT', // or SUM, AVG, MIN, MAX with an `expression`
   filter: "status != 'DONE'",
+},
+
+// A filtered relation: a one-to-many relation showing some records of another one.
+// It has no inverse field, so it takes no `relationTargetFieldMetadataUniversalIdentifier`.
+// The filter, order and limit decide its records; a query filters and sorts inside them.
+computation: {
+  kind: 'FILTERED_RELATION',
+  relationFieldName: 'tasks',
+  filter: "status != 'DONE'", // optional
+  orderBy: [{ expression: 'dueAt', direction: 'AscNullsLast' }], // optional, each an expression on the related record
+  limit: 3, // optional, 1 to 60
 },
 ```
 

@@ -203,6 +203,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 | --- | --- | --- |
 | `FORMULA` | An expression over the record's own fields | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
 | `ROLLUP` | A count, sum, average, minimum or maximum over the records of a one-to-many relation | `NUMBER`, `TEXT`, `BOOLEAN`, `DATE` or `DATE_TIME` |
+| `FILTERED_RELATION` | Some of the records of a one-to-many relation | `RELATION` (one-to-many) |
 
 ```ts
 {
@@ -230,6 +231,7 @@ A field with a `computation` stores nothing: its value is calculated by the data
 ```
 
 - **Rollup:** `operation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no `expression`; the others aggregate `expression`, evaluated on each related record. `filter` keeps only the related records for which it is true.
+- **Filtered relation:** `filter`, `orderBy` and `limit` decide which records of the relation named by `relationFieldName` the field holds. `orderBy` lists sorts such as `{ expression: 'dueAt', direction: 'AscNullsLast' }`, each an expression evaluated on the related record, and `limit` goes from 1 to 60. The filter, order and `first` of a query apply inside those records: with a `limit` of 3, a query filter narrows the three stored records and never picks others. Without an order of its own, a query returns them in the stored order. The field has no inverse, so it takes no `relationTargetFieldMetadataUniversalIdentifier`, and it is empty for a reader who cannot read the relation it derives from.
 - **Expressions** reference fields by name:
   - a sub-field of a composite field as `amount.amountMicros`;
   - a field of a to-one relation as `company.name`, and its id as `company.id` (the `companyId` column is not a field name);
