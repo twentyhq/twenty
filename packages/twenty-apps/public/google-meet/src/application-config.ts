@@ -24,6 +24,7 @@ export default defineApplication({
   galleryImages: [
     'public/gallery/google-meet-cover-image-1.png',
     'public/gallery/google-meet-cover-image-2.png',
+    'public/gallery/google-meet-cover-image-3.png',
   ],
   websiteUrl:
     'https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/google-meet',
