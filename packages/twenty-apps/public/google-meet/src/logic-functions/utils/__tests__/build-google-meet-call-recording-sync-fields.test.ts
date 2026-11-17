@@ -20,8 +20,9 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
+        title: 'Customer call',
         transcriptEntries: TRANSCRIPT_ENTRIES,
-        calendarEvent: { id: 'calendar-event-id', title: ' Customer call ' },
+        calendarEvent: { id: 'calendar-event-id' },
       }),
     ).toEqual({
       title: 'Customer call',
@@ -41,6 +42,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
           name: 'conferenceRecords/first',
           startTime: '2026-11-17T09:00:00Z',
         },
+        title: undefined,
         transcriptEntries: [],
         calendarEvent: undefined,
       }),
@@ -51,12 +53,13 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     });
   });
 
-  it('should leave the title out when the calendar event has none', () => {
+  it('should leave the title out when the conference has none', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
-        calendarEvent: { id: 'calendar-event-id', title: null },
+        calendarEvent: { id: 'calendar-event-id' },
       }),
     ).not.toHaveProperty('title');
   });
