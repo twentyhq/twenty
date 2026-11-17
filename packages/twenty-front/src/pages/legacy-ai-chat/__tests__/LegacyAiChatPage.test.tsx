@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -15,7 +15,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
-import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
+import { LegacyAiChatPage } from '~/pages/legacy-ai-chat/LegacyAiChatPage';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -41,6 +41,11 @@ jest.mock('@/ai/components/AiChatPageThreadLoadEffect', () => ({
 }));
 
 let mockIsMobile = false;
+let mockIsAiChatInboxEnabled = false;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+}));
 
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
@@ -78,23 +83,27 @@ jest.mock('~/pages/object-record/RecordShowPageContent', () => ({
 
 const THREAD_ID = '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
 
+const InboxLocation = () => <div>Inbox at {useLocation().pathname}</div>;
+
 const renderAt = (path: string) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <MemoryRouter initialEntries={[path]}>
           <Routes>
-            <Route path={AppPath.AiChat} element={<AiChatPage />} />
+            <Route path={AppPath.AiChat} element={<LegacyAiChatPage />} />
+            <Route path={AppPath.AiChatInbox} element={<InboxLocation />} />
           </Routes>
         </MemoryRouter>
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('AiChatPage', () => {
+describe('LegacyAiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsMobile = false;
+    mockIsAiChatInboxEnabled = false;
     sessionStorage.clear();
     resetJotaiStore();
   });
@@ -155,5 +164,16 @@ describe('AiChatPage', () => {
     expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
       jotaiStore.get(newAiChatThreadIdState.atom),
     );
+  });
+
+  it.each([
+    [`/chat/${THREAD_ID}`, `/inbox/${THREAD_ID}`],
+    ['/chat', '/inbox/new'],
+  ])('sends %s to %s while the inbox is on', (path, expectedPath) => {
+    mockIsAiChatInboxEnabled = true;
+
+    const { getByText } = renderAt(path);
+
+    expect(getByText(`Inbox at ${expectedPath}`)).toBeInTheDocument();
   });
 });
