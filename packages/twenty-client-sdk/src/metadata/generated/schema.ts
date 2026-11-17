@@ -3169,6 +3169,15 @@ export interface PublicApplicationRegistration {
     __typename: 'PublicApplicationRegistration'
 }
 
+export interface PublicCalendarChannel {
+    connectedAccount: ConnectedAccountPublicDTO
+    connectedAccountId: Scalars['UUID']
+    handle: Scalars['String']
+    id: Scalars['UUID']
+    visibility: CalendarChannelVisibility
+    __typename: 'PublicCalendarChannel'
+}
+
 export interface PublicConnectionParametersOutput {
     connectionSecurity?: EmailConnectionSecurity
     host: Scalars['String']
@@ -3252,7 +3261,7 @@ export interface Query {
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
-    calendarChannels: CalendarChannel[]
+    calendarChannels: PublicCalendarChannel[]
     callRecordingIdForCalendarEvent?: Scalars['UUID']
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
@@ -8087,6 +8096,16 @@ export interface PublicApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PublicCalendarChannelGenqlSelection{
+    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
+    connectedAccountId?: boolean | number
+    handle?: boolean | number
+    id?: boolean | number
+    visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicConnectionParametersOutputGenqlSelection{
     connectionSecurity?: boolean | number
     host?: boolean | number
@@ -8179,7 +8198,7 @@ export interface QueryGenqlSelection{
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
-    calendarChannels?: CalendarChannelGenqlSelection
+    calendarChannels?: PublicCalendarChannelGenqlSelection
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
     chatMessages?: (AgentMessageGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
@@ -11928,6 +11947,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isPublicApplicationRegistration = (obj?: { __typename?: any } | null): obj is PublicApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicApplicationRegistration"')
       return PublicApplicationRegistration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicCalendarChannel_possibleTypes: string[] = ['PublicCalendarChannel']
+    export const isPublicCalendarChannel = (obj?: { __typename?: any } | null): obj is PublicCalendarChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicCalendarChannel"')
+      return PublicCalendarChannel_possibleTypes.includes(obj.__typename)
     }
     
 

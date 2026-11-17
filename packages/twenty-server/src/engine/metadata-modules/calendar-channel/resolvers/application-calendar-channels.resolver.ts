@@ -9,7 +9,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.service';
-import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
+import { PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 
 // Member-bound app tokens can be minted by any member, so only a server-side run may read other members' channels
@@ -32,10 +32,10 @@ export class ApplicationCalendarChannelsResolver {
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,
   ) {}
 
-  @Query(() => [CalendarChannelDTO])
+  @Query(() => [PublicCalendarChannelDTO])
   async calendarChannels(
     @AuthWorkspace() workspace: FlatWorkspace,
-  ): Promise<CalendarChannelDTO[]> {
-    return this.calendarChannelMetadataService.findAll(workspace.id);
+  ): Promise<PublicCalendarChannelDTO[]> {
+    return this.calendarChannelMetadataService.findAllPublic(workspace.id);
   }
 }

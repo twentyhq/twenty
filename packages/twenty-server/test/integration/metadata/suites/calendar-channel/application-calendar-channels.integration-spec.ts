@@ -12,24 +12,43 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-type CalendarChannelOwner = { id: string; userWorkspaceId: string };
+type PublicCalendarChannel = {
+  id: string;
+  handle: string;
+  visibility: string;
+  connectedAccountId: string;
+  connectedAccount: { id: string; userWorkspaceId: string };
+};
 
 const CALENDAR_CHANNELS_QUERY = {
   query: gql`
     query CalendarChannels {
       calendarChannels {
         id
-        userWorkspaceId
+        handle
+        visibility
+        connectedAccountId
+        connectedAccount {
+          id
+          userWorkspaceId
+        }
       }
     }
   `,
 };
 
-const sortById = (calendarChannels: CalendarChannelOwner[]) =>
-  [...calendarChannels].sort((a, b) => a.id.localeCompare(b.id));
+const OTHER_WORKSPACE_USER_WORKSPACE_IDS = [
+  USER_WORKSPACE_DATA_SEED_IDS.JANE_ACME,
+  USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME,
+  USER_WORKSPACE_DATA_SEED_IDS.JONY_ACME,
+  USER_WORKSPACE_DATA_SEED_IDS.PHIL_ACME,
+];
 
 const expectRefused = (response: {
   body: { data?: unknown; errors?: { extensions?: { code?: string } }[] };
@@ -80,7 +99,7 @@ describe('calendarChannels', () => {
     }
   });
 
-  it('should return every calendar channel of the workspace with its owner to an application with the flag', async () => {
+  it('should return the public info and owner of every calendar channel of the workspace to an application with the flag', async () => {
     const { applicationAccessToken } = await generateApplicationTokenPair({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       applicationId: applicationWithFlag.id,
@@ -92,20 +111,36 @@ describe('calendarChannels', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-
-    const expectedCalendarChannels: CalendarChannelOwner[] =
-      await globalThis.testDataSource.query(
-        `SELECT "calendarChannel".id, "connectedAccount"."userWorkspaceId"
-           FROM core."calendarChannel" "calendarChannel"
-           JOIN core."connectedAccount" "connectedAccount"
-             ON "connectedAccount".id = "calendarChannel"."connectedAccountId"
-          WHERE "calendarChannel"."workspaceId" = $1`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
-
-    expect(expectedCalendarChannels.length).toBeGreaterThan(0);
-    expect(sortById(response.body.data.calendarChannels)).toEqual(
-      sortById(expectedCalendarChannels),
+    expect(response.body.data.calendarChannels).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+          handle: 'jane.austen@apple.dev',
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+          connectedAccount: {
+            id: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          },
+        }),
+        expect.objectContaining({
+          id: CALENDAR_CHANNEL_DATA_SEED_IDS.JONY,
+          handle: 'jony@apple.dev',
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
+          connectedAccount: {
+            id: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          },
+        }),
+        expect.objectContaining({
+          id: CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
+          handle: 'team-calendar@apple.dev',
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+          connectedAccount: {
+            id: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+          },
+        }),
+      ]),
     );
   });
 
@@ -120,20 +155,43 @@ describe('calendarChannels', () => {
       applicationAccessToken.token,
     );
 
-    const otherWorkspaceCalendarChannels: { id: string }[] =
-      await globalThis.testDataSource.query(
-        `SELECT id FROM core."calendarChannel" WHERE "workspaceId" <> $1`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
-
-    const returnedIds = response.body.data.calendarChannels.map(
-      ({ id }: CalendarChannelOwner) => id,
+    const ownerUserWorkspaceIds = response.body.data.calendarChannels.map(
+      ({ connectedAccount }: PublicCalendarChannel) =>
+        connectedAccount.userWorkspaceId,
     );
 
-    expect(otherWorkspaceCalendarChannels.length).toBeGreaterThan(0);
-    for (const { id } of otherWorkspaceCalendarChannels) {
-      expect(returnedIds).not.toContain(id);
+    expect(ownerUserWorkspaceIds.length).toBeGreaterThan(0);
+    for (const otherWorkspaceUserWorkspaceId of OTHER_WORKSPACE_USER_WORKSPACE_IDS) {
+      expect(ownerUserWorkspaceIds).not.toContain(
+        otherWorkspaceUserWorkspaceId,
+      );
     }
+  });
+
+  it('should not expose sync state or member settings', async () => {
+    const { applicationAccessToken } = await generateApplicationTokenPair({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: applicationWithFlag.id,
+    });
+
+    const response = await makeMetadataApiRequest(
+      {
+        query: gql`
+          query CalendarChannels {
+            calendarChannels {
+              id
+              syncStatus
+              excludePrivateEvents
+            }
+          }
+        `,
+      },
+      applicationAccessToken.token,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe(
+      'GRAPHQL_VALIDATION_FAILED',
+    );
   });
 
   it('should refuse an application without the flag', async () => {
