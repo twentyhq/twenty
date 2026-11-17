@@ -5,8 +5,7 @@
 ## ✨ What you get
 
 - **Google Meet transcripts and Gemini notes saved to Call Recordings**
-- **New calls synced once Google has them ready, plus a daily catch-up**
-- **Calendar links and titles for clear matches**
+- **Each call linked to its calendar event**
 - **AI summaries for calls without Gemini notes**
 
 ## 💳 Billing
@@ -30,13 +29,6 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
   Calls from before you connect are imported only if they started in the last
   two days.
 - **Imports are shared with your workspace.**
-- **Calendar links need one clear match.** A Call Recording is linked to a
-  calendar event only when its meeting link matches and its start time is
-  closest to the call. Without a match, the call is named after its Gemini
-  notes or transcript document.
-- **Read-only access to Meet and Docs.** The app reads your conferences,
-  transcripts and Gemini notes. In Twenty it reads Calendar Events and writes
-  Call Recordings.
-- **One workspace per Google account.** A second workspace connecting the same
-  account only gets calls on the daily catch-up.
+- **Read-only access to Google.** The app reads your calls and Gemini notes and
+  never changes anything in Google.
 - **Transcripts and notes only.** Video recordings are not imported.
