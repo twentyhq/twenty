@@ -4,7 +4,7 @@ export interface MessageQueueWorkerOptions {
   concurrency?: number;
   globalConcurrency?: number;
   rateLimit?: { max: number; durationMs: number };
-  groupRateLimit?: MessageQueueLimiter;
+  groupLimiter?: MessageQueueLimiter;
   lockDuration?: number;
   maxStalledCount?: number;
   boundedShutdownDrain?: boolean;

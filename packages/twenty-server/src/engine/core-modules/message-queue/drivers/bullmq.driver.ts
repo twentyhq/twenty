@@ -122,9 +122,9 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
-      getGroupRateLimit: (queueName) =>
+      getGroupLimiter: (queueName) =>
         twentyConfigService.get('IS_WORKER_GROUP_LIMITER_ENABLED')
-          ? MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupRateLimit
+          ? MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupLimiter
           : undefined,
     });
     this.jobSizeLimiter = new JobSizeLimiter(
@@ -687,7 +687,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
-      pacedGroupKeys: [options.groupKey],
+      limiterGroupKeys: [options.groupKey],
       additionalGroupKeys: options.fairnessGroupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -961,8 +961,7 @@ export class BullMQDriver
     groupKey: string | undefined;
   }): boolean {
     return (
-      isDefined(groupKey) &&
-      this.fairQueueScheduler.isGroupRateLimited(queueName)
+      isDefined(groupKey) && this.fairQueueScheduler.hasGroupLimiter(queueName)
     );
   }
 
@@ -1073,7 +1072,7 @@ export class BullMQDriver
     });
 
     // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const existingPacedJobIds = this.fairQueueScheduler.isGroupRateLimited(
+    const existingPacedJobIds = this.fairQueueScheduler.hasGroupLimiter(
       queueName,
     )
       ? await this.findExistingJobIds({
@@ -1089,7 +1088,7 @@ export class BullMQDriver
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
-      pacedGroupKeys: jobsToAdd.map((job) =>
+      limiterGroupKeys: jobsToAdd.map((job) =>
         isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
           ? undefined
           : (job.groupKey ?? options?.groupKey),

@@ -342,15 +342,14 @@ const buildScenarioJobScope = ({
 
 export const createFairnessHarness = async ({
   isGroupLimiterEnabled = false,
-  groupRateLimit,
+  groupLimiter,
 }: {
   isGroupLimiterEnabled?: boolean;
-  groupRateLimit?: MessageQueueLimiter;
+  groupLimiter?: MessageQueueLimiter;
 } = {}) => {
   const redis: Redis = new RedisMock();
 
-  MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions.groupRateLimit =
-    groupRateLimit;
+  MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions.groupLimiter = groupLimiter;
 
   await redis.flushall();
   mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
@@ -548,7 +547,7 @@ export const createFairnessHarness = async ({
     }) => {
       await redis.hset(`${QUEUE_KEY_PREFIX}fair:weights`, groupKey, weight);
     },
-    reservePaceSlot: async ({
+    reserveLimiterSlot: async ({
       slotKey,
       delayMs,
     }: {

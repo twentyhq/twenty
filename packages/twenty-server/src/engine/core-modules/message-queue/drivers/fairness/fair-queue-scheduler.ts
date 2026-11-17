@@ -31,9 +31,7 @@ type FairQueueSchedulerOptions = {
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
-  getGroupRateLimit: (
-    queueName: MessageQueue,
-  ) => MessageQueueLimiter | undefined;
+  getGroupLimiter: (queueName: MessageQueue) => MessageQueueLimiter | undefined;
 };
 
 export class FairQueueScheduler {
@@ -56,14 +54,14 @@ export class FairQueueScheduler {
   async computeJobOptions({
     queueName,
     scopes,
-    pacedGroupKeys,
+    limiterGroupKeys,
     additionalGroupKeys,
     delay,
     staticPriority,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    pacedGroupKeys?: (string | undefined)[];
+    limiterGroupKeys?: (string | undefined)[];
     additionalGroupKeys?: string[];
     delay: number | undefined;
     staticPriority: number | undefined;
@@ -82,7 +80,7 @@ export class FairQueueScheduler {
         : this.computePacedDelays({
             queueName,
             scopes,
-            pacedGroupKeys,
+            limiterGroupKeys,
             callerDelayMs,
           }),
     ]);
@@ -96,24 +94,24 @@ export class FairQueueScheduler {
     });
   }
 
-  isGroupRateLimited(queueName: MessageQueue): boolean {
-    return isDefined(this.options.getGroupRateLimit(queueName));
+  hasGroupLimiter(queueName: MessageQueue): boolean {
+    return isDefined(this.options.getGroupLimiter(queueName));
   }
 
   private async computePacedDelays({
     queueName,
     scopes,
-    pacedGroupKeys,
+    limiterGroupKeys,
     callerDelayMs,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    pacedGroupKeys: (string | undefined)[] | undefined;
+    limiterGroupKeys: (string | undefined)[] | undefined;
     callerDelayMs: number;
   }): Promise<number[] | undefined> {
-    const groupRateLimit = this.options.getGroupRateLimit(queueName);
+    const groupLimiter = this.options.getGroupLimiter(queueName);
 
-    if (!isDefined(pacedGroupKeys) || !isDefined(groupRateLimit)) {
+    if (!isDefined(limiterGroupKeys) || !isDefined(groupLimiter)) {
       return undefined;
     }
 
@@ -122,7 +120,7 @@ export class FairQueueScheduler {
     scopes.forEach((scope, jobIndex) => {
       const slotKey = buildPaceSlotKey({
         scope,
-        groupKey: pacedGroupKeys[jobIndex],
+        groupKey: limiterGroupKeys[jobIndex],
       });
 
       if (!isDefined(slotKey)) {
@@ -148,7 +146,7 @@ export class FairQueueScheduler {
       queueName,
       notBeforeDelayMs: callerDelayMs,
       requests: requests.map(({ slotKey, jobIndexes }) => ({
-        limiters: [{ groupKey: slotKey, limiter: groupRateLimit }],
+        limiters: [{ groupKey: slotKey, limiter: groupLimiter }],
         jobCount: jobIndexes.length,
       })),
     });

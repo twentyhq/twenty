@@ -13,8 +13,8 @@ type LimiterTestJobData = { label: string };
 const QUEUE = MessageQueue.workflowQueue;
 const JOB_NAME = 'LimiterTestJob';
 const GROUP_KEY = 'limiter-test';
-const GROUP_RATE_LIMIT = { max: 2, durationMs: 2_000 };
-const INTERVAL_MS = GROUP_RATE_LIMIT.durationMs / GROUP_RATE_LIMIT.max;
+const GROUP_LIMITER = { max: 2, durationMs: 2_000 };
+const INTERVAL_MS = GROUP_LIMITER.durationMs / GROUP_LIMITER.max;
 // Redis TIME and the enqueue round trips drift the delays by a few ms.
 const TOLERANCE_MS = 150;
 
@@ -64,8 +64,8 @@ describe('BullMQDriver limiter (integration)', () => {
   beforeEach(() => {
     jest.replaceProperty(
       MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions,
-      'groupRateLimit',
-      GROUP_RATE_LIMIT,
+      'groupLimiter',
+      GROUP_LIMITER,
     );
     connection = new IORedis(
       process.env.REDIS_QUEUE_URL ??

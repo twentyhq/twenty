@@ -7,7 +7,7 @@ import { URGENT_FAIR_PRIORITY } from 'src/engine/core-modules/message-queue/driv
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const GROUP_KEY = 'workflow';
-const GROUP_RATE_LIMIT = { max: 2, durationMs: 1_000 };
+const GROUP_LIMITER = { max: 2, durationMs: 1_000 };
 
 describe('BullMQDriver limiter', () => {
   beforeAll(silenceDriverLogs);
@@ -19,7 +19,7 @@ describe('BullMQDriver limiter', () => {
   it('runs the first job immediately and delays the next ones by the interval', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const labels = buildLabels({ prefix: 'H', count: 4 });
 
@@ -57,7 +57,7 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const labels = buildLabels({ prefix: 'H', count: 3 });
 
@@ -80,7 +80,7 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const scopes = [
       { prefix: 'A', workspaceId: 'A', applicationUniversalIdentifier: 'H' },
@@ -113,7 +113,7 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
 
     for (const [prefix, groupKey] of [
@@ -137,10 +137,10 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
 
-    await harness.reservePaceSlot({
+    await harness.reserveLimiterSlot({
       slotKey: 'A:jobGroup:workflow',
       delayMs: 2_000,
     });
@@ -154,7 +154,7 @@ describe('BullMQDriver limiter', () => {
     expect(harness.readDelay({ label: 'N2' })).toBe(2_500);
   });
 
-  it('does not pace a queue without a group rate limit', async () => {
+  it('does not delay the jobs of a queue without a group limiter', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
     });
@@ -176,7 +176,7 @@ describe('BullMQDriver limiter', () => {
   it('starts pacing at the caller delay', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const labels = buildLabels({ prefix: 'H', count: 4 });
 
@@ -198,7 +198,7 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
 
@@ -217,7 +217,7 @@ describe('BullMQDriver limiter', () => {
   it('does not delay jobs without a group', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const labels = buildLabels({ prefix: 'H', count: 3 });
 
@@ -240,7 +240,7 @@ describe('BullMQDriver limiter', () => {
 
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const jobIds = ['job-1', 'job-2', 'job-3'];
 
@@ -273,7 +273,7 @@ describe('BullMQDriver limiter', () => {
   it('only dedupes paced jobs against the delayed set', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
 
@@ -294,7 +294,7 @@ describe('BullMQDriver limiter', () => {
   it('never paces the urgent lane', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
 
     await harness.enqueueMany({
@@ -310,7 +310,7 @@ describe('BullMQDriver limiter', () => {
 
   it('does not pace when IS_WORKER_GROUP_LIMITER_ENABLED is off', async () => {
     const harness = await createFairnessHarness({
-      groupRateLimit: GROUP_RATE_LIMIT,
+      groupLimiter: GROUP_LIMITER,
     });
     const labels = buildLabels({ prefix: 'H', count: 4 });
 
