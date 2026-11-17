@@ -790,7 +790,6 @@ export class RecordPermissionsReadService {
     });
   }
 
-  // the stored groups skip a source object with a hidden path, so its readable paths need the full source condition
   private buildUncorrelatedPathEntrySQLCondition({
     hasHiddenPath,
     ...request

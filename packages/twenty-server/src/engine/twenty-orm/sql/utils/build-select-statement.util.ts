@@ -244,7 +244,6 @@ const renderProjectedColumn = ({
     return quotedColumn;
   }
 
-  // a grouped column has to be written exactly as its GROUP BY expression is
   if (state.groupByExpressions.length > 0) {
     return `(${renderNullifiedColumn({ quotedColumn, nullifyConditions })})`;
   }

@@ -35,7 +35,6 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
     flatObjectMetadata.id,
   ];
 
-  // a record's groups do not say which path copied them, so a source object with a hidden path is read through its paths one by one instead
   const sourceObjectMetadataIdsWithHiddenPath =
     findSourceObjectMetadataIdsWithHiddenPath({
       request,
