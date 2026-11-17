@@ -659,10 +659,11 @@ describe('Computed fields (e2e)', () => {
       });
       const relationByFieldName = Object.fromEntries(
         fields.map(
-          ({ node }: { node: { name: string; relation: unknown } }) => [
-            node.name,
-            node.relation,
-          ],
+          ({
+            node,
+          }: {
+            node: { name: string; relation: { type: string } | null };
+          }) => [node.name, node.relation],
         ),
       );
 
