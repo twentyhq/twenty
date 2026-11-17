@@ -18,8 +18,8 @@ jest.mock('@/navigation/components/MainNavigationDrawerContent', () => ({
   MainNavigationDrawerContent: () => <div>Main content</div>,
 }));
 
-jest.mock('@/navigation/components/MainNavigationDrawerModeSwitcher', () => ({
-  MainNavigationDrawerModeSwitcher: () => (
+jest.mock('@/navigation/components/MainNavigationDrawerTabSwitcher', () => ({
+  MainNavigationDrawerTabSwitcher: () => (
     <button type="button">Navigation modes</button>
   ),
 }));

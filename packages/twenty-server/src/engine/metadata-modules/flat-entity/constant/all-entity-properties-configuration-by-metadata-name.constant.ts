@@ -2635,7 +2635,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     coreWorkflowId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'coreWorkflowUniversalIdentifier',
     },
     workflowId: {
       toCompare: false,

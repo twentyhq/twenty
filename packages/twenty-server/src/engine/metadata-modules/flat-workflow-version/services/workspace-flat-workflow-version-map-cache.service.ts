@@ -15,6 +15,7 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const FLAT_WORKFLOW_VERSION_ROWS_REQUIREMENT = {
   workflowVersion: true,
   application: ['id', 'universalIdentifier', 'deletedAt'],
+  workflow: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -27,13 +28,18 @@ export class WorkspaceFlatWorkflowVersionMapCacheService extends MetadataFlatEnt
   }: WorkspaceCacheProviderContext<
     typeof FLAT_WORKFLOW_VERSION_ROWS_REQUIREMENT
   >): FlatWorkflowVersionMaps {
-    const { workflowVersion: workflowVersions, application: applications } =
-      rows;
+    const {
+      workflowVersion: workflowVersions,
+      application: applications,
+      workflow: workflows,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(
         applications.filter((application) => !isDefined(application.deletedAt)),
       );
+    const workflowIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(workflows);
 
     const flatWorkflowVersionMaps = createEmptyFlatEntityMaps();
 
@@ -42,6 +48,7 @@ export class WorkspaceFlatWorkflowVersionMapCacheService extends MetadataFlatEnt
         fromWorkflowVersionEntityToFlatWorkflowVersion({
           entity: workflowVersionEntity,
           applicationIdToUniversalIdentifierMap,
+          workflowIdToUniversalIdentifierMap,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -29,7 +29,7 @@ import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selecto
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
 import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -174,7 +174,7 @@ const renderAiChat = ({
         ...mockedUserData.currentUserWorkspace,
         permissionFlags: [PermissionFlagType.AI],
       });
-      store.set(currentAiChatThreadState.atom, currentThreadId);
+      store.set(aiChatTestInstanceThreadIdState.atom, currentThreadId);
       store.set(
         aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
         newThreadRecipients,
@@ -184,7 +184,10 @@ const renderAiChat = ({
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
       if (isDirectMessage) {
-        store.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
+        store.set(
+          aiChatTestInstanceThreadIdState.atom,
+          DIRECT_MESSAGE_THREAD_ID,
+        );
         store.set(recordStoreFamilyState.atomFamily(DIRECT_MESSAGE_THREAD_ID), {
           id: DIRECT_MESSAGE_THREAD_ID,
           __typename: 'AgentChatThread',
@@ -226,7 +229,7 @@ const renderAiChat = ({
       return {
         ...useAiChat(),
         apolloClient: useApolloClient(),
-        currentAiChatThread: useAtomStateValue(currentAiChatThreadState),
+        currentAiChatThread: useAtomStateValue(aiChatTestInstanceThreadIdState),
         newAiChatThreadId: useAtomStateValue(newAiChatThreadIdState),
       };
     },
@@ -755,7 +758,7 @@ describe('useAiChat', () => {
     });
 
     act(() => {
-      jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
+      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, EXISTING_THREAD_ID);
     });
     releaseOpenDirectMessage();
 

@@ -777,6 +777,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   workflowVersion: {
     workspace: null,
     application: null,
+    coreWorkflow: {
+      metadataName: 'workflow',
+      foreignKey: 'coreWorkflowId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'coreWorkflowUniversalIdentifier',
+    },
   },
   agentChatChannel: {
     workspace: null,

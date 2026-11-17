@@ -4,23 +4,21 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
+import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useLeaveRemovedInboxThread = () => {
   const store = useStore();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
-    shouldPreserveClosedInbox: true,
-  });
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const { loadAiChatThread } = useLoadAiChatThread();
 
   const leaveRemovedInboxThread = useCallback(async () => {
-    const currentThreadId = store.get(currentAiChatThreadState.atom);
+    const currentThreadId = getCurrentAiChatPageThreadId(store);
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threads = store.get(inboxRecentThreadsSelector.atom);
 
@@ -35,7 +33,7 @@ export const useLeaveRemovedInboxThread = () => {
     // Only the first page is reloaded, so an older chat is looked up first
     if (
       (await loadAiChatThread(currentThreadId)) !== null ||
-      store.get(currentAiChatThreadState.atom) !== currentThreadId
+      getCurrentAiChatPageThreadId(store) !== currentThreadId
     ) {
       return;
     }
@@ -50,7 +48,7 @@ export const useLeaveRemovedInboxThread = () => {
           ),
         ),
       )[0]?.id ?? newAiChatThreadId;
-    store.set(currentAiChatThreadState.atom, nextThreadId);
+
     projectAiChatThreadToUrl(nextThreadId);
   }, [store, projectAiChatThreadToUrl, loadAiChatThread]);
 
