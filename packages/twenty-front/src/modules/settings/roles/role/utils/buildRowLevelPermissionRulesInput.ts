@@ -59,32 +59,55 @@ export const buildRowLevelPermissionRulesInput = ({
       .map(toPredicateGroupInput),
   });
 
-  const groupedRules = predicateGroups
-    .filter(
-      ({ parentRowLevelPermissionPredicateGroupId }) =>
-        !isDefined(parentRowLevelPermissionPredicateGroupId),
-    )
-    .map((predicateGroup) => ({
-      id: predicateGroup.rowLevelPermissionRuleId ?? undefined,
+  const ruleByKey = new Map<string, RowLevelPermissionRuleInput>();
+
+  const getOrCreateRule = ({
+    rowLevelPermissionRuleId,
+    keyWithoutRule,
+  }: {
+    rowLevelPermissionRuleId: string | null | undefined;
+    keyWithoutRule: string;
+  }) => {
+    const key = rowLevelPermissionRuleId ?? keyWithoutRule;
+    const existingRule = ruleByKey.get(key);
+
+    if (isDefined(existingRule)) {
+      return existingRule;
+    }
+
+    const rule: RowLevelPermissionRuleInput = {
+      id: rowLevelPermissionRuleId ?? undefined,
       ...ruleOperations,
-      predicateGroups: [toPredicateGroupInput(predicateGroup)],
-    }));
+      predicates: [],
+      predicateGroups: [],
+    };
 
-  const ungroupedPredicates = predicates.filter(
-    ({ rowLevelPermissionPredicateGroupId }) =>
-      !isDefined(rowLevelPermissionPredicateGroupId),
-  );
+    ruleByKey.set(key, rule);
 
-  if (ungroupedPredicates.length === 0) {
-    return groupedRules;
+    return rule;
+  };
+
+  for (const predicateGroup of predicateGroups) {
+    if (isDefined(predicateGroup.parentRowLevelPermissionPredicateGroupId)) {
+      continue;
+    }
+
+    getOrCreateRule({
+      rowLevelPermissionRuleId: predicateGroup.rowLevelPermissionRuleId,
+      keyWithoutRule: `predicate-group:${predicateGroup.id}`,
+    }).predicateGroups?.push(toPredicateGroupInput(predicateGroup));
   }
 
-  return [
-    ...groupedRules,
-    {
-      id: ungroupedPredicates[0].rowLevelPermissionRuleId ?? undefined,
-      ...ruleOperations,
-      predicates: ungroupedPredicates.map(toPredicateInput),
-    },
-  ];
+  for (const predicate of predicates) {
+    if (isDefined(predicate.rowLevelPermissionPredicateGroupId)) {
+      continue;
+    }
+
+    getOrCreateRule({
+      rowLevelPermissionRuleId: predicate.rowLevelPermissionRuleId,
+      keyWithoutRule: 'ungrouped-predicates',
+    }).predicates?.push(toPredicateInput(predicate));
+  }
+
+  return [...ruleByKey.values()];
 };

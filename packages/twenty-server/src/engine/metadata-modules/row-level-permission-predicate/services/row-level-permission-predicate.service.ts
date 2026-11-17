@@ -248,14 +248,19 @@ export class RowLevelPermissionPredicateService {
       return ruleUniversalIdentifier;
     };
 
+    const existingGroupById = new Map(
+      existingGroups.map((group) => [group.id, group]),
+    );
+    const existingPredicateById = new Map(
+      existingPredicates.map((predicate) => [predicate.id, predicate]),
+    );
+
     const groupsToCreate: FlatRowLevelPermissionPredicateGroup[] = [];
     const groupsToUpdate: FlatRowLevelPermissionPredicateGroup[] = [];
     let groupMapsWithCreatedGroups = flatRowLevelPermissionPredicateGroupMaps;
 
     for (const predicateGroup of flattened.predicateGroups) {
-      const existingGroup = existingGroups.find(
-        ({ id }) => id === predicateGroup.id,
-      );
+      const existingGroup = existingGroupById.get(predicateGroup.id);
       const rowLevelPermissionRuleUniversalIdentifier =
         getRuleUniversalIdentifierOrThrow(
           predicateGroup.rowLevelPermissionRuleId,
@@ -303,9 +308,7 @@ export class RowLevelPermissionPredicateService {
     const predicatesToUpdate: FlatRowLevelPermissionPredicate[] = [];
 
     for (const predicate of flattened.predicates) {
-      const existingPredicate = existingPredicates.find(
-        ({ id }) => id === predicate.id,
-      );
+      const existingPredicate = existingPredicateById.get(predicate.id);
       const rowLevelPermissionRuleUniversalIdentifier =
         getRuleUniversalIdentifierOrThrow(predicate.rowLevelPermissionRuleId);
 
@@ -344,9 +347,11 @@ export class RowLevelPermissionPredicateService {
       );
     }
 
-    const isNotIn =
-      (inputEntities: { id: string }[]) => (entity: { id: string }) =>
-        !inputEntities.some(({ id }) => id === entity.id);
+    const isNotIn = (inputEntities: { id: string }[]) => {
+      const inputIds = new Set(inputEntities.map(({ id }) => id));
+
+      return (entity: { id: string }) => !inputIds.has(entity.id);
+    };
 
     const ruleIdByGroupId = new Map(
       flattened.predicateGroups.map(({ id, rowLevelPermissionRuleId }) => [

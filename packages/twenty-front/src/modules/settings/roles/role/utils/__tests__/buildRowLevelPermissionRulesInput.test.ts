@@ -133,7 +133,63 @@ describe('buildRowLevelPermissionRulesInput', () => {
         predicates: [
           expect.objectContaining({ id: 'ungrouped-predicate', position: 2 }),
         ],
+        predicateGroups: [],
       },
+    ]);
+  });
+
+  it('keeps a rule with several groups as one rule', () => {
+    const rules = buildRowLevelPermissionRulesInput({
+      predicateGroups: [
+        buildPredicateGroup({
+          id: 'first-group',
+          parentRowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'shared-rule',
+        }),
+        buildPredicateGroup({
+          id: 'second-group',
+          parentRowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'shared-rule',
+        }),
+      ],
+      predicates: [],
+      ruleOperations: RULE_OPERATIONS,
+    });
+
+    expect(rules).toHaveLength(1);
+    expect(rules[0]).toMatchObject({
+      id: 'shared-rule',
+      predicateGroups: [{ id: 'first-group' }, { id: 'second-group' }],
+    });
+  });
+
+  it('keeps predicates in no group in their own rules', () => {
+    const rules = buildRowLevelPermissionRulesInput({
+      predicateGroups: [],
+      predicates: [
+        buildPredicate({
+          id: 'owner-predicate',
+          rowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'owner-rule',
+        }),
+        buildPredicate({
+          id: 'team-predicate',
+          rowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'team-rule',
+        }),
+      ],
+      ruleOperations: RULE_OPERATIONS,
+    });
+
+    expect(rules).toEqual([
+      expect.objectContaining({
+        id: 'owner-rule',
+        predicates: [expect.objectContaining({ id: 'owner-predicate' })],
+      }),
+      expect.objectContaining({
+        id: 'team-rule',
+        predicates: [expect.objectContaining({ id: 'team-predicate' })],
+      }),
     ]);
   });
 });

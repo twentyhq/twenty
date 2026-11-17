@@ -31,15 +31,15 @@ export const flattenRowLevelPermissionRuleInputs = (
     });
 
     const flattenChildren = ({
-      predicates = [],
-      predicateGroups = [],
+      predicates,
+      predicateGroups,
       parentPredicateGroupId,
     }: {
-      predicates?: RowLevelPermissionRulePredicateInput[];
-      predicateGroups?: RowLevelPermissionRulePredicateGroupInput[];
+      predicates?: RowLevelPermissionRulePredicateInput[] | null;
+      predicateGroups?: RowLevelPermissionRulePredicateGroupInput[] | null;
       parentPredicateGroupId: string | null;
     }): void => {
-      for (const { id, position, ...predicate } of predicates) {
+      for (const { id, position, ...predicate } of predicates ?? []) {
         flattened.predicates.push({
           ...predicate,
           id: id ?? v4(),
@@ -49,7 +49,7 @@ export const flattenRowLevelPermissionRuleInputs = (
         });
       }
 
-      for (const predicateGroup of predicateGroups) {
+      for (const predicateGroup of predicateGroups ?? []) {
         const predicateGroupId = predicateGroup.id ?? v4();
 
         flattened.predicateGroups.push({

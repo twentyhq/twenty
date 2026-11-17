@@ -74,14 +74,14 @@ export class RowLevelPermissionRulePredicateGroupInput {
   @ValidateNested({ each: true })
   @Type(() => RowLevelPermissionRulePredicateInput)
   @Field(() => [RowLevelPermissionRulePredicateInput], { nullable: true })
-  predicates?: RowLevelPermissionRulePredicateInput[];
+  predicates?: RowLevelPermissionRulePredicateInput[] | null;
 
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => RowLevelPermissionRulePredicateGroupInput)
   @Field(() => [RowLevelPermissionRulePredicateGroupInput], { nullable: true })
-  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[];
+  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[] | null;
 }
 
 @InputType()
@@ -121,14 +121,14 @@ export class RowLevelPermissionRuleInput {
   @ValidateNested({ each: true })
   @Type(() => RowLevelPermissionRulePredicateInput)
   @Field(() => [RowLevelPermissionRulePredicateInput], { nullable: true })
-  predicates?: RowLevelPermissionRulePredicateInput[];
+  predicates?: RowLevelPermissionRulePredicateInput[] | null;
 
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => RowLevelPermissionRulePredicateGroupInput)
   @Field(() => [RowLevelPermissionRulePredicateGroupInput], { nullable: true })
-  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[];
+  predicateGroups?: RowLevelPermissionRulePredicateGroupInput[] | null;
 }
 
 @InputType()
