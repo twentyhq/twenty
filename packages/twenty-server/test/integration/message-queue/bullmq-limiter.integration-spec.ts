@@ -239,6 +239,25 @@ describe('BullMQDriver limiter (integration)', () => {
     });
   });
 
+  it('does not hold new jobs behind a delayed job of the same key', async () => {
+    await enqueueBulk({
+      labels: ['R1'],
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      delay: 15_000,
+    });
+    await enqueueBulk({
+      labels: ['N1'],
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+    });
+
+    const delayByLabel = await readDelayByLabel();
+
+    expect(delayByLabel.R1).toBe(15_000);
+    expectDelayNear({ delayMs: delayByLabel.N1, expectedDelayMs: INTERVAL_MS });
+  });
+
   it('does not reserve a slot again for a job id that is already queued', async () => {
     const firstEnqueuedAt = Date.now();
 

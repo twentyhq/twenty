@@ -122,6 +122,26 @@ describe('BullMQDriver limiter', () => {
     ]);
   });
 
+  it('does not hold new jobs behind a delayed job of the same key', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
+    const harness = await createFairnessHarness({
+      isGroupLimiterEnabled: true,
+    });
+    const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
+
+    await harness.enqueue({
+      label: 'R1',
+      delay: 15_000,
+      limiter: LIMITER,
+      ...scope,
+    });
+    await harness.enqueue({ label: 'N1', limiter: LIMITER, ...scope });
+
+    expect(harness.readDelay({ label: 'R1' })).toBe(15_000);
+    expect(harness.readDelay({ label: 'N1' })).toBe(500);
+  });
+
   it('does not delay jobs without a limiter', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,

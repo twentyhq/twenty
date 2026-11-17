@@ -252,6 +252,44 @@ describe('GroupRatePacer', () => {
     expect(delays).toEqual([[700, 1_700, 2_700]]);
   });
 
+  it('does not hold the next jobs behind a delayed one', async () => {
+    const { pacer, redis } = await createPacer();
+    const requests = withLimiters(APPLICATION_LIMITS, [
+      { groupKeys: ['application:H'], jobCount: 1 },
+    ]);
+
+    expect(
+      await pacer.computeDelays({
+        queueName: QUEUE,
+        notBeforeDelayMs: 15_000,
+        requests,
+      }),
+    ).toEqual([[15_000]]);
+    expect(await pacer.computeDelays({ queueName: QUEUE, requests })).toEqual([
+      [1_000],
+    ]);
+    expect(
+      Number(await redis.get(`${KEY_PREFIX}:${QUEUE}:fair:slot:application:H`)),
+    ).toBe(NOW_MS + 2_000);
+  });
+
+  it('keeps a delayed job behind the slots already reserved past its delay', async () => {
+    const { pacer } = await createPacer();
+    const requests = withLimiters(APPLICATION_LIMITS, [
+      { groupKeys: ['application:H'], jobCount: 3 },
+    ]);
+
+    await pacer.computeDelays({ queueName: QUEUE, requests });
+
+    expect(
+      await pacer.computeDelays({
+        queueName: QUEUE,
+        notBeforeDelayMs: 700,
+        requests,
+      }),
+    ).toEqual([[3_000, 4_000, 5_000]]);
+  });
+
   it.each([
     { max: 0, durationMs: 1_000 },
     { max: 1.5, durationMs: 1_000 },

@@ -11,8 +11,8 @@ for i = 1, distinctKeyCount do
 
   local slot = tonumber(redis.call('GET', KEYS[i]) or '0') or 0
 
-  if slot < notBeforeMs then
-    slot = notBeforeMs
+  if slot < nowMs then
+    slot = nowMs
   end
 
   slots[i] = slot
@@ -31,7 +31,7 @@ for _ = 1, requestCount do
     local index = tonumber(ARGV[position + 1 + k])
 
     earliestDueTimeCount = earliestDueTimeCount + 1
-    earliestDueTimes[earliestDueTimeCount] = string.format('%.0f', math.floor(slots[index]))
+    earliestDueTimes[earliestDueTimeCount] = string.format('%.0f', math.floor(math.max(slots[index], notBeforeMs)))
     slots[index] = slots[index] + jobCount * intervals[index]
   end
 
