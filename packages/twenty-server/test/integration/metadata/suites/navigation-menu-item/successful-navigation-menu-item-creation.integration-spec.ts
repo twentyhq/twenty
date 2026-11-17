@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
@@ -12,6 +13,7 @@ describe('NavigationMenuItem creation should succeed', () => {
   let personObjectMetadataId: string;
   let validUserWorkspaceId: string | null;
   let createdFolderId: string | undefined;
+  let createdTabId: string | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -66,6 +68,13 @@ describe('NavigationMenuItem creation should succeed', () => {
         input: { id: createdFolderId },
       });
       createdFolderId = undefined;
+    }
+    if (isDefined(createdTabId)) {
+      await deleteNavigationMenuItem({
+        expectToFail: false,
+        input: { id: createdTabId },
+      });
+      createdTabId = undefined;
     }
   });
 
@@ -176,7 +185,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       input: { type: NavigationMenuItemType.TAB, name: 'Tab' },
     });
 
-    createdFolderId = tabData.createNavigationMenuItem.id;
+    createdTabId = tabData.createNavigationMenuItem.id;
 
     const { data: sectionData } = await createNavigationMenuItem({
       expectToFail: false,
