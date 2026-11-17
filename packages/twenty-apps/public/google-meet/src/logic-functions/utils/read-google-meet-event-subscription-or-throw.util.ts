@@ -8,7 +8,10 @@ import { type GoogleWorkspaceEventsOperation } from 'src/logic-functions/types/g
 export const readGoogleMeetEventSubscriptionOrThrow = ({
   response,
   error,
-}: GoogleWorkspaceEventsOperation): GoogleMeetEventSubscription => {
+}: Pick<
+  GoogleWorkspaceEventsOperation,
+  'response' | 'error'
+>): GoogleMeetEventSubscription => {
   if (isDefined(error) || !isNonEmptyString(response?.name)) {
     throw new GoogleMeetException({
       message: `Google did not return the event subscription: ${error?.message ?? 'the operation has no result'}`,

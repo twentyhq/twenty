@@ -11,7 +11,6 @@ describe('readGoogleMeetEventSubscriptionOrThrow', () => {
 
     expect(
       readGoogleMeetEventSubscriptionOrThrow({
-        done: true,
         response: subscription,
       }),
     ).toEqual(subscription);
@@ -20,7 +19,6 @@ describe('readGoogleMeetEventSubscriptionOrThrow', () => {
   it('should report the error of a failed operation', () => {
     expect(() =>
       readGoogleMeetEventSubscriptionOrThrow({
-        done: true,
         error: { message: 'Topic not found', status: 'NOT_FOUND' },
       }),
     ).toThrow(
