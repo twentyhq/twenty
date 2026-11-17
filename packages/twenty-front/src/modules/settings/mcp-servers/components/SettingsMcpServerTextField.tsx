@@ -11,7 +11,6 @@ type SettingsMcpServerTextFieldProps = {
   hint?: string;
   disabled?: boolean;
   autoFocus?: boolean;
-  onValueChange?: (value: string) => void;
 };
 
 export const SettingsMcpServerTextField = ({
@@ -22,7 +21,6 @@ export const SettingsMcpServerTextField = ({
   hint,
   disabled,
   autoFocus,
-  onValueChange,
 }: SettingsMcpServerTextFieldProps) => {
   const { control } = useFormContext<McpServerFormValues>();
 
@@ -40,10 +38,7 @@ export const SettingsMcpServerTextField = ({
           placeholder={placeholder}
           hint={hint}
           value={value}
-          onChange={(value) => {
-            onChange(value);
-            onValueChange?.(value);
-          }}
+          onChange={onChange}
           onBlur={onBlur}
           error={error?.message}
           disabled={disabled}
