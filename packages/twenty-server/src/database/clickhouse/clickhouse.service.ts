@@ -11,6 +11,8 @@ import {
   createClient,
 } from '@clickhouse/client';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   ClickHouseException,
   ClickHouseExceptionCode,
@@ -56,12 +58,16 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     clientId: string,
     url?: string,
   ): Promise<ClickHouseClient | undefined> {
-    if (!this.twentyConfigService.get('CLICKHOUSE_URL') || this.isDestroyed) {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return undefined;
     }
 
     while (this.isClientInitializing.get(clientId)) {
       await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+
+    if (this.isDestroyed) {
+      return undefined;
     }
 
     if (this.clients.has(clientId)) {
@@ -139,14 +145,14 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     this.isDestroyed = true;
 
-    const clients = [this.mainClient, ...this.clients.values()];
+    const clients = [this.mainClient, ...this.clients.values()].filter(
+      isDefined,
+    );
 
     this.mainClient = undefined;
     this.clients.clear();
 
-    for (const client of clients) {
-      await client?.close();
-    }
+    await Promise.all(clients.map((client) => client.close()));
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any
