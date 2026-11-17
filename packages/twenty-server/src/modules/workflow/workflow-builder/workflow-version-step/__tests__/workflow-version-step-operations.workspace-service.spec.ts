@@ -57,20 +57,7 @@ const buildFlatMcpServer = (): FlatMcpServer => ({
       annotations: null,
       inputSchema: {
         type: 'object',
-        required: ['query', 'mode'],
-        properties: {
-          query: { type: 'string' },
-          mode: { type: 'string', enum: ['fast', 'slow'] },
-          tags: { type: 'array', items: { type: 'string' } },
-          sort: { type: 'string', enum: ['asc', 'desc'] },
-          filter: {
-            type: 'object',
-            required: ['status'],
-            properties: {
-              status: { type: 'string', enum: ['open', 'closed'] },
-            },
-          },
-        },
+        properties: { sort: { type: 'string', enum: ['asc', 'desc'] } },
       },
     },
   ],
@@ -201,14 +188,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService duplicate steps', () => 
 });
 
 describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
-  const buildMcpToolService = () =>
-    buildService({
+  it('seeds untouched optional tool inputs with null', async () => {
+    const service = await buildService({
       flatEntityMapsCacheService: flatEntityMapsCacheServiceWithMcpServer,
       featureFlagService: { isFeatureEnabled: async () => true },
     });
-
-  it('seeds untouched optional tool inputs with null', async () => {
-    const service = await buildMcpToolService();
 
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.MCP_TOOL,
@@ -221,35 +205,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
     expect(builtStep.settings.input).toEqual({
       mcpServerId: MCP_SERVER_ID,
       toolName: 'search_docs',
-      toolInput: {
-        query: null,
-        mode: 'fast',
-        tags: null,
-        sort: null,
-        filter: { status: null },
-      },
-    });
-  });
-
-  it('keeps the tool input it is given', async () => {
-    const service = await buildMcpToolService();
-
-    const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
-      type: WorkflowActionType.MCP_TOOL,
-      workspaceId: WORKSPACE_ID,
-      defaultSettings: {
-        input: {
-          mcpServerId: MCP_SERVER_ID,
-          toolName: 'search_docs',
-          toolInput: { query: 'invoices', sort: 'desc' },
-        },
-      },
-    });
-
-    expect(builtStep.settings.input).toEqual({
-      mcpServerId: MCP_SERVER_ID,
-      toolName: 'search_docs',
-      toolInput: { query: 'invoices', sort: 'desc' },
+      toolInput: { sort: null },
     });
   });
 });

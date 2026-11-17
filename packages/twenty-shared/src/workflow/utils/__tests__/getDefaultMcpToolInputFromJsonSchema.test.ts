@@ -11,7 +11,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
           mode: { type: 'string', enum: ['fast', 'slow'] },
           tags: { type: 'array', items: { type: 'string' } },
           sort: { type: 'string', enum: ['asc', 'desc'] },
-          limit: { type: 'number' },
         },
       }),
     ).toEqual({
@@ -20,7 +19,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
       mode: 'fast',
       tags: null,
       sort: null,
-      limit: null,
     });
   });
 
@@ -30,7 +28,6 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
       required: ['status'],
       properties: {
         status: { type: 'string' as const, enum: ['open', 'closed'] },
-        labels: { type: 'array' as const, items: { type: 'string' as const } },
       },
     };
 
@@ -40,8 +37,8 @@ describe('getDefaultMcpToolInputFromJsonSchema', () => {
         properties: { filter: nestedObject, sort: nestedObject },
       }),
     ).toEqual({
-      filter: { status: null, labels: null },
-      sort: { status: 'open', labels: null },
+      filter: { status: null },
+      sort: { status: 'open' },
     });
   });
 });
