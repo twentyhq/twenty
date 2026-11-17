@@ -58,6 +58,7 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type WrittenRows } from 'src/engine/twenty-orm/sql/types/written-rows.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -117,6 +118,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private isLockedForUpdate = false;
   private includeDeleted = false;
   private explicitSelection?: string[];
+  private writtenRows?: WrittenRows;
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
@@ -184,6 +186,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       this.explicitSelection === undefined
         ? undefined
         : [...this.explicitSelection];
+    cloned.writtenRows = this.writtenRows;
 
     for (const alias of this.aliasesWithRowLevelPermissionApplied) {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
@@ -664,6 +667,15 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       condition: `${this.quoteColumn(alias, foreignKeyColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`,
       foreignKeyColumnName,
     };
+  }
+
+  fromWrittenRows({
+    parameters,
+    ...writtenRows
+  }: WrittenRows & { parameters: Record<string, unknown> }): this {
+    this.writtenRows = writtenRows;
+
+    return this.setParameters(parameters);
   }
 
   withDeleted(): this {
@@ -1508,6 +1520,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return {
       alias: this.alias,
       tableShape: this.tableShape,
+      writtenRows: this.writtenRows,
       findOptions: this.findOptions,
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,

@@ -6,6 +6,7 @@ import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util'
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -409,6 +410,32 @@ describe('Computed field permissions (e2e)', () => {
       bigTaskCount: 1,
     });
     expect((await findTaskAsMember()).projectBudget).toBeNull();
+  });
+
+  it('nulls the same computed values in the response of a write by the member', async () => {
+    await setFieldReadable({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataId: budgetFieldMetadataId,
+      isReadable: false,
+    });
+
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'permProject',
+        gqlFields: `id ${PROJECT_COMPUTED_GQL_FIELDS}`,
+        recordId: PROJECT_ID,
+        data: { name: 'Alpha' },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updatePermProject).toEqual({
+      id: PROJECT_ID,
+      doubleBudget: null,
+      taskCount: 2,
+      totalPoints: 8,
+      bigTaskCount: 1,
+    });
   });
 
   it('nulls the rollups whose expression or filter reads a related field the member cannot read', async () => {

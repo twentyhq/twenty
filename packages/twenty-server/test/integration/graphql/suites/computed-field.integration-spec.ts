@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -792,6 +793,53 @@ describe('Computed fields (e2e)', () => {
       });
     });
 
+    it('returns computed fields of the records a write destroys', async () => {
+      const projectId = '20202020-c0f1-4000-8000-000000000004';
+      const taskId = buildTaskId(TASKS.length + 1);
+
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id',
+          data: [{ id: projectId, name: 'Gamma', budget: 10 }],
+          upsert: false,
+        }),
+      );
+      await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          data: [{ id: taskId, projectId, status: 'TODO', points: 1 }],
+          upsert: false,
+        }),
+      );
+
+      const response = await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupProject',
+          objectMetadataPluralName: 'rollupProjects',
+          gqlFields: 'id taskCount summary',
+          filter: { id: { eq: projectId } },
+        }),
+      );
+
+      await makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: 'rollupTask',
+          objectMetadataPluralName: 'rollupTasks',
+          gqlFields: 'id',
+          filter: { id: { eq: taskId } },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.destroyRollupProjects).toEqual([
+        { id: projectId, taskCount: 1, summary: 'GAMMA: open' },
+      ]);
+    });
+
     it('updates the records matching a filter on a computed field', async () => {
       const response = await makeGraphqlApiRequest(
         updateManyOperationFactory({
@@ -807,6 +855,48 @@ describe('Computed fields (e2e)', () => {
       expect(response.body.data.updateRollupProjects).toEqual([
         { name: 'Empty' },
       ]);
+    });
+
+    it('writes only the records its filter selects when the filter and the response read different text literals', async () => {
+      const fieldIds: string[] = [];
+
+      for (const [name, expression] of [
+        ['isNamedAlpha', "name == 'Alpha'"],
+        ['isNamedBeta', "name == 'Beta'"],
+      ]) {
+        const { data } = await createField({
+          objectMetadataId: projectObjectMetadataId,
+          name,
+          type: FieldMetadataType.BOOLEAN,
+          computation: { kind: 'FORMULA', expression },
+        });
+
+        fieldIds.push(data.createOneField.id);
+      }
+
+      try {
+        const response = await makeGraphqlApiRequest(
+          updateManyOperationFactory({
+            objectMetadataSingularName: 'rollupProject',
+            objectMetadataPluralName: 'rollupProjects',
+            gqlFields: 'id budget isNamedBeta',
+            filter: { isNamedAlpha: { eq: true } },
+            data: { budget: 100 },
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.updateRollupProjects).toEqual([
+          { id: ALPHA_PROJECT_ID, budget: 100, isNamedBeta: false },
+        ]);
+        expect(await findProjectValuesById('budget')).toEqual({
+          [ALPHA_PROJECT_ID]: 100,
+          [BETA_PROJECT_ID]: 30,
+          [EMPTY_PROJECT_ID]: 0,
+        });
+      } finally {
+        await deactivateAndDeleteFields(fieldIds);
+      }
     });
 
     it('refuses to write a computed field', async () => {

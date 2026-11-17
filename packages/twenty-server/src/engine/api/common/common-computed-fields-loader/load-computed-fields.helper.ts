@@ -14,7 +14,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 export class LoadComputedFieldsHelper {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // A write or an event carries stored columns only, so the computed fields a response selects are read afterwards
+  // An event carries stored columns only, so the computed fields a subscriber selects are read afterwards
   public async loadMissingComputedFields({
     flatObjectMetadata,
     flatFieldMetadataMaps,
