@@ -4,7 +4,6 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
-import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
@@ -48,14 +47,6 @@ export const RecordShowPage = () => {
     }
 
     return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
-  }
-
-  if (
-    isWorkspaceWorkflowVersionRouteHidden({
-      objectNameSingular: parameters.objectNameSingular,
-    })
-  ) {
-    return <WorkspaceRouteUnavailable />;
   }
 
   const CoreObjectShowPage = findCoreObjectShowPage(
