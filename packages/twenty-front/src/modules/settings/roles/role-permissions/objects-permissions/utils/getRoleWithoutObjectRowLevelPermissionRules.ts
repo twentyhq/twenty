@@ -39,14 +39,26 @@ export const getRoleWithoutObjectRowLevelPermissionRules = ({
     }
   }
 
+  const isRemovedPredicateGroupId = (
+    predicateGroupId: string | null | undefined,
+  ) =>
+    isDefined(predicateGroupId) &&
+    predicateGroupById.get(predicateGroupId)?.objectMetadataId ===
+      objectMetadataId &&
+    !keptPredicateGroupIds.has(predicateGroupId);
+
   return {
     ...role,
     rowLevelPermissionPredicates,
     rowLevelPermissionPredicateGroups:
       role.rowLevelPermissionPredicateGroups?.filter(
-        (predicateGroup) =>
-          predicateGroup.objectMetadataId !== objectMetadataId ||
-          keptPredicateGroupIds.has(predicateGroup.id),
+        (predicateGroup) => !isRemovedPredicateGroupId(predicateGroup.id),
       ),
+    fieldPermissions: role.fieldPermissions?.filter(
+      (fieldPermission) =>
+        !isRemovedPredicateGroupId(
+          fieldPermission.rowLevelPermissionPredicateGroupId,
+        ),
+    ),
   };
 };

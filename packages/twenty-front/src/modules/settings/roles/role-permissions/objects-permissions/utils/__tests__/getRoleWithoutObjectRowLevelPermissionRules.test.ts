@@ -1,6 +1,7 @@
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { getRoleWithoutObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutObjectRowLevelPermissionRules';
 import {
+  type FieldPermission,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -51,6 +52,23 @@ const buildPredicate = ({
   positionInRowLevelPermissionPredicateGroup: null,
   roleId: 'role-id',
   value: 'value',
+});
+
+const buildFieldPermission = ({
+  id,
+  groupId,
+}: {
+  id: string;
+  groupId: string | null;
+}): FieldPermission => ({
+  __typename: 'FieldPermission',
+  id,
+  roleId: 'role-id',
+  objectMetadataId: 'company',
+  fieldMetadataId: `${id}-field-id`,
+  canReadFieldValue: false,
+  canUpdateFieldValue: false,
+  rowLevelPermissionPredicateGroupId: groupId,
 });
 
 describe('getRoleWithoutObjectRowLevelPermissionRules', () => {
@@ -116,5 +134,44 @@ describe('getRoleWithoutObjectRowLevelPermissionRules', () => {
     expect(role.rowLevelPermissionPredicateGroups?.map(({ id }) => id)).toEqual(
       ['related-path-group', 'related-path-child-group'],
     );
+  });
+
+  it('should drop the field restrictions of the removed rules only', () => {
+    const role = getRoleWithoutObjectRowLevelPermissionRules({
+      role: {
+        ...DEFAULT_SETTINGS_DRAFT_ROLE,
+        rowLevelPermissionPredicates: [
+          buildPredicate({
+            id: 'rule',
+            objectMetadataId: 'company',
+            rowLevelPermissionPredicateGroupId: 'rule-group',
+          }),
+          buildPredicate({
+            id: 'related-path',
+            objectMetadataId: 'company',
+            relationFieldMetadataId: 'relation-field-id',
+            rowLevelPermissionPredicateGroupId: 'related-path-group',
+          }),
+        ],
+        rowLevelPermissionPredicateGroups: [
+          buildPredicateGroup({ id: 'rule-group' }),
+          buildPredicateGroup({ id: 'related-path-group' }),
+        ],
+        fieldPermissions: [
+          buildFieldPermission({ id: 'rule-field', groupId: 'rule-group' }),
+          buildFieldPermission({
+            id: 'related-path-field',
+            groupId: 'related-path-group',
+          }),
+          buildFieldPermission({ id: 'object-field', groupId: null }),
+        ],
+      },
+      objectMetadataId: 'company',
+    });
+
+    expect(role.fieldPermissions?.map(({ id }) => id)).toEqual([
+      'related-path-field',
+      'object-field',
+    ]);
   });
 });
