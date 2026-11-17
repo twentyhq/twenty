@@ -14,6 +14,10 @@ import {
 import { GoogleMeetException } from 'src/logic-functions/types/google-meet-exception.type';
 import { extractBearerToken } from 'src/logic-functions/utils/extract-bearer-token.util';
 
+const getGoogleSigningKey = createRemoteJWKSet(
+  new URL(GOOGLE_SIGNING_KEYS_URL),
+);
+
 export const verifyGooglePubsubPushTokenOrThrow = async ({
   authorizationHeader,
   audience,
@@ -36,7 +40,7 @@ export const verifyGooglePubsubPushTokenOrThrow = async ({
 
   const { payload } = await jwtVerify(
     token,
-    getSigningKey ?? createRemoteJWKSet(new URL(GOOGLE_SIGNING_KEYS_URL)),
+    getSigningKey ?? getGoogleSigningKey,
     {
       issuer: GOOGLE_TOKEN_ISSUERS,
       audience,
