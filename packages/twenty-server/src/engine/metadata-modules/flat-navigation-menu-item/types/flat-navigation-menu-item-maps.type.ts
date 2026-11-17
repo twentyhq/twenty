@@ -3,7 +3,7 @@ import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-na
 
 export type FlatNavigationMenuItemMaps =
   FlatEntityMaps<FlatNavigationMenuItem> & {
-    byUserWorkspaceIdAndFolderId: Partial<
+    byUserWorkspaceIdAndParentId: Partial<
       Record<string, Partial<Record<string, FlatNavigationMenuItem[]>>>
     >;
   };

@@ -54,8 +54,8 @@ export const buildCreateNavigationMenuItemInput = (
     input.name = draftItem.name ?? undefined;
   }
 
-  if (isDefined(draftItem.folderId)) {
-    input.folderId = resolveFolderId(draftItem.folderId);
+  if (isDefined(draftItem.parentId)) {
+    input.parentId = resolveFolderId(draftItem.parentId);
   }
 
   if (isDefined(draftItem.color)) {

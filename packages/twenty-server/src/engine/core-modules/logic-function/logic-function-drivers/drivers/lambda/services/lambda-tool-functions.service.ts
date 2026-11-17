@@ -1,4 +1,3 @@
-import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
@@ -6,12 +5,14 @@ import {
   type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
+  TenantIsolationMode,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import { setTimeout } from 'timers/promises';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,9 +60,9 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
+  type BrowserDependenciesBuildParams,
   type BrowserTranspileParams,
   type BrowserTranspileResult,
-  type BrowserDependenciesBuildParams,
   type TranspileParams,
   type TranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
@@ -375,9 +376,12 @@ export class LambdaToolFunctionsService {
     return functionName;
   }
 
-  async runYarnInstallCreateLayer(
-    params: Omit<YarnInstallLambdaPayload, 'action'>,
-  ): Promise<YarnInstallLambdaResult> {
+  async runYarnInstallCreateLayer({
+    tenantId,
+    ...params
+  }: Omit<YarnInstallLambdaPayload, 'action'> & {
+    tenantId: string;
+  }): Promise<YarnInstallLambdaResult> {
     await this.ensureYarnInstallLambdaExists();
 
     const lambdaClient = await this.awsClient.getLambdaClient();
@@ -395,6 +399,7 @@ export class LambdaToolFunctionsService {
           FunctionName: yarnInstallFunctionName,
           Payload: JSON.stringify(payload),
           LogType: LogType.Tail,
+          TenantId: tenantId,
         }),
         {
           abortSignal: AbortSignal.timeout(
@@ -476,12 +481,14 @@ export class LambdaToolFunctionsService {
     timeoutSeconds,
     copyFiles,
     withCommonLayer = true,
+    isTenantIsolated = false,
   }: {
     functionName: string;
     memoryMb: number;
     timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
     withCommonLayer?: boolean;
+    isTenantIsolated?: boolean;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -534,6 +541,11 @@ export class LambdaToolFunctionsService {
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
             EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+            ...(isTenantIsolated && {
+              TenancyConfig: {
+                TenantIsolationMode: TenantIsolationMode.PER_TENANT,
+              },
+            }),
           };
 
           await lambdaClient.send(new CreateFunctionCommand(params));
@@ -558,6 +570,7 @@ export class LambdaToolFunctionsService {
       memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
       timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
       copyFiles: copyYarnInstall,
+      isTenantIsolated: true,
     });
   }
 
@@ -617,6 +630,7 @@ export class LambdaToolFunctionsService {
         String(YARN_INSTALL_LAMBDA_MEMORY_MB),
         String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
         String(LAMBDA_EPHEMERAL_STORAGE_MB),
+        TenantIsolationMode.PER_TENANT,
       ],
     });
 

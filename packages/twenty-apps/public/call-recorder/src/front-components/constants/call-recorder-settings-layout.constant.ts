@@ -98,7 +98,7 @@ export const CALL_RECORDER_SUMMARY_ENABLED_ROW = {
 export const CALL_RECORDER_STYLE_FIELD = {
   variableKey: CALL_RECORDER_STYLE_ENV_VAR_NAME,
   label: 'Style',
-  hint: 'Applies to recorders scheduled after you change it.',
+  hint: 'Applies to recorders that join more than 15 minutes after you change it.',
 };
 
 export const CALL_RECORDER_STYLE_DESCRIPTIONS: Record<

@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import {
   LEGACY_WORKSPACE_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -31,7 +34,7 @@ describe('isWorkflowRelatedObject', () => {
     expect(
       isWorkflowRelatedObject({
         universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       }),
     ).toBe(true);
   });

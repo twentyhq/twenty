@@ -174,23 +174,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { universalIdentifier: applicationUniversalIdentifier },
   }),
-  upgradeApplication: ({ applicationRegistrationId }: CallingApplication) => ({
-    query: gql`
-      mutation UpgradeApplication(
-        $appRegistrationId: String!
-        $targetVersion: String!
-      ) {
-        upgradeApplication(
-          appRegistrationId: $appRegistrationId
-          targetVersion: $targetVersion
-        )
-      }
-    `,
-    variables: {
-      appRegistrationId: applicationRegistrationId,
-      targetVersion: PLACEHOLDER_TEXT,
-    },
-  }),
   createApplicationRegistration: () => ({
     query: gql`
       mutation CreateApplicationRegistration(

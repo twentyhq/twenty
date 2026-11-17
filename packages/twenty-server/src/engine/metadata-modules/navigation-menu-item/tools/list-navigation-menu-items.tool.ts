@@ -18,7 +18,7 @@ const listNavigationMenuItemsInputSchema = z.object({
     .describe(
       "'workspace' = shared navigation, 'user' = current user's favorites, 'all' = both merged (default).",
     ),
-  folderId: z
+  parentId: z
     .uuid()
     .optional()
     .describe('Only return items inside this folder.'),
@@ -65,7 +65,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
         workspaceId,
         userWorkspaceId,
         scope: input.scope,
-        folderId: input.folderId,
+        parentId: input.parentId,
         type: input.type,
         limit: input.limit,
       });
@@ -79,7 +79,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             type: item.type,
             name: item.name,
             scope: isDefined(item.userWorkspaceId) ? 'user' : 'workspace',
-            folderId: item.folderId,
+            parentId: item.parentId,
             position: item.position,
             icon: item.icon,
             color: item.color,

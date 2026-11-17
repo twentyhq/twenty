@@ -8,16 +8,16 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 type TestNavigationMenuItemEntity = {
   universalIdentifier: string;
   applicationUniversalIdentifier: string;
-  folderUniversalIdentifier: string | null;
+  parentUniversalIdentifier: string | null;
 };
 
 const createEntity = (
   universalIdentifier: string,
-  folderUniversalIdentifier: string | null = null,
+  parentUniversalIdentifier: string | null = null,
 ): TestNavigationMenuItemEntity => ({
   universalIdentifier,
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  folderUniversalIdentifier,
+  parentUniversalIdentifier,
 });
 
 const buildMaps = (

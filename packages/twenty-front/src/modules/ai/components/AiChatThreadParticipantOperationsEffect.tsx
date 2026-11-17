@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatThreadStreamedParticipantsState } from '@/ai/states/aiChatThreadStreamedParticipantsState';
 import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAiChatThreadParticipantFromRecord';
@@ -21,8 +20,6 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // devices, and snoozes the server ends
 export const AiChatThreadParticipantOperationsEffect = () => {
   const store = useStore();
-  const { refreshInboxOpenThreadsSummary } =
-    useRefreshInboxOpenThreadsSummary();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -71,7 +68,6 @@ export const AiChatThreadParticipantOperationsEffect = () => {
             ? mergeAiChatThreadParticipants(loadedParticipants, participants)
             : loadedParticipants,
         );
-        refreshInboxOpenThreadsSummary();
       };
 
       switch (operation.type) {
@@ -98,7 +94,7 @@ export const AiChatThreadParticipantOperationsEffect = () => {
         }
       }
     },
-    [refreshInboxOpenThreadsSummary, store],
+    [store],
   );
 
   useListenToObjectRecordOperationBrowserEvent({

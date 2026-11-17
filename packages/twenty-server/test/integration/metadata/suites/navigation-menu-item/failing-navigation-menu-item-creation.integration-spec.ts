@@ -85,13 +85,13 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       },
     },
     {
-      title: 'when creating with invalid folderId (not a UUID)',
+      title: 'when creating with invalid parentId (not a UUID)',
       context: {
         input: {
           type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
-          folderId: 'not-a-valid-uuid',
+          parentId: 'not-a-valid-uuid',
         },
       },
     },

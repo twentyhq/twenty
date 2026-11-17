@@ -785,7 +785,7 @@ const ticketsNavigationItem: NavigationMenuItemManifest = {
   type: NavigationMenuItemType.OBJECT,
   position: 41,
   icon: 'IconTicket',
-  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  parentUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
   targetObjectUniversalIdentifier: TICKET_OBJECT_ID,
 };
 
@@ -795,7 +795,7 @@ const ticketsIndexViewNavigationItem: NavigationMenuItemManifest = {
   position: 42,
   name: 'All tickets',
   icon: 'IconList',
-  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  parentUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
   viewUniversalIdentifier: TICKET_INDEX_VIEW_ID,
 };
 

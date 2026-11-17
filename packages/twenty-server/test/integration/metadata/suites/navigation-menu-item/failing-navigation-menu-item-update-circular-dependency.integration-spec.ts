@@ -6,7 +6,7 @@ import { updateNavigationMenuItem } from 'test/integration/metadata/suites/navig
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('Navigation Menu Item update should fail with circular dependency', () => {
-  let folderId: string;
+  let parentId: string;
   let parentFolderId: string;
   let childFolderId: string;
 
@@ -19,8 +19,8 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
       },
     });
 
-    folderId = folderData?.createNavigationMenuItem?.id;
-    jestExpectToBeDefined(folderId);
+    parentId = folderData?.createNavigationMenuItem?.id;
+    jestExpectToBeDefined(parentId);
 
     const { data: parentFolderData } = await createNavigationMenuItem({
       expectToFail: false,
@@ -38,7 +38,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
       input: {
         type: NavigationMenuItemType.FOLDER,
         name: 'Child Folder',
-        folderId: parentFolderId,
+        parentId: parentFolderId,
       },
     });
 
@@ -61,21 +61,21 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
       });
     }
 
-    if (folderId) {
+    if (parentId) {
       await deleteNavigationMenuItem({
         expectToFail: false,
-        input: { id: folderId },
+        input: { id: parentId },
       });
     }
   });
 
-  it('when folderId equals id (self-reference)', async () => {
+  it('when parentId equals id (self-reference)', async () => {
     const { errors } = await updateNavigationMenuItem({
       expectToFail: true,
       input: {
-        id: folderId,
+        id: parentId,
         update: {
-          folderId: folderId,
+          parentId: parentId,
         },
       },
     });
@@ -91,7 +91,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
       input: {
         id: parentFolderId,
         update: {
-          folderId: childFolderId,
+          parentId: childFolderId,
         },
       },
     });
