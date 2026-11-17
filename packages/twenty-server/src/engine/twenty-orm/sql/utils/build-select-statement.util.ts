@@ -100,10 +100,13 @@ export type SelectStatementState = {
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
-export const renderNullifiedColumn = (
-  quotedColumn: string,
-  nullifyConditions: string[],
-): string =>
+export const renderNullifiedColumn = ({
+  quotedColumn,
+  nullifyConditions,
+}: {
+  quotedColumn: string;
+  nullifyConditions: string[];
+}): string =>
   `CASE WHEN ${nullifyConditions
     .map((nullifyCondition) => `(${nullifyCondition})`)
     .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
@@ -130,7 +133,7 @@ const renderProjectedColumn = ({
     return quotedColumn;
   }
 
-  return renderNullifiedColumn(quotedColumn, nullifyConditions);
+  return renderNullifiedColumn({ quotedColumn, nullifyConditions });
 };
 
 export const normaliseColumnExpression = (
