@@ -6,14 +6,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const NAVIGATION_ITEM_SKELETON_COUNT = 3;
 
-// Rows are as tall as the section title and items they stand for, so nothing moves when those mount.
+// Sized like the section title and items, so nothing shifts when they mount.
 const StyledRow = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: ${themeCssVariables.spacing[7]};
   justify-content: center;
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding: 0 ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
