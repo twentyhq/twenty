@@ -3,9 +3,7 @@ import {
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
-import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
-import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
-import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
+import { getObjectOperationsSummary } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
@@ -30,14 +28,16 @@ export const SettingsRolePermissionsObjectActionsSelect = ({
 }: SettingsRolePermissionsObjectActionsSelectProps) => {
   const { t } = useLingui();
 
+  const { label, Icon } = getObjectOperationsSummary({
+    operations: selectedOperations,
+    isAdvanced: selectedOperations.length > 1,
+  });
+
   const selectControl = (
     <MultiSelectControl
       selectedOptions={[]}
-      fixedIcon={getObjectPermissionAccessIcon({
-        operations: selectedOperations,
-        isAdvanced: selectedOperations.length > 1,
-      })}
-      fixedText={getObjectPermissionActionsLabel(selectedOperations)}
+      fixedIcon={Icon}
+      fixedText={label}
       isDisabled={disabled}
       selectSizeVariant="small"
     />
@@ -83,7 +83,7 @@ export const SettingsRolePermissionsObjectActionsSelect = ({
                   />
                 }
               >
-                {getObjectPermissionActionLabel(key)}
+                {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </Dropdown.OptionItem>
             ))}
           </Dropdown.Section>

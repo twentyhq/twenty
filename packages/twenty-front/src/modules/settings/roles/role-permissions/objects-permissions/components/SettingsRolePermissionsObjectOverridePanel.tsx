@@ -8,7 +8,6 @@ import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/ro
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
-import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
 import { getObjectPermissionFromOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionFromOperations';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
@@ -146,13 +145,15 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell gap={themeCssVariables.spacing[2]}>
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               <StyledActionLabel>
-                {getObjectPermissionActionLabel(key)}
+                {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </StyledActionLabel>
             </TableCell>
             <TableCell />
             <TableCell align="right">
               <Checkbox
-                aria-label={getObjectPermissionActionLabel(key)}
+                aria-label={t(
+                  SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label,
+                )}
                 checked={operations.includes(key)}
                 disabled={!isEditable}
                 hoverable={false}

@@ -5,8 +5,7 @@ import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/rol
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
-import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
-import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
+import { getObjectOperationsSummary } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
@@ -73,14 +72,12 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
 
   const isAdvanced = rulePredicates.length > 0 || hasFieldRestriction;
 
-  const AccessIcon = getObjectPermissionAccessIcon({
+  const { label, Icon: AccessIcon } = getObjectOperationsSummary({
     operations,
     isAdvanced,
   });
 
-  const accessLabel = isAdvanced
-    ? t`Advanced`
-    : getObjectPermissionActionsLabel(operations);
+  const accessLabel = isAdvanced ? t`Advanced` : label;
 
   const ChevronIcon = isExpanded ? IconChevronUp : IconChevronDown;
 
