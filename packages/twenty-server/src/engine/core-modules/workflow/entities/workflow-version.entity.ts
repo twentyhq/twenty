@@ -4,7 +4,10 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -13,6 +16,7 @@ import { ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME } from 's
 import { ADD_WORKSPACE_WORKFLOW_VERSION_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workspace-workflow-version-id-to-workflow-version-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type NullableUntilUpgrade } from 'src/engine/core-modules/upgrade/types/nullable-until-upgrade.type';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -93,4 +97,10 @@ export class WorkflowVersionEntity extends SyncableEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @ManyToOne(() => WorkflowEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'coreWorkflowId' })
+  coreWorkflow: Relation<WorkflowEntity>;
 }

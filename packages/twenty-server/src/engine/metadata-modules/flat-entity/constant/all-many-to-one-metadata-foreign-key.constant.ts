@@ -431,6 +431,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   workflowVersion: {
     workspace: null,
     application: null,
+    coreWorkflow: {
+      foreignKey: 'coreWorkflowId',
+    },
   },
   agentChatChannel: {
     workspace: null,
