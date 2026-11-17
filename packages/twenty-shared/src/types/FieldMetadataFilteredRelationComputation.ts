@@ -1,8 +1,7 @@
 import { type FieldMetadataComputationBindings } from '@/types/FieldMetadataComputationBindings';
 import { type OrderBy } from '@/types/OrderBy';
 
-// The field is a one-to-many relation showing a subset of another one-to-many relation.
-// `filter`, `orderBy` and `limit` decide its records; each sort expression is evaluated on a related record.
+// A one-to-many subset of another one-to-many relation; sort expressions are evaluated on the related record
 export type FieldMetadataFilteredRelationComputation = {
   kind: 'FILTERED_RELATION';
   relationFieldName: string;
