@@ -1294,6 +1294,7 @@ type CalendarChannel {
   syncedAt: DateTime
   throttleFailureCount: Float!
   updatedAt: DateTime!
+  userWorkspaceId: UUID!
   visibility: CalendarChannelVisibility!
 }
 
