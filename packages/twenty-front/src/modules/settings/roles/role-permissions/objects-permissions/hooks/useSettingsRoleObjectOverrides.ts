@@ -60,9 +60,15 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
     );
   };
 
+  const resetListedObjectOverrides = () => {
+    setSettingsRoleListedObjectOverrideIds([]);
+    setSettingsRoleExpandedObjectOverrideIds([]);
+  };
+
   return {
     addObjectOverride,
     toggleObjectOverrideExpanded,
     removeObjectOverride,
+    resetListedObjectOverrides,
   };
 };

@@ -9,6 +9,7 @@ import { useIsRoleInboxChannelAccessDirty } from '@/settings/roles/role-permissi
 import { useResetRoleInboxChannelAccess } from '@/settings/roles/role-permissions/inbox-channels/hooks/useResetRoleInboxChannelAccess';
 import { useSaveRoleInboxChannelAccess } from '@/settings/roles/role-permissions/inbox-channels/hooks/useSaveRoleInboxChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
+import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
@@ -113,8 +114,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const isRoleDirty = Object.keys(dirtyFields).length > 0;
   const isDirty = isRoleDirty || isRoleInboxChannelAccessDirty;
 
+  const { resetListedObjectOverrides } = useSettingsRoleObjectOverrides(roleId);
+
   const handleCancel = () => {
     resetRoleInboxChannelAccess();
+    resetListedObjectOverrides();
 
     if (isCreateMode) {
       setSettingsDraftRole(DEFAULT_SETTINGS_DRAFT_ROLE);
