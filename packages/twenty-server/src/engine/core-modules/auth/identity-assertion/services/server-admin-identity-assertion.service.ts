@@ -164,7 +164,6 @@ export class ServerAdminIdentityAssertionService {
     }
 
     if (
-      !isDefined(verification.email) ||
       !isDefined(userEmail) ||
       verification.email.toLowerCase() !== userEmail.toLowerCase()
     ) {

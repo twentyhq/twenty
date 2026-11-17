@@ -68,11 +68,14 @@ describe('verifyIdentityAssertion', () => {
     ).toEqual({ isValid: true, email: 'jane@twenty.com' });
   });
 
-  it('should return no email for a valid assertion without one', () => {
-    expect(verify(signAssertion({ payload: {} }))).toEqual({
-      isValid: true,
-      email: undefined,
-    });
+  it('should refuse an assertion without email', () => {
+    expect(verify(signAssertion({ payload: {} })).isValid).toBe(false);
+  });
+
+  it('should refuse an assertion with an empty email', () => {
+    expect(verify(signAssertion({ payload: { email: '' } })).isValid).toBe(
+      false,
+    );
   });
 
   it('should refuse an assertion without expiry', () => {

@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { IDENTITY_ASSERTION_ALGORITHMS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-algorithms.constant';
 
 const IDENTITY_ASSERTION_PAYLOAD_SCHEMA = z.object({
-  email: z.string().optional(),
+  email: z.string().min(1),
   exp: z.number(),
 });
 
@@ -20,9 +20,7 @@ export const verifyIdentityAssertion = ({
   signingKey: KeyObject;
   issuer: string;
   audience: string;
-}):
-  | { isValid: true; email: string | undefined }
-  | { isValid: false; error: string } => {
+}): { isValid: true; email: string } | { isValid: false; error: string } => {
   try {
     const { email } = IDENTITY_ASSERTION_PAYLOAD_SCHEMA.parse(
       jwt.verify(assertion, signingKey, {
