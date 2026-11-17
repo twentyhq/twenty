@@ -145,7 +145,7 @@ export class ViewQueryParamsService {
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        if (!relationTargetField) {
+        if (!isDefined(relationTargetField)) {
           return null;
         }
 
