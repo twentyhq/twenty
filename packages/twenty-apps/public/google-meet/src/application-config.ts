@@ -21,6 +21,10 @@ export default defineApplication({
   description: APP_DESCRIPTION,
   author: 'Twenty',
   category: 'Productivity',
+  galleryImages: [
+    'public/gallery/google-meet-cover-image-1.png',
+    'public/gallery/google-meet-cover-image-2.png',
+  ],
   websiteUrl:
     'https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/google-meet',
   termsUrl: 'https://www.twenty.com/terms',
