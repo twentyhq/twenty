@@ -11,7 +11,6 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { DirectMessagePresentationExample } from '@/inbox/components/__stories__/DirectMessagePresentationExample';
 import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -264,7 +263,6 @@ export const OpenMemberConversation: Story = {
         PermissionFlagType.AI,
       ],
     });
-    jotaiStore.set(currentAiChatThreadState.atom, null);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       featureFlags: [
@@ -391,8 +389,5 @@ export const OpenMemberConversation: Story = {
         getAppPath(AppPath.AiChat, { threadId: DIRECT_MESSAGE_THREAD_ID }),
       ),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      DIRECT_MESSAGE_THREAD_ID,
-    );
   },
 };

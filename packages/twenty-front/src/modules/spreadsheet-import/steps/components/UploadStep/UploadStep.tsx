@@ -13,10 +13,10 @@ import { DropZone } from './components/DropZone';
 
 type UploadStepProps = {
   setUploadedFile: (file: File) => void;
-  setCurrentStepState: (data: any) => void;
+  setCurrentStepState: (data: SpreadsheetImportStep) => void;
   onError: (message: string) => void;
   nextStep: () => void;
-  setPreviousStepState: (data: any) => void;
+  setPreviousStepState: (data: SpreadsheetImportStep) => void;
   currentStepState: SpreadsheetImportStep;
 };
 

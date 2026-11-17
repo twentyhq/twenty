@@ -74,7 +74,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconRowInsertTop,
       hasSubMenu: true,
       onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index }),
+        onAdd({ parentId: item.parentId ?? undefined, position: index }),
     },
     {
       id: 'after',
@@ -82,7 +82,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconRowInsertBottom,
       hasSubMenu: true,
       onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
+        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
     },
     {
       id: 'remove',
@@ -97,7 +97,7 @@ export const NavigationMenuItemActions = ({
       id: 'root',
       label: t`Root level`,
       Icon: IconHierarchy2,
-      isDisabled: !isDefined(item.folderId),
+      isDisabled: !isDefined(item.parentId),
       onClick: () => run(() => moveToFolder(item.id, null)),
     },
     ...items
@@ -111,7 +111,7 @@ export const NavigationMenuItemActions = ({
             color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
           />
         ),
-        isDisabled: folder.id === item.folderId,
+        isDisabled: folder.id === item.parentId,
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
   ];

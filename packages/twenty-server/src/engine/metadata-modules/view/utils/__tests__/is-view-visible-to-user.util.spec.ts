@@ -2,6 +2,9 @@ import { ViewVisibility } from 'twenty-shared/types';
 
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 
+const OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
+
 describe('isViewVisibleToUser', () => {
   it('allows a WORKSPACE view for anyone, including without an identity', () => {
     expect(
@@ -64,5 +67,39 @@ describe('isViewVisibleToUser', () => {
         'me',
       ),
     ).toBe(false);
+  });
+
+  it('denies a WORKSPACE view overridden to UNLISTED to a non-owner', () => {
+    expect(
+      isViewVisibleToUser(
+        {
+          visibility: ViewVisibility.WORKSPACE,
+          createdByUserWorkspaceId: 'someone-else',
+          overrides: {
+            [OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              visibility: ViewVisibility.UNLISTED,
+            },
+          },
+        },
+        'me',
+      ),
+    ).toBe(false);
+  });
+
+  it('allows an UNLISTED view overridden to WORKSPACE for anyone', () => {
+    expect(
+      isViewVisibleToUser(
+        {
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: 'someone-else',
+          overrides: {
+            [OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              visibility: ViewVisibility.WORKSPACE,
+            },
+          },
+        },
+        'me',
+      ),
+    ).toBe(true);
   });
 });

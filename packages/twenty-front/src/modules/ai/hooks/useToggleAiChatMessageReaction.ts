@@ -6,7 +6,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -26,6 +26,7 @@ const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
 export const useToggleAiChatMessageReaction = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
+  const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
   const { enqueueToast } = useToast();
 
   // Live snapshots carry the server's state, so a refused change only takes back its own reaction
@@ -69,7 +70,7 @@ export const useToggleAiChatMessageReaction = () => {
 
       const liveRevisionsAtom =
         aiChatLiveReactionRevisionsFamilyState.atomFamily({
-          threadId: store.get(currentAiChatThreadState.atom),
+          threadId: aiChatThreadId,
         });
       const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];
 
@@ -105,7 +106,7 @@ export const useToggleAiChatMessageReaction = () => {
         reactionRequestQueues.delete(queueKey);
       }
     },
-    [apolloClient, enqueueToast, store],
+    [apolloClient, enqueueToast, store, aiChatThreadId],
   );
 
   return { toggleAiChatMessageReaction };

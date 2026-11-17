@@ -2,11 +2,14 @@ import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
+import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTitle = styled.div`
   align-items: center;
@@ -38,12 +41,18 @@ export const RecordTableColumnHead = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const { getIcon } = useIcons();
-  const Icon = getIcon(
-    correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
-  );
-  const fieldMetadataItem =
+  const lookupTarget = useRecordFieldLookupTarget(recordField);
+  const foundFieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
+  const fieldMetadataItem = isDefined(foundFieldMetadataItem)
+    ? getRecordFieldColumnHeader({
+        fieldMetadataItem: foundFieldMetadataItem,
+        lookupTarget,
+      })
+    : undefined;
+
+  const { getIcon } = useIcons();
+  const Icon = getIcon(fieldMetadataItem?.icon);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>

@@ -1,3 +1,4 @@
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { EditorContent } from '@tiptap/react';
@@ -42,6 +43,7 @@ const meta: Meta<typeof AiChatAddMenuWithEditor> = {
   title: 'Modules/AI/AiChatAddMenu',
   component: AiChatAddMenuWithEditor,
   decorators: [
+    AiChatInstanceDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,

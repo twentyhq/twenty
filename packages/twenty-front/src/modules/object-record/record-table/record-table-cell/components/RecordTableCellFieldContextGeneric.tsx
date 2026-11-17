@@ -1,8 +1,9 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
@@ -10,9 +11,9 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
+import { type RecordTableCellFieldTarget } from '@/object-record/record-table/types/RecordTableCellFieldTarget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
 import {
@@ -20,43 +21,43 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 type RecordTableCellFieldContextGenericProps = {
-  recordField: RecordField;
+  target: RecordTableCellFieldTarget;
   children: ReactNode;
 };
 
 export const RecordTableCellFieldContextGeneric = ({
-  recordField,
+  target: {
+    recordId,
+    objectMetadataItem,
+    fieldMetadataItem,
+    fieldDefinition,
+    isRecordReadOnly,
+    restrictedFieldNames,
+  },
   children,
 }: RecordTableCellFieldContextGenericProps) => {
-  const { recordId, isRecordReadOnly, restrictedFieldNames } =
-    useRecordTableRowContextOrThrow();
-
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
   );
 
-  const { objectMetadataItem, objectMetadataItems, objectPermissions } =
-    useRecordTableContextOrThrow();
+  const { objectMetadataItems } = useRecordTableContextOrThrow();
 
-  const {
-    objectPermissionsByObjectMetadataId,
-    fieldMetadataItemByFieldMetadataItemId,
-    fieldDefinitionByFieldMetadataItemId,
-  } = useRecordIndexContextOrThrow();
-
-  const fieldDefinition =
-    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
-  const fieldMetadataItem =
-    fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  const { objectPermissionsByObjectMetadataId } =
+    useRecordIndexContextOrThrow();
 
   const updateRecord = useContext(RecordTableUpdateContext);
 
-  if (!isDefined(fieldMetadataItem)) {
-    return null;
-  }
+  const updateTargetRecord = (params: RecordUpdateHookParams) =>
+    updateRecord?.({
+      ...params,
+      objectNameSingular: objectMetadataItem.nameSingular,
+    });
 
   let hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
-    objectRecordsPermissions: objectPermissions,
+    objectRecordsPermissions: getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    ),
     operationType: 'read',
   });
   let isInvalidJunctionRelation = false;
@@ -122,24 +123,21 @@ export const RecordTableCellFieldContextGeneric = ({
   return (
     <FieldContext.Provider
       value={{
-        fieldMetadataItemId: recordField.fieldMetadataItemId,
+        fieldMetadataItemId: fieldMetadataItem.id,
         recordId,
-        fieldDefinition: fieldDefinition,
-        useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
-        isLabelIdentifier: isLabelIdentifierField({
-          fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            name: fieldDefinition.metadata.fieldName,
-          },
-          objectMetadataItem,
-        }),
+        fieldDefinition,
+        useUpdateRecord: isDefined(updateRecord)
+          ? () => [updateTargetRecord, {}]
+          : undefined,
+        // Label identifier columns of the table get their own context
+        isLabelIdentifier: false,
         displayedMaxRows: 1,
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
           isInvalidJunctionRelation ||
           isFieldRestricted ||
           isRecordFieldReadOnly({
-            isRecordReadOnly: isRecordReadOnly ?? false,
+            isRecordReadOnly,
             objectMetadataId: objectMetadataItem.id,
             fieldMetadataItem,
             fieldDefinition,

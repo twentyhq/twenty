@@ -9,6 +9,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -103,7 +104,10 @@ export const useApplyAdvancedFilterRelationTargetField = () => {
       positionInRecordFilterGroup:
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
-      label: `${sourceFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`,
+      label: getRelationTargetFieldLabel({
+        sourceFieldMetadataItem,
+        relationTargetFieldMetadataItem,
+      }),
       subFieldName: null,
       relationTargetFieldMetadataId: relationTargetFieldMetadataItem.id,
     } satisfies RecordFilter;

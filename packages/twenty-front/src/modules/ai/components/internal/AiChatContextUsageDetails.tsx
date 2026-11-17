@@ -1,3 +1,4 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -13,8 +14,6 @@ import {
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
@@ -36,9 +35,9 @@ const StyledSectionTitle = styled.span`
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
   if (!isDefined(aiChatUsage)) {
     return null;

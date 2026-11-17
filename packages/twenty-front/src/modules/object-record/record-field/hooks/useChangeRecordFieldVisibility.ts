@@ -4,6 +4,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -26,6 +27,10 @@ export const useChangeRecordFieldVisibility = (
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
+  const getLastPosition = () =>
+    currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
+      ?.position ?? 0;
+
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
     recordFieldId,
@@ -35,17 +40,17 @@ export const useChangeRecordFieldVisibility = (
     recordFieldId?: string;
     isVisible: boolean;
   }) => {
-    const lastPosition =
-      currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
-        ?.position ?? 0;
+    const lastPosition = getLastPosition();
 
     const shouldShowFieldMetadataItem = isVisible === true;
-    const correspondingRecordField = currentRecordFields.find(
-      (recordFieldToFind) =>
-        isDefined(recordFieldId)
-          ? recordFieldToFind.id === recordFieldId
-          : recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
-    );
+    const correspondingRecordField = isDefined(recordFieldId)
+      ? currentRecordFields.find(
+          (recordFieldToFind) => recordFieldToFind.id === recordFieldId,
+        )
+      : findCanonicalRecordField({
+          recordFields: currentRecordFields,
+          fieldMetadataItemId: fieldMetadataId,
+        });
 
     const noExistingRecordField = !isDefined(correspondingRecordField);
 
@@ -75,7 +80,30 @@ export const useChangeRecordFieldVisibility = (
     }
   };
 
+  const addLookupRecordField = async ({
+    fieldMetadataId,
+    relationTargetFieldMetadataId,
+  }: {
+    fieldMetadataId: string;
+    relationTargetFieldMetadataId: string;
+  }) => {
+    const lookupRecordField: RecordField = {
+      id: v4(),
+      fieldMetadataItemId: fieldMetadataId,
+      size: 100,
+      isVisible: true,
+      isCanonical: false,
+      position: getLastPosition() + 1,
+      relationTargetFieldMetadataId,
+    };
+
+    upsertRecordField(lookupRecordField);
+
+    await saveViewFields([mapRecordFieldToViewField(lookupRecordField)]);
+  };
+
   return {
     changeRecordFieldVisibility,
+    addLookupRecordField,
   };
 };

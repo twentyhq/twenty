@@ -114,6 +114,7 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   position: 0,
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {
@@ -225,7 +226,9 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 
-const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<
+  Omit<NavigationMenuItemManifest, 'folderUniversalIdentifier'>
+> = {
   universalIdentifier: '77777777-7777-4777-8777-777777777777',
   type: NavigationMenuItemType.VIEW,
   name: 'All pets',
@@ -234,7 +237,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   position: 12,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
-  folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
+  parentUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',
@@ -394,6 +397,7 @@ const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
       ...flatUniversalWorkflowVersion,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
+      coreWorkflowId: universalFlatWorkflow.id,
     },
     references,
   });
@@ -918,8 +922,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
     workspaceLocalProperties: ['visibility', 'createdByUserWorkspaceId'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      jobConfig:
-        'no manifest slot yet, every application workflow gets the default',
       lastPublishedVersionId:
         'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
@@ -950,6 +952,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'API key role assignments are reported as excluded, only agent roles are exported',
       webhookUniversalIdentifier:
         'webhook role assignments are reported as excluded, only agent roles are exported',
+      isSystemSideEffect:
+        'only the system holds a role for a member this way, and member role assignments are reported as excluded',
     },
   },
   {

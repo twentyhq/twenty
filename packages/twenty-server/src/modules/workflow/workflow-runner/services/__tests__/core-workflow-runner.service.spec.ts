@@ -9,18 +9,14 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 
 const WORKSPACE_ID = 'workspace-id';
 
-const LIMITER = { max: 100, durationMs: 60_000 };
-
 const WORKFLOWS = {
   'workflow-a': {
     id: 'workflow-a',
     applicationId: 'application-a',
-    jobConfig: { limiter: LIMITER },
   },
   'workflow-b': {
     id: 'workflow-b',
     applicationId: 'application-b',
-    jobConfig: { limiter: LIMITER },
   },
 };
 
@@ -127,7 +123,7 @@ const buildService = (triggerType: WorkflowTriggerType) => {
 };
 
 describe('CoreWorkflowRunnerService', () => {
-  it('scopes the run job of each workflow to the application owning it, with the limiter of the workflow', async () => {
+  it('scopes the run job of each workflow to the application owning it, in the workflow group', async () => {
     const { runBothWorkflows, messageQueueService } = buildService(
       WorkflowTriggerType.MANUAL,
     );
@@ -143,7 +139,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-a-universal-id',
-          limiter: { key: 'workflow:workflow-a', ...LIMITER },
+          groupKey: 'workflow',
         },
       ],
       [
@@ -154,7 +150,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-b-universal-id',
-          limiter: { key: 'workflow:workflow-b', ...LIMITER },
+          groupKey: 'workflow',
         },
       ],
     ]);

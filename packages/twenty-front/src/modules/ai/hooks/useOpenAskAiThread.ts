@@ -1,21 +1,11 @@
+import { useStore } from 'jotai';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
-import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const inboxSelectedThreadListSource = useAtomStateValue(
-    inboxSelectedThreadListSourceState,
-  );
-  const inboxThreadListThreads = useAtomFamilySelectorValue(
-    inboxThreadListThreadsFamilySelector,
-    inboxSelectedThreadListSource,
-  );
-  const { selectAiChatThread } = useSelectAiChatThread();
+  const store = useStore();
 
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
@@ -23,20 +13,19 @@ export const useOpenAskAiThread = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const openAskAiThread = (threadId: string) => {
-    const thread = inboxThreadListThreads.find(
-      (visibleThread) => visibleThread.id === threadId,
+    const thread = store.get(
+      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
 
-    if (isDefined(thread)) {
+    if (isDefined(thread) && !isDefined(thread.deletedAt)) {
       handleThreadClick(thread);
       return;
     }
 
-    if (isValidUuid(threadId)) {
-      selectAiChatThread(threadId);
-    }
-
-    openAskAiPage({ resetNavigationStack: true });
+    openAskAiPage({
+      threadId: isValidUuid(threadId) ? threadId : undefined,
+      resetNavigationStack: true,
+    });
   };
 
   return { openAskAiThread };

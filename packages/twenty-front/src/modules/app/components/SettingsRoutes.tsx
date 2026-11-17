@@ -16,6 +16,7 @@ import {
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
+import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
@@ -502,20 +503,6 @@ const SettingsAppPreferencesApp = lazy(() =>
   ),
 );
 
-const SettingsAccountsEmails = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
-    default: module.SettingsAccountsEmails,
-  })),
-);
-
-const SettingsAccountsCalendars = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
-    (module) => ({
-      default: module.SettingsAccountsCalendars,
-    }),
-  ),
-);
-
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
@@ -586,6 +573,18 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
       default: module.SettingsDevelopersWebhookDetail,
     }),
   ),
+);
+
+const SettingsAiMcpServerNew = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerNew').then((module) => ({
+    default: module.SettingsAiMcpServerNew,
+  })),
+);
+
+const SettingsAiMcpServerDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerDetail').then((module) => ({
+    default: module.SettingsAiMcpServerDetail,
+  })),
 );
 
 const SettingsObjectNewFieldSelect = lazy(() =>
@@ -853,60 +852,15 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route element={<SettingsLegacyAccountsRedirect />}>
-        <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
-        <Route
-          path={SettingsPath.AccountsEmails}
-          element={<SettingsAccountsEmails />}
-        />
-        <Route
-          path={SettingsPath.AccountsCalendars}
-          element={<SettingsAccountsCalendars />}
-        />
-        <Route
-          path={SettingsPath.NewAccount}
-          element={<SettingsNewAccount />}
-        />
-        <Route
-          path={SettingsPath.AccountsConfiguration}
-          element={<SettingsAccountsConfiguration />}
-        />
-        <Route
-          path={SettingsPath.NewImapSmtpCaldavConnection}
-          element={<SettingsNewImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.EditImapSmtpCaldavConnection}
-          element={<SettingsEditImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.AccountDetail}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.BuiltInAccountApp}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.ApplicationPreferences}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-      </Route>
-    </Route>
-    <Route
-      element={
-        <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
-          requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
-        />
-      }
-    >
+      {Object.keys(APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH).map(
+        (legacyAccountsPath) => (
+          <Route
+            key={legacyAccountsPath}
+            path={legacyAccountsPath}
+            element={<SettingsLegacyAccountsRedirect />}
+          />
+        ),
+      )}
       <Route
         path={SettingsPath.AppPreferences}
         element={<SettingsAccounts />}
@@ -1239,6 +1193,31 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WebhookDetail}
         element={<SettingsDevelopersWebhookDetail />}
       />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.AI_SETTINGS}
+          requiredFeatureFlag={FeatureFlagKey.IS_MCP_SERVERS_ENABLED}
+        />
+      }
+    >
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.AiNewMcpServer}
+          element={<SettingsAiMcpServerNew />}
+        />
+        <Route
+          path={SettingsPath.AiMcpServerDetail}
+          element={<SettingsAiMcpServerDetail />}
+        />
+      </Route>
     </Route>
 
     <Route

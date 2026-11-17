@@ -1,4 +1,5 @@
-import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -6,8 +7,6 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -26,9 +25,10 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     StartWorkspaceSetupChatDocument,
   );
   const store = useStore();
+  const { onThreadChange } = useAiChatInstanceOrThrow();
   const { refreshAiChatThreadPermissions } =
     useRefreshAiChatThreadPermissions();
-  const { addAiChatThread } = useApplyAiChatThreadUpdate();
+  const { addInboxThread } = useAddInboxThread();
   const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
     isCompanyEnrichmentFetchInFlightState,
   );
@@ -86,7 +86,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           return;
         }
 
-        addAiChatThread({
+        addInboxThread({
           id: thread.id,
           title: thread.title ?? null,
           createdAt: thread.createdAt,
@@ -104,9 +104,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           );
         }
 
-        store.set(hasInitializedAiChatThreadsState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
-        store.set(currentAiChatThreadState.atom, thread.id);
+        onThreadChange(thread.id);
       } catch {
         store.set(hasRequestedWorkspaceSetupChatState.atom, false);
 
@@ -119,7 +118,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     startWorkspaceSetupChatMutation,
     refreshAiChatThreadPermissions,
     store,
-    addAiChatThread,
+    onThreadChange,
+    addInboxThread,
     isCompanyEnrichmentFetchInFlight,
     hasWaitedForCompanyEnrichment,
   ]);

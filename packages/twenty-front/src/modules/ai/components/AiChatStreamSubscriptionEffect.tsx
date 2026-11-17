@@ -1,90 +1,87 @@
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { useAiChat } from '@/ai/hooks/useAiChat';
 import { useAiChatSubscription } from '@/ai/hooks/useAiChatSubscription';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai/states/aiChatFetchedMessagesFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/aiChatIsAwaitingPersistedRefetchFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAiChatUsageFromThread';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-export const AiChatStreamSubscriptionEffect = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+type AiChatStreamSubscriptionEffectProps = {
+  threadId: string;
+};
 
-  useAiChat();
+export const AiChatStreamSubscriptionEffect = ({
+  threadId,
+}: AiChatStreamSubscriptionEffectProps) => {
+  const store = useStore();
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
-  useAiChatSubscription(isOnNewAiChatSlot ? null : currentAiChatThread);
+  useAiChatSubscription(threadId === newAiChatThreadId ? null : threadId);
 
   const aiChatFetchedMessages = useAtomFamilyStateValue(
     aiChatFetchedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setAiChatMessages = useSetAtomFamilyState(aiChatMessagesFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const aiChatIsAwaitingPersistedRefetch = useAtomFamilyStateValue(
     aiChatIsAwaitingPersistedRefetchFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const aiChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
     aiChatIsAwaitingFirstChunkFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
-
-  const setAiChatDisplayedThread = useSetAtomState(aiChatDisplayedThreadState);
+  const aiChatThreadRecord = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
+    threadId,
+  );
 
   useEffect(() => {
-    if (aiChatIsStreaming) {
-      return;
+    const usageAtom = aiChatUsageFamilyState.atomFamily({ threadId });
+
+    if (isDefined(aiChatThreadRecord) && !isDefined(store.get(usageAtom))) {
+      store.set(usageAtom, getAiChatUsageFromThread(aiChatThreadRecord));
     }
+  }, [store, threadId, aiChatThreadRecord]);
 
-    const isThreadSwitch = currentAiChatThread !== aiChatDisplayedThread;
-
+  useEffect(() => {
     if (
-      !isThreadSwitch &&
-      (aiChatIsAwaitingPersistedRefetch || aiChatIsAwaitingFirstChunk)
+      aiChatIsStreaming ||
+      aiChatIsAwaitingPersistedRefetch ||
+      aiChatIsAwaitingFirstChunk
     ) {
       return;
     }
 
-    if (isThreadSwitch && aiChatIsAwaitingFirstChunk) {
-      setAiChatDisplayedThread(currentAiChatThread);
-
-      return;
-    }
-
     setAiChatMessages(aiChatFetchedMessages);
-
-    if (isThreadSwitch) {
-      setAiChatDisplayedThread(currentAiChatThread);
-    }
   }, [
     aiChatFetchedMessages,
     aiChatIsStreaming,
     aiChatIsAwaitingPersistedRefetch,
     aiChatIsAwaitingFirstChunk,
     setAiChatMessages,
-    currentAiChatThread,
-    aiChatDisplayedThread,
-    setAiChatDisplayedThread,
   ]);
 
   return null;

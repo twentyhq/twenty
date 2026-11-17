@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { type MockedResponse } from '@apollo/client/testing';
 import { useApolloClient } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
@@ -26,9 +27,9 @@ import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMe
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -173,7 +174,7 @@ const renderAiChat = ({
         ...mockedUserData.currentUserWorkspace,
         permissionFlags: [PermissionFlagType.AI],
       });
-      store.set(currentAiChatThreadState.atom, currentThreadId);
+      store.set(aiChatTestInstanceThreadIdState.atom, currentThreadId);
       store.set(
         aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
         newThreadRecipients,
@@ -183,7 +184,10 @@ const renderAiChat = ({
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
       if (isDirectMessage) {
-        store.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
+        store.set(
+          aiChatTestInstanceThreadIdState.atom,
+          DIRECT_MESSAGE_THREAD_ID,
+        );
         store.set(recordStoreFamilyState.atomFamily(DIRECT_MESSAGE_THREAD_ID), {
           id: DIRECT_MESSAGE_THREAD_ID,
           __typename: 'AgentChatThread',
@@ -211,7 +215,9 @@ const renderAiChat = ({
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <MetadataAndApolloMocksWrapper>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter>{children}</MemoryRouter>
+        <MemoryRouter>
+          <AiChatTestInstance>{children}</AiChatTestInstance>
+        </MemoryRouter>
       </I18nProvider>
     </MetadataAndApolloMocksWrapper>
   );
@@ -223,7 +229,7 @@ const renderAiChat = ({
       return {
         ...useAiChat(),
         apolloClient: useApolloClient(),
-        currentAiChatThread: useAtomStateValue(currentAiChatThreadState),
+        currentAiChatThread: useAtomStateValue(aiChatTestInstanceThreadIdState),
         newAiChatThreadId: useAtomStateValue(newAiChatThreadIdState),
       };
     },
@@ -446,20 +452,24 @@ describe('useAiChat', () => {
       AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
-    jotaiStore.set(aiChatSelectedFilesState.atom, [
-      new File(['brief'], 'brief.pdf'),
-    ]);
+    jotaiStore.set(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [new File(['brief'], 'brief.pdf')],
+    );
 
     await send(result);
 
     expect(restoreEditorContent).not.toHaveBeenCalled();
 
-    jotaiStore.set(aiChatSelectedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [],
+    );
 
     await send(result);
 
     expect(restoreEditorContent).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: { content: '' } }),
+      expect.objectContaining({ detail: { threadId: THREAD_ID, content: '' } }),
     );
 
     window.removeEventListener(
@@ -748,7 +758,7 @@ describe('useAiChat', () => {
     });
 
     act(() => {
-      jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
+      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, EXISTING_THREAD_ID);
     });
     releaseOpenDirectMessage();
 
@@ -765,7 +775,11 @@ describe('useAiChat', () => {
       expect.objectContaining({ threadId: DIRECT_MESSAGE_THREAD_ID }),
     );
     expect(result.current.currentAiChatThread).toBe(EXISTING_THREAD_ID);
-    expect(restoreEditorContent).not.toHaveBeenCalled();
+    expect(restoreEditorContent).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: expect.objectContaining({ threadId: EXISTING_THREAD_ID }),
+      }),
+    );
     expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 
@@ -783,19 +797,25 @@ describe('useAiChat', () => {
     });
     const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
 
-    jotaiStore.set(aiChatUploadedFilesState.atom, [
-      {
-        type: 'file',
-        fileId: 'file-id',
-        filename: 'brief.pdf',
-        mediaType: 'application/pdf',
-        url: 'https://example.com/brief.pdf',
-      },
-    ]);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [
+        {
+          type: 'file',
+          fileId: 'file-id',
+          filename: 'brief.pdf',
+          mediaType: 'application/pdf',
+          url: 'https://example.com/brief.pdf',
+        },
+      ],
+    );
 
     await send(result);
 
-    jotaiStore.set(aiChatUploadedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [],
+    );
 
     expect(mutate).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });

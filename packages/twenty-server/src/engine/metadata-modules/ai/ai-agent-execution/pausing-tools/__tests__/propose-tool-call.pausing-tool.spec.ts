@@ -287,7 +287,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
         subject: 'Renewal',
         body: { type: 'doc', content: [] },
-        connectedAccountId: 'proposed-account-id',
+        connectedAccountId: '20202020-0f8a-4f3e-9c1b-7a2d4e6f8a01',
       },
       summary: 'Follow up on the renewal',
     };
@@ -348,6 +348,21 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
       ).toMatchObject({ isValid: false });
     });
 
+    it('runs nothing when the approved email has no body', async () => {
+      const executeTool = jest.fn();
+      const { body: _body, ...argumentsWithoutBody } = EMAIL_INPUT.arguments;
+
+      const completion = await parseEmailCall().complete({
+        output: { decision: 'approve', arguments: argumentsWithoutBody },
+        context: { executeTool },
+      });
+
+      expect(executeTool).not.toHaveBeenCalled();
+      expect(completion.toolResult).toMatchObject({
+        result: { status: 'failed' },
+      });
+    });
+
     it('sends from the proposed account even when the answer names another', async () => {
       const executeTool = jest
         .fn()
@@ -358,7 +373,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
           decision: 'approve',
           arguments: {
             ...EMAIL_INPUT.arguments,
-            connectedAccountId: 'another-account-id',
+            connectedAccountId: '20202020-5b7c-4d2e-8f1a-3c9e6b2d4f02',
           },
         },
         context: { executeTool },
