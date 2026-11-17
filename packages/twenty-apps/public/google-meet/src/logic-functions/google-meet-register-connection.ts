@@ -14,7 +14,10 @@ export const googleMeetRegisterConnectionHandler = async ({
   connectedAccountId?: string;
 }): Promise<GoogleMeetRegisterConnectionResult> => {
   if (!isNonEmptyString(connectedAccountId)) {
-    return { success: false, error: 'Invalid Google Meet connection hook' };
+    return {
+      success: false,
+      error: 'Invalid Google Meet connection hook',
+    };
   }
 
   await enqueueGoogleMeetDiscoveriesOrThrow({
