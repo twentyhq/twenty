@@ -4,19 +4,15 @@ import { styled } from '@linaria/react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledTitleSkeleton = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${themeCssVariables.spacing[5]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing['0.5']};
-`;
+const NAVIGATION_ITEM_SKELETON_COUNT = 3;
 
-const StyledRowsContainer = styled.div`
+// Rows are as tall as the section title and items they stand for, so nothing moves when those mount.
+const StyledRow = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[7]};
+  justify-content: center;
   padding-left: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
@@ -24,27 +20,23 @@ const StyledRowsContainer = styled.div`
 export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
   return (
     <NavigationDrawerSection>
-      <StyledTitleSkeleton>
+      <StyledRow>
         <SkeletonLine
           width={72}
           height={SKELETON_HEIGHT_SIZES.xs}
           highlightColor={themeCssVariables.background.transparent.light}
         />
-      </StyledTitleSkeleton>
-      <StyledRowsContainer>
-        <SkeletonLine
-          height={SKELETON_HEIGHT_SIZES.s}
-          highlightColor={themeCssVariables.background.transparent.light}
-        />
-        <SkeletonLine
-          height={SKELETON_HEIGHT_SIZES.s}
-          highlightColor={themeCssVariables.background.transparent.light}
-        />
-        <SkeletonLine
-          height={SKELETON_HEIGHT_SIZES.s}
-          highlightColor={themeCssVariables.background.transparent.light}
-        />
-      </StyledRowsContainer>
+      </StyledRow>
+      {Array.from({ length: NAVIGATION_ITEM_SKELETON_COUNT }).map(
+        (_, index) => (
+          <StyledRow key={index}>
+            <SkeletonLine
+              height={SKELETON_HEIGHT_SIZES.s}
+              highlightColor={themeCssVariables.background.transparent.light}
+            />
+          </StyledRow>
+        ),
+      )}
     </NavigationDrawerSection>
   );
 };
