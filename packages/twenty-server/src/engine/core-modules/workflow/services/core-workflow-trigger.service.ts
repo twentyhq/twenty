@@ -13,8 +13,8 @@ import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trig
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class WorkflowVersionCoreSyncService {
-  private readonly logger = new Logger(WorkflowVersionCoreSyncService.name);
+export class CoreWorkflowTriggerService {
+  private readonly logger = new Logger(CoreWorkflowTriggerService.name);
 
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
