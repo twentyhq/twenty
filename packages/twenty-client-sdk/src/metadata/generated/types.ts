@@ -11605,6 +11605,9 @@ export default {
                     ]
                 }
             ],
+            "calendarChannels": [
+                143
+            ],
             "callRecordingIdForCalendarEvent": [
                 564,
                 {
