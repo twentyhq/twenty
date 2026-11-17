@@ -8326,11 +8326,6 @@ msgstr "إنشاء مهمة لهذا السجل: "
 msgid "Create a workflow"
 msgstr "إنشاء سير عمل"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "أنشئ سير عمل وعُد إلى هنا لرؤية إصداراته"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "لم يتم الإبلاغ عن أي إصدار خلال هذه الفت
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "لا يوجد تشغيلات لعمليات العمل بعد"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "لا توجد نسخ لعمليات العمل بعد"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

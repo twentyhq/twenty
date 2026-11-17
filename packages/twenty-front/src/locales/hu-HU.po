@@ -8326,11 +8326,6 @@ msgstr "Feladat létrehozása ehhez a rekordhoz: "
 msgid "Create a workflow"
 msgstr "Munkafolyamat létrehozása"
 
-#. js-lingui-id: zNoOC2
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
-msgid "Create a workflow and return here to view its versions"
-msgstr "Hozzon létre egy munkafolyamatot, majd térjen vissza ide a verziók megtekintéséhez"
-
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
@@ -20753,11 +20748,6 @@ msgstr "Ebben az időszakban nem jelentettek verziót"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Még nincsenek munkafolyamat futások"
-
-#. js-lingui-id: AQCvCC
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
-msgid "No workflow versions yet"
-msgstr "Még nincsenek munkafolyamat verziók"
 
 #. js-lingui-id: JN90tF
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
