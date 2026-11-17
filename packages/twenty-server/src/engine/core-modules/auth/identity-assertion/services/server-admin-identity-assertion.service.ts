@@ -12,10 +12,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { IDENTITY_ASSERTION_SIGNING_KEYS_FETCH_TIMEOUT_MS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-signing-keys-fetch-timeout-ms.constant';
-import { IDENTITY_ASSERTION_SIGNING_KEYS_MAX_AGE_MS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-signing-keys-max-age-ms.constant';
-import { IDENTITY_ASSERTION_SIGNING_KEYS_MIN_REFETCH_INTERVAL_MS } from 'src/engine/core-modules/auth/identity-assertion/constants/identity-assertion-signing-keys-min-refetch-interval-ms.constant';
 import { type IdentityAssertionRefusalReason } from 'src/engine/core-modules/auth/identity-assertion/types/identity-assertion-refusal-reason.type';
+import { areIdentityAssertionSigningKeysFresh } from 'src/engine/core-modules/auth/identity-assertion/utils/are-identity-assertion-signing-keys-fresh.util';
 import { getIdentityAssertionKeyId } from 'src/engine/core-modules/auth/identity-assertion/utils/get-identity-assertion-key-id.util';
+import { shouldFetchIdentityAssertionSigningKeys } from 'src/engine/core-modules/auth/identity-assertion/utils/should-fetch-identity-assertion-signing-keys.util';
 import { verifyIdentityAssertion } from 'src/engine/core-modules/auth/identity-assertion/utils/verify-identity-assertion.util';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { isServerAdminWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-workspace.util';
@@ -48,6 +48,7 @@ export class ServerAdminIdentityAssertionService {
   private signingKeysByKeyId = new Map<string, KeyObject>();
   private signingKeysUrl: string | undefined;
   private signingKeysFetchedAt: number | undefined;
+  private signingKeysFetchAttemptedAt: number | undefined;
   private signingKeysFetch: Promise<void> | undefined;
 
   constructor(
@@ -184,7 +185,21 @@ export class ServerAdminIdentityAssertionService {
       return undefined;
     }
 
-    if (this.shouldFetchSigningKeys({ keyId, signingKeysUrl })) {
+    if (this.signingKeysUrl !== signingKeysUrl) {
+      this.signingKeysUrl = signingKeysUrl;
+      this.signingKeysByKeyId = new Map();
+      this.signingKeysFetchedAt = undefined;
+      this.signingKeysFetchAttemptedAt = undefined;
+    }
+
+    if (
+      shouldFetchIdentityAssertionSigningKeys({
+        fetchedAt: this.signingKeysFetchedAt,
+        fetchAttemptedAt: this.signingKeysFetchAttemptedAt,
+        isSigningKeyKnown: this.signingKeysByKeyId.has(keyId),
+        now: Date.now(),
+      })
+    ) {
       this.signingKeysFetch ??= this.fetchSigningKeys(signingKeysUrl).finally(
         () => {
           this.signingKeysFetch = undefined;
@@ -194,41 +209,20 @@ export class ServerAdminIdentityAssertionService {
 
     await this.signingKeysFetch;
 
+    if (
+      !areIdentityAssertionSigningKeysFresh({
+        fetchedAt: this.signingKeysFetchedAt,
+        now: Date.now(),
+      })
+    ) {
+      return undefined;
+    }
+
     return this.signingKeysByKeyId.get(keyId);
   }
 
-  private shouldFetchSigningKeys({
-    keyId,
-    signingKeysUrl,
-  }: {
-    keyId: string;
-    signingKeysUrl: string;
-  }): boolean {
-    if (
-      !isDefined(this.signingKeysFetchedAt) ||
-      this.signingKeysUrl !== signingKeysUrl
-    ) {
-      return true;
-    }
-
-    const signingKeysAgeMs = Date.now() - this.signingKeysFetchedAt;
-
-    if (signingKeysAgeMs > IDENTITY_ASSERTION_SIGNING_KEYS_MAX_AGE_MS) {
-      return true;
-    }
-
-    // Issuers rotate their keys, so an unknown key id is worth one refetch, throttled against forged ids.
-    return (
-      !this.signingKeysByKeyId.has(keyId) &&
-      signingKeysAgeMs > IDENTITY_ASSERTION_SIGNING_KEYS_MIN_REFETCH_INTERVAL_MS
-    );
-  }
-
   private async fetchSigningKeys(signingKeysUrl: string): Promise<void> {
-    if (this.signingKeysUrl !== signingKeysUrl) {
-      this.signingKeysByKeyId = new Map();
-      this.signingKeysUrl = signingKeysUrl;
-    }
+    this.signingKeysFetchAttemptedAt = Date.now();
 
     try {
       const response = await this.secureHttpClientService
@@ -252,13 +246,12 @@ export class ServerAdminIdentityAssertionService {
           return [[kid, createPublicKey({ key: jsonWebKey, format: 'jwk' })]];
         }),
       );
+      this.signingKeysFetchedAt = Date.now();
     } catch (error) {
       this.logger.error(
         `Could not fetch the identity assertion signing keys from ${signingKeysUrl}`,
         error,
       );
-    } finally {
-      this.signingKeysFetchedAt = Date.now();
     }
   }
 }
