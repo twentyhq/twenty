@@ -22,7 +22,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
-const NAVIGATION_MENU_ITEM_MAX_DEPTH = 4;
+const NAVIGATION_MENU_ITEM_MAX_DEPTH = 3;
 
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
