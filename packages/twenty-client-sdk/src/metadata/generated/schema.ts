@@ -2810,7 +2810,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW' | 'WORKFLOW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -13506,6 +13506,8 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
+   SECTION: 'SECTION' as const,
+   TAB: 'TAB' as const,
    VIEW: 'VIEW' as const,
    WORKFLOW: 'WORKFLOW' as const
 }

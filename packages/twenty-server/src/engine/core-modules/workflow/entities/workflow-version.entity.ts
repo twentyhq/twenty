@@ -15,6 +15,7 @@ import { CREATE_WORKFLOW_VERSION_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/dat
 import { ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-core-workflow-id-to-workflow-version-upgrade-command-name.constant';
 import { ADD_WORKSPACE_WORKFLOW_VERSION_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workspace-workflow-version-id-to-workflow-version-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type NullableUntilUpgrade } from 'src/engine/core-modules/upgrade/types/nullable-until-upgrade.type';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -82,7 +83,7 @@ export class WorkflowVersionEntity extends SyncableEntity {
       ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'uuid', nullable: false })
-  coreWorkflowId: string | null;
+  coreWorkflowId: NullableUntilUpgrade<string>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
@@ -101,6 +102,5 @@ export class WorkflowVersionEntity extends SyncableEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'coreWorkflowId' })
-  // Nullable until 2.43 sets the column NOT NULL: released upgrade commands mirror versions before their core workflow exists
-  coreWorkflow: Relation<WorkflowEntity> | null;
+  coreWorkflow: Relation<WorkflowEntity>;
 }
