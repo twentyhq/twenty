@@ -50,23 +50,29 @@ const StyledScrollableItemsContainer = styled.div`
 export const MainNavigationDrawerScrollableItems = () => {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
 
+  if (isDefined(activeNavigationMenuTab)) {
+    return (
+      <StyledScrollableItemsContainer>
+        <NavigationDrawerOpenedSection />
+        <GettingStartedOpenedSection />
+        <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
+          <NavigationMenuTabContent
+            key={activeNavigationMenuTab.id}
+            tab={activeNavigationMenuTab}
+          />
+        </Suspense>
+      </StyledScrollableItemsContainer>
+    );
+  }
+
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
       <GettingStartedOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-        {isDefined(activeNavigationMenuTab) ? (
-          <NavigationMenuTabContent
-            key={activeNavigationMenuTab.id}
-            tab={activeNavigationMenuTab}
-          />
-        ) : (
-          <>
-            <FavoritesSectionDispatcher />
-            <WorkspaceSectionDispatcher />
-            <NavigationMenuItemSections containerId={null} />
-          </>
-        )}
+        <FavoritesSectionDispatcher />
+        <WorkspaceSectionDispatcher />
+        <NavigationMenuItemSections containerId={null} />
       </Suspense>
     </StyledScrollableItemsContainer>
   );

@@ -44,6 +44,7 @@ type WorkspaceSectionContainerProps = {
   isTitleHidden?: boolean;
   isReadOnly?: boolean;
   visibleItemLimit?: number;
+  isHiddenWhenEmpty?: boolean;
 };
 
 export const WorkspaceSectionContainer = ({
@@ -58,6 +59,7 @@ export const WorkspaceSectionContainer = ({
   isTitleHidden = false,
   isReadOnly = false,
   visibleItemLimit,
+  isHiddenWhenEmpty = false,
 }: WorkspaceSectionContainerProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -95,6 +97,10 @@ export const WorkspaceSectionContainer = ({
   const filteredItems = filteredTopLevelItems;
 
   const workspaceOrphanItemsForSection = isEditable ? flatItems : filteredItems;
+
+  if (isHiddenWhenEmpty && workspaceOrphanItemsForSection.length === 0) {
+    return null;
+  }
 
   const getEditModeProps = (item: NavigationMenuItem): EditModeProps => {
     const itemId = item.id;

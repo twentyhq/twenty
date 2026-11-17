@@ -4,17 +4,13 @@ import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sectio
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuItemCustomSectionProps = {
-  section: NavigationMenuItem;
+  section: Pick<NavigationMenuItem, 'id' | 'name'>;
 };
 
 export const NavigationMenuItemCustomSection = ({
   section,
 }: NavigationMenuItemCustomSectionProps) => {
   const items = useNavigationMenuItemSectionItems(section.id);
-
-  if (items.length === 0) {
-    return null;
-  }
 
   return (
     <WorkspaceSectionContainer
@@ -23,6 +19,7 @@ export const NavigationMenuItemCustomSection = ({
       containerId={section.id}
       navigationSectionId={`navigation-menu-section-${section.id}`}
       isReadOnly
+      isHiddenWhenEmpty
       visibleItemLimit={NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT}
     />
   );

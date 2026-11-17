@@ -1,4 +1,4 @@
-import { isNavigationMenuItemSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSection';
+import { getNavigationMenuSectionsInContainer } from '@/navigation-menu-item/common/utils/getNavigationMenuSectionsInContainer';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -18,11 +18,8 @@ export const useWorkspaceNavigationMenuSections = (
     return [];
   }
 
-  return workspaceNavigationMenuItems
-    .filter(
-      (item) =>
-        isNavigationMenuItemSection(item) &&
-        (item.parentId ?? null) === containerId,
-    )
-    .sort((a, b) => a.position - b.position);
+  return getNavigationMenuSectionsInContainer({
+    navigationMenuItems: workspaceNavigationMenuItems,
+    containerId,
+  });
 };

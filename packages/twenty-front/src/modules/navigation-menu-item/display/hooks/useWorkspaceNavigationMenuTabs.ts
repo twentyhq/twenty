@@ -1,4 +1,4 @@
-import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
+import { getNavigationMenuTabsInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuTabsInDisplayOrder';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -16,7 +16,5 @@ export const useWorkspaceNavigationMenuTabs = (): NavigationMenuItem[] => {
     return [];
   }
 
-  return workspaceNavigationMenuItems
-    .filter(isNavigationMenuItemTab)
-    .sort((a, b) => a.position - b.position);
+  return getNavigationMenuTabsInDisplayOrder(workspaceNavigationMenuItems);
 };

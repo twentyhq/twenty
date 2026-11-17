@@ -4,7 +4,7 @@ import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sectio
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuTabContentProps = {
-  tab: NavigationMenuItem;
+  tab: Pick<NavigationMenuItem, 'id' | 'name'>;
 };
 
 export const NavigationMenuTabContent = ({
@@ -14,16 +14,15 @@ export const NavigationMenuTabContent = ({
 
   return (
     <>
-      {items.length > 0 && (
-        <WorkspaceSectionContainer
-          sectionTitle={tab.name ?? ''}
-          items={items}
-          containerId={tab.id}
-          navigationSectionId={`navigation-menu-tab-${tab.id}`}
-          isTitleHidden
-          isReadOnly
-        />
-      )}
+      <WorkspaceSectionContainer
+        sectionTitle={tab.name ?? ''}
+        items={items}
+        containerId={tab.id}
+        navigationSectionId={`navigation-menu-tab-${tab.id}`}
+        isTitleHidden
+        isReadOnly
+        isHiddenWhenEmpty
+      />
       <NavigationMenuItemSections containerId={tab.id} />
     </>
   );
