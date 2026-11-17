@@ -6,7 +6,6 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
@@ -19,13 +18,11 @@ import {
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { findApplicationOwnedFlatEntity } from 'src/engine/core-modules/application/utils/find-application-owned-flat-entity.util';
+import { isApplicationOwnedEntityReachable } from 'src/engine/core-modules/application/utils/is-application-owned-entity-reachable.util';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { readApplicationTargetIdOrThrow } from 'src/engine/core-modules/application/utils/read-application-target-id-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getRequest } from 'src/utils/extract-request';
 
 // Sessions and API keys keep workspace-wide reach behind their permission
@@ -122,16 +119,15 @@ export class ApplicationTargetGuard implements CanActivate {
           'An application token can only reach its own application registration',
         );
       case 'applicationOwnedEntity': {
-        const flatEntity = await this.findFlatEntity({
+        const flatEntity = await findApplicationOwnedFlatEntity({
+          flatEntityMapsCacheService: this.flatEntityMapsCacheService,
           metadataName: target.metadataName,
           entityId: targetId,
           workspaceId,
         });
 
-        // Unknown ids pass so the resolver keeps answering NOT_FOUND
         return this.assertOwnTargetOrThrow(
-          !isDefined(flatEntity) ||
-            flatEntity.applicationId === callingApplication.id,
+          isApplicationOwnedEntityReachable({ flatEntity, callingApplication }),
           'An application token can only reach its own application',
         );
       }
@@ -200,7 +196,8 @@ export class ApplicationTargetGuard implements CanActivate {
           workspaceId,
         });
       case 'applicationOwnedEntity': {
-        const flatEntity = await this.findFlatEntity({
+        const flatEntity = await findApplicationOwnedFlatEntity({
+          flatEntityMapsCacheService: this.flatEntityMapsCacheService,
           metadataName: target.metadataName,
           entityId: targetId,
           workspaceId,
@@ -273,30 +270,5 @@ export class ApplicationTargetGuard implements CanActivate {
     }
 
     return application;
-  }
-
-  private async findFlatEntity({
-    metadataName,
-    entityId,
-    workspaceId,
-  }: {
-    metadataName: AllMetadataName;
-    entityId: string;
-    workspaceId: string;
-  }): Promise<SyncableFlatEntity | undefined> {
-    const flatMapsKey = getMetadataFlatEntityMapsKey(metadataName);
-
-    const flatEntityMapsByKey =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: [flatMapsKey] },
-      );
-
-    const flatEntityMaps: FlatEntityMaps<SyncableFlatEntity> =
-      flatEntityMapsByKey[flatMapsKey];
-
-    return findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: entityId,
-      flatEntityMaps,
-    });
   }
 }

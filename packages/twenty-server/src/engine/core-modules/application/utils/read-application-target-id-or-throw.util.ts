@@ -1,7 +1,7 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isObject, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
@@ -10,17 +10,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
-
-const readPath = (value: unknown, path: string): unknown =>
-  path
-    .split('.')
-    .reduce<unknown>(
-      (currentValue, key) =>
-        isObject(currentValue)
-          ? (currentValue as Record<string, unknown>)[key]
-          : undefined,
-      value,
-    );
+import { readValueAtPath } from 'src/engine/core-modules/application/utils/read-value-at-path.util';
 
 const readApplicationTargetValue = ({
   context,
@@ -37,11 +27,11 @@ const readApplicationTargetValue = ({
         GqlExecutionContext.create(context).getArgs()[target.argName];
 
       return isDefined(target.idKey)
-        ? readPath(argValue, target.idKey)
+        ? readValueAtPath(argValue, target.idKey)
         : argValue;
     }
     case 'graphqlArgs':
-      return readPath(
+      return readValueAtPath(
         GqlExecutionContext.create(context).getArgs(),
         target.idKey,
       );
