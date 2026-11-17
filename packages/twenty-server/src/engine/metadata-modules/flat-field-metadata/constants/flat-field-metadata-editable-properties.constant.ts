@@ -2,6 +2,7 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 
 export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
   custom: [
+    'computation',
     'defaultValue',
     'description',
     'icon',

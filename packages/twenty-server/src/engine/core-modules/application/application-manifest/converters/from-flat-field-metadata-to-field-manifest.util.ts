@@ -131,6 +131,9 @@ export const fromFlatFieldMetadataToFieldManifest = ({
             flatFieldMetadata.disabledFieldPermissionActions,
         }
       : {}),
+    ...(isDefined(flatFieldMetadata.computation)
+      ? { computation: flatFieldMetadata.computation }
+      : {}),
     isNullable: flatFieldMetadata.isNullable,
     isUnique: flatFieldMetadata.isUnique ?? false,
     isSearchable: flatFieldMetadata.isSearchable,

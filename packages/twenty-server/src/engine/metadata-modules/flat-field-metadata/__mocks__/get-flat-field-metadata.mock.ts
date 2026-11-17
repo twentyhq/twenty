@@ -27,6 +27,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     updatedAt: createdAt,
     defaultValue: null,
     disabledFieldPermissionActions: null,
+    computation: null,
     options: null,
     morphId: null,
     settings: null,

@@ -5,6 +5,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "applicationUniversalIdentifier": "application-universal-identifier",
   "calendarEndViewUniversalIdentifiers": [],
   "calendarViewUniversalIdentifiers": [],
+  "computation": null,
   "createdAt": "2024-01-01T00:00:00.000Z",
   "defaultValue": null,
   "description": "default flat field metadata description",

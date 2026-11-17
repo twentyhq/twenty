@@ -104,6 +104,7 @@ export const createStandardFieldFlatMetadata = <
     isUIEditable,
     disabledFieldPermissionActions:
       partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ?? null,
+    computation: null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

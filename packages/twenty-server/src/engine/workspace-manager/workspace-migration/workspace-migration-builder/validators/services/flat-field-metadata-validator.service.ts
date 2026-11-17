@@ -13,6 +13,7 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { validateFlatFieldMetadataComputation } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-computation.util';
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
@@ -248,6 +249,10 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
+    );
+
+    validationResult.errors.push(
+      ...validateFlatFieldMetadataComputation(flatFieldMetadataToValidate),
     );
 
     const fieldMetadataTypeValidationErrors =
@@ -491,6 +496,7 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
+      ...validateFlatFieldMetadataComputation(flatFieldMetadataToValidate),
     );
 
     validationResult.errors.push(

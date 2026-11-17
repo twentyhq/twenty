@@ -108,6 +108,7 @@ export const createStandardRelationFieldFlatMetadata = <
     isAuditLogged: true,
     isUIEditable,
     disabledFieldPermissionActions: null,
+    computation: null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue,

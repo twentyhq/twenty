@@ -503,6 +503,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           description: 'A field',
           icon: 'IconAbc',
           disabledFieldPermissionActions: ['canUpdateFieldValue'],
+          computation: { kind: 'FORMULA', expression: 'UPPER(name)' },
           defaultValue: "'x'",
           options: null,
           universalSettings: null,

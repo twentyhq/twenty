@@ -12,6 +12,7 @@ import {
   assertIsDefinedOrThrow,
   assertUnreachable,
   isDefined,
+  isComputedField,
 } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -206,6 +207,14 @@ export class DataArgProcessorService {
       FieldMetadataEntity['options']
     >;
   }): Promise<unknown> {
+    if (isComputedField(fieldMetadata)) {
+      throw new CommonQueryRunnerException(
+        `${key} is a computed field and does not support write operations`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
         return validateOverriddenPositionFieldOrThrow(value, key);

@@ -1673,6 +1673,7 @@ export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_
 
 export interface Field {
     applicationId: Scalars['UUID']
+    computation?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     defaultValue?: Scalars['JSON']
     description?: Scalars['String']
@@ -6133,7 +6134,7 @@ export interface CreateEmailGroupChannelOutputGenqlSelection{
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
-export interface CreateFieldInput {defaultValue?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isAuditLogged?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),label: Scalars['String'],morphRelationsCreationPayload?: (Scalars['JSON'][] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],options?: (Scalars['JSON'] | null),relationCreationPayload?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),type: FieldMetadataType}
+export interface CreateFieldInput {computation?: (Scalars['JSON'] | null),defaultValue?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isAuditLogged?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),label: Scalars['String'],morphRelationsCreationPayload?: (Scalars['JSON'][] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],options?: (Scalars['JSON'] | null),relationCreationPayload?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),type: FieldMetadataType}
 
 export interface CreateFrontComponentInput {builtComponentChecksum: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),name: Scalars['String'],sourceComponentPath: Scalars['String']}
 
@@ -6507,6 +6508,7 @@ export interface FeatureFlagGenqlSelection{
 
 export interface FieldGenqlSelection{
     applicationId?: boolean | number
+    computation?: boolean | number
     createdAt?: boolean | number
     defaultValue?: boolean | number
     description?: boolean | number
@@ -9011,7 +9013,7 @@ export interface UpdateCommandMenuItemInput {availabilityCoreObjectName?: (Scala
 
 export interface UpdateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),id: Scalars['UUID']}
 
-export interface UpdateFieldInput {defaultValue?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isAuditLogged?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),name?: (Scalars['String'] | null),objectMetadataId?: (Scalars['UUID'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),translations?: (MetadataTranslationOverrideInput[] | null),universalIdentifier?: (Scalars['String'] | null)}
+export interface UpdateFieldInput {computation?: (Scalars['JSON'] | null),defaultValue?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isAuditLogged?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),name?: (Scalars['String'] | null),objectMetadataId?: (Scalars['UUID'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),translations?: (MetadataTranslationOverrideInput[] | null),universalIdentifier?: (Scalars['String'] | null)}
 
 export interface UpdateFrontComponentInput {
 /** The id of the front component to update */

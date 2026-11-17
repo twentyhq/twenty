@@ -3807,6 +3807,9 @@ export default {
             ]
         },
         "CreateFieldInput": {
+            "computation": [
+                344
+            ],
             "defaultValue": [
                 344
             ],
@@ -5304,6 +5307,9 @@ export default {
         "Field": {
             "applicationId": [
                 564
+            ],
+            "computation": [
+                344
             ],
             "createdAt": [
                 228
@@ -14582,6 +14588,9 @@ export default {
             ]
         },
         "UpdateFieldInput": {
+            "computation": [
+                344
+            ],
             "defaultValue": [
                 344
             ],

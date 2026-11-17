@@ -1733,6 +1733,7 @@ input CreateEmailingDomainInput {
 }
 
 input CreateFieldInput {
+  computation: JSON
   defaultValue: JSON
   description: String
   icon: String
@@ -2530,6 +2531,7 @@ enum FeatureFlagKey {
 
 type Field {
   applicationId: UUID!
+  computation: JSON
   createdAt: DateTime!
   defaultValue: JSON
   description: String
@@ -5457,6 +5459,7 @@ input UpdateEmailGroupChannelInput {
 }
 
 input UpdateFieldInput {
+  computation: JSON
   defaultValue: JSON
   description: String
   icon: String

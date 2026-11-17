@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isComputedField } from 'twenty-shared/utils';
+
 import { ObjectMetadataCreateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/create-input/object-metadata-create-gql-input-type.generator';
 import { ObjectMetadataFilterGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/filter-input/object-metadata-filter-gql-input-type.generator';
 import { ObjectMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/object-metadata-group-by-gql-input-type.generator';
@@ -26,14 +28,16 @@ export class ObjectMetadataGqlInputTypeGenerator {
     fields: FlatFieldMetadata[],
     context: SchemaGenerationContext,
   ) {
+    const writableFields = fields.filter((field) => !isComputedField(field));
+
     this.objectMetadataCreateGqlInputTypeGenerator.buildAndStore(
       flatObjectMetadata,
-      fields,
+      writableFields,
       context,
     );
     this.objectMetadataUpdateGqlInputTypeGenerator.buildAndStore(
       flatObjectMetadata,
-      fields,
+      writableFields,
       context,
     );
     this.objectMetadataFilterGqlInputTypeGenerator.buildAndStore(

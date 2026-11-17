@@ -5,7 +5,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { hasStoredColumn, isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -189,7 +189,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (isMorphRelationHead(currentFlatFieldMetadata)) {
+    if (!hasStoredColumn(currentFlatFieldMetadata)) {
       return;
     }
 

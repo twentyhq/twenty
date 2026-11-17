@@ -50,6 +50,7 @@ describe('flatEntityToScalarFlatEntity', () => {
     expect(result).toMatchInlineSnapshot(`
 {
   "applicationId": "application-id",
+  "computation": null,
   "createdAt": "2025-01-01T00:00:00.000Z",
   "defaultValue": "'default-value'",
   "description": "test description",
