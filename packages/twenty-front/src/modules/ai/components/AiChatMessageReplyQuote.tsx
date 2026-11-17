@@ -1,3 +1,4 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent } from 'react';
@@ -5,14 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
-import { useIsOwnAiChatMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
-import { aiChatReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/agentChatReplyQuotedMessageIdFamilySelector';
-import { type AiChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
-import { scrollToAiChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { useIsOwnAiChatMessage } from '@/ai/hooks/useIsOwnAiChatMessage';
+import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadMessageFamilySelector';
+import { aiChatReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/aiChatReplyQuotedMessageIdFamilySelector';
+import { type AiChatMessageQuote } from '@/ai/types/AiChatMessageQuote';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAiChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // width 0 with min-width 100% keeps the one-line excerpt from widening a fit-content bubble
 const StyledReplyLine = styled.div<{ isClickable: boolean }>`
@@ -39,14 +38,14 @@ export const AiChatMessageReplyQuote = ({
   quote,
 }: AiChatMessageReplyQuoteProps) => {
   const { t } = useLingui();
-  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const quotedMessageId = useAtomFamilySelectorValue(
     aiChatReplyQuotedMessageIdFamilySelector,
-    { replyMessageId },
+    { threadId, replyMessageId },
   );
   const quotedMessage = useAtomFamilySelectorValue(
     aiChatThreadMessageFamilySelector,
-    { threadId: aiChatDisplayedThread, messageId: quotedMessageId },
+    { threadId, messageId: quotedMessageId },
   );
   const isOwnQuotedMessage = useIsOwnAiChatMessage(quotedMessage);
   const authorName = isOwnQuotedMessage ? t`You` : quote.authorName;

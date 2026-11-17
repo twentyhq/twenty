@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -17,7 +17,7 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadActivityTimeProps = {
   thread: AiChatThreadRecord;
-  variant?: InboxThreadListVariant;
+  variant?: AiChatThreadRowVariant;
 };
 
 export const AiChatThreadActivityTime = ({
@@ -27,7 +27,7 @@ export const AiChatThreadActivityTime = ({
   const { t } = useLingui();
   const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateFamilySelector,
+    aiChatThreadMemberStateFamilySelector,
     thread.id,
   );
   const { formatAiChatThreadDay } = useFormatAiChatThreadDate();

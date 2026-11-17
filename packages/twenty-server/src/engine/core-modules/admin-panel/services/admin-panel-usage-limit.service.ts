@@ -6,6 +6,7 @@ import {
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
 import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitInstanceOverrideService } from 'src/engine/core-modules/usage-limit/instance-override/services/usage-limit-instance-override.service';
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
@@ -21,20 +22,28 @@ export class AdminPanelUsageLimitService {
   constructor(
     private readonly usageLimitService: UsageLimitService,
     private readonly usageLimitDefaultValueService: UsageLimitDefaultValueService,
+    private readonly usageLimitInstanceOverrideService: UsageLimitInstanceOverrideService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async findWorkspaceUsageLimits(
     workspaceId: string,
   ): Promise<AdminPanelWorkspaceUsageLimitsDTO> {
-    const [usageLimits, defaultLimitValues] = await Promise.all([
-      this.usageLimitService.findAll(workspaceId),
-      this.findDefaultLimitValues(workspaceId),
-    ]);
+    const [usageLimits, defaultLimitValues, endDatesByUsageLimitId] =
+      await Promise.all([
+        this.usageLimitService.findAll(workspaceId),
+        this.findDefaultLimitValues(workspaceId),
+        this.usageLimitInstanceOverrideService.findEndDatesByUsageLimitId(
+          workspaceId,
+        ),
+      ]);
 
     return {
       defaults: this.buildDefaults({ usageLimits, defaultLimitValues }),
-      limits: usageLimits.map(fromUsageLimitEntityToDto),
+      limits: usageLimits.map((usageLimit) => ({
+        ...fromUsageLimitEntityToDto(usageLimit),
+        endsAt: endDatesByUsageLimitId.get(usageLimit.id) ?? null,
+      })),
     };
   }
 

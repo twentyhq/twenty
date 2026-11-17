@@ -64,7 +64,9 @@ export const SettingsAccountsListEmptyStateCard = () => {
 
       {isImapSmtpCaldavEnabled && (
         <SettingsCard
-          to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
+          to={getSettingsPath(
+            SettingsPath.AppPreferencesNewImapSmtpCaldavConnection,
+          )}
           Icon={<IconAt size={theme.icon.size.md} />}
           title={t`Connect via IMAP/SMTP`}
         />

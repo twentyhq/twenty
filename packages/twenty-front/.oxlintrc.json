@@ -135,6 +135,23 @@
     "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/no-miscased-acronym-in-message": "error",
     "twenty/types-folder-filename": ["error", { "convention": "PascalCase" }],
+    "twenty/module-import-direction": [
+      "error",
+      {
+        "directions": [
+          {
+            "sourcePath": "/src/modules/ai/",
+            "forbiddenImportPrefix": "@/inbox/",
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/src/modules/ai/testing/"
+            ],
+            "reason": "the AI chat must not depend on the inbox. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+          }
+        ]
+      }
+    ],
     "twenty/enforce-module-boundaries": [
       "error",
       {

@@ -9,7 +9,12 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
-const SUPPORTED_TYPES = ['oauth', 'oauth-discovery', 'custom'] as const;
+const SUPPORTED_TYPES = [
+  'oauth',
+  'oauth-discovery',
+  'custom',
+  'api-key',
+] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,

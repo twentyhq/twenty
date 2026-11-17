@@ -1,27 +1,10 @@
-import { styled } from '@linaria/react';
-import { Suspense, lazy } from 'react';
-
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
-import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatToolFrontComponent } from '@/ai/components/AiChatToolFrontComponent';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { type ToolInput } from '@/ai/types/ToolInput';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
-
-const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  overflow: hidden;
-`;
 
 type AiChatToolWidgetProps = {
   toolPart: ToolUIPart | DynamicToolUIPart;
@@ -54,20 +37,15 @@ export const AiChatToolWidget = ({
   };
 
   return (
-    <StyledContainer>
-      <Suspense fallback={<FrontComponentSkeletonLoader />}>
-        <FrontComponentRenderer
-          frontComponentId={frontComponentId}
-          toolCall={toolCall}
-          loadingFallback={<FrontComponentSkeletonLoader />}
-          unavailableFallback={
-            <ThinkingToolStepRow
-              part={toolPart}
-              isActive={isThinkingStepPartActive(toolPart, isStreaming)}
-            />
-          }
+    <AiChatToolFrontComponent
+      frontComponentId={frontComponentId}
+      toolCall={toolCall}
+      unavailableFallback={
+        <ThinkingToolStepRow
+          part={toolPart}
+          isActive={isThinkingStepPartActive(toolPart, isStreaming)}
         />
-      </Suspense>
-    </StyledContainer>
+      }
+    />
   );
 };

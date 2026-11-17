@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
-import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 
 export const useAnswerToolCallApproval = ({

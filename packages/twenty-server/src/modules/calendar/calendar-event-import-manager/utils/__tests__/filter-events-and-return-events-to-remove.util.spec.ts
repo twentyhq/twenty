@@ -147,6 +147,26 @@ describe('filterEventsAndReturnEventsToRemove', () => {
     expect(filteredEvents).toEqual([externallyOrganizedEvent]);
   });
 
+  it('should treat an internal event whose only other attendee is a booked room as internal', () => {
+    const roomHandle = 'acme.com_188abc@resource.calendar.google.com';
+    const internalEventWithRoom = buildFetchedCalendarEvent({
+      id: 'internal-with-room',
+      resourceHandles: [roomHandle],
+      participants: [
+        buildParticipant('me@acme.com'),
+        buildParticipant('colleague@acme.com'),
+        buildParticipant(roomHandle),
+      ],
+    });
+
+    const { filteredEvents, eventsToRemove } = filterEvents({
+      events: [internalEventWithRoom, regularEvent],
+    });
+
+    expect(filteredEvents).toEqual([regularEvent]);
+    expect(eventsToRemove).toEqual([internalEventWithRoom]);
+  });
+
   it('should route a cancelled internal event to removal once', () => {
     const cancelledInternalEvent = { ...internalEvent, isCanceled: true };
 

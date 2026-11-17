@@ -3,8 +3,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
 import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
-import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/aiChatMessageAuthorLookupSelector';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAiChatMessageAuthor';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

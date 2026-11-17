@@ -12,7 +12,6 @@ export type AffiliateApplicationWorkflowPayload = {
   audienceSize: string;
   country: string;
   promotionPlan: string;
-  isIntegrationPartner: boolean;
 };
 
 export function buildAffiliateWorkflowPayload(
@@ -27,6 +26,5 @@ export function buildAffiliateWorkflowPayload(
     audienceSize: request.audienceSize ?? '',
     country: request.country ?? '',
     promotionPlan: request.promotionPlan ?? '',
-    isIntegrationPartner: request.isIntegrationPartner === true,
   };
 }

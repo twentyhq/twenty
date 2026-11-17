@@ -1,3 +1,5 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
@@ -6,10 +8,10 @@ import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastM
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
-import { InboxThreadStatusNotice } from '@/ai/components/AiChatThreadInboxStateNotice';
-import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
-import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { AiChatThreadStatusNotice } from '@/ai/components/AiChatThreadStatusNotice';
+import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
+import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AiChatStreamingAutoScrollEffect';
+import { aiChatHasMessageFamilySelector } from '@/ai/states/selectors/aiChatHasMessageFamilySelector';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
@@ -21,7 +23,6 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { styled } from '@linaria/react';
 import { Suspense, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledScrollWrapperContainer = styled.div`
   display: flex;
@@ -54,10 +55,14 @@ const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
 `;
 
 export const AiChatTabMessageList = () => {
+  const { threadId } = useAiChatInstanceOrThrow();
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
+  const aiChatHasMessage = useAtomFamilySelectorValue(
+    aiChatHasMessageFamilySelector,
+    threadId,
+  );
 
   const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(
     aiChatSurface ?? AI_CHAT_SURFACE.SIDE_PANEL,
@@ -97,7 +102,7 @@ export const AiChatTabMessageList = () => {
               <AiChatLastMessageWithStreamingState />
               <AiChatPendingResponseIndicator />
               <AiChatErrorUnderMessageList />
-              <InboxThreadStatusNotice />
+              <AiChatThreadStatusNotice />
             </StyledMessageListContent>
             <AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
             <AiChatStreamingAutoScrollEffect />

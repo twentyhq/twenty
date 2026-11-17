@@ -28,6 +28,9 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -115,6 +118,27 @@ const UPDATE_VISIBILITY_MUTATION = `
   ) {
     updateCoreWorkflowVisibility(input: $input) {
       id
+      visibility
+    }
+  }
+`;
+
+const CORE_WORKFLOW_WITH_NAME_BY_ID_QUERY = `
+  query CoreWorkflowWithNameById($coreWorkflowId: UUID!) {
+    coreWorkflowById(coreWorkflowId: $coreWorkflowId) {
+      id
+      name
+      visibility
+      canChangeVisibility
+    }
+  }
+`;
+
+const UPDATE_CORE_WORKFLOW_MUTATION = `
+  mutation UpdateCoreWorkflow($input: UpdateCoreWorkflowInput!) {
+    updateCoreWorkflow(input: $input) {
+      id
+      name
       visibility
     }
   }
@@ -526,6 +550,229 @@ describe('core workflow visibility (e2e)', () => {
       expect(stillPrivate.body.data.coreWorkflowById).toMatchObject({
         visibility: 'PRIVATE',
       });
+    });
+  });
+
+  describe('a visibility change sent through updateCoreWorkflow', () => {
+    const INITIAL_NAME = 'Visibility Through Update';
+    const RENAMED_NAME = 'Visibility Through Update Renamed';
+
+    let updatedCoreWorkflowId: string;
+
+    const readAsCreator = async () => {
+      const response = await workflowGraphqlRequest(
+        CORE_WORKFLOW_WITH_NAME_BY_ID_QUERY,
+        { coreWorkflowId: updatedCoreWorkflowId },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.coreWorkflowById;
+    };
+
+    beforeAll(async () => {
+      ({ coreWorkflowId: updatedCoreWorkflowId } = await createCoreWorkflow({
+        name: INITIAL_NAME,
+      }));
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    afterAll(async () => {
+      if (isDefined(updatedCoreWorkflowId)) {
+        await setVisibility(
+          updatedCoreWorkflowId,
+          WorkflowVisibility.WORKSPACE,
+        );
+        await deleteCoreWorkflows({ coreWorkflowIds: [updatedCoreWorkflowId] });
+      }
+    });
+
+    it('changes the visibility without a name', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        id: updatedCoreWorkflowId,
+        name: INITIAL_NAME,
+        visibility: 'PRIVATE',
+      });
+    });
+
+    it('holds the new visibility in the cached workflow at once', async () => {
+      const { flatWorkflowMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+
+      const cachedFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: updatedCoreWorkflowId,
+        flatEntityMaps: flatWorkflowMaps,
+      });
+
+      assertIsDefinedOrThrow(cachedFlatWorkflow);
+      expect(cachedFlatWorkflow.visibility).toBe(WorkflowVisibility.PRIVATE);
+      expect(cachedFlatWorkflow.createdByUserWorkspaceId).not.toBeNull();
+    });
+
+    it('emits a workflow updated event carrying the visibility', async () => {
+      const emitMetadataEvents = jest.spyOn(
+        getAppProviderByClassName<MetadataEventEmitter>('MetadataEventEmitter'),
+        'emitMetadataEvents',
+      );
+
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            visibility: WorkflowVisibility.WORKSPACE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(emitMetadataEvents).toHaveBeenCalledTimes(1);
+      expect(emitMetadataEvents).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          metadataEvents: expect.arrayContaining([
+            expect.objectContaining({
+              type: 'updated',
+              metadataName: 'workflow',
+              recordId: updatedCoreWorkflowId,
+              properties: expect.objectContaining({
+                updatedFields: ['visibility'],
+              }),
+            }),
+          ]),
+        }),
+      );
+    });
+
+    it('renames and changes the visibility in one call', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            name: RENAMED_NAME,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        name: RENAMED_NAME,
+        visibility: 'PRIVATE',
+      });
+    });
+
+    it('applies neither the name nor the visibility when another member is refused', async () => {
+      await setVisibility(updatedCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+
+      const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
+        input: {
+          coreWorkflowId: updatedCoreWorkflowId,
+          name: 'Renamed By Another Member',
+          visibility: WorkflowVisibility.PRIVATE,
+        },
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+      expect(await readAsCreator()).toMatchObject({
+        name: RENAMED_NAME,
+        visibility: 'WORKSPACE',
+        canChangeVisibility: true,
+      });
+    });
+
+    it('still lets another member rename a workspace-visible workflow', async () => {
+      const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
+        input: {
+          coreWorkflowId: updatedCoreWorkflowId,
+          name: INITIAL_NAME,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await readAsCreator()).toMatchObject({
+        name: INITIAL_NAME,
+        visibility: 'WORKSPACE',
+        canChangeVisibility: true,
+      });
+    });
+  });
+
+  describe('two members claiming an ownerless workflow at the same time', () => {
+    let contestedCoreWorkflowId: string;
+
+    beforeAll(async () => {
+      ({ coreWorkflowId: contestedCoreWorkflowId } = await createCoreWorkflow({
+        name: 'Contested Ownerless Workflow',
+      }));
+
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+        [contestedCoreWorkflowId],
+      );
+
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+    });
+
+    afterAll(async () => {
+      if (isDefined(contestedCoreWorkflowId)) {
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [contestedCoreWorkflowId],
+        });
+      }
+    });
+
+    it('lets exactly one of them win', async () => {
+      const claimInput = {
+        input: {
+          coreWorkflowId: contestedCoreWorkflowId,
+          visibility: WorkflowVisibility.WORKSPACE,
+        },
+      };
+
+      const claims = await Promise.all([
+        workflowGraphqlRequest(UPDATE_CORE_WORKFLOW_MUTATION, claimInput),
+        asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, claimInput),
+      ]);
+
+      const refusedClaims = claims.filter(({ body }) => isDefined(body.errors));
+
+      expect(refusedClaims).toHaveLength(1);
+      expect(refusedClaims[0].body.errors[0].extensions.code).toBe('FORBIDDEN');
+
+      const ownershipViews = await Promise.all([
+        workflowGraphqlRequest(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: contestedCoreWorkflowId,
+        }),
+        asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: contestedCoreWorkflowId,
+        }),
+      ]);
+
+      expect(
+        ownershipViews.map(
+          ({ body }) => body.data.coreWorkflowById.canChangeVisibility,
+        ),
+      ).toEqual(claims.map(({ body }) => !isDefined(body.errors)));
     });
   });
 

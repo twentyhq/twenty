@@ -22,7 +22,6 @@ export const AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES: readonly AiChatApprovalRevi
         ],
         cc: [],
         bcc: [],
-        isCcBccExpanded: false,
         subject: 'Following up on Tuesday’s demo',
         body: serializeParagraphs([
           'Hi Brian and Joe,',
@@ -39,7 +38,6 @@ export const AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES: readonly AiChatApprovalRevi
         to: [{ address: 'grace@example.com', displayName: 'Grace Hopper' }],
         cc: [{ address: 'ada@example.com', displayName: 'Ada Lovelace' }],
         bcc: [],
-        isCcBccExpanded: true,
         subject: 'Pipeline reporting walkthrough',
         body: serializeParagraphs([
           'Hi Grace,',
@@ -60,7 +58,6 @@ export const AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES: readonly AiChatApprovalRevi
         ],
         cc: [],
         bcc: [],
-        isCcBccExpanded: false,
         subject: 'Checking in before the rollout',
         body: serializeParagraphs([
           'Hi Katherine,',

@@ -1,3 +1,4 @@
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -6,11 +7,11 @@ import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
 
 const answerAiChatToolCall = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
+jest.mock('@/ai/hooks/useAnswerAiChatToolCall', () => ({
   useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
@@ -61,7 +62,9 @@ const renderDeck = (store = createStore()) =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={store}>
-        <Deck />
+        <AiChatTestInstance>
+          <Deck />
+        </AiChatTestInstance>
       </Provider>
     </I18nProvider>,
   );
@@ -127,9 +130,9 @@ describe('AiChatRecordApprovalDeck', () => {
   it('keeps answering in its conversation when the person opens another one', async () => {
     const user = userEvent.setup();
     const store = createStore();
-    store.set(aiChatDisplayedThreadState.atom, 'thread-1');
+    store.set(aiChatTestInstanceThreadIdState.atom, 'thread-1');
     answerAiChatToolCall.mockImplementation(async () => {
-      store.set(aiChatDisplayedThreadState.atom, 'thread-2');
+      store.set(aiChatTestInstanceThreadIdState.atom, 'thread-2');
 
       return true;
     });

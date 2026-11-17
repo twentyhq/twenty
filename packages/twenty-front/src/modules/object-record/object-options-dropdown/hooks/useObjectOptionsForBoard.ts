@@ -6,6 +6,7 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -154,13 +155,17 @@ export const useObjectOptionsForBoard = ({
 
       const shouldShowFieldMetadataItem =
         updatedFieldDefinition.isVisible === true;
-      const corresponingRecordField = currentRecordFields.find(
-        (recordFieldToFind) =>
-          isDefined(updatedFieldDefinition.recordFieldId)
-            ? recordFieldToFind.id === updatedFieldDefinition.recordFieldId
-            : recordFieldToFind.fieldMetadataItemId ===
-              updatedFieldDefinition.fieldMetadataId,
-      );
+      const corresponingRecordField = isDefined(
+        updatedFieldDefinition.recordFieldId,
+      )
+        ? currentRecordFields.find(
+            (recordFieldToFind) =>
+              recordFieldToFind.id === updatedFieldDefinition.recordFieldId,
+          )
+        : findCanonicalRecordField({
+            recordFields: currentRecordFields,
+            fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
+          });
 
       const noExistingRecordField = !isDefined(corresponingRecordField);
 

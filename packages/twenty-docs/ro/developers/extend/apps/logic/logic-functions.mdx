@@ -813,6 +813,17 @@ export default defineFrontComponent({
 
 Componenta se montează imediat ce agentul a terminat transmiterea în flux a argumentelor sale, astfel încât gestionează întregul apel, nu doar rezultatul. `toolCall.status` trece prin `input-available`, stările de aprobare atunci când instrumentul are nevoie de aprobare, apoi prin `output-available`, `output-denied` sau `output-error`; `input` este ceea ce a propus agentul, iar `output` este ceea ce a returnat handlerul dvs. Afișați fiecare stare care vă interesează, deoarece rândul de pași nu mai este disponibil pentru a le acoperi.
 
+Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge**, **Aprobă** și feedbackul. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
+
 Atât `input`, cât și `output` sunt tipizate ca `Record\<string, unknown>`, așa că restrângeți tipul fiecărui câmp înainte de a-l utiliza, în loc să faceți conversii de tip. Acest lucru contează cel mai mult pentru orice transmiteți DOM-ului: o valoare pe care o introduceți într-un `href` fără să verificați că este un șir este un link controlat de rezultatul instrumentului.
 
 <Note>
@@ -962,12 +973,12 @@ export default defineHealthCheck({
 
 Rezultatul este o uniune discriminată, nu un boolean:
 
-| Câmp          | Obligatoriu                            | Descriere                                                                                                                                                                                                                                                                                                                                                            |
-| ------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `status`      | Da                                     | `OK` atunci când nu există nimic de raportat, altfel `SUCCESS`, `INFO`, `WARNING`, `ERROR` sau `NEUTRAL`                                                                                                                                                                                                                                                             |
-| `titlu`       | Pentru fiecare stare, cu excepția `OK` | Prima linie a bannerului de pe pagina de setări a aplicației                                                                                                                                                                                                                                                                                                         |
-| `description` | Nu                                     | O a doua linie sub titlu, despre ce trebuie făcut în această privință                                                                                                                                                                                                                                                                                                |
-| `acțiune`     | Nu                                     | `{ label, location }` pentru butonul bannerului. `location` este locul către care redirecționează butonul: o cale din Twenty, cum ar fi `/settings/billing`, opțional cu un hash pentru a selecta o filă, sau doar un hash, cum ar fi `#variables`, pentru a accesa o filă din propria pagină de setări; omite-l pentru a ajunge la fila de configurare a aplicației |
+| Câmp          | Obligatoriu                            | Descriere                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `status`      | Da                                     | `OK` atunci când nu există nimic de raportat, altfel `SUCCESS`, `INFO`, `WARNING`, `ERROR` sau `NEUTRAL`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `titlu`       | Pentru fiecare stare, cu excepția `OK` | Prima linie a bannerului de pe pagina de setări a aplicației                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `description` | Nu                                     | O a doua linie sub titlu, despre ce trebuie făcut în această privință                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `acțiune`     | Nu                                     | `{ label, location }` pentru butonul bannerului. `location` este locul către care redirecționează butonul: o cale din Twenty, cum ar fi `/settings/billing`, opțional cu un hash pentru a selecta o filă, sau doar un hash, cum ar fi `#variables`, pentru a merge la o filă a propriei pagini de setări. Adăugați `/` și o secțiune la hash-ul acelei file, cum ar fi `#general/connections` pentru conexiunile aplicației, pentru a derula la acea secțiune și a o evidenția; omiteți locația pentru a ajunge la fila de configurare a aplicației |
 
 `OK` nu afișează deloc un banner; orice altă stare redă titlul într-un banner colorat în funcție de aceasta, așa că alege-o pe cea care corespunde măsurii în care persoana trebuie să acționeze. Stările sunt propriile `ApplicationHealthStatus` ale Twenty, astfel încât șirul simplu și membrul enum sunt interschimbabile:
 
@@ -1221,7 +1232,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `șir`    | Numele fișierului (folosit pentru stocare și afișare)               |
-| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+| `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
 

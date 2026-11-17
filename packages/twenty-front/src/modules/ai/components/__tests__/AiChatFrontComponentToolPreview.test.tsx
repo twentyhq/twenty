@@ -6,11 +6,11 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
-import { type AiChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
+import { type AiChatPendingToolCall } from '@/ai/types/AiChatPendingToolCall';
 
 let pendingToolCalls: AiChatPendingToolCall[] = [];
 
-jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
+jest.mock('@/ai/hooks/useAiChatPendingToolCalls', () => ({
   useAiChatPendingToolCalls: () => pendingToolCalls,
 }));
 

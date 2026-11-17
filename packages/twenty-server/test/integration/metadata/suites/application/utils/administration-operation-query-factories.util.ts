@@ -174,23 +174,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { universalIdentifier: applicationUniversalIdentifier },
   }),
-  upgradeApplication: ({ applicationRegistrationId }: CallingApplication) => ({
-    query: gql`
-      mutation UpgradeApplication(
-        $appRegistrationId: String!
-        $targetVersion: String!
-      ) {
-        upgradeApplication(
-          appRegistrationId: $appRegistrationId
-          targetVersion: $targetVersion
-        )
-      }
-    `,
-    variables: {
-      appRegistrationId: applicationRegistrationId,
-      targetVersion: PLACEHOLDER_TEXT,
-    },
-  }),
   createApplicationRegistration: () => ({
     query: gql`
       mutation CreateApplicationRegistration(
@@ -360,12 +343,12 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       },
     },
   }),
-  upsertRowLevelPermissionPredicates: () => ({
+  upsertRowLevelPermissionRules: () => ({
     query: gql`
-      mutation UpsertRowLevelPermissionPredicates(
-        $input: UpsertRowLevelPermissionPredicatesInput!
+      mutation UpsertRowLevelPermissionRules(
+        $input: UpsertRowLevelPermissionRulesInput!
       ) {
-        upsertRowLevelPermissionPredicates(input: $input) {
+        upsertRowLevelPermissionRules(input: $input) {
           __typename
         }
       }
@@ -374,8 +357,7 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       input: {
         roleId: PLACEHOLDER_ID,
         objectMetadataId: PLACEHOLDER_ID,
-        predicates: [],
-        predicateGroups: [],
+        rules: [],
       },
     },
   }),

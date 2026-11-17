@@ -1,14 +1,13 @@
 import { useStore } from 'jotai';
 
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import {
   type AiChatPrepromptMode,
   aiChatPrepromptState,
-} from '@/ai/states/agentChatPrepromptState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+} from '@/ai/states/aiChatPrepromptState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -21,17 +20,16 @@ export const useStageAiChatPreprompt = () => {
   const setAiChatPreprompt = useSetAtomState(aiChatPrepromptState);
 
   const stageAiChatPreprompt = ({
+    threadId,
     serializedDocument,
     mode,
   }: {
+    threadId: string;
     serializedDocument: string;
     mode: AiChatPrepromptMode;
   }) => {
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-    const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
     const isIdleNewChat =
-      threadId === newAiChatThreadId &&
+      threadId === store.get(newAiChatThreadIdState.atom) &&
       !store.get(aiChatIsSendingMessageFamilyState.atomFamily({ threadId }));
 
     setAiChatDraftsByThreadId((previousDrafts) => ({
@@ -46,7 +44,7 @@ export const useStageAiChatPreprompt = () => {
       );
     }
 
-    setAiChatPreprompt({ serializedDocument, mode });
+    setAiChatPreprompt({ threadId, serializedDocument, mode });
   };
 
   return { stageAiChatPreprompt };

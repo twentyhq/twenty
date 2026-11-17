@@ -6,7 +6,7 @@ const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   userWorkspaceId
   targetRecordId
   targetObjectMetadataId
-  folderId
+  parentId
   position
   applicationId
   createdAt

@@ -1,5 +1,6 @@
 import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 import crypto from 'crypto';
+import { realpathSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'path';
 import { collectApplicationSourceFiles } from '@/app/bundles/collect-application-source-files';
@@ -51,6 +52,7 @@ export type BuiltFileInfo = {
 
 export type AppBuildResult = {
   builtFileInfos: Map<string, BuiltFileInfo>;
+  frontComponentSourcePaths: Map<string, string[]>;
 };
 
 export const buildApplication = async (
@@ -123,7 +125,7 @@ export const buildApplication = async (
         })
       : null;
 
-  const styleInputs: string[] = [];
+  const styleInputs = new Map<string, string[]>();
   const frontBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
@@ -141,7 +143,8 @@ export const buildApplication = async (
         : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
-          onSourceFiles: (paths) => styleInputs.push(...paths),
+          onSourceFiles: ({ paths, entryPath }) =>
+            styleInputs.set(entryPath, paths),
           getSharedDependenciesBuildContext: () =>
             sharedDependenciesBuildContext,
         }),
@@ -157,9 +160,34 @@ export const buildApplication = async (
     buildInputs: [
       ...Object.keys(logicBuild?.inputs ?? {}).map((path) => resolve(path)),
       ...Object.keys(frontBuild?.inputs ?? {}).map((path) => resolve(path)),
-      ...styleInputs,
+      ...[...styleInputs.values()].flat(),
     ],
   });
+  const frontComponentSourcePaths = new Map<string, string[]>();
+  for (const output of Object.values(frontBuild?.outputs ?? {})) {
+    if (!isDefined(output.entryPoint)) {
+      continue;
+    }
+    const entryPath = resolve(output.entryPoint);
+    const componentPath = frontComponents.find(
+      (path) => realpathSync(resolve(options.appPath, path)) === entryPath,
+    );
+    if (!isDefined(componentPath)) {
+      continue;
+    }
+    const inputs = Object.keys(output.inputs).map((path) => resolve(path));
+    frontComponentSourcePaths.set(
+      componentPath,
+      collectApplicationSourceFiles({
+        appPath: options.appPath,
+        entryPaths: [componentPath],
+        buildInputs: [
+          ...inputs,
+          ...inputs.flatMap((path) => styleInputs.get(path) ?? []),
+        ],
+      }),
+    );
+  }
   const builtPaths = new Set(
     [...builtFileInfos.values()].map(({ builtPath }) => builtPath),
   );
@@ -216,7 +244,7 @@ export const buildApplication = async (
     dereferenceSymlinks: options.dereferenceSymlinks,
   });
 
-  return { builtFileInfos };
+  return { builtFileInfos, frontComponentSourcePaths };
 };
 
 const writeGeneratedAsset = async ({

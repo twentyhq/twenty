@@ -98,7 +98,7 @@ export const compileApplication = async ({
 
   signal?.throwIfAborted();
   onProgress?.('Building application files...');
-  const { builtFileInfos } = await buildApplication({
+  const { builtFileInfos, frontComponentSourcePaths } = await buildApplication({
     appPath,
     manifest,
     filePaths: manifestResult.filePaths,
@@ -117,7 +117,12 @@ export const compileApplication = async ({
   }
 
   const updatedManifest = {
-    ...manifestUpdateChecksums({ manifest, builtFileInfos, outputDir }),
+    ...manifestUpdateChecksums({
+      manifest,
+      builtFileInfos,
+      outputDir,
+      frontComponentSourcePaths,
+    }),
     translations,
   };
 

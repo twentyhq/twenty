@@ -5,12 +5,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
+import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
+import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -73,9 +73,9 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
-  useExecuteInboxThreadStatusAction: () => ({
-    executeInboxThreadStatusAction: jest.fn(),
+jest.mock('@/ai/hooks/useExecuteAiChatThreadStatusAction', () => ({
+  useExecuteAiChatThreadStatusAction: () => ({
+    executeAiChatThreadStatusAction: jest.fn(),
     isPending: false,
   }),
 }));
@@ -140,7 +140,7 @@ const renderThread = async ({
       store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
       store.set(currentWorkspaceMembersState.atom, [mockedWorkspaceMemberData]);
       store.set(
-        inboxChannelsState.atom,
+        aiChatChannelsState.atom,
         isDefined(channelStatus) ? [SALES_CHANNEL] : [],
       );
       setInboxSelectedChannelView(

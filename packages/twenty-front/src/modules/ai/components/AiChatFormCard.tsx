@@ -6,7 +6,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatFormCardContent } from '@/ai/components/AiChatFormCardContent';
-import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
 
 type AiChatFormCardProps = {
   toolCallId: string;

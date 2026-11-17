@@ -1,9 +1,9 @@
 import { type ReactNode } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { InboxDirectMessageTitle } from '@/ai/components/AiChatDirectMessageTitle';
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
@@ -20,7 +20,7 @@ export const AiChatThreadPageContent = ({
   headerTitlePrefix,
 }: AiChatThreadPageContentProps) => {
   const isDirectMessage = useAtomFamilySelectorValue(
-    inboxThreadIsDirectMessageFamilySelector,
+    aiChatThreadIsDirectMessageFamilySelector,
     threadId,
   );
 
@@ -37,7 +37,7 @@ export const AiChatThreadPageContent = ({
         ) : undefined
       }
       headerTitlePrefix={headerTitlePrefix}
-      headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
+      headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
       headerTitleMode="record-title"
       isRecordIdentifierBarHidden
     />

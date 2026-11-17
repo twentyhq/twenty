@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { handleFieldMetadataDeactivationSideEffects } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-field-metadata-deactivation-side-effects.util';
 
@@ -82,5 +83,58 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
 
     expect(result.flatViewsToDelete).toEqual([view]);
     expect(result.flatViewsToUpdate).toEqual([]);
+  });
+
+  it('deletes lookup view fields that show the deactivated field', () => {
+    const lookupViewField: FlatViewField = {
+      id: 'lookup-view-field-id',
+      universalIdentifier: 'lookup-view-field-universal-identifier',
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+      applicationUniversalIdentifier: 'application-universal-identifier',
+      fieldMetadataId: 'relation-field-id',
+      fieldMetadataUniversalIdentifier: 'relation-field-universal-identifier',
+      viewId: 'view-id',
+      viewUniversalIdentifier: 'view-universal-identifier',
+      viewFieldGroupId: null,
+      viewFieldGroupUniversalIdentifier: null,
+      isVisible: true,
+      size: 150,
+      position: 1,
+      aggregateOperation: null,
+      relationTargetFieldMetadataId: 'target-field-id',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'target-field-universal-identifier',
+      isActive: true,
+      isSystemSideEffect: false,
+      isCanonical: false,
+      overrides: null,
+      universalOverrides: null,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+      deletedAt: null,
+    };
+    const fromFlatFieldMetadata = getFlatFieldMetadataMock({
+      id: 'target-field-id',
+      objectMetadataId: 'object-id',
+      universalIdentifier: 'target-field-universal-identifier',
+      type: FieldMetadataType.TEXT,
+    });
+
+    const result = handleFieldMetadataDeactivationSideEffects({
+      fromFlatFieldMetadata,
+      toFlatFieldMetadata: {
+        ...fromFlatFieldMetadata,
+        isActive: false,
+      },
+      ...getEmptyRelatedMaps(),
+      flatViewMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: lookupViewField,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      }),
+    });
+
+    expect(result.flatViewFieldsToDelete).toEqual([lookupViewField]);
   });
 });

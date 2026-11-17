@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { AiChatAgentAuthorResolver } from '@/ai/components/AiChatAgentAuthorResolver';
-import { type AiChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type AiChatMessageAuthor } from '@/ai/types/AiChatMessageAuthor';
 
 type AiChatMessageAuthorResolverProps = {
   author: AiChatMessageAuthor;

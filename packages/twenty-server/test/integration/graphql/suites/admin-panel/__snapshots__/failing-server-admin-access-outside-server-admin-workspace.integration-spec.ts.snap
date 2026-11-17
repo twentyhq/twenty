@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Server admin access outside the server admin workspace should refuse impersonating a user in another workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "Server-level impersonation is not enabled for this user or workspace.",
+  },
+  "message": "Server level impersonation not allowed",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Server admin access outside the server admin workspace should refuse listing the recent users 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Server admin access outside the server admin workspace should refuse listing the server admins 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Server admin access outside the server admin workspace should refuse listing the top workspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;

@@ -13,7 +13,7 @@ import {
 
 import { AiChatAddMenuRecordsPage } from '@/ai/components/AiChatAddMenuRecordsPage';
 import { AiChatAddMenuSkillsPage } from '@/ai/components/AiChatAddMenuSkillsPage';
-import { AiChatFileInput } from '@/ai/components/internal/AgentChatFileInput';
+import { AiChatFileInput } from '@/ai/components/internal/AiChatFileInput';
 import { AI_CHAT_ADD_MENU_PAGE } from '@/ai/constants/AiChatAddMenuPage';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';

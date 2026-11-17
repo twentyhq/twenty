@@ -4,11 +4,11 @@ import { useId, useState } from 'react';
 import { IconCalendar, IconClock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
 import {
   type AiChatThreadSnoozeOption,
   getAiChatThreadSnoozeOptions,
-} from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+} from '@/ai/utils/getAiChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';

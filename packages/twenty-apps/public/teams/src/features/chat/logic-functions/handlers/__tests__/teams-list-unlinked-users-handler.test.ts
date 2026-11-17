@@ -8,12 +8,14 @@ const {
   getTeamsWorkspaceGraphAccessMock,
   collectGraphUsersMock,
   listLinkedTeamsUserAadObjectIdsMock,
+  readTeamsDirectoryMatchRunOutcomeMock,
   coreApiClientMock,
 } = vi.hoisted(() => ({
   hasRolesPermissionMock: vi.fn(),
   getTeamsWorkspaceGraphAccessMock: vi.fn(),
   collectGraphUsersMock: vi.fn(),
   listLinkedTeamsUserAadObjectIdsMock: vi.fn(),
+  readTeamsDirectoryMatchRunOutcomeMock: vi.fn(),
   coreApiClientMock: vi.fn(function () {
     return {};
   }),
@@ -40,6 +42,13 @@ vi.mock(
   }),
 );
 
+vi.mock(
+  'src/features/chat/logic-functions/utils/read-teams-directory-match-run-outcome',
+  () => ({
+    readTeamsDirectoryMatchRunOutcome: readTeamsDirectoryMatchRunOutcomeMock,
+  }),
+);
+
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
@@ -61,6 +70,7 @@ describe('teamsListUnlinkedUsersHandler', () => {
       tenantId: 'tenant-1',
     });
     listLinkedTeamsUserAadObjectIdsMock.mockResolvedValue(new Set());
+    readTeamsDirectoryMatchRunOutcomeMock.mockResolvedValue(undefined);
     collectGraphUsersMock.mockResolvedValue({
       users: [ADA, BOB],
       isTruncated: false,
@@ -108,6 +118,7 @@ describe('teamsListUnlinkedUsersHandler', () => {
     expect(result).toEqual({
       success: true,
       hasMore: false,
+      hasAutoMatchFailed: false,
       teamsUsers: [
         {
           teamsUserAadObjectId: 'aad-bob',
@@ -133,6 +144,20 @@ describe('teamsListUnlinkedUsersHandler', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.hasMore).toBe(true);
+    }
+  });
+
+  it('flags a failed last auto-match run', async () => {
+    readTeamsDirectoryMatchRunOutcomeMock.mockResolvedValue({
+      isSuccessful: false,
+      errorMessage: 'graph down',
+    });
+
+    const result = await teamsListUnlinkedUsersHandler();
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.hasAutoMatchFailed).toBe(true);
     }
   });
 

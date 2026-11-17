@@ -1,5 +1,5 @@
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
 import { useState } from 'react';
 import { type ToolCallApprovalResponse } from 'twenty-shared/ai';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -7,10 +7,9 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
-import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
-import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
+import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAiChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
@@ -29,8 +28,8 @@ export const AiChatRecordApprovalDeck = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const store = useStore();
   const { answerAiChatToolCall } = useAnswerAiChatToolCall();
+  const { threadId } = useAiChatInstanceOrThrow();
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
@@ -61,9 +60,6 @@ export const AiChatRecordApprovalDeck = ({
     onAnsweringToolCallIdsChange(
       recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
-
-    // answers go to the conversation the batch started in, even if the person opens another one
-    const threadId = store.get(aiChatDisplayedThreadState.atom);
 
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);

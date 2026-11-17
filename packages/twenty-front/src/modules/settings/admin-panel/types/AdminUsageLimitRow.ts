@@ -17,5 +17,6 @@ export type AdminUsageLimitRow = {
   limitValue: number | null;
   burstValue: number | null;
   usageLimitId: string | null;
+  endsAt: string | null;
   isOverridden: boolean;
 };

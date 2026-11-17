@@ -88,6 +88,7 @@ describe('fathomListCallsByParticipantHandler', () => {
         },
         expect.not.objectContaining({ meetingUrl: expect.anything() }),
       ],
+      isTruncated: false,
     });
   });
 

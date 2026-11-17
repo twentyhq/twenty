@@ -3,8 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { type AiChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { getAiChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
+import { type AiChatMessageAuthor } from '@/ai/types/AiChatMessageAuthor';
+import { getAiChatAgentAuthor } from '@/ai/utils/getAiChatAgentAuthor';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   FindChatMessageAgentDocument,

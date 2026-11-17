@@ -1,25 +1,26 @@
+import { type AiChatRestoreEditorContentEventDetail } from '@/ai/types/AiChatRestoreEditorContentEventDetail';
+import { type AiChatInstanceEventDetail } from '@/ai/types/AiChatInstanceEventDetail';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
-import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { serializeAiChatEditorDraft } from '@/ai/utils/serializeAiChatEditorDraft';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
-import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AiChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
-import { getAiChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
+import { getAiChatAssistantMentionSearchResults } from '@/ai/utils/getAiChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
@@ -31,15 +32,13 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { useLingui } from '@lingui/react/macro';
 
 export const useAiChatEditor = () => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { instanceId, threadId: draftKey } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
     aiChatDraftsByThreadIdState,
   );
@@ -51,14 +50,13 @@ export const useAiChatEditor = () => {
   const { searchSkills } = useSkillSuggestionSearch();
   const { uploadFiles } = useAiChatFileUpload();
   const isDirectMessage = useAtomFamilySelectorValue(
-    inboxThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    aiChatThreadIsDirectMessageFamilySelector,
+    draftKey,
   );
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const initialDraft = aiChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
@@ -81,7 +79,10 @@ export const useAiChatEditor = () => {
           }
 
           event.preventDefault();
-          dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
+          dispatchBrowserEvent<AiChatInstanceEventDetail>(
+            AI_CHAT_SEND_MESSAGE_EVENT_NAME,
+            { instanceId },
+          );
           return true;
         }
         return false;
@@ -102,16 +103,12 @@ export const useAiChatEditor = () => {
           return false;
         }
 
-        uploadFiles(pastedFiles);
+        uploadFiles({ files: pastedFiles, threadId: draftKey });
         return true;
       },
     },
     onUpdate: (currentEditor) => {
-      const text = turnIntoEmptyStringIfWhitespacesOnly(
-        currentEditor.getText({ blockSeparator: '\n' }),
-      );
-      const serializedDraft =
-        text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
+      const serializedDraft = serializeAiChatEditorDraft(currentEditor);
 
       setAiChatDraftsByThreadId((prev) => ({
         ...prev,
@@ -176,8 +173,8 @@ export const useAiChatEditor = () => {
   }
 
   const handleRestoreEditorContent = useCallback(
-    (detail?: { content: string }) => {
-      if (isDefined(detail?.content)) {
+    (detail?: AiChatRestoreEditorContentEventDetail) => {
+      if (detail?.threadId === draftKey && isDefined(detail.content)) {
         editor?.commands.setContent(
           deserializeAdvancedTextEditorDocument({
             serializedDocument: detail.content,
@@ -185,10 +182,10 @@ export const useAiChatEditor = () => {
         );
       }
     },
-    [editor],
+    [draftKey, editor],
   );
 
-  useListenToBrowserEvent<{ content: string }>({
+  useListenToBrowserEvent<AiChatRestoreEditorContentEventDetail>({
     eventName: AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     onBrowserEvent: handleRestoreEditorContent,
   });

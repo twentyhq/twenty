@@ -4,9 +4,9 @@ import { isLinkableGraphUser } from 'src/features/chat/logic-functions/utils/is-
 
 describe('isLinkableGraphUser', () => {
   it('accepts a user with an id and a mail', () => {
-    expect(
-      isLinkableGraphUser({ id: 'aad-1', mail: 'ada@twenty.com' }),
-    ).toBe(true);
+    expect(isLinkableGraphUser({ id: 'aad-1', mail: 'ada@twenty.com' })).toBe(
+      true,
+    );
   });
 
   it('accepts a user with an id and only a user principal name', () => {

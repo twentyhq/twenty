@@ -33,8 +33,8 @@ import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { type AiChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
+import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const NUMBER_ICONS: IconComponent[] = [
