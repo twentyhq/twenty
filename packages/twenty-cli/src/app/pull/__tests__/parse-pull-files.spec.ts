@@ -153,7 +153,6 @@ describe('parsePullFiles', () => {
     'node_modules/module.ts',
     '.twenty/secret.ts',
     'package.json',
-    'dist/main.js',
     'C:/secret.ts',
     'src/../secret.ts',
   ])('rejects inventoried unsafe path %s', (path) => {
@@ -161,6 +160,12 @@ describe('parsePullFiles', () => {
     expect(() =>
       parsePullFiles({ value: files, frontComponents: withInventory(files) }),
     ).toThrow('invalid front component source inventory');
+  });
+  it('accepts explicitly inventoried generated helpers under dist', () => {
+    const files = [sourceFile, { ...helper, path: 'generated/dist/helper.js' }];
+    expect(
+      parsePullFiles({ value: files, frontComponents: withInventory(files) }),
+    ).toEqual(files);
   });
   it('accepts a public asset shared with a source inventory without duplicating it', () => {
     const frontComponents = withInventory([sourceFile]);

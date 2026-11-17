@@ -143,7 +143,7 @@ export const buildApplication = async (
         : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
-          onSourceFiles: (paths, entryPath) =>
+          onSourceFiles: ({ paths, entryPath }) =>
             styleInputs.set(entryPath, paths),
           getSharedDependenciesBuildContext: () =>
             sharedDependenciesBuildContext,
@@ -165,12 +165,16 @@ export const buildApplication = async (
   });
   const frontComponentSourcePaths = new Map<string, string[]>();
   for (const output of Object.values(frontBuild?.outputs ?? {})) {
-    if (!isDefined(output.entryPoint)) continue;
+    if (!isDefined(output.entryPoint)) {
+      continue;
+    }
     const entryPath = resolve(output.entryPoint);
     const componentPath = frontComponents.find(
       (path) => realpathSync(resolve(options.appPath, path)) === entryPath,
     );
-    if (!isDefined(componentPath)) continue;
+    if (!isDefined(componentPath)) {
+      continue;
+    }
     const inputs = Object.keys(output.inputs).map((path) => resolve(path));
     frontComponentSourcePaths.set(
       componentPath,

@@ -19,7 +19,7 @@ export const planFrontComponentSourceWrites = async ({
   sourceFingerprints = {},
 }: {
   appPath: string;
-  manifest: Manifest;
+  manifest: Pick<Manifest, 'frontComponents'>;
   files: AppExportFile[];
   reservedPaths: ReadonlySet<string>;
   remoteSourceFingerprints?: Record<string, string>;

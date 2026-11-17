@@ -1,3 +1,4 @@
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
 import { Injectable } from '@nestjs/common';
 
@@ -146,6 +147,13 @@ export class ApplicationManifestExportService {
           { workspaceId, applicationUniversalIdentifier },
         )
       : [];
+    const fileBudget = {
+      remainingBytes: Math.max(
+        0,
+        APPLICATION_EXPORT_FILE_BUDGET_BYTES -
+          Buffer.byteLength(JSON.stringify(dependencyFiles)),
+      ),
+    };
     const {
       frontComponents,
       files: sourceFiles,
@@ -157,6 +165,7 @@ export class ApplicationManifestExportService {
         applicationAllFlatEntityMaps,
         shouldIncludeSourceFiles,
         shouldIncludeSourceDependencies,
+        fileBudget,
       },
     );
     const {
@@ -245,6 +254,7 @@ export class ApplicationManifestExportService {
           workspaceId,
           applicationId: flatApplication.id,
           applicationUniversalIdentifier,
+          fileBudget,
         })
       : { publicAssets: [], files: [], coverage: [] };
 

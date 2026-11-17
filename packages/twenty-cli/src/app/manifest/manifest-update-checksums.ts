@@ -146,16 +146,17 @@ export const manifestUpdateChecksums = ({
       const paths = frontComponentSourcePaths.get(
         component.sourceComponentPath,
       );
-      return isDefined(paths)
-        ? {
-            ...component,
-            sourceFiles: result.sourceFiles.filter(
-              (file) =>
-                paths.includes(file.filePath) &&
-                !['package.json', 'yarn.lock'].includes(file.filePath),
-            ),
-          }
-        : component;
+      if (!isDefined(paths)) {
+        return component;
+      }
+      return {
+        ...component,
+        sourceFiles: result.sourceFiles.filter(
+          (file) =>
+            paths.includes(file.filePath) &&
+            !['package.json', 'yarn.lock'].includes(file.filePath),
+        ),
+      };
     });
   }
   return result;

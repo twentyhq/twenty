@@ -164,7 +164,7 @@ export const pullApplication = async (
           ...dependencyPlan.writes,
           ...publicAssetPlan.writes,
           ...frontComponentPlan.writes,
-          ...scannedFiles.filter((file) => isDefined(file.entityKey)),
+          ...safePlan.deletions,
         ].map((write) => write.relativePath.toLowerCase()),
       ),
     });

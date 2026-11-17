@@ -1,3 +1,7 @@
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
+import { type ApplicationExportFileBudget } from 'src/engine/core-modules/application/application-manifest/types/application-export-file-budget.type';
 import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
 import { Injectable } from '@nestjs/common';
 import {
@@ -32,12 +36,14 @@ export class ApplicationFrontComponentExportService {
     applicationAllFlatEntityMaps,
     shouldIncludeSourceFiles,
     shouldIncludeSourceDependencies = false,
+    fileBudget = { remainingBytes: APPLICATION_EXPORT_FILE_BUDGET_BYTES },
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     applicationAllFlatEntityMaps: AllFlatEntityMaps;
     shouldIncludeSourceFiles: boolean;
     shouldIncludeSourceDependencies?: boolean;
+    fileBudget?: ApplicationExportFileBudget;
   }) {
     const frontComponents: FrontComponentManifest[] = [];
     const files: ApplicationExportFile[] = [];
@@ -45,7 +51,6 @@ export class ApplicationFrontComponentExportService {
     if (!shouldIncludeSourceFiles) {
       return { frontComponents, files, coverage };
     }
-    let remainingBytes = 8 * 1024 * 1024;
     for (const component of sortFlatEntitiesByUniversalIdentifier(
       applicationAllFlatEntityMaps.flatFrontComponentMaps,
     )) {
@@ -72,6 +77,7 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
+      let content: string;
       let inventory: Awaited<
         ReturnType<ApplicationFrontComponentSourceService['read']>
       >;
@@ -81,11 +87,39 @@ export class ApplicationFrontComponentExportService {
               workspaceId,
               applicationUniversalIdentifier,
               component: manifest,
-              remainingBytes,
+              remainingBytes: fileBudget.remainingBytes,
               exportedFiles: files,
             })
           : undefined;
+        const location = {
+          workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.Source,
+          resourcePath: path,
+        };
+        if (!(await this.fileStorageService.checkFileExists(location))) {
+          coverage.push({
+            ...unsupportedCoverage,
+            reason:
+              'source file is missing; apply or publish the application again to store it',
+          });
+          continue;
+        }
+        content =
+          inventory?.files.find((file) => file.path === path)?.content ??
+          (
+            await streamToBuffer(
+              await this.fileStorageService.readFile(location),
+              fileBudget.remainingBytes,
+            )
+          ).toString('utf8');
       } catch (error) {
+        if (
+          !(error instanceof StreamSizeExceededError) &&
+          !(error instanceof ApplicationException)
+        ) {
+          throw error;
+        }
         coverage.push({
           ...unsupportedCoverage,
           reason:
@@ -95,28 +129,6 @@ export class ApplicationFrontComponentExportService {
         });
         continue;
       }
-      const location = {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: path,
-      };
-      if (!(await this.fileStorageService.checkFileExists(location))) {
-        coverage.push({
-          ...unsupportedCoverage,
-          reason:
-            'source file is missing; apply or publish the application again to store it',
-        });
-        continue;
-      }
-      const content =
-        inventory?.files.find((file) => file.path === path)?.content ??
-        (
-          await streamToBuffer(
-            await this.fileStorageService.readFile(location),
-            remainingBytes,
-          )
-        ).toString('utf8');
       const reason = getUnsupportedFrontComponentSourceReason({
         source: content,
         universalIdentifier: component.universalIdentifier,
@@ -128,6 +140,22 @@ export class ApplicationFrontComponentExportService {
         coverage.push({ ...unsupportedCoverage, reason });
         continue;
       }
+      const componentFiles = inventory?.files ?? [
+        { folder: FileFolder.Source, path, content },
+      ];
+      const newFiles = componentFiles.filter(
+        (file) => !files.some((existing) => existing.path === file.path),
+      );
+      const encodedBytes = Buffer.byteLength(JSON.stringify(newFiles));
+      if (encodedBytes > fileBudget.remainingBytes) {
+        coverage.push({
+          ...unsupportedCoverage,
+          reason:
+            'Front component sources exceed the remaining shared file export budget.',
+        });
+        continue;
+      }
+      fileBudget.remainingBytes -= encodedBytes;
       frontComponents.push(
         isDefined(inventory)
           ? { ...manifest, sourceFiles: inventory.sourceFiles }
@@ -137,19 +165,7 @@ export class ApplicationFrontComponentExportService {
         ...unsupportedCoverage,
         status: ApplicationExportCoverageStatus.EXPORTED,
       });
-      for (const file of inventory?.files ?? [
-        { folder: FileFolder.Source, path, content },
-      ]) {
-        const existing = files.find((entry) => entry.path === file.path);
-        if (isDefined(existing)) {
-          continue;
-        }
-        remainingBytes -= Buffer.byteLength(
-          file.content,
-          file.encoding === 'base64' ? 'base64' : 'utf8',
-        );
-        files.push(file);
-      }
+      files.push(...newFiles);
     }
     return { frontComponents, files, coverage };
   }

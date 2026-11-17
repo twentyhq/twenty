@@ -10,7 +10,10 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  isSourceFileManifestList,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import { buildApplication } from '@/app/bundles/build-application';
@@ -195,6 +198,53 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       builtFileInfos: new Map(),
     });
     expect(rebuilt.sourceFiles).toEqual([]);
+  });
+
+  it('builds deployable inventories for imported generated files and root package.json', async () => {
+    const appPath = await fixture({
+      'package.json': '{"name":"generated-fixture"}',
+      'src/component.tsx':
+        "import { message } from './generated/dist/helper.js'; import pkg from '../package.json'; export const Component = () => message + pkg.name;",
+      'src/generated/dist/helper.js': 'export const message = "generated";',
+    });
+    const manifest = {
+      ...BASE_MANIFEST,
+      frontComponents: [
+        {
+          universalIdentifier: 'component-id',
+          sourceComponentPath: 'src/component.tsx',
+          builtComponentPath: 'src/component.mjs',
+          builtComponentChecksum: '',
+          componentName: 'Component',
+        },
+      ],
+    };
+    const built = await buildApplication({
+      appPath,
+      manifest,
+      filePaths: {
+        logicFunctions: [],
+        frontComponents: ['src/component.tsx'],
+        publicAssets: [],
+      },
+    });
+    const updated = manifestUpdateChecksums({ manifest, ...built });
+    expect(
+      isSourceFileManifestList(updated.frontComponents[0].sourceFiles),
+    ).toBe(true);
+    expect(
+      updated.frontComponents[0].sourceFiles?.map((file) => file.filePath),
+    ).toEqual([
+      'src/component.tsx',
+      'src/generated/dist/helper.js',
+      'tsconfig.json',
+    ]);
+    expect([...built.builtFileInfos.values()]).toContainEqual(
+      expect.objectContaining({
+        fileFolder: FileFolder.Dependencies,
+        sourcePath: 'package.json',
+      }),
+    );
   });
 
   it('rejects source paths colliding with a bundle before overwriting it', async () => {

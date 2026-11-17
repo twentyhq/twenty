@@ -79,7 +79,9 @@ const uploadedSources = new Map<string, string>();
 const server = await startTestServer((request, response) => {
   if (request.method === 'PUT') {
     const path = sourceUploadPaths.get(request.path);
-    if (isDefined(path)) uploadedSources.set(path, request.body);
+    if (isDefined(path)) {
+      uploadedSources.set(path, request.body);
+    }
     return sendJson(response, 200, {});
   }
 
@@ -130,8 +132,9 @@ const server = await startTestServer((request, response) => {
     const files = isArray(variables.files) ? variables.files : [];
     sourceUploadPaths.clear();
     files.filter(isPlainObject).forEach((file, index) => {
-      if (file.fileFolder === 'Source' && isString(file.filePath))
+      if (file.fileFolder === 'Source' && isString(file.filePath)) {
         sourceUploadPaths.set(`/upload/file-${index}`, file.filePath);
+      }
     });
 
     return sendJson(response, 200, {
@@ -169,14 +172,15 @@ const server = await startTestServer((request, response) => {
         ? syncedManifest.frontComponents
         : [];
     const sourcePaths = new Set(
-      components.filter(isPlainObject).flatMap((component) =>
-        isArray(component.sourceFiles)
-          ? component.sourceFiles
-              .filter(isPlainObject)
-              .map((file) => file.filePath)
-              .filter(isString)
-          : [],
-      ),
+      components.filter(isPlainObject).flatMap((component) => {
+        if (!isArray(component.sourceFiles)) {
+          return [];
+        }
+        return component.sourceFiles
+          .filter(isPlainObject)
+          .map((file) => file.filePath)
+          .filter(isString);
+      }),
     );
     return sendJson(response, 200, {
       data: {

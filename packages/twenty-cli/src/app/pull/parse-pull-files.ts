@@ -7,7 +7,7 @@ import {
   type FrontComponentManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type AppExportFile } from '@/app/types/app-export.type';
 import { CliError } from '@/output/cli-error';
@@ -39,7 +39,9 @@ export const parsePullFiles = ({
 
   const inventory = new Map<string, string>();
   for (const component of frontComponents) {
-    if (component.sourceFiles === undefined) continue;
+    if (!isDefined(component.sourceFiles)) {
+      continue;
+    }
     if (
       !isSourceFileManifestList(component.sourceFiles) ||
       !component.sourceFiles.some(
@@ -67,6 +69,7 @@ export const parsePullFiles = ({
   }
   const files: AppExportFile[] = [];
   const paths = new Set<string>();
+  const sourceChecksums = new Map<string, string>();
 
   for (const file of value) {
     if (
@@ -74,7 +77,7 @@ export const parsePullFiles = ({
       !isString(file.folder) ||
       !isString(file.path) ||
       !isString(file.content) ||
-      (file.encoding != null &&
+      (isDefined(file.encoding) &&
         (file.encoding !== 'base64' || file.folder !== FileFolder.Source))
     ) {
       throw new CliError({
@@ -118,10 +121,10 @@ export const parsePullFiles = ({
       });
     }
 
-    if (
-      (isPublicAsset || file.encoding === 'base64') &&
-      Buffer.from(file.content, 'base64').toString('base64') !== file.content
-    ) {
+    const encoding =
+      isPublicAsset || file.encoding === 'base64' ? 'base64' : 'utf8';
+    const content = Buffer.from(file.content, encoding);
+    if (encoding === 'base64' && content.toString('base64') !== file.content) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
         message: `The exported file ${file.path} is not valid base64.`,
@@ -142,6 +145,12 @@ export const parsePullFiles = ({
       });
     }
 
+    if (isFrontComponentSource || isPublicAsset) {
+      sourceChecksums.set(
+        file.path,
+        createHash('md5').update(content).digest('hex'),
+      );
+    }
     paths.add(file.path.toLowerCase());
     files.push({
       folder: file.folder,
@@ -152,22 +161,7 @@ export const parsePullFiles = ({
   }
 
   for (const [path, checksum] of inventory) {
-    const file = files.find((file) => file.path === path);
-    if (
-      !file ||
-      (file.folder !== FileFolder.Source &&
-        file.folder !== FileFolder.PublicAsset) ||
-      createHash('md5')
-        .update(
-          Buffer.from(
-            file.content,
-            file.encoding === 'base64' || file.folder === FileFolder.PublicAsset
-              ? 'base64'
-              : 'utf8',
-          ),
-        )
-        .digest('hex') !== checksum
-    ) {
+    if (sourceChecksums.get(path) !== checksum) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
         message: `Source file ${path} is missing or does not match its checksum. No local files were changed.`,

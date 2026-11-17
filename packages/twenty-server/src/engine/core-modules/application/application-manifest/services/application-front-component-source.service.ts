@@ -1,3 +1,4 @@
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import {
@@ -16,13 +17,11 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-const MAX_SOURCE_EXPORT_BYTES = 8 * 1024 * 1024;
-
 @Injectable()
 export class ApplicationFrontComponentSourceService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
-  validate(manifest: Manifest): void {
+  validate(manifest: Pick<Manifest, 'frontComponents'>): void {
     for (const component of manifest.frontComponents ?? []) {
       if (
         isDefined(component.sourceFiles) &&
@@ -44,7 +43,9 @@ export class ApplicationFrontComponentSourceService {
     manifest,
   }: {
     workspaceId: string;
-    manifest: Manifest;
+    manifest: Pick<Manifest, 'frontComponents'> & {
+      application: Pick<Manifest['application'], 'universalIdentifier'>;
+    };
   }): Promise<void> {
     for (const component of manifest.frontComponents ?? []) {
       if (
@@ -107,12 +108,15 @@ export class ApplicationFrontComponentSourceService {
       (
         await streamToBuffer(
           await this.fileStorageService.readFile(location),
-          MAX_SOURCE_EXPORT_BYTES,
+          APPLICATION_EXPORT_FILE_BUDGET_BYTES,
         )
       ).toString('utf8'),
     );
     if (!isPlainObject(inventory)) {
-      throw new Error('Stored front component source inventory is invalid');
+      throw new ApplicationException(
+        'Stored front component source inventory is invalid',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
     }
     if (!isDefined(inventory.sourceFiles)) {
       return undefined;
@@ -125,8 +129,9 @@ export class ApplicationFrontComponentSourceService {
         (file) => file.filePath === component.sourceComponentPath,
       )
     ) {
-      throw new Error(
+      throw new ApplicationException(
         'Source inventory does not match the deployed front component; apply or publish again',
+        ApplicationExceptionCode.INVALID_INPUT,
       );
     }
     const files: ApplicationExportFile[] = [];
@@ -138,8 +143,9 @@ export class ApplicationFrontComponentSourceService {
           existing.encoding === 'base64' ? 'base64' : 'utf8',
         );
         if (createHash('md5').update(content).digest('hex') !== checksum) {
-          throw new Error(
+          throw new ApplicationException(
             `Conflicting source checksums for ${filePath}; apply or publish again`,
+            ApplicationExceptionCode.INVALID_INPUT,
           );
         }
         files.push(
@@ -159,8 +165,9 @@ export class ApplicationFrontComponentSourceService {
         resourcePath: filePath,
       };
       if (!(await this.fileStorageService.checkFileExists(sourceLocation))) {
-        throw new Error(
+        throw new ApplicationException(
           `Source file ${filePath} is missing; apply or publish again`,
+          ApplicationExceptionCode.INVALID_INPUT,
         );
       }
       const content = await streamToBuffer(
@@ -169,8 +176,9 @@ export class ApplicationFrontComponentSourceService {
       );
       remainingBytes -= content.length;
       if (createHash('md5').update(content).digest('hex') !== checksum) {
-        throw new Error(
+        throw new ApplicationException(
           `Source file ${filePath} changed since the deployed inventory; apply or publish again`,
+          ApplicationExceptionCode.INVALID_INPUT,
         );
       }
       files.push({

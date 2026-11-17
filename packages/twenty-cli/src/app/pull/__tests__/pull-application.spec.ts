@@ -502,6 +502,40 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     });
     expect(await read('src/helper.ts')).toContain('Remote update');
   });
+  it('preserves unchanged imported definitions and refuses competing metadata regeneration', async () => {
+    requireSuccess(await pull());
+    const objectSource =
+      (await read(OBJECT_PATH)) + '\nexport const greeting = "Pet";\n';
+    await writeFile(join(appPath, OBJECT_PATH), objectSource);
+    const exported = createImportedComponentExport();
+    exported.manifest.objects = createExport().manifest.objects;
+    exported.files.push({
+      folder: 'source',
+      path: OBJECT_PATH,
+      content: Buffer.from(objectSource).toString('base64'),
+      encoding: 'base64',
+    });
+    exported.manifest.frontComponents[0].sourceFiles.push({
+      filePath: OBJECT_PATH,
+      checksum: createHash('md5').update(objectSource).digest('hex'),
+    });
+    const result = requireSuccess(await pull(exported));
+    expect(
+      result.writes.some((write) => write.relativePath === OBJECT_PATH),
+    ).toBe(false);
+    expect(await read(OBJECT_PATH)).toBe(objectSource);
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+
+    exported.manifest.objects = createExport({
+      label: 'Changed in workspace',
+    }).manifest.objects;
+    expect(await pull(exported)).toMatchObject({
+      success: false,
+      error: { code: 'CONFLICT' },
+    });
+    expect(await read(OBJECT_PATH)).toBe(objectSource);
+  });
+
   it('refuses helper collisions before changing any files', async () => {
     await mkdir(join(appPath, 'src'), { recursive: true });
     await writeFile(join(appPath, 'src/helper.ts'), 'unrelated local file');
