@@ -175,7 +175,7 @@ describe('access group sync (integration)', () => {
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      roleId: await findAdminRoleId(),
+      roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
     const compactIds = await accessGroupReadService.findPrincipalsCompactIds({

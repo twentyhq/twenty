@@ -23,11 +23,33 @@ describe('parseGoogleMeetEventOrThrow', () => {
     ).toEqual({
       subscriptionName: 'subscriptions/first',
       eventType: 'google.workspace.meet.transcript.v2.fileGenerated',
-      transcriptName: 'conferenceRecords/first/transcripts/first',
+      artifactName: 'conferenceRecords/first/transcripts/first',
     });
   });
 
-  it('should read an event that carries no transcript', () => {
+  it('should read the smart note of a Gemini notes event', () => {
+    expect(
+      parseGoogleMeetEventOrThrow({
+        message: {
+          attributes: {
+            'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
+            'ce-type': 'google.workspace.meet.smartNote.v2.fileGenerated',
+          },
+          data: Buffer.from(
+            JSON.stringify({
+              smartNote: { name: 'conferenceRecords/first/smartNotes/first' },
+            }),
+          ).toString('base64'),
+        },
+      }),
+    ).toEqual({
+      subscriptionName: 'subscriptions/first',
+      eventType: 'google.workspace.meet.smartNote.v2.fileGenerated',
+      artifactName: 'conferenceRecords/first/smartNotes/first',
+    });
+  });
+
+  it('should read an event that carries no transcript or smart note', () => {
     expect(
       parseGoogleMeetEventOrThrow({
         message: {

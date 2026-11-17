@@ -1,10 +1,10 @@
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChatInstanceOrThrow } from '@/ai/hooks/useAiChatInstanceOrThrow';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsOnNewAiChatSlot = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { threadId } = useAiChatInstanceOrThrow();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
-  return currentAiChatThread === newAiChatThreadId;
+  return threadId === newAiChatThreadId;
 };

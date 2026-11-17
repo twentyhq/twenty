@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
+import { aiChatInputIsEmptyFamilySelector } from '@/ai/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
@@ -95,7 +95,11 @@ describe('useLeaveRemovedAiChatThread', () => {
     await leave();
 
     expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(RECENT_CHAT_ID);
-    expect(jotaiStore.get(aiChatInputIsEmptySelector.atom)).toBe(false);
+    expect(
+      jotaiStore.get(
+        aiChatInputIsEmptyFamilySelector.selectorFamily(RECENT_CHAT_ID),
+      ),
+    ).toBe(false);
     expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
   });
 

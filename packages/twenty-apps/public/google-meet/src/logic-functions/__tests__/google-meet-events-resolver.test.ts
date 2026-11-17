@@ -62,7 +62,7 @@ describe('googleMeetEventsResolverHandler', () => {
       payload: {
         subscriptionName: 'subscriptions/first',
         eventType: 'google.workspace.meet.transcript.v2.fileGenerated',
-        transcriptName: 'conferenceRecords/first/transcripts/first',
+        artifactName: 'conferenceRecords/first/transcripts/first',
       },
     });
 

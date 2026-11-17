@@ -7,14 +7,11 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
 import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatSelectedFilesFamilyState } from '@/ai/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 
@@ -23,9 +20,6 @@ export const useOpenNewAiChatAsDirectMessage = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const { loadAiChatThread } = useLoadAiChatThread();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
-    shouldPreserveClosedInbox: true,
-  });
 
   const openNewAiChatAsDirectMessage = useCallback(
     async ({
@@ -38,8 +32,20 @@ export const useOpenNewAiChatAsDirectMessage = () => {
       serializedDraft: string;
     }) => {
       if (
-        isNonEmptyArray(store.get(aiChatSelectedFilesState.atom)) ||
-        isNonEmptyArray(store.get(aiChatUploadedFilesState.atom))
+        isNonEmptyArray(
+          store.get(
+            aiChatSelectedFilesFamilyState.atomFamily({
+              threadId: newChatThreadId,
+            }),
+          ),
+        ) ||
+        isNonEmptyArray(
+          store.get(
+            aiChatUploadedFilesFamilyState.atomFamily({
+              threadId: newChatThreadId,
+            }),
+          ),
+        )
       ) {
         enqueueToast({
           status: 'error',
@@ -83,14 +89,6 @@ export const useOpenNewAiChatAsDirectMessage = () => {
           );
         }
 
-        if (
-          (store.get(currentAiChatThreadState.atom) ??
-            store.get(newAiChatThreadIdState.atom)) === newChatThreadId
-        ) {
-          store.set(currentAiChatThreadState.atom, directMessageThreadId);
-          projectAiChatThreadToUrl(directMessageThreadId);
-        }
-
         return directMessageThreadId;
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
@@ -98,13 +96,7 @@ export const useOpenNewAiChatAsDirectMessage = () => {
         store.set(isSendingMessageAtom, false);
       }
     },
-    [
-      apolloClient,
-      enqueueToast,
-      loadAiChatThread,
-      projectAiChatThreadToUrl,
-      store,
-    ],
+    [apolloClient, enqueueToast, loadAiChatThread, store],
   );
 
   return { openNewAiChatAsDirectMessage };
