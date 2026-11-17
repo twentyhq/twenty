@@ -1,5 +1,4 @@
 import { aiChatUISessionStartTimeState } from '@/ai/states/aiChatUISessionStartTimeState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { resetClosingInboxThread } from '@/inbox/utils/resetClosingInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
@@ -56,7 +55,7 @@ export const useOpenAskAiPageInSidePanel = () => {
 
       store.set(
         askAiSidePanelThreadIdComponentState.atomFamily({ instanceId: pageId }),
-        threadId ?? store.get(newAiChatThreadIdState.atom),
+        threadId ?? null,
       );
 
       navigateSidePanelMenu({
