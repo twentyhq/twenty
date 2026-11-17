@@ -16,4 +16,9 @@ export class GetAuthorizationUrlForSsoInput {
   @IsString()
   @IsOptional()
   workspaceInviteHash?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  workspacePersonalInviteToken?: string;
 }

@@ -12,7 +12,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThreadComposerDraft';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
+import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
@@ -96,7 +97,11 @@ export const ChatThreadComposer = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useChatThreadComposerDraft(draftKey);
+  const [draft, setDraft] = useComposerDraft({
+    draftFamilyState: chatThreadComposerDraftFamilyState,
+    draftKey,
+    defaultDraft: '',
+  });
   const [files, setFiles] = useState<File[]>([]);
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
