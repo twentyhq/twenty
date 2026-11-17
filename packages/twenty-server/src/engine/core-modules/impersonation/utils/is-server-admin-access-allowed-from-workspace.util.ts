@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { isServerAdminWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-workspace.util';
+
 export const isServerAdminAccessAllowedFromWorkspace = ({
   workspaceId,
   serverAdminWorkspaceId,
@@ -11,5 +13,5 @@ export const isServerAdminAccessAllowedFromWorkspace = ({
     return true;
   }
 
-  return workspaceId === serverAdminWorkspaceId.toLowerCase();
+  return isServerAdminWorkspace({ workspaceId, serverAdminWorkspaceId });
 };

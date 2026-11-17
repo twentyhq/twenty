@@ -116,6 +116,10 @@ jest.mock('@/inbox/hooks/useInboxThreadList', () => ({
   useInboxThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
+jest.mock('@/ai/hooks/useAiChatPageThreadId', () => ({
+  useAiChatPageThreadId: () => null,
+}));
+
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
   useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));

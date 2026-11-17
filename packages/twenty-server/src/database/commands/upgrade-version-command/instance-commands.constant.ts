@@ -311,6 +311,7 @@ import { RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand } from 's
 import { AddTabAndSectionNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794921429000-add-tab-and-section-navigation-menu-items';
 import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794922746000-add-is-system-side-effect-to-role-and-role-target';
 import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
+import { AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794926980299-add-workflow-version-core-workflow-foreign-key';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -624,4 +625,5 @@ export const INSTANCE_COMMANDS = [
   AddTabAndSectionNavigationMenuItemsFastInstanceCommand,
   AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand,
   AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
+  AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand,
 ];

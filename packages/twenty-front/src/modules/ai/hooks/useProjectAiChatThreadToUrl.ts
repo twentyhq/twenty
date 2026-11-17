@@ -11,13 +11,7 @@ import { isInboxPath } from '~/utils/isInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
-type UseProjectAiChatThreadToUrlParams = {
-  shouldPreserveClosedInbox?: boolean;
-};
-
-export const useProjectAiChatThreadToUrl = ({
-  shouldPreserveClosedInbox = false,
-}: UseProjectAiChatThreadToUrlParams = {}) => {
+export const useProjectAiChatThreadToUrl = () => {
   const navigateApp = useNavigateApp();
   const store = useStore();
 
@@ -29,10 +23,6 @@ export const useProjectAiChatThreadToUrl = ({
         pathname,
         getAppPath(AppPath.AiChatInbox, { threadId: null }),
       );
-
-      if (shouldPreserveClosedInbox && isInboxClosed) {
-        return;
-      }
 
       if (!isCurrentPathAiChatPage() && !isOnInboxPage) {
         return;
@@ -52,7 +42,7 @@ export const useProjectAiChatThreadToUrl = ({
         { replace: !isInboxClosed, state: getCurrentHistoryEntryState() },
       );
     },
-    [navigateApp, shouldPreserveClosedInbox, store],
+    [navigateApp, store],
   );
 
   return { projectAiChatThreadToUrl };

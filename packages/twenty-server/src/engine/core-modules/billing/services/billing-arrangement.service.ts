@@ -13,6 +13,7 @@ import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entiti
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
+import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -23,6 +24,14 @@ export class BillingArrangementService {
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
   ) {}
+
+  async findArrangements(
+    workspaceId: string,
+  ): Promise<BillingArrangementEntity[]> {
+    return await this.billingArrangementRepository.find(workspaceId, {
+      order: { startsAt: 'DESC', createdAt: 'DESC' },
+    });
+  }
 
   async findArrangementsByTypes({
     workspaceId,
@@ -71,7 +80,7 @@ export class BillingArrangementService {
     if (isDefined(overlappingArrangement)) {
       throw new BillingException(
         `${arrangement.type} arrangement for workspace ${workspaceId} overlaps arrangement ${overlappingArrangement.id}`,
-        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
+        BillingExceptionCode.BILLING_ARRANGEMENT_OVERLAP,
       );
     }
 
@@ -80,6 +89,55 @@ export class BillingArrangementService {
       workspaceId,
       grantedByUserId,
     });
+  }
+
+  async findArrangementOrThrow({
+    workspaceId,
+    arrangementId,
+  }: {
+    workspaceId: string;
+    arrangementId: string;
+  }): Promise<BillingArrangementEntity> {
+    const arrangement = await this.billingArrangementRepository.findOne(
+      workspaceId,
+      { where: { id: arrangementId } },
+    );
+
+    if (!isDefined(arrangement)) {
+      throw new BillingException(
+        `Billing arrangement ${arrangementId} not found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_NOT_FOUND,
+      );
+    }
+
+    return arrangement;
+  }
+
+  async endArrangement({
+    arrangement,
+    revokedByUserId,
+  }: {
+    arrangement: Pick<
+      BillingArrangementEntity,
+      'id' | 'workspaceId' | 'endsAt' | 'revokedAt'
+    >;
+    revokedByUserId: string | null;
+  }): Promise<BillingArrangementEntity> {
+    const now = new Date();
+    const endDate = getBillingArrangementEndDate(arrangement);
+
+    if (!isDefined(endDate) || endDate > now) {
+      await this.billingArrangementRepository.update(
+        arrangement.workspaceId,
+        { id: arrangement.id, revokedAt: IsNull() },
+        { revokedAt: now, revokedByUserId },
+      );
+    }
+
+    return await this.billingArrangementRepository.findOneOrFail(
+      arrangement.workspaceId,
+      { where: { id: arrangement.id } },
+    );
   }
 
   async endLimitOverride({

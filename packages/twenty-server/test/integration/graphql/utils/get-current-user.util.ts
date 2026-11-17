@@ -9,11 +9,13 @@ import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 type CurrentUserUtilArgs = {
   accessToken: string;
   expectToFail?: boolean;
+  headers?: Record<string, string>;
 };
 
 export const getCurrentUser = async ({
   accessToken,
   expectToFail,
+  headers = {},
 }: CurrentUserUtilArgs): CommonResponseBody<{
   currentUser: UserEntity;
 }> => {
@@ -54,7 +56,7 @@ export const getCurrentUser = async ({
       variables: {},
     },
     accessToken,
-  );
+  ).set(headers);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
