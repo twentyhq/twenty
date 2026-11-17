@@ -22,7 +22,7 @@ export const getLocalLoginHint = async ({
       isDefined(remote) &&
       parseApiUrl({ rawUrl: remote.apiUrl, sourceName: remoteName }) !== apiUrl
     ) {
-      return `Saved remote "${remoteName}" points to ${remote.apiUrl}.\nTo use this environment instead: ${command} --replace`;
+      return `Saved remote "${remoteName}" currently points to ${remote.apiUrl}.\nTo sign in at ${apiUrl} and update saved remote "${remoteName}", run:\n  ${command} --replace`;
     }
   } catch (error) {
     // Authentication config must not prevent local startup.

@@ -232,8 +232,9 @@ describe('local commands', () => {
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toBe(
         `Local Twenty is ready at http://localhost:${port}\n` +
-          `Saved remote "${remoteName}" points to http://localhost:3000.\n` +
-          `To use this environment instead: twenty auth login --url http://localhost:${port} --name ${remoteName} --replace\n`,
+          `Saved remote "${remoteName}" currently points to http://localhost:3000.\n` +
+          `To sign in at http://localhost:${port} and update saved remote "${remoteName}", run:\n` +
+          `  twenty auth login --url http://localhost:${port} --name ${remoteName} --replace\n`,
       );
       expect(result.stderr).not.toContain('saved-key');
       expect(await readFile(configPath, 'utf8')).toBe(config);
