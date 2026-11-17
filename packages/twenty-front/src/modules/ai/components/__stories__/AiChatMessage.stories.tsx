@@ -508,9 +508,10 @@ const AiChatMessagesSetterEffect = ({
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
-    );
+    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+      threadId: currentThreadId,
+    });
+    const previousVisit = store.get(visitAtom);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
@@ -535,15 +536,12 @@ const AiChatMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
-      {
-        threadId: currentThreadId,
-        isUnread: true,
-        isKeptUnread: false,
-        lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
-      },
-    );
+    store.set(visitAtom, {
+      threadId: currentThreadId,
+      isUnread: true,
+      isKeptUnread: false,
+      lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
+    });
     store.set(messagesAtom, messages);
     store.set(reactionsAtom, [
       {
@@ -560,10 +558,7 @@ const AiChatMessagesSetterEffect = ({
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: currentThreadId }),
-        previousVisit,
-      );
+      store.set(visitAtom, previousVisit);
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };
