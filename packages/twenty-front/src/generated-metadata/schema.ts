@@ -3104,6 +3104,12 @@ export type Impersonate = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export enum InboxNotificationLevel {
+  ALL = 'ALL',
+  DIRECT_AND_MENTIONS = 'DIRECT_AND_MENTIONS',
+  NONE = 'NONE'
+}
+
 export type InboxThreadRecordInput = {
   objectNameSingular: Scalars['String']['input'];
   recordId: Scalars['UUID']['input'];
@@ -9212,6 +9218,8 @@ export type WorkspaceMember = {
   colorScheme: Scalars['String']['output'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID']['output'];
+  inboxNotificationLevel: InboxNotificationLevel;
+  isInboxNotificationPreviewEnabled: Scalars['Boolean']['output'];
   locale?: Maybe<Scalars['String']['output']>;
   name: FullName;
   numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;

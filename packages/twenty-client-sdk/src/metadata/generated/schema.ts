@@ -1983,6 +1983,8 @@ export interface Impersonate {
     __typename: 'Impersonate'
 }
 
+export type InboxNotificationLevel = 'ALL' | 'DIRECT_AND_MENTIONS' | 'NONE'
+
 export interface Index {
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -4506,6 +4508,8 @@ export interface WorkspaceMember {
     colorScheme: Scalars['String']
     dateFormat?: WorkspaceMemberDateFormatEnum
     id: Scalars['UUID']
+    inboxNotificationLevel: InboxNotificationLevel
+    isInboxNotificationPreviewEnabled: Scalars['Boolean']
     locale?: Scalars['String']
     name: FullName
     numberFormat?: WorkspaceMemberNumberFormatEnum
@@ -9816,6 +9820,8 @@ export interface WorkspaceMemberGenqlSelection{
     colorScheme?: boolean | number
     dateFormat?: boolean | number
     id?: boolean | number
+    inboxNotificationLevel?: boolean | number
+    isInboxNotificationPreviewEnabled?: boolean | number
     locale?: boolean | number
     name?: FullNameGenqlSelection
     numberFormat?: boolean | number
@@ -13376,6 +13382,12 @@ export const enumGraphOrderBy = {
 export const enumIdentityProviderType = {
    OIDC: 'OIDC' as const,
    SAML: 'SAML' as const
+}
+
+export const enumInboxNotificationLevel = {
+   ALL: 'ALL' as const,
+   DIRECT_AND_MENTIONS: 'DIRECT_AND_MENTIONS' as const,
+   NONE: 'NONE' as const
 }
 
 export const enumIndexType = {

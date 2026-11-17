@@ -2943,6 +2943,12 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+enum InboxNotificationLevel {
+  ALL
+  DIRECT_AND_MENTIONS
+  NONE
+}
+
 input InboxThreadRecordInput {
   objectNameSingular: String!
   recordId: UUID!
@@ -6794,6 +6800,8 @@ type WorkspaceMember {
   colorScheme: String!
   dateFormat: WorkspaceMemberDateFormatEnum
   id: UUID!
+  inboxNotificationLevel: InboxNotificationLevel!
+  isInboxNotificationPreviewEnabled: Boolean!
   locale: String
   name: FullName!
   numberFormat: WorkspaceMemberNumberFormatEnum

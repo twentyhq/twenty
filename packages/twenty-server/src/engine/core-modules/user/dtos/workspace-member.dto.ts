@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { OpenRecordIn } from 'twenty-shared/types';
+import { InboxNotificationLevel, OpenRecordIn } from 'twenty-shared/types';
 import { Max, Min } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -12,6 +12,7 @@ import {
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 registerEnumType(OpenRecordIn, { name: 'OpenRecordIn' });
+registerEnumType(InboxNotificationLevel, { name: 'InboxNotificationLevel' });
 
 @ObjectType('FullName')
 export class FullNameDTO {
@@ -41,6 +42,12 @@ export class WorkspaceMemberDTO {
 
   @Field(() => OpenRecordIn, { nullable: false })
   openRecordIn: OpenRecordIn;
+
+  @Field(() => InboxNotificationLevel, { nullable: false })
+  inboxNotificationLevel: InboxNotificationLevel;
+
+  @Field({ nullable: false })
+  isInboxNotificationPreviewEnabled: boolean;
 
   @Field({ nullable: true })
   avatarUrl: string;

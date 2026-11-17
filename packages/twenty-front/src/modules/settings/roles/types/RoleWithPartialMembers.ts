@@ -6,6 +6,8 @@ export type PartialWorkspaceMember = Omit<
   | 'colorScheme'
   | 'uiScale'
   | 'openRecordIn'
+  | 'inboxNotificationLevel'
+  | 'isInboxNotificationPreviewEnabled'
   | 'locale'
   | 'timeZone'
   | 'dateFormat'

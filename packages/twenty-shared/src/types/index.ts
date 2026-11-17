@@ -155,6 +155,7 @@ export type { FormatRecordSerializedRelationProperties } from './FormatRecordSer
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IframeMediaPermission } from './IframeMediaPermission';
+export { InboxNotificationLevel } from './InboxNotificationLevel';
 export type { IndexOf } from './IndexOf';
 export { IndexType } from './IndexType';
 export type { IsEmptyObject } from './IsEmptyObject';
