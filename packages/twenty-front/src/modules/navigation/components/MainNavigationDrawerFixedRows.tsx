@@ -30,12 +30,14 @@ export const MainNavigationDrawerFixedRows = () => {
         label={t`Search`}
         Icon={IconSearch}
         onClick={openRecordsSearchPage}
+        triggerEvent="CLICK"
       />
       {hasAiPermission && (
         <NavigationDrawerItem
           label={t`New AI chat`}
           Icon={IconMessageCirclePlus}
           onClick={switchToNewChat}
+          triggerEvent="CLICK"
         />
       )}
     </>
