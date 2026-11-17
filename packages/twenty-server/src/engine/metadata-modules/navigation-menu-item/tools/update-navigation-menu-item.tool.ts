@@ -1,6 +1,9 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
@@ -53,6 +56,7 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -79,6 +83,31 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
         update.position = input.position;
       }
       if (input.parentId !== undefined) {
+        if (isDefined(input.parentId)) {
+          const parent = await this.navigationMenuItemService.findById({
+            id: input.parentId,
+            workspaceId,
+          });
+          const isParentTabOrSection =
+            parent?.type === NavigationMenuItemType.TAB ||
+            parent?.type === NavigationMenuItemType.SECTION;
+
+          if (
+            isParentTabOrSection &&
+            !(await this.featureFlagService.isFeatureEnabled(
+              FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+              workspaceId,
+            ))
+          ) {
+            return {
+              success: false,
+              message:
+                'Moving an item into a tab or a section needs the customizable sidebar to be enabled.',
+              error: 'customizable_sidebar_disabled',
+            };
+          }
+        }
+
         update.parentId = input.parentId;
       }
       if (input.link !== undefined) {

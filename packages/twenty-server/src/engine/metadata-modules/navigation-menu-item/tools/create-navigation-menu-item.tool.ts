@@ -225,12 +225,21 @@ export class CreateNavigationMenuItemTool extends BaseTool<
             workspaceId,
           );
 
-        if (!isCustomizableSidebarEnabled || input.scope !== 'workspace') {
+        if (!isCustomizableSidebarEnabled) {
           return {
             success: false,
             message:
-              'Tabs and sections need the customizable sidebar to be enabled and the workspace scope.',
-            error: 'customizable_sidebar_unavailable',
+              'Tabs and sections need the customizable sidebar to be enabled for this workspace.',
+            error: 'customizable_sidebar_disabled',
+          };
+        }
+
+        if (input.scope !== 'workspace') {
+          return {
+            success: false,
+            message:
+              "Tabs and sections are shared with the workspace: use scope='workspace'.",
+            error: 'tab_or_section_requires_workspace_scope',
           };
         }
       }
