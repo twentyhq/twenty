@@ -552,19 +552,10 @@ describe('Computed fields (e2e)', () => {
 
       expect(JSON.stringify(errors)).toContain('would stop working');
 
-      for (const idToDelete of [
+      await deactivateAndDeleteFields([
         prioritizedTasksField.createOneField.id,
         priorityFieldId,
-      ]) {
-        await updateOneFieldMetadata({
-          expectToFail: false,
-          input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
-        });
-        await deleteOneFieldMetadata({
-          expectToFail: false,
-          input: { idToDelete },
-        });
-      }
+      ]);
     });
 
     it('rejects a sort by an unknown field or direction, and follows the renaming of its sort field', async () => {
