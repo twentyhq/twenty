@@ -169,4 +169,45 @@ describe('NavigationMenuItem creation should succeed', () => {
       input: { id: firstItemId },
     });
   });
+
+  it('should create an item inside a folder inside a section inside a tab', async () => {
+    const { data: tabData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: { type: NavigationMenuItemType.TAB, name: 'Tab' },
+    });
+
+    createdFolderId = tabData.createNavigationMenuItem.id;
+
+    const { data: sectionData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.SECTION,
+        name: 'Section',
+        parentId: tabData.createNavigationMenuItem.id,
+      },
+    });
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        parentId: sectionData.createNavigationMenuItem.id,
+      },
+    });
+
+    const { data: linkData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.LINK,
+        name: 'Link',
+        link: 'https://example.com',
+        parentId: folderData.createNavigationMenuItem.id,
+      },
+    });
+
+    expect(linkData.createNavigationMenuItem.parentId).toBe(
+      folderData.createNavigationMenuItem.id,
+    );
+  });
 });
