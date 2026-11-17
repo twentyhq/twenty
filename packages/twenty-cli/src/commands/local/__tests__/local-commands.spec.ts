@@ -229,6 +229,7 @@ describe('local commands', () => {
 
       const result = await runCliForTest(['local', 'start', ...args]);
 
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toBe(
         `Local Twenty is ready at http://localhost:${port}\n` +
@@ -257,6 +258,7 @@ describe('local commands', () => {
 
       const result = await runCliForTest(['local', 'start', '--test']);
 
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toBe(
         'Local Twenty is ready at http://localhost:12021\n' +
@@ -279,6 +281,7 @@ describe('local commands', () => {
 
       const result = await runCliForTest(['local', 'start', '--test']);
 
+      expect(getConfigPath).toHaveBeenCalledExactlyOnceWith();
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain(
         'Local Twenty is ready at http://localhost:12021',

@@ -190,6 +190,24 @@ describe('auth and remote commands', () => {
     expect((await readConfigFile()).remotes.prod.apiUrl).toBe(secondServerUrl);
   });
 
+  it.each(['constructor', 'toString'])(
+    'does not treat inherited property %s as a saved remote',
+    async (remoteName) => {
+      const { exitCode, envelope } = await login([
+        '--url',
+        server.url,
+        '--name',
+        remoteName,
+      ]);
+
+      expect(exitCode).toBe(0);
+      expect(envelope.data.remote).toBe(remoteName);
+      const config = await readConfigFile();
+      expect(Object.hasOwn(config.remotes, remoteName)).toBe(true);
+      expect(config.remotes[remoteName].apiUrl).toBe(server.url);
+    },
+  );
+
   it('lists, switches, renames and removes remotes', async () => {
     await login(['--url', server.url, '--name', 'prod']);
     await login(['--url', server.url, '--name', 'staging']);
