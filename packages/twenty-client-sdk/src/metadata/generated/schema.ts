@@ -3170,7 +3170,7 @@ export interface PublicApplicationRegistration {
 }
 
 export interface PublicCalendarChannel {
-    connectedAccount: ConnectedAccountPublicDTO
+    connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
     handle: Scalars['String']
     id: Scalars['UUID']

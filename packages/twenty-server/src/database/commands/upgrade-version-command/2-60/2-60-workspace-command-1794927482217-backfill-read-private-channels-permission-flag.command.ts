@@ -1,14 +1,15 @@
 import { Command } from 'nest-commander';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeMissingStandardPermissionFlags } from 'src/database/commands/upgrade-version-command/2-60/utils/compute-missing-standard-permission-flags.util';
+import { READ_PRIVATE_CHANNELS_PERMISSION_FLAG } from 'src/database/commands/upgrade-version-command/2-60/constants/read-private-channels-permission-flag.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/permission-flag/build-standard-flat-permission-flag-metadata-maps.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -16,7 +17,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-60:backfill-read-private-channels-permission-flag',
   description:
-    'Create the standard permission flags an existing workspace lacks, such as READ_PRIVATE_CHANNELS, added in 2.60',
+    'Create the READ_PRIVATE_CHANNELS standard permission flag in workspaces that lack it',
 })
 export class BackfillReadPrivateChannelsPermissionFlagCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -42,34 +43,53 @@ export class BackfillReadPrivateChannelsPermissionFlagCommand extends Provisione
         'flatPermissionFlagMaps',
       ]);
 
-    const { permissionFlagsToCreate, permissionFlagsSkippedForKeyClash } =
-      computeMissingStandardPermissionFlags({
-        standardFlatPermissionFlagMaps:
-          buildStandardFlatPermissionFlagMetadataMaps({
-            now: new Date().toISOString(),
-            workspaceId,
-            twentyStandardApplicationId: twentyStandardFlatApplication.id,
-          }),
-        existingFlatPermissionFlagMaps: flatPermissionFlagMaps,
-      });
-
-    if (isNonEmptyArray(permissionFlagsSkippedForKeyClash)) {
-      this.logger.warn(
-        `Workspace ${workspaceId}: another application already registered permission flag key(s) ${permissionFlagsSkippedForKeyClash.map((permissionFlag) => permissionFlag.key).join(', ')}; skipping the standard flag(s)`,
-      );
+    if (
+      isDefined(
+        flatPermissionFlagMaps.byUniversalIdentifier[
+          READ_PRIVATE_CHANNELS_PERMISSION_FLAG.universalIdentifier
+        ],
+      )
+    ) {
+      return;
     }
 
-    if (!isNonEmptyArray(permissionFlagsToCreate)) {
+    const isKeyTakenByAnotherApplication = Object.values(
+      flatPermissionFlagMaps.byUniversalIdentifier,
+    ).some(
+      (permissionFlag) =>
+        permissionFlag?.key === READ_PRIVATE_CHANNELS_PERMISSION_FLAG.key,
+    );
+
+    if (isKeyTakenByAnotherApplication) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: another application already registered permission flag key ${READ_PRIVATE_CHANNELS_PERMISSION_FLAG.key}; skipping the standard flag`,
+      );
+
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating standard permission flag(s) ${permissionFlagsToCreate.map((permissionFlag) => permissionFlag.key).join(', ')}`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating standard permission flag ${READ_PRIVATE_CHANNELS_PERMISSION_FLAG.key}`,
     );
 
     if (options.dryRun) {
       return;
     }
+
+    const now = new Date().toISOString();
+
+    const readPrivateChannelsPermissionFlag: FlatPermissionFlag = {
+      id: v4(),
+      ...READ_PRIVATE_CHANNELS_PERMISSION_FLAG,
+      workspaceId,
+      applicationId: twentyStandardFlatApplication.id,
+      applicationUniversalIdentifier:
+        twentyStandardFlatApplication.universalIdentifier,
+      rolePermissionFlagIds: [],
+      rolePermissionFlagUniversalIdentifiers: [],
+      createdAt: now,
+      updatedAt: now,
+    };
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -80,7 +100,7 @@ export class BackfillReadPrivateChannelsPermissionFlagCommand extends Provisione
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             permissionFlag: {
-              flatEntityToCreate: permissionFlagsToCreate,
+              flatEntityToCreate: [readPrivateChannelsPermissionFlag],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -91,7 +111,7 @@ export class BackfillReadPrivateChannelsPermissionFlagCommand extends Provisione
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        `Failed to backfill the standard permission flags for workspace ${workspaceId}`,
+        `Failed to create the READ_PRIVATE_CHANNELS permission flag for workspace ${workspaceId}`,
       );
     }
   }

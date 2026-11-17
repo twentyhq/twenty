@@ -6121,7 +6121,7 @@ export type PublicApplicationRegistration = {
 
 export type PublicCalendarChannel = {
   __typename?: 'PublicCalendarChannel';
-  connectedAccount: ConnectedAccountPublicDto;
+  connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   handle: Scalars['String']['output'];
   id: Scalars['UUID']['output'];

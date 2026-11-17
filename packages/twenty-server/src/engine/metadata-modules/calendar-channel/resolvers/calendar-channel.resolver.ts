@@ -6,16 +6,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.service';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { UpdateCalendarChannelInput } from 'src/engine/metadata-modules/calendar-channel/dtos/update-calendar-channel.input';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
-import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
@@ -44,7 +44,6 @@ export class CalendarChannelResolver {
   constructor(
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
@@ -54,19 +53,16 @@ export class CalendarChannelResolver {
     @Parent() calendarChannel: CalendarChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO | null> {
-    if (!isDefined(userWorkspaceId)) {
-      return null;
-    }
-
-    const connectedAccount =
-      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
-        id: calendarChannel.connectedAccountId,
-        userWorkspaceId,
+    return this.calendarChannelMetadataService.findPublicConnectedAccountForCaller(
+      {
+        connectedAccountId: calendarChannel.connectedAccountId,
         workspaceId: workspace.id,
-      });
-
-    return buildPublicConnectedAccount(connectedAccount);
+        userWorkspaceId,
+        applicationId: application?.id,
+      },
+    );
   }
 
   @Query(() => [CalendarChannelDTO])

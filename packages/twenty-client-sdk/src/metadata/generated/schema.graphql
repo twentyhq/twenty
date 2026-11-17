@@ -4334,7 +4334,7 @@ type PublicApplicationRegistration {
 }
 
 type PublicCalendarChannel {
-  connectedAccount: ConnectedAccountPublicDTO!
+  connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   handle: String!
   id: UUID!

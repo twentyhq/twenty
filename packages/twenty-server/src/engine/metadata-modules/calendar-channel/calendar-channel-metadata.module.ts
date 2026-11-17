@@ -6,6 +6,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ApplicationCalendarChannelsResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/application-calendar-channels.resolver';
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 
 @Module({
@@ -13,6 +14,7 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
     TypeOrmModule.forFeature([CalendarChannelEntity]),
     ConnectedAccountMetadataModule,
     CalendarCommonModule,
+    PermissionsModule,
   ],
   providers: [
     CalendarChannelMetadataService,
