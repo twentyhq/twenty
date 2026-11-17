@@ -1,20 +1,15 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
+import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-
-const StyledContentGapOffset = styled.div`
-  margin-top: calc(-1 * ${themeCssVariables.betweenSiblingsGap});
-`;
 
 type NavigationMenuSectionProps = {
   section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
@@ -49,7 +44,9 @@ export const NavigationMenuSection = ({
       isOpen={isNavigationSectionOpen}
       onToggle={() => toggleNavigationSection()}
       contentWrapper={(children) => (
-        <StyledContentGapOffset>{children}</StyledContentGapOffset>
+        <StyledNavigationMenuItemSectionContentGapOffset>
+          {children}
+        </StyledNavigationMenuItemSectionContentGapOffset>
       )}
     >
       <WorkspaceSectionListReadOnly

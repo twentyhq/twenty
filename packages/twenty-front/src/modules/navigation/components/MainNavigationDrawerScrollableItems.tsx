@@ -26,7 +26,7 @@ const WorkspaceSectionDispatcher = lazy(() =>
 );
 
 const NavigationMenuSectionList = lazy(() =>
-  import('@/navigation-menu-item/display/section/components/NavigationMenuSectionList').then(
+  import('@/navigation-menu-item/display/containers/components/NavigationMenuSectionList').then(
     (module) => ({
       default: module.NavigationMenuSectionList,
     }),
@@ -34,7 +34,7 @@ const NavigationMenuSectionList = lazy(() =>
 );
 
 const NavigationMenuTabContent = lazy(() =>
-  import('@/navigation-menu-item/display/tab/components/NavigationMenuTabContent').then(
+  import('@/navigation-menu-item/display/containers/components/NavigationMenuTabContent').then(
     (module) => ({
       default: module.NavigationMenuTabContent,
     }),

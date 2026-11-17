@@ -2,7 +2,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
-import { NavigationMenuSection } from '@/navigation-menu-item/display/section/components/NavigationMenuSection';
+import { NavigationMenuSection } from '@/navigation-menu-item/display/containers/components/NavigationMenuSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuSectionListProps = {

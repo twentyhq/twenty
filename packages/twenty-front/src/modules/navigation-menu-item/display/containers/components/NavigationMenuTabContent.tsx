@@ -1,5 +1,5 @@
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
-import { NavigationMenuSectionList } from '@/navigation-menu-item/display/section/components/NavigationMenuSectionList';
+import { NavigationMenuSectionList } from '@/navigation-menu-item/display/containers/components/NavigationMenuSectionList';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
