@@ -5,16 +5,16 @@ import { getAiChatThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useCurrentAiChatThreadAccess = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const permissions = useAtomFamilySelectorValue(
     aiChatThreadPermissionsFamilySelector,
-    currentAiChatThread ?? '',
+    threadId ?? '',
   );
 
   // Before the chat list picks a chat, the composer writes to the new one
   return getAiChatThreadAccess({
-    isOnNewAiChatSlot: isOnNewAiChatSlot || currentAiChatThread === null,
+    isOnNewAiChatSlot: isOnNewAiChatSlot || threadId === null,
     permissions,
   });
 };

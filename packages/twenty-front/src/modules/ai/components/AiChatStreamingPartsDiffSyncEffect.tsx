@@ -5,10 +5,10 @@ import { useEffect } from 'react';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AiChatStreamingPartsDiffSyncEffect = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const { updateStreamingPartsWithDiff } = useUpdateStreamingPartsWithDiff();

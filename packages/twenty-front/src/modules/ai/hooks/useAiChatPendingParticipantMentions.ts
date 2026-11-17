@@ -11,9 +11,9 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useAiChatPendingParticipantMentions = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const draftKey = currentAiChatThread ?? newAiChatThreadId;
+  const draftKey = threadId ?? newAiChatThreadId;
   const serializedDraft =
     useAtomStateValue(aiChatDraftsByThreadIdState)[draftKey] ?? '';
   const thread = useAtomFamilySelectorValue(

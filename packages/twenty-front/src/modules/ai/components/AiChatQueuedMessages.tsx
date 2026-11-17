@@ -36,23 +36,20 @@ export const AiChatQueuedMessages = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const aiChatQueuedMessages = useAtomFamilyStateValue(
     aiChatQueuedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
   const { deleteQueuedMessage } = useDeleteQueuedMessage({
-    threadId: currentAiChatThread,
+    threadId,
   });
 
-  if (
-    !isDefined(currentAiChatThread) ||
-    !isNonEmptyArray(aiChatQueuedMessages)
-  ) {
+  if (!isDefined(threadId) || !isNonEmptyArray(aiChatQueuedMessages)) {
     return null;
   }
 

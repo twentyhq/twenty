@@ -16,14 +16,14 @@ import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFami
 
 export const AiChatComposerQuote = () => {
   const { t } = useLingui();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatDisplayedThread = useAtomComponentStateValue(
     aiChatDisplayedThreadComponentState,
   );
   const [aiChatQuotedMessageId, setAiChatQuotedMessageId] = useAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
     {
-      threadId: currentAiChatThread,
+      threadId,
     },
   );
   const quotedMessage = useAtomFamilySelectorValue(
@@ -34,10 +34,7 @@ export const AiChatComposerQuote = () => {
   const isOwnQuotedMessage = useIsOwnAiChatMessage(quotedMessage);
 
   // the displayed thread lags a switch until its messages load
-  if (
-    !isDefined(aiChatQuotedMessageId) ||
-    aiChatDisplayedThread !== currentAiChatThread
-  ) {
+  if (!isDefined(aiChatQuotedMessageId) || aiChatDisplayedThread !== threadId) {
     return null;
   }
 

@@ -14,7 +14,7 @@ import {
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -629,10 +629,12 @@ export const OpenChatWithKeyboard: Story = {
         .get(sidePanelNavigationStackState.atom)
         .at(-1)?.pageId;
 
+      assertIsDefinedOrThrow(askAiPageId);
+
       expect(
         jotaiStore.get(
           askAiSidePanelThreadIdComponentState.atomFamily({
-            instanceId: askAiPageId ?? '',
+            instanceId: askAiPageId,
           }),
         ),
       ).toBe(SECOND_THREAD_ID);

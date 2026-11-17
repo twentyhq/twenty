@@ -154,10 +154,10 @@ const EditableAiChatEditorSection = () => {
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
   const canSendAiChatMessage = useCanSendAiChatMessage();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const { editor } = useAiChatEditor();

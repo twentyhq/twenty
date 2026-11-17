@@ -32,11 +32,9 @@ export const AiChatInstance = ({
     <AiChatInstanceContext.Provider value={aiChatInstance}>
       <AiChatInstanceRegistrationEffect />
       <AiChatInstanceDisplayedThreadEffect />
+      {isAiChatRuntimeEnabled && <AiChatPrepromptEffect />}
       {isAiChatRuntimeMounted && isAiChatRuntimeEnabled && (
-        <>
-          <AiChatInstanceSendEffect />
-          <AiChatPrepromptEffect />
-        </>
+        <AiChatInstanceSendEffect />
       )}
       {children}
     </AiChatInstanceContext.Provider>

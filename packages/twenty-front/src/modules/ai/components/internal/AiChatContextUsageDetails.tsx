@@ -35,9 +35,9 @@ const StyledSectionTitle = styled.span`
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
   if (!isDefined(aiChatUsage)) {
     return null;

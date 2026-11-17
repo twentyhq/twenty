@@ -161,7 +161,7 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatDisplayedThread = useAtomComponentStateValue(
     aiChatDisplayedThreadComponentState,
   );
@@ -172,12 +172,12 @@ export const AiChatMessage = ({
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const setAiChatQuotedMessageId = useSetAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);

@@ -13,17 +13,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useShouldShowAiChatEmptyState = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
   const aiChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
     aiChatIsAwaitingFirstChunkFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
   const aiChatIsStreaming = useAtomFamilyStateValue(
     aiChatIsStreamingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
   const hasInitializedAiChatThreads = useAtomStateValue(
     hasInitializedAiChatThreadsState,

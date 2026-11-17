@@ -32,10 +32,10 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   const { uploadFiles } = useAiChatFileUpload();
@@ -71,9 +71,7 @@ export const AiChatTab = () => {
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
-          onUploadFiles={(files) =>
-            uploadFiles({ files, threadId: currentAiChatThread })
-          }
+          onUploadFiles={(files) => uploadFiles({ files, threadId })}
         />
       )}
       {!isDraggingFile && (
@@ -82,7 +80,7 @@ export const AiChatTab = () => {
           <AiChatTabMessageList />
           <AiChatTypingParticipants />
           <AiChatQueuedMessages />
-          <AiChatEditorSection key={currentAiChatThread} />
+          <AiChatEditorSection key={threadId} />
         </>
       )}
     </StyledContainer>

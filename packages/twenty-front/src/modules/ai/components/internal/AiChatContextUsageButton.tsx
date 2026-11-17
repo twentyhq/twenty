@@ -57,10 +57,10 @@ export const AiChatContextUsageButton = () => {
     onOpen: () => setShowDetails(false),
   });
 
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const tiers = useAiModelTiers();

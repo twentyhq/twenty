@@ -13,10 +13,10 @@ export const useIsAiChatComposerCentered = () => {
   // The workspace setup preamble is its own intro; centering would fight it.
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    threadId,
   );
 
   return (

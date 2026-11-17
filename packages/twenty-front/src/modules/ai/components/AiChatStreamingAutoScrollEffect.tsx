@@ -11,10 +11,10 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AiChatStreamingAutoScrollEffect = () => {
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
 
   const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
-    threadId: currentAiChatThread,
+    threadId,
   });
 
   const aiChatIsScrolledToBottom = useAtomComponentSelectorValue(

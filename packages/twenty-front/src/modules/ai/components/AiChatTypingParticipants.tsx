@@ -31,7 +31,7 @@ const StyledContainer = styled(StyledAiChatContentContainer)<{
 
 export const AiChatTypingParticipants = () => {
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatHasMessage = useAtomComponentSelectorValue(
     aiChatHasMessageComponentSelector,
   );
@@ -41,7 +41,7 @@ export const AiChatTypingParticipants = () => {
   );
   const aiChatTypingWorkspaceMemberIds = useAtomFamilyStateValue(
     aiChatTypingWorkspaceMemberIdsFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId },
   );
 
   const participants = currentWorkspaceMembers

@@ -25,10 +25,10 @@ export const AiChatThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
-  const { threadId: currentAiChatThread } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const { event } = useAtomFamilySelectorValue(
     aiChatThreadMemberStateFamilySelector,
-    currentAiChatThread ?? '',
+    threadId ?? '',
   );
 
   const isAiChatInboxEnabled = useIsFeatureEnabled(
