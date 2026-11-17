@@ -9,10 +9,10 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.constant';
 import { MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES } from 'src/engine/api/mcp/constants/mcp-generic-mode-listed-tool-categories.constant';
-import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.constant';
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
-import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
-import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.constant';
+import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.constant';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import {
   McpException,
