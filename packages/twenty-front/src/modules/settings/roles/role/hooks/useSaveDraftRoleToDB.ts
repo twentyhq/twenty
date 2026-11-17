@@ -4,16 +4,13 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
-import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
+import { getRoleWithRemovedFieldPermission } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithRemovedFieldPermission';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
-import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useStore } from 'jotai';
+import { type PrimitiveAtom, useAtomValue, useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -58,10 +55,14 @@ const ALL_OBJECT_RECORDS_GRANT_KEYS: Array<keyof Role> = [
 export const useSaveDraftRoleToDB = ({
   roleId,
   isCreateMode,
+  draftRoleAtom,
+  initialDraftRoleAtom,
   onSuccess,
 }: {
   roleId: string;
   isCreateMode: boolean;
+  draftRoleAtom: PrimitiveAtom<RoleWithPartialMembers>;
+  initialDraftRoleAtom: PrimitiveAtom<RoleWithPartialMembers | undefined>;
   onSuccess?: (savedRoleId: string) => void | Promise<void>;
 }) => {
   const [createRole] = useMutation(CreateOneRoleDocument);
@@ -82,22 +83,10 @@ export const useSaveDraftRoleToDB = ({
     roleId,
   );
 
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
+  const draftRole = useAtomValue(draftRoleAtom);
 
   const apolloClient = useApolloClient();
   const store = useStore();
-  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
-  const setSettingsInitialDraftRole = useSetAtomFamilyState(
-    settingsInitialDraftRoleFamilyState,
-    roleId,
-  );
   const setSettingsPersistedRole = useSetAtomFamilyState(
     settingsPersistedRoleFamilyState,
     roleId,
@@ -119,21 +108,18 @@ export const useSaveDraftRoleToDB = ({
     const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
 
     setSettingsPersistedRole(savedRole);
-    setSettingsInitialDraftRole(savedRole);
-    setSettingsDraftRole((currentDraftRole) =>
+    store.set(initialDraftRoleAtom, savedRole);
+    store.set(draftRoleAtom, (currentDraftRole) =>
       isDeeplyEqual(currentDraftRole, savedDraftRole)
         ? savedRole
         : currentDraftRole,
     );
   };
 
-  const dirtyFields = getRoleDirtyFields(
-    settingsDraftRole,
-    settingsPersistedRole,
-  );
+  const dirtyFields = getRoleDirtyFields(draftRole, settingsPersistedRole);
 
   const fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless =
-    settingsDraftRole.fieldPermissions?.filter((fieldPermissionToFilter) => {
+    draftRole.fieldPermissions?.filter((fieldPermissionToFilter) => {
       const fieldPermissionDoesntExistYetInPersistedFieldPermissions =
         !settingsPersistedRole?.fieldPermissions?.some(
           (persistedFieldPermissionToFilter) =>
@@ -166,9 +152,6 @@ export const useSaveDraftRoleToDB = ({
       ),
   );
 
-  const { removeFieldPermissionInDraftRole } =
-    useRemoveFieldPermissionInDraftRole();
-
   const removeUselessFieldPermissions = () => {
     if (
       isNonEmptyArray(
@@ -176,9 +159,11 @@ export const useSaveDraftRoleToDB = ({
       ) === true
     ) {
       for (const fieldPermissionToRemoveInDraftRole of fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless) {
-        removeFieldPermissionInDraftRole(
-          roleId,
-          fieldPermissionToRemoveInDraftRole.fieldMetadataId,
+        store.set(draftRoleAtom, (currentDraftRole) =>
+          getRoleWithRemovedFieldPermission(
+            currentDraftRole,
+            fieldPermissionToRemoveInDraftRole.fieldMetadataId,
+          ),
         );
       }
     }
@@ -189,23 +174,21 @@ export const useSaveDraftRoleToDB = ({
       variables: {
         createRoleInput: {
           id: roleId,
-          label: settingsDraftRole.label,
-          description: settingsDraftRole.description,
-          icon: settingsDraftRole.icon,
-          canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-          canAccessAllTools: settingsDraftRole.canAccessAllTools,
+          label: draftRole.label,
+          description: draftRole.description,
+          icon: draftRole.icon,
+          canUpdateAllSettings: draftRole.canUpdateAllSettings,
+          canAccessAllTools: draftRole.canAccessAllTools,
           canAccessAllAgentChatChannels:
-            settingsDraftRole.canAccessAllAgentChatChannels,
-          canReadAllObjectRecords: settingsDraftRole.canReadAllObjectRecords,
-          canUpdateAllObjectRecords:
-            settingsDraftRole.canUpdateAllObjectRecords,
+            draftRole.canAccessAllAgentChatChannels,
+          canReadAllObjectRecords: draftRole.canReadAllObjectRecords,
+          canUpdateAllObjectRecords: draftRole.canUpdateAllObjectRecords,
           canSoftDeleteAllObjectRecords:
-            settingsDraftRole.canSoftDeleteAllObjectRecords,
-          canDestroyAllObjectRecords:
-            settingsDraftRole.canDestroyAllObjectRecords,
-          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
-          canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
-          canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+            draftRole.canSoftDeleteAllObjectRecords,
+          canDestroyAllObjectRecords: draftRole.canDestroyAllObjectRecords,
+          canBeAssignedToUsers: draftRole.canBeAssignedToUsers,
+          canBeAssignedToAgents: draftRole.canBeAssignedToAgents,
+          canBeAssignedToApiKeys: draftRole.canBeAssignedToApiKeys,
         } satisfies Partial<Role>,
       },
       refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -224,7 +207,7 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const rowLevelPermissionObjectMetadataIds = new Set(
-    (settingsDraftRole.rowLevelPermissionPredicates ?? []).map(
+    (draftRole.rowLevelPermissionPredicates ?? []).map(
       ({ objectMetadataId }) => objectMetadataId,
     ),
   );
@@ -255,7 +238,7 @@ export const useSaveDraftRoleToDB = ({
         upsertObjectPermissionsInput: {
           roleId: targetRoleId,
           objectPermissions: [
-            ...(settingsDraftRole.objectPermissions ?? [])
+            ...(draftRole.objectPermissions ?? [])
               .filter(
                 ({ objectMetadataId }) =>
                   !objectMetadataIdsToResolve.includes(objectMetadataId),
@@ -280,11 +263,10 @@ export const useSaveDraftRoleToDB = ({
                 };
               }
 
-              const objectPermission =
-                settingsDraftRole.objectPermissions?.find(
-                  (draftObjectPermission) =>
-                    draftObjectPermission.objectMetadataId === objectMetadataId,
-                );
+              const objectPermission = draftRole.objectPermissions?.find(
+                (draftObjectPermission) =>
+                  draftObjectPermission.objectMetadataId === objectMetadataId,
+              );
 
               return {
                 objectMetadataId,
@@ -312,7 +294,7 @@ export const useSaveDraftRoleToDB = ({
           upsertPermissionFlagsInput: {
             roleId: roleId,
             permissionFlagKeys:
-              settingsDraftRole.permissionFlags?.map(
+              draftRole.permissionFlags?.map(
                 (permissionFlag) => permissionFlag.flag,
               ) ?? [],
           },
@@ -327,24 +309,21 @@ export const useSaveDraftRoleToDB = ({
           updateRoleInput: {
             id: roleId,
             update: {
-              label: settingsDraftRole.label,
-              description: settingsDraftRole.description,
-              icon: settingsDraftRole.icon,
-              canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-              canAccessAllTools: settingsDraftRole.canAccessAllTools,
+              label: draftRole.label,
+              description: draftRole.description,
+              icon: draftRole.icon,
+              canUpdateAllSettings: draftRole.canUpdateAllSettings,
+              canAccessAllTools: draftRole.canAccessAllTools,
               canAccessAllAgentChatChannels:
-                settingsDraftRole.canAccessAllAgentChatChannels,
-              canReadAllObjectRecords:
-                settingsDraftRole.canReadAllObjectRecords,
-              canUpdateAllObjectRecords:
-                settingsDraftRole.canUpdateAllObjectRecords,
+                draftRole.canAccessAllAgentChatChannels,
+              canReadAllObjectRecords: draftRole.canReadAllObjectRecords,
+              canUpdateAllObjectRecords: draftRole.canUpdateAllObjectRecords,
               canSoftDeleteAllObjectRecords:
-                settingsDraftRole.canSoftDeleteAllObjectRecords,
-              canDestroyAllObjectRecords:
-                settingsDraftRole.canDestroyAllObjectRecords,
-              canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
-              canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
-              canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+                draftRole.canSoftDeleteAllObjectRecords,
+              canDestroyAllObjectRecords: draftRole.canDestroyAllObjectRecords,
+              canBeAssignedToUsers: draftRole.canBeAssignedToUsers,
+              canBeAssignedToAgents: draftRole.canBeAssignedToAgents,
+              canBeAssignedToApiKeys: draftRole.canBeAssignedToApiKeys,
             },
           },
         },
@@ -382,9 +361,8 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const upsertRowLevelPermissionRulesForRole = async (targetRoleId: string) => {
-    const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
-    const predicateGroups =
-      settingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
+    const predicates = draftRole.rowLevelPermissionPredicates ?? [];
+    const predicateGroups = draftRole.rowLevelPermissionPredicateGroups ?? [];
 
     const predicatesByObject = predicates.reduce(
       (acc, predicate) => {
@@ -447,7 +425,7 @@ export const useSaveDraftRoleToDB = ({
       );
 
       const objectRecordsGrant = resolveSettingsRoleObjectRecordsGrant({
-        role: settingsDraftRole,
+        role: draftRole,
         objectMetadataId,
       });
       const persistedRule = (
@@ -484,7 +462,7 @@ export const useSaveDraftRoleToDB = ({
           upsertPermissionFlagsInput: {
             roleId: targetRoleId,
             permissionFlagKeys:
-              settingsDraftRole.permissionFlags?.map(
+              draftRole.permissionFlags?.map(
                 (permissionFlag) => permissionFlag.flag,
               ) ?? [],
           },
@@ -523,33 +501,27 @@ export const useSaveDraftRoleToDB = ({
   const assignEntitiesToRole = async (targetRoleId: string) => {
     if (
       isDefined(dirtyFields.workspaceMembers) &&
-      settingsDraftRole.canBeAssignedToUsers
+      draftRole.canBeAssignedToUsers
     ) {
       await addWorkspaceMembersToRole({
         roleId: targetRoleId,
-        workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
+        workspaceMemberIds: draftRole.workspaceMembers.map(
           (member) => member.id,
         ),
       });
     }
 
-    if (
-      isDefined(dirtyFields.agents) &&
-      settingsDraftRole.canBeAssignedToAgents
-    ) {
+    if (isDefined(dirtyFields.agents) && draftRole.canBeAssignedToAgents) {
       await addAgentsToRole({
         roleId: targetRoleId,
-        agentIds: settingsDraftRole.agents.map((agent) => agent.id),
+        agentIds: draftRole.agents.map((agent) => agent.id),
       });
     }
 
-    if (
-      isDefined(dirtyFields.apiKeys) &&
-      settingsDraftRole.canBeAssignedToApiKeys
-    ) {
+    if (isDefined(dirtyFields.apiKeys) && draftRole.canBeAssignedToApiKeys) {
       await addApiKeysToRole({
         roleId: targetRoleId,
-        apiKeyIds: settingsDraftRole.apiKeys.map((apiKey) => apiKey.id),
+        apiKeyIds: draftRole.apiKeys.map((apiKey) => apiKey.id),
       });
     }
   };
@@ -557,9 +529,7 @@ export const useSaveDraftRoleToDB = ({
   const saveDraftRoleToDB = async () => {
     removeUselessFieldPermissions();
 
-    const savedDraftRole = store.get(
-      settingsDraftRoleFamilyState.getAtom(roleId, routedFlowStateScopeId),
-    );
+    const savedDraftRole = store.get(draftRoleAtom);
 
     const savedRoleId = isCreateMode
       ? await createNewRole()

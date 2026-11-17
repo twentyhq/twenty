@@ -14,7 +14,9 @@ import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/Set
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -76,9 +78,19 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { enqueueToast } = useToast();
 
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
+
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
     roleId,
+    draftRoleAtom: settingsDraftRoleFamilyState.getAtom(
+      roleId,
+      routedFlowStateScopeId,
+    ),
+    initialDraftRoleAtom: settingsInitialDraftRoleFamilyState.getAtom(
+      roleId,
+      routedFlowStateScopeId,
+    ),
     onSuccess: async (savedRoleId) => {
       if (isCreateMode) {
         navigateSettings(SettingsPath.RoleDetail, { roleId: savedRoleId });
