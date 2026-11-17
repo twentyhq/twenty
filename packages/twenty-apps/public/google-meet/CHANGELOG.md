@@ -7,8 +7,6 @@ All notable changes to this application are documented in this file.
 - Connect a personal Google account to import the transcript and Gemini notes
   of each Google Meet call you organized into a Call Recording, linked to the
   matching Calendar Event.
-- Import calls as soon as Google Meet reports their transcript or notes ready,
-  and catch up daily on the calls of the last two days whose event was missed.
 - Write an AI summary for calls without Gemini notes. Each member can turn off
   AI summaries for their own calls in App preferences.
 - Recordings (video) are not imported yet.
