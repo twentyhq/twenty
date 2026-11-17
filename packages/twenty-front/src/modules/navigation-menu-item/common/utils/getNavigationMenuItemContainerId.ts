@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -10,7 +12,7 @@ export const getNavigationMenuItemContainerId = ({
 }): string | null => {
   const parent = items.find((candidate) => candidate.id === item.parentId);
 
-  if (parent !== undefined && isNavigationMenuItemFolder(parent)) {
+  if (isDefined(parent) && isNavigationMenuItemFolder(parent)) {
     return parent.parentId ?? null;
   }
 

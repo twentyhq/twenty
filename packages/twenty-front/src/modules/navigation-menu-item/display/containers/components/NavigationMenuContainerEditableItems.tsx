@@ -1,13 +1,10 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
-import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -29,7 +26,6 @@ export const NavigationMenuContainerEditableItems = ({
   topLevelItems,
   folderChildrenById,
 }: NavigationMenuContainerEditableItemsProps) => {
-  const { t } = useLingui();
   const [
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,
@@ -57,17 +53,9 @@ export const NavigationMenuContainerEditableItems = ({
           }
         />
       ))}
-      <NavigationMenuItemAddDropdown
-        instanceId={`container-${containerId}`}
-        parentId={containerId}
-      >
-        <NavigationDrawerItem
-          Icon={IconPlus}
-          label={t`Add menu item`}
-          triggerEvent="CLICK"
-          variant="tertiary"
-        />
-      </NavigationMenuItemAddDropdown>
+      <WorkspaceSectionAddMenuItemButton
+        container={{ id: containerId, itemCount: topLevelItems.length }}
+      />
     </StyledList>
   );
 };
