@@ -44,7 +44,7 @@ import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -503,7 +503,9 @@ const AiChatMessagesSetterEffect = ({
 
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
-    const previousCurrentThread = store.get(currentAiChatThreadState.atom);
+    const previousCurrentThread = store.get(
+      aiChatTestInstanceThreadIdState.atom,
+    );
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
@@ -519,7 +521,7 @@ const AiChatMessagesSetterEffect = ({
       messageId: mockTeammateMessage.id,
     });
 
-    store.set(currentAiChatThreadState.atom, currentThreadId);
+    store.set(aiChatTestInstanceThreadIdState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -553,7 +555,7 @@ const AiChatMessagesSetterEffect = ({
     ]);
 
     return () => {
-      store.set(currentAiChatThreadState.atom, previousCurrentThread);
+      store.set(aiChatTestInstanceThreadIdState.atom, previousCurrentThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
@@ -614,7 +616,7 @@ export const UserMessage: Story = {
 };
 
 const playInWritableThread = async (play: () => Promise<void>) => {
-  const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+  const threadId = jotaiStore.get(aiChatTestInstanceThreadIdState.atom);
   assertIsDefinedOrThrow(threadId);
   const objectMetadataItemsAtom = metadataStoreState.atomFamily(
     'objectMetadataItems',
@@ -854,7 +856,7 @@ export const MultiplayerConversation: Story = {
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
 
-    const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+    const threadId = jotaiStore.get(aiChatTestInstanceThreadIdState.atom);
     assertIsDefinedOrThrow(threadId);
     const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
     const previousThread = jotaiStore.get(threadRecordAtom);

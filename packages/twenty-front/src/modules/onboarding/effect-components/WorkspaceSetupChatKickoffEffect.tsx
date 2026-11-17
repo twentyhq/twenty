@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAiChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -105,7 +104,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           );
         }
 
-        store.set(hasInitializedAiChatThreadsState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         onThreadChange(thread.id);
       } catch {
