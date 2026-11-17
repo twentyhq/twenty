@@ -11,7 +11,7 @@ import { TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/features/tra
 export default defineConnectionProvider({
   universalIdentifier: TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: TEAMS_PROVIDER_NAME,
-  displayName: 'Microsoft Teams',
+  displayName: 'Teams',
   type: 'oauth',
   scope: 'WORKSPACE',
   onConnectLogicFunction: {

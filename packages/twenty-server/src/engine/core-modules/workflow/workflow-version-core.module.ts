@@ -1,9 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -18,9 +14,6 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
 
 @Module({
   imports: [
-    ApplicationModule,
-    WorkspaceMigrationModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     RecordPositionModule,
     TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
     WorkspaceCacheModule,

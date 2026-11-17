@@ -12,7 +12,7 @@ import {
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'Microsoft Teams',
+  displayName: 'Teams',
   description:
     'Sync Microsoft Teams meeting transcripts into Call Recordings, including an initial import of the last 31 days. Optionally generate AI summaries using your workspace AI credits.',
   logo: 'public/teams.svg',
