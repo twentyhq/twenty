@@ -1,4 +1,4 @@
-# Google Meet setup
+# Meet setup
 
 The server admin does this once per Twenty server, in one Google Cloud project.
 Workspace members then only connect their Google account.
@@ -31,7 +31,7 @@ Workspace members then only connect their Google account.
    https://<your-twenty-host>/auth/apps/callback
    ```
 
-   Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` on the Google Meet
+   Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` on the Meet
    application registration in Twenty.
 
 ## Pub/Sub topic
@@ -76,7 +76,7 @@ configured below.
    `roles/iam.serviceAccountTokenCreator` role on it, and whoever creates the
    subscription needs `roles/iam.serviceAccountUser` on it.
 
-2. Create the push subscription. The endpoint is the Google Meet server route
+2. Create the push subscription. The endpoint is the Meet server route
    of your Twenty server:
 
    ```bash
@@ -87,7 +87,7 @@ configured below.
      --push-auth-token-audience='<audience>'
    ```
 
-   `<application-registration-id>` is the id of the Google Meet application
+   `<application-registration-id>` is the id of the Meet application
    registration in Twenty. `<audience>` is any value you choose, for instance
    the endpoint URL.
 
