@@ -1799,6 +1799,7 @@ input CreateMcpServerInput {
   isActive: Boolean
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   url: String!
 }
 
@@ -2808,6 +2809,7 @@ type GetAuthorizationUrlForSSO {
 input GetAuthorizationUrlForSSOInput {
   identityProviderId: UUID!
   workspaceInviteHash: String
+  workspacePersonalInviteToken: String
 }
 
 type GettingStartedProgress {
@@ -3300,6 +3302,7 @@ type McpServer {
   isActive: Boolean!
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   tools: [McpServerTool!]!
   toolsSyncError: String
   toolsSyncedAt: DateTime
@@ -5540,6 +5543,7 @@ input UpdateMcpServerInputUpdates {
   isActive: Boolean
   label: String
   name: String
+  signInScope: ConnectionProviderScope
   url: String
 }
 

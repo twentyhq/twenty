@@ -2477,8 +2477,8 @@ msgid "Add payment method"
 msgstr "결제 수단 추가"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "사람 또는 채널 추가"
 
@@ -5908,7 +5908,7 @@ msgstr "현재 카드 결제를 사용할 수 없습니다. Stripe 구성을 확
 #. js-lingui-id: VbL9yf
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Cards grouped by a Select field"
-msgstr ""
+msgstr "선택 필드별로 그룹화된 카드"
 
 #. js-lingui-id: M1RLfx
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -6069,7 +6069,6 @@ msgstr "채널"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "차트"
 
@@ -6077,6 +6076,11 @@ msgstr "차트"
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
 msgstr "차트 유형"
+
+#. js-lingui-id: A4tHrb
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
+msgid "Charts"
+msgstr "차트"
 
 #. js-lingui-id: rlwve5
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -7028,7 +7032,7 @@ msgstr "커뮤니티 - 설정"
 #. js-lingui-id: SScVmJ
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Compact list"
-msgstr ""
+msgstr "컴팩트 목록"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -13673,7 +13677,6 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "파일 \"{fileName}\"이(가) {maxUploadSize}를 초과합니다"
 
 #. js-lingui-id: 0bK1RI
-#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
@@ -15296,11 +15299,6 @@ msgstr "HTTP 요청"
 msgid "HTTP request failed"
 msgstr "HTTP 요청 실패"
 
-#. js-lingui-id: 82OlFB
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "HTTP requests in the logic function runtime"
-msgstr "로직 함수 런타임의 HTTP 요청"
-
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15647,7 +15645,7 @@ msgstr "이 계정에서 새 이벤트 가져오기"
 #. js-lingui-id: 4Ljmum
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days."
-msgstr ""
+msgstr "반복되는 Google Calendar 회의의 발생 항목은 최대 90일 전까지만 가져오고, 이후 발생 항목은 90일 이내에 들어오면 가져옵니다."
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -15662,7 +15660,7 @@ msgstr "JetBrains 설정에서 MCP 구성을 가져오거나 추가하세요."
 #. js-lingui-id: 8zGGat
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Import recurring meetings 90 days ahead"
-msgstr ""
+msgstr "반복 회의를 90일 전까지 가져오기"
 
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
@@ -17086,11 +17084,11 @@ msgstr "레이아웃"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -21994,6 +21992,7 @@ msgstr "원본 메시지를 사용할 수 없음"
 #: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23764,7 +23763,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -23952,11 +23951,6 @@ msgstr "레코드 선택"
 msgid "Record sharing"
 msgstr "레코드 공유"
 
-#. js-lingui-id: J9Cfll
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Record Table"
-msgstr "레코드 테이블"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -24037,7 +24031,7 @@ msgstr "레코드"
 #. js-lingui-id: wgYk8q
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
-msgstr ""
+msgstr "날짜별 레코드"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24199,7 +24193,7 @@ msgstr "관련 레코드"
 #. js-lingui-id: ZwRDRN
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Related Records Widget"
-msgstr ""
+msgstr "관련 레코드 위젯"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -25219,7 +25213,7 @@ msgstr "행"
 #. js-lingui-id: cXIbmh
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Rows and columns"
-msgstr ""
+msgstr "행 및 열"
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -25929,11 +25923,6 @@ msgstr "작업 검색"
 msgid "Search options"
 msgstr "검색 옵션"
 
-#. js-lingui-id: /iXEpl
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
-msgid "Search recipients"
-msgstr "수신자 검색"
-
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -26557,7 +26546,7 @@ msgid "Select options"
 msgstr "옵션 선택"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "수신자 선택"
 
@@ -26773,11 +26762,6 @@ msgstr "테스트 이메일 보내기"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "받은편지함으로 보내기"
-
-#. js-lingui-id: 69d0/t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr "워크플로 HTTP 요청, 테스트 요청 및 AI 에이전트 HTTP 도구를 로직 함수 드라이버를 통해 전송합니다. 로직 함수가 Lambda에서 실행될 때 로직 함수 드라이버는 격리된 Lambda에서 이를 실행합니다."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -28003,11 +27987,6 @@ msgstr "독립형"
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "표준"
-
-#. js-lingui-id: 9oJdah
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
-msgid "Standard widgets"
-msgstr "표준 위젯"
 
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -29910,7 +29889,7 @@ msgstr "이 제공업체는 기본 제공됩니다. 해당 페이지에서 API �
 #. js-lingui-id: qfpz3J
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "This record"
-msgstr ""
+msgstr "이 레코드"
 
 #. js-lingui-id: Wf1hgt
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -32469,7 +32448,6 @@ msgstr "보기"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "View"
 msgstr "보기"
@@ -32612,6 +32590,7 @@ msgstr "뷰어"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "보기"

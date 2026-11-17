@@ -1,8 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import {
+  CONNECTION_PROVIDER_SCOPES,
+  type ConnectionProviderScope,
+} from 'twenty-shared/application';
+
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,6 +16,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import { ConnectionProviderScopeEnum } from 'src/engine/core-modules/application/connection-provider/dtos/connection-provider-scope.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
@@ -38,6 +45,11 @@ export class UpdateMcpServerInputUpdates {
   @IsBoolean()
   @Field({ nullable: true })
   isActive?: boolean;
+
+  @IsOptional()
+  @IsIn(CONNECTION_PROVIDER_SCOPES)
+  @Field(() => ConnectionProviderScopeEnum, { nullable: true })
+  signInScope?: ConnectionProviderScope;
 }
 
 @InputType()

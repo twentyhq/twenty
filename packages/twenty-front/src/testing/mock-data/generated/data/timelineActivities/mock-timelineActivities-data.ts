@@ -70,8 +70,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -155,8 +153,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -240,8 +236,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -325,8 +319,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -410,8 +402,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -495,8 +485,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -580,8 +568,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -665,8 +651,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -750,8 +734,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",
@@ -835,8 +817,6 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     "targetWorkflowId": null,
     "targetWorkflowRun": null,
     "targetWorkflowRunId": null,
-    "targetWorkflowVersion": null,
-    "targetWorkflowVersionId": null,
     "updatedAt": "2026-02-27T01:17:30.071Z",
     "updatedBy": {
       "__typename": "Actor",

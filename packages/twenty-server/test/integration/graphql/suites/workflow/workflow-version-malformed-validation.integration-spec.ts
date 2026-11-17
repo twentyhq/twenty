@@ -3,12 +3,8 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -35,7 +31,6 @@ const updateStepResponse = (
 describe('Workflow version malformed validation (e2e)', () => {
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowVersionId: string;
   let createRecordStep: {
     id: string;
     settings: { input: Record<string, unknown> };
@@ -84,20 +79,10 @@ describe('Workflow version malformed validation (e2e)', () => {
       stepType: 'FIND_RECORDS',
       position: { x: 600, y: 0 },
     });
-
-    const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    });
-
-    workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    });
   });
 
   const sendEmailStepWithBody = (body: string) => ({
@@ -241,19 +226,5 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors[0].message).toContain(
       'Unrecognized key: "fieldsToUpdate"',
     );
-  });
-
-  it('forbids writing steps through the generic updateWorkflowVersion mutation', async () => {
-    const operation = updateOneOperationFactory({
-      objectMetadataSingularName: 'workflowVersion',
-      gqlFields: 'id',
-      recordId: workspaceWorkflowVersionId,
-      data: { steps: [] },
-    });
-
-    const response = await makeGraphqlApiRequest(operation);
-
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
   });
 });

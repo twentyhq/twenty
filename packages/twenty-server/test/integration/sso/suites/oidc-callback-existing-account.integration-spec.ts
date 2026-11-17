@@ -1,7 +1,11 @@
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { clearInvitationSendingThrottle } from 'test/integration/graphql/utils/clear-invitation-sending-throttle.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
-import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
+import {
+  deleteWorkspaceInvitationsByEmail,
+  findWorkspaceInvitationsByEmail,
+  seedWorkspaceInvitation,
+} from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
@@ -16,6 +20,7 @@ import {
   setUserCanAccessFullAdminPanel,
 } from 'test/integration/saml-callback/utils/account-state-sql.util';
 import { deleteSsoConnectedAccounts } from 'test/integration/sso/utils/delete-sso-connected-accounts.util';
+import { expectNotInternalServerErrorSsoRedirectSnapshot } from 'test/integration/sso/utils/expect-not-internal-server-error-sso-redirect-snapshot.util';
 import { exchangeLoginToken } from 'test/integration/sso/utils/exchange-login-token.util';
 import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-ycombinator-admin-access-token.util';
 import { signInWithLocalOidcIssuer } from 'test/integration/sso/utils/sign-in-with-local-oidc-issuer.util';
@@ -27,7 +32,10 @@ import { updateConfigVariable } from 'test/integration/twenty-config/utils/updat
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const YCOMBINATOR_SUBDOMAIN = 'yc';
@@ -36,6 +44,7 @@ const YCOMBINATOR_INVITE_HASH = 'yc.dev-invite-hash';
 // Phil is a member of both Apple and YCombinator; Scott is a member of Apple only.
 const YC_MEMBER_EMAIL = 'phil.schiler@apple.dev';
 const NON_YC_MEMBER_EMAIL = 'scott.forstall@apple.dev';
+const OTHER_INVITED_EMAIL = 'sso-invite-token-other@example.com';
 const UNVERIFIED_ACCOUNT_PASSWORD = 'Password123!';
 
 describe('OIDC callback sign-in', () => {
@@ -137,6 +146,161 @@ describe('OIDC callback sign-in', () => {
       ).toBe(0);
     });
 
+    it('lets an existing account join with the personal invite token from its invitation email', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      await sendInvitations({
+        input: { emails: [NON_YC_MEMBER_EMAIL] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const [invitation] = await findWorkspaceInvitationsByEmail({
+        email: NON_YC_MEMBER_EMAIL,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(invitation);
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: invitation.value,
+      });
+
+      expect(redirectUrl.searchParams.get('loginToken')).not.toBeNull();
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(1);
+      expect(
+        await findWorkspaceInvitationsByEmail({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toHaveLength(0);
+    });
+
+    it('refuses an existing account presenting a personal invite token issued for another email', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      await sendInvitations({
+        input: { emails: [OTHER_INVITED_EMAIL] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const [otherInvitation] = await findWorkspaceInvitationsByEmail({
+        email: OTHER_INVITED_EMAIL,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(otherInvitation);
+
+      try {
+        const redirectUrl = await signInWithLocalOidcIssuer({
+          identityProviderId,
+          email: NON_YC_MEMBER_EMAIL,
+          workspacePersonalInviteToken: otherInvitation.value,
+        });
+
+        expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
+        expect(
+          await countUserWorkspaceMemberships({
+            email: NON_YC_MEMBER_EMAIL,
+            workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+          }),
+        ).toBe(0);
+      } finally {
+        await clearInvitationSendingThrottle({ email: OTHER_INVITED_EMAIL });
+        await deleteWorkspaceInvitationsByEmail({
+          email: OTHER_INVITED_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        });
+      }
+    });
+
+    it('refuses an existing account presenting an expired personal invite token', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const expiredInviteToken = `expired-${uuidv4()}`;
+
+      await seedWorkspaceInvitation({
+        email: NON_YC_MEMBER_EMAIL,
+        value: expiredInviteToken,
+        expiresAt: new Date(Date.now() - 60_000),
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: expiredInviteToken,
+      });
+
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('refuses an existing account presenting a personal invite token from another workspace', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const otherWorkspaceInviteToken = `other-workspace-${uuidv4()}`;
+
+      await seedWorkspaceInvitation({
+        email: NON_YC_MEMBER_EMAIL,
+        value: otherWorkspaceInviteToken,
+        expiresAt: new Date(Date.now() + 60 * 60_000),
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      try {
+        const redirectUrl = await signInWithLocalOidcIssuer({
+          identityProviderId,
+          email: NON_YC_MEMBER_EMAIL,
+          workspacePersonalInviteToken: otherWorkspaceInviteToken,
+        });
+
+        expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
+        expect(
+          await countUserWorkspaceMemberships({
+            email: NON_YC_MEMBER_EMAIL,
+            workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+          }),
+        ).toBe(0);
+      } finally {
+        await deleteWorkspaceInvitationsByEmail({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        });
+      }
+    });
+
+    it('refuses an existing account presenting an unknown personal invite token', async () => {
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: 'unknown-personal-invite-token',
+      });
+
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
+      expect(
+        await countUserWorkspaceMemberships({
+          email: NON_YC_MEMBER_EMAIL,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
     it('refuses an existing account joining through the public invite link', async () => {
       identityProviderId = await registerLocalOidcIdentityProvider();
 
@@ -155,7 +319,7 @@ describe('OIDC callback sign-in', () => {
       ).toBe(0);
     });
 
-    it('refuses an existing account with admin panel access', async () => {
+    it('refuses an existing account with admin panel access, even with its personal invite token', async () => {
       await setUserCanAccessFullAdminPanel({
         email: NON_YC_MEMBER_EMAIL,
         canAccessFullAdminPanel: true,
@@ -169,12 +333,20 @@ describe('OIDC callback sign-in', () => {
         token: ycombinatorAdminAccessToken,
       });
 
+      const [invitation] = await findWorkspaceInvitationsByEmail({
+        email: NON_YC_MEMBER_EMAIL,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(invitation);
+
       const redirectUrl = await signInWithLocalOidcIssuer({
         identityProviderId,
         email: NON_YC_MEMBER_EMAIL,
+        workspacePersonalInviteToken: invitation.value,
       });
 
-      expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(
         await countUserWorkspaceMemberships({
           email: NON_YC_MEMBER_EMAIL,
@@ -248,6 +420,45 @@ describe('OIDC callback sign-in', () => {
       });
 
       expect(redirectUrl.searchParams.get('loginToken')).toBeNull();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
+      expect(
+        await countUserWorkspaceMemberships({
+          email: unverifiedEmail,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('refuses an unverified password account presenting its personal invite token and leaves it unverified', async () => {
+      assertIsDefinedOrThrow(unverifiedEmail);
+
+      await updateConfigVariable({
+        input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: true },
+      });
+      isEmailVerificationRequired = true;
+
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      await sendInvitations({
+        input: { emails: [unverifiedEmail] },
+        expectToFail: false,
+        token: ycombinatorAdminAccessToken,
+      });
+
+      const [invitation] = await findWorkspaceInvitationsByEmail({
+        email: unverifiedEmail,
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+      assertIsDefinedOrThrow(invitation);
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: unverifiedEmail,
+        workspacePersonalInviteToken: invitation.value,
+      });
+
+      expectNotInternalServerErrorSsoRedirectSnapshot(redirectUrl);
       expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
       expect(
         await countUserWorkspaceMemberships({
