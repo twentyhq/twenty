@@ -7,6 +7,7 @@ import { EmailComposerFields } from '@/activities/emails/components/EmailCompose
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const SHARED_DRAFT_KEY = 'story-shared-email-reply';
@@ -32,7 +33,7 @@ const TwoComposersSharingADraft = () => (
 const meta: Meta<typeof TwoComposersSharingADraft> = {
   title: 'Modules/Activities/Emails/EmailComposerFields',
   component: TwoComposersSharingADraft,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, ToastDecorator],
   parameters: {
     container: { width: 480 },
     msw: {
