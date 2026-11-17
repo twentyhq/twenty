@@ -1503,8 +1503,8 @@ describe('call recorder app lifecycle (integration)', () => {
         const { calendarEventId, callRecordingId, botId } =
           await scheduleRecordingThroughCalendarReconciliation();
         const update = await updateCalendarEventForDelivery(calendarEventId, {
-          startsAt: hoursAgo(-24),
-          endsAt: hoursAgo(-24 - 1),
+          startsAt: hoursAgo(-12),
+          endsAt: hoursAgo(-12 - 1),
         });
         let lookupFailed = false;
         let mutationCount = 0;
@@ -1714,8 +1714,8 @@ describe('call recorder app lifecycle (integration)', () => {
       const { calendarEventId, callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
       const update = await updateCalendarEventForDelivery(calendarEventId, {
-        startsAt: hoursAgo(-24),
-        endsAt: hoursAgo(-24 - 1),
+        startsAt: hoursAgo(-12),
+        endsAt: hoursAgo(-12 - 1),
       });
 
       await deliverCalendarEventUpdates(update);

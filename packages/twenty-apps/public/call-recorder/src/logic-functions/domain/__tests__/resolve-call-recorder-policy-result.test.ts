@@ -8,10 +8,10 @@ const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
 const PAST_STARTS_AT = '2026-01-01T09:00:00.000Z';
 const PAST_ENDS_AT = '2026-01-01T10:00:00.000Z';
-const LAST_HOUR_OF_HORIZON_STARTS_AT = '2026-01-03T11:00:00.000Z';
-const LAST_HOUR_OF_HORIZON_ENDS_AT = '2026-01-03T12:00:00.000Z';
-const BEYOND_HORIZON_STARTS_AT = '2026-01-03T13:00:00.000Z';
-const BEYOND_HORIZON_ENDS_AT = '2026-01-03T14:00:00.000Z';
+const LAST_HOUR_OF_HORIZON_STARTS_AT = '2026-01-02T11:00:00.000Z';
+const LAST_HOUR_OF_HORIZON_ENDS_AT = '2026-01-02T12:00:00.000Z';
+const BEYOND_HORIZON_STARTS_AT = '2026-01-02T13:00:00.000Z';
+const BEYOND_HORIZON_ENDS_AT = '2026-01-02T14:00:00.000Z';
 
 describe('resolveCallRecorderPolicyResult', () => {
   it('does not request a bot when calendar bot scheduling is disabled, even for an ON event', () => {
@@ -185,7 +185,7 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
-  it('requires a bot for an event starting in the last hour of the two-day scheduling horizon', () => {
+  it('requires a bot for an event starting in the last hour of the one-day scheduling horizon', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {

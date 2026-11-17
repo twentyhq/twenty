@@ -935,9 +935,9 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('cancels the old occurrence and creates a fresh recording when the meeting moves to a new time', async () => {
-    const NEW_STARTS_AT = '2026-01-02T13:00:00.000Z';
-    const NEW_RECALL_BOT_JOIN_AT = '2026-01-02T12:59:00.000Z';
-    const NEW_ENDS_AT = '2026-01-02T14:00:00.000Z';
+    const NEW_STARTS_AT = '2026-01-01T17:00:00.000Z';
+    const NEW_RECALL_BOT_JOIN_AT = '2026-01-01T16:59:00.000Z';
+    const NEW_ENDS_AT = '2026-01-01T18:00:00.000Z';
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
