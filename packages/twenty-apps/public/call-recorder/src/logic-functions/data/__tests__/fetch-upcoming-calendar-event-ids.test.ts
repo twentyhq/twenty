@@ -46,7 +46,7 @@ describe('fetchUpcomingCalendarEventIds', () => {
               or: [
                 {
                   and: [
-                    { startsAt: { lte: '2026-07-11T12:00:00.000Z' } },
+                    { startsAt: { lte: '2026-07-05T12:00:00.000Z' } },
                     { endsAt: { gt: '2026-07-04T12:00:00.000Z' } },
                   ],
                 },
@@ -54,7 +54,7 @@ describe('fetchUpcomingCalendarEventIds', () => {
                   and: [
                     { endsAt: { is: 'NULL' } },
                     { startsAt: { gt: '2026-07-04T12:00:00.000Z' } },
-                    { startsAt: { lte: '2026-07-11T12:00:00.000Z' } },
+                    { startsAt: { lte: '2026-07-05T12:00:00.000Z' } },
                   ],
                 },
               ],

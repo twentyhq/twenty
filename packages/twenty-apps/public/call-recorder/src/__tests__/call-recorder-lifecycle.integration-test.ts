@@ -1516,8 +1516,8 @@ describe('call recorder app lifecycle (integration)', () => {
         const { calendarEventId, callRecordingId, botId } =
           await scheduleRecordingThroughCalendarReconciliation();
         const update = await updateCalendarEventForDelivery(calendarEventId, {
-          startsAt: hoursAgo(-2 * 24),
-          endsAt: hoursAgo(-2 * 24 - 1),
+          startsAt: hoursAgo(-12),
+          endsAt: hoursAgo(-12 - 1),
         });
         let lookupFailed = false;
         let mutationCount = 0;
@@ -1727,8 +1727,8 @@ describe('call recorder app lifecycle (integration)', () => {
       const { calendarEventId, callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
       const update = await updateCalendarEventForDelivery(calendarEventId, {
-        startsAt: hoursAgo(-2 * 24),
-        endsAt: hoursAgo(-2 * 24 - 1),
+        startsAt: hoursAgo(-12),
+        endsAt: hoursAgo(-12 - 1),
       });
 
       await deliverCalendarEventUpdates(update);
@@ -1816,7 +1816,7 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     it.each([1, 2])(
-      'cancels each recorder once when cancellation write %i fails during a move beyond seven days',
+      'cancels each recorder once when cancellation write %i fails during a move beyond the scheduling horizon',
       async (failedCancellationIndex) => {
         const calendarEventId = await createCalendarEvent();
         const callRecordingIds: string[] = [];
