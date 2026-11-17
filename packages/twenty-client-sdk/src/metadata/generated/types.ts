@@ -5844,6 +5844,9 @@ export default {
             "workspaceInviteHash": [
                 4
             ],
+            "workspacePersonalInviteToken": [
+                4
+            ],
             "__typename": [
                 4
             ]
@@ -10134,19 +10137,6 @@ export default {
                     "input": [
                         632,
                         "UpdateWorkspaceMemberSettingsInput!"
-                    ]
-                }
-            ],
-            "upgradeApplication": [
-                1,
-                {
-                    "appRegistrationId": [
-                        4,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        4,
-                        "String!"
                     ]
                 }
             ],
