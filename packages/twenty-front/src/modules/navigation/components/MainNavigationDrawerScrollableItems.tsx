@@ -1,8 +1,6 @@
 import { GettingStartedOpenedSection } from '@/getting-started/components/GettingStartedOpenedSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
-import { NavigationMenuItemSections } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSections';
-import { NavigationMenuTabContent } from '@/navigation-menu-item/display/tab/components/NavigationMenuTabContent';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 
 import { styled } from '@linaria/react';
@@ -27,6 +25,22 @@ const WorkspaceSectionDispatcher = lazy(() =>
   ),
 );
 
+const NavigationMenuItemSections = lazy(() =>
+  import('@/navigation-menu-item/display/sections/components/NavigationMenuItemSections').then(
+    (module) => ({
+      default: module.NavigationMenuItemSections,
+    }),
+  ),
+);
+
+const NavigationMenuTabContent = lazy(() =>
+  import('@/navigation-menu-item/display/tab/components/NavigationMenuTabContent').then(
+    (module) => ({
+      default: module.NavigationMenuTabContent,
+    }),
+  ),
+);
+
 const StyledScrollableItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -40,18 +54,20 @@ export const MainNavigationDrawerScrollableItems = () => {
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
       <GettingStartedOpenedSection />
-      {isDefined(activeNavigationMenuTab) ? (
-        <NavigationMenuTabContent
-          key={activeNavigationMenuTab.id}
-          tab={activeNavigationMenuTab}
-        />
-      ) : (
-        <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-          <FavoritesSectionDispatcher />
-          <WorkspaceSectionDispatcher />
-          <NavigationMenuItemSections containerId={null} />
-        </Suspense>
-      )}
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
+        {isDefined(activeNavigationMenuTab) ? (
+          <NavigationMenuTabContent
+            key={activeNavigationMenuTab.id}
+            tab={activeNavigationMenuTab}
+          />
+        ) : (
+          <>
+            <FavoritesSectionDispatcher />
+            <WorkspaceSectionDispatcher />
+            <NavigationMenuItemSections containerId={null} />
+          </>
+        )}
+      </Suspense>
     </StyledScrollableItemsContainer>
   );
 };

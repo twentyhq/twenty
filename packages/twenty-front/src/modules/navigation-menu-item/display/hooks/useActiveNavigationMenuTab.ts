@@ -1,3 +1,4 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -11,8 +12,14 @@ export const useActiveNavigationMenuTab = (): NavigationMenuItem | null => {
     currentNavigationMenuTabIdState,
   );
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
-  if (activeNavigationDrawerMode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
+  if (
+    activeNavigationDrawerMode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
+    isLayoutCustomizationModeEnabled
+  ) {
     return null;
   }
 
