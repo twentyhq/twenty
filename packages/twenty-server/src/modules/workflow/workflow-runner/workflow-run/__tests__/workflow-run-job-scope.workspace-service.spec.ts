@@ -1,11 +1,6 @@
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
-const WORKFLOW_GROUP_LIMITER = {
-  key: 'jobGroup:workflow',
-  max: 100,
-  durationMs: 60_000,
-};
 
 const buildService = () => {
   const workspaceCacheService = {
@@ -15,16 +10,6 @@ const buildService = () => {
           'workflow-a-universal-id': {
             id: 'workflow-a',
             applicationId: 'application-a',
-            jobGroupKeys: ['workflow'],
-          },
-          'workflow-cached-before-job-groups-universal-id': {
-            id: 'workflow-cached-before-job-groups',
-            applicationId: 'application-a',
-          },
-          'workflow-without-job-group-universal-id': {
-            id: 'workflow-without-job-group',
-            applicationId: 'application-a',
-            jobGroupKeys: [],
           },
           'workflow-of-uninstalled-application-universal-id': {
             id: 'workflow-of-uninstalled-application',
@@ -33,10 +18,6 @@ const buildService = () => {
         },
         universalIdentifierById: {
           'workflow-a': 'workflow-a-universal-id',
-          'workflow-cached-before-job-groups':
-            'workflow-cached-before-job-groups-universal-id',
-          'workflow-without-job-group':
-            'workflow-without-job-group-universal-id',
           'workflow-of-uninstalled-application':
             'workflow-of-uninstalled-application-universal-id',
         },
@@ -56,7 +37,6 @@ const buildService = () => {
         },
         idByUniversalIdentifier: {},
       },
-      jobGroupConfigByKey: {},
     }),
   };
   const workflowRunWorkspaceService = {
@@ -79,26 +59,7 @@ describe('WorkflowRunJobScopeWorkspaceService', () => {
     ).resolves.toEqual({
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: 'application-a-universal-id',
-      limiters: [WORKFLOW_GROUP_LIMITER],
     });
-  });
-
-  it('keeps the workflow limiter for a workflow cached before it had job groups', async () => {
-    await expect(
-      buildService().resolveForCoreWorkflow({
-        workspaceId: WORKSPACE_ID,
-        coreWorkflowId: 'workflow-cached-before-job-groups',
-      }),
-    ).resolves.toMatchObject({ limiters: [WORKFLOW_GROUP_LIMITER] });
-  });
-
-  it('does not limit a workflow that belongs to no job group', async () => {
-    await expect(
-      buildService().resolveForCoreWorkflow({
-        workspaceId: WORKSPACE_ID,
-        coreWorkflowId: 'workflow-without-job-group',
-      }),
-    ).resolves.toMatchObject({ limiters: [] });
   });
 
   it.each([
@@ -116,10 +77,7 @@ describe('WorkflowRunJobScopeWorkspaceService', () => {
           workspaceId: WORKSPACE_ID,
           coreWorkflowId,
         }),
-      ).resolves.toMatchObject({
-        workspaceId: WORKSPACE_ID,
-        isWorkspaceJob: true,
-      });
+      ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
     },
   );
 });

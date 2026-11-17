@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RunWorkflowJobTarget } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-target.type';
-import { WORKFLOW_JOB_GROUP_KEY } from 'src/engine/core-modules/job-group/constants/workflow-job-group-key.constant';
-import { buildJobGroupLimiters } from 'src/engine/core-modules/job-group/utils/build-job-group-limiters.util';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
@@ -19,12 +17,11 @@ export class WorkflowRunJobScopeWorkspaceService {
 
   async getCoreWorkflowJobScopeResolver(
     workspaceId: string,
-  ): Promise<(coreWorkflowId: string | null) => RunWorkflowJobTarget> {
-    const { flatWorkflowMaps, flatApplicationMaps, jobGroupConfigByKey } =
+  ): Promise<(coreWorkflowId: string | null) => QueueJobScope> {
+    const { flatWorkflowMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
         'flatApplicationMaps',
-        'jobGroupConfigByKey',
       ]);
 
     return (coreWorkflowId) => {
@@ -34,24 +31,12 @@ export class WorkflowRunJobScopeWorkspaceService {
             flatEntityMaps: flatWorkflowMaps,
           })
         : undefined;
-      const scope = buildApplicationQueueJobScope({
+
+      return buildApplicationQueueJobScope({
         workspaceId,
         applicationId: flatWorkflow?.applicationId,
         flatApplicationMaps,
       });
-
-      if (!isDefined(flatWorkflow)) {
-        return scope;
-      }
-
-      return {
-        ...scope,
-        // jobGroupKeys is missing before the 2.60 command and in flat maps cached before it.
-        limiters: buildJobGroupLimiters({
-          jobGroupKeys: flatWorkflow.jobGroupKeys ?? [WORKFLOW_JOB_GROUP_KEY],
-          jobGroupConfigByKey,
-        }),
-      };
     };
   }
 
@@ -61,7 +46,7 @@ export class WorkflowRunJobScopeWorkspaceService {
   }: {
     workspaceId: string;
     coreWorkflowId: string | null;
-  }): Promise<RunWorkflowJobTarget> {
+  }): Promise<QueueJobScope> {
     const resolveJobScope =
       await this.getCoreWorkflowJobScopeResolver(workspaceId);
 
@@ -74,7 +59,7 @@ export class WorkflowRunJobScopeWorkspaceService {
   }: {
     workspaceId: string;
     workflowRunId: string;
-  }): Promise<RunWorkflowJobTarget> {
+  }): Promise<QueueJobScope> {
     return this.resolveForCoreWorkflow({
       workspaceId,
       coreWorkflowId:

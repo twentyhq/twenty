@@ -3,7 +3,6 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { JobGroupEntity } from 'src/engine/core-modules/job-group/job-group.entity';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
@@ -18,6 +17,5 @@ export const ALL_WORKSPACE_CACHE_ENTITY_BY_NAME = {
   featureFlag: FeatureFlagEntity,
   billingEntitlement: BillingEntitlementEntity,
   usageLimit: UsageLimitEntity,
-  jobGroup: JobGroupEntity,
   userWorkspace: UserWorkspaceEntity,
 } as const;

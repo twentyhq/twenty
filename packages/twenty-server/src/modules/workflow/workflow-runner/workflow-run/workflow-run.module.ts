@@ -11,11 +11,9 @@ import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { JobGroupModule } from 'src/engine/core-modules/job-group/job-group.module';
 
 @Module({
   imports: [
-    JobGroupModule,
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,

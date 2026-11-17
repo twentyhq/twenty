@@ -19,7 +19,6 @@ const existingFlatWorkflow: FlatWorkflow = {
   lastPublishedCoreWorkflowVersionId: null,
   workspaceWorkflowId: null,
   isSystem: false,
-  jobGroupKeys: ['workflow'],
   visibility: WorkflowVisibility.WORKSPACE,
   createdByUserWorkspaceId: CREATOR_USER_WORKSPACE_ID,
   navigationMenuItemIds: [],

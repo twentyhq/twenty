@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { buildJobGroupLimiters } from 'src/engine/core-modules/job-group/utils/build-job-group-limiters.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -61,18 +60,11 @@ export class CronTriggerCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const {
-          flatLogicFunctionMaps,
-          flatApplicationMaps,
-          jobGroupConfigByKey,
-        } = await this.workspaceCacheService.getOrRecompute(
-          activeWorkspace.id,
-          [
+        const { flatLogicFunctionMaps, flatApplicationMaps } =
+          await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
             'flatLogicFunctionMaps',
             'flatApplicationMaps',
-            'jobGroupConfigByKey',
-          ],
-        );
+          ]);
 
         const logicFunctions = Object.values(
           flatLogicFunctionMaps.byUniversalIdentifier,
@@ -155,10 +147,6 @@ export class CronTriggerCronJob {
               {
                 retryLimit: 10,
                 backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-                limiters: buildJobGroupLimiters({
-                  jobGroupKeys: logicFunction.jobGroupKeys ?? [],
-                  jobGroupConfigByKey,
-                }),
                 workspaceId: activeWorkspace.id,
                 applicationUniversalIdentifier: application.universalIdentifier,
               },

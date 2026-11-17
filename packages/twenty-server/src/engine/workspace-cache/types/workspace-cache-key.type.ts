@@ -17,7 +17,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type JobGroupConfigByKey } from 'src/engine/core-modules/job-group/types/job-group-config-by-key.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
@@ -35,7 +34,6 @@ export type AdditionalCacheDataMaps = {
   billingEntitlements: BillingEntitlements;
   workflowAutomatedTriggerMaps: WorkflowAutomatedTriggerMaps;
   usageLimits: UsageLimits;
-  jobGroupConfigByKey: JobGroupConfigByKey;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &

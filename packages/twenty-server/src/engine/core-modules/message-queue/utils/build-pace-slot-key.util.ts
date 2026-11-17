@@ -1,17 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type QueueJobLimiter,
-  type QueueJobScope,
-} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 
 export const buildPaceSlotKey = ({
   scope,
-  limiter,
+  groupKey,
 }: {
   scope: Pick<QueueJobScope, 'workspaceId'>;
-  limiter: Pick<QueueJobLimiter, 'key'>;
+  groupKey: string | undefined;
 }): string | undefined =>
-  isDefined(scope.workspaceId)
-    ? `${scope.workspaceId}:${limiter.key}`
+  isDefined(scope.workspaceId) && isDefined(groupKey)
+    ? `${scope.workspaceId}:${groupKey}`
     : undefined;
