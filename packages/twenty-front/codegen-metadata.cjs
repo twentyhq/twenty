@@ -24,6 +24,8 @@ module.exports = {
     // DPA operations are served by the core (/graphql) schema via @CoreResolver,
     // not the metadata schema, so they must not be validated against /metadata.
     '!./src/modules/settings/legal/**/graphql/**/*.{ts,tsx}',
+    // Enterprise operations are served by the admin (/admin-panel) schema.
+    '!./src/modules/settings/enterprise/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
     './src/modules/mcp-servers/graphql/**/*.{ts,tsx}',
 

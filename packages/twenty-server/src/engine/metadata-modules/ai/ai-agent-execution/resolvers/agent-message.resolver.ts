@@ -1,9 +1,10 @@
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { Parent, ResolveField } from '@nestjs/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 
-@Resolver(() => AgentMessageDTO)
+@MetadataResolver(() => AgentMessageDTO)
 export class AgentMessageResolver {
   @ResolveField(() => Date)
   createdAt(@Parent() message: AgentMessageWorkspaceEntity): Date {

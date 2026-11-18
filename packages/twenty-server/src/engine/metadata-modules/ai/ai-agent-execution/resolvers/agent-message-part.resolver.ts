@@ -1,14 +1,15 @@
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { Parent, ResolveField } from '@nestjs/graphql';
 
 import { FileFolder } from 'twenty-shared/types';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AgentMessagePartDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message-part.dto';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
-@Resolver(() => AgentMessagePartDTO)
+@MetadataResolver(() => AgentMessagePartDTO)
 export class AgentMessagePartResolver {
   constructor(private readonly fileUrlService: FileUrlService) {}
 

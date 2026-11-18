@@ -10884,7 +10884,7 @@ __metadata:
 
 "@nestjs/graphql@patch:@nestjs/graphql@npm%3A14.1.0#~/.yarn/patches/@nestjs-graphql-npm-14.1.0-a5b8f393ae.patch":
   version: 14.1.0
-  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A14.1.0#~/.yarn/patches/@nestjs-graphql-npm-14.1.0-a5b8f393ae.patch::version=14.1.0&hash=fa43ca"
+  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A14.1.0#~/.yarn/patches/@nestjs-graphql-npm-14.1.0-a5b8f393ae.patch::version=14.1.0&hash=70b85f"
   dependencies:
     "@graphql-tools/merge": "npm:9.2.8"
     "@graphql-tools/schema": "npm:10.1.5"
@@ -10919,7 +10919,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/db545f199d869ae644218fe24652960697ce9189fee3dfce28f3a9e31d28a5bfbfb05696bb6143fb619ccadc9cbfc035b33560ce241e222dbd5f10dd46a70077
+  checksum: 10c0/57272f90c4009963f02096df9a70f0a04ecc97edfa0d1abb1896129f86a06fca076708dfd1a60e8389efb82edb39255383a2ca47e236ce837ed28096e75c3ae3
   languageName: node
   linkType: hard
 

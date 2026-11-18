@@ -4,6 +4,7 @@ module.exports = {
     '/admin-panel',
   documents: [
     './src/modules/settings/admin-panel/**/graphql/**/*.{ts,tsx}',
+    './src/modules/settings/enterprise/graphql/**/*.{ts,tsx}',
     './src/modules/settings/application-registrations/graphql/fragments/*.{ts,tsx}',
 
     '!./src/**/*.test.{ts,tsx}',

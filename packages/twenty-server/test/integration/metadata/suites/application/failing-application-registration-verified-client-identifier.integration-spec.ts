@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -62,7 +63,7 @@ describe('Application registration should protect a verified client identifier',
 
     const [cliRegistration] = await findCliRegistrations();
 
-    const response = await makeMetadataApiRequest({
+    const response = await makeAdminPanelApiRequest({
       query: gql`
         mutation ClaimApplicationRegistrationOwnership(
           $applicationRegistrationId: String!

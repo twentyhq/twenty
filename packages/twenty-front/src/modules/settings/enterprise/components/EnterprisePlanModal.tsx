@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -107,7 +107,7 @@ export const EnterprisePlanModal = () => {
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
   const [isLoading, setIsLoading] = useState(false);
-  const client = useApolloClient();
+  const apolloAdminClient = useApolloAdminClient();
 
   const benefits = [
     t`SSO (SAML / OIDC)`,
@@ -127,7 +127,7 @@ export const EnterprisePlanModal = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await client.query<{
+      const { data } = await apolloAdminClient.query<{
         enterpriseCheckoutSession: string | null;
       }>({
         query: ENTERPRISE_CHECKOUT_SESSION,

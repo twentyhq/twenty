@@ -586,6 +586,24 @@ export type DeleteJobsResponse = {
   results: Array<JobOperationResult>;
 };
 
+export type EnterpriseLicenseInfoDto = {
+  __typename?: 'EnterpriseLicenseInfoDTO';
+  expiresAt?: Maybe<Scalars['DateTime']['output']>;
+  isValid: Scalars['Boolean']['output'];
+  licensee?: Maybe<Scalars['String']['output']>;
+  subscriptionId?: Maybe<Scalars['String']['output']>;
+};
+
+export type EnterpriseSubscriptionStatusDto = {
+  __typename?: 'EnterpriseSubscriptionStatusDTO';
+  cancelAt?: Maybe<Scalars['DateTime']['output']>;
+  currentPeriodEnd?: Maybe<Scalars['DateTime']['output']>;
+  expiresAt?: Maybe<Scalars['DateTime']['output']>;
+  isCancellationScheduled: Scalars['Boolean']['output'];
+  licensee?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+};
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   key: FeatureFlagKey;
@@ -724,6 +742,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addAiProvider: Scalars['Boolean']['output'];
   addModelToProvider: Scalars['Boolean']['output'];
+  claimApplicationRegistrationOwnership: ApplicationRegistration;
   clearMaintenanceMode: Scalars['Boolean']['output'];
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
@@ -735,7 +754,9 @@ export type Mutation = {
   endWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
+  refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
+  releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeAiProvider: Scalars['Boolean']['output'];
   removeModelFromProvider: Scalars['Boolean']['output'];
   retryJobs: RetryJobsResponse;
@@ -744,6 +765,7 @@ export type Mutation = {
   setAdminAiModelEnabled: Scalars['Boolean']['output'];
   setAdminAiModelsEnabled: Scalars['Boolean']['output'];
   setAdminDefaultAiModel: Scalars['Boolean']['output'];
+  setEnterpriseKey: EnterpriseLicenseInfoDto;
   setMaintenanceMode: Scalars['Boolean']['output'];
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   updateAdminApplicationRegistration: ApplicationRegistration;
@@ -763,6 +785,11 @@ export type MutationAddAiProviderArgs = {
 export type MutationAddModelToProviderArgs = {
   modelConfig: Scalars['JSON']['input'];
   providerName: Scalars['String']['input'];
+};
+
+
+export type MutationClaimApplicationRegistrationOwnershipArgs = {
+  applicationRegistrationId: Scalars['String']['input'];
 };
 
 
@@ -884,6 +911,11 @@ export type MutationSetAdminDefaultAiModelArgs = {
 };
 
 
+export type MutationSetEnterpriseKeyArgs = {
+  enterpriseKey: Scalars['String']['input'];
+};
+
+
 export type MutationSetMaintenanceModeArgs = {
   endAt: Scalars['DateTime']['input'];
   link?: InputMaybe<Scalars['String']['input']>;
@@ -932,6 +964,9 @@ export type Query = {
   __typename?: 'Query';
   adminPanelRecentUsers: Array<AdminPanelRecentUser>;
   adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
+  enterpriseCheckoutSession?: Maybe<Scalars['String']['output']>;
+  enterprisePortalSession?: Maybe<Scalars['String']['output']>;
+  enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
   findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoring;
@@ -975,6 +1010,16 @@ export type QueryAdminPanelRecentUsersArgs = {
 
 export type QueryAdminPanelTopWorkspacesArgs = {
   searchTerm?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEnterpriseCheckoutSessionArgs = {
+  billingInterval?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEnterprisePortalSessionArgs = {
+  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
 

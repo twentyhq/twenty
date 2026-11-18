@@ -117,6 +117,7 @@ export const SettingsEnterprise = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [enterpriseKey, setEnterpriseKey] = useState('');
   const [isActivating, setIsActivating] = useState(false);
+  const apolloAdminClient = useApolloAdminClient();
   const [setEnterpriseKeyMutation] = useMutation<{
     setEnterpriseKey: {
       isValid: boolean;
@@ -124,10 +125,10 @@ export const SettingsEnterprise = ({
       expiresAt: string | null;
       subscriptionId: string | null;
     };
-  }>(SET_ENTERPRISE_KEY);
+  }>(SET_ENTERPRISE_KEY, { client: apolloAdminClient });
   const [refreshValidityTokenMutation] = useMutation<{
     refreshEnterpriseValidityToken: boolean;
-  }>(REFRESH_ENTERPRISE_VALIDITY_TOKEN);
+  }>(REFRESH_ENTERPRISE_VALIDITY_TOKEN, { client: apolloAdminClient });
   const [releaseServerBindingMutation] = useMutation<{
     releaseEnterpriseServerBinding: {
       isValid: boolean;
@@ -135,10 +136,10 @@ export const SettingsEnterprise = ({
       expiresAt: string | null;
       subscriptionId: string | null;
     };
-  }>(RELEASE_ENTERPRISE_SERVER_BINDING);
+  }>(RELEASE_ENTERPRISE_SERVER_BINDING, { client: apolloAdminClient });
   const [fetchPortalSession] = useLazyQuery<{
     enterprisePortalSession: string | null;
-  }>(ENTERPRISE_PORTAL_SESSION);
+  }>(ENTERPRISE_PORTAL_SESSION, { client: apolloAdminClient });
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
   const [isReleasing, setIsReleasing] = useState(false);
   const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
@@ -146,7 +147,6 @@ export const SettingsEnterprise = ({
   const { enqueueToast } = useToast();
   const { loadCurrentUser } = useLoadCurrentUser();
 
-  const apolloAdminClient = useApolloAdminClient();
   const {
     handleUpdateVariable: updateInstanceTypeVariable,
     handleDeleteVariable: deleteInstanceTypeVariable,
@@ -196,7 +196,10 @@ export const SettingsEnterprise = ({
 
   const [fetchSubscriptionStatus] = useLazyQuery<{
     enterpriseSubscriptionStatus: SubscriptionStatus | null;
-  }>(ENTERPRISE_SUBSCRIPTION_STATUS, { fetchPolicy: 'network-only' });
+  }>(ENTERPRISE_SUBSCRIPTION_STATUS, {
+    client: apolloAdminClient,
+    fetchPolicy: 'network-only',
+  });
 
   const [subscriptionStatus, setSubscriptionStatus] =
     useState<SubscriptionStatus | null>(null);

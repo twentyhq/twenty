@@ -1,10 +1,11 @@
 /* @license Enterprise */
 
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
 import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
@@ -27,7 +28,7 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
   EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE,
 ];
 
-@Resolver()
+@AdminResolver()
 @UseGuards(
   AccessPolicyGuard({
     authPrincipals: {

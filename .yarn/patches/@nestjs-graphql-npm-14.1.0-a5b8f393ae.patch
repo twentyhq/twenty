@@ -247,40 +247,50 @@ diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolve
 index c7499cb..1644e20 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -28,6 +28,7 @@ const ROOT_RESOLVER_TYPES = new Set([
+@@ -1,6 +1,7 @@
+ var ResolversExplorerService_1;
+ import { __decorate, __metadata, __param } from "tslib";
+ import { Inject, Injectable, Logger } from '@nestjs/common';
++import { ENTRY_PROVIDER_WATERMARK } from '@nestjs/common/constants.js';
+ import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
+ import { ContextIdFactory, MetadataScanner, ModuleRef, ModulesContainer, REQUEST, } from '@nestjs/core';
+ import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host.js';
+@@ -28,6 +29,15 @@
      Resolver.QUERY,
      Resolver.SUBSCRIPTION,
  ]);
 +const RESOLVER_SCHEMA_SCOPE_KEY = 'RESOLVER_SCHEMA_SCOPE';
++// Only @Resolver() sets the entry provider watermark, which tells resolvers apart from other providers.
++const getResolverSchemaScope = (target) => {
++    const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, target);
++    if (!resolverScope && Reflect.getMetadata(ENTRY_PROVIDER_WATERMARK, target) === true) {
++        throw new Error(`${target.name} has no GraphQL schema scope: decorate it with @CoreResolver, @MetadataResolver or @AdminResolver`);
++    }
++    return resolverScope;
++};
  let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplorerService extends BaseExplorerService {
      constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph, resolverDecoratorHost) {
          super();
-@@ -55,6 +56,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -55,6 +65,12 @@
          if (!instance) {
              return undefined;
          }
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope && wrapper.metatype) {
-+            // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
-+            const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, wrapper.metatype) || 'metadata';
-+            if (resolverScope !== resolverSchemaScope) {
++            if (getResolverSchemaScope(wrapper.metatype) !== resolverSchemaScope) {
 +                return undefined;
 +            }
 +        }
          const prototype = Object.getPrototypeOf(instance);
          const predicate = (resolverType, isReferenceResolver, isPropertyResolver) => isUndefined(resolverType) ||
              (!isReferenceResolver &&
-@@ -215,6 +224,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -215,6 +231,10 @@
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope) {
-+            return resolvers.filter((resolverConstructor) => {
-+                // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
-+                const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, resolverConstructor) || 'metadata';
-+                return resolverScope === resolverSchemaScope;
-+            });
++            return resolvers.filter((resolverConstructor) => getResolverSchemaScope(resolverConstructor) === resolverSchemaScope);
 +        }
          return resolvers;
      }

@@ -2537,24 +2537,6 @@ export type EnqueuedJob = {
   sizeBytes: Scalars['Int']['output'];
 };
 
-export type EnterpriseLicenseInfoDto = {
-  __typename?: 'EnterpriseLicenseInfoDTO';
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  isValid: Scalars['Boolean']['output'];
-  licensee?: Maybe<Scalars['String']['output']>;
-  subscriptionId?: Maybe<Scalars['String']['output']>;
-};
-
-export type EnterpriseSubscriptionStatusDto = {
-  __typename?: 'EnterpriseSubscriptionStatusDTO';
-  cancelAt?: Maybe<Scalars['DateTime']['output']>;
-  currentPeriodEnd?: Maybe<Scalars['DateTime']['output']>;
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  isCancellationScheduled: Scalars['Boolean']['output'];
-  licensee?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
-};
-
 export type EventLogDateRangeInput = {
   end?: InputMaybe<Scalars['DateTime']['input']>;
   start?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3750,7 +3732,6 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
-  claimApplicationRegistrationOwnership: ApplicationRegistration;
   completeAppTarballUpload: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
@@ -3900,8 +3881,6 @@ export type Mutation = {
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
   openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
-  refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
-  releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRecordShare: RecordSharingDto;
@@ -3939,7 +3918,6 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setBillingPartnerCode: BillingPartnerCode;
-  setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
@@ -4132,11 +4110,6 @@ export type MutationCheckoutSessionArgs = {
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationClaimApplicationRegistrationOwnershipArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
 };
 
 
@@ -5063,11 +5036,6 @@ export type MutationSetAppKeyValueArgs = {
 
 export type MutationSetBillingPartnerCodeArgs = {
   partnerCode: Scalars['String']['input'];
-};
-
-
-export type MutationSetEnterpriseKeyArgs = {
-  enterpriseKey: Scalars['String']['input'];
 };
 
 
@@ -6224,9 +6192,6 @@ export type Query = {
   currentUserApplicationAuthorizations: Array<ApplicationAuthorization>;
   currentUserSessions: Array<UserSession>;
   currentWorkspace: Workspace;
-  enterpriseCheckoutSession?: Maybe<Scalars['String']['output']>;
-  enterprisePortalSession?: Maybe<Scalars['String']['output']>;
-  enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
   exportApplication: ApplicationExport;
   field: Field;
@@ -6480,16 +6445,6 @@ export type QueryCheckWorkspaceSubdomainAvailabilityArgs = {
 
 export type QueryCommandMenuItemArgs = {
   id: Scalars['UUID']['input'];
-};
-
-
-export type QueryEnterpriseCheckoutSessionArgs = {
-  billingInterval?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryEnterprisePortalSessionArgs = {
-  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
 

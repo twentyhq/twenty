@@ -33,7 +33,6 @@ import { ApplicationTarballService } from 'src/engine/core-modules/application/a
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
-import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
@@ -51,7 +50,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -484,22 +482,6 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.findClaimable({
       sourcePackage,
       universalIdentifier,
-    });
-  }
-
-  @UseGuards(
-    AccessPolicyGuard(APPLICATION_REGISTRATION_OWNERSHIP_ACCESS_POLICY),
-    AdminPanelGuard,
-  )
-  @Mutation(() => ApplicationRegistrationEntity)
-  async claimApplicationRegistrationOwnership(
-    @Args()
-    { applicationRegistrationId }: ClaimApplicationRegistrationOwnershipInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.claimOwnership({
-      applicationRegistrationId,
-      claimingWorkspaceId: workspaceId,
     });
   }
 

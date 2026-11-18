@@ -22,14 +22,16 @@ import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
-  ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationInstallCountDocument,
   FindManyApplicationRegistrationsDocument,
   PermissionFlagType,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
-import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
+import {
+  ClaimApplicationRegistrationOwnershipDocument,
+  FindOneAdminApplicationRegistrationDocument,
+} from '~/generated-admin/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
@@ -98,9 +100,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   const [claimOwnership] = useMutation(
     ClaimApplicationRegistrationOwnershipDocument,
-    {
-      refetchQueries: [FindManyApplicationRegistrationsDocument],
-    },
+    { client: apolloAdminClient },
   );
 
   const handleDelete = async () => {
