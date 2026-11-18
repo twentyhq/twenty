@@ -113,9 +113,7 @@ export class GroupByWithRecordsService {
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: allRecords,
-        parentObjectRecordsAggregatedValues: {},
         selection: selectedFieldsResult,
-        shouldComputeAggregates: true,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
         ...nestedRelationsReadPathOptions,
@@ -130,6 +128,7 @@ export class GroupByWithRecordsService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      selection: selectedFieldsResult,
       processRecord: (record: ObjectRecord) =>
         this.commonResultGettersService.processRecord({
           record,

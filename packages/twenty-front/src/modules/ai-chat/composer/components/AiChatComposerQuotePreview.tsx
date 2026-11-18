@@ -4,8 +4,8 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatQuotedMessagePreview } from '@/ai-chat/composer/components/AiChatQuotedMessagePreview';
-import { type AiChatQuotedMessageSource } from '@/ai-chat/composer/types/AiChatQuotedMessageSource';
+import { AiChatQuotedMessagePreview } from '@/ai-chat/messages/components/AiChatQuotedMessagePreview';
+import { type AiChatQuotedMessageSource } from '@/ai-chat/messages/types/AiChatQuotedMessageSource';
 
 const StyledReplyBar = styled.div`
   align-items: center;
