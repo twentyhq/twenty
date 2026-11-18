@@ -1,6 +1,7 @@
 import { Lambda } from '@aws-sdk/client-lambda';
 
 import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/types/floci-lambda-driver.type';
+import { clearCachedLambdaFunctions } from 'test/integration/logic-function-lambda/utils/clear-cached-lambda-functions.util';
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { startFlociContainer } from 'test/integration/utils/start-floci-container.util';
@@ -16,6 +17,9 @@ const FLOCI_CREDENTIALS = { accessKeyId: 'test', secretAccessKey: 'test' };
 export const switchToFlociLambdaDriver =
   async (): Promise<FlociLambdaDriver> => {
     const floci = await startFlociContainer();
+
+    await clearCachedLambdaFunctions();
+
     const lambdaDriverConfigVariables: Record<string, string> = {
       LOGIC_FUNCTION_TYPE: LogicFunctionDriverType.LAMBDA,
       LOGIC_FUNCTION_LAMBDA_REGION: LAMBDA_REGION,
