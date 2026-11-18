@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import {
   AiException,
   AiExceptionCode,
@@ -25,8 +26,10 @@ export const computeAgentPrivacyUpdateOrThrow = ({
 
   const canChangePrivacy =
     isDefined(userWorkspaceId) &&
-    (!isDefined(existingFlatAgent.createdByUserWorkspaceId) ||
-      existingFlatAgent.createdByUserWorkspaceId === userWorkspaceId);
+    canChangeCoreWorkflowVisibility({
+      createdByUserWorkspaceId: existingFlatAgent.createdByUserWorkspaceId,
+      userWorkspaceId,
+    });
 
   if (!canChangePrivacy) {
     throw new AiException(
