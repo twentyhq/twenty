@@ -20,6 +20,10 @@ import { type FlatEntityValidationError } from 'src/engine/workspace-manager/wor
 import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
 import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
 import { getInvalidViewFilterValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util';
+import {
+  type RelationTargetFlatFieldMetadataFailureReason,
+  resolveRelationTargetFlatFieldMetadata,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-relation-target-flat-field-metadata.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
@@ -65,7 +69,33 @@ const isOneToManyFlatFieldMetadata = ({
   'relationType' in universalSettings &&
   universalSettings.relationType === RelationType.ONE_TO_MANY;
 
-// Same rules as a lookup column: one hop through a many-to-one relation to an active, non-relation field
+const getRelationTargetError = (
+  failureReason: RelationTargetFlatFieldMetadataFailureReason,
+): FlatEntityValidationError => {
+  switch (failureReason) {
+    case 'NOT_A_MANY_TO_ONE_RELATION':
+      return invalidRelationScopeError(
+        t`A relation scope related record field can only be used on a many-to-one relation field`,
+        msg`Only a field linking to one record can use a field of that record`,
+      );
+    case 'NOT_ON_RELATION_TARGET_OBJECT':
+      return invalidRelationScopeError(
+        t`The relation scope related record field must belong to the relation target object`,
+        msg`The field must belong to the related object`,
+      );
+    case 'INACTIVE':
+      return invalidRelationScopeError(
+        t`The relation scope related record field must be active`,
+        msg`A deactivated field cannot be used to filter or sort related records`,
+      );
+    case 'IS_A_RELATION':
+      return invalidRelationScopeError(
+        t`The relation scope related record field cannot be a relation`,
+        msg`A related record's relation cannot be used to filter or sort`,
+      );
+  }
+};
+
 const resolveRelationScopeFieldReference = ({
   fieldReference: {
     fieldMetadataUniversalIdentifier,
@@ -126,67 +156,22 @@ const resolveRelationScopeFieldReference = ({
     return { errors: [], flatFieldMetadata };
   }
 
-  if (
-    !isRelationUniversalFlatFieldMetadataOfType({
-      flatFieldMetadata,
-      relationType: RelationType.MANY_TO_ONE,
-    })
-  ) {
-    return {
-      errors: [
-        invalidRelationScopeError(
-          t`A relation scope related record field can only be used on a many-to-one relation field`,
-          msg`Only a field linking to one record can use a field of that record`,
-        ),
-      ],
-    };
-  }
-
-  const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
-    flatEntityMaps: flatFieldMetadataMaps,
+  const relationTarget = resolveRelationTargetFlatFieldMetadata({
+    flatFieldMetadata,
+    relationTargetFieldMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
   });
 
-  if (
-    !isDefined(relationTargetFlatFieldMetadata) ||
-    relationTargetFlatFieldMetadata.objectMetadataUniversalIdentifier !==
-      flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
-  ) {
-    return {
-      errors: [
-        invalidRelationScopeError(
-          t`The relation scope related record field must belong to the relation target object`,
-          msg`The field must belong to the related object`,
-        ),
-      ],
-    };
+  if ('failureReason' in relationTarget) {
+    return { errors: [getRelationTargetError(relationTarget.failureReason)] };
   }
 
-  if (!isActiveFlatFieldMetadata(relationTargetFlatFieldMetadata)) {
-    return {
-      errors: [
-        invalidRelationScopeError(
-          t`The relation scope related record field must be active`,
-          msg`A deactivated field cannot be used to filter or sort related records`,
-        ),
-      ],
-    };
-  }
-
-  if (
-    isMorphOrRelationFieldMetadataType(relationTargetFlatFieldMetadata.type)
-  ) {
-    return {
-      errors: [
-        invalidRelationScopeError(
-          t`The relation scope related record field cannot be a relation`,
-          msg`A related record's relation cannot be used to filter or sort`,
-        ),
-      ],
-    };
-  }
-
-  return { errors: [], flatFieldMetadata, relationTargetFlatFieldMetadata };
+  return {
+    errors: [],
+    flatFieldMetadata,
+    relationTargetFlatFieldMetadata:
+      relationTarget.relationTargetFlatFieldMetadata,
+  };
 };
 
 const validateRelationScopeFilterGroups = (
