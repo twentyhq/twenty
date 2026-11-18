@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/composer/states/aiChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatAssistantProfileSelector } from '@/ai-chat/states/selectors/aiChatAssistantProfileSelector';
 import { getAiChatPreviewPlainText } from '@/ai-chat/threads/utils/getAiChatPreviewPlainText';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';

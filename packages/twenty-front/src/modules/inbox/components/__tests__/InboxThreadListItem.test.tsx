@@ -11,7 +11,7 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/composer/states/aiChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,

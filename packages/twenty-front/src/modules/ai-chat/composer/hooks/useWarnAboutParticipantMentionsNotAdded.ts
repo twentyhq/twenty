@@ -5,7 +5,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { useFetchAiChatThreadsPage } from '@/ai-chat/threads/hooks/useFetchAiChatThreadsPage';
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
-import { getAiChatParticipantAdditionStatus } from '@/ai-chat/threads/utils/getAiChatParticipantAdditionStatus';
+import { getAiChatParticipantAdditionStatus } from '@/ai-chat/composer/utils/getAiChatParticipantAdditionStatus';
 import { logError } from '~/utils/logError';
 
 export const useWarnAboutParticipantMentionsNotAdded = () => {

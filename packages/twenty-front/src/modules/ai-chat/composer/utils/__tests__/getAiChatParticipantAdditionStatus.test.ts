@@ -1,4 +1,4 @@
-import { getAiChatParticipantAdditionStatus } from '@/ai-chat/threads/utils/getAiChatParticipantAdditionStatus';
+import { getAiChatParticipantAdditionStatus } from '@/ai-chat/composer/utils/getAiChatParticipantAdditionStatus';
 
 const INITIAL_RECIPIENT = { workspaceMemberId: 'jane', label: 'Jane' };
 const PARTICIPANT_MENTION = { workspaceMemberId: 'jony', label: 'Jony' };

@@ -1,5 +1,5 @@
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatDraftPreviewTextFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatDraftPreviewTextFamilySelector';
+import { aiChatDraftPreviewTextFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatDraftPreviewTextFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getAiChatThreadSubtitleContent } from '@/ai-chat/threads/utils/getAiChatThreadSubtitleContent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
