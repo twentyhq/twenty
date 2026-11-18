@@ -15,8 +15,11 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { IngestAppMessagesInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { IngestAppMessagesOutput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.output';
+import { SetAppMessageThreadReadStateInput } from 'src/engine/metadata-modules/message-channel/dtos/set-app-message-thread-read-state.input';
+import { SetAppMessageThreadReadStateOutput } from 'src/engine/metadata-modules/message-channel/dtos/set-app-message-thread-read-state.output';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageReadStateService } from 'src/engine/metadata-modules/message-channel/services/application-message-read-state.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -38,6 +41,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 export class ApplicationMessageIngestionResolver {
   constructor(
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
+    private readonly applicationMessageReadStateService: ApplicationMessageReadStateService,
   ) {}
 
   @Mutation(() => IngestAppMessagesOutput)
@@ -54,6 +58,24 @@ export class ApplicationMessageIngestionResolver {
       requestUserWorkspaceId: userWorkspaceId ?? null,
       messageChannelId: input.messageChannelId,
       messages: input.messages,
+    });
+  }
+
+  @Mutation(() => SetAppMessageThreadReadStateOutput)
+  async setAppMessageThreadReadState(
+    @AuthApplication() application: FlatApplication,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @Args('input') input: SetAppMessageThreadReadStateInput,
+  ): Promise<SetAppMessageThreadReadStateOutput> {
+    return this.applicationMessageReadStateService.setThreadReadState({
+      applicationId: application.id,
+      workspaceId: workspace.id,
+      requestUserWorkspaceId: userWorkspaceId ?? null,
+      messageChannelId: input.messageChannelId,
+      threadExternalId: input.threadExternalId,
+      isRead: input.isRead,
     });
   }
 }

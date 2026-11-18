@@ -83,6 +83,12 @@ class GetMessageThreadChannelArgs {
 }
 
 @ArgsType()
+class MarkMessageThreadAsReadArgs {
+  @Field(() => UUIDScalarType)
+  messageThreadId: string;
+}
+
+@ArgsType()
 class SearchTimelineThreadsArgs {
   @Field(() => String)
   objectNameSingular: string;
@@ -293,6 +299,38 @@ export class TimelineMessagingResolver {
       page,
       pageSize,
     });
+  }
+
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    CustomPermissionGuard,
+  )
+  @Mutation(() => Boolean)
+  async markMessageThreadAsRead(
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { messageThreadId }: MarkMessageThreadAsReadArgs,
+  ): Promise<boolean> {
+    await this.timelineMessagingService.markMessageThreadAsRead({
+      messageThreadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+
+    return true;
   }
 
   @UseGuards(

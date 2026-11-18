@@ -2075,6 +2075,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "a433efbf-d423-5a5a-9615-143b0abd53ed",
       },
+      "isRead": {
+        "universalIdentifier": "e2342b78-0e71-49ba-b9d4-f4b89e4b988e",
+      },
       "message": {
         "universalIdentifier": "20202020-da5d-4ac5-8743-342ab0a0336b",
       },
