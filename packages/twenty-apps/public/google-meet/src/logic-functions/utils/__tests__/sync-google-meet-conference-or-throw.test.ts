@@ -175,10 +175,10 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         id: true,
       },
     });
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
   });
 
-  it('should not write a call recording for a conference without transcript or notes', async () => {
+  it('should not write a call recording for a conference without transcript, notes or recording', async () => {
     fetchMock.mockImplementation(async () => new Response('{}'));
 
     const coreApiClient = buildCoreApiClient();
@@ -194,7 +194,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       shouldGenerateAiSummary: false,
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(coreApiClient.query).not.toHaveBeenCalled();
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
   });
@@ -213,7 +213,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       }),
     ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
 
     const recordingData =

@@ -23,6 +23,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: 'Customer call',
         summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        recordings: [],
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).toEqual({
@@ -46,6 +47,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: undefined,
         transcriptEntries: [],
+        recordings: [],
         calendarEvent: undefined,
       }),
     ).toEqual({
@@ -62,6 +64,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: '## Summary',
         transcriptEntries: [],
+        recordings: [],
         calendarEvent: undefined,
       }),
     ).toEqual({
@@ -73,6 +76,25 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     });
   });
 
+  it('should complete a recording only once its video file is generated', () => {
+    const buildFieldsForRecordingState = (
+      state: 'ENDED' | 'FILE_GENERATED',
+    ) =>
+      buildGoogleMeetCallRecordingSyncFields({
+        conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: undefined,
+        transcriptEntries: [],
+        recordings: [{ state }],
+        calendarEvent: undefined,
+      });
+
+    expect(buildFieldsForRecordingState('ENDED').status).toBe('PROCESSING');
+    expect(buildFieldsForRecordingState('FILE_GENERATED').status).toBe(
+      'COMPLETED',
+    );
+  });
+
   it('should leave the title out when the conference has none', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
@@ -80,6 +102,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        recordings: [],
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).not.toHaveProperty('title');
