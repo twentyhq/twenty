@@ -574,7 +574,7 @@ msgstr "{0}、フィールドに戻る"
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
 #. placeholder {1}: selectedResolvedTier.model.label
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
 
@@ -3159,7 +3159,7 @@ msgstr "AI クレジット"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI クレジットは {0, plural, other {# 日後}} に更新されます。"
 
@@ -3825,7 +3825,7 @@ msgid "And"
 msgstr "および"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/tool-calls/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "ほか {hiddenCount} 件"
 
@@ -6342,8 +6342,8 @@ msgid "Choose a date to see available times."
 msgstr "利用可能な時間を表示するには日付を選択してください。"
 
 #. js-lingui-id: n5pcaT
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr "モデルモードを選択"
 
@@ -8031,7 +8031,7 @@ msgid "Cost"
 msgstr "コスト"
 
 #. js-lingui-id: R0dp36
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
 msgstr "コスト指数"
 
@@ -9664,7 +9664,7 @@ msgstr "値を減らす"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/advanced-text-editor/components/RichTextColorDropdown.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -11343,7 +11343,7 @@ msgid "Editor"
 msgstr "エディター"
 
 #. js-lingui-id: QyUT/d
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Effort"
 msgstr "努力"
 
@@ -14318,8 +14318,8 @@ msgid "Formats"
 msgstr "形式"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai-chat/messages/utils/getAiChatSenderLabel.ts
 #: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
 msgid "Former member"
@@ -16330,7 +16330,7 @@ msgid "Integrations - Settings"
 msgstr "統合 - 設定"
 
 #. js-lingui-id: Gzw2pq
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "インテリジェンス"
@@ -19045,8 +19045,8 @@ msgid "Mode"
 msgstr "モード"
 
 #. js-lingui-id: scu3wk
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierSlider.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierSlider.tsx
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19083,7 +19083,7 @@ msgid "Model ID is required"
 msgstr "モデル ID は必須です"
 
 #. js-lingui-id: E6zx5y
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Model information"
 msgstr "モデル情報"
 
@@ -20957,7 +20957,7 @@ msgid "No test result yet"
 msgstr "テスト結果はまだありません"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai-chat/composer/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "テキストコンテンツがありません"
 
@@ -21212,9 +21212,9 @@ msgid "Not all columns matched"
 msgstr "すべての列が一致していません"
 
 #. js-lingui-id: OJx3wK
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
 #: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
@@ -21270,7 +21270,7 @@ msgid "Not listed"
 msgstr "リストにありません"
 
 #. js-lingui-id: zLXWou
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
 msgstr "この努力レベルではまだ測定されていないため、これらはベースモデルの測定値です。"
 
@@ -22321,7 +22321,7 @@ msgid "Organizer"
 msgstr "主催者"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai-chat/composer/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "元のメッセージは利用できません"
 
@@ -28295,7 +28295,7 @@ msgid "Speech recognition could not be reached. Check your connection."
 msgstr "音声認識サービスに接続できませんでした。接続を確認してください。"
 
 #. js-lingui-id: l9wI00
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "速度"
@@ -33136,7 +33136,7 @@ msgid "Visualize data model"
 msgstr "データモデルを可視化"
 
 #. js-lingui-id: Ii6BOL
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
 msgstr "バランスモードとの比較"
 
@@ -34311,7 +34311,7 @@ msgstr "昨日"
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
 #: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai-chat/messages/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

@@ -569,7 +569,7 @@ msgstr "{0}, back to fields"
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
 #. placeholder {1}: selectedResolvedTier.model.label
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
 
@@ -3154,7 +3154,7 @@ msgstr "AI credits"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI credits renew in {0, plural, one {# day} other {# days}}."
 
@@ -3820,7 +3820,7 @@ msgid "And"
 msgstr "And"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/tool-calls/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "and {hiddenCount} more"
 
@@ -6337,8 +6337,8 @@ msgid "Choose a date to see available times."
 msgstr "Choose a date to see available times."
 
 #. js-lingui-id: n5pcaT
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr "Choose a model mode"
 
@@ -8026,7 +8026,7 @@ msgid "Cost"
 msgstr "Cost"
 
 #. js-lingui-id: R0dp36
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
 msgstr "Cost index"
 
@@ -9659,7 +9659,7 @@ msgstr "Decrease value"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/advanced-text-editor/components/RichTextColorDropdown.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -11338,7 +11338,7 @@ msgid "Editor"
 msgstr "Editor"
 
 #. js-lingui-id: QyUT/d
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Effort"
 msgstr "Effort"
 
@@ -14313,8 +14313,8 @@ msgid "Formats"
 msgstr "Formats"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai-chat/messages/utils/getAiChatSenderLabel.ts
 #: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
 msgid "Former member"
@@ -16325,7 +16325,7 @@ msgid "Integrations - Settings"
 msgstr "Integrations - Settings"
 
 #. js-lingui-id: Gzw2pq
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "Intelligence"
@@ -19040,8 +19040,8 @@ msgid "Mode"
 msgstr "Mode"
 
 #. js-lingui-id: scu3wk
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierSlider.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierSlider.tsx
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19078,7 +19078,7 @@ msgid "Model ID is required"
 msgstr "Model ID is required"
 
 #. js-lingui-id: E6zx5y
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Model information"
 msgstr "Model information"
 
@@ -20952,7 +20952,7 @@ msgid "No test result yet"
 msgstr "No test result yet"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai-chat/composer/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "No text content"
 
@@ -21207,9 +21207,9 @@ msgid "Not all columns matched"
 msgstr "Not all columns matched"
 
 #. js-lingui-id: OJx3wK
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
 #: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
@@ -21265,7 +21265,7 @@ msgid "Not listed"
 msgstr "Not listed"
 
 #. js-lingui-id: zLXWou
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
 msgstr "Not measured at this effort yet, so these are the base model's readings."
 
@@ -22316,7 +22316,7 @@ msgid "Organizer"
 msgstr "Organizer"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai-chat/composer/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "Original message unavailable"
 
@@ -28290,7 +28290,7 @@ msgid "Speech recognition could not be reached. Check your connection."
 msgstr "Speech recognition could not be reached. Check your connection."
 
 #. js-lingui-id: l9wI00
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "Speed"
@@ -33133,7 +33133,7 @@ msgid "Visualize data model"
 msgstr "Visualize data model"
 
 #. js-lingui-id: Ii6BOL
-#: src/modules/ai-chat/composer/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
 msgstr "Vs Balanced mode"
 
@@ -34308,7 +34308,7 @@ msgstr "Yesterday"
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
 #: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai-chat/messages/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
