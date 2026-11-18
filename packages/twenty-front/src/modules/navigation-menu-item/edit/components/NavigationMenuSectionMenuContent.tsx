@@ -5,6 +5,7 @@ import { IconFolderSymlink, IconHome, IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
+import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
@@ -47,16 +48,12 @@ export const NavigationMenuSectionMenuContent = ({
 
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
-    !(
-      section.type === NavigationMenuItemType.FAVORITES && containerId === null
-    ) &&
-    !(
-      isBuiltInSection &&
-      workspaceNavigationMenuItems.some(
-        (item) =>
-          item.type === section.type && (item.parentId ?? null) === containerId,
-      )
-    );
+    (!isBuiltInSection ||
+      canAddBuiltInSectionToContainer({
+        type: section.type,
+        containerId,
+        items: workspaceNavigationMenuItems,
+      }));
 
   const moveTo = (containerId: string | null) => {
     void moveToFolder(section.id, containerId);
