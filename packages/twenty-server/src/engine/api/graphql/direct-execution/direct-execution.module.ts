@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { WorkspaceResolverRunnerService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-runner.service';
+import { GraphqlDocumentValidationService } from 'src/engine/api/graphql/direct-execution/services/graphql-document-validation.service';
 import { WorkspaceGraphqlSchemaSDLModule } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -16,7 +17,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceGraphqlSchemaSDLModule,
     MetricsModule,
   ],
-  providers: [DirectExecutionService, WorkspaceResolverRunnerService],
+  providers: [
+    DirectExecutionService,
+    WorkspaceResolverRunnerService,
+    GraphqlDocumentValidationService,
+  ],
   exports: [DirectExecutionService],
 })
 export class DirectExecutionModule {}
