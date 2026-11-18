@@ -22,10 +22,13 @@ type ActivatableWorkflowVersion = Pick<
   'id' | 'status' | 'steps'
 > & { trigger: WorkflowTrigger | null };
 
-export function assertVersionCanBeActivated(
-  workflowVersion: ActivatableWorkflowVersion,
-  isLastPublishedVersion: boolean,
-) {
+export function assertVersionCanBeActivated({
+  workflowVersion,
+  isLastPublishedVersion,
+}: {
+  workflowVersion: ActivatableWorkflowVersion;
+  isLastPublishedVersion: boolean;
+}) {
   assertVersionIsValid(workflowVersion);
 
   const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
