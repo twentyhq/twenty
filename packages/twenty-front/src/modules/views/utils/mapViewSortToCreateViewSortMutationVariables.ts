@@ -5,7 +5,14 @@ export const mapViewSortToCreateViewSortMutationVariables = ({
   viewSort,
   viewId,
 }: {
-  viewSort: ViewSort;
+  viewSort: Pick<
+    ViewSort,
+    | 'id'
+    | 'fieldMetadataId'
+    | 'direction'
+    | 'subFieldName'
+    | 'relationTargetFieldMetadataId'
+  >;
   viewId: string;
 }): CreateViewSortMutationVariables => ({
   input: {
