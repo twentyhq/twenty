@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
@@ -44,7 +45,7 @@ export const upsertCallRecordingOrThrow = async ({
         },
       });
 
-      return (result.updateCallRecordings ?? []).length > 0
+      return isNonEmptyArray(result.updateCallRecordings)
         ? { callRecordingId, created: false }
         : { callRecordingId, created: false, skipped: true };
     }

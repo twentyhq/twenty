@@ -36,11 +36,15 @@ export const removeGranolaPersonalWebhook = async ({
     return;
   }
 
-  try {
-    if (!isDefined(client)) {
-      throw new Error('The Granola API key is unavailable.');
-    }
+  if (!isDefined(client)) {
+    console.error(
+      `[granola] Remove personal endpoint ${webhook.webhookEndpointId} in Granola settings. The API key is unavailable.`,
+    );
 
+    return;
+  }
+
+  try {
     await deleteStaleGranolaWebhookEndpointOrThrow({
       client,
       webhookEndpointId: webhook.webhookEndpointId,

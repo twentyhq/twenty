@@ -10,7 +10,7 @@ export const parseSignedGranolaWebhookEvent = ({
   receivedAt,
   signingSecret,
 }: {
-  routePayload: RoutePayload<unknown>;
+  routePayload: Pick<RoutePayload<unknown>, 'rawBody' | 'headers'>;
   receivedAt: number;
   signingSecret: string;
 }) => {

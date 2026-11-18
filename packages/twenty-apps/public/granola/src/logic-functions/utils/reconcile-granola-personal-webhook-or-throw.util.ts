@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type GranolaPersonalSyncScope } from 'src/logic-functions/types/granola-personal-sync-scope.type';
 import { type GranolaPersonalWebhookRegistration } from 'src/logic-functions/types/granola-personal-webhook-registration.type';
+import { GranolaWebhookConfigurationError } from 'src/logic-functions/types/granola-webhook-configuration-error';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { createGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/create-granola-webhook-endpoint-or-throw.util';
 import { deleteStaleGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/delete-stale-granola-webhook-endpoint-or-throw.util';
@@ -18,7 +19,7 @@ import { repairGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/r
 import { removeGranolaPersonalWebhook } from 'src/logic-functions/utils/remove-granola-personal-webhook.util';
 
 export const reconcileGranolaPersonalWebhookOrThrow = async ({
-  scope,
+  scope: { connectionId, userWorkspaceId },
   client,
   apiKeyFingerprint,
   folderIds,
@@ -30,24 +31,23 @@ export const reconcileGranolaPersonalWebhookOrThrow = async ({
 }) => {
   if (folderIds.length === 0) {
     await removeGranolaPersonalWebhook({
-      connectionId: scope.connectionId,
+      connectionId,
       client,
     });
 
-    return;
+    return { skipped: true };
   }
 
   const apiUrl = process.env.TWENTY_API_URL;
 
   if (!isNonEmptyString(apiUrl)) {
-    throw new Error(
+    throw new GranolaWebhookConfigurationError(
       'TWENTY_API_URL is required to register a Granola webhook.',
     );
   }
 
-  const key = getGranolaPersonalWebhookKey(scope.connectionId);
-  const registrationId =
-    GRANOLA_PERSONAL_REGISTRATION_PREFIX + scope.connectionId;
+  const key = getGranolaPersonalWebhookKey(connectionId);
+  const registrationId = GRANOLA_PERSONAL_REGISTRATION_PREFIX + connectionId;
   const claimKey = getGranolaRegistrationClaimKey(registrationId);
   const existing = await kv.get<GranolaPersonalWebhookRegistration>(key);
   const url = getGranolaWebhookDestinationUrlOrThrow({
@@ -70,7 +70,7 @@ export const reconcileGranolaPersonalWebhookOrThrow = async ({
     });
     await kv.set(claimKey, null, { scope: 'SERVER' });
 
-    return;
+    return { skipped: false };
   }
 
   for (const endpoint of endpoints.filter(
@@ -92,21 +92,29 @@ export const reconcileGranolaPersonalWebhookOrThrow = async ({
 
   try {
     const current = await loadGranolaPersonalSync({
-      ...scope,
+      connectionId,
+      userWorkspaceId,
       apiKeyFingerprint,
     });
 
-    if (isDefined(current)) {
-      await kv.set<GranolaPersonalWebhookRegistration>(key, {
-        userWorkspaceId: scope.userWorkspaceId,
+    if (!isDefined(current)) {
+      await deleteStaleGranolaWebhookEndpointOrThrow({
+        client,
         webhookEndpointId: webhook.id,
-        signingSecret: webhook.signing_secret,
-        apiKeyFingerprint,
       });
-      await kv.set(claimKey, null, { scope: 'SERVER' });
 
-      return;
+      return { skipped: true };
     }
+
+    await kv.set<GranolaPersonalWebhookRegistration>(key, {
+      userWorkspaceId,
+      webhookEndpointId: webhook.id,
+      signingSecret: webhook.signing_secret,
+      apiKeyFingerprint,
+    });
+    await kv.set(claimKey, null, { scope: 'SERVER' });
+
+    return { skipped: false };
   } catch (error) {
     await deleteStaleGranolaWebhookEndpointOrThrow({
       client,
@@ -114,9 +122,4 @@ export const reconcileGranolaPersonalWebhookOrThrow = async ({
     });
     throw error;
   }
-
-  await deleteStaleGranolaWebhookEndpointOrThrow({
-    client,
-    webhookEndpointId: webhook.id,
-  });
 };

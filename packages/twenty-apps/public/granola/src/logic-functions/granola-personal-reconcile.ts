@@ -1,14 +1,7 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import {
-  AppConnectionAuthFailedError,
-  getConnection,
-  kv,
-  reportConnectionAuthFailure,
-} from 'twenty-sdk/logic-function';
+import { kv, reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
 import { GRANOLA_PERSONAL_RECONCILE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaPersonalFolderSelection } from 'src/logic-functions/types/granola-personal-folder-selection.type';
@@ -16,7 +9,7 @@ import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-gra
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 import { listAllGranolaFoldersOrThrow } from 'src/logic-functions/utils/list-all-granola-folders-or-throw.util';
-import { listGranolaPersonalConnections } from 'src/logic-functions/utils/list-granola-personal-connections.util';
+import { findGranolaPersonalConnectionOrThrow } from 'src/logic-functions/utils/find-granola-personal-connection-or-throw.util';
 import { loadGranolaPersonalSync } from 'src/logic-functions/utils/load-granola-personal-sync.util';
 import { reconcileGranolaPersonalWebhookOrThrow } from 'src/logic-functions/utils/reconcile-granola-personal-webhook-or-throw.util';
 import { removeGranolaPersonalWebhook } from 'src/logic-functions/utils/remove-granola-personal-webhook.util';
@@ -37,26 +30,12 @@ export const granolaPersonalReconcileHandler = async ({
     return { success: true, skipped: true };
   }
 
-  const connection = isDefined(userWorkspaceId)
-    ? (await listGranolaPersonalConnections(userWorkspaceId)).find(
-        ({ id }) => id === connectionId,
-      )
-    : await getConnection(connectionId).catch((error: unknown) => {
-        if (!(error instanceof AppConnectionAuthFailedError)) {
-          throw error;
-        }
+  const connection = await findGranolaPersonalConnectionOrThrow({
+    connectionId,
+    userWorkspaceId,
+  });
 
-        return undefined;
-      });
-
-  if (
-    !isDefined(connection) ||
-    connection.providerName !== GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME ||
-    connection.scope !== 'USER' ||
-    !isDefined(connection.workspaceMemberId) ||
-    isDefined(connection.authFailedAt) ||
-    !isNonEmptyString(connection.accessToken)
-  ) {
+  if (!isDefined(connection)) {
     return { success: true, skipped: true };
   }
 
@@ -89,14 +68,14 @@ export const granolaPersonalReconcileHandler = async ({
     const selectedFolderIds = availableSelection.map(
       ({ folderId }) => folderId,
     );
-    await reconcileGranolaPersonalWebhookOrThrow({
+    const result = await reconcileGranolaPersonalWebhookOrThrow({
       scope,
       client,
       apiKeyFingerprint,
       folderIds: selectedFolderIds,
     });
 
-    return { success: true };
+    return { success: true, ...result };
   } catch (error) {
     if (error instanceof GranolaApiError && error.status === 401) {
       const current = await loadGranolaPersonalSync({
