@@ -2,7 +2,7 @@ import { type Editor } from '@tiptap/react';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { shouldFocusChatEditorState } from '@/ai-chat/composer/states/shouldFocusChatEditorState';
+import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 type AiChatEditorFocusEffectProps = {

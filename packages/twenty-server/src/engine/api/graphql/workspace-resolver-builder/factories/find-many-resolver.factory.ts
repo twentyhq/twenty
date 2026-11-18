@@ -40,6 +40,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
           results: {
             records,
             aggregatedValues,
+            relationAggregatedValues,
             totalCount,
             pageInfo,
             orderByValuesByRecordId,
@@ -60,7 +61,8 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
-          objectRecordsAggregatedValues: aggregatedValues,
+          aggregatedValues,
+          relationAggregatedValues,
           selection: selectedFieldsResult,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: getFindManyPageSize(args),
