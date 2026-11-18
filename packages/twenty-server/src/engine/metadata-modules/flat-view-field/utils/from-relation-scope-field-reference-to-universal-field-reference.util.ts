@@ -15,8 +15,7 @@ type UniversalRelationScopeFieldReference = Pick<
   | 'relationTargetFieldMetadataUniversalIdentifier'
 >;
 
-// An unresolved id nulls fieldMetadataUniversalIdentifier, which the view field validator rejects,
-// because a null relation target means the filter or sort has none
+// Unresolved ids become null so the validator rejects them; a null relation target means none
 export const fromRelationScopeFieldReferenceToUniversalFieldReference = ({
   fieldReference: { fieldMetadataId, relationTargetFieldMetadataId },
   fieldMetadataUniversalIdentifierById,

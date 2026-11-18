@@ -92,18 +92,20 @@ export const recomputeViewFieldRelationScopesOnFlatFieldMetadataOptionsUpdate =
           return [];
         }
 
+        const recomputedRelationScope = isDefined(relationScope)
+          ? {
+              ...relationScope,
+              filters: applyRecomputedFilterValues({
+                filters: relationScope.filters,
+                recomputedValueByFilterId,
+              }),
+            }
+          : null;
+
         return [
           {
             ...flatViewField,
-            relationScope: isDefined(relationScope)
-              ? {
-                  ...relationScope,
-                  filters: applyRecomputedFilterValues({
-                    filters: relationScope.filters,
-                    recomputedValueByFilterId,
-                  }),
-                }
-              : null,
+            relationScope: recomputedRelationScope,
             universalRelationScope: {
               ...universalRelationScope,
               filters: applyRecomputedFilterValues({
