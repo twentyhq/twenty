@@ -206,28 +206,11 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
 
-  protected async processQueryResult({
-    queryResult,
-    ...resultGettersArgs
-  }: CommonQueryResultProcessingArgs<Output>): Promise<Output> {
-    if (Array.isArray(queryResult)) {
-      return (await this.commonResultGettersService.processRecordArray({
-        records: queryResult as ObjectRecord[],
-        ...resultGettersArgs,
-      })) as Output;
-    }
+  protected abstract processQueryResult(
+    args: CommonQueryResultProcessingArgs<Output>,
+  ): Promise<Output>;
 
-    return (await this.commonResultGettersService.processRecord({
-      record: queryResult as ObjectRecord,
-      ...resultGettersArgs,
-    })) as Output;
-  }
-
-  protected getResultRecords(results: Output): ObjectRecord[] {
-    return (
-      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
-    ).filter(isDefined);
-  }
+  protected abstract getResultRecords(results: Output): ObjectRecord[];
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
