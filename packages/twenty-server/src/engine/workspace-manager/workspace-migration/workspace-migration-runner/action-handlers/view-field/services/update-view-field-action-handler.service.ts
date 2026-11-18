@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
@@ -48,39 +48,69 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
       allFlatEntityMaps,
     });
 
-    const updateWithOverrides =
-      universalOverrides === undefined
-        ? updateWithResolvedForeignKeys
-        : universalOverrides === null
-          ? { ...updateWithResolvedForeignKeys, overrides: null }
-          : {
-              ...updateWithResolvedForeignKeys,
-              overrides: fromUniversalOverridesToViewFieldOverrides({
-                universalOverrides,
-                flatViewFieldGroupMaps:
-                  allFlatEntityMaps.flatViewFieldGroupMaps,
-              }),
-            };
-
-    const update =
-      universalRelationScope === undefined
-        ? updateWithOverrides
-        : {
-            ...updateWithOverrides,
-            relationScope: isDefined(universalRelationScope)
-              ? fromUniversalRelationScopeToViewFieldRelationScope({
-                  universalRelationScope,
-                  flatFieldMetadataMaps:
-                    allFlatEntityMaps.flatFieldMetadataMaps,
-                })
-              : null,
-          };
+    const update = {
+      ...updateWithResolvedForeignKeys,
+      ...this.transpileUniversalOverrides({
+        universalOverrides,
+        flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
+      }),
+      ...this.transpileUniversalRelationScope({
+        universalRelationScope,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      }),
+    };
 
     return {
       type: 'update',
       metadataName: 'viewField',
       entityId: flatViewField.id,
       update,
+    };
+  }
+
+  private transpileUniversalOverrides({
+    universalOverrides,
+    flatViewFieldGroupMaps,
+  }: {
+    universalOverrides: UniversalUpdateViewFieldAction['update']['universalOverrides'];
+    flatViewFieldGroupMaps: AllFlatEntityMaps['flatViewFieldGroupMaps'];
+  }): Pick<FlatUpdateViewFieldAction['update'], 'overrides'> {
+    if (universalOverrides === undefined) {
+      return {};
+    }
+
+    if (universalOverrides === null) {
+      return { overrides: null };
+    }
+
+    return {
+      overrides: fromUniversalOverridesToViewFieldOverrides({
+        universalOverrides,
+        flatViewFieldGroupMaps,
+      }),
+    };
+  }
+
+  private transpileUniversalRelationScope({
+    universalRelationScope,
+    flatFieldMetadataMaps,
+  }: {
+    universalRelationScope: UniversalUpdateViewFieldAction['update']['universalRelationScope'];
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+  }): Pick<FlatUpdateViewFieldAction['update'], 'relationScope'> {
+    if (universalRelationScope === undefined) {
+      return {};
+    }
+
+    if (universalRelationScope === null) {
+      return { relationScope: null };
+    }
+
+    return {
+      relationScope: fromUniversalRelationScopeToViewFieldRelationScope({
+        universalRelationScope,
+        flatFieldMetadataMaps,
+      }),
     };
   }
 
