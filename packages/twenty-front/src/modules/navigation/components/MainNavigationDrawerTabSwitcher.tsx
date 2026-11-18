@@ -5,13 +5,11 @@ import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
-import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -47,11 +45,6 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
-const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] =
-  NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(({ isAi }) => isAi).map(
-    ({ type }) => type,
-  );
-
 const StyledUnreadBadge = styled.span`
   pointer-events: none;
   position: absolute;
@@ -76,8 +69,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
   });
   const tabCountIncludingHome = navigationMenuTabs.length + 1;
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
+    useNavigationMenuTabIdsWithUnreadChats();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -99,14 +92,6 @@ export const MainNavigationDrawerTabSwitcher = () => {
   }
 
   const shouldShowTooltips = !isExpanded && !isMobile;
-  const tabIdsWithAiChatSection = new Set(
-    workspaceNavigationMenuItems
-      .filter(
-        (item) =>
-          isDefined(item.parentId) && AI_CHAT_SECTION_TYPES.includes(item.type),
-      )
-      .map((item) => item.parentId),
-  );
   const unreadBadge = (
     <Badge
       render={<StyledUnreadBadge />}
@@ -178,9 +163,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isExpanded={isExpanded}
               shouldShowTooltip={shouldShowTooltips}
               unreadCount={
-                isAiChatInboxEnabled &&
                 activeNavigationMenuTab?.id !== tab.id &&
-                tabIdsWithAiChatSection.has(tab.id)
+                tabIdsWithUnreadChats.has(tab.id)
                   ? unreadOpenThreadCount
                   : 0
               }

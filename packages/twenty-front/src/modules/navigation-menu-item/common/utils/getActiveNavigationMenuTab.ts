@@ -8,17 +8,12 @@ export const getActiveNavigationMenuTab = ({
   tabs,
   currentNavigationMenuTabId,
   activeNavigationDrawerTab,
-  isMobile,
 }: {
   tabs: NamedNavigationMenuItem[];
   currentNavigationMenuTabId: string | null;
   activeNavigationDrawerTab: NavigationDrawerActiveTab;
-  isMobile: boolean;
 }): NamedNavigationMenuItem | null => {
-  if (
-    activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
-    isMobile
-  ) {
+  if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
     return null;
   }
 
