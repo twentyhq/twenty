@@ -47,12 +47,12 @@ export const NavigationDrawerInboxChannelsSection = ({
     useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
-  if (!isDefined(aiChatChannels)) {
+  if (!isDefined(aiChatChannels) && !isDefined(headerAction)) {
     return null;
   }
 
   // Listed only for who manages channels, so they keep a way to set them up
-  const inaccessibleChannels = aiChatChannels.filter(
+  const inaccessibleChannels = (aiChatChannels ?? []).filter(
     ({ isAccessible }) => !isAccessible,
   );
 
