@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecord } from 'twenty-shared/types';
 
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -32,6 +33,7 @@ export class CommonRecordVisibilityService {
   public async applyVisibilityRestrictions({
     records,
     flatObjectMetadata,
+    selection,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
@@ -39,6 +41,7 @@ export class CommonRecordVisibilityService {
   }: {
     records: ObjectRecord[];
     flatObjectMetadata: FlatObjectMetadata;
+    selection: CommonSelection;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
@@ -51,6 +54,7 @@ export class CommonRecordVisibilityService {
     const recordsByObjectNameSingular = collectRecordsByObjectNameSingular({
       records,
       flatObjectMetadata,
+      selection,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectNameSingulars: new Set(this.handlersByObjectNameSingular.keys()),

@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(已选择: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -288,7 +288,7 @@ msgstr "{0, plural, other {# 个对象}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# 步} other {# 步}}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "{formattedRunCount} 次运行中有 {formattedFailedRunCount} 次失败"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "已使用 {formattedPercentage}%，{formattedConversationSize} / {formattedContextWindow} 个令牌"
 
@@ -2119,17 +2119,17 @@ msgid "Add a meeting link"
 msgstr "添加会议链接"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "添加一个我们正在联系的新公司 (例如：名称、网站、行业)。详细信息： "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "添加备注"
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "向此记录添加备注： "
 
@@ -2154,13 +2154,13 @@ msgid "Add a related record"
 msgstr "添加相关记录"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "添加步骤"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "向此工作流添加一个步骤，该步骤"
 
@@ -2306,7 +2306,7 @@ msgid "Add credit card"
 msgstr "添加信用卡"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "添加信用卡"
@@ -2600,6 +2600,11 @@ msgstr "添加规则"
 msgid "Add rule group"
 msgstr "添加规则组"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2618,12 @@ msgstr "添加排序"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份提供商"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr ""
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3148,7 +3159,7 @@ msgstr "AI 积分"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI 积分将在 {0, plural, other {# 天}}后续期。"
 
@@ -3245,22 +3256,22 @@ msgid "AI Usage by Workspace"
 msgstr "按工作区的 AI 用量"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "本周期的 AI 使用限额已达上限。"
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "AI 使用限额已达上限。请让管理员提高限额。"
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "已达到 AI 使用上限。请联系管理员升级方案。"
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "已达到 AI 使用上限。请联系支持团队进行升级。"
 
@@ -5533,8 +5544,8 @@ msgid "Cached creation"
 msgstr "缓存创建"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "缓存输入"
 
@@ -6232,7 +6243,7 @@ msgid "Check List"
 msgstr "检查清单"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "检查最近运行"
 
@@ -6252,7 +6263,7 @@ msgid "Check the merge result before trying again"
 msgstr "再次尝试前请检查合并结果"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "检查此工作流最近的运行，并告诉我是否有失败的运行及其原因。"
 
@@ -6848,7 +6859,7 @@ msgstr "代码"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "代码"
@@ -6864,7 +6875,7 @@ msgid "Code Block"
 msgstr "代码块"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "代码已复制到剪贴板"
 
@@ -6915,7 +6926,7 @@ msgid "collapse"
 msgstr "折叠"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7193,7 @@ msgstr "已完成"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7692,22 +7703,22 @@ msgid "Context"
 msgstr "上下文"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "上下文和使用情况"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "上下文和使用量，已使用上下文窗口的 {formattedPercentage}%"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "上下文和使用量，上下文窗口不可用"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "上下文窗口"
@@ -7793,7 +7804,7 @@ msgstr "控制此角色可分配的实体类型"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7890,10 +7901,10 @@ msgid "Copy audio download link"
 msgstr "复制音频下载链接"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "复制代码"
 
@@ -7935,8 +7946,8 @@ msgid "Copy link to view"
 msgstr "复制查看链接"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "复制输出"
 
@@ -8386,18 +8397,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "创建几个 {0}，以便在真实记录上预览此规则。"
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "创建一个新联系人并将其关联到一家公司。详细信息： "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "在此视图中创建新记录。详细信息： "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "创建记录"
 
@@ -8407,23 +8418,23 @@ msgid "Create a relation with other objects"
 msgstr "与其他对象创建关系"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "创建任务"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "为此公司创建任务： "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "为此记录创建任务： "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "创建工作流"
 
@@ -8790,8 +8801,8 @@ msgid "credits"
 msgstr "额度"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10084,6 +10095,11 @@ msgstr "删除行"
 msgid "Delete Skill"
 msgstr "删除技能"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -10558,7 +10574,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "在 {defaultDomain} 上可被发现"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "关闭"
 
@@ -10792,7 +10808,7 @@ msgid "Download"
 msgstr "下载"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "下载 {filename}"
 
@@ -10838,12 +10854,12 @@ msgid "Draft"
 msgstr "草稿"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "起草电子邮件"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "起草一封关于此公司的电子邮件，内容为 "
 
@@ -11624,7 +11640,7 @@ msgid "Empty"
 msgstr "空"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11659,7 @@ msgid "Empty Array"
 msgstr "空数组"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12729,7 +12745,7 @@ msgid "Exit import flow"
 msgstr "退出导入流程"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12879,12 @@ msgid "Expires in less than a day"
 msgstr "将在不到一天后过期"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "解释此工作流"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "逐步解释此工作流的作用。"
 
@@ -12982,8 +12998,8 @@ msgstr "表情"
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -14004,12 +14020,12 @@ msgid "Filter opt-outs"
 msgstr "筛选退订者"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "筛选此视图"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "筛选此视图，仅显示 "
 
@@ -14070,11 +14086,6 @@ msgstr "完成布局编辑以打开收件箱"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "完成布局编辑以打开设置"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "完成布局编辑以打开此选项卡"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14669,7 +14680,7 @@ msgid "Generate recovery code"
 msgstr "生成恢复代码"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "生成的文件"
 
@@ -14689,7 +14700,7 @@ msgid "Germany"
 msgstr "德国"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "获取更多积分"
@@ -15418,7 +15429,7 @@ msgid "Hours between triggers"
 msgstr "触发之间的小时数"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "我能帮您做什么？"
 
@@ -16100,7 +16111,7 @@ msgid "Initial values"
 msgstr "初始值"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16142,8 @@ msgid "Input settings"
 msgstr "输入设置"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "输入令牌"
 
@@ -17188,7 +17199,7 @@ msgid "Last event"
 msgstr "上次事件"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "最后一条消息"
 
@@ -17461,7 +17472,7 @@ msgid "Legend"
 msgstr ""
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "更少"
 
@@ -18024,7 +18035,7 @@ msgid "Loading..."
 msgstr "加载中……"
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18074,7 @@ msgid "Lock diagram"
 msgstr "锁定图表"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "记录一笔新交易 (公司、金额、阶段、预计成交日期)。详细信息： "
 
@@ -19191,7 +19202,7 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "更多"
@@ -19277,6 +19288,7 @@ msgstr "大多为空"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "下移"
 
@@ -19293,6 +19305,7 @@ msgstr "将其聊天移动到"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19301,6 +19314,7 @@ msgstr "左移"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19342,6 +19356,7 @@ msgstr "要切换到新的 {planLabel} 套餐吗？"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "上移"
 
@@ -19863,6 +19878,11 @@ msgstr "新的结转上限"
 msgid "New rule"
 msgstr "新规则"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19886,6 +19906,7 @@ msgid "New SSO provider"
 msgstr "新 SSO 提供商"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "新标签页"
@@ -20552,7 +20573,7 @@ msgid "No latest version found"
 msgstr "找不到最新版本"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "无限制"
@@ -20676,7 +20697,7 @@ msgid "No options found"
 msgstr "未找到选项"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -21194,9 +21215,9 @@ msgstr "并非所有列都匹配"
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "不可用"
 
@@ -22411,9 +22432,9 @@ msgid "Outlook"
 msgstr "Outlook 邮箱"
 
 #. js-lingui-id: gh06VD
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -22437,13 +22458,13 @@ msgid "Output saved"
 msgstr "输出已保存"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "输出流"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "输出令牌"
 
@@ -22949,7 +22970,7 @@ msgid "Personal AI usage"
 msgstr "个人 AI 使用量"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "个人使用量"
 
@@ -23724,7 +23745,7 @@ msgid "Purple"
 msgstr "紫色"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Python 代码执行"
 
@@ -24861,6 +24882,11 @@ msgstr "移除规则组"
 msgid "Remove searchable field"
 msgstr "移除可搜索字段"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -25048,12 +25074,12 @@ msgid "Reschedule Campaign"
 msgstr "重新安排营销活动"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "研究此公司"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "研究此公司，并总结其业务、规模以及近期新闻。"
 
@@ -25094,7 +25120,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "重置此布局上的所有覆盖设置，将其恢复为应用的默认设置"
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "将在 {daysUntilReset, plural, other {# 天}}后重置 ({percentage}%)"
 
@@ -25670,7 +25696,7 @@ msgstr "正在运行工具……"
 
 #. js-lingui-id: LTC198
 #: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Running..."
 msgstr "正在运行..."
 
@@ -26477,6 +26503,16 @@ msgstr "区段"
 msgid "Section"
 msgstr "区段"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr ""
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26587,7 +26623,7 @@ msgid "See Turns"
 msgstr "查看轮次"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "看看我能做什么"
 
@@ -27377,7 +27413,7 @@ msgstr "正在设置你的<0>数据库</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -28766,7 +28802,7 @@ msgid "Subscribe"
 msgstr "订阅"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "立即订阅"
@@ -28881,22 +28917,22 @@ msgid "Sum"
 msgstr "总和"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "总结此视图中的记录，并指出任何需要关注的事项。"
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "总结此记录"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "总结此记录及其最近的活动。"
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "总结此视图"
 
@@ -29175,6 +29211,16 @@ msgstr "标签 {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "选项卡 {tabNumber}：{0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr ""
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29856,8 +29902,8 @@ msgid "Thickness"
 msgstr "粗细"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "思考中"
 
@@ -30476,7 +30522,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "这将收回 {userLabel} 的 {0}。"
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "思考"
 
@@ -30785,7 +30831,7 @@ msgid "Tool deleted"
 msgstr "工具已删除"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "工具详情：{displayMessage}"
 
@@ -32084,8 +32130,8 @@ msgid "Updating..."
 msgstr "正在更新..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32180,7 @@ msgstr "升级到 {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "升级至 {0} 积分，价格为 ${1}/{2}。"
@@ -32366,7 +32412,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -33126,7 +33172,7 @@ msgid "Waiting for a form to be filled in"
 msgstr "等待表单填写完成"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "正在等待输出..."
 
@@ -33442,17 +33488,17 @@ msgid "Weekly"
 msgstr "每周"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "每周个人 AI 使用额度已用尽。请管理员启用工作区积分。"
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "每周个人 AI 使用额度已用尽。启用工作区积分以继续。"
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "每周个人 AI 使用额度已用尽。现正使用工作区积分。"
 
@@ -33488,12 +33534,12 @@ msgid "What AI model should your agent run on"
 msgstr "您的代理应使用哪种 AI 模型运行"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "我能帮您做什么？"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "你能做什么？"
 
@@ -33549,17 +33595,17 @@ msgid "When {assistantName} finishes"
 msgstr "当 {assistantName} 完成时"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "当某个交易的阶段变为已赢单时，创建一个分配给该交易负责人的任务，截止日期为关闭日期后的 7 天，标题为 \"售后回访\"，并在描述中包含公司名称。"
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "当创建来源为 \"网站\" 的新线索时，将其分配给辖区（按地区/国家）与该线索地址匹配的销售代表；如果不匹配，则分配给团队负责人。"
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "当任何金额超过 $100,000 的交易的阶段或金额被更新时，向销售频道发送通知，包含交易名称、公司、新阶段、金额和负责人。"
 
@@ -33739,7 +33785,7 @@ msgstr "无需信用卡"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "已工作 {0}"
 
@@ -34413,7 +34459,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "您即将更改工作区子域名。这一操作将会注销所有用户。"
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "您已达到 AI 使用限额。"
 
@@ -34520,7 +34566,7 @@ msgid "Your other events"
 msgstr "您的其他事件"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "您自己的 AI 使用量，与工作区额度分开"
 

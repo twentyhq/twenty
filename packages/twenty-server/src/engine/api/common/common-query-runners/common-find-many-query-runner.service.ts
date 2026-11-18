@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 
-import {
-  QUERY_MAX_RECORDS,
-  QUERY_MAX_RECORDS_FROM_RELATION,
-} from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import {
   ObjectRecordFilter,
@@ -48,10 +44,7 @@ import {
   buildOrderByFromLeaves,
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -146,7 +139,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregates,
       queryBuilder: aggregateQueryBuilder,
       objectMetadataNameSingular: flatObjectMetadata.nameSingular,
     });
@@ -155,8 +148,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const columnsToSelect = {
       ...buildColumnsToSelect({
-        select: args.selectedFieldsResult.select,
-        relations: args.selectedFieldsResult.relations,
+        selection: args.selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -226,33 +218,27 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       orderByValuesByRecordId,
     });
+    // The nested loader writes relation aggregates onto this object, so it must exist when a relation is selected
     const hasAggregatedFields =
-      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+      !isEmptyObject(args.selectedFieldsResult.aggregates) ||
+      !isEmptyObject(args.selectedFieldsResult.relations);
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
       ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        parentObjectRecordsAggregatedValues,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        aggregate: args.selectedFieldsResult.aggregate,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-    }
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem: flatObjectMetadata,
+      parentObjectRecords: objectRecords,
+      parentObjectRecordsAggregatedValues,
+      selection: args.selectedFieldsResult,
+      shouldComputeAggregates: true,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      authContext,
+      ...this.getNestedRelationsReadPathOptions(),
+    });
 
     return {
       records: objectRecords,
@@ -292,21 +278,23 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return results.records;
   }
 
-  async processQueryResult(
-    queryResult: CommonFindManyOutput,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<CommonFindManyOutput> {
+  async processQueryResult({
+    queryResult,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    workspaceId,
+    selection,
+  }: CommonQueryResultProcessingArgs<CommonFindManyOutput>): Promise<CommonFindManyOutput> {
     const processedRecords =
-      await this.commonResultGettersService.processRecordArray(
-        queryResult.records,
+      await this.commonResultGettersService.processRecordArray({
+        records: queryResult.records,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        authContext.workspace.id,
-      );
+        workspaceId,
+        selection,
+      });
 
     return {
       ...queryResult,
@@ -398,7 +386,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return (
       getFindManyPageSize(args) *
       computeMaxFieldCountPerRecord({
-        selectedFieldsResult,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
