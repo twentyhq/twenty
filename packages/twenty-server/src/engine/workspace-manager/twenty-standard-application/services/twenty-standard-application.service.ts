@@ -134,7 +134,7 @@ export class TwentyStandardApplicationService {
       );
     }
 
-    if (!isDefined(twentyStandardFlatApplication.defaultRoleId)) {
+    if (!isDefined(twentyStandardFlatApplication.requestedRoleId)) {
       await this.setStandardApplicationDefaultRoleOrThrow({
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
