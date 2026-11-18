@@ -90,13 +90,14 @@ How they are raised:
   Declaration only for now. The build validates `billing.subscriptions`, but the platform does not bill these plans yet.
 </Warning>
 
-A subscription plan is a recurring price in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice.
+A subscription plan is a recurring price in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice. Prices are in US dollars only for now.
 
 ```ts src/application-config.ts
 billing: {
   subscriptions: {
     platform: {
       monthlyAmountCents: 2000,
+      currency: 'USD',
       label: 'Platform',
     },
     seat: {
@@ -111,12 +112,13 @@ billing: {
 | Field | Description |
 |-------|-------------|
 | `monthlyAmountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
+| `currency` | Optional. `USD` is the only supported currency for now, and the default |
 | `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member, `CONNECTED_ACCOUNT` a rate per account connected through your app |
 | `label` | What admins read for that line |
 
 A plan follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
 
-The build rejects a `monthlyAmountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), an unknown `per`, and an empty `label`.
+The build rejects a `monthlyAmountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), a `currency` other than `USD`, an unknown `per`, and an empty `label`.
 
 ## Billable operations
 

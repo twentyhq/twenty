@@ -1,4 +1,5 @@
 import {
+  isSubscriptionPlanCurrency,
   isSubscriptionPlanMonthlyAmount,
   isSubscriptionPlanUnit,
   MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
@@ -35,5 +36,15 @@ describe('isSubscriptionPlanUnit', () => {
 
   it.each([['CONNECTION'], [undefined]])('should reject %p', (unit) => {
     expect(isSubscriptionPlanUnit(unit)).toBe(false);
+  });
+});
+
+describe('isSubscriptionPlanCurrency', () => {
+  it('should accept USD', () => {
+    expect(isSubscriptionPlanCurrency('USD')).toBe(true);
+  });
+
+  it.each([['EUR'], ['usd'], [undefined]])('should reject %p', (currency) => {
+    expect(isSubscriptionPlanCurrency(currency)).toBe(false);
   });
 });

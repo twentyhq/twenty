@@ -6,6 +6,7 @@ import {
   isKnownApplicationCategory,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
+  isSubscriptionPlanCurrency,
   isSubscriptionPlanMonthlyAmount,
   isSubscriptionPlanUnit,
   isUsageOperationTypeValue,
@@ -13,6 +14,7 @@ import {
   MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
+  SUBSCRIPTION_PLAN_CURRENCIES,
   SUBSCRIPTION_PLAN_UNITS,
   USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
@@ -181,6 +183,17 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (!isSubscriptionPlanMonthlyAmount(subscriptionPlan.monthlyAmountCents)) {
       errors.push(
         `Subscription plan "${planName}" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
+      );
+    }
+
+    if (
+      isDefined(subscriptionPlan.currency) &&
+      !isSubscriptionPlanCurrency(subscriptionPlan.currency)
+    ) {
+      errors.push(
+        `Subscription plan "${planName}" must be priced in a supported currency (${SUBSCRIPTION_PLAN_CURRENCIES.join(
+          ', ',
+        )}) or omit \`currency\``,
       );
     }
 

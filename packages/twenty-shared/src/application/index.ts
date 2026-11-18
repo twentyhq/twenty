@@ -25,6 +25,7 @@ export type {
   RecurringCharge,
   RecurringCharges,
   SubscriptionPlanUnit,
+  SubscriptionPlanCurrency,
   SubscriptionPlan,
   SubscriptionPlans,
   ApplicationBilling,
@@ -42,6 +43,8 @@ export {
   isSubscriptionPlanMonthlyAmount,
   SUBSCRIPTION_PLAN_UNITS,
   isSubscriptionPlanUnit,
+  SUBSCRIPTION_PLAN_CURRENCIES,
+  isSubscriptionPlanCurrency,
 } from './applicationBillingType';
 export type { ApplicationCapability } from './applicationCapabilityType';
 export {
