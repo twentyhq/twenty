@@ -8,7 +8,7 @@ describe('buildLogicFunctionErrorLogLine', () => {
         errorMessage: "Cannot read properties of undefined (reading 'phone')",
         stackTrace: ['TypeError: boom', '    at handler (index.js:3:9)'],
       },
-      willRetry: false,
+      isRetryScheduled: false,
     });
 
     expect(line).toMatchObject({
@@ -30,7 +30,7 @@ describe('buildLogicFunctionErrorLogLine', () => {
         errorMessage: 'boom',
         stackTrace: 'Error: boom\n    at handler (index.js:1:1)',
       },
-      willRetry: false,
+      isRetryScheduled: false,
     });
 
     expect(line.properties).toEqual({
@@ -44,7 +44,7 @@ describe('buildLogicFunctionErrorLogLine', () => {
         errorType: 'Runtime.ExitError',
         errorMessage: 'RequestId: 1 Error: Runtime exited with error',
       },
-      willRetry: false,
+      isRetryScheduled: false,
     });
 
     expect(line).toMatchObject({
@@ -59,7 +59,7 @@ describe('buildLogicFunctionErrorLogLine', () => {
         errorType: 'RetryableLogicFunctionError',
         errorMessage: 'Upstream API returned 503',
       },
-      willRetry: true,
+      isRetryScheduled: true,
     });
 
     expect(line).toMatchObject({

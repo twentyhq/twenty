@@ -1,4 +1,4 @@
-import { willRetryLogicFunctionExecution } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/will-retry-logic-function-execution.util';
+import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 
 const RETRYABLE_ERROR = {
   errorType: 'RetryableLogicFunctionError',
@@ -6,52 +6,52 @@ const RETRYABLE_ERROR = {
   stackTrace: [],
 };
 
-describe('willRetryLogicFunctionExecution', () => {
+describe('isLogicFunctionRetryScheduled', () => {
   it('returns true for a retryable error with retries left', () => {
     expect(
-      willRetryLogicFunctionExecution(RETRYABLE_ERROR, {
-        retryCount: 2,
-        maxRetries: 3,
+      isLogicFunctionRetryScheduled({
+        error: RETRYABLE_ERROR,
+        retry: { retryCount: 2, maxRetries: 3 },
       }),
     ).toBe(true);
   });
 
   it('returns false for a retryable error on the last attempt', () => {
     expect(
-      willRetryLogicFunctionExecution(RETRYABLE_ERROR, {
-        retryCount: 3,
-        maxRetries: 3,
+      isLogicFunctionRetryScheduled({
+        error: RETRYABLE_ERROR,
+        retry: { retryCount: 3, maxRetries: 3 },
       }),
     ).toBe(false);
   });
 
   it('returns false for a retryable error when the caller never retries', () => {
     expect(
-      willRetryLogicFunctionExecution(RETRYABLE_ERROR, {
-        retryCount: 0,
-        maxRetries: 0,
+      isLogicFunctionRetryScheduled({
+        error: RETRYABLE_ERROR,
+        retry: { retryCount: 0, maxRetries: 0 },
       }),
     ).toBe(false);
   });
 
   it('returns false for an ordinary error', () => {
     expect(
-      willRetryLogicFunctionExecution(
-        {
+      isLogicFunctionRetryScheduled({
+        error: {
           errorType: 'TypeError',
           errorMessage: 'Cannot read properties of undefined',
           stackTrace: [],
         },
-        { retryCount: 0, maxRetries: 3 },
-      ),
+        retry: { retryCount: 0, maxRetries: 3 },
+      }),
     ).toBe(false);
   });
 
   it('returns false when the execution has no error', () => {
     expect(
-      willRetryLogicFunctionExecution(undefined, {
-        retryCount: 0,
-        maxRetries: 3,
+      isLogicFunctionRetryScheduled({
+        error: undefined,
+        retry: { retryCount: 0, maxRetries: 3 },
       }),
     ).toBe(false);
   });

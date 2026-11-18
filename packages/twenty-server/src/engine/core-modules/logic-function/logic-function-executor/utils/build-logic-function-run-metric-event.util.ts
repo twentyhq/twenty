@@ -6,27 +6,27 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 
 const getRunLevel = ({
   status,
-  willRetry,
+  isRetryScheduled,
 }: {
   status: LogicFunctionExecutionStatus;
-  willRetry: boolean;
+  isRetryScheduled: boolean;
 }): string => {
   if (status !== LogicFunctionExecutionStatus.ERROR) {
     return 'INFO';
   }
 
-  return willRetry ? 'WARN' : 'ERROR';
+  return isRetryScheduled ? 'WARN' : 'ERROR';
 };
 
 export const buildLogicFunctionRunMetricEvent = ({
   result,
-  willRetry,
+  isRetryScheduled,
   flatApplication,
   flatLogicFunction,
   workspaceId,
 }: {
   result: LogicFunctionExecuteResult;
-  willRetry: boolean;
+  isRetryScheduled: boolean;
   flatApplication: Pick<
     FlatApplication,
     'id' | 'applicationRegistrationId' | 'version'
@@ -42,7 +42,7 @@ export const buildLogicFunctionRunMetricEvent = ({
   source: 'LOGIC_FUNCTION',
   logicFunctionId: flatLogicFunction.id,
   logicFunctionName: flatLogicFunction.name,
-  level: getRunLevel({ status: result.status, willRetry }),
+  level: getRunLevel({ status: result.status, isRetryScheduled }),
   errorCode: result.error?.errorType ?? '',
   durationMs: result.duration,
   occurrenceCount: 1,

@@ -16,14 +16,14 @@ const getStackTraceLines = (
 
 export const buildLogicFunctionErrorLogLine = ({
   error,
-  willRetry,
+  isRetryScheduled,
 }: {
   error: Pick<LogicFunctionExecuteError, 'errorType' | 'errorMessage'> &
     Partial<Pick<LogicFunctionExecuteError, 'stackTrace'>>;
-  willRetry: boolean;
+  isRetryScheduled: boolean;
 }): ParsedLogLine & Pick<ApplicationLogEntry, 'errorCode' | 'properties'> => ({
   timestamp: new Date(),
-  level: willRetry ? 'WARN' : 'ERROR',
+  level: isRetryScheduled ? 'WARN' : 'ERROR',
   message: `${error.errorType}: ${error.errorMessage}`,
   errorCode: error.errorType,
   properties: {

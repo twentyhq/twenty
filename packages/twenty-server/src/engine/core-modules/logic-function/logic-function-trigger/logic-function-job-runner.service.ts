@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
@@ -8,7 +9,7 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { willRetryLogicFunctionExecution } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/will-retry-logic-function-execution.util';
+import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -69,20 +70,18 @@ export class LogicFunctionJobRunnerService {
           retry,
         });
 
+      const { error: executionError } = logicFunctionExecutionResult;
+
       if (
-        !willRetryLogicFunctionExecution(
-          logicFunctionExecutionResult.error,
-          retry,
-        )
+        !isDefined(executionError) ||
+        !isLogicFunctionRetryScheduled({ error: executionError, retry })
       ) {
         return;
       }
 
       await persistRetryCount(retryCount + 1);
 
-      throw new RetryableLogicFunctionError(
-        logicFunctionExecutionResult.error.errorMessage,
-      );
+      throw new RetryableLogicFunctionError(executionError.errorMessage);
     } catch (error) {
       // A stopped application must not fail the job: failing would make
       // the queue retry an execution that is intentionally blocked.
