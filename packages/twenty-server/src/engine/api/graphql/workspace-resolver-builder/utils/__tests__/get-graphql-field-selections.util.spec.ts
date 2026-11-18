@@ -2,10 +2,13 @@ import { Kind, parse, type FragmentDefinitionNode } from 'graphql';
 
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 
-const getNodeSelections = (
-  query: string,
-  variableValues: Record<string, unknown> = {},
-) => {
+const getNodeSelections = ({
+  query,
+  variableValues = {},
+}: {
+  query: string;
+  variableValues?: Record<string, unknown>;
+}) => {
   const document = parse(query);
   const [operation, ...fragments] = document.definitions;
 
@@ -38,7 +41,8 @@ const getNodeSelections = (
 describe('getGraphqlFieldSelections', () => {
   it('keeps each alias as its own selection with its field name and arguments', () => {
     expect(
-      getNodeSelections(`
+      getNodeSelections({
+        query: `
         query {
           companies {
             edges {
@@ -50,7 +54,8 @@ describe('getGraphqlFieldSelections', () => {
             }
           }
         }
-      `),
+      `,
+      }),
     ).toEqual([
       {
         responseKey: 'label',
@@ -88,7 +93,8 @@ describe('getGraphqlFieldSelections', () => {
   });
 
   it('merges selections sharing a response key across fragments', () => {
-    const [scoped] = getNodeSelections(`
+    const [scoped] = getNodeSelections({
+      query: `
       query {
         companies {
           edges {
@@ -103,7 +109,8 @@ describe('getGraphqlFieldSelections', () => {
       fragment CompanyPeople on Company {
         scoped: people(first: 1) { edges { node { id } } }
       }
-    `);
+    `,
+    });
 
     expect(scoped.responseKey).toBe('scoped');
     expect(scoped.selections.map(({ responseKey }) => responseKey)).toEqual([
@@ -120,20 +127,20 @@ describe('getGraphqlFieldSelections', () => {
     ],
   ])('rejects a response key that names %s', (_, conflictingFields) => {
     expect(() =>
-      getNodeSelections(
-        `query { companies { edges { node { ${conflictingFields} } } } }`,
-      ),
+      getNodeSelections({
+        query: `query { companies { edges { node { ${conflictingFields} } } } }`,
+      }),
     ).toThrow(/^Fields "(label|scoped)" conflict/);
   });
 
   it('honours skip and include', () => {
     expect(
-      getNodeSelections(
-        `query ($withName: Boolean!) {
+      getNodeSelections({
+        query: `query ($withName: Boolean!) {
           companies { edges { node { id name @include(if: $withName) } } }
         }`,
-        { withName: false },
-      ).map(({ responseKey }) => responseKey),
+        variableValues: { withName: false },
+      }).map(({ responseKey }) => responseKey),
     ).toEqual(['id']);
   });
 });
