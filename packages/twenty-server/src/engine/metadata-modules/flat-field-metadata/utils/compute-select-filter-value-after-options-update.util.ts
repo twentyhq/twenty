@@ -50,7 +50,7 @@ export const computeSelectFilterValueAfterOptionsUpdate = ({
 
   return filterValues
     .map((filterValue) =>
-      fromOptions?.find((option) => option.value === filterValue),
+      fromOptions.find((option) => option.value === filterValue),
     )
     .filter(isDefined)
     .filter(
