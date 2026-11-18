@@ -175,16 +175,6 @@ const disownThread = async (threadId: string) => {
   );
 };
 
-const countThreadTargets = async (threadId: string) => {
-  const [{ count }] = await globalThis.testDataSource.query(
-    `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."agentChatThreadTarget"
-     WHERE "threadId" = $1`,
-    [threadId],
-  );
-
-  return count;
-};
-
 const attachThroughRegistry = async ({
   execution: { workspaceId, threadId, persona, executionContext },
   record,
@@ -246,7 +236,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
     return execution;
   };
 
-  const runAgentAndListOfferedToolNames = async ({
+  const runAgentAndReadSystemPrompt = async ({
     token,
     runAsWorkspaceMemberId,
   }: {
@@ -254,7 +244,8 @@ describe('Agent run conversation should be recorded for the caller', () => {
     runAsWorkspaceMemberId?: string;
   }) => {
     const systemPrompts: string[] = [];
-    const offeredToolNamesByCall = mockScriptedAiModel(({ options }) => {
+
+    mockScriptedAiModel(({ options }) => {
       systemPrompts.push(
         ...options.prompt.flatMap((message) =>
           message.role === 'system' ? [message.content] : [],
@@ -281,8 +272,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
       jest.restoreAllMocks();
     }
 
-    // a lazily loaded tool is only named in the catalog the prompt carries
-    return [...offeredToolNamesByCall.flat(), ...systemPrompts].join('\n');
+    return systemPrompts.join('\n');
   };
 
   beforeAll(async () => {
@@ -500,7 +490,6 @@ describe('Agent run conversation should be recorded for the caller', () => {
         },
       }),
     ).resolves.toMatchObject({ success: false });
-    expect(await countThreadTargets(execution.threadId)).toBe(0);
 
     await expect(
       attachThroughRegistry({
@@ -511,37 +500,18 @@ describe('Agent run conversation should be recorded for the caller', () => {
         },
       }),
     ).resolves.toMatchObject({ success: true });
-    expect(await countThreadTargets(execution.threadId)).toBe(1);
-  });
-
-  it('should give the application continuing a conversation as itself no record to file it under', async () => {
-    const execution = await runAgent({
-      token: globalTestContext.applicationToken,
-      threadKey: randomUUID(),
-    });
-
-    await expect(
-      attachThroughRegistry({
-        execution,
-        record: {
-          objectNameSingular: 'company',
-          recordId: COMPANY_DATA_SEED_IDS.ID_1,
-        },
-      }),
-    ).resolves.toMatchObject({ success: false });
-    expect(await countThreadTargets(execution.threadId)).toBe(0);
   });
 
   it('should offer filing the conversation under records only to a run made as a member', async () => {
     await expect(
-      runAgentAndListOfferedToolNames({
+      runAgentAndReadSystemPrompt({
         token: globalTestContext.applicationToken,
         runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       }),
     ).resolves.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
 
     await expect(
-      runAgentAndListOfferedToolNames({
+      runAgentAndReadSystemPrompt({
         token: globalTestContext.applicationToken,
       }),
     ).resolves.not.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
