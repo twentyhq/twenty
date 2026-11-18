@@ -102,16 +102,17 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       request,
       DEFAULT_NUMBER_OF_GROUPS_LIMIT,
     );
+    const recordSelectedFields = includeRecords
+      ? await this.computeSelectedFields({
+          depth: 0,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          authContext,
+        })
+      : { fields: {}, relations: {} };
     const selectedFields: CommonSelectedFields = {
-      ...(includeRecords
-        ? await this.computeSelectedFields({
-            depth: 0,
-            flatObjectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            authContext,
-          })
-        : { fields: {}, relations: {} }),
+      ...recordSelectedFields,
       aggregates: aggregateFields,
     };
 

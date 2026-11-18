@@ -369,4 +369,19 @@ describe('buildConnectionSelectedFields', () => {
       relations: {},
     });
   });
+
+  it('rejects names reserved for introspection, in a record and in a connection', () => {
+    expect(() =>
+      buildRecord({
+        query: `query { company { __proto__ { id } } }`,
+        flatObjectMetadata: COMPANY,
+      }),
+    ).toThrow('Cannot query field "__proto__"');
+    expect(() =>
+      buildConnection({
+        query: `query { companies { __arguments edges { node { id } } } }`,
+        flatObjectMetadata: COMPANY,
+      }),
+    ).toThrow('Cannot query field "__arguments"');
+  });
 });
