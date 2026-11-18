@@ -4,7 +4,7 @@ import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamily
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/states/aiChatNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

@@ -1,9 +1,9 @@
 import { AiChatApiKeyNotConfiguredMessage } from '@/ai-chat/components/AiChatApiKeyNotConfiguredMessage';
 import { AiChatErrorMessage } from '@/ai-chat/components/AiChatErrorMessage';
-import { AiChatQuotaLimitExhaustedMessage } from '@/ai-chat/components/AiChatQuotaLimitExhaustedMessage';
-import { AiChatUserCreditsExhaustedMessage } from '@/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage';
-import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/hooks/useCanRetryCurrentAiChatTurn';
-import { useRetryChatMessage } from '@/ai-chat/hooks/useRetryChatMessage';
+import { AiChatQuotaLimitExhaustedMessage } from '@/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage';
+import { AiChatUserCreditsExhaustedMessage } from '@/ai-chat/components/AiChatUserCreditsExhaustedMessage';
+import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
+import { useRetryChatMessage } from '@/ai-chat/messages/hooks/useRetryChatMessage';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { getAiChatQuotaExhaustedKind } from '@/ai-chat/usage/utils/getAiChatQuotaExhaustedKind';

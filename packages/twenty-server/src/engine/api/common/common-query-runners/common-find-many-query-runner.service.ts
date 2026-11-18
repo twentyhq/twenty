@@ -23,6 +23,7 @@ import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
+import { type CommonAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
 import {
   CommonExtendedInput,
   CommonInput,
@@ -218,32 +219,28 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       orderByValuesByRecordId,
     });
-    // The nested loader writes relation aggregates onto this object, so it must exist when a relation is selected
-    const hasAggregatedFields =
-      !isEmptyObject(args.selectedFieldsResult.aggregates) ||
-      !isEmptyObject(args.selectedFieldsResult.relations);
+    const aggregatedValues = isEmptyObject(args.selectedFieldsResult.aggregates)
+      ? undefined
+      : await aggregateQueryBuilder.getRawOne<CommonAggregatedValues>();
 
-    const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
-      : undefined;
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: objectRecords,
-      parentObjectRecordsAggregatedValues,
-      selection: args.selectedFieldsResult,
-      shouldComputeAggregates: true,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
+    const relationAggregatedValues =
+      await this.processNestedRelationsHelper.processNestedRelations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
+        parentObjectRecords: objectRecords,
+        selection: args.selectedFieldsResult,
+        shouldComputeAggregates: true,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
+        authContext,
+        ...this.getNestedRelationsReadPathOptions(),
+      });
 
     return {
       records: objectRecords,
-      aggregatedValues: parentObjectRecordsAggregatedValues,
-      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
+      aggregatedValues,
+      relationAggregatedValues,
+      totalCount: aggregatedValues?.totalCount,
       pageInfo,
       orderByValuesByRecordId,
       selectedFieldsResult: args.selectedFieldsResult,
