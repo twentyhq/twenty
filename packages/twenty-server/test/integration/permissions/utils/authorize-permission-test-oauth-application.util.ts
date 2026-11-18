@@ -10,13 +10,13 @@ export const authorizePermissionTestOauthApplicationOrThrow = async ({
   await loginAsTwentyCli(accessToken);
 
   const { data } = await findManyApplications({
-    gqlFields: 'id defaultRoleId',
+    gqlFields: 'id requestedRoleId',
     expectToFail: false,
     accessToken,
   });
 
   const oauthOnlyApplication = data.findManyApplications.find(
-    ({ defaultRoleId }) => !isDefined(defaultRoleId),
+    ({ requestedRoleId }) => !isDefined(requestedRoleId),
   );
 
   if (!isDefined(oauthOnlyApplication)) {
