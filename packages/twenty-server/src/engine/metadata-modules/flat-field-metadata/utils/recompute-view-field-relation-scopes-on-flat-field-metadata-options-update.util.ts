@@ -12,7 +12,7 @@ import { computeSelectFilterValueAfterOptionsUpdate } from 'src/engine/metadata-
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 
 type RecomputeViewFieldRelationScopesOnFlatFieldMetadataOptionsUpdateArgs = {
-  fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
+  fromFlatFieldMetadata: Pick<FlatFieldMetadata, 'universalIdentifier'>;
 } & FromTo<FlatFieldMetadata<EnumFieldMetadataType>['options'], 'options'> &
   Pick<AllFlatEntityMaps, 'flatViewFieldMaps'>;
 
