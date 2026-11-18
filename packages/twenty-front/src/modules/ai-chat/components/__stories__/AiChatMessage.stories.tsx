@@ -37,8 +37,8 @@ import {
   mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
-import { MarkdownLoadingSkeleton } from '@/ai-chat/components/LazyMarkdownRenderer';
-import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/constants/ProtectedChatReferenceMarker';
+import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
+import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
 import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai-chat/testing/setAiChatThreadPermissions';

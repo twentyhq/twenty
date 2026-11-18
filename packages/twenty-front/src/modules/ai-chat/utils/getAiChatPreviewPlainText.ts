@@ -1,8 +1,8 @@
 import { isString } from '@sniptt/guards';
 import { isAgentChatAssistantReference } from 'twenty-shared/ai';
 
-import { escapeMarkdownForChatReference } from '@/ai-chat/utils/escapeMarkdownForChatReference';
-import { getChatReferenceSegments } from '@/ai-chat/utils/getChatReferenceSegments';
+import { escapeMarkdownForChatReference } from '@/ai-chat/message-content/utils/escapeMarkdownForChatReference';
+import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 // The server cuts the text short, which can leave half a reference at the end
