@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiModelTierDropdown } from '@/ai-chat/composer/components/AiModelTierDropdown';
+import { AiModelTierDropdown } from '@/ai-chat/components/AiModelTierDropdown';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
