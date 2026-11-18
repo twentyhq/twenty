@@ -464,7 +464,9 @@ export class ServerRouteTriggerService {
   ): ServerRouteTriggerExceptionCode {
     if (
       error instanceof LogicFunctionException &&
-      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+      (error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED ||
+        error.code ===
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED)
     ) {
       return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED;
     }
