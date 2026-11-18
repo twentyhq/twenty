@@ -7,7 +7,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai-chat/components/StyledAiChatAskCard';
-import { TextWithChatReferences } from '@/ai-chat/components/TextWithChatReferences';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { AiChatToolCallApprovalFeedbackInput } from '@/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput';
 import { useAiChatAskCardFieldFocus } from '@/ai-chat/hooks/useAiChatAskCardFieldFocus';
 import { type useAnswerToolCallApproval } from '@/ai-chat/hooks/useAnswerToolCallApproval';
