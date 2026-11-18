@@ -28,6 +28,7 @@ import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runner
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
@@ -84,7 +85,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<CommonGroupByOutputItem[]> {
+  ): Promise<CommonQueryRunResult<CommonGroupByOutputItem[]>> {
     const {
       commonQueryParser,
       flatObjectMetadata,
@@ -180,12 +181,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    return this.resolveWithoutRecords({
-      queryBuilder,
-      groupByDefinitions,
-      selectedFieldsResult: args.selectedFieldsResult,
-      groupLimit: args.limit,
-    });
+    return {
+      result: await this.resolveWithoutRecords({
+        queryBuilder,
+        groupByDefinitions,
+        selectedFieldsResult: args.selectedFieldsResult,
+        groupLimit: args.limit,
+      }),
+      relationAggregatedValues: {},
+    };
   }
 
   protected getResultRecords(
