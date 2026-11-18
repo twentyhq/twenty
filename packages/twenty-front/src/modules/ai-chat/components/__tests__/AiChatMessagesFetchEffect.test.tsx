@@ -4,8 +4,8 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { AiChatMessagesFetchEffect } from '@/ai-chat/components/AiChatMessagesFetchEffect';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/aiChatMessageReactionsFamilyState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { GetChatMessagesDocument } from '~/generated-metadata/graphql';
 
