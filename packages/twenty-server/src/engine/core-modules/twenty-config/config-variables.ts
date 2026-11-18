@@ -1707,7 +1707,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: one job every durationMs / max with no initial burst, per workspace and application. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
+      'Delay the jobs of a job group (workflow runs) at enqueue when their queue has a group limiter: one job every durationMs / max with no initial burst, per workspace and job group. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by a group limiter.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()

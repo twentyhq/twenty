@@ -5,9 +5,13 @@ export const GOOGLE_MEET_READONLY_SCOPE =
   'https://www.googleapis.com/auth/meetings.space.readonly';
 export const GOOGLE_DOCS_READONLY_SCOPE =
   'https://www.googleapis.com/auth/documents.readonly';
+export const GOOGLE_DRIVE_MEET_READONLY_SCOPE =
+  'https://www.googleapis.com/auth/drive.meet.readonly';
 export const GOOGLE_MEET_PUBSUB_TOPIC_SERVER_VARIABLE_NAME =
   'GOOGLE_MEET_PUBSUB_TOPIC';
 export const GOOGLE_MEET_PUBSUB_AUDIENCE_SERVER_VARIABLE_NAME =
   'GOOGLE_MEET_PUBSUB_AUDIENCE';
 export const GOOGLE_MEET_PUBSUB_SERVICE_ACCOUNT_EMAIL_SERVER_VARIABLE_NAME =
   'GOOGLE_MEET_PUBSUB_SERVICE_ACCOUNT_EMAIL';
+export const GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_NAME =
+  'GOOGLE_MEET_AI_SUMMARY_ENABLED';

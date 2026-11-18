@@ -339,6 +339,75 @@ describe('app connection OAuth discovery flow', () => {
     expect(await readStoredClients()).toHaveLength(1);
   });
 
+  it('finishes a server host callback on the workspace host, only with the browser cookie', async () => {
+    const serverHost = new URL(getServerUrl()).host;
+
+    const callbackThroughWorkspaceHost = async ({
+      code,
+      isSentWithBrowserCookie,
+    }: {
+      code: string;
+      isSentWithBrowserCookie: boolean;
+    }): Promise<URL> => {
+      const state = getState(await authorize());
+      const bounce = await request(`http://localhost:${APP_PORT}`)
+        .get('/auth/apps/callback')
+        .set('Host', serverHost)
+        .query({ state, code });
+
+      expect(bounce.status).toBe(302);
+
+      const workspaceCallbackUrl = new URL(bounce.headers.location);
+
+      const response = await request(`http://localhost:${APP_PORT}`)
+        .get(`${workspaceCallbackUrl.pathname}${workspaceCallbackUrl.search}`)
+        .set('Host', workspaceCallbackUrl.host)
+        .set('Cookie', isSentWithBrowserCookie ? (browserCookie ?? '') : '');
+
+      expect(response.status).toBe(302);
+
+      return new URL(response.headers.location);
+    };
+
+    const rejectedRedirect = await callbackThroughWorkspaceHost({
+      code: 'cookieless-code',
+      isSentWithBrowserCookie: false,
+    });
+
+    expect(rejectedRedirect.searchParams.get('errorMessage')).toEqual(
+      expect.any(String),
+    );
+    expect(tokenRequests).toHaveLength(0);
+
+    const completedRedirect = await callbackThroughWorkspaceHost({
+      code: 'bounced-code',
+      isSentWithBrowserCookie: true,
+    });
+
+    expect(completedRedirect.searchParams.get('errorMessage')).toBeNull();
+    expect(tokenRequests.map((params) => params.get('code'))).toEqual([
+      'bounced-code',
+    ]);
+    expect(await readAccounts()).toHaveLength(1);
+  });
+
+  it('completes a callback on the server host when sign-in started there', async () => {
+    const state = getState(await authorize());
+
+    const response = await request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/callback')
+      .set('Host', new URL(getServerUrl()).host)
+      .set('Cookie', browserCookie ?? '')
+      .query({ state, code: 'server-host-code' });
+
+    expect(response.status).toBe(302);
+    expect(
+      new URL(response.headers.location).searchParams.get('errorMessage'),
+    ).toBeNull();
+    expect(tokenRequests).toHaveLength(1);
+    expect(tokenRequests[0].get('code')).toBe('server-host-code');
+  });
+
   it('forgets the stored client once the token endpoint rejects it', async () => {
     const state = getState(await authorize());
 

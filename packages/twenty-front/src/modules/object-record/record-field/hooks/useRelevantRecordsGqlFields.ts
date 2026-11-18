@@ -4,6 +4,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
+import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
@@ -37,6 +39,7 @@ export const useRelevantRecordsGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
 
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
@@ -71,11 +74,24 @@ export const useRelevantRecordsGqlFields = ({
     ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
-  const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
-    objectMetadataItems,
-    sourceObjectMetadataItem: objectMetadataItem,
-    fields: fieldMetadataItemsToUse,
-    depth: 1,
+  const allDepthOneGqlFields = addLookupTargetsToRecordGqlFields({
+    recordGqlFields: generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems,
+      sourceObjectMetadataItem: objectMetadataItem,
+      fields: fieldMetadataItemsToUse,
+      depth: 1,
+    }),
+    lookupTargets: visibleRecordFields
+      .map((recordField) =>
+        getRecordFieldLookupTarget({
+          recordField,
+          fieldMetadataItem:
+            fieldMetadataItemByFieldMetadataItemId[
+              recordField.fieldMetadataItemId
+            ],
+        }),
+      )
+      .filter(isDefined),
   });
 
   const coreRecordReferenceFieldsRecordGqlFields =

@@ -4,8 +4,8 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
+import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

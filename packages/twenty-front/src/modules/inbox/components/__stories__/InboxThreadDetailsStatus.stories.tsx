@@ -10,10 +10,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { aiChatChannelsState } from '@/ai-chat/states/aiChatChannelsState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai-chat/testing/setAiChatThreadPermissions';
+import { type AiChatChannel } from '@/ai-chat/types/AiChatChannel';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

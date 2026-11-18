@@ -25,6 +25,7 @@ const GOOGLE_RESPONSES: Record<string, object> = {
     smartNotes: [
       {
         name: 'conferenceRecords/first/smartNotes/third',
+        state: 'FILE_GENERATED',
         docsDestination: { document: 'notes-document' },
       },
     ],
@@ -144,7 +145,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toBe('CREATED');
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
     expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
       createCallRecording: {
@@ -174,10 +175,10 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         id: true,
       },
     });
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
   });
 
-  it('should not write a call recording for a conference without transcript or notes', async () => {
+  it('should not write a call recording for a conference without transcript, notes or recording', async () => {
     fetchMock.mockImplementation(async () => new Response('{}'));
 
     const coreApiClient = buildCoreApiClient();
@@ -188,11 +189,60 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         coreApiClient,
         conferenceRecord: CONFERENCE_RECORD,
       }),
-    ).resolves.toBe('NO_ARTIFACT');
+    ).resolves.toEqual({
+      outcome: 'NO_ARTIFACT',
+      shouldGenerateAiSummary: false,
+    });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(coreApiClient.query).not.toHaveBeenCalled();
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
+  });
+
+  it('should complete a conference that only has a recording and import its first video', async () => {
+    fetchMock.mockImplementation(async (url) =>
+      url ===
+      `${MEET_API_URL}/conferenceRecords/first/recordings?pageSize=100`
+        ? new Response(
+            JSON.stringify({
+              recordings: [
+                {
+                  name: 'conferenceRecords/first/recordings/fourth',
+                  state: 'FILE_GENERATED',
+                },
+                {
+                  name: 'conferenceRecords/first/recordings/fifth',
+                  state: 'FILE_GENERATED',
+                },
+              ],
+            }),
+          )
+        : new Response('{}'),
+    );
+
+    const coreApiClient = buildCoreApiClient();
+
+    await expect(
+      syncGoogleMeetConferenceOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        conferenceRecord: {
+          name: CONFERENCE_RECORD.name,
+          startTime: CONFERENCE_RECORD.startTime,
+        },
+      }),
+    ).resolves.toEqual({
+      outcome: 'CREATED',
+      shouldGenerateAiSummary: false,
+      recordingNameToImport: 'conferenceRecords/first/recordings/fourth',
+    });
+
+    const recordingData =
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
+
+    expect(recordingData.status).toBe('COMPLETED');
+    expect(recordingData).not.toHaveProperty('transcript');
+    expect(recordingData).not.toHaveProperty('summary');
   });
 
   it('should name a conference without calendar event after its transcript document', async () => {
@@ -207,9 +257,9 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
           startTime: CONFERENCE_RECORD.startTime,
         },
       }),
-    ).resolves.toBe('CREATED');
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
 
     const recordingData =
@@ -217,6 +267,30 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
 
     expect(recordingData.title).toBe('Meeting started 2026/11/17 18:10 IST');
     expect(recordingData).not.toHaveProperty('calendarEventId');
+  });
+
+  it('should ask for an AI summary of a conference that has no Gemini notes', async () => {
+    fetchMock.mockImplementation(async (url) => {
+      if (url.includes('/smartNotes')) {
+        return new Response('{}');
+      }
+
+      return new Response(JSON.stringify(GOOGLE_RESPONSES[url] ?? {}));
+    });
+
+    const coreApiClient = buildCoreApiClient();
+
+    await expect(
+      syncGoogleMeetConferenceOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        conferenceRecord: CONFERENCE_RECORD,
+      }),
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: true });
+
+    expect(
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data,
+    ).not.toHaveProperty('summary');
   });
 
   it('should import the transcript of a conference whose documents cannot be read', async () => {
@@ -242,7 +316,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
           startTime: CONFERENCE_RECORD.startTime,
         },
       }),
-    ).resolves.toBe('CREATED');
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: true });
 
     const recordingData =
       coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;

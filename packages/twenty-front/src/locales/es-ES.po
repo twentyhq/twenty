@@ -348,6 +348,12 @@ msgstr ""
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
 msgstr "{0, plural, one {Enviar invitación} other {Enviar # invitaciones}}"
 
+#. js-lingui-id: xpxT5R
+#. placeholder {0}: tools.length
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
+msgstr "{0, plural, one {Sincronizada # herramienta} other {Sincronizadas # herramientas}}"
+
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
@@ -554,10 +560,11 @@ msgstr "{0} miembros del espacio de trabajo"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: relationFieldMetadataItem.label
 #. placeholder {0}: selectedField.label
-#. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -703,6 +710,11 @@ msgstr "{count} en {objectLabel}"
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject.tsx
 msgid "{countNonRelation, plural, one {# field} other {# fields}}"
 msgstr "{countNonRelation, plural, one {# campo} other {# campos}}"
+
+#. js-lingui-id: 0Iz7tg
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{credits} credits/month"
+msgstr "{credits} créditos/mes"
 
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
@@ -925,7 +937,7 @@ msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
 #. js-lingui-id: g4xrfh
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr "{label}, {unreadOpenThreadCount} sin leer"
 
@@ -1153,6 +1165,11 @@ msgstr "{seatCreditsDisplay} de los asientos, se restablecen cada año"
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
 msgstr "{seatCreditsDisplay} de los asientos, se restablecen cada año · {packageCreditsDisplay} de tu paquete de créditos, se acumulan"
 
+#. js-lingui-id: X/yTAr
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
+msgstr "{seats, plural, one {{formattedSeats} asiento} other {{formattedSeats} asientos}}"
+
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
@@ -1237,6 +1254,11 @@ msgstr "{stepNumber}. Calendario"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (no disponible para ti)"
+
+#. js-lingui-id: RIjnws
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
+msgid "{toolCount, plural, one {# tool} other {# tools}}"
+msgstr "{toolCount, plural, one {# herramienta} other {# herramientas}}"
 
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -1768,6 +1790,7 @@ msgstr "Abortar"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -1794,6 +1817,11 @@ msgstr "Sobre este espacio de trabajo"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "About your app"
 msgstr "Acerca de tu aplicación"
+
+#. js-lingui-id: g/S81Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Above the commitment"
+msgstr "Por encima del compromiso"
 
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -1958,6 +1986,7 @@ msgstr "Acciones que los usuarios pueden realizar en este objeto"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
@@ -1992,6 +2021,7 @@ msgstr "Activando..."
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -2040,6 +2070,7 @@ msgstr "Actor"
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
 msgstr "Añadir"
@@ -2200,6 +2231,12 @@ msgstr "Agrega un título al evento"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "Añadir Dominio de Acceso Aprobado"
+
+#. js-lingui-id: rY10B9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Add arrangement"
+msgstr "Añadir acuerdo"
 
 #. js-lingui-id: U76pXW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -2394,6 +2431,11 @@ msgstr "Agregar elemento"
 msgid "Add link"
 msgstr "Agregar enlace"
 
+#. js-lingui-id: LGXpWE
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Add MCP server"
+msgstr "Añadir servidor MCP"
+
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
@@ -2572,6 +2614,11 @@ msgstr "Agregar ordenamiento"
 msgid "Add SSO Identity Provider"
 msgstr "Añadir proveedor de identidad SSO"
 
+#. js-lingui-id: O6B1gJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes."
+msgstr "Añada columnas de tabla que muestren un campo de un registro relacionado, como el sector de la empresa de una persona. Habilítelas después de que se complete la actualización de la instancia."
+
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
@@ -2733,6 +2780,16 @@ msgstr "Añadido {beautifiedCreatedAt}"
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
 msgstr "Se añadió <0>Fecha de renovación</0> a <1>{companiesLabel}</1>"
+
+#. js-lingui-id: NxahIk
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added by"
+msgstr "Añadido por"
+
+#. js-lingui-id: z1dTLo
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Added on"
+msgstr "Añadido el"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3015,8 +3072,9 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3029,7 +3087,6 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "AI"
 msgstr "IA"
@@ -4211,6 +4268,11 @@ msgstr "¿Estás seguro de que quieres eliminar {sourceHandle}? El correo entran
 msgid "Are you sure you want to delete {topicName}? Recipients will no longer be able to opt out of this category."
 msgstr "¿Seguro que quieres eliminar {topicName}? Los destinatarios ya no podrán darse de baja de esta categoría."
 
+#. js-lingui-id: njO+Zl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
+msgstr "¿Está seguro de que desea eliminar este servidor MCP? Esta acción no se puede deshacer."
+
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Are you sure you want to delete this related {relationObjectLabelSingular}?<0/>This action will break all its relationships with other objects."
@@ -4281,6 +4343,21 @@ msgstr "Los argumentos deben ser un objeto JSON válido."
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Armenian"
 msgstr "Armenio"
+
+#. js-lingui-id: T1TSIx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Arrangement added."
+msgstr "Acuerdo añadido."
+
+#. js-lingui-id: EboPKL
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangement ended."
+msgstr "El acuerdo ha finalizado."
+
+#. js-lingui-id: We0TcM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Arrangements"
+msgstr "Acuerdos"
 
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -4559,6 +4636,11 @@ msgstr "Se requiere al menos una operación"
 #: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
 msgid "At least one protocol must be configured"
 msgstr "Se debe configurar al menos un protocolo"
+
+#. js-lingui-id: QAlSoU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
+msgstr "Se facturan al menos esta cantidad de plazas hasta la fecha de finalización. Un límite estricto también bloquea a los nuevos miembros que la superen."
 
 #. js-lingui-id: tqMllA
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -5677,6 +5759,7 @@ msgstr "Canadá"
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
@@ -6999,9 +7082,21 @@ msgid "Commas and dot"
 msgstr "Comas y punto"
 
 #. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Comment"
 msgstr "Comentario"
+
+#. js-lingui-id: As9mhp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Commercial exceptions to the plan, with why and until when."
+msgstr "Excepciones comerciales al plan, con el motivo y hasta cuándo."
+
+#. js-lingui-id: 1JmJ2B
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Committed seats"
+msgstr "Plazas comprometidas"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7437,6 +7532,11 @@ msgstr "Conecta el correo electrónico, WhatsApp o LinkedIn para ver tus convers
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Conecta Google, Microsoft o CalDAV y activa la sincronización del calendario antes de crear un evento."
 
+#. js-lingui-id: +RyxXW
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
+msgid "Connect remote MCP servers so agents can use their tools"
+msgstr "Conecte servidores MCP remotos para que los agentes puedan usar sus herramientas"
+
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
@@ -7490,6 +7590,7 @@ msgstr "Conectado"
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -8605,6 +8706,11 @@ msgstr "Credenciales"
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "Credenciales y ámbitos para los flujos de autorización de OAuth"
 
+#. js-lingui-id: x8lB6y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit allowance"
+msgstr "Asignación de crédito"
+
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit balance"
@@ -8619,6 +8725,11 @@ msgstr "Consumo de créditos para el período actual"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
 msgstr "Consumo de créditos a lo largo del tiempo."
+
+#. js-lingui-id: OeJw5Y
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Credit grant"
+msgstr "Concesión de crédito"
 
 #. js-lingui-id: zH6NZT
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -8735,6 +8846,11 @@ msgstr "Créditos otorgados además de la asignación del plan. Se pueden gastar
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
 msgstr "Créditos por día"
+
+#. js-lingui-id: 30XINA
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Credits per month"
+msgstr "Créditos por mes"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9083,6 +9199,11 @@ msgstr "customer_satisfaction"
 msgid "Customise the fields available in the {objectLabelSingular} views and their display order in the {objectLabelSingular} detail view and menus."
 msgstr "Personaliza los campos disponibles en las vistas de {objectLabelSingular} y su orden de visualización en la vista de detalle de {objectLabelSingular} y en los menús."
 
+#. js-lingui-id: 5GgtFa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Customizable sidebar"
+msgstr "Barra lateral personalizable"
+
 #. js-lingui-id: qqLY+j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -9193,6 +9314,7 @@ msgstr "Diariamente, se conserva durante 30 días"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9459,6 +9581,7 @@ msgstr "Días entre activadores"
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9480,6 +9603,11 @@ msgstr "Desactivar campo"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Deactivate object"
 msgstr "Desactivar objeto"
+
+#. js-lingui-id: ujOIgb
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Deactivate or delete this MCP server"
+msgstr "Desactivar o eliminar este servidor MCP"
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9661,6 +9789,8 @@ msgstr "eliminar"
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9887,6 +10017,11 @@ msgstr "Eliminar nivel"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Eliminar límite"
+
+#. js-lingui-id: u+Hoy8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+msgid "Delete MCP server"
+msgstr "Eliminar servidor MCP"
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10154,6 +10289,7 @@ msgstr "Describa lo que quiere que la IA haga..."
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
@@ -10236,6 +10372,8 @@ msgstr "detalles"
 #. js-lingui-id: URmyfc
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleSecurityColumns.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -10403,6 +10541,11 @@ msgstr "Desconectado"
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
 msgstr "Se desconectaron {successfulCount} de {totalCount} conexiones. No se pudieron desconectar: {failedLabels}."
+
+#. js-lingui-id: H6Ma8Z
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Discount"
+msgstr "Descuento"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11579,6 +11722,17 @@ msgstr "Cifrado"
 msgid "Encryption key rotation"
 msgstr "Rotación de claves de cifrado"
 
+#. js-lingui-id: xDr/ct
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End"
+msgstr "Finalizar"
+
+#. js-lingui-id: VhdLE7
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "End arrangement"
+msgstr "Finalizar acuerdo"
+
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -11606,6 +11760,16 @@ msgstr "Finalizar periodo de prueba"
 msgid "End trial period to continue using Workflow or AI features."
 msgstr "Finaliza el periodo de prueba para seguir usando las funciones de flujo de trabajo o de IA."
 
+#. js-lingui-id: 237hSL
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "Ended"
+msgstr "Finalizado"
+
+#. js-lingui-id: eNtnOy
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+msgid "Ended by"
+msgstr "Finalizado por"
+
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Ending"
@@ -11625,11 +11789,15 @@ msgstr "URL del endpoint"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr "Finaliza"
 
 #. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Ends (optional)"
 msgstr "Finaliza (opcional)"
@@ -12928,6 +13096,11 @@ msgstr "No se pudo crear el agente"
 msgid "Failed to create calendar event"
 msgstr "No se pudo crear el evento de calendario"
 
+#. js-lingui-id: 8qnNWI
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "Failed to create MCP server"
+msgstr "No se pudo crear el servidor MCP"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -13092,6 +13265,11 @@ msgstr "No se pudieron vincular los registros relacionados a este evento"
 msgid "Failed to load agent details."
 msgstr "No se pudieron cargar los detalles del agente."
 
+#. js-lingui-id: dQLWeE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "Failed to load billing arrangements."
+msgstr "No se pudieron cargar los acuerdos de facturación."
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13108,6 +13286,16 @@ msgstr "Error al cargar el componente del front-end: {0}"
 #: src/modules/front-components/components/FrontComponentLoadErrorToastEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Error al cargar el componente del front-end: {errorMessage}"
+
+#. js-lingui-id: wEebE8
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
+msgid "Failed to load MCP server"
+msgstr "No se pudo cargar el servidor MCP"
+
+#. js-lingui-id: rte0QY
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "Failed to load MCP servers"
+msgstr "No se pudieron cargar los servidores MCP"
 
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13252,6 +13440,11 @@ msgstr "No se pudo establecer el modo de mantenimiento."
 msgid "Failed to start the export. {0}"
 msgstr "No se pudo iniciar la exportación. {0}"
 
+#. js-lingui-id: 22o02r
+#: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
+msgid "Failed to sync tools"
+msgstr "No se pudieron sincronizar las herramientas"
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -13277,6 +13470,11 @@ msgstr "No se pudo actualizar el modelo predeterminado"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Failed to update feature flag. {0}"
 msgstr "No se pudo actualizar el feature flag. {0}"
+
+#. js-lingui-id: mwx+OD
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "Failed to update MCP server"
+msgstr "Error al actualizar el servidor MCP"
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13744,7 +13942,7 @@ msgstr "Rellenar con datos de muestra de"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -13859,19 +14057,24 @@ msgid "Finish editing the layout to expand chat"
 msgstr "Termina de editar el diseño para expandir el chat"
 
 #. js-lingui-id: yJoako
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open AI"
 msgstr "Termina de editar el diseño para abrir IA"
 
 #. js-lingui-id: KstqNM
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
 msgstr "Termina de editar el diseño para abrir la bandeja de entrada"
 
 #. js-lingui-id: 6cOXRd
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Termina de editar el diseño para abrir Configuración"
+
+#. js-lingui-id: 1yKuEJ
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
+msgid "Finish editing the layout to open this tab"
+msgstr "Termina de editar el diseño para abrir esta pestaña"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14171,6 +14374,11 @@ msgstr "Créditos gratis"
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
 msgstr "Créditos gratis obtenidos"
+
+#. js-lingui-id: x2qGE3
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Free seats"
+msgstr "Plazas gratuitas"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -14864,6 +15072,11 @@ msgstr "Identificador"
 msgid "Happy"
 msgstr "Feliz"
 
+#. js-lingui-id: 4OOUC8
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Hard cap"
+msgstr "Límite estricto"
+
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
 msgid "Has attachments"
@@ -15168,7 +15381,7 @@ msgstr "Contrata a un socio para que te ayude a implementar y personalizar Twent
 #. js-lingui-id: i0qMbr
 #: src/modules/ai/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
 msgstr "Inicio"
 
@@ -15228,6 +15441,11 @@ msgstr "Cómo se muestran y navegan los registros."
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "How this rule appears in settings."
 msgstr "Cómo aparece esta regla en la configuración."
+
+#. js-lingui-id: HuGZWl
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "How this server is named for your team and for agents"
+msgstr "Cómo se llama este servidor para su equipo y los agentes"
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15323,6 +15541,11 @@ msgstr "https://example.com/embed"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
+
+#. js-lingui-id: U0G31R
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "https://mcp.example.com/mcp"
+msgstr "https://mcp.example.com/mcp"
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15734,6 +15957,7 @@ msgstr "In-Reply-To"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Inactive"
 msgstr "Inactivo"
 
@@ -15753,7 +15977,7 @@ msgid "Inactive Skill Options"
 msgstr "Opciones de habilidad inactiva"
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Inbox"
 msgstr "Bandeja de entrada"
 
@@ -16166,6 +16390,16 @@ msgstr "Expresión cron no válida. Se esperaban entre 4 y 6 campos, se obtuvier
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Patrón cron no válido: {errorMessage}"
+
+#. js-lingui-id: DQm/44
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE."
+msgstr "Parte de fecha no válida. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR o MINUTE."
+
+#. js-lingui-id: UAtSd1
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR."
+msgstr "Unidad de fecha no válida. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER o YEAR."
 
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -16720,6 +16954,8 @@ msgstr "Coreano"
 
 #. js-lingui-id: 87a/t/
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -16739,6 +16975,7 @@ msgid "Label is not transliterable"
 msgstr "La etiqueta no se puede transliterar"
 
 #. js-lingui-id: w8Rv8T
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Label is required"
@@ -17007,6 +17244,17 @@ msgstr "Visto por última vez"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Last signed in"
 msgstr "Último acceso"
+
+#. js-lingui-id: ElUyt8
+#. placeholder {0}: mcpServer.toolsSyncError
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last sync failed: {0}"
+msgstr "La última sincronización falló: {0}"
+
+#. js-lingui-id: Ip8UbZ
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Last synced {lastSynced}"
+msgstr "Última sincronización: {lastSynced}"
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17363,6 +17611,16 @@ msgstr "Limitar cuántos valores se pueden agregar a este campo"
 msgid "Limit must be greater than 0."
 msgstr "El límite debe ser mayor que 0."
 
+#. js-lingui-id: cF6iqz
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Limit override"
+msgstr "Anulación de límite"
+
+#. js-lingui-id: BDi/z7
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
+msgid "Limit removed"
+msgstr "Límite eliminado"
+
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
@@ -17415,6 +17673,16 @@ msgstr "Gráfico de líneas"
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Line height"
 msgstr "Altura de línea"
+
+#. js-lingui-id: vQ2Ad9
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "linear"
+msgstr "lineal"
+
+#. js-lingui-id: ih+n6S
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
+msgid "Linear"
+msgstr "Lineal"
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -17930,6 +18198,11 @@ msgstr "Longitud"
 msgid "Look up"
 msgstr "Buscar"
 
+#. js-lingui-id: PJeBuo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Lookup columns"
+msgstr "Columnas de búsqueda"
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -18326,8 +18599,24 @@ msgstr "Servidor MCP"
 msgid "MCP Server"
 msgstr "Servidor MCP"
 
+#. js-lingui-id: 8uHtaz
+#: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
+msgid "MCP server {label} created successfully"
+msgstr "Servidor MCP {label} creado con éxito"
+
+#. js-lingui-id: IbSocu
+#: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
+msgid "MCP server {label} updated successfully"
+msgstr "Servidor MCP {label} actualizado con éxito"
+
+#. js-lingui-id: bbaHGM
+#: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
+msgid "MCP server deleted successfully"
+msgstr "Servidor MCP eliminado con éxito"
+
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "Servidores MCP"
 
@@ -18943,6 +19232,7 @@ msgstr "Más campos avanzados para proyectos avanzados"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
@@ -19169,6 +19459,8 @@ msgstr "N/A"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -19230,6 +19522,16 @@ msgstr "Detalles del nombre"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Nombre tanto en forma singular (ej., 'Factura') como en plural (ej., 'Facturas')."
+
+#. js-lingui-id: 8/brI5
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name is required"
+msgstr "El nombre es obligatorio"
+
+#. js-lingui-id: Kq5f+c
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
+msgstr "El nombre debe tener como máximo {MCP_SERVER_NAME_MAX_LENGTH} caracteres"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19297,7 +19599,7 @@ msgid "navigation menu item"
 msgstr "elemento del menú de navegación"
 
 #. js-lingui-id: aTTshK
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Navigation modes"
 msgstr "Modos de navegación"
 
@@ -19333,6 +19635,7 @@ msgstr "Error de red"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+#: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementEndDate.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -19364,6 +19667,7 @@ msgstr "Nunca, ni por Twenty ni por los proveedores"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -19394,6 +19698,7 @@ msgid "New Agent"
 msgstr "Nuevo agente"
 
 #. js-lingui-id: JLx7YM
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Nuevo chat de IA"
@@ -19516,6 +19821,11 @@ msgstr "Nueva clave"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
 msgstr "Nuevo límite"
+
+#. js-lingui-id: p/TT/2
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
+msgid "New MCP server"
+msgstr "Nuevo servidor MCP"
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20106,6 +20416,7 @@ msgid "No emoji found"
 msgstr "No se encontró ningún emoji"
 
 #. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "No end date"
 msgstr "Sin fecha de finalización"
@@ -20275,6 +20586,11 @@ msgstr "No hay conversaciones coincidentes"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "No matching people or roles"
 msgstr "No hay personas ni roles coincidentes"
+
+#. js-lingui-id: c/bX1U
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+msgid "No MCP servers yet"
+msgstr "Aún no hay servidores MCP"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -20501,6 +20817,7 @@ msgstr "No hay respuesta del servidor"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
@@ -20627,6 +20944,11 @@ msgstr "Sin contenido"
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
 msgstr "No hay herramientas que coincidan con tu búsqueda"
+
+#. js-lingui-id: SCvh4h
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
+msgid "No tools synced yet"
+msgstr "Aún no se han sincronizado herramientas"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21413,6 +21735,11 @@ msgstr "Una vez reclamada, instala esta aplicación en el espacio de trabajo de 
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Uno o más filtros hacen referencia a campos desactivados o eliminados y se eliminarán automáticamente al guardar."
 
+#. js-lingui-id: zTzoj2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE."
+msgstr "Una parte de la fecha como número, en UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 es lunes), HOUR o MINUTE."
+
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
@@ -21422,6 +21749,11 @@ msgstr "Uno por ejecución"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "Una suscripción proporciona una clave de Organización que impulsa una instancia de producción y una posible instancia de ensayo o prueba. Para ejecutar un entorno de ensayo o prueba, instala Twenty en un segundo servidor, actívalo con esta misma clave de Organización y registra ese servidor como instancia de desarrollo. Las instancias de desarrollo desbloquean funciones premium sin facturación adicional y no cuentan para tus plazas de producción."
+
+#. js-lingui-id: YO4da4
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
+msgid "One-time"
+msgstr "De una sola vez"
 
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -22712,6 +23044,11 @@ msgstr "Elige uno o más campos. El orden en que los selecciones se convierte en
 msgid "Pick Record"
 msgstr "Elegir registro"
 
+#. js-lingui-id: 48B257
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Pick the end date"
+msgstr "Elige la fecha de finalización"
+
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB."
@@ -22834,6 +23171,11 @@ msgstr "Por favor, revisa la sintaxis de tu expresión cron."
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
 msgstr "Por favor, revisa tu correo electrónico para un enlace de verificación."
+
+#. js-lingui-id: vYumai
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Please enter a valid http(s) URL"
+msgstr "Por favor, introduzca una URL http(s) válida"
 
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
@@ -22982,6 +23324,11 @@ msgstr "Rellenando tus <0>datos del espacio de trabajo</0>..."
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
 msgstr "Prefijo"
+
+#. js-lingui-id: HR5Lti
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Prefix of the tool names agents see. Cannot be changed later."
+msgstr "Prefijo de los nombres de las herramientas que ven los agentes. No se puede cambiar más adelante."
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -23660,6 +24007,9 @@ msgid "Read/Edit/Delete permissions"
 msgstr "Permisos de lectura/edición/eliminación"
 
 #. js-lingui-id: VJScHU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -23704,6 +24054,7 @@ msgstr "Recibir un correo electrónico con un enlace para actualizar la contrase
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Reciente"
 
@@ -24100,6 +24451,11 @@ msgstr "Actualizar la disponibilidad para esta fecha."
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Refresh status"
 msgstr "Actualizar estado"
+
+#. js-lingui-id: J0LAHU
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Refund"
+msgstr "Reembolso"
 
 #. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -24605,6 +24961,11 @@ msgstr "Reordenar opciones"
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
 msgstr "Reemplazar widget"
+
+#. js-lingui-id: JsTqK9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
+msgstr "Reemplaza los créditos de espacio de trabajo incluidos en el plan por una cantidad fija al mes, a partir de ahora. Los créditos pagados y concedidos se siguen sumando."
 
 #. js-lingui-id: uFEgGd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25522,6 +25883,7 @@ msgstr "Programar campaña"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr "Programado"
@@ -25587,6 +25949,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -25835,6 +26198,8 @@ msgstr "buscar metadatos de campo"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -26051,6 +26416,7 @@ msgid "seats"
 msgstr "plazas"
 
 #. js-lingui-id: grt0Pu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -26188,7 +26554,13 @@ msgstr "Ver función"
 msgid "See installed applications"
 msgstr "Ver aplicaciones instaladas"
 
+#. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+msgid "See less"
+msgstr "Ver menos"
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Ver más"
@@ -27007,7 +27379,7 @@ msgstr "Configurando tu <0>base de datos</0>..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27305,6 +27677,11 @@ msgstr "Mostrar en"
 msgid "Show only rows with errors"
 msgstr "Mostrar solo filas con errores"
 
+#. js-lingui-id: KefbEP
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show sidebar tabs and sections."
+msgstr "Mostrar pestañas y secciones de la barra lateral."
+
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -27387,6 +27764,11 @@ msgstr "El registro no está disponible temporalmente durante el mantenimiento."
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Signatory title"
 msgstr "Título del firmante"
+
+#. js-lingui-id: +Ou1Pl
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Signed a 2-year deal for 25 seats"
+msgstr "Se firmó un acuerdo de 2 años para 25 plazas"
 
 #. js-lingui-id: Lz4j8Q
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
@@ -27688,6 +28070,11 @@ msgstr "Pospuesto hasta {eventTime}"
 msgid "SOC 2"
 msgstr "SOC 2"
 
+#. js-lingui-id: mbsiG9
+#: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
+msgid "Soft cap"
+msgstr "Límite flexible"
+
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
@@ -27791,7 +28178,7 @@ msgstr "Lo sentimos, no pudimos determinar el tipo de objeto correcto para este 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Sort"
@@ -28041,6 +28428,8 @@ msgstr "Empieza el {scheduledChangeStartDate}"
 #. js-lingui-id: W1KkjZ
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Starts"
 msgstr "Comienza"
 
@@ -28080,6 +28469,8 @@ msgstr "Estadísticas"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28090,6 +28481,7 @@ msgstr "Estadísticas"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -28656,6 +29048,7 @@ msgstr "Sincronizar cada mensaje"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
+#: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "Sync failed"
 msgstr "Sincronización fallida"
 
@@ -28673,6 +29066,11 @@ msgstr "Se perdió la sincronización con el buzón {mailboxHandle}. Vuelve a co
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sincronización pausada"
+
+#. js-lingui-id: cxRmVd
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Sync tools"
+msgstr "Sincronizar herramientas"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29025,6 +29423,11 @@ msgstr "Ese horario ya no está disponible. Elige otro horario."
 msgid "That's about {formattedNewlyEarnedAiActions} AI actions. Credits never expire."
 msgstr "Eso equivale a aproximadamente {formattedNewlyEarnedAiActions} acciones de IA. Los créditos nunca caducan."
 
+#. js-lingui-id: XOno1Y
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
+msgstr "El acuerdo {pendingEndTypeLabel} deja de aplicarse ahora y permanece en el historial. No se puede reiniciar: añade uno nuevo en su lugar."
+
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
@@ -29104,6 +29507,11 @@ msgstr "No se pudo cargar el Acuerdo de procesamiento de datos. Inténtalo de nu
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
 msgstr "La fecha y hora de la escritura que se está comprobando."
+
+#. js-lingui-id: ny+Evg
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month."
+msgstr "La fecha desplazada por un número entero de unidades, en UTC. Un mes añadido al día 31 llega al último día del mes."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -29247,15 +29655,15 @@ msgstr "El nombre que los destinatarios ven junto a tu dirección en su bandeja 
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "El nombre que los destinatarios ven junto a tu dirección. Se establece cuando se crea el canal."
 
-#. js-lingui-id: op7R9r
-#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
-msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr "El número de días desde la fecha hasta hoy, en UTC. Negativo para una fecha futura."
-
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "El número de elementos de la lista, o 0 cuando no es una lista."
+
+#. js-lingui-id: SpoTRx
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
+msgstr "El número de unidades completas desde la primera fecha hasta la segunda, negativo cuando la segunda es anterior. Los minutos y las horas son tiempo transcurrido; las unidades más largas cuentan días y meses del calendario, en UTC."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -29311,6 +29719,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "El correo electrónico compartido que quieres usar."
+
+#. js-lingui-id: XWiOdK
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr "El inicio de la unidad que contiene la fecha, en UTC. Las semanas comienzan el lunes."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -29774,6 +30187,11 @@ msgstr "Esta es la clave de firma actual. Revocarla invalidará todos los JWT fi
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
 msgstr "Esta clave debe establecerse mediante la entrada del cuerpo"
+
+#. js-lingui-id: 3Xb+Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "This many members are not billed. Seats are synced right away."
+msgstr "No se facturan esta cantidad de miembros. Las plazas se sincronizan de inmediato."
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30383,9 +30801,15 @@ msgstr "Herramienta no encontrada"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
 msgstr "Herramientas"
+
+#. js-lingui-id: OGOaH+
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
+msgid "Tools have not been synced yet"
+msgstr "Las herramientas aún no se han sincronizado"
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -30570,6 +30994,11 @@ msgstr "La prueba ha expirado. Por favor, contacte a su administrador"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
 msgstr "Periodo de prueba expirado. Por favor, actualice sus datos de facturación."
+
+#. js-lingui-id: SyzXYh
+#: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
+msgid "Trial extension"
+msgstr "Extensión de prueba"
 
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -30867,6 +31296,9 @@ msgstr "La autenticación de dos factores se restableció para este espacio de t
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -31907,6 +32339,8 @@ msgstr "URI es obligatorio"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "URL"
 msgstr "URL"
@@ -31919,6 +32353,7 @@ msgstr "URL copiada al portapapeles"
 
 #. js-lingui-id: HtrFfw
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "URL is required"
 msgstr "URL es obligatoria"
 
@@ -32052,6 +32487,11 @@ msgstr "Usa los índices con moderación"
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Utiliza solo letras, números y guiones. Empieza y termina con una letra o un número"
+
+#. js-lingui-id: cW4z4t
+#: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "Use letras minúsculas, dígitos y guiones bajos, empezando por una letra"
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33188,6 +33628,11 @@ msgstr "Dónde los proveedores de IA procesan tus solicitudes"
 msgid "Where records of this object open"
 msgstr "Dónde se abren los registros de este objeto"
 
+#. js-lingui-id: jQ8/hg
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
+msgid "Where the server lives"
+msgstr "Dónde se encuentra el servidor"
+
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
@@ -33429,6 +33874,7 @@ msgstr "Inicio del horario laboral"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
@@ -33455,7 +33901,6 @@ msgstr "Inicio del horario laboral"
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx

@@ -1,5 +1,4 @@
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
-import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -37,6 +36,8 @@ const MANIFEST = buildBaseManifest({
   },
 });
 
+const WORKSPACE_ID = '44444444-4444-4444-8444-444444444444';
+
 const compute = ({
   workflows = MANIFEST.workflows ?? [],
   fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps(),
@@ -47,10 +48,15 @@ const compute = ({
   )) {
     const version = (workflow as UniversalFlatWorkflow | undefined)
       ?.flatUniversalWorkflowVersion;
-    if (isDefined(version)) {
+    if (isDefined(version) && isDefined(workflow)) {
       fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
         version.universalIdentifier
-      ] = version as FlatWorkflowVersion;
+      ] = {
+        ...version,
+        workspaceId: WORKSPACE_ID,
+        applicationId: MANIFEST.application.universalIdentifier,
+        coreWorkflowId: workflow.id,
+      };
     }
   }
   const toAllUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
