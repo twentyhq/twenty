@@ -56,6 +56,10 @@ export class ViewSortEntity extends SyncableEntity {
   })
   direction: ViewSortDirection;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.3.0_AddSubFieldNameToViewSortEarlyFastInstanceCommand_1747234200000',
+  })
   @Column({ nullable: true, type: 'varchar' })
   subFieldName?: string | null;
 
@@ -66,8 +70,7 @@ export class ViewSortEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid', default: null })
   relationTargetFieldMetadataId: string | null;
 
-  // Not CASCADE: a sync deletes fields before it updates view sorts, so a cascade would drop a sort
-  // the same sync repoints. fieldRelationTargetViewSortsOnDelete deletes the sorts left on the field.
+  // Not CASCADE: syncs delete fields before updating sorts; the on-delete side effect cleans up instead
   @ManyToOne(() => FieldMetadataEntity, {
     onDelete: 'SET NULL',
     nullable: true,
