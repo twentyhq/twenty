@@ -377,7 +377,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
         [fixture.coreWorkflowId],
       );
-      if (run) {
+      if (isDefined(run)) {
         const completedRun = await waitForRun(run.id, 'COMPLETED');
 
         expect(completedRun.createdByName).toBe('B-Async execution');
