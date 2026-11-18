@@ -7,7 +7,10 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 export const getMcpRegistryToolAnnotations = ({
   executionRef,
   isDestructive,
-}: Pick<ToolIndexEntry, 'executionRef' | 'isDestructive'>): McpToolAnnotations => {
+}: Pick<
+  ToolIndexEntry,
+  'executionRef' | 'isDestructive'
+>): McpToolAnnotations => {
   if (executionRef.kind === 'database_crud') {
     return MCP_DATABASE_CRUD_TOOL_ANNOTATIONS[executionRef.operation];
   }

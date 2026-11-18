@@ -66,11 +66,14 @@ describe('getMcpRegistryToolAnnotations', () => {
         logicFunctionId: '20202020-0000-4000-8000-000000000001',
       },
     ],
-  ])('should return non-destructive execute annotations for %p', (executionRef) => {
-    expect(getMcpRegistryToolAnnotations({ executionRef })).toEqual(
-      MCP_EXECUTE_TOOL_ANNOTATIONS,
-    );
-  });
+  ])(
+    'should return non-destructive execute annotations for %p',
+    (executionRef) => {
+      expect(getMcpRegistryToolAnnotations({ executionRef })).toEqual(
+        MCP_EXECUTE_TOOL_ANNOTATIONS,
+      );
+    },
+  );
 
   it('should flag a non-database tool declared destructive', () => {
     expect(
