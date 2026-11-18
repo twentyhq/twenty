@@ -1,7 +1,6 @@
 import { splitPhaseItemsInPricesOrThrow } from '@/settings/billing/utils/splitPhaseItemsInPricesOrThrow';
 import {
   type BillingPriceLicensed,
-  BillingUsageType,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
@@ -9,7 +8,6 @@ const basePrice: BillingPriceLicensed = {
   stripePriceId: 'price_base',
   unitAmount: 1200,
   recurringInterval: SubscriptionInterval.Month,
-  priceUsageType: BillingUsageType.LICENSED,
   creditAmount: null,
   isSellable: true,
 };
@@ -18,7 +16,6 @@ const resourceCreditPrice: BillingPriceLicensed = {
   stripePriceId: 'price_resource_credit',
   unitAmount: 2000,
   recurringInterval: SubscriptionInterval.Month,
-  priceUsageType: BillingUsageType.LICENSED,
   creditAmount: 1000,
   isSellable: true,
 };

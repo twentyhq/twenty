@@ -13,9 +13,6 @@ export const usePlanByPriceId = () => {
         ) ||
         plan.resourceCreditProducts.some((p) =>
           p.prices?.some((price) => price.stripePriceId === priceId),
-        ) ||
-        plan.meteredProducts.some((p) =>
-          p.prices?.some((price) => price.stripePriceId === priceId),
         ),
     );
 

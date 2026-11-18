@@ -59,10 +59,6 @@ export class BillingProductService {
       );
     }
 
-    return [
-      ...plan.baseProducts,
-      ...plan.resourceCreditProducts,
-      ...plan.meteredProducts,
-    ];
+    return [...plan.baseProducts, ...plan.resourceCreditProducts];
   }
 }

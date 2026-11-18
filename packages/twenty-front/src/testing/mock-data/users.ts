@@ -53,10 +53,6 @@ const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.baseProducts?.[0]!;
 const PRO_BASE_MONTHLY_PRICE = PRO_BASE_LICENSED_PRODUCT?.prices?.find(
   (pr) => pr.recurringInterval === 'Month',
 )!;
-const PRO_METERED_PRODUCT = PRO_PLAN?.meteredProducts?.[0]!;
-const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
-  (pr) => pr.recurringInterval === 'Month',
-)!;
 
 export const mockCurrentWorkspace = {
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
@@ -129,21 +125,6 @@ export const mockCurrentWorkspace = {
           description: PRO_BASE_LICENSED_PRODUCT.description,
           images: PRO_BASE_LICENSED_PRODUCT.images,
           metadata: PRO_BASE_LICENSED_PRODUCT.metadata,
-        },
-      },
-      {
-        __typename: 'BillingSubscriptionItem',
-        id: '11111111-1111-4111-8111-111111111112',
-        hasReachedCurrentPeriodCap: false,
-        quantity: null,
-        stripePriceId: PRO_METERED_MONTHLY_PRICE.stripePriceId,
-        unitAmount: null,
-        creditAmount: null,
-        billingProduct: {
-          name: PRO_METERED_PRODUCT.name,
-          description: PRO_METERED_PRODUCT.description,
-          images: PRO_METERED_PRODUCT.images,
-          metadata: PRO_METERED_PRODUCT.metadata,
         },
       },
     ],

@@ -1186,22 +1186,13 @@ export enum BillingEntitlementKey {
   VALIDATION_RULES = 'VALIDATION_RULES'
 }
 
-export type BillingLicensedProduct = BillingProductDto & {
+export type BillingLicensedProduct = {
   __typename?: 'BillingLicensedProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
   prices?: Maybe<Array<BillingPriceLicensed>>;
-};
-
-export type BillingMeteredProduct = BillingProductDto & {
-  __typename?: 'BillingMeteredProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingPartnerCode = {
@@ -1222,7 +1213,6 @@ export type BillingPlan = {
   downgradePlanKeys: Array<BillingPlanKey>;
   isCheckoutDefault: Scalars['Boolean']['output'];
   isSellable: Scalars['Boolean']['output'];
-  meteredProducts: Array<BillingMeteredProduct>;
   planKey: BillingPlanKey;
   resourceCreditProducts: Array<BillingLicensedProduct>;
   upgradePlanKeys: Array<BillingPlanKey>;
@@ -1240,36 +1230,13 @@ export type BillingPriceLicensed = {
   __typename?: 'BillingPriceLicensed';
   creditAmount?: Maybe<Scalars['Float']['output']>;
   isSellable: Scalars['Boolean']['output'];
-  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
 };
 
-export type BillingPriceMetered = {
-  __typename?: 'BillingPriceMetered';
-  priceUsageType: BillingUsageType;
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  tiers: Array<BillingPriceTier>;
-};
-
-export type BillingPriceTier = {
-  __typename?: 'BillingPriceTier';
-  flatAmount?: Maybe<Scalars['Float']['output']>;
-  unitAmount?: Maybe<Scalars['Float']['output']>;
-  upTo?: Maybe<Scalars['Float']['output']>;
-};
-
 export type BillingProduct = {
   __typename?: 'BillingProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-};
-
-export type BillingProductDto = {
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
@@ -1287,7 +1254,6 @@ export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
   planKey?: Maybe<BillingPlanKey>;
-  priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
 
@@ -1332,7 +1298,7 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
-  billingProduct: BillingProductDto;
+  billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
@@ -1367,11 +1333,6 @@ export type BillingUpdate = {
   /** Current billing subscription */
   currentBillingSubscription: BillingSubscription;
 };
-
-export enum BillingUsageType {
-  LICENSED = 'LICENSED',
-  METERED = 'METERED'
-}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
