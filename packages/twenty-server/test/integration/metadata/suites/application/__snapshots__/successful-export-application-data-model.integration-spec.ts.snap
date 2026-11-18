@@ -39,12 +39,6 @@ exports[`Application export - data model exports the whole application as a stab
       "status": "EXPORTED",
       "universalIdentifier": "de7e7102-6725-5a65-8ee8-3154fe4fb94b",
     },
-    {
-      "metadataName": "rowLevelPermissionRule",
-      "reason": null,
-      "status": "EXPORTED",
-      "universalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
-    },
   ],
   "named": [
     {
@@ -262,12 +256,6 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_updatedBy_ENGINE_FIELD>",
-    },
-    {
-      "metadataName": "fieldPermission",
-      "reason": null,
-      "status": "EXPORTED",
-      "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION>",
     },
     {
       "metadataName": "index",
@@ -568,24 +556,6 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "EXPORTED",
       "universalIdentifier": "<TEST_ROLE>",
-    },
-    {
-      "metadataName": "rowLevelPermissionPredicate",
-      "reason": null,
-      "status": "EXPORTED",
-      "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_PREDICATE>",
-    },
-    {
-      "metadataName": "rowLevelPermissionPredicateGroup",
-      "reason": null,
-      "status": "EXPORTED",
-      "universalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
-    },
-    {
-      "metadataName": "rowLevelPermissionPredicateGroup",
-      "reason": null,
-      "status": "EXPORTED",
-      "universalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
     },
     {
       "metadataName": "view",
@@ -1132,53 +1102,9 @@ exports[`Application export - data model exports the whole application as a stab
         "objects": [
           {
             "canCreateAllRecords": false,
-            "canDestroyAllRecords": false,
-            "canReadAllRecords": false,
-            "canSoftDeleteAllRecords": false,
+            "canReadAllRecords": true,
             "canUpdateAllRecords": false,
-            "fieldPermissionIdentifiers": [
-              {
-                "fieldUniversalIdentifier": "<TICKET_TITLE_FIELD>",
-                "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION>",
-              },
-            ],
             "objectUniversalIdentifier": "<TICKET_OBJECT>",
-            "rowLevelRecordsPermissions": [
-              {
-                "canCreateRecords": false,
-                "canDestroyRecords": false,
-                "canReadRecords": true,
-                "canSoftDeleteRecords": false,
-                "canUpdateRecords": false,
-                "predicateGroups": [
-                  {
-                    "logicalOperator": "OR",
-                    "position": 0,
-                    "predicateGroups": [
-                      {
-                        "logicalOperator": "AND",
-                        "position": 1,
-                        "predicates": [
-                          {
-                            "fieldUniversalIdentifier": "<TICKET_TITLE_FIELD>",
-                            "operand": "CONTAINS",
-                            "position": 0,
-                            "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_PREDICATE>",
-                            "value": "bug",
-                          },
-                        ],
-                        "universalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
-                      },
-                    ],
-                    "universalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
-                  },
-                ],
-                "universalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
-              },
-            ],
-            "uneditableFields": [
-              "<TICKET_TITLE_FIELD>",
-            ],
             "universalIdentifier": "<TEST_ROLE_TICKET_OBJECT_PERMISSION>",
           },
         ],

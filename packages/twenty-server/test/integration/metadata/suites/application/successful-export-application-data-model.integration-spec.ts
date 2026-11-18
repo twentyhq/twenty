@@ -138,16 +138,8 @@ const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
   '7e3d1c2b-0028-4a7b-8c9d-0e1f2a3b4c5d';
 const TEST_ROLE_TICKET_OBJECT_PERMISSION_ID =
   '7e3d1c2b-0032-4a7b-8c9d-0e1f2a3b4c5d';
-const TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID =
-  '7e3d1c2b-0033-4a7b-8c9d-0e1f2a3b4c5d';
 const EXPORT_TICKETS_PERMISSION_FLAG_ID =
   '7e3d1c2b-0034-4a7b-8c9d-0e1f2a3b4c5d';
-const TEST_ROLE_TICKET_PREDICATE_GROUP_ID =
-  '7e3d1c2b-0035-4a7b-8c9d-0e1f2a3b4c5d';
-const TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID =
-  '7e3d1c2b-0036-4a7b-8c9d-0e1f2a3b4c5d';
-const TEST_ROLE_TICKET_TITLE_PREDICATE_ID =
-  '7e3d1c2b-0037-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -192,17 +184,7 @@ const buildIdentifierNames = (): Map<string, string> => {
       TEST_ROLE_TICKET_OBJECT_PERMISSION_ID,
       'TEST_ROLE_TICKET_OBJECT_PERMISSION',
     ],
-    [
-      TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID,
-      'TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION',
-    ],
     [EXPORT_TICKETS_PERMISSION_FLAG_ID, 'EXPORT_TICKETS_PERMISSION_FLAG'],
-    [TEST_ROLE_TICKET_PREDICATE_GROUP_ID, 'TEST_ROLE_TICKET_PREDICATE_GROUP'],
-    [
-      TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
-      'TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP',
-    ],
-    [TEST_ROLE_TICKET_TITLE_PREDICATE_ID, 'TEST_ROLE_TICKET_TITLE_PREDICATE'],
     [TICKET_OBJECT_ID, 'TICKET_OBJECT'],
     [PROJECT_OBJECT_ID, 'PROJECT_OBJECT'],
     [TICKET_TITLE_FIELD_ID, 'TICKET_TITLE_FIELD'],
@@ -827,43 +809,6 @@ const manifest = buildBaseManifest({
             canUpdateObjectRecords: false,
           },
         ],
-        fieldPermissions: [
-          {
-            universalIdentifier: TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID,
-            objectUniversalIdentifier: TICKET_OBJECT_ID,
-            fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
-            canUpdateFieldValue: false,
-          },
-        ],
-        rowLevelPermissionPredicateGroups: [
-          {
-            universalIdentifier: TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
-            objectUniversalIdentifier: TICKET_OBJECT_ID,
-            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-            position: 0,
-          },
-          {
-            universalIdentifier: TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
-            objectUniversalIdentifier: TICKET_OBJECT_ID,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            parentPredicateGroupUniversalIdentifier:
-              TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
-            position: 1,
-          },
-        ],
-        rowLevelPermissionPredicates: [
-          {
-            universalIdentifier: TEST_ROLE_TICKET_TITLE_PREDICATE_ID,
-            objectUniversalIdentifier: TICKET_OBJECT_ID,
-            fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'bug',
-            predicateGroupUniversalIdentifier:
-              TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
-            position: 0,
-          },
-        ],
         permissionFlagUniversalIdentifiers: [
           EXPORT_TICKETS_PERMISSION_FLAG_ID,
           SystemPermissionFlag.WORKSPACE,
@@ -1027,19 +972,7 @@ describe('Application export - data model', () => {
     expect(statusOf(TEST_ROLE_TICKET_OBJECT_PERMISSION_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID)).toBe(
-      ApplicationExportCoverageStatus.EXPORTED,
-    );
     expect(statusOf(EXPORT_TICKETS_PERMISSION_FLAG_ID)).toBe(
-      ApplicationExportCoverageStatus.EXPORTED,
-    );
-    expect(statusOf(TEST_ROLE_TICKET_PREDICATE_GROUP_ID)).toBe(
-      ApplicationExportCoverageStatus.EXPORTED,
-    );
-    expect(statusOf(TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID)).toBe(
-      ApplicationExportCoverageStatus.EXPORTED,
-    );
-    expect(statusOf(TEST_ROLE_TICKET_TITLE_PREDICATE_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TICKET_INDEX_VIEW_ID)).toBe(

@@ -4,6 +4,8 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 import {
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   type Manifest,
+  formatApplicationManifestRoleViolation,
+  getApplicationManifestRoleViolations,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
@@ -272,6 +274,10 @@ export const manifestValidate = (manifest: Manifest) => {
       manifest,
       pageLayoutWidgets,
     }),
+    ...getApplicationManifestRoleViolations({ manifest }).map(
+      (violation) =>
+        `${formatApplicationManifestRoleViolation(violation)} Publishing and syncing to a workspace fail unless this is the workspace custom app.`,
+    ),
   ];
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);

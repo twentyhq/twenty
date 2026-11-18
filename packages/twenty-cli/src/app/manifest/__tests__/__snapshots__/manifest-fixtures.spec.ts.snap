@@ -1412,6 +1412,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
     "Front component "root-component" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
     "Front component "test-component" declares no widgetAvailability, so it is not offered in any widget picker. Set widgetAvailability to let users add it to record pages or dashboards.",
+    "Role "Default function role" (b648f87b-1d26-4961-b974-0908fd991061), the application role, declares field permissions on objects 54b589ca-eeed-4950-a176-358418b85c05. Marketplace applications cannot declare field permissions: the workspace configures them. Publishing and syncing to a workspace fail unless this is the workspace custom app.",
+    "Role "Root role" (c0c1c2c3-c4c5-4000-8000-000000000001) is neither the application role nor an agent role. Marketplace applications can only declare their application role and their agents' roles. Publishing and syncing to a workspace fail unless this is the workspace custom app.",
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
     ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
   ],

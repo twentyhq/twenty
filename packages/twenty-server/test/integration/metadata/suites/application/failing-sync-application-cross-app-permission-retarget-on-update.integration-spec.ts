@@ -12,11 +12,8 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 const TEST_APP_ID = 'a1b2c3d4-0020-4000-a000-000000000010';
 const TEST_ROLE_ID = 'a1b2c3d4-0020-4000-a000-000000000011';
 const TEST_OBJECT_PERMISSION_ID = 'a1b2c3d4-0020-4000-a000-000000000013';
-const TEST_FIELD_PERMISSION_ID = 'a1b2c3d4-0020-4000-a000-000000000014';
 
 const COMPANY_OBJECT_ID = STANDARD_OBJECTS.company.universalIdentifier;
-const COMPANY_NAME_FIELD_ID =
-  STANDARD_OBJECTS.company.fields.name.universalIdentifier;
 
 describe('Sync application should fail when retargeting existing permissions to a standard role on update', () => {
   beforeAll(async () => {
@@ -59,7 +56,7 @@ describe('Sync application should fail when retargeting existing permissions to 
 
     const retargetManifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
@@ -115,7 +112,7 @@ describe('Sync application should fail when retargeting existing permissions to 
 
     const retargetManifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
@@ -131,69 +128,6 @@ describe('Sync application should fail when retargeting existing permissions to 
               {
                 universalIdentifier: TEST_OBJECT_PERMISSION_ID,
                 objectUniversalIdentifier: COMPANY_OBJECT_ID,
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    const { errors } = await syncApplication({
-      manifest: retargetManifest,
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  }, 60000);
-
-  it('should fail when retargeting a field permission from own role to the standard admin role', async () => {
-    const initialManifest = buildBaseManifest({
-      appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
-      overrides: {
-        roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-            fieldPermissions: [
-              {
-                universalIdentifier: TEST_FIELD_PERMISSION_ID,
-                objectUniversalIdentifier: COMPANY_OBJECT_ID,
-                fieldUniversalIdentifier: COMPANY_NAME_FIELD_ID,
-                canReadFieldValue: false,
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    await syncApplication({
-      manifest: initialManifest,
-      expectToFail: false,
-    });
-
-    const retargetManifest = buildBaseManifest({
-      appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
-      overrides: {
-        roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
-          {
-            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-            label: 'Admin',
-            description: 'Attempts to retarget field permission to admin role',
-            fieldPermissions: [
-              {
-                universalIdentifier: TEST_FIELD_PERMISSION_ID,
-                objectUniversalIdentifier: COMPANY_OBJECT_ID,
-                fieldUniversalIdentifier: COMPANY_NAME_FIELD_ID,
-                canReadFieldValue: false,
               },
             ],
           },

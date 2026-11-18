@@ -6,6 +6,9 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { assertMarketplaceApplicationManifestRolesOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/assert-marketplace-application-manifest-roles-or-throw.util';
+import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
 import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -23,7 +26,35 @@ export class ApplicationManifestApplyService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationGrantRoleService: ApplicationGrantRoleService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  // Called before anything is written, so a rejected manifest leaves the install as it was
+  async assertManifestRolesAllowedOrThrow({
+    workspaceId,
+    manifest,
+    sourceType,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+    sourceType: ApplicationRegistrationSourceType;
+  }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    if (
+      isMarketplaceApplication({
+        universalIdentifier: manifest.application.universalIdentifier,
+        sourceType,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      })
+    ) {
+      assertMarketplaceApplicationManifestRolesOrThrow({ manifest });
+    }
+  }
 
   async applyManifestToWorkspace({
     workspaceId,

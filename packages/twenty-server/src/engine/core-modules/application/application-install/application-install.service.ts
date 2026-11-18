@@ -411,6 +411,14 @@ export class ApplicationInstallService {
       );
     }
 
+    await this.applicationManifestApplyService.assertManifestRolesAllowedOrThrow(
+      {
+        workspaceId: params.workspaceId,
+        manifest: resolvedPackage.manifest,
+        sourceType: appRegistration.sourceType,
+      },
+    );
+
     const approvedCapabilities = toApplicationCapabilities(
       appRegistration.manifest?.application?.requestedCapabilities,
     );

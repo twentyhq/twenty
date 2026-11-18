@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { assertMarketplaceAppRolesOrThrow } from '@/app/deployment/assert-app-roles-allowed';
 import { publishAppToServer } from '@/app/publish/publish-app-to-server';
 import { resolveCommandTarget } from '@/program/resolve-command-target';
 import { publishAppToNpm } from '@/app/publish/publish-app-to-npm';
@@ -49,6 +50,8 @@ export const runAppPublishCommand: CommandRun = async (context) => {
   const { project, diagnostics } = await runAppBuild({
     context,
     useHeldBuild: async ({ project, data: build }) => {
+      assertMarketplaceAppRolesOrThrow({ build });
+
       published = await withPackedApp({
         appPath: project.path,
         build,

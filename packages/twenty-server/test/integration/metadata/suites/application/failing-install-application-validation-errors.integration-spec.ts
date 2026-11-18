@@ -18,7 +18,7 @@ const buildManifestWithCrossEntityIdentifierConflict = (
       description:
         'A test app whose manifest reuses a universalIdentifier across entity types',
       icon: 'IconTestPipe',
-      defaultRoleUniversalIdentifier: roleUniversalIdentifier,
+      defaultRoleUniversalIdentifier: duplicatedUniversalIdentifier,
       applicationVariables: {},
       packageJsonChecksum: null,
       yarnLockChecksum: null,

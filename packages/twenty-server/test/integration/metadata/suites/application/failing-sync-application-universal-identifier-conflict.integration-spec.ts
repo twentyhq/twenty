@@ -30,7 +30,7 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
   it('should fail when two entities in the same manifest share the same universalIdentifier', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: DUPLICATED_UNIVERSAL_IDENTIFIER,
       overrides: {
         roles: [
           {
@@ -69,7 +69,7 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
   it('should fail when an entity uses a universalIdentifier from the twenty-standard app', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
