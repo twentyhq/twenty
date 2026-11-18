@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { isAiChatCreditsExhaustedError } from '@/ai-chat/utils/isAiChatCreditsExhaustedError';
+import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   markWorkspaceCreditsAvailable,
