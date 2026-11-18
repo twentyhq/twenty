@@ -1619,6 +1619,7 @@ export type ClientConfig = {
   serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
+  webPushVapidPublicKey?: Maybe<Scalars['String']['output']>;
 };
 
 export type ClientConfigMaintenanceMode = {
@@ -3984,6 +3985,7 @@ export type Mutation = {
   updateEmailGroupChannel: MessageChannel;
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
+  updateInboxPresence: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -4041,6 +4043,7 @@ export type Mutation = {
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
+  upsertPushSubscription: Scalars['Boolean']['output'];
   upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -5297,6 +5300,11 @@ export type MutationUpdateGettingStartedArgs = {
 };
 
 
+export type MutationUpdateInboxPresenceArgs = {
+  input: UpdateInboxPresenceInput;
+};
+
+
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
@@ -5567,6 +5575,11 @@ export type MutationUpsertObjectPermissionsArgs = {
 
 export type MutationUpsertPermissionFlagsArgs = {
   upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
+};
+
+
+export type MutationUpsertPushSubscriptionArgs = {
+  input: UpsertPushSubscriptionInput;
 };
 
 
@@ -7935,6 +7948,11 @@ export type UpdateGettingStartedInput = {
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateInboxPresenceInput = {
+  isFocused: Scalars['Boolean']['input'];
+  tabId: Scalars['String']['input'];
+};
+
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
@@ -8384,6 +8402,13 @@ export type UpsertObjectPermissionsInput = {
 export type UpsertPermissionFlagsInput = {
   permissionFlagKeys: Array<Scalars['String']['input']>;
   roleId: Scalars['UUID']['input'];
+};
+
+export type UpsertPushSubscriptionInput = {
+  applicationServerKey: Scalars['String']['input'];
+  authSecret: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  p256dhKey: Scalars['String']['input'];
 };
 
 export type UpsertRowLevelPermissionRulesInput = {
