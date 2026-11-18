@@ -1,24 +1,28 @@
-const WEB_PUSH_SERVICE_HOSTS = [
+import { isDefined } from 'twenty-shared/utils';
+
+const WEB_PUSH_SERVICE_HOSTNAMES = [
   'fcm.googleapis.com',
-  '*.notify.windows.com',
   'updates.push.services.mozilla.com',
   'web.push.apple.com',
 ];
 
+const WEB_PUSH_SERVICE_HOSTNAME_SUFFIXES = ['.notify.windows.com'];
+
 export const isWebPushEndpointAllowed = (endpoint: string): boolean => {
-  if (!URL.canParse(endpoint)) {
+  const endpointUrl = URL.parse(endpoint);
+
+  if (!isDefined(endpointUrl)) {
     return false;
   }
 
-  const { protocol, hostname, port } = new URL(endpoint);
+  const { protocol, hostname, port } = endpointUrl;
 
   return (
     protocol === 'https:' &&
     port === '' &&
-    WEB_PUSH_SERVICE_HOSTS.some((host) =>
-      host.startsWith('*.')
-        ? hostname.endsWith(host.slice(1))
-        : hostname === host,
-    )
+    (WEB_PUSH_SERVICE_HOSTNAMES.includes(hostname) ||
+      WEB_PUSH_SERVICE_HOSTNAME_SUFFIXES.some((hostnameSuffix) =>
+        hostname.endsWith(hostnameSuffix),
+      ))
   );
 };

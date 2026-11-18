@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, MoreThan, Not } from 'typeorm';
+import { In, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -19,13 +18,14 @@ import { UserSessionService } from 'src/engine/core-modules/user-session/service
 import { type UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
 import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
-import { getWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/get-web-push-vapid-key-pair.util';
+import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils/is-web-push-endpoint-allowed.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const FOCUSED_TAB_TTL_MS = 45_000;
-const WEB_PUSH_TTL_SECONDS = 3600;
+const PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
+const EXPIRED_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
 
 const getFocusedTabKey = (workspaceId: string, userId: string) =>
   `focused-tab:${workspaceId}:${userId}`;
@@ -61,7 +61,7 @@ export class WebPushService {
       );
     }
 
-    const { publicKey } = getWebPushVapidKeyPair({
+    const { publicKey } = deriveWebPushVapidKeyPair({
       twentyConfigService: this.twentyConfigService,
     });
 
@@ -110,16 +110,23 @@ export class WebPushService {
     tabId: string;
     isFocused: boolean;
   }): Promise<void> {
-    const key = getFocusedTabKey(workspaceId, userId);
+    const focusedTabKey = getFocusedTabKey(workspaceId, userId);
 
     if (isFocused) {
-      await this.cacheStorageService.set(key, tabId, FOCUSED_TAB_TTL_MS);
+      await this.cacheStorageService.set(
+        focusedTabKey,
+        tabId,
+        FOCUSED_TAB_TTL_MS,
+      );
 
       return;
     }
 
-    if ((await this.cacheStorageService.get<string>(key)) === tabId) {
-      await this.cacheStorageService.del(key);
+    const focusedTabId =
+      await this.cacheStorageService.get<string>(focusedTabKey);
+
+    if (focusedTabId === tabId) {
+      await this.cacheStorageService.del(focusedTabKey);
     }
   }
 
@@ -137,7 +144,7 @@ export class WebPushService {
     );
   }
 
-  async sendToUser({
+  async sendNotificationToUser({
     workspaceId,
     userId,
     notification,
@@ -146,21 +153,25 @@ export class WebPushService {
     userId: string;
     notification: WebPushNotification;
   }): Promise<void> {
-    const now = Date.now();
+    const activeUserSessions =
+      await this.userSessionService.findActiveSessionsForUserWorkspace({
+        userId,
+        workspaceId,
+      });
+
+    if (activeUserSessions.length === 0) {
+      return;
+    }
+
+    const vapidKeyPair = deriveWebPushVapidKeyPair({
+      twentyConfigService: this.twentyConfigService,
+    });
     const pushSubscriptions = await this.pushSubscriptionRepository.find(
       workspaceId,
       {
         where: {
-          userSession: {
-            userId,
-            revokedAt: IsNull(),
-            expiresAt: MoreThan(new Date(now)),
-            lastActiveAt: MoreThan(
-              new Date(
-                now - ms(this.twentyConfigService.get('SESSION_IDLE_TIMEOUT')),
-              ),
-            ),
-          },
+          userSessionId: In(activeUserSessions.map(({ id }) => id)),
+          applicationServerKey: vapidKeyPair.publicKey,
         },
       },
     );
@@ -169,9 +180,6 @@ export class WebPushService {
       return;
     }
 
-    const vapidKeyPair = getWebPushVapidKeyPair({
-      twentyConfigService: this.twentyConfigService,
-    });
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const subject = serverUrl.startsWith('https:')
       ? serverUrl
@@ -184,14 +192,6 @@ export class WebPushService {
 
     for (const pushSubscription of pushSubscriptions) {
       try {
-        if (pushSubscription.applicationServerKey !== vapidKeyPair.publicKey) {
-          await this.pushSubscriptionRepository.delete(workspaceId, {
-            id: pushSubscription.id,
-          });
-
-          continue;
-        }
-
         const { endpoint, headers, body } = generateRequestDetails(
           {
             endpoint: pushSubscription.endpoint,
@@ -203,7 +203,7 @@ export class WebPushService {
           JSON.stringify(notification),
           {
             vapidDetails: { subject, ...vapidKeyPair },
-            TTL: WEB_PUSH_TTL_SECONDS,
+            TTL: PUSH_SERVICE_MESSAGE_TTL_SECONDS,
             urgency: 'high',
           },
         );
@@ -213,7 +213,7 @@ export class WebPushService {
           validateStatus: () => true,
         });
 
-        if (response.status === 404 || response.status === 410) {
+        if (EXPIRED_PUSH_SUBSCRIPTION_STATUS_CODES.includes(response.status)) {
           await this.pushSubscriptionRepository.delete(workspaceId, {
             id: pushSubscription.id,
           });
