@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 import { createServer, type IncomingHttpHeaders, type Server } from 'node:http';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { putStreamToUploadUrlOrThrow } from 'src/logic-functions/utils/put-stream-to-upload-url-or-throw.util';
@@ -37,9 +37,10 @@ const startUploadServer = async (
 
   const address = server.address();
 
-  if (!isDefined(address) || isString(address)) {
-    throw new Error('The upload server has no port');
-  }
+  assert(
+    isDefined(address) && !isString(address),
+    'The upload server has no port',
+  );
 
   return {
     uploadUrl: `http://127.0.0.1:${address.port}/upload`,
@@ -87,5 +88,42 @@ describe('putStreamToUploadUrlOrThrow', () => {
         signal: AbortSignal.timeout(5_000),
       }),
     ).rejects.toMatchObject({ code: 'FILE_UPLOAD_FAILED' });
+  });
+
+  it('should stop reading the download when the upload connection drops', async () => {
+    const server = createServer((request) =>
+      request.once('data', () => request.socket.destroy()),
+    );
+
+    startedServers.push(server);
+    await new Promise<void>((resolve) =>
+      server.listen(0, '127.0.0.1', resolve),
+    );
+
+    const address = server.address();
+
+    assert(
+      isDefined(address) && !isString(address),
+      'The upload server has no port',
+    );
+
+    const download = { isCanceled: false };
+
+    await expect(
+      putStreamToUploadUrlOrThrow({
+        stream: new ReadableStream<Uint8Array>({
+          pull: (controller) => controller.enqueue(new Uint8Array(65_536)),
+          cancel: () => {
+            download.isCanceled = true;
+          },
+        }),
+        sizeBytes: 100 * 1024 * 1024,
+        uploadUrl: `http://127.0.0.1:${address.port}/upload`,
+        contentType: 'video/mp4',
+        signal: AbortSignal.timeout(5_000),
+      }),
+    ).rejects.toThrow();
+
+    await vi.waitFor(() => expect(download.isCanceled).toBe(true));
   });
 });

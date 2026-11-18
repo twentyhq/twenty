@@ -21,7 +21,7 @@ async function* readStreamChunks(
       yield value;
     }
   } finally {
-    reader.releaseLock();
+    await reader.cancel();
   }
 }
 

@@ -37,7 +37,10 @@ export default defineApplicationRole({
       },
     ],
   },
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.AI,
+    SystemPermissionFlag.UPLOAD_FILE,
+  ],
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
