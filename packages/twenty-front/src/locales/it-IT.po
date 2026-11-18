@@ -19288,6 +19288,7 @@ msgstr "Perlopiù vuoto"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "Sposta giù"
 
@@ -19304,6 +19305,7 @@ msgstr "Sposta le sue chat in"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19312,6 +19314,7 @@ msgstr "Sposta a sinistra"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19353,6 +19356,7 @@ msgstr "Passare al nuovo piano {planLabel}?"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "Sposta su"
 

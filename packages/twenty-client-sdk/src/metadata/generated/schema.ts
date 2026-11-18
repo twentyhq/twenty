@@ -4345,6 +4345,7 @@ export interface ViewSort {
     direction: ViewSortDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     subFieldName?: Scalars['String']
     updatedAt: Scalars['DateTime']
     viewId: Scalars['UUID']
@@ -6207,7 +6208,7 @@ export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | nul
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
-export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
@@ -9156,7 +9157,7 @@ id: Scalars['UUID'],
 /** The view sort to update */
 update: UpdateViewSortInputUpdates}
 
-export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),subFieldName?: (Scalars['String'] | null)}
+export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null)}
 
 export interface UpdateWebhookInput {
 /** The id of the webhook to update */
@@ -9638,6 +9639,7 @@ export interface ViewSortGenqlSelection{
     direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     subFieldName?: boolean | number
     updatedAt?: boolean | number
     viewId?: boolean | number
