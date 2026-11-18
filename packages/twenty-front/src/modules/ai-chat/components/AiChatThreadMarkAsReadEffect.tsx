@@ -4,17 +4,14 @@ import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
+import { useOpenAiChatThreadView } from '@/ai-chat/hooks/useOpenAiChatThreadView';
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/hooks/useUpdateAiChatThreadStatus';
-import { aiChatReopenedThreadActivityState } from '@/ai-chat/states/aiChatReopenedThreadActivityState';
-import { aiChatThreadOpenViewCountFamilyState } from '@/ai-chat/states/aiChatThreadOpenViewCountFamilyState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
   aiChatThreadVisitFamilyState,
 } from '@/ai-chat/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { isAiChatThreadSettledForMember } from '@/ai-chat/utils/isAiChatThreadSettledForMember';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
@@ -44,60 +41,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  useEffect(() => {
-    if (!isDefined(threadId)) {
-      return;
-    }
-
-    const openViewCountAtom = aiChatThreadOpenViewCountFamilyState.atomFamily({
-      threadId,
-    });
-
-    store.set(openViewCountAtom, (count) => count + 1);
-
-    const leaveIfNoViewLeft = () => {
-      if (store.get(openViewCountAtom) !== 0) {
-        return;
-      }
-
-      store.set(aiChatThreadVisitFamilyState.atomFamily({ threadId }), null);
-
-      // Filed on leave, not on read, so the chat stays put while being read
-      const thread = store.get(
-        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
-      );
-      const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
-      const reopenedThreadActivity = store.get(
-        aiChatReopenedThreadActivityState.atom,
-      );
-
-      if (
-        isDefined(thread) &&
-        isDefined(workspaceMemberId) &&
-        thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
-        isAiChatThreadSettledForMember({
-          thread,
-          participant: store.get(aiChatThreadParticipantsState.atom)?.[
-            threadId
-          ],
-          workspaceMemberId,
-        })
-      ) {
-        void updateAgentChatThreadInboxState({
-          threadIds: [threadId],
-          action: AgentChatInboxAction.ARCHIVE,
-        });
-      }
-    };
-
-    return () => {
-      store.set(openViewCountAtom, (count) => count - 1);
-
-      if (store.get(openViewCountAtom) === 0) {
-        queueMicrotask(leaveIfNoViewLeft);
-      }
-    };
-  }, [store, threadId, updateAgentChatThreadInboxState]);
+  useOpenAiChatThreadView(threadId);
 
   useEffect(() => {
     if (

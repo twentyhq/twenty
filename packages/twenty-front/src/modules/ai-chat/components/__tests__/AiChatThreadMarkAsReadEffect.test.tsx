@@ -2,6 +2,7 @@ import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestIns
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
+import { AiChatPageThreadOpenViewEffect } from '@/ai-chat/components/AiChatPageThreadOpenViewEffect';
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/components/AiChatThreadMarkAsReadEffect';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/states/aiChatReopenedThreadActivityState';
@@ -245,6 +246,30 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       await leaveChatView(view);
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledTimes(1);
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat its page shows until the page leaves it', async () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const page = render(
+        <JotaiProvider store={jotaiStore}>
+          <AiChatPageThreadOpenViewEffect threadId={THREAD_ID} />
+        </JotaiProvider>,
+      );
+
+      await leaveChatView(renderChatView());
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+
+      page.unmount();
+      await act(() => Promise.resolve());
+
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
         action: 'ARCHIVE',

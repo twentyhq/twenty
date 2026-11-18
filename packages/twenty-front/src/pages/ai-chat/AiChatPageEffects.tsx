@@ -1,5 +1,6 @@
 import { AiChatPageContinueInSidePanelEffect } from '@/ai-chat/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageThreadLoadEffect } from '@/ai-chat/components/AiChatPageThreadLoadEffect';
+import { AiChatPageThreadOpenViewEffect } from '@/ai-chat/components/AiChatPageThreadOpenViewEffect';
 
 type AiChatPageEffectsProps = {
   threadId: string;
@@ -16,5 +17,6 @@ export const AiChatPageEffects = ({
       <AiChatPageThreadLoadEffect key={threadId} threadId={threadId} />
     )}
     <AiChatPageContinueInSidePanelEffect threadId={threadId} />
+    <AiChatPageThreadOpenViewEffect threadId={threadId} />
   </>
 );
