@@ -183,42 +183,50 @@ export class WebPushService {
     });
 
     for (const pushSubscription of pushSubscriptions) {
-      if (pushSubscription.applicationServerKey !== vapidKeyPair.publicKey) {
-        await this.pushSubscriptionRepository.delete(workspaceId, {
-          id: pushSubscription.id,
-        });
+      try {
+        if (pushSubscription.applicationServerKey !== vapidKeyPair.publicKey) {
+          await this.pushSubscriptionRepository.delete(workspaceId, {
+            id: pushSubscription.id,
+          });
 
-        continue;
-      }
+          continue;
+        }
 
-      const { endpoint, headers, body } = generateRequestDetails(
-        {
-          endpoint: pushSubscription.endpoint,
-          keys: {
-            p256dh: pushSubscription.p256dhKey,
-            auth: pushSubscription.authSecret,
+        const { endpoint, headers, body } = generateRequestDetails(
+          {
+            endpoint: pushSubscription.endpoint,
+            keys: {
+              p256dh: pushSubscription.p256dhKey,
+              auth: pushSubscription.authSecret,
+            },
           },
-        },
-        JSON.stringify(notification),
-        {
-          vapidDetails: { subject, ...vapidKeyPair },
-          TTL: WEB_PUSH_TTL_SECONDS,
-          urgency: 'high',
-        },
-      );
+          JSON.stringify(notification),
+          {
+            vapidDetails: { subject, ...vapidKeyPair },
+            TTL: WEB_PUSH_TTL_SECONDS,
+            urgency: 'high',
+          },
+        );
 
-      const response = await httpClient.post(endpoint, body, {
-        headers,
-        validateStatus: () => true,
-      });
-
-      if (response.status === 404 || response.status === 410) {
-        await this.pushSubscriptionRepository.delete(workspaceId, {
-          id: pushSubscription.id,
+        const response = await httpClient.post(endpoint, body, {
+          headers,
+          validateStatus: () => true,
         });
-      } else if (response.status >= 400) {
+
+        if (response.status === 404 || response.status === 410) {
+          await this.pushSubscriptionRepository.delete(workspaceId, {
+            id: pushSubscription.id,
+          });
+        } else if (response.status >= 400) {
+          this.logger.warn(
+            `Push service answered ${response.status} for push subscription ${pushSubscription.id} in workspace ${workspaceId}`,
+          );
+        }
+      } catch (error) {
         this.logger.warn(
-          `Push service answered ${response.status} for push subscription ${pushSubscription.id} in workspace ${workspaceId}`,
+          `Could not send to push subscription ${pushSubscription.id} in workspace ${workspaceId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
       }
     }

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AgentChatInboxNotificationLevel } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL,
+  type AgentChatInboxNotificationLevel,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -107,9 +110,12 @@ export class WorkspaceMemberTranspiler {
       colorScheme,
       openRecordIn: openRecordIn as OpenRecordIn,
       uiScale,
-      inboxNotificationLevel:
-        inboxNotificationLevel as AgentChatInboxNotificationLevel,
-      isInboxNotificationPreviewEnabled,
+      // Workspaces upgrade after the code rolls out, so these fields are
+      // absent until the 2-61 workspace command reaches them.
+      inboxNotificationLevel: (inboxNotificationLevel ??
+        AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED) as AgentChatInboxNotificationLevel,
+      isInboxNotificationPreviewEnabled:
+        isInboxNotificationPreviewEnabled ?? true,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,
