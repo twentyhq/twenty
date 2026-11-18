@@ -5,15 +5,12 @@ import {
   GraphQLOutputType,
   isObjectType,
   type GraphQLFieldConfigArgumentMap,
-  type GraphQLFieldResolver,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
-import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/args-type/args-type.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
@@ -26,25 +23,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-
-// Rows are loaded per field and arguments, so an aliased relation must not fall back to source[fieldName]
-const resolveRelationBySelectionKey: GraphQLFieldResolver<unknown, unknown> = (
-  source,
-  _args,
-  _context,
-  info,
-) =>
-  isPlainObject(source)
-    ? source[
-        computeSelectionKey({
-          fieldName: info.fieldName,
-          arguments: extractArgumentsFromAst(
-            info.fieldNodes[0].arguments,
-            info.variableValues,
-          ),
-        })
-      ]
-    : undefined;
 
 @Injectable()
 export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
@@ -164,10 +142,6 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
         type: targetObjectMetadataGqlObjectType,
         args: argsType,
         description: flatFieldMetadata.description,
-        ...(flatFieldMetadata.settings.relationType ===
-          RelationType.ONE_TO_MANY && {
-          resolve: resolveRelationBySelectionKey,
-        }),
       };
     }
 

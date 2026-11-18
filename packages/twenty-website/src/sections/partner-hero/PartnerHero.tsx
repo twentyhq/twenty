@@ -5,16 +5,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
+  FONT_WEIGHT,
   fontFamily,
+  fontSize,
   GRADIENT,
   HERO_COMPOSITION,
   mediaUp,
   radius,
   semanticColor,
   spacing,
+  typeRampDeclarations,
 } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
+import { type PartnerHeroStat } from './partner-hero-stat.type';
 import { PartnerVisual } from './PartnerVisual';
 
 const GradientBackdrop = styled.div`
@@ -88,8 +92,91 @@ const CtaRow = styled.div`
   }
 `;
 
+const StatStage = styled.div`
+  margin-top: ${spacing(12)};
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
+`;
+
+// Hairlines between cells, no frame, on the hero's centered axis.
+const StatList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+
+  ${mediaUp('md')} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+`;
+
+const StatCell = styled.li`
+  border-left: 1px solid ${semanticColor.line};
+  padding: ${spacing(5)} ${spacing(4)};
+  text-align: center;
+
+  & > * + * {
+    margin-top: ${spacing(1.5)};
+  }
+
+  &:nth-child(odd) {
+    border-left: none;
+  }
+
+  &:nth-child(n + 3) {
+    border-top: 1px solid ${semanticColor.line};
+  }
+
+  ${mediaUp('md')} {
+    padding: ${spacing(6)} ${spacing(4)};
+
+    &:nth-child(odd) {
+      border-left: 1px solid ${semanticColor.line};
+    }
+
+    &:nth-child(n + 3) {
+      border-top: none;
+    }
+
+    &:first-child {
+      border-left: none;
+    }
+  }
+`;
+
+const StatValue = styled.p`
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('sans')};
+  ${typeRampDeclarations('headingSm')}
+  font-weight: ${FONT_WEIGHT.light};
+  letter-spacing: -0.04em;
+`;
+
+const StatLabel = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const StatNote = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  line-height: 1.4;
+  text-align: center;
+`;
+
 const VisualStage = styled.div`
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+
+  &[data-follows-stats] {
+    margin-top: ${spacing(6)};
+  }
   width: 100%;
 `;
 
@@ -98,6 +185,8 @@ type PartnerHeroProps = {
   body: MessageDescriptor;
   badge?: MessageDescriptor;
   actions: ReactNode;
+  stats?: readonly PartnerHeroStat[];
+  statsNote?: MessageDescriptor;
   visualImageUrl?: string;
 };
 
@@ -106,6 +195,8 @@ export function PartnerHero({
   body,
   badge,
   actions,
+  stats,
+  statsNote,
   visualImageUrl,
 }: PartnerHeroProps) {
   const i18n = getServerI18n();
@@ -138,7 +229,20 @@ export function PartnerHero({
         </TitleBlock>
         <CtaRow>{actions}</CtaRow>
       </IntroStack>
-      <VisualStage>
+      {isDefined(stats) && (
+        <StatStage>
+          <StatList>
+            {stats.map((stat) => (
+              <StatCell key={stat.label.id}>
+                <StatValue>{i18n._(stat.value)}</StatValue>
+                <StatLabel>{i18n._(stat.label)}</StatLabel>
+              </StatCell>
+            ))}
+          </StatList>
+          {isDefined(statsNote) && <StatNote>{i18n._(statsNote)}</StatNote>}
+        </StatStage>
+      )}
+      <VisualStage data-follows-stats={isDefined(stats) ? '' : undefined}>
         <PartnerVisual imageUrl={visualImageUrl} />
       </VisualStage>
     </SectionShell>

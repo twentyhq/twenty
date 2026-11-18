@@ -19,11 +19,16 @@ import {
 import { AffiliateAudiences } from '@/sections/affiliate-program';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { CREATORS_HERO_IMAGE_URL, PartnerHero } from '@/sections/partner-hero';
+import {
+  CREATOR_HERO_STATS,
+  CREATORS_HERO_IMAGE_URL,
+  PartnerHero,
+} from '@/sections/partner-hero';
 import {
   CREATOR_STEPS,
   ProgramExplainer,
   ProgramStrip,
+  ProgramStripSection,
 } from '@/sections/partner-programs';
 import { Button } from '@/ui';
 
@@ -62,6 +67,8 @@ export default async function CreatorProgramPage({
           badge={msg`Beta`}
           heading={msg`Become a\n*Twenty creator*`}
           body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
+          stats={CREATOR_HERO_STATS}
+          statsNote={msg`Commission on Cloud Organization and Enterprise plans`}
           actions={
             <>
               <AffiliateApplyButton label={msg`Apply as a creator`} />
@@ -78,12 +85,25 @@ export default async function CreatorProgramPage({
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
           eyebrow={msg`How it works`}
           heading={msg`From link *to payout*`}
-          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays.`}
+          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months.`}
           steps={CREATOR_STEPS}
+          footer={[
+            {
+              id: 'apply',
+              node: (
+                <ProgramStrip
+                  heading={msg`Ready to *apply?*`}
+                  body={msg`We review every application within 5 business days and send your link once you're approved.`}
+                  action={
+                    <AffiliateApplyButton label={msg`Apply as a creator`} />
+                  }
+                />
+              ),
+            },
+          ]}
         />
-        <ProgramStrip
-          heading={msg`You implement Twenty *for clients?*`}
-          body={msg`Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs.`}
+        <ProgramStripSection
+          heading={msg`You implement Twenty *for your clients?*`}
           action={
             <Button
               href="/partners/integrators"
@@ -93,16 +113,6 @@ export default async function CreatorProgramPage({
           }
         />
         <AffiliateProgramFaq />
-        <ProgramStrip
-          heading={msg`Ready to *apply?*`}
-          body={msg`We review every application within 5 business days and send your link once you're approved.`}
-          action={
-            <AffiliateApplyButton
-              label={msg`Apply as a creator`}
-              variant="outlined"
-            />
-          }
-        />
       </main>
     </AffiliateApplicationModalRoot>
   );
