@@ -8,6 +8,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { UserWorkspaceSuccessorTransferModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor-transfer.module';
 import { GlobalWorkspaceMemberListener } from 'src/engine/core-modules/user/services/global-workspace-member.listener';
 import { UserEntityCacheProviderService } from 'src/engine/core-modules/user/services/user-entity-cache-provider.service';
 import { WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
@@ -17,10 +18,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
-import { CoreWorkflowOwnershipTransferModule } from 'src/engine/core-modules/workflow/core-workflow-ownership-transfer.module';
-import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { ViewOwnershipTransferModule } from 'src/engine/metadata-modules/view/view-ownership-transfer.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -36,11 +33,8 @@ import { UserService } from './services/user.service';
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserVarsModule,
     UserWorkspaceModule,
+    UserWorkspaceSuccessorTransferModule,
     RoleAssignmentModule,
-    ConnectedAccountMetadataModule,
-    ViewOwnershipTransferModule,
-    CoreWorkflowOwnershipTransferModule,
-    RecordShareModule,
     AgentHistoryModule,
     PermissionsModule,
     EmailVerificationModule,
