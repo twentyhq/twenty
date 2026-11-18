@@ -155,8 +155,9 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     icon: 'IconUser',
   },
   [PermissionFlagType.READ_PRIVATE_CHANNELS]: {
-    label: 'Read Private Channels',
-    description: "Read every member's channels and who owns them",
+    label: 'Read Private Channel Info',
+    description:
+      "Read the address, owner and account status of every member's channels, not their messages or events",
     icon: 'IconAt',
   },
 };

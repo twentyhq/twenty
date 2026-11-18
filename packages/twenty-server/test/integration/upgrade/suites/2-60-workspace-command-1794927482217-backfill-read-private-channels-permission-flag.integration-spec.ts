@@ -93,7 +93,7 @@ describe('2-60 workspace command - backfill read private channels permission fla
     ).toEqual([
       expect.objectContaining({
         key: 'READ_PRIVATE_CHANNELS',
-        label: 'Read Private Channels',
+        label: 'Read Private Channel Info',
         permissionType: 'settings',
         applicationId: standardApplication.id,
       }),
