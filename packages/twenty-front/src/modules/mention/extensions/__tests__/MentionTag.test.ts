@@ -7,7 +7,7 @@ import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/utils/isAiChatAssistantMentionedInSerializedDocument';
-import { parseChatReferences } from '@/ai-chat/utils/parseChatReferences';
+import { parseChatReferences } from '@/ai-chat/message-content/utils/parseChatReferences';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 jest.mock('@/mention/components/MentionChip', () => ({
