@@ -10,6 +10,7 @@ import { IconDotsVertical, IconMessage } from 'twenty-ui/icon';
 
 import { SidePanelStartAppConversationPage } from '@/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage';
 import { startAppConversationTargetComponentState } from '@/side-panel/pages/start-app-conversation/states/startAppConversationTargetComponentState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -40,10 +41,6 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
 
 jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
   useSidePanelHistory: () => ({ goBackFromSidePanel }),
-}));
-
-jest.mock('@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement', () => ({
-  useHotkeysOnFocusedElement: jest.fn(),
 }));
 
 jest.mock('twenty-ui/components/feedback', () => ({
@@ -89,6 +86,12 @@ describe('SidePanelStartAppConversationPage', () => {
         personId: PERSON_ID,
       },
     );
+    jotaiStore.set(recordStoreFamilyState.atomFamily(PERSON_ID), {
+      __typename: 'Person',
+      id: PERSON_ID,
+      name: { firstName: 'Grace', lastName: 'Hopper' },
+      avatarUrl: null,
+    });
   });
 
   it('sends the first message and opens the new thread', async () => {
@@ -98,7 +101,11 @@ describe('SidePanelStartAppConversationPage', () => {
 
     render(<SidePanelStartAppConversationPage />, { wrapper: Wrapper });
 
-    expect(screen.getByText('Send from Tim on LinkedIn')).toBeInTheDocument();
+    expect(screen.getByText('Grace Hopper')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Message' })).toHaveAttribute(
+      'placeholder',
+      'Message Grace',
+    );
     expect(screen.getByRole('button', { name: /Send/ })).toBeDisabled();
 
     await user.type(
@@ -145,6 +152,27 @@ describe('SidePanelStartAppConversationPage', () => {
     const [firstCall, secondCall] = startAppChannelConversation.mock.calls;
 
     expect(secondCall[0].idempotencyKey).toBe(firstCall[0].idempotencyKey);
+  });
+
+  it('sends with Enter and keeps Shift+Enter for a new line', async () => {
+    const user = userEvent.setup();
+
+    startAppChannelConversation.mockResolvedValue('thread-1');
+
+    render(<SidePanelStartAppConversationPage />, { wrapper: Wrapper });
+
+    const textbox = screen.getByRole('textbox', { name: 'Message' });
+
+    await user.type(textbox, 'Hi{Shift>}{Enter}{/Shift}Grace');
+
+    expect(startAppChannelConversation).not.toHaveBeenCalled();
+
+    await user.type(textbox, '{Enter}');
+
+    expect(startAppChannelConversation).toHaveBeenCalledTimes(1);
+    expect(startAppChannelConversation).toHaveBeenCalledWith(
+      expect.objectContaining({ text: 'Hi\nGrace' }),
+    );
   });
 
   it('sends an edited draft with a new idempotency key', async () => {
