@@ -56,6 +56,10 @@ export class ViewSortEntity extends SyncableEntity {
   })
   direction: ViewSortDirection;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.3.0_AddSubFieldNameToViewSortEarlyFastInstanceCommand_1747234200000',
+  })
   @Column({ nullable: true, type: 'varchar' })
   subFieldName?: string | null;
 
