@@ -106,7 +106,7 @@ export function AffiliateAudiences() {
           <Eyebrow>{i18n._(msg`Who it's for`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`Trusted by teams *to pick their tools*`)}
+              {i18n._(msg`People that teams trust *to pick their tools*`)}
             </Heading>
           </HeadingMeasure>
         </SectionIntro>
