@@ -17,12 +17,14 @@ export type UnwrapWasRemovedInUpgrade<T> =
 
 // NonNullable first: a brand is intersected with the non-null type, so a nullable property carries it on that member only
 type WasRemovedInUpgradeKeys<TEntity> = {
-  [K in keyof TEntity]: HasBrandedType<
-    NonNullable<TEntity[K]>,
-    'wasRemovedInUpgrade'
-  > extends true
-    ? K
-    : never;
+  [K in keyof TEntity]: [NonNullable<TEntity[K]>] extends [never]
+    ? never
+    : HasBrandedType<
+          NonNullable<TEntity[K]>,
+          'wasRemovedInUpgrade'
+        > extends true
+      ? K
+      : never;
 }[keyof TEntity];
 
 export type MakeWasRemovedInUpgradePropertiesOptional<TEntity> = Omit<
@@ -76,6 +78,7 @@ type WasRemovedInUpgradeTests = [
       { kept: string } & { dropped?: WasRemovedInUpgrade<string> }
     >
   >,
+  Expect<Equal<WasRemovedInUpgradeKeys<{ alwaysNull: null }>, never>>,
 
   Expect<Equal<UnwrapWasRemovedInUpgrade<WasRemovedInUpgrade<string>>, string>>,
   Expect<
