@@ -19,7 +19,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 const CONNECTION_STRUCTURE_FIELD_NAMES = ['edges', 'pageInfo', '__typename'];
 
-type BuildSelectedFieldsArgs = {
+type BuildCommonSelectedFieldsArgs = {
+  selectionKind: 'record' | 'connection';
   fieldSelections: GraphqlFieldSelection[];
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -48,37 +49,38 @@ const findSelectionsOfField = ({
     .filter((fieldSelection) => fieldSelection.fieldName === fieldName)
     .flatMap(({ selections }) => selections);
 
-// A connection selects its aggregates next to edges and its record fields under edges.node
-export const buildConnectionSelectedFields = ({
-  fieldSelections,
-  ...metadata
-}: BuildSelectedFieldsArgs): CommonSelectedFields => {
-  const selectedFieldNames = fieldSelections.map(({ fieldName }) => fieldName);
-
-  selectedFieldNames.forEach(assertIsNotReservedFieldNameOrThrow);
-
-  return {
-    ...buildRecordSelectedFields({
-      fieldSelections: findSelectionsOfField({
-        fieldSelections: findSelectionsOfField({
-          fieldSelections,
-          fieldName: 'edges',
-        }),
-        fieldName: 'node',
-      }),
-      ...metadata,
-    }),
-    aggregates: [...new Set(selectedFieldNames)].filter(
-      (fieldName) => !CONNECTION_STRUCTURE_FIELD_NAMES.includes(fieldName),
-    ),
-  };
-};
-
-export const buildRecordSelectedFields = ({
+export const buildCommonSelectedFields = ({
+  selectionKind,
   fieldSelections,
   flatObjectMetadata,
   ...metadataMaps
-}: BuildSelectedFieldsArgs): CommonSelectedFields => {
+}: BuildCommonSelectedFieldsArgs): CommonSelectedFields => {
+  if (selectionKind === 'connection') {
+    const selectedFieldNames = fieldSelections.map(
+      ({ fieldName }) => fieldName,
+    );
+
+    selectedFieldNames.forEach(assertIsNotReservedFieldNameOrThrow);
+
+    return {
+      ...buildCommonSelectedFields({
+        selectionKind: 'record',
+        fieldSelections: findSelectionsOfField({
+          fieldSelections: findSelectionsOfField({
+            fieldSelections,
+            fieldName: 'edges',
+          }),
+          fieldName: 'node',
+        }),
+        flatObjectMetadata,
+        ...metadataMaps,
+      }),
+      aggregates: [...new Set(selectedFieldNames)].filter(
+        (fieldName) => !CONNECTION_STRUCTURE_FIELD_NAMES.includes(fieldName),
+      ),
+    };
+  }
+
   const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     metadataMaps.flatFieldMetadataMaps,
     flatObjectMetadata,
@@ -142,17 +144,18 @@ export const buildRecordSelectedFields = ({
       relationFieldMetadata,
       metadataMaps.flatObjectMetadataMaps,
     );
-    const buildRelationSelectedFields =
-      relationFieldMetadata.settings.relationType === RelationType.ONE_TO_MANY
-        ? buildConnectionSelectedFields
-        : buildRecordSelectedFields;
 
     selectedFields.relations[selectionKey] = {
       fieldName,
       ...(Object.keys(fieldArguments).length > 0 && {
         arguments: fieldArguments,
       }),
-      selectedFields: buildRelationSelectedFields({
+      selectedFields: buildCommonSelectedFields({
+        selectionKind:
+          relationFieldMetadata.settings.relationType ===
+          RelationType.ONE_TO_MANY
+            ? 'connection'
+            : 'record',
         fieldSelections: subFieldSelections,
         flatObjectMetadata: relationTargetObjectMetadata,
         ...metadataMaps,

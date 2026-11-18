@@ -310,7 +310,9 @@ const formatConnection = ({
           ...formatArgs,
         })
       : null;
-  const formatPageInfoField = (pageInfoFieldName: string): unknown => {
+  const formatPageInfoField = (
+    pageInfoFieldName: string,
+  ): string | boolean | null => {
     switch (pageInfoFieldName) {
       case '__typename':
         return 'PageInfo';
@@ -332,7 +334,7 @@ const formatConnection = ({
   }: {
     record: ObjectRecord;
     edgeSelection: GraphqlFieldSelection;
-  }): unknown => {
+  }): string | Record<string, unknown> | null => {
     switch (fieldName) {
       case '__typename':
         return getEdgeTypename(nameSingular);
@@ -347,6 +349,8 @@ const formatConnection = ({
           depth,
           ...formatArgs,
         });
+      default:
+        return null;
     }
   };
 

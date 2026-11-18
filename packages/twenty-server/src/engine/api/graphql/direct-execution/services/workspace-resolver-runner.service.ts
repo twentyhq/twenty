@@ -22,10 +22,7 @@ import {
   GraphqlDirectExecutionException,
   GraphqlDirectExecutionExceptionCode,
 } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
-import {
-  buildConnectionSelectedFields,
-  buildRecordSelectedFields,
-} from 'src/engine/api/graphql/direct-execution/utils/build-common-selected-fields.util';
+import { buildCommonSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/build-common-selected-fields.util';
 import { assertCreateManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-many-args.util';
 import { assertCreateOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-one-args.util';
 import { assertDeleteManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-delete-many-args.util';
@@ -128,11 +125,8 @@ export class WorkspaceResolverRunnerService {
     const queryRunnerContext = createQueryRunnerContext({
       workspaceSchemaBuilderContext,
     });
-    const buildSelectedFields =
-      SELECTION_KIND_BY_RESOLVER_METHOD_NAME[method] === 'connection'
-        ? buildConnectionSelectedFields
-        : buildRecordSelectedFields;
-    const selectedFields = buildSelectedFields({
+    const selectedFields = buildCommonSelectedFields({
+      selectionKind: SELECTION_KIND_BY_RESOLVER_METHOD_NAME[method],
       fieldSelections,
       flatObjectMetadata: workspaceSchemaBuilderContext.flatObjectMetadata,
       flatObjectMetadataMaps:

@@ -29,6 +29,7 @@ export const createCoreIndexConcurrently = async ({
     extra: {
       ...coreDataSourceOptions.extra,
       query_timeout: undefined,
+      statement_timeout: undefined,
     },
   }).initialize();
 

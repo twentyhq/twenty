@@ -9,6 +9,7 @@ import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSum
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -162,7 +163,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
               shouldShowTooltip={shouldShowTooltips}
             />
           )),
-          ...(isLayoutCustomizationModeEnabled
+          ...(isLayoutCustomizationModeEnabled &&
+          navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
                 <MainNavigationDrawerAddTabButton
                   key="add-tab"

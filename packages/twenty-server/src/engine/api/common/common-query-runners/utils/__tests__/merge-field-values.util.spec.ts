@@ -191,4 +191,93 @@ describe('mergeFieldValues', () => {
       });
     });
   });
+
+  describe('currency field type', () => {
+    it('should keep the other record amount when the priority currency has no amount', () => {
+      const result = mergeFieldValues(
+        FieldMetadataType.CURRENCY,
+        [
+          {
+            value: { amountMicros: null, currencyCode: 'USD' },
+            recordId: PRIORITY_RECORD_ID,
+          },
+          {
+            value: { amountMicros: 24000000000, currencyCode: 'EUR' },
+            recordId: 'record1',
+          },
+        ],
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual({
+        amountMicros: 24000000000,
+        currencyCode: 'EUR',
+      });
+    });
+
+    it('should keep a zero priority amount', () => {
+      const result = mergeFieldValues(
+        FieldMetadataType.CURRENCY,
+        [
+          {
+            value: { amountMicros: 0, currencyCode: 'USD' },
+            recordId: PRIORITY_RECORD_ID,
+          },
+          {
+            value: { amountMicros: 24000000000, currencyCode: 'EUR' },
+            recordId: 'record1',
+          },
+        ],
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual({ amountMicros: 0, currencyCode: 'USD' });
+    });
+
+    it('should keep the priority currency code when no record has an amount', () => {
+      const result = mergeFieldValues(
+        FieldMetadataType.CURRENCY,
+        [
+          {
+            value: { amountMicros: null, currencyCode: 'EUR' },
+            recordId: 'record1',
+          },
+          {
+            value: { amountMicros: null, currencyCode: 'USD' },
+            recordId: PRIORITY_RECORD_ID,
+          },
+        ],
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual({ amountMicros: null, currencyCode: 'USD' });
+    });
+  });
+
+  describe('rich text field type', () => {
+    it('should keep the other record body when the priority body was cleared', () => {
+      const otherBody = {
+        tiptap:
+          '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Notes"}]}]}',
+        markdown: 'Notes',
+      };
+
+      const result = mergeFieldValues(
+        FieldMetadataType.RICH_TEXT,
+        [
+          {
+            value: {
+              tiptap: '{"type":"doc","content":[{"type":"paragraph"}]}',
+              markdown: '',
+            },
+            recordId: PRIORITY_RECORD_ID,
+          },
+          { value: otherBody, recordId: 'record1' },
+        ],
+        PRIORITY_RECORD_ID,
+      );
+
+      expect(result).toEqual(otherBody);
+    });
+  });
 });

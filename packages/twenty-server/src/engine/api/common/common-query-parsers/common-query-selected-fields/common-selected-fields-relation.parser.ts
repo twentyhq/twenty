@@ -28,15 +28,21 @@ export class CommonQuerySelectedFieldsRelationParser {
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
 
-  parseRelationField(
+  parseRelationField({
+    fieldMetadata,
+    relationKey,
+    selectedRelation,
+    accumulator,
+    isFromOneToManyRelation,
+  }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    relationKey: string,
-    selectedRelation: CommonSelectedRelation,
-    accumulator: CommonSelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+    relationKey: string;
+    selectedRelation: CommonSelectedRelation;
+    accumulator: CommonSelectedFieldsResult;
+    isFromOneToManyRelation?: boolean;
+  }): void {
     const isOneToManyRelation =
       fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
@@ -59,11 +65,11 @@ export class CommonQuerySelectedFieldsRelationParser {
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );
-    const relationAccumulator = fieldParser.parse(
-      selectedRelation.selectedFields,
-      targetObjectMetadata,
-      isFromOneToManyRelation || isOneToManyRelation,
-    );
+    const relationAccumulator = fieldParser.parse({
+      selectedFields: selectedRelation.selectedFields,
+      flatObjectMetadata: targetObjectMetadata,
+      isFromOneToManyRelation: isFromOneToManyRelation || isOneToManyRelation,
+    });
 
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +

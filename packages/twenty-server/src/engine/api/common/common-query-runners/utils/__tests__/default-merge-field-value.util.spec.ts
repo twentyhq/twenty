@@ -139,4 +139,19 @@ describe('defaultMergeFieldValue', () => {
 
     expect(result).toEqual({ name: 'priority object', id: 1 });
   });
+
+  it('should use the given emptiness check and keep the priority value when nothing qualifies', () => {
+    const recordsWithValues = [
+      { recordId: '1', value: { amount: null, code: 'USD' } },
+      { recordId: '2', value: { amount: null, code: 'EUR' } },
+    ];
+
+    const result = defaultMergeFieldValue(
+      recordsWithValues,
+      '1',
+      (value) => value.amount !== null,
+    );
+
+    expect(result).toEqual({ amount: null, code: 'USD' });
+  });
 });

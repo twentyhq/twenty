@@ -108,14 +108,14 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
     // Boolean selections carry no sub-fields; only the object form hydrates
     const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
-    const result = parser.parse(
-      {
+    const result = parser.parse({
+      selectedFields: {
         fields: { id: true, fund: true },
         aggregates: [],
         relations: {},
       },
-      investorLeadObject,
-    );
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(result.relations).toEqual({});
@@ -125,8 +125,8 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
   it('should hydrate a relation selected as a nested object', () => {
     const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
-    const result = parser.parse(
-      {
+    const result = parser.parse({
+      selectedFields: {
         fields: { id: true },
         aggregates: [],
         relations: {
@@ -140,8 +140,8 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
           },
         },
       },
-      investorLeadObject,
-    );
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(result.relations.fund).toEqual({
@@ -162,8 +162,8 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
       arguments: { first: 2 },
     });
 
-    const result = parser.parse(
-      {
+    const result = parser.parse({
+      selectedFields: {
         fields: { id: true },
         aggregates: [],
         relations: {
@@ -186,8 +186,8 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
           },
         },
       },
-      investorLeadObject,
-    );
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(Object.keys(result.relations)).toEqual(['fund', firstFundKey]);

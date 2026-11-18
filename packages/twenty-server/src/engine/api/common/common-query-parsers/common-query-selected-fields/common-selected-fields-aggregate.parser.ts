@@ -11,12 +11,17 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export class CommonQuerySelectedFieldsAggregateParser {
-  parse(
-    selectedAggregates: string[],
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    accumulator: CommonSelectedFieldsResult,
-  ): void {
+  parse({
+    selectedAggregates,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    accumulator,
+  }: {
+    selectedAggregates: string[];
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    accumulator: CommonSelectedFieldsResult;
+  }): void {
     const fields = flatObjectMetadata.fieldIds
       .map((id) =>
         findFlatEntityByIdInFlatEntityMaps({
