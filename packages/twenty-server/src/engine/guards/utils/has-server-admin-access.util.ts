@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { type ImpersonationAuthorizationUser } from 'src/engine/core-modules/impersonation/utils/impersonation-authorization-user.type';
 import { isServerAdminAccessAllowedFromWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-access-allowed-from-workspace.util';
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
@@ -9,9 +10,11 @@ export const hasServerAdminAccess = ({
   authContext,
   serverAdminWorkspaceId,
 }: {
-  authContext: Partial<
-    Pick<RawAuthContext, 'user' | 'workspace' | 'impersonationContext'>
-  >;
+  authContext: {
+    user?: ImpersonationAuthorizationUser | null;
+    workspace?: { id: string };
+    impersonationContext?: RawAuthContext['impersonationContext'];
+  };
   serverAdminWorkspaceId: string | undefined;
 }): boolean =>
   isDefined(authContext.user) &&

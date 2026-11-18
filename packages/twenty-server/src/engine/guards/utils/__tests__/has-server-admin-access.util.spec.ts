@@ -1,4 +1,3 @@
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { hasServerAdminAccess } from 'src/engine/guards/utils/has-server-admin-access.util';
 
 const SERVER_ADMIN_WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -14,20 +13,16 @@ const buildAuthContext = ({
   canImpersonate?: boolean;
   workspaceId?: string;
   isImpersonating?: boolean;
-}) =>
-  ({
-    user: { canAccessFullAdminPanel, canImpersonate },
-    workspace: { id: workspaceId },
-    impersonationContext: isImpersonating
-      ? {
-          impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
-          impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
-        }
-      : undefined,
-  }) as unknown as Pick<
-    RawAuthContext,
-    'user' | 'workspace' | 'impersonationContext'
-  >;
+}) => ({
+  user: { canAccessFullAdminPanel, canImpersonate },
+  workspace: { id: workspaceId },
+  impersonationContext: isImpersonating
+    ? {
+        impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+        impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+      }
+    : undefined,
+});
 
 describe('hasServerAdminAccess', () => {
   it('should grant a full admin in the server admin workspace', () => {
