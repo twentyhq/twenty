@@ -13,6 +13,7 @@ const currentPrices = {
   baseProductPriceId: 'price_base_year',
   seats: 3,
   resourceCreditPriceId: 'price_credit_year',
+  applicationPriceIdByCurrentPriceId: new Map<string, string>(),
 };
 
 describe('computeImmediateSubscriptionUpdate', () => {

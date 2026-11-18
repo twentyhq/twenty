@@ -62,7 +62,17 @@ export const buildPhaseUpdateParamsOrThrow = ({
         toUpdatePrices,
       });
 
-      return managedPrice ?? item;
+      if (isDefined(managedPrice)) {
+        return managedPrice;
+      }
+
+      const applicationPriceId = isDefined(item.price)
+        ? toUpdatePrices.applicationPriceIdByCurrentPriceId.get(item.price)
+        : undefined;
+
+      return isDefined(applicationPriceId)
+        ? { ...item, price: applicationPriceId }
+        : item;
     }),
   };
 };

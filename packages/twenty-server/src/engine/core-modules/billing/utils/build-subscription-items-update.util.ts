@@ -12,11 +12,12 @@ import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/r
 type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
   'stripeSubscriptionItemId'
-> & {
-  billingProduct?: {
-    metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
-  } | null;
-};
+> &
+  Partial<Pick<BillingSubscriptionItemEntity, 'stripePriceId'>> & {
+    billingProduct?: {
+      metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
+    } | null;
+  };
 
 export const buildSubscriptionItemsUpdate = ({
   billingSubscriptionItems,
@@ -26,14 +27,23 @@ export const buildSubscriptionItemsUpdate = ({
   toUpdatePrices: SubscriptionStripePrices;
 }): Stripe.SubscriptionUpdateParams.Item[] =>
   billingSubscriptionItems.flatMap(
-    ({ stripeSubscriptionItemId, billingProduct }) => {
+    ({ stripeSubscriptionItemId, stripePriceId, billingProduct }) => {
       const managedPrice = resolveManagedItemPrice({
         productKey: billingProduct?.metadata?.productKey,
         toUpdatePrices,
       });
 
-      return isDefined(managedPrice)
-        ? [{ id: stripeSubscriptionItemId, ...managedPrice }]
+      if (isDefined(managedPrice)) {
+        return [{ id: stripeSubscriptionItemId, ...managedPrice }];
+      }
+
+      const applicationPriceId = isDefined(stripePriceId)
+        ? toUpdatePrices.applicationPriceIdByCurrentPriceId.get(stripePriceId)
+        : undefined;
+
+      return isDefined(applicationPriceId) &&
+        applicationPriceId !== stripePriceId
+        ? [{ id: stripeSubscriptionItemId, price: applicationPriceId }]
         : [];
     },
   );

@@ -7,6 +7,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credits_year_1200',
+  applicationPriceIdByCurrentPriceId: new Map<string, string>(),
 };
 
 const baseItem = {
@@ -55,6 +56,57 @@ describe('buildSubscriptionItemsUpdate', () => {
 
     expect(items).toEqual([
       { id: 'si_credit', price: 'price_credits_year_1200', quantity: 1 },
+      { id: 'si_base', price: 'price_base_year', quantity: 7 },
+    ]);
+  });
+
+  it('moves an application item to its price for the new interval and keeps its quantity', () => {
+    const items = buildSubscriptionItemsUpdate({
+      billingSubscriptionItems: [
+        baseItem,
+        {
+          stripeSubscriptionItemId: 'si_application',
+          stripePriceId: 'price_application_month',
+          billingProduct: {
+            metadata: { productKey: BillingProductKey.APPLICATION },
+          },
+        },
+      ],
+      toUpdatePrices: {
+        ...toUpdatePrices,
+        applicationPriceIdByCurrentPriceId: new Map([
+          ['price_application_month', 'price_application_year'],
+        ]),
+      },
+    });
+
+    expect(items).toEqual([
+      { id: 'si_base', price: 'price_base_year', quantity: 7 },
+      { id: 'si_application', price: 'price_application_year' },
+    ]);
+  });
+
+  it('leaves an application item out when its price does not change', () => {
+    const items = buildSubscriptionItemsUpdate({
+      billingSubscriptionItems: [
+        baseItem,
+        {
+          stripeSubscriptionItemId: 'si_application',
+          stripePriceId: 'price_application_month',
+          billingProduct: {
+            metadata: { productKey: BillingProductKey.APPLICATION },
+          },
+        },
+      ],
+      toUpdatePrices: {
+        ...toUpdatePrices,
+        applicationPriceIdByCurrentPriceId: new Map([
+          ['price_application_month', 'price_application_month'],
+        ]),
+      },
+    });
+
+    expect(items).toEqual([
       { id: 'si_base', price: 'price_base_year', quantity: 7 },
     ]);
   });

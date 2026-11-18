@@ -8,6 +8,7 @@ import {
   assertUnreachable,
   findOrThrow,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -36,6 +37,7 @@ import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { computeApplicationPricesForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/compute-application-prices-for-interval-or-throw.util';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
@@ -570,6 +572,15 @@ export class BillingSubscriptionUpdateService {
       baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
+      applicationPriceIdByCurrentPriceId: new Map(
+        phaseItemPrices
+          .filter(
+            (price) =>
+              price.billingProduct?.metadata?.productKey ===
+              BillingProductKey.APPLICATION,
+          )
+          .map((price) => [price.stripePriceId, price.stripePriceId]),
+      ),
     };
   }
 
@@ -939,10 +950,28 @@ export class BillingSubscriptionUpdateService {
         hasSamePlanKey: true,
       });
 
+    const applicationPriceIds = [
+      ...currentPrices.applicationPriceIdByCurrentPriceId.keys(),
+    ];
+
+    const applicationPrices = isNonEmptyArray(applicationPriceIds)
+      ? await this.billingPriceRepository.find({
+          where: { stripePriceId: In(applicationPriceIds) },
+          relations: ['billingProduct', 'billingProduct.billingPrices'],
+        })
+      : [];
+
     return {
       ...currentPrices,
       baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
+      applicationPriceIdByCurrentPriceId:
+        computeApplicationPricesForIntervalOrThrow({
+          applicationPriceIdByCurrentPriceId:
+            currentPrices.applicationPriceIdByCurrentPriceId,
+          applicationPrices,
+          interval: newInterval,
+        }),
     };
   }
 }
