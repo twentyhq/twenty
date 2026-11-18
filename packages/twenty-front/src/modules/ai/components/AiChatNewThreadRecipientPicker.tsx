@@ -1,122 +1,107 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components/navigation';
+import { useInView } from 'react-intersection-observer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { normalizeSearchText } from 'twenty-ui/utilities';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 
 import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
+import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai/constants/AiChatAssistantRecipientSuggestionId';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
-import { getToggledRecipientWorkspaceMemberIds } from '@/ai/utils/getToggledRecipientWorkspaceMemberIds';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
-import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export const AiChatNewThreadRecipientPicker = () => {
+const RECIPIENT_PICKER_SIDE_OFFSET_PX = 6;
+const SHOW_MORE_SUGGESTIONS_ROOT_MARGIN = '0px 0px 320px 0px';
+
+const StyledShowMoreSuggestionsTrigger = styled.div`
+  height: 1px;
+`;
+
+type AiChatNewThreadRecipientPickerProps = {
+  isAssistantSuggested: boolean;
+  suggestedWorkspaceMembers: PartialWorkspaceMember[];
+  suggestedChannels: AiChatChannel[];
+  hasMoreSuggestions: boolean;
+  onShowMoreSuggestions: () => void;
+  onPick: () => void;
+};
+
+export const AiChatNewThreadRecipientPicker = ({
+  isAssistantSuggested,
+  suggestedWorkspaceMembers,
+  suggestedChannels,
+  hasMoreSuggestions,
+  onShowMoreSuggestions,
+  onPick,
+}: AiChatNewThreadRecipientPickerProps) => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
-  const [search, setSearch] = useState('');
-  const trimmedSearch = search.trim();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const aiChatIsSendingMessage = useAtomFamilyStateValue(
-    aiChatIsSendingMessageFamilyState,
-    { threadId: newAiChatThreadId },
-  );
-  const [recipients, setRecipients] = useAtomFamilyState(
+  const setAiChatNewThreadRecipients = useSetAtomFamilyState(
     aiChatNewThreadRecipientsFamilyState,
     newAiChatThreadId,
   );
-  const [aiChatNewThreadChannelId, setAiChatNewThreadChannelId] = useAtomState(
+  const setAiChatNewThreadChannelId = useSetAtomState(
     aiChatNewThreadChannelIdState,
   );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
+  const [suggestionList, setSuggestionList] = useState<HTMLDivElement | null>(
+    null,
   );
-  const aiChatAccessibleChannels = useAtomStateValue(
-    aiChatAccessibleChannelsSelector,
-  );
-  const shouldShowAssistant = normalizeSearchText(assistantName).includes(
-    normalizeSearchText(trimmedSearch),
-  );
-  const matchingWorkspaceMembers = filterBySearchQuery({
-    items: currentWorkspaceMembers.filter(
-      ({ id }) => id !== currentWorkspaceMember?.id,
-    ),
-    searchQuery: trimmedSearch,
-    getSearchableValues: (workspaceMember) => [
-      getWorkspaceMemberNameOrEmail(workspaceMember),
-      workspaceMember.userEmail,
-    ],
+  const { ref: showMoreSuggestionsTriggerRef } = useInView({
+    root: suggestionList,
+    rootMargin: SHOW_MORE_SUGGESTIONS_ROOT_MARGIN,
+    skip: !hasMoreSuggestions,
+    onChange: (isInView) => {
+      if (isInView) {
+        onShowMoreSuggestions();
+      }
+    },
   });
-  const matchingChannels = filterBySearchQuery({
-    items: aiChatAccessibleChannels,
-    searchQuery: trimmedSearch,
-    getSearchableValues: ({ name }) => [name],
-  });
-  const hasMatches =
-    shouldShowAssistant ||
-    isNonEmptyArray(matchingWorkspaceMembers) ||
-    isNonEmptyArray(matchingChannels);
-
-  const toggleWorkspaceMember = (workspaceMemberId: string) => {
-    setRecipients((current) => ({
-      ...current,
-      recipientWorkspaceMemberIds: getToggledRecipientWorkspaceMemberIds({
-        recipientWorkspaceMemberIds: current.recipientWorkspaceMemberIds,
-        workspaceMemberId,
-      }),
-    }));
-  };
 
   return (
-    <>
-      <Dropdown.Search
-        aria-label={t`Search recipients`}
-        placeholder={t`Add people or a channel`}
-        value={search}
-        onValueChange={setSearch}
-        disabled={aiChatIsSendingMessage}
-      />
-      <Dropdown.Separator />
-      <Dropdown.Section scrollable>
-        {shouldShowAssistant && (
-          <Dropdown.OptionItem
-            selected={recipients.isAssistantParticipant}
-            disabled={aiChatIsSendingMessage}
+    <AutocompleteContent
+      align="start"
+      sideOffset={RECIPIENT_PICKER_SIDE_OFFSET_PX}
+      width={GenericDropdownContentWidth.ExtraLarge}
+    >
+      <Autocomplete.List
+        ref={setSuggestionList}
+        aria-label={t`Select recipients`}
+      >
+        {isAssistantSuggested && (
+          <Autocomplete.Item
+            value={AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID}
             startIcon={<AiChatAssistantAvatar />}
-            onSelect={() =>
-              setRecipients((current) => ({
+            onClick={() => {
+              setAiChatNewThreadRecipients((current) => ({
                 ...current,
-                isAssistantParticipant: !current.isAssistantParticipant,
-              }))
-            }
+                isAssistantParticipant: true,
+              }));
+              onPick();
+            }}
           >
             {assistantName}
-          </Dropdown.OptionItem>
+          </Autocomplete.Item>
         )}
-        {matchingWorkspaceMembers.map((workspaceMember) => {
+        {suggestedWorkspaceMembers.map((workspaceMember) => {
           const label = getWorkspaceMemberNameOrEmail(workspaceMember);
 
           return (
-            <Dropdown.OptionItem
+            <Autocomplete.Item
               key={workspaceMember.id}
-              disabled={aiChatIsSendingMessage}
-              selected={recipients.recipientWorkspaceMemberIds.includes(
-                workspaceMember.id,
-              )}
+              value={workspaceMember.id}
               startIcon={
                 <Avatar
                   name={label}
@@ -127,33 +112,43 @@ export const AiChatNewThreadRecipientPicker = () => {
                 />
               }
               description={workspaceMember.userEmail}
-              onSelect={() => toggleWorkspaceMember(workspaceMember.id)}
+              onClick={() => {
+                setAiChatNewThreadRecipients((current) => ({
+                  ...current,
+                  recipientWorkspaceMemberIds: [
+                    ...current.recipientWorkspaceMemberIds,
+                    workspaceMember.id,
+                  ],
+                }));
+                onPick();
+              }}
             >
               {label}
-            </Dropdown.OptionItem>
+            </Autocomplete.Item>
           );
         })}
-        {matchingChannels.map((channel) => (
-          <Dropdown.OptionItem
+        {suggestedChannels.map((channel) => (
+          <Autocomplete.Item
             key={channel.id}
-            disabled={aiChatIsSendingMessage}
-            indicator="check"
-            selected={channel.id === aiChatNewThreadChannelId}
+            value={channel.id}
             startIcon={<AiChatChannelIcon channel={channel} />}
             description={t`Channel`}
-            onSelect={() =>
-              setAiChatNewThreadChannelId(
-                channel.id === aiChatNewThreadChannelId ? null : channel.id,
-              )
-            }
+            onClick={() => {
+              setAiChatNewThreadChannelId(channel.id);
+              onPick();
+            }}
           >
             {channel.name}
-          </Dropdown.OptionItem>
+          </Autocomplete.Item>
         ))}
-        {!hasMatches && (
-          <Dropdown.Empty>{t`No recipients found`}</Dropdown.Empty>
+        {hasMoreSuggestions && (
+          <StyledShowMoreSuggestionsTrigger
+            ref={showMoreSuggestionsTriggerRef}
+            aria-hidden
+          />
         )}
-      </Dropdown.Section>
-    </>
+      </Autocomplete.List>
+      <Autocomplete.Empty>{t`No recipients found`}</Autocomplete.Empty>
+    </AutocompleteContent>
   );
 };

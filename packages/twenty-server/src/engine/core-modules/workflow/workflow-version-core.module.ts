@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { FlatWorkflowVersionModule } from 'src/engine/metadata-modules/flat-workflow-version/flat-workflow-version.module';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -22,9 +22,9 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
   ],
   providers: [
     WorkspaceWorkflowAutomatedTriggerMapCacheService,
-    WorkflowVersionCoreSyncService,
+    CoreWorkflowTriggerService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
-  exports: [TypeOrmModule, WorkflowVersionCoreSyncService],
+  exports: [TypeOrmModule, CoreWorkflowTriggerService],
 })
 export class WorkflowVersionCoreModule {}

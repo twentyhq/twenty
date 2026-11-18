@@ -20,8 +20,10 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
+        title: 'Customer call',
+        summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
-        calendarEvent: { id: 'calendar-event-id', title: ' Customer call ' },
+        calendarEvent: { id: 'calendar-event-id' },
       }),
     ).toEqual({
       title: 'Customer call',
@@ -41,6 +43,8 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
           name: 'conferenceRecords/first',
           startTime: '2026-11-17T09:00:00Z',
         },
+        title: undefined,
+        summaryMarkdown: undefined,
         transcriptEntries: [],
         calendarEvent: undefined,
       }),
@@ -51,12 +55,32 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     });
   });
 
-  it('should leave the title out when the calendar event has none', () => {
+  it('should complete a recording that only has Gemini notes', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: '## Summary',
+        transcriptEntries: [],
+        calendarEvent: undefined,
+      }),
+    ).toEqual({
+      status: 'COMPLETED',
+      externalRecordingId: 'conferenceRecords/first',
+      startedAt: '2026-11-17T09:00:00Z',
+      endedAt: '2026-11-17T09:30:00Z',
+      summary: { blocknote: null, markdown: '## Summary' },
+    });
+  });
+
+  it('should leave the title out when the conference has none', () => {
+    expect(
+      buildGoogleMeetCallRecordingSyncFields({
+        conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
-        calendarEvent: { id: 'calendar-event-id', title: null },
+        calendarEvent: { id: 'calendar-event-id' },
       }),
     ).not.toHaveProperty('title');
   });

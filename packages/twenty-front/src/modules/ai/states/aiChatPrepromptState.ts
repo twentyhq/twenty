@@ -3,6 +3,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export type AiChatPrepromptMode = 'PREFILL' | 'SEND';
 
 export type AiChatPreprompt = {
+  threadId: string;
   serializedDocument: string;
   mode: AiChatPrepromptMode;
 };

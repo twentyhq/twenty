@@ -1,4 +1,4 @@
-# Google Meet setup
+# Meet setup
 
 The server admin does this once per Twenty server, in one Google Cloud project.
 Workspace members then only connect their Google account.
@@ -6,11 +6,11 @@ Workspace members then only connect their Google account.
 ## Google Cloud project
 
 1. Create or pick a Google Cloud project with billing enabled.
-2. Enable the Google Meet REST API, the Google Workspace Events API and the
-   Cloud Pub/Sub API:
+2. Enable the Google Meet REST API, the Google Workspace Events API, the
+   Google Docs API and the Cloud Pub/Sub API:
 
    ```bash
-   gcloud services enable meet.googleapis.com workspaceevents.googleapis.com pubsub.googleapis.com
+   gcloud services enable meet.googleapis.com workspaceevents.googleapis.com docs.googleapis.com pubsub.googleapis.com
    ```
 
 3. Configure the OAuth consent screen with these scopes:
@@ -19,9 +19,11 @@ Workspace members then only connect their Google account.
    | --------------------------------------------------------- | ----------------------------------------------------------- |
    | `openid`, `email`                                         | Identify the connected Google account                       |
    | `https://www.googleapis.com/auth/meetings.space.readonly` | Read conferences and transcripts, and subscribe to events   |
+   | `https://www.googleapis.com/auth/documents.readonly`      | Read the call's name and Gemini notes from Meet's documents |
 
-   The Meet scope is sensitive: an app used outside your own Google Workspace
-   organization needs Google's verification before members can connect.
+   The Meet and Docs scopes are sensitive: an app used outside your own Google
+   Workspace organization needs Google's verification before members can
+   connect.
 
 4. Create an OAuth client of type **Web application** with this redirect URI:
 
@@ -29,12 +31,13 @@ Workspace members then only connect their Google account.
    https://<your-twenty-host>/auth/apps/callback
    ```
 
-   Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` on the Google Meet
+   Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` on the Meet
    application registration in Twenty.
 
 ## Pub/Sub topic
 
-Google publishes a message to this topic each time a transcript is ready.
+Google publishes a message to this topic each time a transcript or Gemini notes
+are ready.
 
 1. Create the topic in the same project as the OAuth client:
 
@@ -73,7 +76,7 @@ configured below.
    `roles/iam.serviceAccountTokenCreator` role on it, and whoever creates the
    subscription needs `roles/iam.serviceAccountUser` on it.
 
-2. Create the push subscription. The endpoint is the Google Meet server route
+2. Create the push subscription. The endpoint is the Meet server route
    of your Twenty server:
 
    ```bash
@@ -84,7 +87,7 @@ configured below.
      --push-auth-token-audience='<audience>'
    ```
 
-   `<application-registration-id>` is the id of the Google Meet application
+   `<application-registration-id>` is the id of the Meet application
    registration in Twenty. `<audience>` is any value you choose, for instance
    the endpoint URL.
 
@@ -102,9 +105,12 @@ its owner workspace.
 
 - A member connects their Google account from the app's settings. Twenty
   subscribes to that account's Meet events.
-- When a transcript is ready, Google publishes an event, Pub/Sub pushes it to
-  Twenty, and the call is imported as a Call Recording in the member's
-  workspace.
+- When a transcript or Gemini notes are ready, Google publishes an event,
+  Pub/Sub pushes it to Twenty, and the call is imported as a Call Recording in
+  the member's workspace, with the notes as its summary.
+- When a call has a transcript but no Gemini notes, an AI agent writes its
+  summary instead. This uses AI credits; each member can turn off AI
+  summaries for their own calls in Settings, under Apps preferences.
 - Once a day, Twenty renews each subscription (Google expires them after 7
   days) and imports the calls of the last two days whose event was missed.
 - When a member removes their connection, the subscription is deleted.
@@ -112,6 +118,6 @@ its owner workspace.
 ## Limits
 
 - Only calls the member organized are imported, and only when transcription
-  was on. Google keeps conference data for 30 days.
+  or Gemini notes were on. Google keeps conference data for 30 days.
 - A Google account delivers events to one workspace per Twenty server. A second
   workspace connecting the same account only gets the daily import.

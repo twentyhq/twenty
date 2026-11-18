@@ -1,46 +1,15 @@
-import { useLingui } from '@lingui/react/macro';
-import { useId, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
-import { Dropdown } from 'twenty-ui/components/navigation';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useTheme } from 'twenty-ui/theme';
-
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
-import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
-import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
-import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
+import { AiChatNewThreadRecipientField } from '@/ai/components/AiChatNewThreadRecipientField';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
-import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatNewThreadRecipientBar = () => {
-  const { t } = useLingui();
-  const { displayName: assistantName } = useAiChatAssistantProfile();
-  const theme = useTheme();
-  const dropdownInstanceId = useId();
-  const recipientRowRef = useRef<HTMLDivElement>(null);
-  const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -50,122 +19,15 @@ export const AiChatNewThreadRecipientBar = () => {
     aiChatIsSendingMessageFamilyState,
     { threadId: newAiChatThreadId },
   );
-  const [recipients, setRecipients] = useAtomFamilyState(
-    aiChatNewThreadRecipientsFamilyState,
-    newAiChatThreadId,
-  );
-  const [aiChatNewThreadChannelId, setAiChatNewThreadChannelId] = useAtomState(
-    aiChatNewThreadChannelIdState,
-  );
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === aiChatNewThreadChannelId,
-  );
-  const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
-    recipients.recipientWorkspaceMemberIds.includes(id),
-  );
-
-  const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
 
   if (
     !isAiChatInboxEnabled ||
-    !isCreatingChat ||
+    !isOnNewAiChatSlot ||
     isWorkspaceSetupChat ||
     aiChatIsSendingMessage
   ) {
     return null;
   }
 
-  const focusAddRecipientsButton = () => {
-    addRecipientsButtonRef.current?.focus();
-  };
-
-  return (
-    <FormFieldRow
-      ref={recipientRowRef}
-      aria-label={t`Recipients`}
-      contentPaddingInline={0}
-    >
-      {recipients.isAssistantParticipant && (
-        <ChatRecipientChip
-          label={assistantName}
-          avatar={<AiChatAssistantAvatar />}
-          onRemove={() => {
-            focusAddRecipientsButton();
-            setRecipients((current) => ({
-              ...current,
-              isAssistantParticipant: false,
-            }));
-          }}
-        />
-      )}
-      {recipientWorkspaceMembers.map((workspaceMember) => {
-        const label = getWorkspaceMemberNameOrEmail(workspaceMember);
-
-        return (
-          <ChatRecipientChip
-            key={workspaceMember.id}
-            label={label}
-            avatar={
-              <Avatar
-                name={label}
-                colorSeed={workspaceMember.id}
-                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                size="sm"
-                shape="circle"
-              />
-            }
-            onRemove={() => {
-              focusAddRecipientsButton();
-              setRecipients((current) => ({
-                ...current,
-                recipientWorkspaceMemberIds:
-                  current.recipientWorkspaceMemberIds.filter(
-                    (recipientId) => recipientId !== workspaceMember.id,
-                  ),
-              }));
-            }}
-          />
-        );
-      })}
-      {isDefined(channel) && (
-        <ChatRecipientChip
-          label={channel.name}
-          avatar={
-            <AiChatChannelIcon channel={channel} size={theme.icon.size.sm} />
-          }
-          onRemove={() => {
-            focusAddRecipientsButton();
-            setAiChatNewThreadChannelId(null);
-          }}
-        />
-      )}
-      <DropdownRoot
-        dropdownId={`ai-chat-new-thread-recipients-${dropdownInstanceId}`}
-        type="picker"
-        multiple
-      >
-        <Dropdown.Trigger
-          render={
-            <LightButton
-              ref={addRecipientsButtonRef}
-              emphasis="subtle"
-              size="sm"
-            >
-              {t`Add people or a channel`}
-            </LightButton>
-          }
-        />
-        <DropdownContent
-          anchor={recipientRowRef}
-          width={GenericDropdownContentWidth.ExtraLarge}
-          aria-label={t`Select recipients`}
-        >
-          <AiChatNewThreadRecipientPicker />
-        </DropdownContent>
-      </DropdownRoot>
-    </FormFieldRow>
-  );
+  return <AiChatNewThreadRecipientField />;
 };

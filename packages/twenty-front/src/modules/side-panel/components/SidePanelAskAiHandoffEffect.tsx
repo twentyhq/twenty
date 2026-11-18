@@ -1,8 +1,11 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isInboxPath } from '~/utils/isInboxPath';
@@ -32,19 +35,35 @@ export const SidePanelAskAiHandoffEffect = ({
       return;
     }
 
-    if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
+    const aiChatContinueInSidePanelThreadId = store.get(
+      aiChatContinueInSidePanelThreadIdState.atom,
+    );
+
+    if (!isDefined(aiChatContinueInSidePanelThreadId)) {
       return;
     }
 
-    store.set(shouldContinueAiChatInSidePanelState.atom, false);
+    store.set(aiChatContinueInSidePanelThreadIdState.atom, null);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     if (isSettingsPath(pathname)) {
       return;
     }
 
+    const isIdleNewChat =
+      aiChatContinueInSidePanelThreadId ===
+        store.get(newAiChatThreadIdState.atom) &&
+      !store.get(
+        aiChatIsSendingMessageFamilyState.atomFamily({
+          threadId: aiChatContinueInSidePanelThreadId,
+        }),
+      );
+
     onContinueChatFromFullWidth();
-    openAskAiPage({ resetNavigationStack: true });
+    openAskAiPage({
+      threadId: isIdleNewChat ? undefined : aiChatContinueInSidePanelThreadId,
+      resetNavigationStack: true,
+    });
   }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
 
   return null;

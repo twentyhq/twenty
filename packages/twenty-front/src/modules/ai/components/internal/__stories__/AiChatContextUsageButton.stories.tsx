@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
@@ -10,7 +11,7 @@ import {
   aiChatUsageFamilyState,
   type AiChatUsageState,
 } from '@/ai/states/aiChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -59,7 +60,7 @@ const UsageStory = ({
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
-    storyStore.set(currentAiChatThreadState.atom, 'story-thread');
+    storyStore.set(aiChatTestInstanceThreadIdState.atom, 'story-thread');
     storyStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
@@ -72,38 +73,40 @@ const UsageStory = ({
   });
   return (
     <Provider store={store}>
-      <MockedProvider
-        mocks={[
-          {
-            request: { query: GetAiChatUsageDocument },
-            maxUsageCount: Infinity,
-            delay: loading ? Infinity : 0,
-            ...(error
-              ? { error: new Error('Usage unavailable') }
-              : {
-                  result: {
-                    data: {
-                      aiChatUsage:
-                        limit === null
-                          ? null
-                          : {
-                              limitValue: limit,
-                              consumedValue: consumed,
-                              periodEnd: null,
-                              kind,
-                            },
-                      aiChatUserCreditsUsage: userCreditsUsage && {
-                        __typename: 'AiChatUserCreditsUsage',
-                        ...userCreditsUsage,
+      <AiChatTestInstance>
+        <MockedProvider
+          mocks={[
+            {
+              request: { query: GetAiChatUsageDocument },
+              maxUsageCount: Infinity,
+              delay: loading ? Infinity : 0,
+              ...(error
+                ? { error: new Error('Usage unavailable') }
+                : {
+                    result: {
+                      data: {
+                        aiChatUsage:
+                          limit === null
+                            ? null
+                            : {
+                                limitValue: limit,
+                                consumedValue: consumed,
+                                periodEnd: null,
+                                kind,
+                              },
+                        aiChatUserCreditsUsage: userCreditsUsage && {
+                          __typename: 'AiChatUserCreditsUsage',
+                          ...userCreditsUsage,
+                        },
                       },
                     },
-                  },
-                }),
-          },
-        ]}
-      >
-        {children ?? <AiChatContextUsageButton />}
-      </MockedProvider>
+                  }),
+            },
+          ]}
+        >
+          {children ?? <AiChatContextUsageButton />}
+        </MockedProvider>
+      </AiChatTestInstance>
     </Provider>
   );
 };

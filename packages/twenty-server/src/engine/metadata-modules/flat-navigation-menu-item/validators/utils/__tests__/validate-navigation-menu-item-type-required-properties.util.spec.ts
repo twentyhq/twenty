@@ -48,6 +48,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       expectedMessages: ['A name is required for FOLDER type'],
     },
     {
+      type: NavigationMenuItemType.TAB,
+      expectedMessages: ['A name is required for TAB type'],
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      expectedMessages: ['A name is required for SECTION type'],
+    },
+    {
       type: NavigationMenuItemType.OBJECT,
       expectedMessages: [
         'A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type',
@@ -109,6 +117,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.FOLDER,
       overrides: { name: 'My folder' },
+    },
+    {
+      type: NavigationMenuItemType.TAB,
+      overrides: { name: 'My tab' },
+    },
+    {
+      type: NavigationMenuItemType.SECTION,
+      overrides: { name: 'My section' },
     },
     {
       type: NavigationMenuItemType.OBJECT,

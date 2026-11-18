@@ -1,11 +1,12 @@
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AiChatThreadMarkAsReadEffect';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   type CurrentWorkspaceMember,
@@ -53,7 +54,9 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
 const renderChatView = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AiChatThreadMarkAsReadEffect />
+      <AiChatTestInstance>
+        <AiChatThreadMarkAsReadEffect />
+      </AiChatTestInstance>
     </JotaiProvider>,
   );
 
@@ -80,7 +83,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: PARTICIPANT,
     });
-    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('marks the thread on screen as read and keeps where the member left off', () => {
@@ -90,7 +93,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       threadIds: [THREAD_ID],
       action: 'READ',
     });
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toEqual({
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual({
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: '2026-10-01T09:00:00.000Z',
@@ -110,7 +117,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       threadIds: [THREAD_ID],
       action: 'READ',
     });
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toEqual({
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toEqual({
       threadId: THREAD_ID,
       isUnread: false,
       lastReadAt: null,
@@ -125,13 +136,19 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     sidePanelView.unmount();
 
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)?.threadId).toBe(
-      THREAD_ID,
-    );
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      )?.threadId,
+    ).toBe(THREAD_ID);
 
     recordPageView.unmount();
 
-    expect(jotaiStore.get(aiChatThreadVisitState.atom)).toBeNull();
+    expect(
+      jotaiStore.get(
+        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      ),
+    ).toBeNull();
   });
 
   describe('on leaving the chat', () => {

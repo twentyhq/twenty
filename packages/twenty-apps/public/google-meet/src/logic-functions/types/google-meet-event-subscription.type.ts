@@ -4,4 +4,5 @@ export type GoogleMeetEventSubscription = {
   expireTime?: string;
   suspensionReason?: string;
   notificationEndpoint?: { pubsubTopic?: string };
+  eventTypes?: string[];
 };

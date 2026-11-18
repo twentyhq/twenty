@@ -59,6 +59,7 @@ export class ApplicationExportResolver {
       universalIdentifier,
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
+      shouldIncludeSourceDependencies,
       shouldIncludePublicAssets,
     }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -68,6 +69,7 @@ export class ApplicationExportResolver {
       workspaceId,
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
+      shouldIncludeSourceDependencies,
       shouldIncludePublicAssets,
     });
   }

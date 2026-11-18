@@ -1,3 +1,13 @@
+export const ROW_LEVEL_PERMISSION_RULE_GQL_FIELDS = `
+    id
+    objectMetadataId
+    canCreateRecords
+    canReadRecords
+    canUpdateRecords
+    canSoftDeleteRecords
+    canDestroyRecords
+`;
+
 export const ROW_LEVEL_PERMISSION_PREDICATE_GQL_FIELDS = `
     id
     fieldMetadataId
@@ -9,6 +19,7 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_GQL_FIELDS = `
     workspaceMemberFieldMetadataId
     workspaceMemberSubFieldName
     rowLevelPermissionPredicateGroupId
+    rowLevelPermissionRuleId
     positionInRowLevelPermissionPredicateGroup
     roleId
 `;
@@ -16,6 +27,7 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_GQL_FIELDS = `
 export const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_GQL_FIELDS = `
     id
     parentRowLevelPermissionPredicateGroupId
+    rowLevelPermissionRuleId
     logicalOperator
     positionInRowLevelPermissionPredicateGroup
     canReadRecords
