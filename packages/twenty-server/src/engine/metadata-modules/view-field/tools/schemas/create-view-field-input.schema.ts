@@ -1,6 +1,8 @@
 import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { viewFieldRelationScopeSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/view-field-relation-scope.schema';
+
 export const createViewFieldInputSchema = z.object({
   viewId: z.string().uuid().describe('The ID of the view to add the field to.'),
   fieldMetadataId: z
@@ -43,4 +45,5 @@ export const createViewFieldInputSchema = z.object({
     .describe(
       'On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.',
     ),
+  relationScope: viewFieldRelationScopeSchema.optional(),
 });

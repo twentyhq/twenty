@@ -47,6 +47,7 @@ export class CreateViewFieldTool extends BaseTool<
         aggregateOperation: input.aggregateOperation,
         isCanonical: input.isCanonical,
         relationTargetFieldMetadataId: input.relationTargetFieldMetadataId,
+        relationScope: input.relationScope,
       },
       workspaceId,
     });
@@ -64,6 +65,7 @@ export class CreateViewFieldTool extends BaseTool<
         aggregateOperation: viewField.aggregateOperation,
         isCanonical: viewField.isCanonical,
         relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
+        relationScope: viewField.relationScope,
       },
     };
   }
