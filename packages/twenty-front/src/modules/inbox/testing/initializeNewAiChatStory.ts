@@ -2,7 +2,6 @@ import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiCha
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
@@ -49,7 +48,6 @@ export const initializeNewAiChatStory = ({
       userEmail: 'jane@example.com',
     },
   ]);
-  jotaiStore.set(aiChatTestInstanceThreadIdState.atom, NEW_CHAT_THREAD_ID);
   jotaiStore.set(
     inboxThreadListFamilyState.atomFamily(
       getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),

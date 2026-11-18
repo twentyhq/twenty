@@ -105,14 +105,11 @@ export class BillingPlanService {
         BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
       );
     }
-    const { meteredProducts, baseProducts, resourceCreditProducts } = plan;
+    const { baseProducts, resourceCreditProducts } = plan;
 
     const filterPricesByInterval = (product: BillingProductEntity) =>
       product.billingPrices.filter((price) => price.interval === interval);
 
-    const meteredProductPrices = meteredProducts.flatMap(
-      filterPricesByInterval,
-    );
     const baseProductPrices = baseProducts.flatMap(filterPricesByInterval);
 
     const resourceCreditProductPrices = resourceCreditProducts.flatMap(
@@ -120,7 +117,6 @@ export class BillingPlanService {
     );
 
     return {
-      meteredProductPrices,
       baseProductPrices,
       resourceCreditProductPrices,
     };

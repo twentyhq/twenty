@@ -15,7 +15,6 @@ export const graphqlDirectExecutionToGraphqlApiExceptionHandler = (
   switch (error.code) {
     case GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT:
       throw new UserInputError(error);
-    case GraphqlDirectExecutionExceptionCode.INVALID_RESULT_TYPE:
     case GraphqlDirectExecutionExceptionCode.UNKNOWN_METHOD:
       throw new InternalServerError(error);
     default: {

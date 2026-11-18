@@ -7,7 +7,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,7 +26,9 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>
-      <AiChatTestInstance>{children}</AiChatTestInstance>
+      <AiChatTestInstance threadId="shared-thread">
+        {children}
+      </AiChatTestInstance>
     </I18nProvider>
   </JotaiProvider>
 );
@@ -36,7 +37,6 @@ describe('Shared conversation composer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'shared-thread');
   });
 
   it.each([false, undefined])(
