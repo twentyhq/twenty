@@ -16,7 +16,8 @@ own calls in **Settings**, under **Apps preferences**.
 ## 📌 Getting started
 
 1. Install **Meet** from **Settings → Applications**.
-2. Each member connects their own Google account from the app's settings.
+2. Each member connects their own Google account in
+   **Settings → Apps preferences**.
 3. Turn on transcription, or Gemini notes, in the calls you want imported.
 
 **Self-hosting?** Your admin sets up a Google Cloud project, an OAuth client and
@@ -25,6 +26,8 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
 
 ## 📌 Heads up
 
+- **Each member must connect.** Installing the app imports nothing until a member
+  connects their Google account in **Settings → Apps preferences**.
 - **Calls you organize.** Calls where you are only a guest are not imported.
   Calls from before you connect are imported only if they started in the last
   two days.
