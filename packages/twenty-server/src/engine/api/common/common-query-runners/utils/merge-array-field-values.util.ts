@@ -1,4 +1,4 @@
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
+import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
 
 type RecordWithValue<T> = { value: T; recordId: string };
 

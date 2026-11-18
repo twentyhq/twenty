@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { mergeFieldValues } from 'src/engine/api/common/common-query-runners/utils/merge-field-values.util';
 
 describe('mergeFieldValues', () => {
   const PRIORITY_RECORD_ID = 'priority-record-id';

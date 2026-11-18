@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { isValidDomain } from 'twenty-shared/utils';
 
-import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
+import { parseArrayOrJsonStringToArray } from 'src/engine/api/common/utils/parse-additional-items.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
 import {

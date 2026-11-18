@@ -1,7 +1,7 @@
 import { type EmailsMetadata } from 'twenty-shared/types';
 
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
+import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
+import { parseArrayOrJsonStringToArray } from 'src/engine/api/common/utils/parse-additional-items.util';
 
 export const mergeEmailsFieldValues = (
   recordsWithValues: { value: EmailsMetadata; recordId: string }[],

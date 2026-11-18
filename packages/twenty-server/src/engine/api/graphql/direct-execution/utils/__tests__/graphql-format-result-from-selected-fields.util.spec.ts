@@ -2,7 +2,7 @@ import { Kind, parse } from 'graphql';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { decodeCursor } from 'src/engine/api/common/utils/cursors.util';
 import {
   type GraphqlConnectionResult,
   type GraphqlResolverResult,

@@ -1,7 +1,7 @@
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { encodeCursorData } from 'src/engine/api/common/utils/cursors.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 

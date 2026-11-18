@@ -23,7 +23,7 @@ import { convertOrderByToFindOptionsOrder } from 'src/engine/api/common/common-q
 import { getOptionalOrderByCasting } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/get-optional-order-by-casting.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/parse-composite-field-for-order.util';
 import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
 import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,

@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type LinkMetadata, type LinksMetadata } from 'twenty-shared/types';
 import { normalizeDomain } from 'twenty-shared/utils';
 
-import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
+import { parseArrayOrJsonStringToArray } from 'src/engine/api/common/utils/parse-additional-items.util';
 
 const normalizeStoredDomain = (url: string): string =>
   isNonEmptyString(url) ? normalizeDomain(url) : url;

@@ -1,4 +1,4 @@
-import { defaultMergeFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/default-merge-field-value.util';
+import { defaultMergeFieldValue } from 'src/engine/api/common/common-query-runners/utils/default-merge-field-value.util';
 
 describe('defaultMergeFieldValue', () => {
   it('should return priority record value when available', () => {

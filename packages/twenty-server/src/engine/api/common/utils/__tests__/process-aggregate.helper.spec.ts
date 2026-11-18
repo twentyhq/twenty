@@ -1,7 +1,7 @@
 import { GraphQLFloat } from 'graphql';
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
 
 describe('ProcessAggregateHelper.getAggregateExpression', () => {
   it('should cast rating enum values to integers for numeric operations', () => {
