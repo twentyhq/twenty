@@ -3,7 +3,7 @@ import { type ToolUIPart } from 'ai';
 
 import { AiChatToolWidget } from '@/ai-chat/components/AiChatToolWidget';
 
-jest.mock('@/ai-chat/components/ThinkingToolStepRow', () => ({
+jest.mock('@/ai-chat/thinking-steps/components/ThinkingToolStepRow', () => ({
   ThinkingToolStepRow: () => <div data-testid="tool-step-row" />,
 }));
 

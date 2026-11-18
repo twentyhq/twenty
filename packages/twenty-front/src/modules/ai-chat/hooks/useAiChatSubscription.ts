@@ -6,7 +6,7 @@ import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/aiChatMessag
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/states/aiChatQueuedMessagesFamilyState';
-import { useRefreshAiChatUsage } from '@/ai-chat/hooks/useRefreshAiChatUsage';
+import { useRefreshAiChatUsage } from '@/ai-chat/usage/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai-chat/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
@@ -31,9 +31,9 @@ import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/ai
 import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatStreamRecoveryAttemptsState } from '@/ai-chat/states/aiChatStreamRecoveryAttemptsState';
-import { aiChatUsageFamilyState } from '@/ai-chat/states/aiChatUsageFamilyState';
+import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { accumulateAiChatUsage } from '@/ai-chat/utils/accumulateAiChatUsage';
+import { accumulateAiChatUsage } from '@/ai-chat/usage/utils/accumulateAiChatUsage';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai-chat/utils/createAiChatCodedError';
 import { createMidStreamAdapter } from '@/ai-chat/utils/createMidStreamAdapter';

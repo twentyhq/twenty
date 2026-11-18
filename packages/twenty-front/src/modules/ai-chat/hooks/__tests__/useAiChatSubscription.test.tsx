@@ -28,7 +28,7 @@ jest.mock('@/ai-chat/hooks/useRefreshAiChatThreadPermissions', () => ({
 const subscribe = jest.fn();
 const disconnect = jest.fn();
 const refreshAiChatUsage = jest.fn();
-jest.mock('@/ai-chat/hooks/useRefreshAiChatUsage', () => ({
+jest.mock('@/ai-chat/usage/hooks/useRefreshAiChatUsage', () => ({
   useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
