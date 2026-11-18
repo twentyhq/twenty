@@ -8,7 +8,6 @@ export const GET_CORE_WORKFLOW_VERSION = gql`
       id
       label
       status
-      workspaceWorkflowVersionId
       coreWorkflowId
       trigger
       steps

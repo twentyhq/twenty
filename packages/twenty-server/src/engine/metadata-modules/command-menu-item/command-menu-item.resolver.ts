@@ -235,18 +235,12 @@ export class CommandMenuItemResolver {
         coreWorkflowVersionIds: commandMenuItems
           .map(({ coreWorkflowVersionId }) => coreWorkflowVersionId)
           .filter(isDefined),
-        workspaceWorkflowVersionIds: commandMenuItems
-          .map(({ workflowVersionId }) => workflowVersionId)
-          .filter(isDefined),
       });
 
     return commandMenuItems.filter(
-      ({ coreWorkflowVersionId, workflowVersionId }) =>
-        ![coreWorkflowVersionId, workflowVersionId].some(
-          (workflowVersionIdToCheck) =>
-            isDefined(workflowVersionIdToCheck) &&
-            inaccessibleWorkflowVersionIds.has(workflowVersionIdToCheck),
-        ),
+      ({ coreWorkflowVersionId }) =>
+        !isDefined(coreWorkflowVersionId) ||
+        !inaccessibleWorkflowVersionIds.has(coreWorkflowVersionId),
     );
   }
 }

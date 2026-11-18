@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -43,32 +41,6 @@ export class CoreWorkflowTriggerService {
     return this.coreWorkflowVersionRepository.findOne(workspaceId, {
       where: { id: coreWorkflowVersionId },
     });
-  }
-
-  async resolveDispatchedCoreVersionId({
-    workspaceId,
-    coreWorkflowVersionId,
-    workspaceWorkflowVersionId,
-    lastPublishedCoreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId?: string | null;
-    workspaceWorkflowVersionId?: string | null;
-    lastPublishedCoreWorkflowVersionId?: string | null;
-  }): Promise<string | undefined> {
-    if (isDefined(coreWorkflowVersionId)) {
-      return coreWorkflowVersionId;
-    }
-
-    if (isDefined(workspaceWorkflowVersionId)) {
-      return (
-        await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-          where: { workspaceWorkflowVersionId },
-        })
-      )?.id;
-    }
-
-    return lastPublishedCoreWorkflowVersionId ?? undefined;
   }
 
   async invalidateAutomatedTriggerMaps(workspaceId: string): Promise<void> {

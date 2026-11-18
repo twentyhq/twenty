@@ -15,7 +15,6 @@ import {
 import { findCoreWorkflowById } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-by-id.util';
 import { findCoreWorkflowByWorkspaceWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-by-workspace-workflow-id.util';
 import { findCoreWorkflowVersionById } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-version-by-id.util';
-import { findCoreWorkflowVersionByWorkspaceWorkflowVersionId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-version-by-workspace-workflow-version-id.util';
 import { findCoreWorkflowVersionsByCoreWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-versions-by-core-workflow-id.util';
 import { findCoreWorkflowVersionsByWorkspaceWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-versions-by-workspace-workflow-id.util';
 import { findCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/find-core-workflows.util';
@@ -347,21 +346,6 @@ describe('Core workflow reads through an application should fail', () => {
               });
 
             expect(data.coreWorkflowVersions).toEqual([]);
-          });
-
-          it('should not find the workflow version', async () => {
-            const { data } =
-              await findCoreWorkflowVersionByWorkspaceWorkflowVersionId({
-                input: {
-                  workspaceWorkflowVersionId:
-                    memberWorkflowContext.workflow(globalTestContext)
-                      .workspaceWorkflowVersionId,
-                },
-                token: await buildCallerToken(),
-                expectToFail: false,
-              });
-
-            expect(data.coreWorkflowVersion).toBeNull();
           });
         },
       );

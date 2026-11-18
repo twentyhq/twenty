@@ -23,9 +23,6 @@ export class CoreWorkflowDTO {
   statuses: WorkflowStatus[];
 
   @Field(() => UUIDScalarType, { nullable: true })
-  lastPublishedVersionId: string | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
   lastPublishedCoreWorkflowVersionId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })

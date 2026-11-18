@@ -1,7 +1,4 @@
-import {
-  GetCoreWorkflowVersionDocument,
-  GetCoreWorkflowVersionLegacyMappingDocument,
-} from '~/generated/graphql';
+import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 import { useCallback } from 'react';
 
 import {
@@ -14,8 +11,7 @@ import { type CommandMenuItemAvailabilityType } from '~/generated-metadata/graph
 
 type EnrichParams = {
   headlessEngineCommandContextApi: HeadlessEngineCommandContextApi;
-  workflowVersionId?: string;
-  coreWorkflowVersionId?: string;
+  coreWorkflowVersionId: string;
   availabilityType: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
 };
@@ -28,32 +24,13 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
       useCallback(
         async ({
           headlessEngineCommandContextApi,
-          workflowVersionId,
           coreWorkflowVersionId,
           availabilityType,
           availabilityObjectMetadataId,
         }: EnrichParams): Promise<HeadlessCommandContextApi | undefined> => {
-          let resolvedCoreVersionId = coreWorkflowVersionId;
-
-          if (
-            !isDefined(resolvedCoreVersionId) &&
-            isDefined(workflowVersionId)
-          ) {
-            const { data } = await apolloCoreClient.query({
-              query: GetCoreWorkflowVersionLegacyMappingDocument,
-              variables: { workspaceWorkflowVersionId: workflowVersionId },
-              fetchPolicy: 'network-only',
-            });
-            resolvedCoreVersionId = data?.coreWorkflowVersion?.id;
-          }
-
-          if (!isDefined(resolvedCoreVersionId)) {
-            return undefined;
-          }
-
           const { data } = await apolloCoreClient.query({
             query: GetCoreWorkflowVersionDocument,
-            variables: { coreWorkflowVersionId: resolvedCoreVersionId },
+            variables: { coreWorkflowVersionId },
             fetchPolicy: 'network-only',
           });
           const version = data?.coreWorkflowVersion;

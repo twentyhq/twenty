@@ -5,7 +5,6 @@ import {
   type WorkflowVersionEntity,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
@@ -25,12 +24,9 @@ type ActivatableWorkflowVersion = Pick<
 
 export function assertVersionCanBeActivated(
   workflowVersion: ActivatableWorkflowVersion,
-  workflow: Pick<WorkflowEntity, 'lastPublishedVersionId'>,
+  isLastPublishedVersion: boolean,
 ) {
   assertVersionIsValid(workflowVersion);
-
-  const isLastPublishedVersion =
-    workflow.lastPublishedVersionId === workflowVersion.id;
 
   const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
 

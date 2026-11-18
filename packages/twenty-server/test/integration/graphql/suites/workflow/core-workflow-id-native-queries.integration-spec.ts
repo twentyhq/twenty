@@ -11,7 +11,6 @@ const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
       label
       status
       workspaceWorkflowId
-      workspaceWorkflowVersionId
     }
   }
 `;
@@ -34,7 +33,6 @@ const CORE_WORKFLOW_VERSIONS_LEGACY = `
       id
       label
       status
-      workspaceWorkflowVersionId
     }
   }
 `;
@@ -66,7 +64,7 @@ describe('core workflow id native queries (e2e)', () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
-  it('lists the versions by core workflow id, legacy workspace ids included', async () => {
+  it('lists the versions by core workflow id, legacy workspace workflow id included', async () => {
     const response = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID,
       { coreWorkflowId },
@@ -80,7 +78,6 @@ describe('core workflow id native queries (e2e)', () => {
     expect(versions[0].status).toBe('DRAFT');
     expect(versions[0].label).toBe('v1');
     expect(versions[0].workspaceWorkflowId).toBe(workspaceWorkflowId);
-    expect(versions[0].workspaceWorkflowVersionId).not.toBeNull();
   });
 
   it('resolves a version by its core id, with its content', async () => {
@@ -117,19 +114,8 @@ describe('core workflow id native queries (e2e)', () => {
     expect(byWorkspaceId.body.errors).toBeUndefined();
 
     const normalise = (
-      versions: {
-        id: string;
-        label: string;
-        status: string;
-        workspaceWorkflowVersionId: string | null;
-      }[],
-    ) =>
-      versions.map(({ id, label, status, workspaceWorkflowVersionId }) => ({
-        id,
-        label,
-        status,
-        workspaceWorkflowVersionId,
-      }));
+      versions: { id: string; label: string; status: string }[],
+    ) => versions.map(({ id, label, status }) => ({ id, label, status }));
 
     expect(
       normalise(byCoreId.body.data.coreWorkflowVersionsByCoreWorkflowId),

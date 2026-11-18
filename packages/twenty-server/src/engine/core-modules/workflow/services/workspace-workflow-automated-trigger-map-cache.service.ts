@@ -53,7 +53,6 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
 
       const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        workspaceWorkflowVersionId: workflowVersion.workspaceWorkflowVersionId,
       });
 
       if (isDefined(automatedTrigger)) {

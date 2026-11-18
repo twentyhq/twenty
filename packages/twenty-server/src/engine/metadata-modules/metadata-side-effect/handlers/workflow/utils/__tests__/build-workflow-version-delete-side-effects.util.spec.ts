@@ -90,19 +90,16 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
           id: 'active-version-id',
           universalIdentifier: 'active-version',
           coreWorkflowId: 'core-workflow-id',
-          workspaceWorkflowVersionId: 'mirror-active-version-id',
         },
         {
           id: 'draft-version-id',
           universalIdentifier: 'draft-version',
           coreWorkflowId: 'core-workflow-id',
-          workspaceWorkflowVersionId: null,
         },
         {
           id: 'other-version-id',
           universalIdentifier: 'other-version',
           coreWorkflowId: 'other-core-workflow-id',
-          workspaceWorkflowVersionId: null,
         },
       ];
 
@@ -117,11 +114,6 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
           universalIdentifier: 'core-version-item',
           coreWorkflowVersionId: 'active-version-id',
           workflowVersionId: null,
-        },
-        {
-          universalIdentifier: 'mirror-version-item',
-          coreWorkflowVersionId: null,
-          workflowVersionId: 'mirror-active-version-id',
         },
         {
           universalIdentifier: 'other-version-item',
@@ -148,6 +140,6 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     ).toEqual(['active-version', 'draft-version']);
     expect(
       Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
-    ).toEqual(['core-version-item', 'mirror-version-item']);
+    ).toEqual(['core-version-item']);
   });
 });

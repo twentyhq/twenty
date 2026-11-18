@@ -199,32 +199,20 @@ export class CoreWorkflowAccessService {
     workspaceId,
     userWorkspaceId,
     coreWorkflowVersionIds,
-    workspaceWorkflowVersionIds,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowVersionIds: string[];
-    workspaceWorkflowVersionIds: string[];
   }): Promise<Set<string>> {
-    if (
-      coreWorkflowVersionIds.length === 0 &&
-      workspaceWorkflowVersionIds.length === 0
-    ) {
+    if (coreWorkflowVersionIds.length === 0) {
       return new Set();
     }
 
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
-        where: [
-          { id: In(coreWorkflowVersionIds) },
-          { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        ],
-        select: {
-          id: true,
-          coreWorkflowId: true,
-          workspaceWorkflowVersionId: true,
-        },
+        where: { id: In(coreWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true },
       },
     );
 
@@ -245,13 +233,13 @@ export class CoreWorkflowAccessService {
     );
 
     return new Set(
-      coreWorkflowVersions.flatMap(
-        ({ id, coreWorkflowId, workspaceWorkflowVersionId }) =>
-          isDefined(coreWorkflowId) &&
-          inaccessibleCoreWorkflowIds.has(coreWorkflowId)
-            ? [id, workspaceWorkflowVersionId].filter(isDefined)
-            : [],
-      ),
+      coreWorkflowVersions
+        .filter(
+          ({ coreWorkflowId }) =>
+            isDefined(coreWorkflowId) &&
+            inaccessibleCoreWorkflowIds.has(coreWorkflowId),
+        )
+        .map(({ id }) => id),
     );
   }
 

@@ -81,7 +81,6 @@ export class CoreWorkflowVersionListService {
           status: true,
           createdAt: true,
           updatedAt: true,
-          workspaceWorkflowVersionId: true,
         },
       },
     );
@@ -92,8 +91,6 @@ export class CoreWorkflowVersionListService {
         coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
-        workspaceWorkflowVersionId:
-          coreWorkflowVersion.workspaceWorkflowVersionId,
         workspaceWorkflowId,
         trigger: null,
         steps: null,
@@ -101,36 +98,6 @@ export class CoreWorkflowVersionListService {
         updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
       }))
       .reverse();
-  }
-
-  async findOneByWorkspaceWorkflowVersionId({
-    workspaceId,
-    userWorkspaceId,
-    callerApplication,
-    workspaceCustomApplicationId,
-    workspaceWorkflowVersionId,
-  }: CoreWorkflowReadCaller & {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowVersionId: string;
-  }): Promise<CoreWorkflowVersionDTO | null> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { workspaceWorkflowVersionId },
-        select: { id: true },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      return null;
-    }
-
-    return this.findOneByCoreWorkflowVersionId({
-      workspaceId,
-      userWorkspaceId,
-      callerApplication,
-      workspaceCustomApplicationId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-    });
   }
 
   async findManyByCoreWorkflowId({
@@ -179,7 +146,6 @@ export class CoreWorkflowVersionListService {
           status: true,
           createdAt: true,
           updatedAt: true,
-          workspaceWorkflowVersionId: true,
         },
       },
     );
@@ -190,8 +156,6 @@ export class CoreWorkflowVersionListService {
         coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
-        workspaceWorkflowVersionId:
-          coreWorkflowVersion.workspaceWorkflowVersionId,
         workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
         trigger: null,
         steps: null,
@@ -270,8 +234,6 @@ export class CoreWorkflowVersionListService {
       coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
       label: buildCoreWorkflowVersionLabel(versionRank),
       status: coreWorkflowVersion.status,
-      workspaceWorkflowVersionId:
-        coreWorkflowVersion.workspaceWorkflowVersionId,
       workspaceWorkflowId: coreWorkflow?.workspaceWorkflowId ?? null,
       trigger: coreWorkflowVersion.triggers?.[0] ?? null,
       steps: coreWorkflowVersion.steps ?? null,

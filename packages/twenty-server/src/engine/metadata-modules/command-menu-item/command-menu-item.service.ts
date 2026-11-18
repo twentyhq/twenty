@@ -596,36 +596,16 @@ export class CommandMenuItemService {
     coreWorkflowVersionId: string,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO | null> {
-    return this.findByWorkflowVersionReference(
-      coreWorkflowVersionId,
-      workspaceId,
-      'coreWorkflowVersionId',
-    );
-  }
-
-  async findByWorkflowVersionId(
-    workflowVersionId: string,
-    workspaceId: string,
-  ): Promise<CommandMenuItemDTO | null> {
-    return this.findByWorkflowVersionReference(
-      workflowVersionId,
-      workspaceId,
-      'workflowVersionId',
-    );
-  }
-
-  private async findByWorkflowVersionReference(
-    versionId: string,
-    workspaceId: string,
-    reference: 'workflowVersionId' | 'coreWorkflowVersionId',
-  ): Promise<CommandMenuItemDTO | null> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatCommandMenuItemMaps'] },
       );
     const flatCommandMenuItem = Object.values(
       flatCommandMenuItemMaps.byUniversalIdentifier,
-    ).find((item) => isDefined(item) && item[reference] === versionId);
+    ).find(
+      (item) =>
+        isDefined(item) && item.coreWorkflowVersionId === coreWorkflowVersionId,
+    );
 
     return isDefined(flatCommandMenuItem)
       ? fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem)

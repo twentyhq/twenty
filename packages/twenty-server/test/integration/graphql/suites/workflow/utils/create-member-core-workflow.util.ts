@@ -9,7 +9,6 @@ export type MemberCoreWorkflow = {
   coreWorkflowId: string;
   coreWorkflowVersionId: string;
   workspaceWorkflowId: string;
-  workspaceWorkflowVersionId: string;
 };
 
 export const createMemberCoreWorkflow = async ({
@@ -22,10 +21,9 @@ export const createMemberCoreWorkflow = async ({
   const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
     name,
   });
-  const {
-    workspaceWorkflowId,
-    workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-  } = await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId });
+  const { workspaceWorkflowId } = await linkCoreWorkflowToLegacyWorkspaceIds({
+    coreWorkflowId,
+  });
 
   if (visibility !== WorkflowVisibility.WORKSPACE) {
     await updateCoreWorkflowVisibility({
@@ -38,6 +36,5 @@ export const createMemberCoreWorkflow = async ({
     coreWorkflowId,
     coreWorkflowVersionId,
     workspaceWorkflowId,
-    workspaceWorkflowVersionId,
   };
 };
