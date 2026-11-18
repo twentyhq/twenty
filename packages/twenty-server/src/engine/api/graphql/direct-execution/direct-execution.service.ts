@@ -48,7 +48,7 @@ import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
-import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -309,19 +309,17 @@ export class DirectExecutionService {
               workspaceSchemaBuilderContext,
             })) as ResolverOutput;
 
-            const formattedResult = graphQLFormatResultFromSelectedFields(
+            data[responseKey] = graphQLFormatResultFromSelectedFields({
               result,
-              getResolverSelectedFields(graphqlPartialResolveInfo),
-              workspaceSchemaBuilderContext.flatObjectMetadata.nameSingular,
-              {
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-                objectIdByNameSingular,
-                method: entry.method,
-              },
-            );
-
-            data[responseKey] = formattedResult;
+              fieldSelections: getGraphqlFieldSelections(
+                graphqlPartialResolveInfo,
+              ),
+              objectNameSingular:
+                workspaceSchemaBuilderContext.flatObjectMetadata.nameSingular,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              objectIdByNameSingular,
+            });
           } catch (error) {
             data[responseKey] = null;
             errors.push(this.formatError(error, req));
