@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
@@ -122,8 +122,7 @@ export const SettingsApplicationConnectionDetail = () => {
   const connection = connectedAccounts.find(
     (account) =>
       account.id === connectedAccountId &&
-      account.connectionProviderId !== null &&
-      account.connectionProviderId !== undefined &&
+      isDefined(account.connectionProviderId) &&
       providerIds.has(account.connectionProviderId),
   );
   const provider = connectionProviders.find(

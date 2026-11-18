@@ -12,6 +12,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { type JsonValue } from 'type-fest';
 
 const updateMultipleRecordsFormSectionClassName = css`
   display: flex;
@@ -25,7 +26,7 @@ export type UpdateMultipleRecordsFormProps = {
   formInstanceId: string;
   disabled?: boolean;
   values: UpdateMultipleRecordsState;
-  onChange: (fieldName: string, value: any) => void;
+  onChange: (fieldName: string, value: unknown) => void;
 };
 
 export const UpdateMultipleRecordsForm = ({
@@ -68,7 +69,7 @@ export const UpdateMultipleRecordsForm = ({
 
         const value = values[fieldNameOrRelationIdName];
 
-        const handleValueChange = (newValue: any) => {
+        const handleValueChange = (newValue: JsonValue) => {
           if (newValue === null) {
             onChange(fieldNameOrRelationIdName, null);
           } else if (isUpdateRecordValueEmpty(newValue)) {
