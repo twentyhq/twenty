@@ -5,6 +5,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -15,6 +16,8 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+const CONNECTION_STRUCTURE_FIELD_NAMES = ['edges', 'pageInfo', '__typename'];
 
 type BuildSelectedFieldsArgs = {
   fieldSelections: GraphqlFieldSelection[];
@@ -65,7 +68,9 @@ export const buildConnectionSelectedFields = ({
       }),
       ...metadata,
     }),
-    aggregates: [...new Set(selectedFieldNames)],
+    aggregates: [...new Set(selectedFieldNames)].filter(
+      (fieldName) => !CONNECTION_STRUCTURE_FIELD_NAMES.includes(fieldName),
+    ),
   };
 };
 
@@ -119,17 +124,8 @@ export const buildRecordSelectedFields = ({
       !isMorphRelationHead(fieldMetadata)
         ? fieldMetadata
         : undefined;
-    const relationTargetObjectMetadata = isDefined(relationFieldMetadata)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: relationFieldMetadata.relationTargetObjectMetadataId,
-          flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-        })
-      : undefined;
 
-    if (
-      !isDefined(relationFieldMetadata) ||
-      !isDefined(relationTargetObjectMetadata)
-    ) {
+    if (!isDefined(relationFieldMetadata)) {
       selectedFields.fields[selectionKey] =
         subFieldSelections.length === 0 ||
         Object.fromEntries(
@@ -142,6 +138,10 @@ export const buildRecordSelectedFields = ({
       continue;
     }
 
+    const relationTargetObjectMetadata = getTargetObjectMetadataOrThrow(
+      relationFieldMetadata,
+      metadataMaps.flatObjectMetadataMaps,
+    );
     const buildRelationSelectedFields =
       relationFieldMetadata.settings.relationType === RelationType.ONE_TO_MANY
         ? buildConnectionSelectedFields

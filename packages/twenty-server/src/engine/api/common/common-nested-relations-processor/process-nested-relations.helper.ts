@@ -56,7 +56,6 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
   selection: CommonSelection;
-  shouldComputeAggregates?: boolean;
   limit: number;
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
@@ -85,7 +84,6 @@ export class ProcessNestedRelationsHelper {
       parentObjectMetadataItem,
       parentObjectRecords,
       selection,
-      shouldComputeAggregates = false,
       limit,
       authContext,
       useReplica = false,
@@ -104,7 +102,6 @@ export class ProcessNestedRelationsHelper {
             parentObjectRecords,
             key,
             relationSelection,
-            shouldComputeAggregates,
             limit,
             authContext,
             useReplica,
@@ -124,7 +121,6 @@ export class ProcessNestedRelationsHelper {
     parentObjectRecords,
     key,
     relationSelection,
-    shouldComputeAggregates,
     limit,
     authContext,
     useReplica,
@@ -137,7 +133,6 @@ export class ProcessNestedRelationsHelper {
     parentObjectRecords: T[];
     key: string;
     relationSelection: CommonRelationSelection;
-    shouldComputeAggregates: boolean;
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
@@ -286,7 +281,6 @@ export class ProcessNestedRelationsHelper {
           ids: relationIds,
           relationType,
           parentRecordsCount: parentObjectRecords.length,
-          shouldComputeAggregates,
           targetObjectNameSingular,
           relationSelection,
           relationQueryParser: new CommonQueryParser(
@@ -306,7 +300,6 @@ export class ProcessNestedRelationsHelper {
           parentObjectMetadataItem: targetObjectMetadata,
           parentObjectRecords: relationResults as ObjectRecord[],
           selection: relationSelection.selection,
-          shouldComputeAggregates,
           limit,
           authContext,
           useReplica,
@@ -395,7 +388,6 @@ export class ProcessNestedRelationsHelper {
     relationType,
     perParentLimit,
     parentRecordsCount,
-    shouldComputeAggregates,
     targetObjectNameSingular,
     relationSelection,
     relationQueryParser,
@@ -408,9 +400,11 @@ export class ProcessNestedRelationsHelper {
     relationType: RelationType;
     perParentLimit: number;
     parentRecordsCount: number;
-    shouldComputeAggregates: boolean;
     targetObjectNameSingular: string;
-    relationSelection: CommonRelationSelection;
+    relationSelection: Pick<
+      CommonRelationSelection,
+      'selection' | 'filter' | 'orderBy'
+    >;
     relationQueryParser: CommonQueryParser;
   }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -428,7 +422,7 @@ export class ProcessNestedRelationsHelper {
     let valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'] =
       {};
 
-    if (shouldComputeAggregates && !isEmptyObject(aggregates)) {
+    if (!isEmptyObject(aggregates)) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
       this.applyNestedRelationFilterToBuilder({

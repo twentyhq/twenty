@@ -1,7 +1,7 @@
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -9,6 +9,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import {
   CommonExtendedInput,
   CommonInput,
@@ -25,7 +26,7 @@ type FilteredMutationManyQueryArgs =
   | DestroyManyQueryArgs
   | RestoreManyQueryArgs;
 
-export abstract class CommonFilteredMutationManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export abstract class CommonFilteredMutationManyQueryRunnerService extends CommonRecordQueryRunnerService<
   FilteredMutationManyQueryArgs,
   ObjectRecord[]
 > {
@@ -34,7 +35,7 @@ export abstract class CommonFilteredMutationManyQueryRunnerService extends Commo
   async run(
     args: CommonExtendedInput<FilteredMutationManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     return this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,

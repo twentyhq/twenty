@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
@@ -6,20 +7,7 @@ import {
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-
-const parseJsonArray = (value: unknown): string[] | undefined => {
-  if (typeof value !== 'string') {
-    return undefined;
-  }
-
-  try {
-    const parsedValue: unknown = JSON.parse(value);
-
-    return Array.isArray(parsedValue) ? parsedValue : undefined;
-  } catch {
-    return undefined;
-  }
-};
+import { tryParseJsonArray } from 'src/utils/try-parse-json-array';
 
 export const parseAggregateFieldsRestRequest = (
   request: AuthenticatedRequest,
@@ -30,9 +18,11 @@ export const parseAggregateFieldsRestRequest = (
     return [];
   }
 
-  const aggregateFields = parseJsonArray(aggregateFieldsQuery);
+  const aggregateFields = isString(aggregateFieldsQuery)
+    ? tryParseJsonArray(aggregateFieldsQuery)
+    : null;
 
-  if (!isDefined(aggregateFields)) {
+  if (!isDefined(aggregateFields) || !aggregateFields.every(isString)) {
     throw new RestInputRequestParserException(
       `Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]`,
       RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,

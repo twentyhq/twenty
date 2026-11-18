@@ -9,7 +9,11 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForRelationField';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { getOrderByForFieldMetadataType, isDefined } from 'twenty-shared/utils';
+import {
+  findById,
+  getOrderByForFieldMetadataType,
+  isDefined,
+} from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   FieldMetadataType,
@@ -38,6 +42,23 @@ export const turnSortsIntoOrderBy = (
         sort.direction === ViewSortDirection.ASC
           ? 'AscNullsLast'
           : 'DescNullsLast';
+
+      const relationTargetField = isDefined(sort.relationTargetFieldMetadataId)
+        ? objectMetadataItems
+            .flatMap((item) => item.fields)
+            .find(findById(sort.relationTargetFieldMetadataId))
+        : undefined;
+
+      if (
+        correspondingField.type === FieldMetadataType.RELATION &&
+        isDefined(relationTargetField)
+      ) {
+        return getOrderByForFieldMetadataType({
+          field: relationTargetField,
+          orderByDirection: direction,
+          primaryCompositeSubField: sort.subFieldName,
+        }).map((orderByEntry) => ({ [correspondingField.name]: orderByEntry }));
+      }
 
       if (correspondingField.type === FieldMetadataType.RELATION) {
         const relatedObjectName =

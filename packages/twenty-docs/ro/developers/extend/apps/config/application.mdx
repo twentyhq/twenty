@@ -14,7 +14,7 @@ Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta d
 * **Capabilități media** *(opțional)*: acces la microfon sau cameră solicitat de componentele front-end, aprobat separat de permisiunile de rol.
 * **Variabile** *(opțional)* — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
 * **Hook-uri de pre-instalare / post-instalare / dezinstalare** *(opțional)* — vedeți [Funcții logice](/ro/developers/extend/apps/logic/logic-functions).
-* **Facturare** *(opțional)* — `billing.recurring` pentru taxele de abonament pe care platforma le percepe automat, `billing.operations` pentru operațiunile pentru care aplicația dvs. percepe credite și `billing.description` pentru marketplace; consultați [Perceperea creditelor](/ro/developers/extend/apps/logic/credits).
+* **Facturare** *(opțional)* — `billing.prices` pentru costul aplicației dvs. în monedă reală, `billing.operations` pentru operațiunile pentru care aplicația dvs. percepe credite și `billing.description` pentru piața de aplicații; consultați [Încărcarea creditelor](/ro/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';

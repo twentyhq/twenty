@@ -61,11 +61,21 @@ export const graphQLFormatResultFromSelectedFields = ({
   switch (result.kind) {
     case 'record':
       return isDefined(result.record)
-        ? formatObjectRecord({ record: result.record, depth: 0, ...formatArgs })
+        ? formatObjectRecord({
+            record: result.record,
+            relationAggregatedValues: result.relationAggregatedValues,
+            depth: 0,
+            ...formatArgs,
+          })
         : result.record;
     case 'records':
       return result.records.map((record) =>
-        formatObjectRecord({ record, depth: 0, ...formatArgs }),
+        formatObjectRecord({
+          record,
+          relationAggregatedValues: result.relationAggregatedValues,
+          depth: 0,
+          ...formatArgs,
+        }),
       );
     case 'connection':
       return formatConnection({
@@ -186,9 +196,11 @@ const formatObjectRecordField = ({
       });
     }
 
-    return isDefined(relationValue) && !Array.isArray(relationValue)
-      ? formatObjectRecord({ record: relationValue, ...relationFormatArgs })
-      : null;
+    if (!isDefined(relationValue) || Array.isArray(relationValue)) {
+      return null;
+    }
+
+    return formatObjectRecord({ record: relationValue, ...relationFormatArgs });
   }
 
   const value = record[fieldName];
