@@ -2,6 +2,18 @@
 
 **Your Google Meet transcripts, Gemini notes and recordings, right inside your CRM.**
 
+## ⚠️ Check your Google plan first
+
+Meet only makes transcripts, Gemini notes and recordings on paid Google plans,
+and this app imports what Meet makes. What you get depends on the plan of the
+person who **organizes** the call:
+
+| Organizer's Google plan                                          | Transcripts | Gemini notes | Recordings |
+| ---------------------------------------------------------------- | ----------- | ------------ | ---------- |
+| Workspace Business Starter, Google AI Plus, free Gmail           | No          | No           | No         |
+| Workspace Business Standard or Plus, Enterprise Standard or Plus | Yes         | Yes          | Yes        |
+| Google AI Pro or Ultra                                           | Yes         | Yes          | Yes        |
+
 ## ✨ What you get
 
 - **Google Meet transcripts, Gemini notes and recording videos saved to Call Recordings**
@@ -33,4 +45,5 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
 - **One video per call.** The first recording of a call is imported, up to
   500 MB.
 - **Needs a paid Google plan.** The organizer needs a Google Workspace plan
-  with Meet transcripts or recording, or a Google AI plan for Gemini notes.
+  with Meet transcripts or recording, or Google AI Pro or Ultra for Gemini
+  notes.
