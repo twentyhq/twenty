@@ -91,6 +91,9 @@ export type {
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';
+export type { ExpressionDate } from './ExpressionDate';
+export type { ExpressionDatePart } from './ExpressionDatePart';
+export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';

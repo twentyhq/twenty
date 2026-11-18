@@ -132,7 +132,7 @@ msgstr "24 óra"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
-msgstr ""
+msgstr "Egy {type} típusú navigációs menüelem nem helyezhető el egy {parentType} típuson belül"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -324,13 +324,13 @@ msgstr "A FOLDER típushoz a név megadása kötelező."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for SECTION type"
-msgstr ""
+msgstr "A SECTION típushoz név szükséges"
 
 #. js-lingui-id: yA/goz
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for TAB type"
-msgstr ""
+msgstr "A TAB típushoz a név megadása kötelező"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1577,7 +1577,7 @@ msgstr "Az alkalmazások nem frissíthetik ezeket a mezőket: {fieldsList}."
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 #: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
 msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr ""
+msgstr "Az előtérbeli komponensek forrásainak visszaállításához alkalmazza vagy tegye közzé újra az alkalmazást."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1958,7 +1958,7 @@ msgstr "Számlázás"
 #. js-lingui-id: HhE4nB
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing arrangement not found."
-msgstr ""
+msgstr "A számlázási megállapodás nem található."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11937,7 +11937,7 @@ msgstr "Szerepkör"
 #. js-lingui-id: hYcnrj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" cannot be assigned"
-msgstr ""
+msgstr "A(z) „{roleLabel}” szerepkör nem rendelhető hozzá"
 
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11983,7 +11983,7 @@ msgstr "A \"{roleLabel}\" szerepkör nem rendelhető hozzá: az egyéni szerepk�
 #. js-lingui-id: aMDMRk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
-msgstr ""
+msgstr "A(z) „{roleLabel}” szerepkört a rendszer fenntartja, és nem rendelhető hozzá"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14733,7 +14733,7 @@ msgstr "Ez az alkalmazásváltozó-hatókör nem támogatott."
 #. js-lingui-id: akCeIt
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
-msgstr ""
+msgstr "Ennek a számlázási megállapodásnak érvénytelen beállításai vannak."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14779,7 +14779,7 @@ msgstr "Ennek a kampánynak a listája a kukában van. Állítsa vissza, vagy v�
 #. js-lingui-id: wicYT+
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This change would bill more members than the hard seat cap allows."
-msgstr ""
+msgstr "Ez a módosítás több tag számlázását eredményezné, mint amennyit a szigorú férőhelykorlát engedélyez."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -15032,7 +15032,7 @@ msgstr "Ez a feladat túl nagy ahhoz, hogy sorba legyen állítva."
 #. js-lingui-id: wU/+Ok
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of billing arrangement cannot be created or ended by hand."
-msgstr ""
+msgstr "Ez a fajta számlázási megállapodás nem hozható létre vagy szüntethető meg kézzel."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15483,7 +15483,7 @@ msgstr "Ehhez a munkaterülethez már tartozik előfizetés."
 #. js-lingui-id: tLPjQC
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has an arrangement of this type over that period."
-msgstr ""
+msgstr "Ez a munkaterület már rendelkezik ilyen típusú megállapodással arra az időszakra."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -49,7 +49,29 @@ describe('parseGoogleMeetEventOrThrow', () => {
     });
   });
 
-  it('should read an event that carries no transcript or smart note', () => {
+  it('should read the recording of a recording event', () => {
+    expect(
+      parseGoogleMeetEventOrThrow({
+        message: {
+          attributes: {
+            'ce-source': '//workspaceevents.googleapis.com/subscriptions/first',
+            'ce-type': 'google.workspace.meet.recording.v2.fileGenerated',
+          },
+          data: Buffer.from(
+            JSON.stringify({
+              recording: { name: 'conferenceRecords/first/recordings/first' },
+            }),
+          ).toString('base64'),
+        },
+      }),
+    ).toEqual({
+      subscriptionName: 'subscriptions/first',
+      eventType: 'google.workspace.meet.recording.v2.fileGenerated',
+      artifactName: 'conferenceRecords/first/recordings/first',
+    });
+  });
+
+  it('should read an event that carries no transcript, smart note or recording', () => {
     expect(
       parseGoogleMeetEventOrThrow({
         message: {

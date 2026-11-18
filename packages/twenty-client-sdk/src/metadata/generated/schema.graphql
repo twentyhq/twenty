@@ -545,7 +545,7 @@ type Application {
   content: ApplicationContent
   createdAt: DateTime!
   defaultLogicFunctionRole: Role
-  defaultRoleId: String
+  defaultRoleId: String @deprecated(reason: "Use requestedRoleId instead")
   description: String
   frontComponents: [FrontComponent!]!
   grantRoleId: UUID
@@ -561,6 +561,7 @@ type Application {
   packageJsonChecksum: String
   packageJsonFileId: UUID
   requestedIframeMediaPermissions: [IframeMediaPermission!]!
+  requestedRoleId: UUID
   runHealthCheckOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
@@ -2352,7 +2353,6 @@ enum EngineComponentKey {
   SEE_RUNS_WORKFLOW_VERSION
   SEE_VERSIONS_WORKFLOW
   SEE_VERSIONS_WORKFLOW_VERSION
-  SEE_VERSION_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_VERSION
   SEND_MESSAGE_CAMPAIGN

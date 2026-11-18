@@ -144,9 +144,8 @@ export const useTriggerRecordBoardFetchMore = () => {
 
     for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
       const foundGroupInResult = groups.find(
-        (recordGroup: any) =>
-          (recordGroup.groupByDimensionValues[0] as string) ===
-          recordGroupDefinition.value,
+        (recordGroup) =>
+          recordGroup.groupByDimensionValues[0] === recordGroupDefinition.value,
       );
 
       if (!isDefined(foundGroupInResult)) {

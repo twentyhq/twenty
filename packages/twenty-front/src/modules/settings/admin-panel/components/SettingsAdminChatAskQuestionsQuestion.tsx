@@ -7,7 +7,7 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatAskQuestionsQuestionProps = {

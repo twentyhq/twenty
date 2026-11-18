@@ -260,10 +260,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
           isValid: (value: string) => {
             try {
               const parsedValue = JSON.parse(value);
-              return (
-                Array.isArray(parsedValue) &&
-                parsedValue.every((item: any) => isString(item))
-              );
+              return Array.isArray(parsedValue) && parsedValue.every(isString);
             } catch {
               return false;
             }
