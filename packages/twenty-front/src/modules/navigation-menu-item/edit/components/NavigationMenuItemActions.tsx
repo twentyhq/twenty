@@ -8,6 +8,7 @@ import {
   IconChevronDown,
   IconHierarchy2,
   IconFolderSymlink,
+  IconLayoutList,
   IconRowInsertTop,
   IconRowInsertBottom,
   IconTrash,
@@ -49,6 +50,17 @@ export const NavigationMenuItemActions = ({
     useNavigationMenuItemMoveRemove(section, containerId);
   const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
+  const sections =
+    section === 'workspace'
+      ? workspaceNavigationMenuItems.filter(
+          (candidate) =>
+            candidate.type === NavigationMenuItemType.SECTION &&
+            candidate.id !== containerId,
+        )
+      : [];
+  const getTabName = (tabId: string | null | undefined) =>
+    workspaceNavigationMenuItems.find((candidate) => candidate.id === tabId)
+      ?.name ?? t`Home`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
     void action();
@@ -71,9 +83,10 @@ export const NavigationMenuItemActions = ({
     },
     {
       id: 'folder',
-      label: t`Move to folder`,
+      label: sections.length > 0 ? t`Move to` : t`Move to folder`,
       Icon: IconFolderSymlink,
-      isDisabled: item.type === NavigationMenuItemType.FOLDER,
+      isDisabled:
+        item.type === NavigationMenuItemType.FOLDER && sections.length === 0,
       hasSubMenu: true,
       onClick: () => goToPage('folders'),
     },
@@ -110,7 +123,11 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => moveToFolder(item.id, containerId)),
     },
     ...items
-      .filter((folder) => folder.type === NavigationMenuItemType.FOLDER)
+      .filter(
+        (folder) =>
+          folder.type === NavigationMenuItemType.FOLDER &&
+          item.type !== NavigationMenuItemType.FOLDER,
+      )
       .map((folder) => ({
         id: folder.id,
         label: folder.name ?? t`Folder`,
@@ -123,6 +140,13 @@ export const NavigationMenuItemActions = ({
         isDisabled: folder.id === item.parentId,
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
+    ...sections.map((targetSection) => ({
+      id: targetSection.id,
+      label: targetSection.name ?? t`Section`,
+      contextualText: getTabName(targetSection.parentId),
+      Icon: IconLayoutList,
+      onClick: () => run(() => moveToFolder(item.id, targetSection.id)),
+    })),
   ];
   return (
     <>
@@ -134,7 +158,9 @@ export const NavigationMenuItemActions = ({
         </Dropdown.Section>
       </Dropdown.Page>
       <Dropdown.Page id="folders">
-        <Dropdown.Back>{t`Move to folder`}</Dropdown.Back>
+        <Dropdown.Back>
+          {sections.length > 0 ? t`Move to` : t`Move to folder`}
+        </Dropdown.Back>
         <Dropdown.Section scrollable>
           {folders.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
