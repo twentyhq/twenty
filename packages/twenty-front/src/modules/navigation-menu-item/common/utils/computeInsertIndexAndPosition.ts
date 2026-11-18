@@ -1,26 +1,24 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const computeInsertIndexAndPosition = (
-  items: NavigationMenuItem[],
-  targetFolderId: string | null,
-  targetIndex: number,
-  isSibling: (item: NavigationMenuItem) => boolean = () => true,
-) => {
-  const itemsInFolder = items
-    .filter(
-      (item) => (item.parentId ?? null) === targetFolderId && isSibling(item),
-    )
-    .sort((a, b) => a.position - b.position);
-  const insertRef = itemsInFolder[targetIndex];
-  const lastInFolder = itemsInFolder[itemsInFolder.length - 1];
+export const computeInsertIndexAndPosition = ({
+  items,
+  siblings,
+  targetIndex,
+}: {
+  items: NavigationMenuItem[];
+  siblings: NavigationMenuItem[];
+  targetIndex: number;
+}) => {
+  const insertRef = siblings[targetIndex];
+  const lastSibling = siblings[siblings.length - 1];
   const flatIndex = isDefined(insertRef)
     ? items.indexOf(insertRef)
-    : isDefined(lastInFolder)
-      ? items.indexOf(lastInFolder) + 1
+    : isDefined(lastSibling)
+      ? items.indexOf(lastSibling) + 1
       : items.length;
-  const prevPosition = itemsInFolder[targetIndex - 1]?.position ?? 0;
-  const nextPosition = itemsInFolder[targetIndex]?.position ?? prevPosition + 1;
+  const prevPosition = siblings[targetIndex - 1]?.position ?? 0;
+  const nextPosition = siblings[targetIndex]?.position ?? prevPosition + 1;
   const position = (prevPosition + nextPosition) / 2;
   return { flatIndex, position };
 };
