@@ -35,11 +35,13 @@ export class RestoreOneResolverFactory implements WorkspaceResolverBuilderFactor
       });
 
       try {
-        const { results: record } =
-          await this.commonRestoreOneQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: record,
+          args: { selectedFieldsResult },
+        } = await this.commonRestoreOneQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -51,6 +53,7 @@ export class RestoreOneResolverFactory implements WorkspaceResolverBuilderFactor
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
+          selection: selectedFieldsResult,
           take: 1,
           totalCount: 1,
         });

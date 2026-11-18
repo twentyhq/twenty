@@ -1,6 +1,4 @@
 import { type GraphQLResolveInfo } from 'graphql';
-import isEqual from 'lodash.isequal';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
@@ -8,62 +6,58 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
 import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
+import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
-const addFieldSelections = ({
-  fieldSelections,
-  selectedFields,
-}: {
-  fieldSelections: GraphqlFieldSelection[];
-  selectedFields: ResolverSelectedFields;
-}) => {
-  for (const fieldSelection of fieldSelections) {
-    const { fieldName } = fieldSelection;
-    const existingSelectedField: ResolverSelectedFields | undefined =
-      selectedFields[fieldName];
-
-    // Keyed by field name, so aliases of one field share a single set of arguments
-    if (
-      isDefined(existingSelectedField) &&
-      !isEqual(
-        existingSelectedField.__arguments ?? {},
-        fieldSelection.arguments,
-      )
-    ) {
-      throw new CommonQueryRunnerException(
-        `Conflicting arguments for "${fieldName}": every selection of a field must use the same arguments`,
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
-
-    const selectedField: ResolverSelectedFields =
-      existingSelectedField ?? Object.create(null);
-
-    selectedFields[fieldName] = selectedField;
-
-    if (Object.keys(fieldSelection.arguments).length > 0) {
-      selectedField.__arguments = fieldSelection.arguments;
-    }
-
-    addFieldSelections({
-      fieldSelections: fieldSelection.selections,
-      selectedFields: selectedField,
-    });
+// Direct execution skips validation; such names are never schema fields and would collide with __arguments
+const assertIsNotReservedFieldName = (fieldName: string) => {
+  if (fieldName.startsWith('__') && fieldName !== '__typename') {
+    throw new CommonQueryRunnerException(
+      `Cannot query field "${fieldName}": names starting with "__" are reserved`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
   }
 };
 
-// Null-prototype levels: a selected name such as __proto__ must stay an ordinary key
+const buildSelectedFields = (
+  fieldSelections: GraphqlFieldSelection[],
+): ResolverSelectedFields => {
+  const fieldSelectionsByKey = new Map<string, GraphqlFieldSelection[]>();
+
+  for (const fieldSelection of fieldSelections) {
+    assertIsNotReservedFieldName(fieldSelection.fieldName);
+
+    const selectionKey = computeSelectionKey(fieldSelection);
+
+    fieldSelectionsByKey.set(selectionKey, [
+      ...(fieldSelectionsByKey.get(selectionKey) ?? []),
+      fieldSelection,
+    ]);
+  }
+
+  return Object.fromEntries(
+    [...fieldSelectionsByKey].map(([selectionKey, sameKeySelections]) => {
+      const fieldArguments = sameKeySelections[0].arguments;
+
+      return [
+        selectionKey,
+        {
+          ...(Object.keys(fieldArguments).length > 0
+            ? { __arguments: fieldArguments }
+            : {}),
+          ...buildSelectedFields(
+            sameKeySelections.flatMap(({ selections }) => selections),
+          ),
+        },
+      ];
+    }),
+  );
+};
+
+// Keyed by what to load, so aliases sharing a field and its arguments load once
 export const getResolverSelectedFields = (
   info: Pick<GraphQLResolveInfo, 'fieldNodes' | 'fragments' | 'variableValues'>,
-): ResolverSelectedFields => {
-  const selectedFields: ResolverSelectedFields = Object.create(null);
-
-  addFieldSelections({
-    fieldSelections: getGraphqlFieldSelections(info),
-    selectedFields,
-  });
-
-  return selectedFields;
-};
+): ResolverSelectedFields =>
+  buildSelectedFields(getGraphqlFieldSelections(info));
