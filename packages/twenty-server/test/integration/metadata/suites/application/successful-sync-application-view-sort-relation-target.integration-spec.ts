@@ -72,29 +72,9 @@ type ViewWithSorts = {
   universalIdentifier: string;
   viewSorts: {
     id: string;
-    universalIdentifier: string;
+    fieldMetadataId: string;
     relationTargetFieldMetadataId: string | null;
   }[];
-};
-
-const findViewSort = async () => {
-  const { data } = await findViews<ViewWithSorts>({
-    expectToFail: false,
-    gqlFields: `
-      universalIdentifier
-      viewSorts {
-        id
-        universalIdentifier
-        relationTargetFieldMetadataId
-      }
-    `,
-  });
-
-  return data.getViews
-    .find((view) => view.universalIdentifier === PERSON_VIEW_ID)
-    ?.viewSorts.find(
-      (viewSort) => viewSort.universalIdentifier === VIEW_SORT_ID,
-    );
 };
 
 const findFieldIdByUniversalIdentifier = async (
@@ -110,6 +90,28 @@ const findFieldIdByUniversalIdentifier = async (
     ({ node }: { node: { universalIdentifier: string } }) =>
       node.universalIdentifier === universalIdentifier,
   )?.node.id;
+};
+
+const findViewSort = async () => {
+  const { data } = await findViews<ViewWithSorts>({
+    expectToFail: false,
+    gqlFields: `
+      universalIdentifier
+      viewSorts {
+        id
+        fieldMetadataId
+        relationTargetFieldMetadataId
+      }
+    `,
+  });
+
+  const companyFieldId = await findFieldIdByUniversalIdentifier(
+    STANDARD_OBJECTS.person.fields.company.universalIdentifier,
+  );
+
+  return data.getViews
+    .find((view) => view.universalIdentifier === PERSON_VIEW_ID)
+    ?.viewSorts.find((viewSort) => viewSort.fieldMetadataId === companyFieldId);
 };
 
 describe('Sync application with a view sort ordering by a field of the related record', () => {
