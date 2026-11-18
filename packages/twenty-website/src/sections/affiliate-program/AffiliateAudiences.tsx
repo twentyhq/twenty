@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
-import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import {
   color,
   FONT_WEIGHT,
@@ -24,8 +24,13 @@ import {
 } from '@/ui';
 
 import { AFFILIATE_AUDIENCES } from './affiliate-audiences.data';
+import { AUDIENCE_MODEL_SETTINGS } from './audience-model-settings';
+
+const AUDIENCE_MODEL_SIZE_PX = 160;
 
 const HeadingMeasure = styled.div`
+  scroll-margin-top: ${spacing(32)};
+
   ${mediaUp('md')} {
     max-width: 640px;
   }
@@ -51,6 +56,10 @@ const AudienceCard = styled.div`
   border-radius: ${radius(2)};
   padding: ${spacing(6)};
 
+  ${mediaUp('sm')} {
+    padding: ${spacing(8)};
+  }
+
   & > * + * {
     margin-top: ${spacing(2)};
   }
@@ -60,31 +69,20 @@ const AudienceCard = styled.div`
   }
 `;
 
-// One slot height for every card, so titles align whether or not the
-// audience has its icon yet.
 const AudienceVisual = styled.div`
-  align-items: flex-start;
-  display: flex;
-  height: ${spacing(20)};
-`;
+  --audience-model-size: ${spacing(30)};
+  height: var(--audience-model-size);
+  width: var(--audience-model-size);
 
-const AudienceIcon = styled.div<{ $widthPx: number }>`
-  height: 100%;
-  position: relative;
-  width: ${({ $widthPx }) => `${$widthPx}px`};
+  ${mediaUp('sm')} {
+    --audience-model-size: ${AUDIENCE_MODEL_SIZE_PX}px;
+  }
 
   img {
-    object-fit: contain;
-    object-position: left top;
+    display: block;
+    height: 100%;
+    width: 100%;
   }
-`;
-
-const AudienceMarker = styled.span`
-  background-color: ${color('blue')};
-  border-radius: 1px;
-  display: block;
-  height: 7px;
-  width: 14px;
 `;
 
 const AudienceTitle = styled.h3`
@@ -104,7 +102,7 @@ export function AffiliateAudiences() {
       <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Who it's for`)}</Eyebrow>
-          <HeadingMeasure>
+          <HeadingMeasure id="audiences">
             <Heading as="h2" size="lg" weight="light">
               {i18n._(msg`People that teams trust *to pick their tools*`)}
             </Heading>
@@ -113,19 +111,21 @@ export function AffiliateAudiences() {
         <AudienceGrid>
           {AFFILIATE_AUDIENCES.map((audience) => (
             <AudienceCard key={audience.title.id}>
-              <AudienceVisual aria-hidden>
-                {isDefined(audience.icon) ? (
-                  <AudienceIcon $widthPx={audience.icon.widthPx}>
+              <AudienceVisual aria-hidden data-illustration={audience.model}>
+                <HalftoneModel
+                  modelUrl={`/models/${audience.model}.glb`}
+                  poster={
                     <NextImage
                       alt=""
-                      fill
-                      sizes={`${audience.icon.widthPx}px`}
-                      src={audience.icon.src}
+                      height={AUDIENCE_MODEL_SIZE_PX}
+                      src={`/images/partners/audiences/${audience.model}.webp`}
+                      unoptimized
+                      width={AUDIENCE_MODEL_SIZE_PX}
                     />
-                  </AudienceIcon>
-                ) : (
-                  <AudienceMarker />
-                )}
+                  }
+                  reducedMotionMode="poster"
+                  settings={AUDIENCE_MODEL_SETTINGS}
+                />
               </AudienceVisual>
               <AudienceTitle>{i18n._(audience.title)}</AudienceTitle>
               <Body muted size="sm">

@@ -27,6 +27,7 @@ export type HalftoneModelSceneProps = {
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
   geometryOptions?: LoadGlbGeometryOptions;
+  onFirstFrame?: () => void;
 };
 
 export function HalftoneModelScene({
@@ -34,6 +35,7 @@ export function HalftoneModelScene({
   settings,
   initialPose,
   geometryOptions,
+  onFirstFrame,
 }: HalftoneModelSceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { reducedMotion } = useVisualRuntime();
@@ -63,6 +65,7 @@ export function HalftoneModelScene({
             geometry,
             settings: resolved,
             initialPose,
+            onFirstFrame,
             reducedMotion,
           })
         : createBandSession({
@@ -70,6 +73,7 @@ export function HalftoneModelScene({
             geometry,
             settings: resolved,
             initialPose,
+            onFirstFrame,
             reducedMotion,
           }),
     ).then((createdSession) => {
@@ -87,7 +91,7 @@ export function HalftoneModelScene({
     // settings/initialPose are config records owned by the section; their
     // identity is stable for the life of the mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geometry, reducedMotion]);
+  }, [geometry, onFirstFrame, reducedMotion]);
 
   return <SceneContainer ref={containerRef} />;
 }
