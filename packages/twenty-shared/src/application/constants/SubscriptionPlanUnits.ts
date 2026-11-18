@@ -1,0 +1,4 @@
+export const SUBSCRIPTION_PLAN_UNITS = [
+  'WORKSPACE_MEMBER',
+  'CONNECTED_ACCOUNT',
+] as const;

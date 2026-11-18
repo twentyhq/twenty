@@ -1,0 +1,3 @@
+export const MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS = Math.floor(
+  99_999_999 / 12,
+);

@@ -1,4 +1,5 @@
 import { type BillableOperations } from '@/application/billableOperationsType';
+import { type SubscriptionPlans } from '@/application/subscriptionPlanType';
 
 /** @deprecated Use `billing.subscriptions` */
 export const RECURRING_CHARGE_PERIODS = ['MONTH'] as const;
@@ -69,49 +70,6 @@ export const isRecurringCharge = (value: unknown): value is RecurringCharge => {
 // Raised by the platform once per billing period, unlike operations the app charges via chargeCredits.
 /** @deprecated Use `SubscriptionPlans` */
 export type RecurringCharges = Partial<Record<string, RecurringCharge>>;
-
-export const MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS = Math.floor(
-  99_999_999 / 12,
-);
-
-export const isSubscriptionPlanMonthlyAmount = (
-  value: unknown,
-): value is number =>
-  typeof value === 'number' &&
-  Number.isSafeInteger(value) &&
-  value > 0 &&
-  value <= MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS;
-
-export const SUBSCRIPTION_PLAN_UNITS = [
-  'WORKSPACE_MEMBER',
-  'CONNECTED_ACCOUNT',
-] as const;
-
-export type SubscriptionPlanUnit = (typeof SUBSCRIPTION_PLAN_UNITS)[number];
-
-export const isSubscriptionPlanUnit = (
-  value: unknown,
-): value is SubscriptionPlanUnit =>
-  SUBSCRIPTION_PLAN_UNITS.some((unit) => unit === value);
-
-export const SUBSCRIPTION_PLAN_CURRENCIES = ['USD'] as const;
-
-export type SubscriptionPlanCurrency =
-  (typeof SUBSCRIPTION_PLAN_CURRENCIES)[number];
-
-export const isSubscriptionPlanCurrency = (
-  value: unknown,
-): value is SubscriptionPlanCurrency =>
-  SUBSCRIPTION_PLAN_CURRENCIES.some((currency) => currency === value);
-
-export type SubscriptionPlan = {
-  label: string;
-  monthlyAmountCents: number;
-  currency?: SubscriptionPlanCurrency;
-  per?: SubscriptionPlanUnit;
-};
-
-export type SubscriptionPlans = Partial<Record<string, SubscriptionPlan>>;
 
 export type ApplicationBilling = {
   description?: string;
