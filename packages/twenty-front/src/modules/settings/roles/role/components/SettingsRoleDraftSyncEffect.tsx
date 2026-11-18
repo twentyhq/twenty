@@ -1,4 +1,4 @@
-import { getDraftRoleSyncedWithPersistedRole } from '@/settings/roles/role/utils/getDraftRoleSyncedWithPersistedRole';
+import { mergePersistedRoleIntoDraftRole } from '@/settings/roles/role/utils/mergePersistedRoleIntoDraftRole';
 import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -42,7 +42,7 @@ export const SettingsRoleDraftSyncEffect = ({
     const currentDraftRole = store.get(draftRoleAtom);
     const initialDraftRole = store.get(initialDraftRoleAtom);
 
-    const nextDraftRole = getDraftRoleSyncedWithPersistedRole({
+    const nextDraftRole = mergePersistedRoleIntoDraftRole({
       draftRole: currentDraftRole,
       initialDraftRole,
       persistedRole: settingsPersistedRole,

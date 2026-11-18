@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { coreAgentDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentDraftRoleFamilyState';
 import { coreAgentInitialDraftRoleFamilyState } from '@/object-core/agents/states/coreAgentInitialDraftRoleFamilyState';
-import { getDraftRoleSyncedWithPersistedRole } from '@/settings/roles/role/utils/getDraftRoleSyncedWithPersistedRole';
+import { mergePersistedRoleIntoDraftRole } from '@/settings/roles/role/utils/mergePersistedRoleIntoDraftRole';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -36,7 +36,7 @@ export const CoreAgentRoleDraftSyncEffect = ({
     const currentDraftRole = store.get(draftRoleAtom);
     const initialDraftRole = store.get(initialDraftRoleAtom);
 
-    const nextDraftRole = getDraftRoleSyncedWithPersistedRole({
+    const nextDraftRole = mergePersistedRoleIntoDraftRole({
       draftRole: currentDraftRole,
       initialDraftRole,
       persistedRole: settingsPersistedRole,
