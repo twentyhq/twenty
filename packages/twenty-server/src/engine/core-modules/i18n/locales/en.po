@@ -1571,13 +1571,13 @@ msgstr "Application variable scope cannot be changed after creation"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Applications cannot update these fields: {fieldsList}."
 
-#. js-lingui-id: irwO8L
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr "Apply or publish the application again to restore its frontend component sources."
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr "Apply or publish the application again to restore its application sources."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

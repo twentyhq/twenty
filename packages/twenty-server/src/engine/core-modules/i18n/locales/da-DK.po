@@ -1576,13 +1576,13 @@ msgstr "Omfanget for applikationsvariablen kan ikke ændres efter oprettelse"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Applikationer kan ikke opdatere disse felter: {fieldsList}."
 
-#. js-lingui-id: irwO8L
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr "Anvend eller udgiv applikationen igen for at gendanne dens frontend-komponentkilder."
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr ""
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
