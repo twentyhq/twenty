@@ -13,27 +13,27 @@ import {
   type CommonSelectedFieldsResult,
 } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
-import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
+import { CommonQueryFilterConditionParser } from 'src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-condition.parser';
+import { CommonQueryOrderGroupByParser } from 'src/engine/api/common/common-query-parsers/common-query-order/common-query-order-group-by.parser';
 import {
-  GraphqlQueryOrderFieldParser,
+  CommonQueryOrderFieldParser,
   type OrderByClause,
   type RelationJoinInfo,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
-import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+} from 'src/engine/api/common/common-query-parsers/common-query-order/common-query-order.parser';
+import { CommonQuerySelectedFieldsParser } from 'src/engine/api/common/common-query-parsers/common-query-selected-fields/common-selected-fields.parser';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/common/common-query-parsers/utils/add-relation-join-alias.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
-export class GraphqlQueryParser {
+export class CommonQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  private filterConditionParser: GraphqlQueryFilterConditionParser;
-  private orderFieldParser: GraphqlQueryOrderFieldParser;
-  private orderGroupByParser: GraphqlQueryOrderGroupByParser;
+  private filterConditionParser: CommonQueryFilterConditionParser;
+  private orderFieldParser: CommonQueryOrderFieldParser;
+  private orderGroupByParser: CommonQueryOrderGroupByParser;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
@@ -44,17 +44,17 @@ export class GraphqlQueryParser {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
 
-    this.filterConditionParser = new GraphqlQueryFilterConditionParser(
+    this.filterConditionParser = new CommonQueryFilterConditionParser(
       this.flatObjectMetadata,
       this.flatFieldMetadataMaps,
       this.flatObjectMetadataMaps,
     );
-    this.orderFieldParser = new GraphqlQueryOrderFieldParser(
+    this.orderFieldParser = new CommonQueryOrderFieldParser(
       this.flatObjectMetadata,
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );
-    this.orderGroupByParser = new GraphqlQueryOrderGroupByParser(
+    this.orderGroupByParser = new CommonQueryOrderGroupByParser(
       this.flatObjectMetadata,
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
@@ -244,7 +244,7 @@ export class GraphqlQueryParser {
   public parseSelectedFields(
     selectedFields: CommonSelectedFields,
   ): CommonSelectedFieldsResult {
-    const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
+    const selectedFieldsParser = new CommonQuerySelectedFieldsParser(
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );

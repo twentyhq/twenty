@@ -28,7 +28,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
@@ -289,7 +289,7 @@ export class ProcessNestedRelationsHelper {
           shouldComputeAggregates,
           targetObjectNameSingular,
           relationSelection,
-          relationQueryParser: new GraphqlQueryParser(
+          relationQueryParser: new CommonQueryParser(
             targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -411,7 +411,7 @@ export class ProcessNestedRelationsHelper {
     shouldComputeAggregates: boolean;
     targetObjectNameSingular: string;
     relationSelection: CommonRelationSelection;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
@@ -535,7 +535,7 @@ export class ProcessNestedRelationsHelper {
     ids: string[];
     perParentLimit: number;
     relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
 
@@ -595,7 +595,7 @@ export class ProcessNestedRelationsHelper {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
     relationSelection: Pick<CommonRelationSelection, 'filter'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): void {
     if (!isDefined(relationSelection.filter)) {
       return;

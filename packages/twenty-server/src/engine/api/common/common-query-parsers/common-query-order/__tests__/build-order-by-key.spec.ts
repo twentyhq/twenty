@@ -4,7 +4,7 @@ import {
   buildOrderByColumnExpression,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
+} from 'src/engine/api/common/common-query-parsers/common-query-order/utils/build-order-by-column-expression.util';
 
 describe('buildOrderByColumnExpression', () => {
   describe('returns unquoted column expressions for TypeORM', () => {

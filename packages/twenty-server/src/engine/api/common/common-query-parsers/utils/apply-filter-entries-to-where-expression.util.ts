@@ -1,12 +1,12 @@
 import { Brackets, NotBrackets, type WhereExpressionBuilder } from 'typeorm';
 
-import { type GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
+import { type CommonQueryFilterFieldParser } from 'src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 type FilterWalkContext = {
   outerQueryBuilder: WorkspaceSelectQueryBuilder;
   objectNameSingular: string;
-  fieldParser: GraphqlQueryFilterFieldParser;
+  fieldParser: CommonQueryFilterFieldParser;
   useDirectTableReference: boolean;
 };
 
@@ -22,7 +22,7 @@ export const applyFilterEntriesToWhereExpression = ({
   outerQueryBuilder: WorkspaceSelectQueryBuilder;
   objectNameSingular: string;
   filter: Record<string, unknown>;
-  fieldParser: GraphqlQueryFilterFieldParser;
+  fieldParser: CommonQueryFilterFieldParser;
   useDirectTableReference?: boolean;
 }): void => {
   applyFilterEntries(whereExpression, filter, {

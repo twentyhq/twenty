@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
-import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonQuerySelectedFieldsParser } from 'src/engine/api/common/common-query-parsers/common-query-selected-fields/common-selected-fields.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -57,7 +57,7 @@ const buildObjectMaps = (
   universalIdentifiersByApplicationId: {},
 });
 
-describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
+describe('CommonQuerySelectedFieldsParser relation fields', () => {
   const leadIdField = createMockField({
     id: 'lead-id-field',
     name: 'id',
@@ -106,7 +106,7 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
 
   it('should ignore a relation selected as a boolean', () => {
     // Boolean selections carry no sub-fields; only the object form hydrates
-    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
     const result = parser.parse(
       {
@@ -123,7 +123,7 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
   });
 
   it('should hydrate a relation selected as a nested object', () => {
-    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
     const result = parser.parse(
       {
@@ -156,7 +156,7 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
   });
 
   it('should build one relation selection per selection key', () => {
-    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
     const firstFundKey = computeSelectionKey({
       fieldName: 'fund',
       arguments: { first: 2 },

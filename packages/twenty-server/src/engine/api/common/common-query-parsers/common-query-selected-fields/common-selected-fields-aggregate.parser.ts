@@ -10,7 +10,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export class GraphqlQuerySelectedFieldsAggregateParser {
+export class CommonQuerySelectedFieldsAggregateParser {
   parse(
     selectedAggregates: string[],
     flatObjectMetadata: FlatObjectMetadata,

@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
+import { parseCompositeFieldForOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/parse-composite-field-for-order.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 describe('parseCompositeFieldForOrder', () => {

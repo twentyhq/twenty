@@ -13,8 +13,8 @@ import {
   type CommonSelectedFieldsResult,
 } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
-import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
+import { CommonQuerySelectedFieldsAggregateParser } from 'src/engine/api/common/common-query-parsers/common-query-selected-fields/common-selected-fields-aggregate.parser';
+import { CommonQuerySelectedFieldsRelationParser } from 'src/engine/api/common/common-query-parsers/common-query-selected-fields/common-selected-fields-relation.parser';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -34,9 +34,9 @@ const isFieldSelected = ({
 }): boolean =>
   Object.prototype.hasOwnProperty.call(selectedFields.fields, fieldName);
 
-export class GraphqlQuerySelectedFieldsParser {
-  private graphqlQuerySelectedFieldsRelationParser: GraphqlQuerySelectedFieldsRelationParser;
-  private aggregateParser: GraphqlQuerySelectedFieldsAggregateParser;
+export class CommonQuerySelectedFieldsParser {
+  private commonQuerySelectedFieldsRelationParser: CommonQuerySelectedFieldsRelationParser;
+  private aggregateParser: CommonQuerySelectedFieldsAggregateParser;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 
@@ -46,12 +46,12 @@ export class GraphqlQuerySelectedFieldsParser {
   ) {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
-    this.graphqlQuerySelectedFieldsRelationParser =
-      new GraphqlQuerySelectedFieldsRelationParser(
+    this.commonQuerySelectedFieldsRelationParser =
+      new CommonQuerySelectedFieldsRelationParser(
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
-    this.aggregateParser = new GraphqlQuerySelectedFieldsAggregateParser();
+    this.aggregateParser = new CommonQuerySelectedFieldsAggregateParser();
   }
 
   parse(
@@ -173,7 +173,7 @@ export class GraphqlQuerySelectedFieldsParser {
         continue;
       }
 
-      this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
+      this.commonQuerySelectedFieldsRelationParser.parseRelationField(
         fieldMetadata,
         relationKey,
         selectedRelation,

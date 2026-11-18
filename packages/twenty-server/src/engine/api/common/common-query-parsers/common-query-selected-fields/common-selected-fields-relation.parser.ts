@@ -8,14 +8,14 @@ import {
   type CommonSelectedFieldsResult,
   type CommonSelectedRelation,
 } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonQuerySelectedFieldsParser } from 'src/engine/api/common/common-query-parsers/common-query-selected-fields/common-selected-fields.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export class GraphqlQuerySelectedFieldsRelationParser {
+export class CommonQuerySelectedFieldsRelationParser {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private readonly filterArgProcessor = new FilterArgProcessorService();
@@ -55,7 +55,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       flatEntityMaps: this.flatObjectMetadataMaps,
     });
 
-    const fieldParser = new GraphqlQuerySelectedFieldsParser(
+    const fieldParser = new CommonQuerySelectedFieldsParser(
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );

@@ -43,7 +43,7 @@ import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/type
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
@@ -145,7 +145,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    const commonQueryParser = new GraphqlQueryParser(
+    const commonQueryParser = new CommonQueryParser(
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -285,7 +285,7 @@ export abstract class CommonBaseQueryRunnerService<
   private async executeQueryAndEnrichResults(
     processedArgs: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    commonQueryParser: GraphqlQueryParser,
+    commonQueryParser: CommonQueryParser,
   ): Promise<Output> {
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(

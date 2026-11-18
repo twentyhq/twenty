@@ -37,7 +37,7 @@ import {
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import {
@@ -354,7 +354,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-    commonQueryParser: GraphqlQueryParser;
+    commonQueryParser: CommonQueryParser;
     permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
   }): Promise<void> {
     const objectAlias = getObjectAlias(flatObjectMetadata);

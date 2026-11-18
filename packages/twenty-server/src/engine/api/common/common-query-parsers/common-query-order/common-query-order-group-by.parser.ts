@@ -19,10 +19,10 @@ import {
 } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByOrderExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-order-expression.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
-import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
-import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
-import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/convert-order-by-to-find-options-order';
+import { getOptionalOrderByCasting } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/get-optional-order-by-casting.util';
+import { parseCompositeFieldForOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/parse-composite-field-for-order.util';
+import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type AggregationField,
@@ -42,7 +42,7 @@ import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twen
 
 import { type OrderByClause } from './types/order-by-condition.type';
 
-export class GraphqlQueryOrderGroupByParser {
+export class CommonQueryOrderGroupByParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

@@ -15,7 +15,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
@@ -256,17 +256,16 @@ export class GroupByWithRecordsService {
       return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
     }
 
-    const graphqlQueryParser = new GraphqlQueryParser(
+    const commonQueryParser = new CommonQueryParser(
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     );
 
-    const { orderByRawSQL, relationJoins } =
-      graphqlQueryParser.getOrderByRawSQL(
-        orderByForRecords,
-        flatObjectMetadata.nameSingular,
-      );
+    const { orderByRawSQL, relationJoins } = commonQueryParser.getOrderByRawSQL(
+      orderByForRecords,
+      flatObjectMetadata.nameSingular,
+    );
 
     if (!isNonEmptyString(orderByRawSQL)) {
       return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;

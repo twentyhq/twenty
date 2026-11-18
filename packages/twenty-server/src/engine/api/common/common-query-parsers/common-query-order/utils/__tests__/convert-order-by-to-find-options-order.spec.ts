@@ -1,6 +1,6 @@
 import { OrderByDirection } from 'twenty-shared/types';
 
-import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/convert-order-by-to-find-options-order';
 
 describe('convertOrderByToFindOptionsOrder', () => {
   it.each([

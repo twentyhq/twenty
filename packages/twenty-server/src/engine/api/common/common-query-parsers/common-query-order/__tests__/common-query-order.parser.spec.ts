@@ -1,12 +1,12 @@
 import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
-import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { CommonQueryOrderFieldParser } from 'src/engine/api/common/common-query-parsers/common-query-order/common-query-order.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-describe('GraphqlQueryOrderFieldParser', () => {
+describe('CommonQueryOrderFieldParser', () => {
   const workspaceId = 'workspace-id';
   const objectMetadataId = 'object-id';
 
@@ -113,7 +113,7 @@ describe('GraphqlQueryOrderFieldParser', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const parser = new GraphqlQueryOrderFieldParser(
+  const parser = new CommonQueryOrderFieldParser(
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

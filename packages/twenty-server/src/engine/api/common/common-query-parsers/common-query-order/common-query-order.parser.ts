@@ -6,8 +6,8 @@ import {
   buildOrderByColumnExpression,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
-import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
+} from 'src/engine/api/common/common-query-parsers/common-query-order/utils/build-order-by-column-expression.util';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/convert-order-by-to-find-options-order';
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import { resolveOrderByLeaves } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -23,7 +23,7 @@ import { type RelationJoinInfo } from './types/relation-join-info.type';
 export { OrderByClause, ParseOrderByResult, RelationJoinInfo };
 
 // Leaves come from resolveOrderByLeaves, shared with cursors, so the scan order cannot diverge from cursor continuation
-export class GraphqlQueryOrderFieldParser {
+export class CommonQueryOrderFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

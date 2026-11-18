@@ -19,8 +19,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
-import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/common/common-query-parsers/utils/add-relation-join-alias.util';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/common/common-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArrayOrThrow } from 'src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util';
 import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
@@ -34,7 +34,7 @@ import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-fi
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
+import { CommonQueryFilterConditionParser } from './common-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export type ParentFilterScope = {
@@ -50,7 +50,7 @@ const SQL_COMPARISON_OPERATORS = {
   lte: '<=',
 } as const;
 
-export class GraphqlQueryFilterFieldParser {
+export class CommonQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
@@ -232,7 +232,7 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    const childConditionParser = new GraphqlQueryFilterConditionParser(
+    const childConditionParser = new CommonQueryFilterConditionParser(
       targetObjectMetadata,
       this.flatFieldMetadataMaps,
       this.flatObjectMetadataMaps,

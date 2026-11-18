@@ -2,19 +2,19 @@ import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { applyFilterEntriesToWhereExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/apply-filter-entries-to-where-expression.util';
+import { applyFilterEntriesToWhereExpression } from 'src/engine/api/common/common-query-parsers/utils/apply-filter-entries-to-where-expression.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 import {
-  GraphqlQueryFilterFieldParser,
+  CommonQueryFilterFieldParser,
   type ParentFilterScope,
-} from './graphql-query-filter-field.parser';
+} from './common-query-filter-field.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
-export class GraphqlQueryFilterConditionParser {
-  private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
+export class CommonQueryFilterConditionParser {
+  private queryFilterFieldParser: CommonQueryFilterFieldParser;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
@@ -23,7 +23,7 @@ export class GraphqlQueryFilterConditionParser {
     depth = 0,
     parentFilterScope?: ParentFilterScope,
   ) {
-    this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
+    this.queryFilterFieldParser = new CommonQueryFilterFieldParser(
       flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,

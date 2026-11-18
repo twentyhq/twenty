@@ -1,14 +1,14 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { type OrderByClause } from 'src/engine/api/common/common-query-parsers/common-query-order/common-query-order.parser';
 import {
   buildOrderByColumnExpression,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
-import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
+} from 'src/engine/api/common/common-query-parsers/common-query-order/utils/build-order-by-column-expression.util';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/convert-order-by-to-find-options-order';
+import { isOrderByDirection } from 'src/engine/api/common/common-query-parsers/common-query-order/utils/is-order-by-direction.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 

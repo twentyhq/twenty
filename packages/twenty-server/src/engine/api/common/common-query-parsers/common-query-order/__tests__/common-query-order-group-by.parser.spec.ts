@@ -11,7 +11,7 @@ import {
   type GroupByRelationField,
 } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
-import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
+import { CommonQueryOrderGroupByParser } from 'src/engine/api/common/common-query-parsers/common-query-order/common-query-order-group-by.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -23,7 +23,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 // NOT the physical table name (which is `_`-prefixed for custom objects via
 // `computeObjectTargetTable`). These tests pin order-by clauses to that alias so the
 // parser stays in sync if the alias convention ever changes.
-describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', () => {
+describe('CommonQueryOrderGroupByParser - object alias in order-by clauses', () => {
   const OBJECT_ID = 'rocket-object-id';
   const OBJECT_UNIVERSAL_ID = 'rocket-object-universal-id';
   const NAME_FIELD_ID = 'rocket-name-field-id';
@@ -83,7 +83,7 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
   const physicalTableName = computeObjectTargetTable(flatObjectMetadata);
 
   const buildParser = () =>
-    new GraphqlQueryOrderGroupByParser(
+    new CommonQueryOrderGroupByParser(
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -144,7 +144,7 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
   });
 });
 
-describe('GraphqlQueryOrderGroupByParser - relation order-by under target primary key group-by', () => {
+describe('CommonQueryOrderGroupByParser - relation order-by under target primary key group-by', () => {
   const SOURCE_OBJECT_ID = 'person-object-id';
   const SOURCE_OBJECT_UNIVERSAL_ID = 'person-object-universal-id';
   const COMPANY_RELATION_FIELD_ID = 'person-company-field-id';
@@ -313,7 +313,7 @@ describe('GraphqlQueryOrderGroupByParser - relation order-by under target primar
   };
 
   const buildParser = () =>
-    new GraphqlQueryOrderGroupByParser(
+    new CommonQueryOrderGroupByParser(
       sourceObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
