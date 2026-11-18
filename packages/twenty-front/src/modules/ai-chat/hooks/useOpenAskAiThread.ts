@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 

@@ -4,9 +4,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
-import { useAiChatThreadRename } from '@/ai-chat/hooks/useAiChatThreadRename';
-import { useIsAiChatThreadShownAsUnread } from '@/ai-chat/hooks/useIsAiChatThreadShownAsUnread';
-import { useAiChatThreadDisplayLabel } from '@/ai-chat/hooks/useAiChatThreadDisplayLabel';
+import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
+import { useIsAiChatThreadShownAsUnread } from '@/ai-chat/threads/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';

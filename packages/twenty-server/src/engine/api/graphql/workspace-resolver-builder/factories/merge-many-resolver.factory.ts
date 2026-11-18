@@ -35,11 +35,13 @@ export class MergeManyResolverFactory implements WorkspaceResolverBuilderFactory
       });
 
       try {
-        const { results: record } =
-          await this.commonMergeManyQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: record,
+          args: { selectedFieldsResult },
+        } = await this.commonMergeManyQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -51,6 +53,7 @@ export class MergeManyResolverFactory implements WorkspaceResolverBuilderFactory
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
+          selection: selectedFieldsResult,
           take: 1,
           totalCount: 1,
         });

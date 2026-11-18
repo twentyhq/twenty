@@ -1,8 +1,9 @@
+import { getApplicationSourceResources } from 'src/engine/core-modules/application/application-manifest/utils/get-application-source-resources.util';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { type ApplicationExportFileBudget } from 'src/engine/core-modules/application/application-manifest/types/application-export-file-budget.type';
-import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
+import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
 import { Injectable } from '@nestjs/common';
 import {
   isRestorableFrontComponentSourcePath,
@@ -27,7 +28,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class ApplicationFrontComponentExportService {
   constructor(
     private readonly fileStorageService: FileStorageService,
-    private readonly applicationFrontComponentSourceService: ApplicationFrontComponentSourceService,
+    private readonly applicationSourceService: ApplicationSourceService,
   ) {}
 
   async exportFrontComponents({
@@ -79,10 +80,12 @@ export class ApplicationFrontComponentExportService {
       }
       try {
         const inventory = shouldIncludeSourceDependencies
-          ? await this.applicationFrontComponentSourceService.read({
+          ? await this.applicationSourceService.read({
               workspaceId,
               applicationUniversalIdentifier,
-              component: manifest,
+              resource: getApplicationSourceResources({
+                manifest: { frontComponents: [manifest] },
+              })[0],
               remainingBytes: fileBudget.remainingBytes,
               exportedFiles: files,
             })
