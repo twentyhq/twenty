@@ -6,11 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- **Date functions in rule expressions: `dateDiff`, `dateAdd`, `dateTrunc` and `datePart`.** They take a unit (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) or, for `datePart`, a part (`'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`), read dates in UTC, and are available as `ruleExpression.dateDiff(...)` and so on. Minutes and hours are elapsed time; longer units count calendar days and months.
+
 ### Changed
 
 - **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
 
 ### Breaking Changes
+
+- **Date comparisons in rule expressions now compare values rather than timestamp spellings.** `==` and `!=` compare a date with a date-time by UTC calendar day; two date-times compare as instants for equality and ordering, including equivalent offsets and fractional-second precision. Existing rules and trigger conditions that relied on strict string equality or lexicographic timestamp ordering can change result.
+
+- **`ruleExpression.daysSince` is removed; use `ruleExpression.dateDiff(field, ruleExpression.now, 'DAY')`.** `dateDiff` gives the same whole UTC days, and also minutes, hours, weeks, months, quarters or years. `daysSince` is also removed from string expressions. Update existing rules to `dateDiff(date, now, 'DAY')` before upgrading.
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflowVersion`.** Workflow versions live in Twenty's core workflow store, and Twenty 2.60 drops the legacy workspace `workflowVersion` object from every workspace, along with `workflowRun.workflowVersion`, `timelineActivity.targetWorkflowVersion` and any other relation field that points at it. Remove references to the identifier, including relation fields that target it.
 
