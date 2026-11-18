@@ -3,7 +3,6 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -69,7 +68,8 @@ export const NavigationMenuItemAddDropdownContent = ({
     currentItems.filter(
       (item) =>
         (item.parentId ?? null) === (parentId ?? null) &&
-        !isNavigationMenuItemTabOrSection(item),
+        item.type !== NavigationMenuItemType.TAB &&
+        item.type !== NavigationMenuItemType.SECTION,
     ).length;
 
   const navigate = (next: Step) => {
