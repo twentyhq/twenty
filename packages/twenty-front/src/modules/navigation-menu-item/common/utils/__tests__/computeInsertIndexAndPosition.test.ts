@@ -1,26 +1,10 @@
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-const getSiblings = (items: NavigationMenuItem[], parentId: string | null) =>
-  items
-    .filter((item) => (item.parentId ?? null) === parentId)
-    .sort((a, b) => a.position - b.position);
-
-const compute = (
-  items: NavigationMenuItem[],
-  parentId: string | null,
-  targetIndex: number,
-) =>
-  computeInsertIndexAndPosition({
-    items,
-    siblings: getSiblings(items, parentId),
-    targetIndex,
-  });
-
 describe('computeInsertIndexAndPosition', () => {
   it('should compute flatIndex and position for insert in folder', () => {
     const empty: NavigationMenuItem[] = [];
-    expect(compute(empty, null, 0)).toEqual({
+    expect(computeInsertIndexAndPosition(empty, null, 0)).toEqual({
       flatIndex: 0,
       position: 0.5,
     });
@@ -29,7 +13,7 @@ describe('computeInsertIndexAndPosition', () => {
       { id: '1', parentId: null, position: 10 } as NavigationMenuItem,
       { id: '2', parentId: null, position: 20 } as NavigationMenuItem,
     ];
-    const between = compute(draft, null, 1);
+    const between = computeInsertIndexAndPosition(draft, null, 1);
     expect(between.flatIndex).toBe(1);
     expect(between.position).toBe(15);
   });
@@ -40,7 +24,7 @@ describe('computeInsertIndexAndPosition', () => {
       { id: '2', parentId: 'folder-b', position: 20 } as NavigationMenuItem,
       { id: '3', parentId: 'folder-b', position: 30 } as NavigationMenuItem,
     ];
-    const result = compute(draft, 'folder-b', 1);
+    const result = computeInsertIndexAndPosition(draft, 'folder-b', 1);
     expect(result.flatIndex).toBe(2);
     expect(result.position).toBe(25);
   });
@@ -60,7 +44,7 @@ describe('computeInsertIndexAndPosition', () => {
         userWorkspaceId: 'ws-1',
       } as NavigationMenuItem,
     ];
-    const inserted = compute(personalItems, null, 1);
+    const inserted = computeInsertIndexAndPosition(personalItems, null, 1);
     expect(inserted.flatIndex).toBe(1);
     expect(inserted.position).toBe(15);
   });
