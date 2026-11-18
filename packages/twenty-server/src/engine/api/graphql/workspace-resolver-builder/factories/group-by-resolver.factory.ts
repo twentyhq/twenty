@@ -50,6 +50,7 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
 
         const {
           results,
+          relationAggregatedValues,
           args: { selectedFieldsResult },
         } = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
@@ -60,6 +61,7 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
             objectRecords: group.records ?? [],
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            relationAggregatedValues,
             selection: selectedFieldsResult,
             take: group.records?.length || 0,
             totalCount: Number(group.totalCount ?? 0),
