@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(wybrano: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -288,7 +288,7 @@ msgstr "{0, plural, one {# Element} few {# Elementy} many {# Elementów} other {
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# krok} few {# kroki} many {# kroków} other {# kroków}}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "Nie powiodło się {formattedFailedRunCount} z {formattedRunCount} uruchomień"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "Wykorzystano {formattedPercentage}%, {formattedConversationSize} z {formattedContextWindow} tokenów"
 
@@ -2119,17 +2119,17 @@ msgid "Add a meeting link"
 msgstr "Dodaj link do spotkania"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Dodaj nową firmę, z którą mamy kontakt (np. nazwa, strona internetowa, branża). Szczegóły: "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "Dodaj notatkę."
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "Dodaj notatkę do tego rekordu: "
 
@@ -2154,13 +2154,13 @@ msgid "Add a related record"
 msgstr "Dodaj powiązany rekord"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "Dodaj krok"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "Dodaj krok do tego przepływu pracy, który "
 
@@ -2306,7 +2306,7 @@ msgid "Add credit card"
 msgstr "Dodaj kartę kredytową"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Dodaj kartę kredytową"
@@ -2600,6 +2600,11 @@ msgstr "Dodaj regułę"
 msgid "Add rule group"
 msgstr "Dodaj grupę reguł"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2618,12 @@ msgstr "Dodaj sortowanie"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Dodaj dostawcę tożsamości dla SSO"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr ""
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3148,7 +3159,7 @@ msgstr "Kredyty AI"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Kredyty AI odnowią się za {0, plural, one {# dzień} few {# dni} many {# dni} other {# dnia}}."
 
@@ -3245,22 +3256,22 @@ msgid "AI Usage by Workspace"
 msgstr "Użycie AI według przestrzeni roboczej"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "Limit użycia AI został osiągnięty w tym okresie."
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "Osiągnięto limit użycia AI. Poproś administratora o zwiększenie limitu."
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "Osiągnięto limit wykorzystania AI. Poproś administratora o uaktualnienie planu."
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "Osiągnięto limit wykorzystania AI. Skontaktuj się z pomocą techniczną, aby dokonać uaktualnienia."
 
@@ -5533,8 +5544,8 @@ msgid "Cached creation"
 msgstr "Utworzenie w pamięci podręcznej"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "Wejście z pamięci podręcznej"
 
@@ -6232,7 +6243,7 @@ msgid "Check List"
 msgstr "Lista kontrolna"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Sprawdź ostatnie uruchomienia"
 
@@ -6252,7 +6263,7 @@ msgid "Check the merge result before trying again"
 msgstr "Sprawdź wynik scalania przed ponowną próbą"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "Sprawdź ostatnie uruchomienia tego przepływu pracy i powiedz mi, czy któreś się nie powiodło oraz dlaczego."
 
@@ -6848,7 +6859,7 @@ msgstr "kod"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "Kod"
@@ -6864,7 +6875,7 @@ msgid "Code Block"
 msgstr "Blok kodu"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "Kod skopiowano do schowka"
 
@@ -6915,7 +6926,7 @@ msgid "collapse"
 msgstr "zwiń"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7193,7 @@ msgstr "zakończono"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7692,22 +7703,22 @@ msgid "Context"
 msgstr "Kontekst"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "Kontekst i użycie"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "Kontekst i użycie, wykorzystano {formattedPercentage}% okna kontekstu"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "Kontekst i użycie, okno kontekstu niedostępne"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Okno kontekstu"
@@ -7793,7 +7804,7 @@ msgstr "Kontroluj, do jakich typów podmiotów można przypisać tę rolę"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7890,10 +7901,10 @@ msgid "Copy audio download link"
 msgstr "Kopiuj link do pobrania nagrania audio"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Kopiuj kod"
 
@@ -7935,8 +7946,8 @@ msgid "Copy link to view"
 msgstr "Skopiuj link do wyświetlenia"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "Kopiuj wyjście"
 
@@ -8386,18 +8397,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "Utwórz kilka {0}, aby wyświetlić podgląd tej reguły na rzeczywistych rekordach."
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "Utwórz nowy kontakt i powiąż go z firmą. Szczegóły: "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "Utwórz nowy rekord w tym widoku. Szczegóły: "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "Utwórz rekord"
 
@@ -8407,23 +8418,23 @@ msgid "Create a relation with other objects"
 msgstr "Utwórz relację z innymi obiektami"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "Utwórz zadanie"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "Utwórz zadanie dla tej firmy: "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "Utwórz zadanie dla tego rekordu: "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Utwórz przepływ pracy"
 
@@ -8790,8 +8801,8 @@ msgid "credits"
 msgstr "kredyty"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10084,6 +10095,11 @@ msgstr "Usuń wiersz"
 msgid "Delete Skill"
 msgstr "Usuń umiejętność"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -10558,7 +10574,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "Odkrywanie w {defaultDomain}"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "Odrzuć"
 
@@ -10792,7 +10808,7 @@ msgid "Download"
 msgstr "Pobierz"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "Pobierz {filename}"
 
@@ -10838,12 +10854,12 @@ msgid "Draft"
 msgstr "Szkic"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "Utwórz szkic wiadomości e-mail"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "Utwórz szkic wiadomości e-mail do tej firmy na temat "
 
@@ -11624,7 +11640,7 @@ msgid "Empty"
 msgstr "Puste"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11659,7 @@ msgid "Empty Array"
 msgstr "Pusta tablica"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12729,7 +12745,7 @@ msgid "Exit import flow"
 msgstr "Zakończ importowanie"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12879,12 @@ msgid "Expires in less than a day"
 msgstr "Wygasa za mniej niż jeden dzień"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "Wyjaśnij ten przepływ pracy"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Wyjaśnij krok po kroku, co robi ten przepływ pracy."
 
@@ -12982,8 +12998,8 @@ msgstr "Twarz"
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -14004,12 +14020,12 @@ msgid "Filter opt-outs"
 msgstr "Filtruj rezygnacje"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "Filtruj ten widok"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "Filtruj ten widok, aby wyświetlać tylko "
 
@@ -14070,11 +14086,6 @@ msgstr "Zakończ edycję układu, aby otworzyć skrzynkę odbiorczą"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Zakończ edycję układu, aby otworzyć Ustawienia"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Zakończ edycję układu, aby otworzyć tę kartę"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14669,7 +14680,7 @@ msgid "Generate recovery code"
 msgstr "Wygeneruj kod odzyskiwania"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "Wygenerowane pliki"
 
@@ -14689,7 +14700,7 @@ msgid "Germany"
 msgstr "Niemcy"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Kup więcej kredytów"
@@ -15418,7 +15429,7 @@ msgid "Hours between triggers"
 msgstr "Godziny pomiędzy wyzwalaczami"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Jak mogę pomóc?"
 
@@ -16100,7 +16111,7 @@ msgid "Initial values"
 msgstr "Początkowe wartości"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16142,8 @@ msgid "Input settings"
 msgstr "Ustawienia wprowadzania"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "Tokeny wejściowe"
 
@@ -17188,7 +17199,7 @@ msgid "Last event"
 msgstr "Ostatnie zdarzenie"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "Ostatnia wiadomość"
 
@@ -17461,7 +17472,7 @@ msgid "Legend"
 msgstr ""
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "Mniej"
 
@@ -18024,7 +18035,7 @@ msgid "Loading..."
 msgstr "Ładowanie..."
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18074,7 @@ msgid "Lock diagram"
 msgstr "Zablokuj diagram"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Zarejestruj nową transakcję (firma, kwota, etap, oczekiwana data zamknięcia). Szczegóły: "
 
@@ -19191,7 +19202,7 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Więcej"
@@ -19863,6 +19874,11 @@ msgstr "Nowy limit przeniesienia"
 msgid "New rule"
 msgstr "Nowa reguła"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19886,6 +19902,7 @@ msgid "New SSO provider"
 msgstr "Nowy dostawca SSO"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "Nowa karta"
@@ -20552,7 +20569,7 @@ msgid "No latest version found"
 msgstr "Nie znaleziono najnowszej wersji"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Brak limitu"
@@ -20676,7 +20693,7 @@ msgid "No options found"
 msgstr "Nie znaleziono opcji"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -21194,9 +21211,9 @@ msgstr "Nie wszystkie kolumny zostały dopasowane"
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "Niedostępne"
 
@@ -22411,9 +22428,9 @@ msgid "Outlook"
 msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -22437,13 +22454,13 @@ msgid "Output saved"
 msgstr "Dane wyjściowe zapisane"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "Strumień wyjściowy"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "Tokeny wyjściowe"
 
@@ -22949,7 +22966,7 @@ msgid "Personal AI usage"
 msgstr "Osobiste użycie AI"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Osobiste użycie"
 
@@ -23724,7 +23741,7 @@ msgid "Purple"
 msgstr "Purpurowy"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Wykonywanie kodu w Pythonie"
 
@@ -24861,6 +24878,11 @@ msgstr "Usuń grupę reguł"
 msgid "Remove searchable field"
 msgstr "Usuń pole wyszukiwania"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -25048,12 +25070,12 @@ msgid "Reschedule Campaign"
 msgstr "Zmień termin kampanii"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "Zbadaj tę firmę"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "Zbadaj tę firmę i podsumuj, czym się zajmuje, jak duża jest oraz wszelkie najnowsze wiadomości."
 
@@ -25094,7 +25116,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "Zresetuj wszystkie nadpisania w tym układzie, aby przywrócić go do domyślnego układu aplikacji."
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "Reset za {daysUntilReset, plural, one {# dzień} few {# dni} many {# dni} other {# dnia}} ({percentage}%)"
 
@@ -25670,7 +25692,7 @@ msgstr "Uruchamianie narzędzia..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Running..."
 msgstr "Wykonywanie..."
 
@@ -26477,6 +26499,16 @@ msgstr "sekcja"
 msgid "Section"
 msgstr "Sekcja"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr ""
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26587,7 +26619,7 @@ msgid "See Turns"
 msgstr "Zobacz tury"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "Zobacz, co potrafię"
 
@@ -27377,7 +27409,7 @@ msgstr "Konfigurowanie twojej <0>bazy danych</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -28766,7 +28798,7 @@ msgid "Subscribe"
 msgstr "Zapisz się do newslettera"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Subskrybuj teraz"
@@ -28881,22 +28913,22 @@ msgid "Sum"
 msgstr "Suma"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "Podsumuj rekordy w tym widoku i wskaż wszystko, co wymaga uwagi."
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "Podsumuj ten rekord"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "Podsumuj ten rekord i jego ostatnią aktywność."
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "Podsumuj ten widok"
 
@@ -29175,6 +29207,16 @@ msgstr "Zakładka {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "Karta {tabNumber}: {0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr ""
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29856,8 +29898,8 @@ msgid "Thickness"
 msgstr "Grubość"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "Myślenie"
 
@@ -30476,7 +30518,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "To cofnie {0} użytkownikowi {userLabel}."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Myśl"
 
@@ -30785,7 +30827,7 @@ msgid "Tool deleted"
 msgstr "Narzędzie usunięte"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Szczegóły narzędzia: {displayMessage}"
 
@@ -32084,8 +32126,8 @@ msgid "Updating..."
 msgstr "Aktualizowanie..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32176,7 @@ msgstr "Uaktualnij do {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Uaktualnij do {0} kredytów za ${1}/{2}."
@@ -32366,7 +32408,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -33126,7 +33168,7 @@ msgid "Waiting for a form to be filled in"
 msgstr "Oczekiwanie na wypełnienie formularza"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Oczekiwanie na wyjście..."
 
@@ -33442,17 +33484,17 @@ msgid "Weekly"
 msgstr "Co tydzień"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "Osiągnięto tygodniowy limit osobistego użycia AI. Poproś administratora o włączenie środków obszaru roboczego."
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "Osiągnięto tygodniowy limit osobistego użycia AI. Włącz środki obszaru roboczego, aby kontynuować."
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "Osiągnięto tygodniowy limit osobistego użycia AI. Teraz używane są środki obszaru roboczego."
 
@@ -33488,12 +33530,12 @@ msgid "What AI model should your agent run on"
 msgstr "Na jakim modelu AI powinien działać Twój agent"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "W czym mogę pomóc?"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Co potrafisz?"
 
@@ -33549,17 +33591,17 @@ msgid "When {assistantName} finishes"
 msgstr "Gdy {assistantName} zakończy"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "Gdy etap transakcji zmieni się na \"Zamknięta wygrana\", utwórz zadanie przypisane do właściciela transakcji, z terminem 7 dni po dacie zamknięcia, z tytułem \"Kontrola po sprzedaży\" i nazwą firmy w opisie."
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Gdy nowy lead zostanie utworzony ze źródłem \"Website\", przypisz go do handlowca, którego terytorium (wg regionu/kraju) odpowiada adresowi leada; jeśli brak dopasowania, przypisz do lidera zespołu."
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Gdy w dowolnej transakcji o kwocie powyżej $100,000 zaktualizowany zostanie etap lub kwota, wyślij powiadomienie na kanał sprzedażowy z nazwą transakcji, firmą, nowym etapem, kwotą i właścicielem."
 
@@ -33739,7 +33781,7 @@ msgstr "bez karty kredytowej"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "Działał przez {0}"
 
@@ -34413,7 +34455,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "Zmiana subdomeny Twojego obszaru roboczego spowoduje wylogowanie wszystkich użytkowników."
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Osiągnięto limit korzystania z AI."
 
@@ -34520,7 +34562,7 @@ msgid "Your other events"
 msgstr "Twoje pozostałe wydarzenia"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "Twoje własne użycie AI, niezależne od kredytów obszaru roboczego"
 
