@@ -283,7 +283,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    authContext,
+    workspaceId,
     selection,
   }: CommonQueryResultProcessingArgs<CommonFindManyOutput>): Promise<CommonFindManyOutput> {
     const processedRecords =
@@ -292,7 +292,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        workspaceId: authContext.workspace.id,
+        workspaceId,
         selection,
       });
 

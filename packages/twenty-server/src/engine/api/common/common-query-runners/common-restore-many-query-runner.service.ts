@@ -21,7 +21,6 @@ import {
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -88,24 +87,6 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
         flatFieldMetadataMaps,
       }),
     };
-  }
-
-  async processQueryResult({
-    queryResult,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    selection,
-  }: CommonQueryResultProcessingArgs<ObjectRecord[]>): Promise<ObjectRecord[]> {
-    return this.commonResultGettersService.processRecordArray({
-      records: queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceId: authContext.workspace.id,
-      selection,
-    });
   }
 
   async validate(

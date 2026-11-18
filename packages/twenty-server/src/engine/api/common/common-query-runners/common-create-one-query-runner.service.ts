@@ -18,7 +18,6 @@ import {
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -72,24 +71,6 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       ...args,
       data: coercedData[0],
     };
-  }
-
-  async processQueryResult({
-    queryResult,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    selection,
-  }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord({
-      record: queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceId: authContext.workspace.id,
-      selection,
-    });
   }
 
   async validate(

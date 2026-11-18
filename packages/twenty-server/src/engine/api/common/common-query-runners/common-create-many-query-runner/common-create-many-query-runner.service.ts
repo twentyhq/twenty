@@ -51,7 +51,6 @@ import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contai
 import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
 
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
-import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -731,24 +730,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     return upsertedRecords as ObjectRecord[];
-  }
-
-  async processQueryResult({
-    queryResult,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    selection,
-  }: CommonQueryResultProcessingArgs<ObjectRecord[]>): Promise<ObjectRecord[]> {
-    return await this.commonResultGettersService.processRecordArray({
-      records: queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceId: authContext.workspace.id,
-      selection,
-    });
   }
 
   private getRecordWithoutCreatedBy(

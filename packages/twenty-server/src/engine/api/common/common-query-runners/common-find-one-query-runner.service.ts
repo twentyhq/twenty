@@ -21,7 +21,6 @@ import {
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -117,24 +116,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         flatFieldMetadataMaps,
       }),
     };
-  }
-
-  async processQueryResult({
-    queryResult,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    selection,
-  }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord({
-      record: queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceId: authContext.workspace.id,
-      selection,
-    });
   }
 
   async validate(

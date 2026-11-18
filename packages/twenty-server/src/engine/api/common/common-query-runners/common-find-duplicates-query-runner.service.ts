@@ -227,7 +227,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    authContext,
+    workspaceId,
     selection,
   }: CommonQueryResultProcessingArgs<
     CommonFindDuplicatesOutputItem[]
@@ -241,7 +241,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-            workspaceId: authContext.workspace.id,
+            workspaceId,
             selection,
           }),
         };

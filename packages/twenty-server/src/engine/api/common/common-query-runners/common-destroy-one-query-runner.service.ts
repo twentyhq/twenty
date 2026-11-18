@@ -19,7 +19,6 @@ import {
   CommonQueryNames,
   DestroyOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
 export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -64,24 +63,6 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
     _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<DestroyOneQueryArgs>> {
     return args;
-  }
-
-  async processQueryResult({
-    queryResult,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    selection,
-  }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord({
-      record: queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceId: authContext.workspace.id,
-      selection,
-    });
   }
 
   async validate(

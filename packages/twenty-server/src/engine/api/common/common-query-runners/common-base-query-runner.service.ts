@@ -206,9 +206,22 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
 
-  protected abstract processQueryResult(
-    args: CommonQueryResultProcessingArgs<Output>,
-  ): Promise<Output>;
+  protected async processQueryResult({
+    queryResult,
+    ...resultGettersArgs
+  }: CommonQueryResultProcessingArgs<Output>): Promise<Output> {
+    return (
+      Array.isArray(queryResult)
+        ? await this.commonResultGettersService.processRecordArray({
+            records: queryResult as ObjectRecord[],
+            ...resultGettersArgs,
+          })
+        : await this.commonResultGettersService.processRecord({
+            record: queryResult as ObjectRecord,
+            ...resultGettersArgs,
+          })
+    ) as Output;
+  }
 
   protected getResultRecords(results: Output): ObjectRecord[] {
     return (
@@ -335,7 +348,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      authContext,
+      workspaceId: authContext.workspace.id,
       selection,
     });
 
