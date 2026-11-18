@@ -32,7 +32,7 @@ import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions
 
 type PermissionsPrincipalsFlatApplication = Pick<
   FlatApplication,
-  'id' | 'defaultRoleId' | 'sourceType' | 'deletedAt'
+  'id' | 'requestedRoleId' | 'sourceType' | 'deletedAt'
 >;
 
 export type PermissionsPrincipalsRoleMaps = {
