@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(ընտրված է՝ {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -288,7 +288,7 @@ msgstr "{0, plural, one {# օբյեկտ} other {# օբյեկտ}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# քայլ} other {# քայլեր}}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "{formattedRunCount} գործարկումից {formattedFailedRunCount}-ը ձախողվել է"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "Օգտագործված է {formattedPercentage}%, {formattedConversationSize}՝ {formattedContextWindow} տոկենից"
 
@@ -2119,17 +2119,17 @@ msgid "Add a meeting link"
 msgstr "Ավելացնել հանդիպման հղում"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Ավելացրու նոր ընկերություն, որի հետ կապի մեջ ենք (օր․՝ անուն, կայք, ոլորտ)։ Մանրամասներ՝ "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "Ավելացնել նշում"
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "Ավելացնել նշում այս գրառմանը. "
 
@@ -2154,13 +2154,13 @@ msgid "Add a related record"
 msgstr "Ավելացնել առնչվող գրառում"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "Ավելացնել քայլ"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "Ավելացնել քայլ այս աշխատահոսքին, որը "
 
@@ -2306,7 +2306,7 @@ msgid "Add credit card"
 msgstr "Ավելացնել վարկային քարտ"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Ավելացնել վարկային քարտ"
@@ -2600,6 +2600,11 @@ msgstr "Ավելացնել կանոն"
 msgid "Add rule group"
 msgstr "Ավելացնել կանոնների խումբ"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2618,12 @@ msgstr "Ավելացնել դասավորում"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Ավելացնել SSO նույնականացման մատակարար"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr ""
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3148,7 +3159,7 @@ msgstr "AI կրեդիտներ"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "ԱԲ կրեդիտները կթարմացվեն {0, plural, one {# օրից} other {# օրից}}։"
 
@@ -3245,22 +3256,22 @@ msgid "AI Usage by Workspace"
 msgstr "AI օգտագործում ըստ աշխատատարածքի"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "Այս ժամանակահատվածի համար AI-ի օգտագործման սահմանաչափը հասել է։"
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "AI-ի օգտագործման սահմանաչափը հասել է։ Խնդրեք ադմինիստրատորին բարձրացնել սահմանաչափը։"
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "AI-ի օգտագործման սահմանը հասել է։ Խնդրեք ադմինին՝ թարմացնել փաթեթը։"
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "AI-ի օգտագործման սահմանը հասել է։ Թարմացնելու համար կապվեք աջակցման ծառայության հետ։"
 
@@ -5533,8 +5544,8 @@ msgid "Cached creation"
 msgstr "Քեշավորված ստեղծում"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "Քեշավորված մուտք"
 
@@ -6232,7 +6243,7 @@ msgid "Check List"
 msgstr "Ստուգաթերթ"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Ստուգել վերջին գործարկումները"
 
@@ -6252,7 +6263,7 @@ msgid "Check the merge result before trying again"
 msgstr "Նորից փորձելուց առաջ ստուգեք միավորման արդյունքը"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "Ստուգիր այս աշխատահոսքի վերջին գործարկումները և ասա՝ արդյոք դրանցից որևէ մեկը ձախողվել է և ինչու։"
 
@@ -6848,7 +6859,7 @@ msgstr "կոդ"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "Կոդ"
@@ -6864,7 +6875,7 @@ msgid "Code Block"
 msgstr "Կոդի բլոկ"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "Կոդը պատճենվեց սեղմատախտակին"
 
@@ -6915,7 +6926,7 @@ msgid "collapse"
 msgstr "կծկել"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7193,7 @@ msgstr "ավարտված"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7692,22 +7703,22 @@ msgid "Context"
 msgstr "Համատեքստ"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "Համատեքստ և օգտագործում"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "Համատեքստ և օգտագործում, օգտագործված է համատեքստի պատուհանի {formattedPercentage}%-ը"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "Համատեքստ և օգտագործում, համատեքստի պատուհանը հասանելի չէ"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Համատեքստի պատուհան"
@@ -7793,7 +7804,7 @@ msgstr "Կառավարեք, թե այս դերը որ տեսակի սուբյե�
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7890,10 +7901,10 @@ msgid "Copy audio download link"
 msgstr "Պատճենել աուդիոյի ներբեռնման հղումը"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Պատճենել կոդը"
 
@@ -7935,8 +7946,8 @@ msgid "Copy link to view"
 msgstr "Պատճենել տեսքի հղումը"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "Պատճենել ելքը"
 
@@ -8386,18 +8397,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "Ստեղծեք մի քանի {0}՝ այս կանոնը իրական գրառումների վրա նախադիտելու համար։"
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "Ստեղծիր նոր կոնտակտ և կապիր նրան ընկերության հետ։ Մանրամասներ՝ "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "Ստեղծել նոր գրառում այս տեսքում։ Մանրամասներ. "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "Ստեղծել գրառում"
 
@@ -8407,23 +8418,23 @@ msgid "Create a relation with other objects"
 msgstr "Ստեղծել կապ այլ օբյեկտների հետ"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "Ստեղծել առաջադրանք"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "Ստեղծել առաջադրանք այս ընկերության համար. "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "Ստեղծել առաջադրանք այս գրառման համար. "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Ստեղծել աշխատահոսք"
 
@@ -8790,8 +8801,8 @@ msgid "credits"
 msgstr "կրեդիտներ"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10084,6 +10095,11 @@ msgstr "Ջնջել տողը"
 msgid "Delete Skill"
 msgstr "Ջնջել հմտությունը"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -10558,7 +10574,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "Հայտնաբերում {defaultDomain}-ում"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "Փակել"
 
@@ -10792,7 +10808,7 @@ msgid "Download"
 msgstr "Ներբեռնել"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "Ներբեռնել {filename}"
 
@@ -10838,12 +10854,12 @@ msgid "Draft"
 msgstr "Սևագիր"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "Սևագրել նամակ"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "Սևագրել նամակ այս ընկերությանը՝ "
 
@@ -11624,7 +11640,7 @@ msgid "Empty"
 msgstr "Դատարկ"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11659,7 @@ msgid "Empty Array"
 msgstr "Դատարկ զանգված"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12729,7 +12745,7 @@ msgid "Exit import flow"
 msgstr "Դուրս գալ ներմուծման գործընթացից"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12879,12 @@ msgid "Expires in less than a day"
 msgstr "Սպառվում է մեկ օրից պակաս ժամանակում"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "Բացատրել այս աշխատահոսքը"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Բացատրի՛ր, թե ինչ է անում այս աշխատահոսքը՝ քայլ առ քայլ։"
 
@@ -12982,8 +12998,8 @@ msgstr "Դեմք"
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -14004,12 +14020,12 @@ msgid "Filter opt-outs"
 msgstr "Զտել հրաժարումները"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "Զտել այս տեսքը"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "Զտել այս տեսքը՝ ցուցադրելու միայն "
 
@@ -14070,11 +14086,6 @@ msgstr "Ավարտեք դասավորության խմբագրումը՝ մու�
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Ավարտեք դասավորության խմբագրումը՝ Կարգավորումները բացելու համար"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Ավարտեք դասավորության խմբագրումը՝ այս ներդիրը բացելու համար"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14669,7 +14680,7 @@ msgid "Generate recovery code"
 msgstr "Ստեղծել վերականգնման կոդ"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "Ստեղծված ֆայլեր"
 
@@ -14689,7 +14700,7 @@ msgid "Germany"
 msgstr "Գերմանիա"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Ստանալ ավելի շատ կրեդիտներ"
@@ -15418,7 +15429,7 @@ msgid "Hours between triggers"
 msgstr "Ժամերը գործարկումների միջև"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Ինչո՞վ կարող եմ օգնել ձեզ։"
 
@@ -16100,7 +16111,7 @@ msgid "Initial values"
 msgstr "Սկզբնական արժեքներ"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16142,8 @@ msgid "Input settings"
 msgstr "Մուտքագրման կարգավորումներ"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "Մուտքային թոքեններ"
 
@@ -17188,7 +17199,7 @@ msgid "Last event"
 msgstr "Վերջին իրադարձությունը"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "Վերջին հաղորդագրություն"
 
@@ -17461,7 +17472,7 @@ msgid "Legend"
 msgstr "Լեգենդ"
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "Ավելի քիչ"
 
@@ -18024,7 +18035,7 @@ msgid "Loading..."
 msgstr "Բեռնվում է..."
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18074,7 @@ msgid "Lock diagram"
 msgstr "Կողպել գծապատկերը"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Գրանցել նոր գործարք (ընկերություն, գումար, փուլ, սպասվող փակման ամսաթիվ): Մանրամասներ՝ "
 
@@ -19191,7 +19202,7 @@ msgid "months"
 msgstr "ամիսներ"
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Ավելին"
@@ -19277,6 +19288,7 @@ msgstr "Հիմնականում դատարկ"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "Տեղափոխել ներքև"
 
@@ -19293,6 +19305,7 @@ msgstr "Տեղափոխել դրա զրույցները"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19301,6 +19314,7 @@ msgstr "Տեղափոխել ձախ"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19342,6 +19356,7 @@ msgstr "Անցնե՞լ նոր {planLabel} փաթեթին։"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "Տեղափոխել վերև"
 
@@ -19863,6 +19878,11 @@ msgstr "Նոր տեղափոխման (rollover) սահմանաչափ"
 msgid "New rule"
 msgstr "Նոր կանոն"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19886,6 +19906,7 @@ msgid "New SSO provider"
 msgstr "Նոր SSO մատակարար"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "Նոր ներդիր"
@@ -20552,7 +20573,7 @@ msgid "No latest version found"
 msgstr "Վերջին տարբերակը չի գտնվել"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Սահմանափակում չկա"
@@ -20676,7 +20697,7 @@ msgid "No options found"
 msgstr "Ոչ մի տարբերակ չի գտնվել"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -21194,9 +21215,9 @@ msgstr "Բոլոր սյունակները չեն համընկնում"
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "Անհասանելի"
 
@@ -22411,9 +22432,9 @@ msgid "Outlook"
 msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -22437,13 +22458,13 @@ msgid "Output saved"
 msgstr "Ելքային տվյալները պահպանվել են"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "Ելքային հոսք"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "Ելքային թոքեններ"
 
@@ -22949,7 +22970,7 @@ msgid "Personal AI usage"
 msgstr "Անձնական AI օգտագործում"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Անձնական օգտագործում"
 
@@ -23724,7 +23745,7 @@ msgid "Purple"
 msgstr "Մանուշակագույն"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Python կոդի կատարում"
 
@@ -24861,6 +24882,11 @@ msgstr "Հեռացնել կանոնների խումբը"
 msgid "Remove searchable field"
 msgstr "Հեռացնել որոնելի դաշտը"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -25048,12 +25074,12 @@ msgid "Reschedule Campaign"
 msgstr "Վերապլանավորել արշավը"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "Ուսումնասիրել այս ընկերությունը"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "Ուսումնասիրիր այս ընկերությունը և ամփոփիր, թե ինչով են զբաղվում, որքան մեծ են և վերջին նորությունները։"
 
@@ -25094,7 +25120,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "Վերակայել դասավորության բոլոր փոփոխությունները՝ այն վերադարձնելու հավելվածի սկզբնական տեսքին"
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "Կվերակայվի {daysUntilReset, plural, one {# օր} other {# օր}} հետո ({percentage}%)"
 
@@ -25670,7 +25696,7 @@ msgstr "Գործիքը գործարկվում է..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Running..."
 msgstr "Գործարկվում է..."
 
@@ -26477,6 +26503,16 @@ msgstr "բաժին"
 msgid "Section"
 msgstr "Բաժին"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr ""
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26587,7 +26623,7 @@ msgid "See Turns"
 msgstr "Տեսնել փուլերը"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "Տեսնել, թե ինչ կարող եմ անել"
 
@@ -27377,7 +27413,7 @@ msgstr "Կարգավորվում է ձեր <0>տվյալների բազան</0>.
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -28766,7 +28802,7 @@ msgid "Subscribe"
 msgstr "Բաժանորդագրվել"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Բաժանորդագրվեք հիմա"
@@ -28881,22 +28917,22 @@ msgid "Sum"
 msgstr "Գումար"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "Ամփոփիր այս տեսքի գրառումները և նշիր այն ամենը, ինչ ուշադրության կարիք ունի։"
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "Ամփոփել այս գրառումը"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "Ամփոփիր այս գրառումը և դրա վերջին ակտիվությունը։"
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "Ամփոփել այս տեսքը"
 
@@ -29175,6 +29211,16 @@ msgstr "Ներդիր {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "Ներդիր {tabNumber}՝ {0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr ""
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29856,8 +29902,8 @@ msgid "Thickness"
 msgstr "Հաստություն"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "Մտածում է"
 
@@ -30476,7 +30522,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "Սա կչեղարկի {0}-ը {userLabel}-ի համար։"
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Մտորում"
 
@@ -30785,7 +30831,7 @@ msgid "Tool deleted"
 msgstr "Գործիքը ջնջվեց"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Գործիքի մանրամասներ՝ {displayMessage}"
 
@@ -32084,8 +32130,8 @@ msgid "Updating..."
 msgstr "Թարմացվում է..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32180,7 @@ msgstr "Թարմացնել մինչև {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Թարմացնել մինչև {0} կրեդիտ՝ ${1}/{2}։"
@@ -32366,7 +32412,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -33126,7 +33172,7 @@ msgid "Waiting for a form to be filled in"
 msgstr "Սպասում է ձևաթղթի լրացմանը"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Սպասում է ելքին..."
 
@@ -33442,17 +33488,17 @@ msgid "Weekly"
 msgstr "Շաբաթական"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "Անձնական AI-ի շաբաթական օգտագործման սահմանաչափը հասել է։ Խնդրեք ադմինիստրատորին միացնել աշխատանքային տարածքի կրեդիտները։"
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "Անձնական AI-ի շաբաթական օգտագործման սահմանաչափը հասել է։ Շարունակելու համար միացրեք աշխատանքային տարածքի կրեդիտները։"
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "Անձնական AI-ի շաբաթական օգտագործման սահմանաչափը հասել է։ Այժմ օգտագործվում են աշխատանքային տարածքի կրեդիտները։"
 
@@ -33488,12 +33534,12 @@ msgid "What AI model should your agent run on"
 msgstr "Ո՞ր AI մոդելի վրա պետք է գործարկվի ձեր գործակալը"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Ինչո՞վ կարող եմ օգնել ձեզ։"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Ի՞նչ կարող ես անել։"
 
@@ -33549,17 +33595,17 @@ msgid "When {assistantName} finishes"
 msgstr "Երբ {assistantName}-ն ավարտի"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "Երբ գործարքի փուլը փոխվում է «Closed Won», ստեղծեք առաջադրանք, որը վերագրված է գործարքի սեփականատիրոջը, վերջնաժամկետը՝ փակման ամսաթվից 7 օր հետո, վերնագրով «Post-sale check-in» և նկարագրության մեջ նշված ընկերության անունը։"
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Երբ ստեղծվում է նոր «lead», որի աղբյուրը «Website» է, այն վերագրեք այն վաճառքի ներկայացուցչին, որի տարածքը (ըստ տարածաշրջանի/երկրի) համապատասխանում է «lead»-ի հասցեին․ եթե համապատասխանություն չկա, վերագրեք թիմի ղեկավարին։"
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Երբ $100,000-ից բարձր գումար ունեցող որևէ գործարքի փուլը կամ գումարը թարմացվում է, ուղարկեք ծանուցում վաճառքի ալիքին՝ ներառելով գործարքի անունը, ընկերությունը, նոր փուլը, գումարը և սեփականատիրոջը։"
 
@@ -33739,7 +33785,7 @@ msgstr "առանց վարկային քարտի"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "Աշխատել է {0}"
 
@@ -34413,7 +34459,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "Դուք պատրաստվում եք փոխել ձեր աշխատանքային տարածքի ենթադոմենը։ Այս գործողությունը բոլոր օգտատերերին դուրս կբերի համակարգից։"
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Դուք հասել եք AI-ի օգտագործման ձեր սահմանաչափին։"
 
@@ -34520,7 +34566,7 @@ msgid "Your other events"
 msgstr "Ձեր մյուս իրադարձությունները"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "Ձեր սեփական AI օգտագործումը՝ աշխատանքային տարածքի կրեդիտներից առանձին"
 

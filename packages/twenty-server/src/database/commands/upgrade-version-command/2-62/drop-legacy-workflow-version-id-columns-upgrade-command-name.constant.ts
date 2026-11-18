@@ -1,2 +1,2 @@
 export const DROP_LEGACY_WORKFLOW_VERSION_ID_COLUMNS_UPGRADE_COMMAND_NAME =
-  '2.62.0_DropLegacyWorkflowVersionIdColumnsFastInstanceCommand_1794999728863';
+  '2.62.0_DropLegacyWorkflowVersionIdColumnsFastInstanceCommand_1795013257406';
