@@ -24,14 +24,7 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
-      return;
-    }
-
-    // The inbox shows its own chat, which keeps the handoff pending; only the
-    // onboarding chat ends there
-    if (isInboxPath(pathname)) {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    if (isAiChatPath(pathname) || isInboxPath(pathname)) {
       return;
     }
 
