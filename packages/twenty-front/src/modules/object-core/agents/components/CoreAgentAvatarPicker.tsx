@@ -12,7 +12,7 @@ import {
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
-import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai/constants/AiChatAssistantAvatarShapeLabels';
+import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai-chat/constants/AiChatAssistantAvatarShapeLabels';
 import { useUpdateCoreAgentAvatar } from '@/object-core/agents/hooks/useUpdateCoreAgentAvatar';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentAvatar } from '@/object-core/agents/utils/getCoreAgentAvatar';
