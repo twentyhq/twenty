@@ -3,7 +3,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type AiChatMessageAuthorLookup } from '@/ai-chat/messages/types/AiChatMessageAuthorLookup';
 import { type AiChatMessageQuote } from '@/ai-chat/messages/types/AiChatMessageQuote';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
-import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/composer/utils/getAiChatMessageQuoteExcerpt';
+import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 // a reply does not store the id it quotes, so the original is matched by the quoted text

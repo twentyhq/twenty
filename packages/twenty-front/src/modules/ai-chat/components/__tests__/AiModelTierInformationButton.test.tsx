@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { AiModelTierInformationButton } from '@/ai-chat/composer/components/AiModelTierInformationButton';
+import { AiModelTierInformationButton } from '@/ai-chat/components/AiModelTierInformationButton';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 
 const resolvedTier: ResolvedAiModelTier = {
