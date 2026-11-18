@@ -1,6 +1,6 @@
 import {
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
-  MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
+  MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
 } from 'twenty-shared/application';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -449,7 +449,7 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should accept a subscription plan with or without a yearly amount', () => {
+  it('should accept a flat and a per member subscription plan', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -457,12 +457,11 @@ describe('defineApplication', () => {
       billing: {
         subscriptions: {
           platform: {
-            monthlyAmountCents: 2000,
+            monthlyAmountCents: MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
             label: 'Platform',
           },
           seat: {
             monthlyAmountCents: 1000,
-            yearlyAmountCents: 10_000,
             per: 'WORKSPACE_MEMBER',
             label: 'Per member',
           },
@@ -475,7 +474,7 @@ describe('defineApplication', () => {
     expect(result.warnings).toEqual([]);
   });
 
-  it('should return error when a subscription plan has a non positive or non integer monthly amount', () => {
+  it('should return error when a subscription plan monthly amount is not a positive integer or exceeds the maximum', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -484,45 +483,20 @@ describe('defineApplication', () => {
         subscriptions: {
           free: { monthlyAmountCents: 0, label: 'Free' },
           fractional: { monthlyAmountCents: 9.99, label: 'Fractional' },
+          excessive: {
+            monthlyAmountCents: MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS + 1,
+            label: 'Excessive',
+          },
         },
       },
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
-      `Subscription plan "free" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}`,
-      `Subscription plan "fractional" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}`,
+      `Subscription plan "free" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
+      `Subscription plan "fractional" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
+      `Subscription plan "excessive" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
     ]);
-  });
-
-  it('should return error when a subscription plan yearly amount is invalid, declared or derived', () => {
-    const result = defineApplication({
-      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
-      displayName: 'My App',
-      description: 'My app description',
-      billing: {
-        subscriptions: {
-          declared: {
-            monthlyAmountCents: 1000,
-            yearlyAmountCents: -1,
-            label: 'Declared',
-          },
-          derived: {
-            monthlyAmountCents: MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
-            label: 'Derived',
-          },
-        },
-      },
-    });
-
-    expect(result.success).toBe(false);
-    expect(result.errors).toHaveLength(2);
-    expect(result.errors?.[0]).toContain(
-      'Subscription plan "declared" must have a positive integer yearly amount',
-    );
-    expect(result.errors?.[1]).toContain(
-      'Subscription plan "derived" must have a positive integer yearly amount',
-    );
   });
 
   it('should return error when a subscription plan has an empty label', () => {

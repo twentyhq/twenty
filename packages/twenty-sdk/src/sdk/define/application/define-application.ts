@@ -4,13 +4,12 @@ import {
   APPLICATION_VARIABLE_SCOPES,
   isApplicationVariableScope,
   isKnownApplicationCategory,
-  getSubscriptionPlanYearlyAmountCents,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
-  isSubscriptionPlanAmount,
+  isSubscriptionPlanMonthlyAmount,
   isUsageOperationTypeValue,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
-  MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
+  MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
@@ -177,17 +176,9 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
       continue;
     }
 
-    if (!isSubscriptionPlanAmount(subscriptionPlan.monthlyAmountCents)) {
+    if (!isSubscriptionPlanMonthlyAmount(subscriptionPlan.monthlyAmountCents)) {
       errors.push(
-        `Subscription plan "${planName}" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}`,
-      );
-    } else if (
-      !isSubscriptionPlanAmount(
-        getSubscriptionPlanYearlyAmountCents(subscriptionPlan),
-      )
-    ) {
-      errors.push(
-        `Subscription plan "${planName}" must have a positive integer yearly amount of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}: yearlyAmountCents, or 12 times monthlyAmountCents when omitted`,
+        `Subscription plan "${planName}" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
       );
     }
 

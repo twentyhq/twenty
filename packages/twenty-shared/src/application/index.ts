@@ -37,9 +37,8 @@ export {
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
   isRecurringChargeAmount,
   isRecurringCharge,
-  MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
-  isSubscriptionPlanAmount,
-  getSubscriptionPlanYearlyAmountCents,
+  MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
+  isSubscriptionPlanMonthlyAmount,
 } from './applicationBillingType';
 export type { ApplicationCapability } from './applicationCapabilityType';
 export {
