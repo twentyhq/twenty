@@ -1507,7 +1507,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
-  webPushVapidPublicKey: String
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -3794,9 +3794,9 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
-  updateInboxPresence(input: UpdateInboxPresenceInput!): Boolean!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -5501,6 +5501,11 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
+input UpdateFocusedTabInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5520,11 +5525,6 @@ input UpdateGettingStartedInput {
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
-}
-
-input UpdateInboxPresenceInput {
-  isFocused: Boolean!
-  tabId: String!
 }
 
 input UpdateLabPublicFeatureFlagInput {

@@ -9721,11 +9721,20 @@ export default {
                     ]
                 }
             ],
+            "updateFocusedTab": [
+                1,
+                {
+                    "input": [
+                        584,
+                        "UpdateFocusedTabInput!"
+                    ]
+                }
+            ],
             "updateFrontComponent": [
                 304,
                 {
                     "input": [
-                        584,
+                        585,
                         "UpdateFrontComponentInput!"
                     ]
                 }
@@ -9734,17 +9743,8 @@ export default {
                 313,
                 {
                     "input": [
-                        586,
-                        "UpdateGettingStartedInput!"
-                    ]
-                }
-            ],
-            "updateInboxPresence": [
-                1,
-                {
-                    "input": [
                         587,
-                        "UpdateInboxPresenceInput!"
+                        "UpdateGettingStartedInput!"
                     ]
                 }
             ],
@@ -14708,12 +14708,23 @@ export default {
                 4
             ]
         },
+        "UpdateFocusedTabInput": {
+            "isFocused": [
+                1
+            ],
+            "tabId": [
+                4
+            ],
+            "__typename": [
+                4
+            ]
+        },
         "UpdateFrontComponentInput": {
             "id": [
                 565
             ],
             "update": [
-                585
+                586
             ],
             "__typename": [
                 4
@@ -14744,17 +14755,6 @@ export default {
                 314
             ],
             "snoozedUntil": [
-                4
-            ],
-            "__typename": [
-                4
-            ]
-        },
-        "UpdateInboxPresenceInput": {
-            "isFocused": [
-                1
-            ],
-            "tabId": [
                 4
             ],
             "__typename": [

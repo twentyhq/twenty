@@ -9,7 +9,7 @@ export type SendAgentChatPushNotificationsJobData = {
   thread: AgentChatThreadWorkspaceEntity;
 };
 
-@Processor(MessageQueue.notificationQueue)
+@Processor(MessageQueue.pushNotificationQueue)
 export class SendAgentChatPushNotificationsJob {
   constructor(
     private readonly agentChatPushNotificationService: AgentChatPushNotificationService,

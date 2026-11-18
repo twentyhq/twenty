@@ -462,6 +462,6 @@ export class ClientConfig {
   @Field(() => ClientConfigMaintenanceMode, { nullable: true })
   maintenance?: ClientConfigMaintenanceMode;
 
-  @Field(() => String, { nullable: true })
-  webPushVapidPublicKey?: string;
+  @Field(() => String)
+  webPushVapidPublicKey: string;
 }

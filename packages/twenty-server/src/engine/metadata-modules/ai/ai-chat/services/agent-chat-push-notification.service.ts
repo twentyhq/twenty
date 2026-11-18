@@ -4,13 +4,14 @@ import { type AgentChatInboxState } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
@@ -22,9 +23,7 @@ import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const RENOTIFY_COOLDOWN_MS = 15_000;
 
@@ -44,7 +43,7 @@ export class AgentChatPushNotificationService {
     private readonly i18nService: I18nService,
     private readonly sharingService: AgentChatSharingService,
     private readonly webPushService: WebPushService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async sendPushNotifications({
@@ -70,87 +69,34 @@ export class AgentChatPushNotificationService {
       workspaceId,
       threadId: thread.id,
     });
-    const recipientIds = [
-      ...participants.keys(),
-      thread.directMessageFirstWorkspaceMemberId,
-      thread.directMessageSecondWorkspaceMemberId,
-      thread.assigneeId,
-    ].filter(
-      (workspaceMemberId): workspaceMemberId is string =>
-        isDefined(workspaceMemberId) &&
-        workspaceMemberId !== thread.lastMessageSenderWorkspaceMemberId,
-    );
-
-    if (recipientIds.length === 0) {
-      return;
-    }
-
-    const workspaceMembers = await this.findWorkspaceMembers({
-      workspaceId,
-      workspaceMemberIds: [
-        ...recipientIds,
-        thread.lastMessageSenderWorkspaceMemberId,
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const recipientWorkspaceMemberIds = new Set(
+      [
+        ...participants.keys(),
         thread.directMessageFirstWorkspaceMemberId,
         thread.directMessageSecondWorkspaceMemberId,
+        thread.assigneeId,
       ].filter(isDefined),
-    });
+    );
 
-    for (const recipient of workspaceMembers) {
-      if (!recipientIds.includes(recipient.id)) {
+    for (const recipientWorkspaceMemberId of recipientWorkspaceMemberIds) {
+      const recipient =
+        flatWorkspaceMemberMaps.byId[recipientWorkspaceMemberId];
+
+      if (!isDefined(recipient) || isDefined(recipient.deletedAt)) {
         continue;
       }
 
       try {
-        const reason = getAgentChatPushNotificationReason({
-          thread,
-          participant: participants.get(recipient.id),
-          workspaceMemberId: recipient.id,
-          inboxNotificationLevel: recipient.inboxNotificationLevel,
-        });
-
-        if (
-          !isDefined(reason) ||
-          (await this.webPushService.hasFocusedTab({
-            workspaceId,
-            userId: recipient.userId,
-          }))
-        ) {
-          continue;
-        }
-
-        const readableThreadIds =
-          await this.sharingService.findReadableThreadIds({
-            workspaceId,
-            workspaceMemberId: recipient.id,
-            threadIds: [thread.id],
-          });
-
-        if (!readableThreadIds.includes(thread.id)) {
-          continue;
-        }
-
-        const isOutsideCooldown = await this.cacheStorageService.setIfAbsent(
-          `cooldown:${recipient.id}:${thread.id}`,
-          true,
-          RENOTIFY_COOLDOWN_MS,
-        );
-
-        await this.webPushService.sendToUser({
+        await this.sendPushNotificationToRecipient({
           workspaceId,
-          userId: recipient.userId,
-          notification: {
-            ...buildAgentChatPushNotification({
-              i18n: this.i18nService.getI18nInstance(recipient.locale),
-              thread,
-              recipientWorkspaceMemberId: recipient.id,
-              workspaceMembers,
-              isPreviewEnabled: recipient.isInboxNotificationPreviewEnabled,
-            }),
-            renotify:
-              reason === 'DIRECT_MESSAGE' ||
-              reason === 'MENTION' ||
-              isOutsideCooldown,
-          },
+          thread,
+          recipient,
+          participant: participants.get(recipient.id),
+          workspaceMemberById: flatWorkspaceMemberMaps.byId,
         });
       } catch (error) {
         this.logger.warn(
@@ -160,6 +106,75 @@ export class AgentChatPushNotificationService {
         );
       }
     }
+  }
+
+  private async sendPushNotificationToRecipient({
+    workspaceId,
+    thread,
+    recipient,
+    participant,
+    workspaceMemberById,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    recipient: FlatWorkspaceMember;
+    participant: AgentChatInboxState | undefined;
+    workspaceMemberById: FlatWorkspaceMemberMaps['byId'];
+  }): Promise<void> {
+    const reason = getAgentChatPushNotificationReason({
+      thread,
+      participant,
+      workspaceMemberId: recipient.id,
+      inboxNotificationLevel: recipient.inboxNotificationLevel,
+    });
+
+    if (!isDefined(reason)) {
+      return;
+    }
+
+    const hasFocusedTab = await this.webPushService.hasFocusedTab({
+      workspaceId,
+      userId: recipient.userId,
+    });
+
+    if (hasFocusedTab) {
+      return;
+    }
+
+    const [readableThreadId] = await this.sharingService.findReadableThreadIds({
+      workspaceId,
+      workspaceMemberId: recipient.id,
+      threadIds: [thread.id],
+    });
+
+    if (!isDefined(readableThreadId)) {
+      return;
+    }
+
+    const isOutsideRenotifyCooldown =
+      await this.cacheStorageService.setIfAbsent(
+        `renotify-cooldown:${recipient.id}:${thread.id}`,
+        true,
+        RENOTIFY_COOLDOWN_MS,
+      );
+
+    await this.webPushService.sendNotificationToUser({
+      workspaceId,
+      userId: recipient.userId,
+      notification: {
+        ...buildAgentChatPushNotification({
+          i18n: this.i18nService.getI18nInstance(recipient.locale),
+          thread,
+          recipientWorkspaceMemberId: recipient.id,
+          workspaceMemberById,
+          isPreviewEnabled: recipient.isInboxNotificationPreviewEnabled,
+        }),
+        renotify:
+          reason === 'DIRECT_MESSAGE' ||
+          reason === 'MENTION' ||
+          isOutsideRenotifyCooldown,
+      },
+    });
   }
 
   private async findParticipants({
@@ -191,24 +206,5 @@ export class AgentChatPushNotificationService {
         },
       ]),
     );
-  }
-
-  private async findWorkspaceMembers({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
-
-      return workspaceMemberRepository.find({
-        where: { id: In([...new Set(workspaceMemberIds)]) },
-      });
-    }, buildSystemAuthContext(workspaceId));
   }
 }

@@ -1,20 +1,19 @@
 import { createECDH } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { deriveInstanceHmacKey } from 'src/engine/core-modules/secret-encryption/utils/derive-instance-hmac-key.util';
+import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export const getWebPushVapidKeyPair = ({
+export const deriveWebPushVapidKeyPair = ({
   twentyConfigService,
 }: {
   twentyConfigService: Pick<TwentyConfigService, 'get'>;
 }): { publicKey: string; privateKey: string } => {
-  const encryptionKey = twentyConfigService.get('ENCRYPTION_KEY');
+  const { primary } = resolveEncryptionKeysOrThrow({
+    environmentConfigDriver: twentyConfigService,
+  });
   const privateKey = deriveInstanceHmacKey({
-    rawKey: isNonEmptyString(encryptionKey)
-      ? encryptionKey
-      : twentyConfigService.get('APP_SECRET'),
+    rawKey: primary,
     purpose: 'web-push-vapid',
   });
   const ecdh = createECDH('prime256v1');

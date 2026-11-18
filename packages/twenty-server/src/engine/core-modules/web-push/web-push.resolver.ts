@@ -8,7 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
-import { UpdateInboxPresenceInput } from 'src/engine/core-modules/web-push/dtos/update-inbox-presence.input';
+import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
 import { UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -63,8 +63,8 @@ export class WebPushResolver {
   }
 
   @Mutation(() => Boolean)
-  async updateInboxPresence(
-    @Args('input') { tabId, isFocused }: UpdateInboxPresenceInput,
+  async updateFocusedTab(
+    @Args('input') { tabId, isFocused }: UpdateFocusedTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<boolean> {
