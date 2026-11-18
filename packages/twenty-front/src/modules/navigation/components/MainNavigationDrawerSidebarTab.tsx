@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -16,7 +16,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -47,66 +46,71 @@ export const MainNavigationDrawerSidebarTab = ({
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const anchorRef = useRef<HTMLSpanElement>(null);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
-  const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
 
   const handleClick = () => {
     if (isLayoutCustomizationModeEnabled && isActive) {
-      openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
       return;
     }
 
     switchToNavigationMenuTab(tab.id);
   };
 
+  const tabButton = (
+    <MainNavigationDrawerTab
+      Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
+      label={tab.name}
+      isActive={isActive}
+      isExpanded={isExpanded}
+      isDisabled={false}
+      tooltip={tab.name}
+      shouldShowTooltip={shouldShowTooltip}
+      onClick={handleClick}
+      ariaLabel={
+        unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
+      }
+      iconAccessory={unreadCount > 0 && <StyledUnreadDot aria-hidden="true" />}
+    />
+  );
+
+  if (!isLayoutCustomizationModeEnabled) {
+    return <StyledAnchor>{tabButton}</StyledAnchor>;
+  }
+
   return (
-    <StyledAnchor ref={anchorRef}>
-      <MainNavigationDrawerTab
-        Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
-        label={tab.name}
-        isActive={isActive}
-        isExpanded={isExpanded}
-        isDisabled={false}
-        tooltip={tab.name}
-        shouldShowTooltip={shouldShowTooltip}
-        onClick={handleClick}
-        ariaLabel={
-          unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
-        }
-        iconAccessory={
-          unreadCount > 0 && <StyledUnreadDot aria-hidden="true" />
-        }
-      />
-      {isLayoutCustomizationModeEnabled && (
-        <DropdownRoot dropdownId={dropdownId} type="menu">
-          {navigationMenuItemIdToRename === tab.id && (
-            <NavigationMenuItemDropdownOpenEffect
-              dropdownId={dropdownId}
-              onOpen={() => setNavigationMenuItemIdToRename(null)}
-            />
-          )}
-          <DropdownContent
-            anchor={anchorRef}
-            side="bottom"
-            align="start"
-            width={GenericDropdownContentWidth.Large}
-            aria-label={t`Tab actions`}
-          >
-            <NavigationMenuTabMenuContent
-              tab={tab}
-              onClose={() => closeDropdown(dropdownId)}
-            />
-          </DropdownContent>
-        </DropdownRoot>
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      {navigationMenuItemIdToRename === tab.id && (
+        <NavigationMenuItemDropdownOpenEffect
+          dropdownId={dropdownId}
+          onOpen={() => setNavigationMenuItemIdToRename(null)}
+        />
       )}
-    </StyledAnchor>
+      <Dropdown.Trigger
+        render={<StyledAnchor />}
+        nativeButton={false}
+        disabled={!isActive}
+        tabIndex={-1}
+      >
+        {tabButton}
+      </Dropdown.Trigger>
+      <DropdownContent
+        side="bottom"
+        align="start"
+        width={GenericDropdownContentWidth.Large}
+        aria-label={t`Tab actions`}
+      >
+        <NavigationMenuTabMenuContent
+          tab={tab}
+          onClose={() => closeDropdown(dropdownId)}
+        />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };
