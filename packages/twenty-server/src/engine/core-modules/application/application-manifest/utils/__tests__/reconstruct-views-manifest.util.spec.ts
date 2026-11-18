@@ -332,6 +332,7 @@ const buildFlatViewSort = ({
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
   fieldMetadataId: `${viewSortManifest.fieldMetadataUniversalIdentifier}-id`,
+  relationTargetFieldMetadataId: null,
   viewId: `${viewUniversalIdentifier}-id`,
 });
 

@@ -39,6 +39,7 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewGroupMaps'
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatViewSortMaps'
     | 'flatFieldMetadataOptionMaps'
   >;
 
@@ -55,6 +56,7 @@ export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpd
     flatViewsToDelete: [],
     flatViewFieldsToDelete: [],
     flatViewFieldsToUpdate: [],
+    flatViewSortsToDelete: [],
     flatViewsToUpdate: [],
   };
 
@@ -68,6 +70,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  flatViewSortMaps,
   flatFieldMetadataOptionMaps,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
@@ -91,6 +94,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewFiltersToDelete,
+      flatViewSortsToDelete,
       flatViewsToUpdate,
     } = handleFieldMetadataDeactivationSideEffects({
       flatViewMaps,
@@ -99,12 +103,14 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewFieldMaps,
       flatViewFilterMaps,
       flatViewGroupMaps,
+      flatViewSortMaps,
     });
 
     sideEffectResult.flatViewsToUpdate.push(...flatViewsToUpdate);
     sideEffectResult.flatViewsToDelete.push(...flatViewsToDelete);
     sideEffectResult.flatViewFieldsToDelete.push(...flatViewFieldsToDelete);
     sideEffectResult.flatViewFiltersToDelete.push(...flatViewFiltersToDelete);
+    sideEffectResult.flatViewSortsToDelete.push(...flatViewSortsToDelete);
   } else if (
     isEnumFlatFieldMetadata(toFlatFieldMetadata) &&
     isEnumFlatFieldMetadata(fromFlatFieldMetadata)

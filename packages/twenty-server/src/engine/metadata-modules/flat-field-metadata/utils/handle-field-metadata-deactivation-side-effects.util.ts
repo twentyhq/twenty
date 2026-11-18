@@ -8,6 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { getViewFieldRelationScopeFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/flat-view-field/utils/get-view-field-relation-scope-field-metadata-universal-identifiers.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 type HandleFlatFieldMetadataDeactivationSideEffectsArgs = FromTo<
@@ -20,6 +21,7 @@ type HandleFlatFieldMetadataDeactivationSideEffectsArgs = FromTo<
     | 'flatViewFilterMaps'
     | 'flatViewFieldMaps'
     | 'flatViewGroupMaps'
+    | 'flatViewSortMaps'
   >;
 
 export type FieldMetadataDeactivationSideEffect = {
@@ -27,6 +29,7 @@ export type FieldMetadataDeactivationSideEffect = {
   flatViewsToUpdate: FlatView[];
   flatViewFieldsToDelete: FlatViewField[];
   flatViewFiltersToDelete: FlatViewFilter[];
+  flatViewSortsToDelete: FlatViewSort[];
 };
 
 export const handleFieldMetadataDeactivationSideEffects = ({
@@ -35,6 +38,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
   flatViewFieldMaps,
   flatViewFilterMaps,
   flatViewGroupMaps,
+  flatViewSortMaps,
 }: HandleFlatFieldMetadataDeactivationSideEffectsArgs): FieldMetadataDeactivationSideEffect => {
   const flatViewFiltersToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
     {
@@ -69,6 +73,14 @@ export const handleFieldMetadataDeactivationSideEffects = ({
       ),
     ).values(),
   ];
+
+  const flatViewSortsToDelete = Object.values(
+    flatViewSortMaps.byUniversalIdentifier,
+  ).filter(
+    (flatViewSort): flatViewSort is FlatViewSort =>
+      isDefined(flatViewSort) &&
+      flatViewSort.relationTargetFieldMetadataId === fromFlatFieldMetadata.id,
+  );
 
   const flatViewsAffected: FlatView[] =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -143,5 +155,6 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     flatViewsToDelete,
     flatViewFieldsToDelete,
     flatViewFiltersToDelete,
+    flatViewSortsToDelete,
   };
 };
