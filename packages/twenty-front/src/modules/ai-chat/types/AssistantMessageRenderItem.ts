@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type ThinkingStepPart } from '@/ai-chat/types/ThinkingStepPart';
+import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
 
 export type AssistantMessageRenderItem =
   | {

@@ -11,7 +11,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 import { AiChatAskStatusRow } from '@/ai-chat/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/components/StyledAiChatAskStatusDetail';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/hooks/useIsAiChatToolCallAskedInComposer';
-import { TextWithChatReferences } from '@/ai-chat/components/TextWithChatReferences';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,

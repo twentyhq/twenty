@@ -42,7 +42,7 @@ jest.mock('@/ai-chat/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
-jest.mock('@/ai-chat/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
 }));
 
