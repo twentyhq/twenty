@@ -5,9 +5,9 @@ import { render, screen } from '@testing-library/react';
 import { type ToolUIPart } from 'ai';
 
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/components/AiChatToolCallApprovalStatusRenderer';
-import { type ChatReferenceMatch } from '@/ai-chat/types/ChatReferenceMatch';
+import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 
-jest.mock('@/ai-chat/components/ChatReferenceChip', () => ({
+jest.mock('@/ai-chat/message-content/components/ChatReferenceChip', () => ({
   ChatReferenceChip: ({ reference }: { reference: ChatReferenceMatch }) => (
     <span data-testid="chat-reference-chip">{reference.displayName}</span>
   ),

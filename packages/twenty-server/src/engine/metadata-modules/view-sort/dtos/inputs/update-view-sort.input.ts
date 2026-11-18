@@ -24,6 +24,11 @@ class UpdateViewSortInputUpdates {
   @IsString()
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
 }
 
 @InputType()
