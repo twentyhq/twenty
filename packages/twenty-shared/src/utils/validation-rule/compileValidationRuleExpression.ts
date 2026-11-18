@@ -4,12 +4,12 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
+import { tokenizeExpression } from '@/utils/expression/tokenizeExpression';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
-import { getValidationRuleSyntaxError } from '@/utils/validation-rule/getValidationRuleSyntaxError';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
-import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
 export const compileValidationRuleExpression = ({
   expression,
@@ -42,7 +42,7 @@ export const compileValidationRuleExpression = ({
   } catch (error) {
     return {
       isValid: false,
-      ...getValidationRuleSyntaxError({ expression, error }),
+      ...getExpressionSyntaxError({ expression, error }),
     };
   }
 
@@ -54,7 +54,7 @@ export const compileValidationRuleExpression = ({
     };
   }
 
-  const meaningfulTokens = tokenizeValidationRuleExpression(expression).filter(
+  const meaningfulTokens = tokenizeExpression(expression).filter(
     (token) => token.type !== 'whitespace',
   );
   const spacedMemberDotIndex = meaningfulTokens.findIndex(

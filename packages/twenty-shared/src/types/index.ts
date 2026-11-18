@@ -94,6 +94,9 @@ export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExpressionDate } from './ExpressionDate';
 export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
+export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
+export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
+export type { ExpressionToken } from './ExpressionToken';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
@@ -355,7 +358,6 @@ export type { ValidationRuleDatabaseEventAction } from './ValidationRuleDatabase
 export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
 export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
-export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';
 export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';

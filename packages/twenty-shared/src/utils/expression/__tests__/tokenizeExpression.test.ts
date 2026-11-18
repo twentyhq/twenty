@@ -1,11 +1,9 @@
-import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
+import { tokenizeExpression } from '@/utils/expression/tokenizeExpression';
 
 const describeTokens = (expression: string) =>
-  tokenizeValidationRuleExpression(expression).map(
-    ({ type, text }) => `${type}:${text}`,
-  );
+  tokenizeExpression(expression).map(({ type, text }) => `${type}:${text}`);
 
-describe('tokenizeValidationRuleExpression', () => {
+describe('tokenizeExpression', () => {
   it('should keep a dotted path in one token', () => {
     expect(describeTokens('company.employees >= 10.5')).toEqual([
       'path:company.employees',
@@ -33,7 +31,7 @@ describe('tokenizeValidationRuleExpression', () => {
 
   it('should cover the whole expression with contiguous offsets', () => {
     const expression = 'isDefined(amount) and stage in ["NEW"]';
-    const tokens = tokenizeValidationRuleExpression(expression);
+    const tokens = tokenizeExpression(expression);
 
     expect(tokens.map(({ text }) => text).join('')).toBe(expression);
     expect(

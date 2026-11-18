@@ -1,4 +1,4 @@
-import { type ValidationRuleExpressionToken } from '@/types/ValidationRuleExpressionToken';
+import { type ExpressionToken } from '@/types/ExpressionToken';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const PATH_PATTERN = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/;
@@ -9,7 +9,7 @@ const QUOTE_CHARACTERS = ['"', "'"];
 const readString = (
   expression: string,
   start: number,
-): Pick<ValidationRuleExpressionToken, 'type' | 'end'> => {
+): Pick<ExpressionToken, 'type' | 'end'> => {
   const quote = expression[start];
 
   for (let index = start + 1; index < expression.length; index++) {
@@ -29,7 +29,7 @@ const readString = (
 const readToken = (
   expression: string,
   start: number,
-): Pick<ValidationRuleExpressionToken, 'type' | 'end'> => {
+): Pick<ExpressionToken, 'type' | 'end'> => {
   const character = expression[start] ?? '';
 
   if (QUOTE_CHARACTERS.includes(character)) {
@@ -38,7 +38,7 @@ const readToken = (
 
   const rest = expression.slice(start);
 
-  const patternMatches: [ValidationRuleExpressionToken['type'], RegExp][] = [
+  const patternMatches: [ExpressionToken['type'], RegExp][] = [
     ['whitespace', WHITESPACE_PATTERN],
     ['number', NUMBER_PATTERN],
     ['path', PATH_PATTERN],
@@ -55,10 +55,8 @@ const readToken = (
   return { type: 'symbol', end: start + 1 };
 };
 
-export const tokenizeValidationRuleExpression = (
-  expression: string,
-): ValidationRuleExpressionToken[] => {
-  const tokens: ValidationRuleExpressionToken[] = [];
+export const tokenizeExpression = (expression: string): ExpressionToken[] => {
+  const tokens: ExpressionToken[] = [];
 
   let start = 0;
 

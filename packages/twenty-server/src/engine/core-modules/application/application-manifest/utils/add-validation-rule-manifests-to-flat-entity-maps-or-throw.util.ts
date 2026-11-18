@@ -11,7 +11,7 @@ import {
 import {
   compileValidationRuleExpression,
   isDefined,
-  tokenizeValidationRuleExpression,
+  tokenizeExpression,
 } from 'twenty-shared/utils';
 
 import { fromValidationRuleManifestToUniversalFlatValidationRule } from 'src/engine/core-modules/application/application-manifest/converters/from-validation-rule-manifest-to-universal-flat-validation-rule.util';
@@ -326,9 +326,7 @@ const buildFieldRemovedFromApplicationException = ({
   );
 
 const toComparableTokens = (expression: string) =>
-  tokenizeValidationRuleExpression(expression).filter(
-    (token) => token.type !== 'whitespace',
-  );
+  tokenizeExpression(expression).filter((token) => token.type !== 'whitespace');
 
 // The field-rename side effect rewrote the saved rule, so the manifest still holds the old names.
 // Only fields outside the app can be renamed that way: the app names its own fields in the manifest.

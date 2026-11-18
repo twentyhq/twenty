@@ -91,6 +91,8 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { tokenizeExpression } from './expression/tokenizeExpression';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -403,7 +405,6 @@ export { createValidationRuleEvaluator } from './validation-rule/createValidatio
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
-export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
@@ -415,7 +416,6 @@ export { renameValidationRuleExpressionFields } from './validation-rule/renameVa
 export { renameValidationRuleExpressionToCurrentFieldNames } from './validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
 export { renameValidationRulePath } from './validation-rule/renameValidationRulePath';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
-export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';
 export {
   validationRuleNullPlaceholders,
