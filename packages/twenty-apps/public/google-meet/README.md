@@ -29,3 +29,5 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
   Calls from before you connect are imported only if they started in the last
   two days.
 - **Imports are shared with your workspace.**
+- **Needs a paid Google plan.** The organizer needs a Google Workspace plan
+  with Meet transcripts, or a Google AI plan for Gemini notes.
