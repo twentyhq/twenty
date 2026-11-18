@@ -4,13 +4,11 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
-import { getRoleWithRemovedFieldPermission } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithRemovedFieldPermission';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { type PrimitiveAtom, useAtomValue, useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -24,7 +22,6 @@ import {
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
@@ -55,14 +52,12 @@ const ALL_OBJECT_RECORDS_GRANT_KEYS: Array<keyof Role> = [
 export const useSaveDraftRoleToDB = ({
   roleId,
   isCreateMode,
-  draftRoleAtom,
-  initialDraftRoleAtom,
+  draftRole,
   onSuccess,
 }: {
   roleId: string;
   isCreateMode: boolean;
-  draftRoleAtom: PrimitiveAtom<RoleWithPartialMembers>;
-  initialDraftRoleAtom: PrimitiveAtom<RoleWithPartialMembers | undefined>;
+  draftRole: RoleWithPartialMembers;
   onSuccess?: (savedRoleId: string) => void | Promise<void>;
 }) => {
   const [createRole] = useMutation(CreateOneRoleDocument);
@@ -83,18 +78,13 @@ export const useSaveDraftRoleToDB = ({
     roleId,
   );
 
-  const draftRole = useAtomValue(draftRoleAtom);
-
   const apolloClient = useApolloClient();
-  const store = useStore();
   const setSettingsPersistedRole = useSetAtomFamilyState(
     settingsPersistedRoleFamilyState,
     roleId,
   );
 
-  const replaceDraftRoleWithSavedRole = async (
-    savedDraftRole: RoleWithPartialMembers,
-  ) => {
+  const refreshPersistedRole = async () => {
     const { data } = await apolloClient.query({
       query: GetRolesDocument,
       fetchPolicy: 'network-only',
@@ -108,12 +98,8 @@ export const useSaveDraftRoleToDB = ({
     const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
 
     setSettingsPersistedRole(savedRole);
-    store.set(initialDraftRoleAtom, savedRole);
-    store.set(draftRoleAtom, (currentDraftRole) =>
-      isDeeplyEqual(currentDraftRole, savedDraftRole)
-        ? savedRole
-        : currentDraftRole,
-    );
+
+    return savedRole;
   };
 
   const dirtyFields = getRoleDirtyFields(draftRole, settingsPersistedRole);
@@ -151,23 +137,6 @@ export const useSaveDraftRoleToDB = ({
         settingsPersistedRole?.fieldPermissions,
       ),
   );
-
-  const removeUselessFieldPermissions = () => {
-    if (
-      isNonEmptyArray(
-        fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless,
-      ) === true
-    ) {
-      for (const fieldPermissionToRemoveInDraftRole of fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless) {
-        store.set(draftRoleAtom, (currentDraftRole) =>
-          getRoleWithRemovedFieldPermission(
-            currentDraftRole,
-            fieldPermissionToRemoveInDraftRole.fieldMetadataId,
-          ),
-        );
-      }
-    }
-  };
 
   const createNewRole = async () => {
     const { data } = await createRole({
@@ -527,10 +496,6 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const saveDraftRoleToDB = async () => {
-    removeUselessFieldPermissions();
-
-    const savedDraftRole = store.get(draftRoleAtom);
-
     const savedRoleId = isCreateMode
       ? await createNewRole()
       : await updateExistingRole();
@@ -543,7 +508,7 @@ export const useSaveDraftRoleToDB = ({
       await onSuccess(savedRoleId);
     }
 
-    await replaceDraftRoleWithSavedRole(savedDraftRole);
+    return refreshPersistedRole();
   };
 
   return {

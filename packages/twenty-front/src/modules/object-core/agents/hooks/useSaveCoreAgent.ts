@@ -40,13 +40,14 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   const { draft, resetDraft, resetDraftIfUnchanged } = useCoreAgentDraft(agent);
   const { roleId, isNewRole } = useCoreAgentRole(agent);
   const { isDraftDirty, isRoleDirty } = useCoreAgentDirtyState(agent);
+  const coreAgentDraftRole = useAtomFamilyStateValue(
+    coreAgentDraftRoleFamilyState,
+    agent.id,
+  );
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     roleId,
     isCreateMode: isNewRole,
-    draftRoleAtom: coreAgentDraftRoleFamilyState.atomFamily(agent.id),
-    initialDraftRoleAtom: coreAgentInitialDraftRoleFamilyState.atomFamily(
-      agent.id,
-    ),
+    draftRole: coreAgentDraftRole,
   });
 
   const coreAgentInitialDraftRole = useAtomFamilyStateValue(
@@ -55,6 +56,10 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   );
   const setCoreAgentDraftRole = useSetAtomFamilyState(
     coreAgentDraftRoleFamilyState,
+    agent.id,
+  );
+  const setCoreAgentInitialDraftRole = useSetAtomFamilyState(
+    coreAgentInitialDraftRoleFamilyState,
     agent.id,
   );
   const setCoreAgentDiscardCount = useSetAtomFamilyState(
@@ -83,7 +88,16 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
 
     try {
       if (isRoleDirty) {
-        await saveDraftRoleToDB();
+        const savedRole = await saveDraftRoleToDB();
+
+        if (isDefined(savedRole)) {
+          setCoreAgentInitialDraftRole(savedRole);
+          setCoreAgentDraftRole((currentDraftRole) =>
+            isDeeplyEqual(currentDraftRole, coreAgentDraftRole)
+              ? savedRole
+              : currentDraftRole,
+          );
+        }
       }
 
       if (isDraftDirty) {

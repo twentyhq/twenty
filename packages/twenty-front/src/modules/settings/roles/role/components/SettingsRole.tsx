@@ -16,7 +16,6 @@ import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRo
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -31,6 +30,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 import { useLingui } from '@lingui/react/macro';
 
@@ -62,6 +62,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsDraftRoleFamilyState,
     roleId,
   );
+  const setSettingsInitialDraftRole = useSetAtomFamilyState(
+    settingsInitialDraftRoleFamilyState,
+    roleId,
+  );
 
   const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
@@ -78,19 +82,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { enqueueToast } = useToast();
 
-  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
-
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
     roleId,
-    draftRoleAtom: settingsDraftRoleFamilyState.getAtom(
-      roleId,
-      routedFlowStateScopeId,
-    ),
-    initialDraftRoleAtom: settingsInitialDraftRoleFamilyState.getAtom(
-      roleId,
-      routedFlowStateScopeId,
-    ),
+    draftRole: settingsDraftRole,
     onSuccess: async (savedRoleId) => {
       if (isCreateMode) {
         navigateSettings(SettingsPath.RoleDetail, { roleId: savedRoleId });
@@ -152,7 +147,17 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
     try {
       if (isCreateMode || isRoleDirty) {
-        await saveDraftRoleToDB();
+        const savedRole = await saveDraftRoleToDB();
+
+        if (isDefined(savedRole)) {
+          setSettingsInitialDraftRole(savedRole);
+          setSettingsDraftRole((currentDraftRole) =>
+            isDeeplyEqual(currentDraftRole, settingsDraftRole)
+              ? savedRole
+              : currentDraftRole,
+          );
+        }
+
         await loadCurrentUser();
       }
       if (isRoleInboxChannelAccessDirty) {
