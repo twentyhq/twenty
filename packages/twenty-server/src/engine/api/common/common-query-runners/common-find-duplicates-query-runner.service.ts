@@ -166,7 +166,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: findDuplicatesOutput.flatMap((item) => item.records),
-      parentObjectRecordsAggregatedValues: {},
       selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       authContext,
