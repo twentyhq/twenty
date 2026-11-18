@@ -13,10 +13,13 @@ export const isRecurringChargePeriod = (
   RECURRING_CHARGE_PERIODS.includes(value as RecurringChargePeriod);
 
 // Omitted for a flat fee; WORKSPACE_MEMBER multiplies by the member count when the period is charged.
+/** @deprecated Use `billing.subscriptions` */
 export const RECURRING_CHARGE_UNITS = ['WORKSPACE_MEMBER'] as const;
 
+/** @deprecated Use `billing.subscriptions` */
 export type RecurringChargeUnit = (typeof RECURRING_CHARGE_UNITS)[number];
 
+/** @deprecated Use `billing.subscriptions` */
 export const isRecurringChargeUnit = (
   value: unknown,
 ): value is RecurringChargeUnit =>
