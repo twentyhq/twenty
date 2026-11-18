@@ -162,7 +162,29 @@ describe('LogicFunctionExecutorService.executeBuiltCode', () => {
 });
 
 describe('LogicFunctionExecutorService.execute', () => {
-  it('lets a lifecycle hook that skips usage limits run in a suspended workspace', async () => {
+  it('lets a cleanup hook that opts out run in a suspended workspace', async () => {
+    const { logicFunctionExecutorService, consumeToken } =
+      await createExecutorService({
+        workspace: buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
+      });
+
+    await expect(
+      logicFunctionExecutorService.execute({
+        logicFunctionId: 'logic-function-id',
+        workspaceId: 'workspace-id',
+        payload: {},
+        shouldEnforceUsageLimits: false,
+        shouldRefuseSuspendedWorkspace: false,
+      }),
+    ).rejects.toMatchObject({
+      code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+    });
+
+    expect(consumeToken).toHaveBeenCalledTimes(1);
+    expect(consumeToken).toHaveBeenCalledWith('workspace-id');
+  });
+
+  it('still refuses a suspended workspace when only usage limits are skipped', async () => {
     const { logicFunctionExecutorService, consumeToken } =
       await createExecutorService({
         workspace: buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
@@ -176,10 +198,9 @@ describe('LogicFunctionExecutorService.execute', () => {
         shouldEnforceUsageLimits: false,
       }),
     ).rejects.toMatchObject({
-      code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+      code: LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED,
     });
 
-    expect(consumeToken).toHaveBeenCalledTimes(1);
-    expect(consumeToken).toHaveBeenCalledWith('workspace-id');
+    expect(consumeToken).not.toHaveBeenCalled();
   });
 });

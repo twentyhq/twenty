@@ -116,6 +116,12 @@ type ExecutionArgs = {
   retry?: LogicFunctionRetryContext;
 };
 
+type ExecutionAdmissionOptions = {
+  shouldEnforceUsageLimits?: boolean;
+  // Cleanup hooks opt out so uninstall and disconnect still run while a workspace is suspended or deleted.
+  shouldRefuseSuspendedWorkspace?: boolean;
+};
+
 @Injectable()
 export class LogicFunctionExecutorService {
   private readonly logger = new Logger(LogicFunctionExecutorService.name);
@@ -181,8 +187,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
-    shouldEnforceUsageLimits?: boolean;
-  }): Promise<LogicFunctionExecuteResult> {
+  } & ExecutionAdmissionOptions): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
@@ -251,16 +256,17 @@ export class LogicFunctionExecutorService {
   }
 
   private async executeResolved({
-    shouldEnforceUsageLimits = true,
+    shouldEnforceUsageLimits,
+    shouldRefuseSuspendedWorkspace,
     ...executionArgs
-  }: ExecutionArgs & {
-    shouldEnforceUsageLimits?: boolean;
-  }): Promise<LogicFunctionExecuteResult> {
+  }: ExecutionArgs &
+    ExecutionAdmissionOptions): Promise<LogicFunctionExecuteResult> {
     await this.admitExecution({
       workspaceId: executionArgs.workspaceId,
       flatApplication: executionArgs.flatApplication,
       spenders: executionArgs.spenders,
       shouldEnforceUsageLimits,
+      shouldRefuseSuspendedWorkspace,
     });
 
     return this.executeAdmitted(executionArgs);
@@ -271,15 +277,14 @@ export class LogicFunctionExecutorService {
     flatApplication,
     spenders,
     shouldEnforceUsageLimits = true,
-  }: Pick<ExecutionArgs, 'workspaceId' | 'flatApplication' | 'spenders'> & {
-    shouldEnforceUsageLimits?: boolean;
-  }): Promise<void> {
+    shouldRefuseSuspendedWorkspace = true,
+  }: Pick<ExecutionArgs, 'workspaceId' | 'flatApplication' | 'spenders'> &
+    ExecutionAdmissionOptions): Promise<void> {
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
-    // Lifecycle hooks opt out so uninstall and disconnect cleanup still run while a workspace is suspended or deleted.
-    if (shouldEnforceUsageLimits) {
-      await this.assertWorkspaceNotSuspended(workspaceId);
+    if (shouldRefuseSuspendedWorkspace) {
+      await this.assertWorkspaceNotSuspendedOrThrow(workspaceId);
     }
 
     await this.throttleExecution(workspaceId);
@@ -395,7 +400,7 @@ export class LogicFunctionExecutorService {
     }
   }
 
-  private async assertWorkspaceNotSuspended(
+  private async assertWorkspaceNotSuspendedOrThrow(
     workspaceId: string,
   ): Promise<void> {
     const workspace = await this.coreEntityCacheService.get(
