@@ -8,7 +8,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -39,7 +38,8 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
     .filter(
       (item) =>
         (item.parentId ?? null) === containerId &&
-        !isNavigationMenuItemTabOrSection(item),
+        item.type !== NavigationMenuItemType.TAB &&
+        item.type !== NavigationMenuItemType.SECTION,
     )
     .sort((a, b) => a.position - b.position);
 
