@@ -6,13 +6,9 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
-import {
-  LogicFunctionExecutionExceptionCode,
-  LogicFunctionExecutorService,
-} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const FLAT_APPLICATION = {
   id: 'application-id',
@@ -20,16 +16,9 @@ const FLAT_APPLICATION = {
   universalIdentifier: 'application-universal-identifier',
 } as FlatApplication;
 
-const buildWorkspace = (
-  activationStatus: WorkspaceActivationStatus,
-): Pick<FlatWorkspace, 'activationStatus' | 'deletedAt'> => ({
-  activationStatus,
-  deletedAt: undefined,
-});
-
 const createExecutorService = async ({
   isApplicationStopped = false,
-  workspace = buildWorkspace(WorkspaceActivationStatus.ACTIVE),
+  workspace = null,
 }: {
   isApplicationStopped?: boolean;
   workspace?: Pick<FlatWorkspace, 'activationStatus' | 'deletedAt'> | null;
@@ -54,29 +43,6 @@ const createExecutorService = async ({
       {
         provide: LogicFunctionExecutionThrottleService,
         useValue: { consumeToken },
-      },
-      {
-        provide: WorkspaceCacheService,
-        useValue: {
-          getOrRecompute: jest.fn().mockResolvedValue({
-            flatLogicFunctionMaps: {
-              universalIdentifierById: {
-                'logic-function-id': 'logic-function-universal-identifier',
-              },
-              byUniversalIdentifier: {
-                'logic-function-universal-identifier': {
-                  id: 'logic-function-id',
-                  applicationId: FLAT_APPLICATION.id,
-                  deletedAt: null,
-                },
-              },
-            },
-            flatApplicationMaps: {
-              byId: { [FLAT_APPLICATION.id]: FLAT_APPLICATION },
-            },
-            flatApplicationVariableMaps: {},
-          }),
-        },
       },
     ],
   })
@@ -113,9 +79,22 @@ describe('LogicFunctionExecutorService.executeBuiltCode', () => {
     expect(getBuiltHandlerPath).not.toHaveBeenCalled();
   });
 
+  // Deleted workspaces and throttle ordering can't be observed on the shared integration seed workspaces.
   it.each([
-    ['suspended', buildWorkspace(WorkspaceActivationStatus.SUSPENDED)],
-    ['inactive', buildWorkspace(WorkspaceActivationStatus.INACTIVE)],
+    [
+      'suspended',
+      {
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        deletedAt: undefined,
+      },
+    ],
+    [
+      'inactive',
+      {
+        activationStatus: WorkspaceActivationStatus.INACTIVE,
+        deletedAt: undefined,
+      },
+    ],
     ['deleted', null],
   ])(
     'rejects a run in a %s workspace before spending a throttle token',
@@ -140,67 +119,4 @@ describe('LogicFunctionExecutorService.executeBuiltCode', () => {
       expect(getBuiltHandlerPath).not.toHaveBeenCalled();
     },
   );
-
-  it('admits a run in an active workspace', async () => {
-    const { logicFunctionExecutorService, consumeToken } =
-      await createExecutorService();
-
-    await expect(
-      logicFunctionExecutorService.executeBuiltCode({
-        workspaceId: 'workspace-id',
-        flatApplication: FLAT_APPLICATION,
-        getBuiltHandlerPath: jest.fn(),
-        payload: {},
-      }),
-    ).rejects.toMatchObject({
-      code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
-    });
-
-    expect(consumeToken).toHaveBeenCalledTimes(1);
-    expect(consumeToken).toHaveBeenCalledWith('workspace-id');
-  });
-});
-
-describe('LogicFunctionExecutorService.execute', () => {
-  it('lets a cleanup hook that opts out run in a suspended workspace', async () => {
-    const { logicFunctionExecutorService, consumeToken } =
-      await createExecutorService({
-        workspace: buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
-      });
-
-    await expect(
-      logicFunctionExecutorService.execute({
-        logicFunctionId: 'logic-function-id',
-        workspaceId: 'workspace-id',
-        payload: {},
-        shouldEnforceUsageLimits: false,
-        shouldRefuseSuspendedWorkspace: false,
-      }),
-    ).rejects.toMatchObject({
-      code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
-    });
-
-    expect(consumeToken).toHaveBeenCalledTimes(1);
-    expect(consumeToken).toHaveBeenCalledWith('workspace-id');
-  });
-
-  it('still refuses a suspended workspace when only usage limits are skipped', async () => {
-    const { logicFunctionExecutorService, consumeToken } =
-      await createExecutorService({
-        workspace: buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
-      });
-
-    await expect(
-      logicFunctionExecutorService.execute({
-        logicFunctionId: 'logic-function-id',
-        workspaceId: 'workspace-id',
-        payload: {},
-        shouldEnforceUsageLimits: false,
-      }),
-    ).rejects.toMatchObject({
-      code: LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED,
-    });
-
-    expect(consumeToken).not.toHaveBeenCalled();
-  });
 });
