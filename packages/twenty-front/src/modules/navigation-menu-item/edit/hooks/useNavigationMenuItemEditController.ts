@@ -1,7 +1,7 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import {
-  NavigationMenuItemType,
+  type NavigationMenuItemType,
   type NativePageKey,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,6 +14,7 @@ import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -71,14 +72,12 @@ export const useNavigationMenuItemEditController = (
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
     const parentId = targetFolderId ?? null;
-    const isTabOrSection = (type: NavigationMenuItemType) =>
-      type === NavigationMenuItemType.TAB ||
-      type === NavigationMenuItemType.SECTION;
+    const isNewItemTabOrSection = isNavigationMenuItemTabOrSection(input);
     const siblings = currentItems
       .filter(
         (item) =>
           (item.parentId ?? null) === parentId &&
-          isTabOrSection(item.type) === isTabOrSection(input.type),
+          isNavigationMenuItemTabOrSection(item) === isNewItemTabOrSection,
       )
       .sort((a, b) => a.position - b.position);
     const { flatIndex, position } = computeInsertIndexAndPosition({
