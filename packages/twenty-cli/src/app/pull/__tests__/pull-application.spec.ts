@@ -630,6 +630,37 @@ export default defineLogicFunction({ universalIdentifier: '${entry.universalIden
     });
     expect(await read('src/functions/greet.ts')).toBe(local);
   });
+  it('refuses to delete a definition still imported by a surviving function', async () => {
+    const exported = createFunctionExport();
+    const [surviving, removed] = exported.manifest.logicFunctions;
+    const removedFile = exported.files.find(
+      (file) => file.path === removed.sourceHandlerPath,
+    )!;
+    const survivingFile = exported.files.find(
+      (file) => file.path === surviving.sourceHandlerPath,
+    )!;
+    removedFile.content += '\nexport const helper = "shared";';
+    survivingFile.content = `import { helper } from './farewell';\n${survivingFile.content.replace('async () => message', 'async () => message + helper')}`;
+    for (const definition of exported.manifest.logicFunctions) {
+      definition.sourceFiles = exported.files.map((file) => ({
+        filePath: file.path,
+        checksum: createHash('md5').update(file.content).digest('hex'),
+      }));
+    }
+    requireSuccess(await pull(exported));
+    const previousBase = await read(BASE_PATH);
+    const result = await pull({
+      ...exported,
+      manifest: { ...exported.manifest, logicFunctions: [surviving] },
+      coverage: exported.coverage.filter(
+        (entry) => entry.universalIdentifier !== removed.universalIdentifier,
+      ),
+    });
+    expect(result).toMatchObject({ success: false });
+    expect(await read(removed.sourceHandlerPath)).toBe(removedFile.content);
+    expect(await read(surviving.sourceHandlerPath)).toBe(survivingFile.content);
+    expect(await read(BASE_PATH)).toBe(previousBase);
+  });
   it('preserves a function omitted with a coverage gap, then removes it when remotely deleted', async () => {
     const exported = createFunctionExport();
     requireSuccess(await pull(exported));

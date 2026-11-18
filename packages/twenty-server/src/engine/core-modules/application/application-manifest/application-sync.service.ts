@@ -125,10 +125,13 @@ export class ApplicationSyncService {
     }
 
     if (!dryRun) {
-      await this.applicationSourceService.store({
-        workspaceId,
-        manifest,
-      });
+      try {
+        await this.applicationSourceService.store({ workspaceId, manifest });
+      } catch (error) {
+        this.logger.warn(
+          `Application sync succeeded but its source inventory could not be stored: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {

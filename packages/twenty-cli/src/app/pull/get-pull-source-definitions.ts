@@ -1,7 +1,22 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type FrontComponentManifest,
+  type LogicFunctionManifest,
+} from 'twenty-shared/application';
 
-export const getPullSourceDefinitions = (
-  manifest: Pick<Manifest, 'frontComponents' | 'logicFunctions'> | null,
+export const getPullSourceDefinitions = <
+  TFrontComponent extends Pick<
+    FrontComponentManifest,
+    'sourceComponentPath' | 'sourceFiles'
+  >,
+  TLogicFunction extends Pick<
+    LogicFunctionManifest,
+    'sourceHandlerPath' | 'sourceFiles'
+  >,
+>(
+  manifest: {
+    frontComponents: TFrontComponent[];
+    logicFunctions: TLogicFunction[];
+  } | null,
 ) => [
   ...(manifest?.frontComponents ?? []).map((component) => ({
     kind: 'frontComponent' as const,
@@ -9,7 +24,6 @@ export const getPullSourceDefinitions = (
     label: 'Front component',
     sourcePath: component.sourceComponentPath,
     sourceFiles: component.sourceFiles,
-    universalIdentifier: component.universalIdentifier,
     requiredSdkExports: ['defineFrontComponent'],
     definition: component,
   })),
@@ -19,7 +33,6 @@ export const getPullSourceDefinitions = (
     label: 'Logic function',
     sourcePath: logicFunction.sourceHandlerPath,
     sourceFiles: logicFunction.sourceFiles,
-    universalIdentifier: logicFunction.universalIdentifier,
     requiredSdkExports: ['defineLogicFunction'],
     definition: logicFunction,
   })),

@@ -147,8 +147,9 @@ Existing clients that do not request source files continue to receive coverage
 gaps for frontend components and their widgets, without reading component source
 from storage.
 
-Apply baseline recording opts in to source export too, so a later pull compares
-the same supported components and functions. Pull restores
+Apply and dev record the source definitions from the manifest just synced,
+alongside the remote metadata export. Recording this baseline does not download
+component or function sources. Pull restores
 `dependencies/package.json` and `dependencies/yarn.lock` to the project root,
 in the same transaction as metadata and the baseline.
 
@@ -217,10 +218,10 @@ An occupied destination or a missing declared source aborts the entire pull
 before writes. Supported page-layout widgets keep their component identifiers.
 Run `yarn install` after dependency changes before building the pulled TSX.
 
-Logic functions require a per-function inventory. The server snapshots their
-stored metadata after successful sync, including resolved triggers and default
-values. Export compares that snapshot with current metadata and validates every
-source checksum. Missing inventories, changed metadata or stale builds become
+Logic functions require a per-function inventory. The server records their
+deployed `updatedAt` revision after successful sync. Export compares that revision
+and validates every source checksum. Converter changes alone do not invalidate
+the inventory. Missing inventories, changed metadata or stale builds become
 coverage gaps; pull never invents a handler or replaces a newer workspace edit
 with an older definition. Apply the app with the current CLI to refresh its
 inventory. Original definitions, including install hooks, keep their SDK

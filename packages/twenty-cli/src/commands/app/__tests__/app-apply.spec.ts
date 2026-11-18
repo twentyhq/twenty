@@ -701,9 +701,6 @@ describe('app apply', () => {
       exportRequest && readGraphqlRequest(exportRequest).arguments,
     ).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
-      shouldIncludeSourceFiles: true,
-      shouldIncludeSourceDependencies: true,
-      shouldIncludeLogicFunctionSources: true,
     });
     expect((await readdir(join(appPath, '.twenty/cli'))).sort()).toEqual([
       'pull-base.json',
@@ -969,7 +966,7 @@ describe('app apply', () => {
       { ...EXPORTED_MANIFEST, futureCollection: [{ name: 'preserved' }] },
     ],
   ])(
-    'records %s exactly as the server sent them',
+    'preserves %s and records the applied source definitions',
     async (_description, manifest) => {
       state.exportResponse = {
         data: { exportApplication: { ...APPLICATION_EXPORT, manifest } },
@@ -983,7 +980,7 @@ describe('app apply', () => {
         JSON.parse(
           await readFile(join(appPath, '.twenty/cli/pull-base.json'), 'utf8'),
         ).manifest,
-      ).toEqual(manifest);
+      ).toEqual({ ...manifest, frontComponents: [], logicFunctions: [] });
     },
   );
 

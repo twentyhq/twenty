@@ -1,9 +1,13 @@
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationSourceResource } from 'src/engine/core-modules/application/application-manifest/types/application-source-resource.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 
 export const getApplicationSourceResources = (
   manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>>,
+  flatLogicFunctionMaps?: AllFlatEntityMaps['flatLogicFunctionMaps'],
 ): ApplicationSourceResource[] => [
   ...(manifest.frontComponents ?? []).map((component) => ({
     kind: 'frontComponent' as const,
@@ -16,18 +20,23 @@ export const getApplicationSourceResources = (
       builtComponentChecksum: component.builtComponentChecksum,
     },
   })),
-  ...(manifest.logicFunctions ?? []).map(
-    ({ sourceFiles, ...logicFunction }) => ({
+  ...(manifest.logicFunctions ?? []).map(({ sourceFiles, ...definition }) => {
+    const logicFunction = flatLogicFunctionMaps
+      ? findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatLogicFunctionMaps,
+          universalIdentifier: definition.universalIdentifier,
+        })
+      : undefined;
+    return {
       kind: 'logicFunction' as const,
-      universalIdentifier: logicFunction.universalIdentifier,
-      sourcePath: logicFunction.sourceHandlerPath,
-      inventoryPath: `logic-function-sources/${logicFunction.universalIdentifier}.json`,
-      sourceFiles,
-      metadata: {
-        sourceHandlerPath: logicFunction.sourceHandlerPath,
-        builtHandlerChecksum: logicFunction.builtHandlerChecksum,
-        definition: logicFunction,
-      },
-    }),
-  ),
+      universalIdentifier: definition.universalIdentifier,
+      sourcePath: definition.sourceHandlerPath,
+      inventoryPath: `logic-function-sources/${definition.universalIdentifier}.json`,
+      sourceFiles:
+        isDefined(flatLogicFunctionMaps) && !isDefined(logicFunction)
+          ? undefined
+          : sourceFiles,
+      metadata: { updatedAt: logicFunction?.updatedAt },
+    };
+  }),
 ];

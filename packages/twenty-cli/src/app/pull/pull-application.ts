@@ -164,6 +164,7 @@ export const pullApplication = async (
           ...dependencyPlan.writes,
           ...publicAssetPlan.writes,
           ...sourceDefinitionPlan.writes,
+          ...sourceDefinitionPlan.deletions,
           ...safePlan.deletions,
         ].map((write) => write.relativePath.toLowerCase()),
       ),

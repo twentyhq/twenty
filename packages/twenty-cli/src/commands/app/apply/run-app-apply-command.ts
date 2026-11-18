@@ -82,6 +82,7 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
       appPath: project.path,
       universalIdentifier: applyResult.acknowledgedUniversalIdentifier,
       sourceFingerprints,
+      appliedManifest: build.manifest,
       context,
     });
     if (pullBase === 'recorded') {

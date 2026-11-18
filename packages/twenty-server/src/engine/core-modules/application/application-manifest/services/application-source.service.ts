@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'node:crypto';
-import { isDeepStrictEqual } from 'node:util';
 import {
   isSourceFileManifestList,
   type SourceFileManifest,
@@ -9,19 +8,18 @@ import {
 } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isPlainObject, parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
-import { fromFlatLogicFunctionToLogicFunctionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-logic-function-to-logic-function-manifest.util';
 import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { type ApplicationSourceResource } from 'src/engine/core-modules/application/application-manifest/types/application-source-resource.type';
 import { getApplicationSourceResources } from 'src/engine/core-modules/application/application-manifest/utils/get-application-source-resources.util';
+import { validateApplicationSourceInventory } from 'src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -62,33 +60,19 @@ export class ApplicationSourceService {
       application: Pick<Manifest['application'], 'universalIdentifier'>;
     };
   }): Promise<void> {
-    const resources = getApplicationSourceResources(manifest);
-    const logicFunctions = resources.filter(
-      (resource) =>
-        resource.kind === 'logicFunction' && isDefined(resource.sourceFiles),
+    const flatLogicFunctionMaps = manifest.logicFunctions?.some(
+      (logicFunction) => isDefined(logicFunction.sourceFiles),
+    )
+      ? (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatLogicFunctionMaps',
+          ])
+        ).flatLogicFunctionMaps
+      : undefined;
+    const resources = getApplicationSourceResources(
+      manifest,
+      flatLogicFunctionMaps,
     );
-    if (logicFunctions.length > 0) {
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]);
-      for (const resource of logicFunctions) {
-        const logicFunction = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatLogicFunctionMaps,
-          universalIdentifier: resource.universalIdentifier,
-        });
-        if (!isDefined(logicFunction)) {
-          throw new ApplicationException(
-            doNotTranslate(
-              `Logic function ${resource.universalIdentifier} was not synchronized`,
-            ),
-            ApplicationExceptionCode.INVALID_INPUT,
-          );
-        }
-        resource.metadata.definition =
-          fromFlatLogicFunctionToLogicFunctionManifest(logicFunction);
-      }
-    }
     for (const resource of resources) {
       if (
         !isDefined(resource.sourceFiles) &&
@@ -153,36 +137,15 @@ export class ApplicationSourceService {
         )
       ).toString('utf8'),
     );
-    if (!isPlainObject(inventory)) {
-      throw new ApplicationException(
-        doNotTranslate('Stored application source inventory is invalid'),
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-    if (!isDefined(inventory.sourceFiles)) {
+    const sourceFiles = validateApplicationSourceInventory({
+      inventory,
+      resource,
+    });
+    if (!isDefined(sourceFiles)) {
       return undefined;
     }
-    if (
-      Object.entries(resource.metadata).some(
-        ([key, value]) => !isDeepStrictEqual(inventory[key], value),
-      ) ||
-      !isSourceFileManifestList(inventory.sourceFiles) ||
-      !inventory.sourceFiles.some(
-        (file) => file.filePath === resource.sourcePath,
-      )
-    ) {
-      throw new ApplicationException(
-        doNotTranslate(
-          'Source inventory does not match the deployed application definition; apply or publish again',
-        ),
-        ApplicationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`Apply or publish the application again to restore its application sources.`,
-        },
-      );
-    }
     const files: ApplicationExportFile[] = [];
-    for (const { filePath, checksum } of inventory.sourceFiles) {
+    for (const { filePath, checksum } of sourceFiles) {
       const existing = exportedFiles.find((file) => file.path === filePath);
       if (isDefined(existing)) {
         const content = Buffer.from(
@@ -255,6 +218,6 @@ export class ApplicationSourceService {
           : {}),
       });
     }
-    return { sourceFiles: inventory.sourceFiles, files };
+    return { sourceFiles, files };
   }
 }

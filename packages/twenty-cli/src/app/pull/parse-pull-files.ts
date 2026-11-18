@@ -10,6 +10,7 @@ import {
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { getPullSourceDefinitions } from '@/app/pull/get-pull-source-definitions';
 import { type AppExportFile } from '@/app/types/app-export.type';
 import { CliError } from '@/output/cli-error';
 
@@ -44,16 +45,10 @@ export const parsePullFiles = ({
   }
 
   const inventory = new Map<string, string>();
-  const definitions = [
-    ...frontComponents.map((component) => ({
-      sourcePath: component.sourceComponentPath,
-      sourceFiles: component.sourceFiles,
-    })),
-    ...logicFunctions.map((logicFunction) => ({
-      sourcePath: logicFunction.sourceHandlerPath,
-      sourceFiles: logicFunction.sourceFiles,
-    })),
-  ];
+  const definitions = getPullSourceDefinitions({
+    frontComponents,
+    logicFunctions,
+  });
   for (const definition of definitions) {
     if (!isDefined(definition.sourceFiles)) {
       continue;

@@ -42,7 +42,8 @@ export const planSourceDefinitionWrites = async ({
   const definitions = getPullSourceDefinitions(manifest);
   const previousDefinitions = getPullSourceDefinitions(baseManifest);
   for (const resource of definitions) {
-    const { universalIdentifier, sourcePath } = resource;
+    const { sourcePath } = resource;
+    const { universalIdentifier } = resource.definition;
     const file = files.find(
       (file) => file.folder === FileFolder.Source && file.path === sourcePath,
     );
@@ -93,7 +94,7 @@ export const planSourceDefinitionWrites = async ({
     }
     const previous = previousDefinitions.find(
       (entry) =>
-        entry.universalIdentifier.toLowerCase() ===
+        entry.definition.universalIdentifier.toLowerCase() ===
         universalIdentifier.toLowerCase(),
     );
     const previousFingerprint =
@@ -122,14 +123,18 @@ export const planSourceDefinitionWrites = async ({
     });
   }
   for (const previous of previousDefinitions) {
-    if (protectedIdentifiers.has(previous.universalIdentifier.toLowerCase())) {
+    if (
+      protectedIdentifiers.has(
+        previous.definition.universalIdentifier.toLowerCase(),
+      )
+    ) {
       const previousFingerprint = remoteSourceFingerprints[previous.sourcePath];
       if (
         !isDefined(previousFingerprint) ||
         definitions.some(
           (resource) =>
-            resource.universalIdentifier.toLowerCase() ===
-            previous.universalIdentifier.toLowerCase(),
+            resource.definition.universalIdentifier.toLowerCase() ===
+            previous.definition.universalIdentifier.toLowerCase(),
         )
       ) {
         continue;
@@ -141,12 +146,12 @@ export const planSourceDefinitionWrites = async ({
       (file) =>
         file.entityKey === previous.entityKey &&
         file.universalIdentifier?.toLowerCase() ===
-          previous.universalIdentifier.toLowerCase(),
+          previous.definition.universalIdentifier.toLowerCase(),
     );
     const relativePath = existing?.relativePath.split('\\').join('/');
     if (isDefined(relativePath) && !usedPaths.has(relativePath.toLowerCase())) {
       deletions.push({
-        universalIdentifier: previous.universalIdentifier,
+        universalIdentifier: previous.definition.universalIdentifier,
         relativePath,
       });
     }

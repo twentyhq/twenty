@@ -143,41 +143,34 @@ export const manifestUpdateChecksums = ({
     first.filePath.localeCompare(second.filePath),
   );
 
-  if (isDefined(frontComponentSourcePaths)) {
-    result.frontComponents = result.frontComponents.map((component) => {
-      const paths = frontComponentSourcePaths.get(
-        component.sourceComponentPath,
-      );
-      if (!isDefined(paths)) {
-        return component;
-      }
-      return {
-        ...component,
-        sourceFiles: result.sourceFiles.filter(
-          (file) =>
-            paths.includes(file.filePath) &&
-            !['package.json', 'yarn.lock'].includes(file.filePath),
-        ),
-      };
-    });
-  }
-  if (isDefined(logicFunctionSourcePaths)) {
-    result.logicFunctions = result.logicFunctions.map((logicFunction) => {
-      const paths = logicFunctionSourcePaths.get(
-        logicFunction.sourceHandlerPath,
-      );
-      if (!isDefined(paths)) {
-        return logicFunction;
-      }
-      return {
-        ...logicFunction,
-        sourceFiles: result.sourceFiles.filter(
-          (file) =>
-            paths.includes(file.filePath) &&
-            !['package.json', 'yarn.lock'].includes(file.filePath),
-        ),
-      };
-    });
-  }
+  const withSourceFiles = <
+    TDefinition extends { sourceFiles?: SourceFileManifest[] },
+  >(
+    definition: TDefinition,
+    paths: string[] | undefined,
+  ): TDefinition & { sourceFiles?: SourceFileManifest[] } =>
+    isDefined(paths)
+      ? {
+          ...definition,
+          sourceFiles: result.sourceFiles.filter(
+            (file) =>
+              paths.includes(file.filePath) &&
+              !['package.json', 'yarn.lock'].includes(file.filePath),
+          ),
+        }
+      : definition;
+
+  result.frontComponents = result.frontComponents.map((component) =>
+    withSourceFiles(
+      component,
+      frontComponentSourcePaths?.get(component.sourceComponentPath),
+    ),
+  );
+  result.logicFunctions = result.logicFunctions.map((logicFunction) =>
+    withSourceFiles(
+      logicFunction,
+      logicFunctionSourcePaths?.get(logicFunction.sourceHandlerPath),
+    ),
+  );
   return result;
 };

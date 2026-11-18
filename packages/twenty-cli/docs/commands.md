@@ -803,6 +803,10 @@ files may be incomplete: fix the problem, then run `twenty app generate-client`,
 which regenerates the client without syncing again. Ctrl+C exits with 130 and
 reports the step it interrupted.
 
+Apply and dev record component and logic function definitions from the manifest
+just synced. They fetch the other baseline metadata without downloading source
+files again.
+
 Remote changes made between the plan and the sync can change what the sync does.
 Remote changes between the acknowledged sync and the export can also enter the
 saved baseline without appearing in local source; this is not an atomic server

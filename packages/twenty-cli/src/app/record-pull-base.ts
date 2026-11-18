@@ -11,11 +11,13 @@ export const recordPullBase = async ({
   appPath,
   universalIdentifier,
   sourceFingerprints,
+  appliedManifest,
   context: { target, signal, output },
 }: {
   appPath: string;
   universalIdentifier: string;
   sourceFingerprints?: Record<string, string>;
+  appliedManifest: Record<string, unknown>;
   context: TargetCommandContext;
 }): Promise<PullBaseRecording> => {
   output.progress({ message: 'Recording the pull base…' });
@@ -26,12 +28,15 @@ export const recordPullBase = async ({
       universalIdentifier,
       target,
       signal,
-      shouldIncludeSourceFiles: true,
     });
 
     await writePullBase({
       appPath,
-      manifest: applicationExport.manifest,
+      manifest: {
+        ...applicationExport.manifest,
+        frontComponents: appliedManifest.frontComponents ?? [],
+        logicFunctions: appliedManifest.logicFunctions ?? [],
+      },
       target: { apiUrl: target.apiUrl, workspaceId },
       sourceFingerprints,
       signal,
