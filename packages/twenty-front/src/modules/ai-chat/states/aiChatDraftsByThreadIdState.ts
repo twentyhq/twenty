@@ -1,4 +1,4 @@
-import { isAiChatDraftsByThreadId } from '@/ai-chat/composer/utils/isAiChatDraftsByThreadId';
+import { isAiChatDraftsByThreadId } from '@/ai-chat/utils/isAiChatDraftsByThreadId';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';

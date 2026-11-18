@@ -6,7 +6,7 @@ import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRol
 import { type AiChatMessageAuthor } from '@/ai-chat/messages/types/AiChatMessageAuthor';
 import { type AiChatMessageAuthorLookup } from '@/ai-chat/messages/types/AiChatMessageAuthorLookup';
 import { getAiChatAgentAuthor } from '@/ai-chat/messages/utils/getAiChatAgentAuthor';
-import { getAiChatSenderLabel } from '@/ai-chat/messages/utils/getAiChatSenderLabel';
+import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
