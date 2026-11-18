@@ -2,6 +2,7 @@ import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
@@ -59,8 +60,12 @@ export const NavigationMenuItemActions = ({
         )
       : [];
   const getTabName = (tabId: string | null | undefined) =>
-    workspaceNavigationMenuItems.find((candidate) => candidate.id === tabId)
-      ?.name ?? t`Home`;
+    isDefined(tabId)
+      ? (workspaceNavigationMenuItems.find(
+          (candidate) => candidate.id === tabId,
+        )?.name ?? '')
+      : t`Home`;
+  const moveToLabel = sections.length > 0 ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
     void action();
@@ -83,7 +88,7 @@ export const NavigationMenuItemActions = ({
     },
     {
       id: 'folder',
-      label: sections.length > 0 ? t`Move to` : t`Move to folder`,
+      label: moveToLabel,
       Icon: IconFolderSymlink,
       isDisabled:
         item.type === NavigationMenuItemType.FOLDER && sections.length === 0,
@@ -158,9 +163,7 @@ export const NavigationMenuItemActions = ({
         </Dropdown.Section>
       </Dropdown.Page>
       <Dropdown.Page id="folders">
-        <Dropdown.Back>
-          {sections.length > 0 ? t`Move to` : t`Move to folder`}
-        </Dropdown.Back>
+        <Dropdown.Back>{moveToLabel}</Dropdown.Back>
         <Dropdown.Section scrollable>
           {folders.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
