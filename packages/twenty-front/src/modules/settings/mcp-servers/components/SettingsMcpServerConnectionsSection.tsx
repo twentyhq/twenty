@@ -29,7 +29,7 @@ export const SettingsMcpServerConnectionsSection = ({
     <SettingsApplicationConnectionProviderSection
       providerDisplayName={connectionProvider.displayName}
       providerLogoUrl={connectionProvider.logoUrl}
-      description={t`This server asks each member to sign in with their own account.`}
+      description={t`Connect your own ${connectionProvider.displayName} account for this server to use on your behalf.`}
       shouldShowMissingCredentialsBanner={!canStartAuthorization}
     >
       {isDefined(error) ? (
@@ -46,7 +46,7 @@ export const SettingsMcpServerConnectionsSection = ({
           )}
           canStartAuthorization={canStartAuthorization}
           isLoading={loading}
-          connectTitle={t`Sign in to use this server`}
+          connectTitle={t`Connect with ${connectionProvider.displayName}`}
           redirectLocation={getSettingsPath(SettingsPath.AiMcpServerDetail, {
             mcpServerId,
           })}

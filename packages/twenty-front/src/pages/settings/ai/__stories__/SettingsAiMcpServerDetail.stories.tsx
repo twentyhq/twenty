@@ -155,7 +155,7 @@ export const MemberWithoutConnectionStartsTheSignIn: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const signInCard = await canvas.findByText(
-      'Sign in to use this server',
+      'Connect with Linear',
       undefined,
       { timeout: 3000 },
     );
@@ -192,7 +192,7 @@ export const SignInShowsWhenTheCachedProvidersPredateTheServer: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Sign in to use this server', undefined, {
+      await canvas.findByText('Connect with Linear', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
@@ -240,9 +240,7 @@ export const SignedInMemberSeesOnlyTheirConnectionToThisServer: Story = {
       canvas.getByRole('button', { name: 'Add connection' }),
     ).toBeVisible();
     expect(canvas.queryByText('tim@notion.so')).not.toBeInTheDocument();
-    expect(
-      canvas.queryByText('Sign in to use this server'),
-    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Connect with Linear')).not.toBeInTheDocument();
   },
 };
 
@@ -260,12 +258,10 @@ export const SharedSignInShowsNoMemberSection: Story = {
 
     await canvas.findByText('search_issues', undefined, { timeout: 3000 });
 
-    expect(
-      canvas.queryByText('Sign in to use this server'),
-    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Connect with Linear')).not.toBeInTheDocument();
     expect(
       canvas.queryByText(
-        'This server asks each member to sign in with their own account.',
+        'Connect your own Linear account for this server to use on your behalf.',
       ),
     ).not.toBeInTheDocument();
   },
@@ -295,13 +291,13 @@ export const SignInLoadErrorOffersRetry: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText(
-      'The sign-in for this server could not be loaded. Check your connection and try again.',
+      'Your connections could not be loaded. Check your connection and try again.',
       undefined,
       { timeout: 3000 },
     );
 
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
 
-    expect(await canvas.findByText('Sign in to use this server')).toBeVisible();
+    expect(await canvas.findByText('Connect with Linear')).toBeVisible();
   },
 };
