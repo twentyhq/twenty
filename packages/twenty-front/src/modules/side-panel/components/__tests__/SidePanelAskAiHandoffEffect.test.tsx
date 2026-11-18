@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 
@@ -58,8 +58,12 @@ describe('SidePanelAskAiHandoffEffect', () => {
     expect(store.get(aiChatContinueInSidePanelThreadIdState.atom)).toBeNull();
   });
 
-  it.each(['/inbox', '/inbox/20202020-0000-4000-8000-000000000001'])(
-    'leaves the chat to the page it moves to on %s',
+  it.each([
+    '/inbox',
+    '/inbox/new',
+    '/inbox/20202020-0000-4000-8000-000000000001',
+  ])(
+    'leaves the chat and the onboarding chat to the page it moves to on %s',
     (pathname) => {
       const store = leaveChatPageFor(pathname);
 
@@ -67,7 +71,7 @@ describe('SidePanelAskAiHandoffEffect', () => {
       expect(store.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
         CONTINUED_THREAD_ID,
       );
-      expect(store.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(false);
+      expect(store.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(true);
     },
   );
 });

@@ -429,7 +429,7 @@ export class ApplicationManifestMigrationService {
       'flatLogicFunctionMaps',
     ]);
 
-    let defaultRoleId: string | null = null;
+    let requestedRoleId: string | null = null;
 
     for (const role of manifest.roles) {
       const flatRoleId = resolveApplicationReferenceIdOrThrow({
@@ -443,7 +443,7 @@ export class ApplicationManifestMigrationService {
         role.universalIdentifier ===
         manifest.application.defaultRoleUniversalIdentifier
       ) {
-        defaultRoleId = flatRoleId;
+        requestedRoleId = flatRoleId;
       }
     }
 
@@ -510,8 +510,8 @@ export class ApplicationManifestMigrationService {
                 ?.runOnUserPreferences ?? false,
           }
         : {}),
-      ...(isDefined(defaultRoleId)
-        ? { defaultRoleId, requestedRoleId: defaultRoleId }
+      ...(isDefined(requestedRoleId)
+        ? { requestedRoleId, defaultRoleId: requestedRoleId }
         : {}),
     });
   }
