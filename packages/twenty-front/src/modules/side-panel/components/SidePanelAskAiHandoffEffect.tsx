@@ -24,8 +24,6 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    // The inbox replaces the chat page when it is on, so the onboarding chat
-    // runs there too
     if (isAiChatPath(pathname) || isInboxPath(pathname)) {
       return;
     }
