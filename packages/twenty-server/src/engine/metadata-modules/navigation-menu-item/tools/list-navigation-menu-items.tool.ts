@@ -21,12 +21,10 @@ const listNavigationMenuItemsInputSchema = z.object({
   parentId: z
     .uuid()
     .optional()
-    .describe('Only return items inside this folder.'),
+    .describe('Only return items inside this folder, section or tab.'),
   type: navigationMenuItemTypeSchema
     .optional()
-    .describe(
-      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, NATIVE_PAGE).',
-    ),
+    .describe('Filter by item type.'),
   limit: z
     .number()
     .int()
