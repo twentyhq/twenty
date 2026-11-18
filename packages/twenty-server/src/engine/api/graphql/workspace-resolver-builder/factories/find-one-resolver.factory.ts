@@ -35,11 +35,13 @@ export class FindOneResolverFactory implements WorkspaceResolverBuilderFactoryIn
           workspaceSchemaBuilderContext: internalContext,
         });
 
-        const { results: record } =
-          await this.commonFindOneQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: record,
+          args: { selectedFieldsResult },
+        } = await this.commonFindOneQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -51,6 +53,7 @@ export class FindOneResolverFactory implements WorkspaceResolverBuilderFactoryIn
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
+          selection: selectedFieldsResult,
           take: 1,
           totalCount: 1,
         });
