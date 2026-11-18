@@ -23,6 +23,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: 'Customer call',
         summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        hasRecordingFile: false,
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).toEqual({
@@ -46,6 +47,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: undefined,
         transcriptEntries: [],
+        hasRecordingFile: false,
         calendarEvent: undefined,
       }),
     ).toEqual({
@@ -62,6 +64,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: '## Summary',
         transcriptEntries: [],
+        hasRecordingFile: false,
         calendarEvent: undefined,
       }),
     ).toEqual({
@@ -73,6 +76,19 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     });
   });
 
+  it('should complete a recording that only has a recording file', () => {
+    expect(
+      buildGoogleMeetCallRecordingSyncFields({
+        conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: undefined,
+        transcriptEntries: [],
+        hasRecordingFile: true,
+        calendarEvent: undefined,
+      }).status,
+    ).toBe('COMPLETED');
+  });
+
   it('should leave the title out when the conference has none', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
@@ -80,6 +96,7 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
         title: undefined,
         summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        hasRecordingFile: false,
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).not.toHaveProperty('title');
