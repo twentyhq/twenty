@@ -341,29 +341,32 @@ export class McpProtocolService {
   ): Promise<McpToolsListResult> {
     const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
 
-    switch (context.toolMode) {
-      case 'meta':
-        return this.mcpToolExecutorService.handleToolsListing(toolSet);
-      case 'direct': {
-        const {
-          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-          ...nativeTools
-        } = toolSet;
+    if (context.toolMode === 'meta') {
+      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    }
 
+    // Unlisted but still callable, so clients that listed them earlier keep working; directory
+    // reviews (ChatGPT) refuse a generic executor that reaches tools not listed for review
+    const {
+      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+      ...nativeTools
+    } = toolSet;
+
+    switch (context.toolMode) {
+      case 'direct':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({ toolContext })),
           ...nativeTools,
         });
-      }
       case 'generic':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({
             toolContext,
             categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
           })),
-          ...toolSet,
+          ...nativeTools,
         });
       default:
         return assertUnreachable(context.toolMode);
