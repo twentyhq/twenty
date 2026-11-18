@@ -14,7 +14,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock(
-  '@/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts',
+  '@/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts',
   () => ({
     AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
   }),

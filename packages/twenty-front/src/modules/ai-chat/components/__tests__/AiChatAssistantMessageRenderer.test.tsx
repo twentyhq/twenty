@@ -7,7 +7,7 @@ import {
 
 import { AiChatAssistantMessageRenderer } from '@/ai-chat/components/AiChatAssistantMessageRenderer';
 
-jest.mock('@/ai-chat/components/ThinkingStepsDisplay', () => ({
+jest.mock('@/ai-chat/thinking-steps/components/ThinkingStepsDisplay', () => ({
   ThinkingStepsDisplay: ({
     parts,
     isTrailingWhileStreaming,
@@ -23,13 +23,13 @@ jest.mock('@/ai-chat/components/ThinkingStepsDisplay', () => ({
   ),
 }));
 
-jest.mock('@/ai-chat/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownContent: ({ text }: { text: string }) => (
     <div data-testid="markdown-renderer">{text}</div>
   ),
 }));
 
-jest.mock('@/ai-chat/components/CodeExecutionDisplay', () => ({
+jest.mock('@/ai-chat/message-content/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
