@@ -80,7 +80,7 @@ export default defineLogicFunction({
   universalIdentifier: GOOGLE_MEET_HANDLE_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'google-meet-handle-event',
   description:
-    'Queues the import of a Google Meet conference when Google reports that its transcript or Gemini notes are ready.',
+    'Queues the import of a Google Meet conference when Google reports that its transcript, Gemini notes or recording is ready.',
   timeoutSeconds: 60,
   handler: googleMeetHandleEventHandler,
 });
