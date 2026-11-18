@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { findMarketplaceBuiltInApplicationForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-marketplace-built-in-application-for-registration.util';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -21,6 +22,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -66,6 +68,7 @@ export class ApplicationResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -113,19 +116,66 @@ export class ApplicationResolver {
     );
   }
 
-  // Resolves the display url of the logo bundled in the installed
-  // application's public assets, so clients never build file urls themselves.
+  // Resolves a display url so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
-    @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
+    @Parent()
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'logo' | 'applicationRegistration'
+    >,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    return buildPublicAssetLogoUrl({
+    const bundledLogoUrl = buildPublicAssetLogoUrl({
       logo: application.logo,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+
+    if (isDefined(bundledLogoUrl)) {
+      return bundledLogoUrl;
+    }
+
+    const marketplaceBuiltInApplication =
+      findMarketplaceBuiltInApplicationForRegistration(
+        application.applicationRegistration,
+      );
+
+    return isDefined(marketplaceBuiltInApplication)
+      ? new URL(
+          marketplaceBuiltInApplication.logoPath,
+          this.domainServerConfigService.getBaseUrl(),
+        ).toString()
+      : null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  description(
+    @Parent()
+    application: Pick<
+      ApplicationEntity,
+      'description' | 'applicationRegistration'
+    >,
+  ): string | null {
+    return (
+      findMarketplaceBuiltInApplicationForRegistration(
+        application.applicationRegistration,
+      )?.description ??
+      application.description ??
+      null
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  marketplaceAppUniversalIdentifier(
+    @Parent() application: Pick<ApplicationEntity, 'applicationRegistration'>,
+  ): string | null {
+    return (
+      findMarketplaceBuiltInApplicationForRegistration(
+        application.applicationRegistration,
+      )?.universalIdentifier ?? null
+    );
   }
 
   @ResolveField(() => UUIDScalarType, { nullable: true })

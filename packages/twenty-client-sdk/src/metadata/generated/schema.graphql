@@ -556,6 +556,7 @@ type Application {
   logicFunctions: [LogicFunction!]!
   logoFileId: UUID
   logoUrl: String
+  marketplaceAppUniversalIdentifier: String
   name: String!
   objects: [Object!]!
   packageJsonChecksum: String

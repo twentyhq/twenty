@@ -57,6 +57,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 applicationRegistrationId: null,
                 applicationRegistration: null,
                 canBeUninstalled: true,
+                marketplaceAppUniversalIdentifier: null,
                 isUninstallBlockedByOtherWorkspaceInstallations: false,
                 autoUpgrade: false,
                 requestedRoleId: null,

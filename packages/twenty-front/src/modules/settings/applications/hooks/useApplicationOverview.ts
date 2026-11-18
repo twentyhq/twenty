@@ -11,10 +11,10 @@ import { getApplicationCoverImageUrl } from '@/settings/applications/utils/getAp
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 
 type UseApplicationOverviewArgs = {
-  application?: Pick<
-    Application,
-    'id' | 'universalIdentifier' | 'description'
-  > | null;
+  application?:
+    | (Pick<Application, 'id' | 'universalIdentifier' | 'description'> &
+        Partial<Pick<Application, 'marketplaceAppUniversalIdentifier'>>)
+    | null;
 };
 
 export const useApplicationOverview = ({
@@ -22,9 +22,13 @@ export const useApplicationOverview = ({
 }: UseApplicationOverviewArgs) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
+  const marketplaceAppUniversalIdentifier =
+    application?.marketplaceAppUniversalIdentifier ??
+    application?.universalIdentifier;
+
   const { data } = useQuery(FindMarketplaceAppDetailDocument, {
-    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
-    skip: !isNonEmptyString(application?.universalIdentifier),
+    variables: { universalIdentifier: marketplaceAppUniversalIdentifier ?? '' },
+    skip: !isNonEmptyString(marketplaceAppUniversalIdentifier),
   });
 
   const resolvedDescription = useResolvedApplicationDescription(application);

@@ -596,6 +596,7 @@ export type Application = {
   logicFunctions: Array<LogicFunction>;
   logoFileId?: Maybe<Scalars['UUID']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
+  marketplaceAppUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;

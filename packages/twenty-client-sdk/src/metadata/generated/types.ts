@@ -1195,6 +1195,9 @@ export default {
             "logoUrl": [
                 4
             ],
+            "marketplaceAppUniversalIdentifier": [
+                4
+            ],
             "name": [
                 4
             ],

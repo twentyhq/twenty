@@ -8,6 +8,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
+import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
@@ -77,6 +79,20 @@ const findClientVerificationQuery = gql`
       name
       isVerified
       isClaimingVerifiedClientName
+    }
+  }
+`;
+
+const findManyApplicationsQuery = gql`
+  query FindManyApplications {
+    findManyApplications {
+      name
+      description
+      logoUrl
+      marketplaceAppUniversalIdentifier
+      applicationRegistration {
+        id
+      }
     }
   }
 `;
@@ -280,6 +296,71 @@ describe('OAuth client ID metadata documents (integration)', () => {
       });
 
       expect(refreshResponse.status).toBe(200);
+    });
+
+    it('should show an installed verified client as its store card, and an unverified one as itself', async () => {
+      for (const { clientId, redirectUris } of [
+        VERIFIED_CLIENT_DOCUMENT,
+        WEB_CLIENT_DOCUMENT,
+      ]) {
+        const authorization = await requestAuthorization({
+          clientId,
+          redirectUrl: redirectUris[0],
+        });
+
+        const exchangeResponse = await postToken({
+          grant_type: 'authorization_code',
+          code: findAuthorizationCode(authorization),
+          client_id: clientId,
+          code_verifier: CODE_VERIFIER,
+          redirect_uri: redirectUris[0],
+        });
+
+        expect(exchangeResponse.status).toBe(200);
+      }
+
+      const [verifiedRegistration] = await dataSource.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+        [VERIFIED_CLIENT_DOCUMENT.clientId],
+      );
+      const [unverifiedRegistration] = await dataSource.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+        [WEB_CLIENT_DOCUMENT.clientId],
+      );
+
+      const response = await makeMetadataApiRequest(
+        { query: findManyApplicationsQuery },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const findApplication = (registrationId: string) =>
+        response.body.data.findManyApplications.find(
+          (application: { applicationRegistration: { id: string } | null }) =>
+            application.applicationRegistration?.id === registrationId,
+        );
+      const chatGptCard = findMarketplaceBuiltInApplication(
+        MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
+      );
+
+      expect(findApplication(verifiedRegistration.id)).toEqual({
+        name: 'ChatGPT',
+        description: chatGptCard?.description,
+        logoUrl: expect.stringMatching(
+          /\/images\/oauth-clients\/chatgpt\.webp$/,
+        ),
+        marketplaceAppUniversalIdentifier:
+          MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
+        applicationRegistration: { id: verifiedRegistration.id },
+      });
+      expect(findApplication(unverifiedRegistration.id)).toEqual({
+        name: 'ChatGPT',
+        description: 'OAuth application registered as "ChatGPT"',
+        logoUrl: null,
+        marketplaceAppUniversalIdentifier: null,
+        applicationRegistration: { id: unverifiedRegistration.id },
+      });
     });
 
     it('should reject a callback the document does not list, without registering the client', async () => {
