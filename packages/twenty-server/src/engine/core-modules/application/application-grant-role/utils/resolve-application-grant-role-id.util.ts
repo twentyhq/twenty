@@ -14,7 +14,10 @@ export const resolveApplicationGrantRoleId = ({
   workspaceCustomApplicationId,
   flatRoleTargetByApplicationIdMaps,
 }: {
-  flatApplication: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'sourceType'>;
+  flatApplication: Pick<
+    FlatApplication,
+    'id' | 'requestedRoleId' | 'sourceType'
+  >;
   workspaceId: string;
   workspaceCustomApplicationId: string;
   flatRoleTargetByApplicationIdMaps: Partial<
@@ -23,13 +26,13 @@ export const resolveApplicationGrantRoleId = ({
 }): string | undefined => {
   if (
     isOAuthOnlyApplication(flatApplication) ||
-    !isDefined(flatApplication.defaultRoleId)
+    !isDefined(flatApplication.requestedRoleId)
   ) {
     return undefined;
   }
 
   if (flatApplication.id === workspaceCustomApplicationId) {
-    return flatApplication.defaultRoleId;
+    return flatApplication.requestedRoleId;
   }
 
   const grantRoleId =
@@ -43,5 +46,5 @@ export const resolveApplicationGrantRoleId = ({
     `Application ${flatApplication.id} has no grant role in workspace ${workspaceId}, it runs with its requested role`,
   );
 
-  return flatApplication.defaultRoleId;
+  return flatApplication.requestedRoleId;
 };

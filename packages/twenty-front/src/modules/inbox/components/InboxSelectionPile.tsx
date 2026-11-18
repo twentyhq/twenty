@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
-import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
-import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
-import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { AiChatThreadActivityTime } from '@/ai-chat/threads/components/AiChatThreadActivityTime';
+import { AiChatThreadAvatar } from '@/ai-chat/threads/components/AiChatThreadAvatar';
+import { AiChatThreadSubtitle } from '@/ai-chat/threads/components/AiChatThreadSubtitle';
+import { AiChatThreadTitle } from '@/ai-chat/threads/components/AiChatThreadTitle';
 import { INBOX_SELECTION_PILE_MAX_CARDS } from '@/inbox/constants/InboxSelectionPileMaxCards';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
 const StyledPile = styled.div`
   display: flex;

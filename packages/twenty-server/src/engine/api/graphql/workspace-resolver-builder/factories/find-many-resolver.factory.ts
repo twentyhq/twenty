@@ -45,6 +45,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
             orderByValuesByRecordId,
             selectedFieldsResult,
           },
+          relationAggregatedValues,
           args: processedArgs,
         } = await this.commonFindManyQueryRunnerService.execute(
           { ...args, selectedFields },
@@ -60,8 +61,9 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
-          objectRecordsAggregatedValues: aggregatedValues,
-          selectedAggregatedFields: selectedFieldsResult.aggregate,
+          aggregatedValues,
+          relationAggregatedValues,
+          selection: selectedFieldsResult,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: getFindManyPageSize(args),
           totalCount,

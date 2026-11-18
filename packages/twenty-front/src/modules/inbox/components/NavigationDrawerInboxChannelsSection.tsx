@@ -9,8 +9,8 @@ import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationD
 import { useCreateInboxChannel } from '@/inbox/hooks/useCreateInboxChannel';
 import { useOpenInboxChannel } from '@/inbox/hooks/useOpenInboxChannel';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
-import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';

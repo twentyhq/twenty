@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -13,6 +12,7 @@ import { type GroupByDefinition } from 'src/engine/api/common/common-query-runne
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
@@ -63,7 +63,7 @@ export class GroupByWithRecordsService {
     groupLimit?: number;
     offsetForRecords?: number;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<CommonGroupByOutputItem[]> {
+  }): Promise<CommonQueryRunResult<CommonGroupByOutputItem[]>> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
     const groupsResult = await queryBuilderWithGroupBy
@@ -71,7 +71,7 @@ export class GroupByWithRecordsService {
       .getRawMany();
 
     if (groupsResult.length === 0) {
-      return [];
+      return { result: [], relationAggregatedValues: {} };
     }
 
     const {
@@ -82,8 +82,7 @@ export class GroupByWithRecordsService {
     } = queryRunnerContext;
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -109,44 +108,39 @@ export class GroupByWithRecordsService {
       .flatMap((group) => group.records as ObjectRecord[])
       .filter(isDefined);
 
-    if (!isEmpty(selectedFieldsResult.relations)) {
+    const relationAggregatedValues =
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: allRecords,
-        parentObjectRecordsAggregatedValues: {},
-        relations: selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        aggregate: selectedFieldsResult.aggregate,
+        selection: selectedFieldsResult,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        selectedFields: selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...nestedRelationsReadPathOptions,
       });
-    }
 
-    return await formatResultWithGroupByDimensionValues({
+    const groups = await formatResultWithGroupByDimensionValues({
       groupsResult,
       recordsResult,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregates),
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      selection: selectedFieldsResult,
       processRecord: (record: ObjectRecord) =>
-        this.commonResultGettersService.processRecord(
+        this.commonResultGettersService.processRecord({
           record,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          authContext.workspace.id,
-        ),
+          workspaceId: authContext.workspace.id,
+          selection: selectedFieldsResult,
+        }),
     });
+
+    return { result: groups, relationAggregatedValues };
   }
 
   private async buildRankedRecordsStatement({

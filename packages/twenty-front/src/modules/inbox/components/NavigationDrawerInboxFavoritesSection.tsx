@@ -3,12 +3,12 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
-import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
+import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
