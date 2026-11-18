@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/states/aiChatReopenedThreadActivityState';
@@ -13,7 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AiChatThreadOpenViewEffectProps = {
-  threadId: string | null;
+  threadId: string;
 };
 
 export const AiChatThreadOpenViewEffect = ({
@@ -23,7 +23,7 @@ export const AiChatThreadOpenViewEffect = ({
   const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
 
   useEffect(() => {
-    if (!isDefined(threadId)) {
+    if (!isValidUuid(threadId)) {
       return;
     }
 

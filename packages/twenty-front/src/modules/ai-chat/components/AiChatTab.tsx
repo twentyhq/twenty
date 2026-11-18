@@ -1,4 +1,3 @@
-import { isValidUuid } from 'twenty-shared/utils';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
@@ -68,9 +67,7 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AiChatHasBeenOpenedEffect />
-      <AiChatThreadOpenViewEffect
-        threadId={isValidUuid(threadId) ? threadId : null}
-      />
+      <AiChatThreadOpenViewEffect threadId={threadId} />
       <AiChatThreadMarkAsReadEffect />
       <AiChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
