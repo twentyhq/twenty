@@ -6198,7 +6198,6 @@ export type Query = {
   aiChatUserCreditsUsage?: Maybe<AiChatUserCreditsUsage>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
-  appCalendarChannels: Array<PublicCalendarChannel>;
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
@@ -6213,6 +6212,7 @@ export type Query = {
   billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
+  calendarChannels: Array<PublicCalendarChannel>;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
   chatMessages: Array<AgentMessage>;
   chatStreamCatchupChunks: ChatStreamCatchupChunks;

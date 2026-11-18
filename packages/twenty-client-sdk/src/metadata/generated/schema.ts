@@ -3247,7 +3247,6 @@ export interface Query {
     aiChatUserCreditsUsage?: AiChatUserCreditsUsage
     apiKey?: ApiKey
     apiKeys: ApiKey[]
-    appCalendarChannels: PublicCalendarChannel[]
     appConnection: AppConnection
     appConnections: AppConnection[]
     appKeyValue?: AppKeyValue
@@ -3262,6 +3261,7 @@ export interface Query {
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
+    calendarChannels: PublicCalendarChannel[]
     callRecordingIdForCalendarEvent?: Scalars['UUID']
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
@@ -8184,7 +8184,6 @@ export interface QueryGenqlSelection{
     aiChatUserCreditsUsage?: AiChatUserCreditsUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     apiKeys?: ApiKeyGenqlSelection
-    appCalendarChannels?: PublicCalendarChannelGenqlSelection
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
@@ -8199,6 +8198,7 @@ export interface QueryGenqlSelection{
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
+    calendarChannels?: PublicCalendarChannelGenqlSelection
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
     chatMessages?: (AgentMessageGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })

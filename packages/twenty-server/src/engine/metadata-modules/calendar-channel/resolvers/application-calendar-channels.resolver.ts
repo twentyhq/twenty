@@ -37,7 +37,7 @@ export class ApplicationCalendarChannelsResolver {
   ) {}
 
   @Query(() => [PublicCalendarChannelDTO])
-  async appCalendarChannels(
+  async calendarChannels(
     @AuthWorkspace() workspace: FlatWorkspace,
   ): Promise<PublicCalendarChannelDTO[]> {
     return this.calendarChannelMetadataService.findAllPublic(workspace.id);
