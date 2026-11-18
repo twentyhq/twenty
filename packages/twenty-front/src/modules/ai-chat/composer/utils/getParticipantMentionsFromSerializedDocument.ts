@@ -1,0 +1,51 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import {
+  isDefined,
+  parseCanonicalTipTapJsonDocument,
+  TIPTAP_NODE_TYPES,
+  type TipTapNode,
+} from 'twenty-shared/utils';
+
+import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
+
+const getParticipantMentionsFromNode = (
+  node: TipTapNode,
+): AiChatParticipantMention[] => {
+  const workspaceMemberId = node.attrs?.recordId;
+  const label = node.attrs?.label;
+
+  const isParticipantMention =
+    node.type === TIPTAP_NODE_TYPES.MENTION_TAG &&
+    node.attrs?.objectNameSingular ===
+      StandardObjectNameSingular.WorkspaceMember &&
+    node.attrs?.shouldAddAsParticipant === true &&
+    isNonEmptyString(workspaceMemberId);
+
+  return [
+    ...(isParticipantMention
+      ? [{ workspaceMemberId, label: isNonEmptyString(label) ? label : '' }]
+      : []),
+    ...(node.content ?? []).flatMap(getParticipantMentionsFromNode),
+  ];
+};
+
+export const getParticipantMentionsFromSerializedDocument = (
+  serializedDocument: string,
+): AiChatParticipantMention[] => {
+  const document = parseCanonicalTipTapJsonDocument(serializedDocument);
+
+  if (!isDefined(document)) {
+    return [];
+  }
+
+  const participantMentions = getParticipantMentionsFromNode(document);
+
+  return participantMentions.filter(
+    ({ workspaceMemberId }, index) =>
+      participantMentions.findIndex(
+        (participantMention) =>
+          participantMention.workspaceMemberId === workspaceMemberId,
+      ) === index,
+  );
+};
