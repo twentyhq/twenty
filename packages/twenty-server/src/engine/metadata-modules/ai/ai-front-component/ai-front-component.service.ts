@@ -600,7 +600,7 @@ export class AiFrontComponentService {
       });
 
     for (const fieldName of query.select) {
-      if (!isDefined(selectedFields[fieldName])) {
+      if (!isDefined(selectedFields.fields[fieldName])) {
         throw new ApplicationException(
           doNotTranslate(
             `Field ${query.objectName}.${fieldName} is unavailable. Select accessible top-level fields.`,

@@ -13,6 +13,7 @@ import {
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
 
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
@@ -241,9 +242,10 @@ export class ChartDataQueryService {
       aggregateFieldMetadata: aggregateField,
     });
 
-    const selectedFields = {
-      [aggregateFieldKey]: true,
-      groupByDimensionValues: true,
+    const selectedFields: CommonSelectedFields = {
+      fields: {},
+      aggregates: [aggregateFieldKey],
+      relations: {},
     };
 
     const { results } = await this.commonGroupByQueryRunnerService.execute(

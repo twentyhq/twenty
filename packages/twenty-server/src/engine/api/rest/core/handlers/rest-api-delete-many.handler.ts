@@ -4,6 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { ID_ONLY_SELECTED_FIELDS } from 'src/engine/api/common/constants/id-only-selected-fields.constant';
 import { CommonDeleteManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-many-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
@@ -42,7 +43,7 @@ export class RestApiDeleteManyHandler extends RestApiBaseHandler {
     try {
       const { results: records } =
         await this.commonDeleteManyQueryRunnerService.execute(
-          { filter, selectedFields: { id: true } },
+          { filter, selectedFields: ID_ONLY_SELECTED_FIELDS },
           {
             authContext,
             flatObjectMetadata,

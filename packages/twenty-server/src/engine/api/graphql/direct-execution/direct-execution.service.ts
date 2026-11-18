@@ -30,7 +30,6 @@ import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/di
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
-import { buildResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
 import { WorkspaceResolverRunnerService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-runner.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { getGraphqlOperationMetricKeyFromErrorCode } from 'src/engine/core-modules/graphql/utils/get-graphql-operation-metric-key-from-error-code.util';
@@ -210,7 +209,7 @@ export class DirectExecutionService {
               result: await this.workspaceResolverRunnerService.run({
                 method: entry.method,
                 args,
-                selectedFields: buildResolverSelectedFields(fieldSelections),
+                fieldSelections,
                 workspaceSchemaBuilderContext,
               }),
               fieldSelections,

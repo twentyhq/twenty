@@ -1,10 +1,13 @@
 import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/utils/extract-nested-relation-query-args.util';
-import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  type CommonSelectedFieldsResult,
+  type CommonSelectedRelation,
+} from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -25,19 +28,21 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
 
-  parseRelationField(
+  parseRelationField({
+    fieldMetadata,
+    relationKey,
+    selectedRelation,
+    accumulator,
+    isFromOneToManyRelation,
+  }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
-      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    fieldKey: string,
-    fieldValue: unknown,
-    accumulator: CommonSelectedFieldsResult,
-    isFromOneToManyRelation?: boolean,
-  ): void {
-    if (!fieldValue || typeof fieldValue !== 'object') {
-      return;
-    }
-
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+    relationKey: string;
+    selectedRelation: CommonSelectedRelation;
+    accumulator: CommonSelectedFieldsResult;
+    isFromOneToManyRelation?: boolean;
+  }): void {
     const isOneToManyRelation =
       fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
@@ -60,11 +65,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );
-    const relationAccumulator = fieldParser.parse(
-      fieldValue,
-      targetObjectMetadata,
-      isFromOneToManyRelation || isOneToManyRelation,
-    );
+    const relationAccumulator = fieldParser.parse({
+      selectedFields: selectedRelation.selectedFields,
+      flatObjectMetadata: targetObjectMetadata,
+      isFromOneToManyRelation: isFromOneToManyRelation || isOneToManyRelation,
+    });
 
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +
@@ -73,12 +78,13 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
-    accumulator.relations[fieldKey] = {
+    accumulator.relations[relationKey] = {
       fieldName: fieldMetadata.name,
-      ...(isOneToManyRelation &&
-      isPlainObject(fieldValue) &&
-      isPlainObject(fieldValue.__arguments)
-        ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
+      ...(isOneToManyRelation && isDefined(selectedRelation.arguments)
+        ? this.resolveQueryArgs(
+            selectedRelation.arguments,
+            targetObjectMetadata,
+          )
         : {}),
       selection: {
         columns: { id: true, ...relationAccumulator.columns },
@@ -90,11 +96,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
 
   // Resolved while parsing so a malformed argument fails before a mutation writes anything
   private resolveQueryArgs(
-    graphqlArguments: Record<string, unknown>,
+    relationArguments: Record<string, unknown>,
     targetObjectMetadata: FlatObjectMetadata,
   ) {
     const { filter, orderBy, first } =
-      extractNestedRelationQueryArgs(graphqlArguments);
+      extractNestedRelationQueryArgs(relationArguments);
 
     return {
       filter: this.filterArgProcessor.process({

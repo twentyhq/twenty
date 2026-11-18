@@ -108,7 +108,14 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     // Boolean selections carry no sub-fields; only the object form hydrates
     const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
-    const result = parser.parse({ id: true, fund: true }, investorLeadObject);
+    const result = parser.parse({
+      selectedFields: {
+        fields: { id: true, fund: true },
+        aggregates: [],
+        relations: {},
+      },
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(result.relations).toEqual({});
@@ -118,10 +125,23 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
   it('should hydrate a relation selected as a nested object', () => {
     const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
-    const result = parser.parse(
-      { id: true, fund: { id: true, name: true } },
-      investorLeadObject,
-    );
+    const result = parser.parse({
+      selectedFields: {
+        fields: { id: true },
+        aggregates: [],
+        relations: {
+          fund: {
+            fieldName: 'fund',
+            selectedFields: {
+              fields: { id: true, name: true },
+              aggregates: [],
+              relations: {},
+            },
+          },
+        },
+      },
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(result.relations.fund).toEqual({
@@ -142,14 +162,32 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
       arguments: { first: 2 },
     });
 
-    const result = parser.parse(
-      {
-        id: {},
-        fund: { edges: { node: { name: {} } } },
-        [firstFundKey]: { __arguments: { first: 2 }, edges: { node: {} } },
+    const result = parser.parse({
+      selectedFields: {
+        fields: { id: true },
+        aggregates: [],
+        relations: {
+          fund: {
+            fieldName: 'fund',
+            selectedFields: {
+              fields: { name: true },
+              aggregates: ['edges'],
+              relations: {},
+            },
+          },
+          [firstFundKey]: {
+            fieldName: 'fund',
+            arguments: { first: 2 },
+            selectedFields: {
+              fields: {},
+              aggregates: ['edges'],
+              relations: {},
+            },
+          },
+        },
       },
-      investorLeadObject,
-    );
+      flatObjectMetadata: investorLeadObject,
+    });
 
     expect(result.columns).toEqual({ id: true });
     expect(Object.keys(result.relations)).toEqual(['fund', firstFundKey]);

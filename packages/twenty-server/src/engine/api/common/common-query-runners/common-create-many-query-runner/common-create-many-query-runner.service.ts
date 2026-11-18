@@ -6,6 +6,7 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Brackets, In, InsertResult, ObjectLiteral } from 'typeorm';
 
+import { ID_ONLY_SELECTED_FIELDS } from 'src/engine/api/common/constants/id-only-selected-fields.constant';
 import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
@@ -673,7 +674,7 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
           {
             data: targetRecords,
             shareWith,
-            selectedFields: { id: true },
+            selectedFields: ID_ONLY_SELECTED_FIELDS,
           },
           {
             ...queryRunnerContext,
