@@ -13,7 +13,7 @@ import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/a
 import { aiChatMessageIdsFamilySelector } from '@/ai-chat/states/selectors/aiChatMessageIdsFamilySelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageReaders } from '@/ai-chat/messages/utils/getAiChatMessageReaders';
-import { getAiChatSenderLabel } from '@/ai-chat/messages/utils/getAiChatSenderLabel';
+import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';

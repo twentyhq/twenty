@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { ToolRecordsWidget } from '@/ai-chat/tool-calls/components/ToolRecordsWidget';
+import { ToolRecordsWidget } from '@/ai-chat/thinking-steps/components/ToolRecordsWidget';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';

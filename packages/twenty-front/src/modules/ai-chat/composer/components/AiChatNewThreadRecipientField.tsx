@@ -15,7 +15,7 @@ import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantPro
 import { useAiChatNewThreadRecipientSuggestions } from '@/ai-chat/composer/hooks/useAiChatNewThreadRecipientSuggestions';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
