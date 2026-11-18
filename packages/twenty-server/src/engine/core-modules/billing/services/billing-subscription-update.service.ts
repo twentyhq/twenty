@@ -163,6 +163,8 @@ export class BillingSubscriptionUpdateService {
       getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
         ?.metadata.planKey;
 
+    assertIsDefinedOrThrow(currentPlan);
+
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
       newPlan: currentPlan,
