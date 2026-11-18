@@ -183,6 +183,7 @@ export class TwentyStandardApplicationService {
     await this.applicationService.update(twentyStandardApplicationId, {
       workspaceId,
       defaultRoleId: adminFlatRole.id,
+      requestedRoleId: adminFlatRole.id,
     });
   }
 
