@@ -1,5 +1,5 @@
-import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai-chat/composer/constants/AiChatQuoteExcerptMaxLength';
-import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/composer/utils/getAiChatMessageQuoteExcerpt';
+import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai-chat/messages/constants/AiChatQuoteExcerptMaxLength';
+import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
 
 describe('getAiChatMessageQuoteExcerpt', () => {
   it('keeps a short message as is', () => {

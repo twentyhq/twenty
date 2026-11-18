@@ -1,6 +1,6 @@
 import { type ToolUIPart } from 'ai';
 
-import { getToolRecordOutput } from '@/ai-chat/tool-calls/utils/getToolRecordOutput';
+import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
 
 const buildToolPart = (
   state: ToolUIPart['state'],
