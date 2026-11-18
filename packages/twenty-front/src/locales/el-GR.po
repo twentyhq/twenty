@@ -352,7 +352,7 @@ msgstr "{0, plural, one {Αποστολή πρόσκλησης} other {Αποσ�
 #. placeholder {0}: tools.length
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "{0, plural, one {Synced # tool} other {Synced # tools}}"
-msgstr ""
+msgstr "{0, plural, one {Συγχρονίστηκε # εργαλείο} other {Συγχρονίστηκαν # εργαλεία}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
@@ -560,10 +560,11 @@ msgstr "{0} μέλη χώρου εργασίας"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: relationFieldMetadataItem.label
 #. placeholder {0}: selectedField.label
-#. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -713,7 +714,7 @@ msgstr "{countNonRelation, plural, one {# πεδίο} other {# πεδία}}"
 #. js-lingui-id: 0Iz7tg
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{credits} credits/month"
-msgstr ""
+msgstr "{credits} πιστώσεις/μήνα"
 
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
@@ -1167,7 +1168,7 @@ msgstr "{seatCreditsDisplay} από θέσεις, επαναφέρονται κ�
 #. js-lingui-id: X/yTAr
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "{seats, plural, one {{formattedSeats} seat} other {{formattedSeats} seats}}"
-msgstr ""
+msgstr "{seats, plural, one {{formattedSeats} θέση} other {{formattedSeats} θέσεις}}"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1257,7 +1258,7 @@ msgstr "{storedToolName} (δεν είναι διαθέσιμο σε εσάς)"
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
 msgid "{toolCount, plural, one {# tool} other {# tools}}"
-msgstr ""
+msgstr "{toolCount, plural, one {# εργαλείο} other {# εργαλεία}}"
 
 #. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -1820,7 +1821,7 @@ msgstr "Σχετικά με την εφαρμογή σας"
 #. js-lingui-id: g/S81Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Above the commitment"
-msgstr ""
+msgstr "Πάνω από τη δέσμευση"
 
 #. js-lingui-id: nJJAYH
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -2235,7 +2236,7 @@ msgstr "Προσθήκη Εγκεκριμένου Τομέα Πρόσβασης"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Add arrangement"
-msgstr ""
+msgstr "Προσθήκη συμφωνίας"
 
 #. js-lingui-id: U76pXW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -2433,7 +2434,7 @@ msgstr "Προσθήκη συνδέσμου"
 #. js-lingui-id: LGXpWE
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
-msgstr ""
+msgstr "Προσθήκη διακομιστή MCP"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
@@ -2613,6 +2614,11 @@ msgstr "Προσθήκη ταξινόμησης"
 msgid "Add SSO Identity Provider"
 msgstr "Προσθήκη παρόχου ταυτότητας SSO"
 
+#. js-lingui-id: O6B1gJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes."
+msgstr "Προσθέστε στήλες πίνακα που εμφανίζουν ένα πεδίο μιας σχετικής εγγραφής, όπως τον κλάδο της εταιρείας ενός ατόμου. Ενεργοποιήστε τη δυνατότητα μετά την ολοκλήρωση της αναβάθμισης του στιγμιότυπου."
+
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
@@ -2778,12 +2784,12 @@ msgstr "Προστέθηκε <0>Ημερομηνία ανανέωσης</0> σε
 #. js-lingui-id: NxahIk
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added by"
-msgstr ""
+msgstr "Προστέθηκε από"
 
 #. js-lingui-id: z1dTLo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Added on"
-msgstr ""
+msgstr "Προστέθηκε στις"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -4265,7 +4271,7 @@ msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε 
 #. js-lingui-id: njO+Zl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Are you sure you want to delete this MCP server? This action cannot be undone."
-msgstr ""
+msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον διακομιστή MCP; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί."
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -4341,17 +4347,17 @@ msgstr "Αρμενικά"
 #. js-lingui-id: T1TSIx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Arrangement added."
-msgstr ""
+msgstr "Η συμφωνία προστέθηκε."
 
 #. js-lingui-id: EboPKL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangement ended."
-msgstr ""
+msgstr "Η συμφωνία έληξε."
 
 #. js-lingui-id: We0TcM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Arrangements"
-msgstr ""
+msgstr "Συμφωνίες"
 
 #. js-lingui-id: f6R0uX
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -4634,7 +4640,7 @@ msgstr "Πρέπει να ρυθμιστεί τουλάχιστον ένα πρ�
 #. js-lingui-id: QAlSoU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "At least this many seats are billed until the end date. A hard cap also blocks new members above it."
-msgstr ""
+msgstr "Τουλάχιστον αυτός ο αριθμός θέσεων χρεώνεται έως την ημερομηνία λήξης. Ένα αυστηρό όριο αποκλείει επίσης νέα μέλη πέρα από αυτό."
 
 #. js-lingui-id: tqMllA
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -7085,12 +7091,12 @@ msgstr "Σχόλιο"
 #. js-lingui-id: As9mhp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Commercial exceptions to the plan, with why and until when."
-msgstr ""
+msgstr "Εμπορικές εξαιρέσεις στο πλάνο, με το γιατί και έως πότε ισχύουν."
 
 #. js-lingui-id: 1JmJ2B
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Committed seats"
-msgstr ""
+msgstr "Δεσμευμένες θέσεις"
 
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -7529,7 +7535,7 @@ msgstr "Συνδέστε Google, Microsoft ή CalDAV και ενεργοποιή
 #. js-lingui-id: +RyxXW
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Connect remote MCP servers so agents can use their tools"
-msgstr ""
+msgstr "Συνδέστε απομακρυσμένους διακομιστές MCP, ώστε οι πράκτορες να μπορούν να χρησιμοποιούν τα εργαλεία τους"
 
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -8703,7 +8709,7 @@ msgstr "Διαπιστευτήρια και πεδία πρόσβασης για
 #. js-lingui-id: x8lB6y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit allowance"
-msgstr ""
+msgstr "Πίστωση πιστώσεων"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8723,7 +8729,7 @@ msgstr "Κατανάλωση πιστώσεων με την πάροδο του 
 #. js-lingui-id: OeJw5Y
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Credit grant"
-msgstr ""
+msgstr "Χορήγηση πιστώσεων"
 
 #. js-lingui-id: zH6NZT
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -8844,7 +8850,7 @@ msgstr "Πιστώσεις ανά ημέρα"
 #. js-lingui-id: 30XINA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Credits per month"
-msgstr ""
+msgstr "Πιστώσεις ανά μήνα"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9196,7 +9202,7 @@ msgstr "Προσαρμόστε τα πεδία που είναι διαθέσι�
 #. js-lingui-id: 5GgtFa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Customizable sidebar"
-msgstr ""
+msgstr "Προσαρμόσιμη πλευρική γραμμή"
 
 #. js-lingui-id: qqLY+j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9601,7 +9607,7 @@ msgstr "Απενεργοποίηση αντικειμένου"
 #. js-lingui-id: ujOIgb
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Deactivate or delete this MCP server"
-msgstr ""
+msgstr "Απενεργοποιήστε ή διαγράψτε αυτόν τον διακομιστή MCP"
 
 #. js-lingui-id: OFJYGS
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10015,7 +10021,7 @@ msgstr "Διαγραφή ορίου"
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
-msgstr ""
+msgstr "Διαγραφή διακομιστή MCP"
 
 #. js-lingui-id: KDfTdX
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -10539,7 +10545,7 @@ msgstr "Αποσυνδέθηκαν {successfulCount} από τις {totalCount} 
 #. js-lingui-id: H6Ma8Z
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Discount"
-msgstr ""
+msgstr "Έκπτωση"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11720,12 +11726,12 @@ msgstr "Περιστροφή κλειδιού κρυπτογράφησης"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End"
-msgstr ""
+msgstr "Λήξη"
 
 #. js-lingui-id: VhdLE7
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "End arrangement"
-msgstr ""
+msgstr "Λήξη συμφωνίας"
 
 #. js-lingui-id: IrI9pg
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -11757,12 +11763,12 @@ msgstr "Τερματίστε τη δοκιμαστική περίοδο για �
 #. js-lingui-id: 237hSL
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "Ended"
-msgstr ""
+msgstr "Έληξε"
 
 #. js-lingui-id: eNtnOy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 msgid "Ended by"
-msgstr ""
+msgstr "Έληξε από"
 
 #. js-lingui-id: O2tNG0
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -13093,7 +13099,7 @@ msgstr "Απέτυχε η δημιουργία του συμβάντος ημε�
 #. js-lingui-id: 8qnNWI
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "Failed to create MCP server"
-msgstr ""
+msgstr "Αποτυχία δημιουργίας διακομιστή MCP"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/hooks/useCreateOneRecord.ts
@@ -13262,7 +13268,7 @@ msgstr "Αποτυχία φόρτωσης λεπτομερειών πράκτο�
 #. js-lingui-id: dQLWeE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "Failed to load billing arrangements."
-msgstr ""
+msgstr "Αποτυχία φόρτωσης συμφωνιών χρέωσης."
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -13284,12 +13290,12 @@ msgstr "Αποτυχία φόρτωσης στοιχείου διεπαφής: {
 #. js-lingui-id: wEebE8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDetail.tsx
 msgid "Failed to load MCP server"
-msgstr ""
+msgstr "Αποτυχία φόρτωσης διακομιστή MCP"
 
 #. js-lingui-id: rte0QY
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "Failed to load MCP servers"
-msgstr ""
+msgstr "Αποτυχία φόρτωσης διακομιστών MCP"
 
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13437,7 +13443,7 @@ msgstr "Δεν ήταν δυνατή η έναρξη της εξαγωγής. {0
 #. js-lingui-id: 22o02r
 #: src/modules/settings/mcp-servers/hooks/useSyncMcpServerTools.ts
 msgid "Failed to sync tools"
-msgstr ""
+msgstr "Αποτυχία συγχρονισμού εργαλείων"
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -13468,7 +13474,7 @@ msgstr "Αποτυχία ενημέρωσης σημαίας δυνατότητ�
 #. js-lingui-id: mwx+OD
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "Failed to update MCP server"
-msgstr ""
+msgstr "Αποτυχία ενημέρωσης διακομιστή MCP"
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13936,7 +13942,7 @@ msgstr "Συμπλήρωση με δείγμα εισόδου από"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -14068,7 +14074,7 @@ msgstr "Ολοκληρώστε την επεξεργασία της διάταξ
 #. js-lingui-id: 1yKuEJ
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open this tab"
-msgstr ""
+msgstr "Ολοκληρώστε την επεξεργασία της διάταξης για να ανοίξετε αυτήν την καρτέλα"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14372,7 +14378,7 @@ msgstr "Δωρεάν πιστώσεις που κερδήθηκαν"
 #. js-lingui-id: x2qGE3
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Free seats"
-msgstr ""
+msgstr "Δωρεάν θέσεις"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -15069,7 +15075,7 @@ msgstr "Χαρούμενο"
 #. js-lingui-id: 4OOUC8
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Hard cap"
-msgstr ""
+msgstr "Αυστηρό όριο"
 
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
@@ -15439,7 +15445,7 @@ msgstr "Πώς εμφανίζεται αυτός ο κανόνας στις ρυ
 #. js-lingui-id: HuGZWl
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "How this server is named for your team and for agents"
-msgstr ""
+msgstr "Πώς ονομάζεται αυτός ο διακομιστής για την ομάδα και τους πράκτορές σας"
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15539,7 +15545,7 @@ msgstr "https://example.com/webhook"
 #. js-lingui-id: U0G31R
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "https://mcp.example.com/mcp"
-msgstr ""
+msgstr "https://mcp.example.com/mcp"
 
 #. js-lingui-id: khBRyu
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -16384,6 +16390,16 @@ msgstr "Μη έγκυρη έκφραση cron. Αναμένονταν 4-6 πεδ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Μη έγκυρο μοτίβο cron: {errorMessage}"
+
+#. js-lingui-id: DQm/44
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE."
+msgstr "Μη έγκυρο μέρος ημερομηνίας. Χρησιμοποιήστε YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR ή MINUTE."
+
+#. js-lingui-id: UAtSd1
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR."
+msgstr "Μη έγκυρη μονάδα ημερομηνίας. Χρησιμοποιήστε MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER ή YEAR."
 
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -17233,12 +17249,12 @@ msgstr "Τελευταία σύνδεση"
 #. placeholder {0}: mcpServer.toolsSyncError
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last sync failed: {0}"
-msgstr ""
+msgstr "Αποτυχία τελευταίου συγχρονισμού: {0}"
 
 #. js-lingui-id: Ip8UbZ
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Last synced {lastSynced}"
-msgstr ""
+msgstr "Τελευταίος συγχρονισμός {lastSynced}"
 
 #. js-lingui-id: o1zvNS
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -17598,12 +17614,12 @@ msgstr ""
 #. js-lingui-id: cF6iqz
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Limit override"
-msgstr ""
+msgstr "Παράκαμψη ορίου"
 
 #. js-lingui-id: BDi/z7
 #: src/modules/settings/admin-panel/utils/formatAdminBillingArrangementDetails.ts
 msgid "Limit removed"
-msgstr ""
+msgstr "Το όριο καταργήθηκε"
 
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -17661,12 +17677,12 @@ msgstr "Ύψος γραμμής"
 #. js-lingui-id: vQ2Ad9
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "linear"
-msgstr ""
+msgstr "γραμμικό"
 
 #. js-lingui-id: ih+n6S
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerLabelField.tsx
 msgid "Linear"
-msgstr ""
+msgstr "Γραμμικό"
 
 #. js-lingui-id: LdyooL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -18182,6 +18198,11 @@ msgstr "Γεωγραφικό μήκος"
 msgid "Look up"
 msgstr "Αναζήτηση"
 
+#. js-lingui-id: PJeBuo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Lookup columns"
+msgstr "Στήλες αναζήτησης"
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -18581,17 +18602,17 @@ msgstr "Διακομιστής MCP"
 #. js-lingui-id: 8uHtaz
 #: src/modules/settings/mcp-servers/hooks/useCreateMcpServer.ts
 msgid "MCP server {label} created successfully"
-msgstr ""
+msgstr "Ο διακομιστής MCP {label} δημιουργήθηκε με επιτυχία"
 
 #. js-lingui-id: IbSocu
 #: src/modules/settings/mcp-servers/hooks/useUpdateMcpServer.ts
 msgid "MCP server {label} updated successfully"
-msgstr ""
+msgstr "Ο διακομιστής MCP {label} ενημερώθηκε με επιτυχία"
 
 #. js-lingui-id: bbaHGM
 #: src/modules/settings/mcp-servers/hooks/useDeleteMcpServer.ts
 msgid "MCP server deleted successfully"
-msgstr ""
+msgstr "Ο διακομιστής MCP διαγράφηκε με επιτυχία"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19505,12 +19526,12 @@ msgstr "Όνομα και σε ενικό (π.χ., 'Τιμολόγιο') και 
 #. js-lingui-id: 8/brI5
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name is required"
-msgstr ""
+msgstr "Απαιτείται όνομα"
 
 #. js-lingui-id: Kq5f+c
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Name must be at most {MCP_SERVER_NAME_MAX_LENGTH} characters"
-msgstr ""
+msgstr "Το όνομα πρέπει να έχει το πολύ {MCP_SERVER_NAME_MAX_LENGTH} χαρακτήρες"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -19677,6 +19698,7 @@ msgid "New Agent"
 msgstr "Νέος Πράκτορας"
 
 #. js-lingui-id: JLx7YM
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Νέα συνομιλία AI"
@@ -19803,7 +19825,7 @@ msgstr "Νέο όριο"
 #. js-lingui-id: p/TT/2
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
 msgid "New MCP server"
-msgstr ""
+msgstr "Νέος διακομιστής MCP"
 
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
@@ -20568,7 +20590,7 @@ msgstr "Δεν υπάρχουν αντίστοιχα άτομα ή ρόλοι"
 #. js-lingui-id: c/bX1U
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
 msgid "No MCP servers yet"
-msgstr ""
+msgstr "Δεν υπάρχουν ακόμη διακομιστές MCP"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -20795,6 +20817,7 @@ msgstr "Δεν υπήρξε απόκριση από τον διακομιστή"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
@@ -20925,7 +20948,7 @@ msgstr "Κανένα εργαλείο δεν ταιριάζει με την αν
 #. js-lingui-id: SCvh4h
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
 msgid "No tools synced yet"
-msgstr ""
+msgstr "Δεν έχουν συγχρονιστεί ακόμη εργαλεία"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21712,6 +21735,11 @@ msgstr "Μόλις διεκδικηθεί, εγκαταστήστε αυτήν �
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Ένα ή περισσότερα φίλτρα αναφέρονται σε απενεργοποιημένα ή διαγραμμένα πεδία και θα αφαιρεθούν αυτόματα κατά την αποθήκευση."
 
+#. js-lingui-id: zTzoj2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE."
+msgstr "Ένα μέρος της ημερομηνίας ως αριθμός, σε UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 είναι Δευτέρα), HOUR ή MINUTE."
+
 #. js-lingui-id: mwvUSb
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "One per run"
@@ -21725,7 +21753,7 @@ msgstr "Μία συνδρομή παρέχει ένα κλειδί Οργανι�
 #. js-lingui-id: YO4da4
 #: src/modules/settings/admin-panel/constants/BillingArrangementStatusTags.ts
 msgid "One-time"
-msgstr ""
+msgstr "Εφάπαξ"
 
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -23019,7 +23047,7 @@ msgstr "Επιλογή εγγραφής"
 #. js-lingui-id: 48B257
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Pick the end date"
-msgstr ""
+msgstr "Επιλέξτε την ημερομηνία λήξης"
 
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -23147,7 +23175,7 @@ msgstr "Παρακαλώ ελέγξτε το email σας για έναν σύν
 #. js-lingui-id: vYumai
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Please enter a valid http(s) URL"
-msgstr ""
+msgstr "Παρακαλώ εισαγάγετε μία έγκυρη διεύθυνση URL http(s)"
 
 #. js-lingui-id: jEw0Mr
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
@@ -23300,7 +23328,7 @@ msgstr "Πρόθεμα"
 #. js-lingui-id: HR5Lti
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Prefix of the tool names agents see. Cannot be changed later."
-msgstr ""
+msgstr "Πρόθεμα των ονομάτων εργαλείων που βλέπουν οι πράκτορες. Δεν μπορεί να αλλάξει αργότερα."
 
 #. js-lingui-id: IHoyJS
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -24026,6 +24054,7 @@ msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμ�
 
 #. js-lingui-id: CCTop/
 #: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
+#: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Πρόσφατο"
 
@@ -24426,7 +24455,7 @@ msgstr "Ανανέωση κατάστασης"
 #. js-lingui-id: J0LAHU
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Refund"
-msgstr ""
+msgstr "Επιστροφή χρημάτων"
 
 #. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -24936,7 +24965,7 @@ msgstr "Αντικατάσταση widget"
 #. js-lingui-id: JsTqK9
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top."
-msgstr ""
+msgstr "Αντικαθιστά τις πιστώσεις χώρου εργασίας που περιλαμβάνονται στο πλάνο με ένα σταθερό ποσό ανά μήνα, αρχίζοντας από τώρα. Οι αγορασμένες και οι χορηγημένες πιστώσεις εξακολουθούν να προστίθενται επιπλέον."
 
 #. js-lingui-id: uFEgGd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25920,6 +25949,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26168,6 +26198,8 @@ msgstr "αναζήτηση μεταδεδομένων πεδίου"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -26525,7 +26557,7 @@ msgstr "Δείτε τις εγκατεστημένες εφαρμογές"
 #. js-lingui-id: uPo3PQ
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
-msgstr ""
+msgstr "Δείτε λιγότερα"
 
 #. js-lingui-id: V1fa9u
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
@@ -27648,7 +27680,7 @@ msgstr "Εμφάνιση μόνο γραμμών με λάθη"
 #. js-lingui-id: KefbEP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show sidebar tabs and sections."
-msgstr ""
+msgstr "Εμφάνιση καρτελών και ενοτήτων της πλευρικής γραμμής."
 
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27736,7 +27768,7 @@ msgstr "Τίτλος υπογράφοντος"
 #. js-lingui-id: +Ou1Pl
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Signed a 2-year deal for 25 seats"
-msgstr ""
+msgstr "Υπογράφηκε συμφωνία 2 ετών για 25 θέσεις"
 
 #. js-lingui-id: Lz4j8Q
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
@@ -28041,7 +28073,7 @@ msgstr "SOC 2"
 #. js-lingui-id: mbsiG9
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
-msgstr ""
+msgstr "Ήπιο όριο"
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -28146,7 +28178,7 @@ msgstr "Λυπούμαστε, δεν μπορέσαμε να προσδιορί�
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Sort"
@@ -29038,7 +29070,7 @@ msgstr "Ο συγχρονισμός τέθηκε σε παύση"
 #. js-lingui-id: cxRmVd
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Sync tools"
-msgstr ""
+msgstr "Συγχρονισμός εργαλείων"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29394,7 +29426,7 @@ msgstr "Αυτό αντιστοιχεί σε περίπου {formattedNewlyEarne
 #. js-lingui-id: XOno1Y
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "The {pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead."
-msgstr ""
+msgstr "Η συμφωνία {pendingEndTypeLabel} παύει να ισχύει τώρα και παραμένει στο ιστορικό. Δεν μπορεί να επανεκκινηθεί: προσθέστε αντ’ αυτής μια νέα."
 
 #. js-lingui-id: Z4WP0F
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -29475,6 +29507,11 @@ msgstr "Δεν ήταν δυνατή η φόρτωση της Συμφωνίας
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The date and time of the write being checked."
 msgstr "Η ημερομηνία και η ώρα της εγγραφής που ελέγχεται."
+
+#. js-lingui-id: ny+Evg
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month."
+msgstr "Η ημερομηνία μετακινήθηκε κατά έναν ακέραιο αριθμό μονάδων, σε UTC. Ένας μήνας που προστίθεται στην 31η καταλήγει στην τελευταία ημέρα του μήνα."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -29618,15 +29655,15 @@ msgstr "Το όνομα που βλέπουν οι παραλήπτες δίπλ
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "Το όνομα που βλέπουν οι παραλήπτες δίπλα από τη διεύθυνσή σας. Ορίζεται όταν δημιουργείται το κανάλι."
 
-#. js-lingui-id: op7R9r
-#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
-msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr "Ο αριθμός των ημερών από την ημερομηνία έως σήμερα, σε UTC. Αρνητικός για ημερομηνία στο μέλλον."
-
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "Ο αριθμός των στοιχείων στη λίστα ή 0 όταν δεν είναι λίστα."
+
+#. js-lingui-id: SpoTRx
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
+msgstr "Ο αριθμός των ακέραιων μονάδων από την πρώτη ημερομηνία έως τη δεύτερη, αρνητικός όταν η δεύτερη είναι προγενέστερη. Τα λεπτά και οι ώρες είναι χρόνος που έχει παρέλθει· οι μεγαλύτερες μονάδες μετρούν ημερολογιακές ημέρες και μήνες, σε UTC."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -29682,6 +29719,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Το κοινόχρηστο email που θέλετε να χρησιμοποιήσετε."
+
+#. js-lingui-id: XWiOdK
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr "Η αρχή της μονάδας που περιέχει την ημερομηνία, σε UTC. Οι εβδομάδες ξεκινούν τη Δευτέρα."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30149,7 +30191,7 @@ msgstr "Αυτό το κλειδί πρέπει να οριστεί στο σώ�
 #. js-lingui-id: 3Xb+Zj
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "This many members are not billed. Seats are synced right away."
-msgstr ""
+msgstr "Αυτός ο αριθμός μελών δεν χρεώνεται. Οι θέσεις συγχρονίζονται αμέσως."
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30767,7 +30809,7 @@ msgstr "Εργαλεία"
 #. js-lingui-id: OGOaH+
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsSection.tsx
 msgid "Tools have not been synced yet"
-msgstr ""
+msgstr "Τα εργαλεία δεν έχουν συγχρονιστεί ακόμη"
 
 #. js-lingui-id: WWy8TN
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -30956,7 +30998,7 @@ msgstr "Η δοκιμαστική περίοδος έληξε. Ενημερώσ�
 #. js-lingui-id: SyzXYh
 #: src/modules/settings/admin-panel/constants/BillingArrangementTypeLabels.ts
 msgid "Trial extension"
-msgstr ""
+msgstr "Παράταση δοκιμαστικής περιόδου"
 
 #. js-lingui-id: 67waeA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -32449,7 +32491,7 @@ msgstr "Χρησιμοποιήστε μόνο γράμματα, αριθμούς
 #. js-lingui-id: cW4z4t
 #: src/modules/settings/mcp-servers/validation-schemas/mcpServerFormSchema.ts
 msgid "Use lowercase letters, digits and underscores, starting with a letter"
-msgstr ""
+msgstr "Χρησιμοποιήστε πεζά γράμματα, ψηφία και κάτω παύλες, ξεκινώντας με γράμμα"
 
 #. js-lingui-id: oSORjU
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -33589,7 +33631,7 @@ msgstr "Πού ανοίγουν οι εγγραφές αυτού του αντι
 #. js-lingui-id: jQ8/hg
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
 msgid "Where the server lives"
-msgstr ""
+msgstr "Η τοποθεσία του διακομιστή"
 
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx

@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/google-meet",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Import Google Meet transcripts and Gemini notes into Twenty Call Recordings.",
   "author": "Twenty",
   "license": "MIT",
@@ -10,7 +10,9 @@
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/twentyhq/twenty.git",
