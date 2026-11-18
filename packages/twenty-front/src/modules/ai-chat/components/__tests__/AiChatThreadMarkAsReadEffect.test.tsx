@@ -2,8 +2,8 @@ import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestIns
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { AiChatPageThreadOpenViewEffect } from '@/ai-chat/components/AiChatPageThreadOpenViewEffect';
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/components/AiChatThreadMarkAsReadEffect';
+import { AiChatThreadOpenViewEffect } from '@/ai-chat/components/AiChatThreadOpenViewEffect';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
@@ -56,6 +56,7 @@ const renderChatView = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <AiChatTestInstance>
+        <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
         <AiChatThreadMarkAsReadEffect />
       </AiChatTestInstance>
     </JotaiProvider>,
@@ -235,9 +236,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       const view = render(
         <JotaiProvider store={jotaiStore}>
           <AiChatTestInstance>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
             <AiChatThreadMarkAsReadEffect />
           </AiChatTestInstance>
           <AiChatTestInstance>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
             <AiChatThreadMarkAsReadEffect />
           </AiChatTestInstance>
         </JotaiProvider>,
@@ -257,7 +260,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
       const page = render(
         <JotaiProvider store={jotaiStore}>
-          <AiChatPageThreadOpenViewEffect threadId={THREAD_ID} />
+          <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
         </JotaiProvider>,
       );
 
@@ -282,6 +285,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       const renderViewOf = (page: string) => (
         <JotaiProvider store={jotaiStore}>
           <AiChatTestInstance key={page}>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
             <AiChatThreadMarkAsReadEffect />
           </AiChatTestInstance>
         </JotaiProvider>

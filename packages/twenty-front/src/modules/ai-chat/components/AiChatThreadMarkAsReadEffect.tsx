@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { useOpenAiChatThreadView } from '@/ai-chat/hooks/useOpenAiChatThreadView';
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/hooks/useUpdateAiChatThreadStatus';
 import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
 import {
@@ -40,8 +39,6 @@ export const AiChatThreadMarkAsReadEffect = () => {
     return () =>
       document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
-
-  useOpenAiChatThreadView(threadId);
 
   useEffect(() => {
     if (

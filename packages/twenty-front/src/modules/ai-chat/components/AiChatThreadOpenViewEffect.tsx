@@ -12,7 +12,13 @@ import { isAiChatThreadSettledForMember } from '@/ai-chat/utils/isAiChatThreadSe
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-export const useOpenAiChatThreadView = (threadId: string | null) => {
+type AiChatThreadOpenViewEffectProps = {
+  threadId: string | null;
+};
+
+export const AiChatThreadOpenViewEffect = ({
+  threadId,
+}: AiChatThreadOpenViewEffectProps) => {
   const store = useStore();
   const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
 
@@ -70,4 +76,6 @@ export const useOpenAiChatThreadView = (threadId: string | null) => {
       }
     };
   }, [store, threadId, updateAgentChatThreadInboxState]);
+
+  return null;
 };

@@ -1,6 +1,8 @@
+import { isValidUuid } from 'twenty-shared/utils';
+
 import { AiChatPageContinueInSidePanelEffect } from '@/ai-chat/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageThreadLoadEffect } from '@/ai-chat/components/AiChatPageThreadLoadEffect';
-import { AiChatPageThreadOpenViewEffect } from '@/ai-chat/components/AiChatPageThreadOpenViewEffect';
+import { AiChatThreadOpenViewEffect } from '@/ai-chat/components/AiChatThreadOpenViewEffect';
 
 type AiChatPageEffectsProps = {
   threadId: string;
@@ -17,6 +19,8 @@ export const AiChatPageEffects = ({
       <AiChatPageThreadLoadEffect key={threadId} threadId={threadId} />
     )}
     <AiChatPageContinueInSidePanelEffect threadId={threadId} />
-    <AiChatPageThreadOpenViewEffect threadId={threadId} />
+    <AiChatThreadOpenViewEffect
+      threadId={isValidUuid(threadId) ? threadId : null}
+    />
   </>
 );

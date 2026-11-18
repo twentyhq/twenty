@@ -1,3 +1,4 @@
+import { isValidUuid } from 'twenty-shared/utils';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
@@ -8,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AiChatHasBeenOpenedEffect } from '@/ai-chat/components/AiChatHasBeenOpenedEffect';
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/components/AiChatThreadMarkAsReadEffect';
+import { AiChatThreadOpenViewEffect } from '@/ai-chat/components/AiChatThreadOpenViewEffect';
 import { AiChatStreamingPartsDiffSyncEffect } from '@/ai-chat/components/AiChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai-chat/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai-chat/components/AiChatNewThreadRecipientBar';
@@ -66,6 +68,9 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AiChatHasBeenOpenedEffect />
+      <AiChatThreadOpenViewEffect
+        threadId={isValidUuid(threadId) ? threadId : null}
+      />
       <AiChatThreadMarkAsReadEffect />
       <AiChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
