@@ -1,4 +1,4 @@
-import { useExecuteAiChatThreadStatusAction } from '@/ai/hooks/useExecuteAiChatThreadStatusAction';
+import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/hooks/useExecuteAiChatThreadStatusAction';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { type AgentChatInboxAction } from '~/generated-metadata/graphql';

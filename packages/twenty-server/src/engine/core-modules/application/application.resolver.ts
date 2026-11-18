@@ -151,6 +151,16 @@ export class ApplicationResolver {
     );
   }
 
+  @ResolveField(() => String, {
+    nullable: true,
+    deprecationReason: 'Use requestedRoleId instead',
+  })
+  defaultRoleId(
+    @Parent() application: Pick<ApplicationDTO, 'requestedRoleId'>,
+  ): string | null {
+    return application.requestedRoleId ?? null;
+  }
+
   @ResolveField(() => Boolean)
   runHealthCheckOnUserPreferences(
     @Parent()
