@@ -28,15 +28,12 @@ import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import { INBOX_LAYOUT } from '@/inbox/constants/InboxLayout';
 import { INBOX_LIST_PANE_WIDTH } from '@/inbox/constants/InboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { inboxLayoutState } from '@/inbox/states/inboxLayoutState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingAiChatThreadIdState } from '@/ai/states/closingAiChatThreadIdState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -105,7 +102,6 @@ const StyledNavigationControls = styled.div`
 const InboxRouteNavigation = () => {
   const navigate = useNavigate();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { selectAiChatThread } = useSelectAiChatThread();
 
   return (
     <StyledNavigationControls>
@@ -135,9 +131,6 @@ const InboxRouteNavigation = () => {
       <Button onClick={() => navigate(-1)}>Back through history</Button>
       <Button onClick={() => navigate(1)}>Forward through history</Button>
       <Button onClick={() => openAskAiPage()}>Open Ask AI</Button>
-      <Button onClick={() => selectAiChatThread(FIRST_THREAD_ID)}>
-        Select first chat for Ask AI
-      </Button>
     </StyledNavigationControls>
   );
 };
@@ -552,9 +545,6 @@ export const CloseConversationPane: Story = {
 
     if (!shouldReduceMotion && !MotionGlobalConfig.skipAnimations) {
       await expect(conversation).toBeInTheDocument();
-      await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        FIRST_THREAD_ID,
-      );
       await expect(conversation).toHaveAttribute('aria-hidden', 'true');
       await waitFor(() => {
         const closingListWidth = list.getBoundingClientRect().width;
@@ -567,7 +557,6 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(conversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
     });
     await expect(
       getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
@@ -595,7 +584,6 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(reopenedConversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
     });
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
   },
@@ -626,17 +614,6 @@ export const AskAiAfterClosingConversation: Story = {
     await expect(
       jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
     ).toBe(SidePanelPages.AskAI);
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
-    await expect(jotaiStore.get(closingAiChatThreadIdState.atom)).toBeNull();
-
-    await user.click(
-      canvas.getByRole('button', { name: 'Select first chat for Ask AI' }),
-    );
-    await user.click(canvas.getByRole('button', { name: 'Open Ask AI' }));
-    await waitFor(() => expect(conversation).not.toBeInTheDocument());
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      FIRST_THREAD_ID,
-    );
   },
 };
 

@@ -39,6 +39,7 @@ type EmailThreadComposerProps = {
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
   draftPrefill?: EmailDraftPrefill | null;
+  draftKey?: string;
   appReplyTarget?: AppReplyTarget | null;
 };
 
@@ -48,6 +49,7 @@ export const EmailThreadComposer = ({
   isComposerOpen,
   setIsComposerOpen,
   draftPrefill,
+  draftKey,
   appReplyTarget,
 }: EmailThreadComposerProps) => {
   const { t } = useLingui();
@@ -74,12 +76,17 @@ export const EmailThreadComposer = ({
     defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,
     appReplyTarget,
+    draftKey,
     onSent: handleReplySent,
   });
 
-  const { handleSend, canSend, canAttachFiles } = composerState;
+  const { handleSend, canSend, canAttachFiles, discardDraft } = composerState;
 
-  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
+  const {
+    openAttachmentPicker,
+    discardPendingUploads,
+    isUploadingAttachments,
+  } = useAttachEmailFiles({
     onFilesAttached: composerState.setFiles,
   });
 
@@ -104,7 +111,11 @@ export const EmailThreadComposer = ({
       label: t`Cancel reply`,
       Icon: IconX,
       isPinned: !isInSidePanel,
-      onClick: () => setIsComposerOpen(false),
+      onClick: () => {
+        discardPendingUploads();
+        discardDraft();
+        setIsComposerOpen(false);
+      },
       replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
     };
 
@@ -146,6 +157,8 @@ export const EmailThreadComposer = ({
     canSendReply,
     setIsComposerOpen,
     openAttachmentPicker,
+    discardPendingUploads,
+    discardDraft,
     t,
   ]);
 

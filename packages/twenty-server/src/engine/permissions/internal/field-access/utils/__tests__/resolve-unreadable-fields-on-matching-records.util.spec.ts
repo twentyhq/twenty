@@ -103,7 +103,7 @@ const resolve = ({
       workspaceId: 'workspace-id',
       mainPrincipal: {
         type: 'workspaceMember',
-        roleId: MEMBER_ROLE_ID,
+        roleIds: [MEMBER_ROLE_ID],
         workspaceMemberId: 'member-id',
       },
       limitingPrincipal: {

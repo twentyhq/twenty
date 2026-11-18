@@ -5,10 +5,10 @@ import { type ReactNode } from 'react';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { aiChatOpenThreadIdByInstanceIdState } from '@/ai/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai/states/aiChatPrepromptState';
-import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatUploadedFilesFamilyState } from '@/ai/states/aiChatUploadedFilesFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -28,8 +28,13 @@ let finishUpload: () => void = () => {};
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
-    switchToNewChat: () =>
-      jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID),
+    switchToNewChat: () => {
+      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+        'side-panel': NEW_CHAT_THREAD_ID,
+      });
+
+      return NEW_CHAT_THREAD_ID;
+    },
   }),
 }));
 
@@ -38,7 +43,12 @@ jest.mock('@/ai/hooks/useAiChatFileUpload', () => ({
     uploadFiles: () =>
       new Promise<AiChatFileUIPart[]>((resolve) => {
         finishUpload = () => {
-          jotaiStore.set(aiChatUploadedFilesState.atom, [uploadedFile]);
+          jotaiStore.set(
+            aiChatUploadedFilesFamilyState.atomFamily({
+              threadId: NEW_CHAT_THREAD_ID,
+            }),
+            [uploadedFile],
+          );
           resolve([uploadedFile]);
         };
       }),
@@ -57,7 +67,12 @@ describe('useOpenAskAiPageWithPreprompt', () => {
   beforeEach(() => {
     jotaiStore.set(aiChatDraftsByThreadIdState.atom, {});
     jotaiStore.set(aiChatPrepromptState.atom, null);
-    jotaiStore.set(aiChatUploadedFilesState.atom, []);
+    jotaiStore.set(
+      aiChatUploadedFilesFamilyState.atomFamily({
+        threadId: NEW_CHAT_THREAD_ID,
+      }),
+      [],
+    );
   });
 
   it('sends the prompt in the new chat once the files have uploaded', async () => {
@@ -80,12 +95,17 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       [NEW_CHAT_THREAD_ID]: 'Import these contacts',
     });
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toEqual({
+      threadId: NEW_CHAT_THREAD_ID,
       serializedDocument: 'Import these contacts',
       mode: 'SEND',
     });
-    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([
-      uploadedFile,
-    ]);
+    expect(
+      jotaiStore.get(
+        aiChatUploadedFilesFamilyState.atomFamily({
+          threadId: NEW_CHAT_THREAD_ID,
+        }),
+      ),
+    ).toEqual([uploadedFile]);
   });
 
   it('drops the prompt and its files when the user switches chats during the upload', async () => {
@@ -100,14 +120,22 @@ describe('useOpenAskAiPageWithPreprompt', () => {
         files: [new File(['name'], 'contacts.csv')],
       });
 
-      jotaiStore.set(currentAiChatThreadState.atom, OTHER_CHAT_THREAD_ID);
+      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+        'side-panel': OTHER_CHAT_THREAD_ID,
+      });
       finishUpload();
       await opening;
     });
 
     expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({});
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toBeNull();
-    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([]);
+    expect(
+      jotaiStore.get(
+        aiChatUploadedFilesFamilyState.atomFamily({
+          threadId: NEW_CHAT_THREAD_ID,
+        }),
+      ),
+    ).toEqual([]);
   });
 
   it('addresses the prompt to the default recipients instead of a leftover draft', async () => {

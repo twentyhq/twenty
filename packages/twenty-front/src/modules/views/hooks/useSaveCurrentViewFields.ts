@@ -61,6 +61,9 @@ export const useSaveCurrentViewFields = () => {
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
               position: viewFieldToCreateOrUpdate.position,
               isVisible: viewFieldToCreateOrUpdate.isVisible,
+              isCanonical: viewFieldToCreateOrUpdate.isCanonical,
+              relationTargetFieldMetadataId:
+                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,

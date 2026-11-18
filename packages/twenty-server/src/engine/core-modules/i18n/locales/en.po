@@ -123,6 +123,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24HRS"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr "A {type} navigation menu item cannot be placed inside a {parentType}"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -308,6 +314,18 @@ msgstr "A name conflict occurred."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
 msgstr "A name is required for FOLDER type"
+
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr "A name is required for SECTION type"
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr "A name is required for TAB type"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1548,6 +1566,14 @@ msgstr "Application variable scope cannot be changed after creation"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Applications cannot update these fields: {fieldsList}."
 
+#. js-lingui-id: irwO8L
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+msgid "Apply or publish the application again to restore its frontend component sources."
+msgstr "Apply or publish the application again to restore its frontend component sources."
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1923,6 +1949,11 @@ msgstr "Bcc"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "Billing"
+
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr "Billing arrangement not found."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3399,6 +3430,7 @@ msgstr "Connected account \"{connectedAccountId}\" has no calendar channel with 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "Connected account not found."
 
@@ -11897,6 +11929,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Role"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr "Role \"{roleLabel}\" cannot be assigned"
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11937,6 +11974,11 @@ msgstr "Role \"{roleLabel}\" cannot be assigned to webhooks"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr "Role \"{roleLabel}\" is held by the system and cannot be assigned"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14683,6 +14725,11 @@ msgstr "This application is being upgraded. Please wait for it to finish before 
 msgid "This application variable scope is not supported."
 msgstr "This application variable scope is not supported."
 
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr "This billing arrangement has invalid settings."
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -14723,6 +14770,11 @@ msgstr "This campaign's email content is invalid."
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "This campaign's list is in the trash. Restore it or pick another list in the To field."
+
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr "This change would bill more members than the hard seat cap allows."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -14971,6 +15023,11 @@ msgstr "This instance did not report a server identifier. Set SERVER_ID on this 
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "This job is too large to be enqueued."
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr "This kind of billing arrangement cannot be created or ended by hand."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15417,6 +15474,11 @@ msgstr "This workflow version is not ready to be activated. {reasons}"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "This workspace already has a subscription."
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr "This workspace already has an arrangement of this type over that period."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -18293,7 +18355,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Your role cannot delete some of these records, so they cannot be merged."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Your role in this workspace could not be found. Please contact your workspace administrator."

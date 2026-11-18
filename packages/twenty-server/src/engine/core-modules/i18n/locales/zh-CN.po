@@ -128,6 +128,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24小时制"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr "{type} 导航菜单项不能放置在 {parentType} 内部"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -313,6 +319,18 @@ msgstr "发生名称冲突。"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
 msgstr "对于 FOLDER 类型，必须提供名称"
+
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr "对于 SECTION 类型，必须提供名称"
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr "TAB 类型必须提供名称"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1553,6 +1571,14 @@ msgstr "应用程序变量范围在创建后无法更改"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "应用程序无法更新以下字段：{fieldsList}。"
 
+#. js-lingui-id: irwO8L
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+msgid "Apply or publish the application again to restore its frontend component sources."
+msgstr "重新应用或发布该应用程序，以恢复其前端组件源文件。"
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1928,6 +1954,11 @@ msgstr "密送"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "账单"
+
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr "未找到计费安排。"
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3404,6 +3435,7 @@ msgstr "已连接账户 \"{connectedAccountId}\" 没有启用同步的日历渠�
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "未找到已连接账户。"
 
@@ -11902,6 +11934,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "角色"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr "无法分配角色“{roleLabel}”"
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11942,6 +11979,11 @@ msgstr "无法将角色“{roleLabel}”分配给 Webhook"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "无法分配角色“{roleLabel}”：自定义角色需要组织计划"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr "角色“{roleLabel}”由系统保留，无法分配"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14688,6 +14730,11 @@ msgstr "此应用程序正在升级。请等待升级完成后再卸载。"
 msgid "This application variable scope is not supported."
 msgstr "不支持此应用程序变量范围。"
 
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr "此计费安排的设置无效。"
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -14728,6 +14775,11 @@ msgstr "此营销活动的电子邮件内容无效。"
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "此营销活动的列表位于回收站中。请将其还原，或在“收件人”字段中选择其他列表。"
+
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr "此次更改将导致计费成员数超过硬性席位上限。"
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -14976,6 +15028,11 @@ msgstr "此实例未报告服务器标识符。请在此实例上设置 SERVER_I
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "此作业过大，无法加入队列。"
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr "此类计费安排无法手动创建或终止。"
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15422,6 +15479,11 @@ msgstr "此工作流版本尚未准备好激活。{reasons}"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "该工作区已有订阅。"
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr "此工作区在该期间内已存在此类型的安排。"
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -18298,7 +18360,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "您的角色无法删除其中一些记录，因此无法合并它们。"
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "无法找到您在此工作区中的角色。请联系您的工作区管理员。"

@@ -128,6 +128,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24 tim"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr "Ett navigeringsmenyalternativ av typen {type} kan inte placeras inuti en {parentType}"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -313,6 +319,18 @@ msgstr "En namnkonflikt uppstod."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
 msgstr "Ett namn krävs för typen FOLDER"
+
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr "Ett namn krävs för typen SECTION"
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr "Ett namn krävs för typen TAB"
 
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1553,6 +1571,14 @@ msgstr "Omfattningen för applikationsvariabeln kan inte ändras efter skapandet
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Applikationer kan inte uppdatera dessa fält: {fieldsList}."
 
+#. js-lingui-id: irwO8L
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
+msgid "Apply or publish the application again to restore its frontend component sources."
+msgstr "Tillämpa eller publicera applikationen igen för att återställa dess källor för frontendkomponenter."
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1928,6 +1954,11 @@ msgstr "Bcc"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "Fakturering"
+
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr "Faktureringsarrangemang hittades inte."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3404,6 +3435,7 @@ msgstr "Det anslutna kontot \"{connectedAccountId}\" har ingen kalenderkanal med
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "Anslutet konto hittades inte."
 
@@ -11904,6 +11936,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Roll"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr "Rollen \"{roleLabel}\" kan inte tilldelas"
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11944,6 +11981,11 @@ msgstr "Rollen \"{roleLabel}\" kan inte tilldelas webhooks"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Rollen \"{roleLabel}\" kan inte tilldelas: anpassade roller kräver Organization Plan"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr "Rollen \"{roleLabel}\" innehas av systemet och kan inte tilldelas"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14694,6 +14736,11 @@ msgstr "Den här applikationen uppgraderas. Vänta tills det är klart innan du 
 msgid "This application variable scope is not supported."
 msgstr "Denna omfattning för applikationsvariabel stöds inte."
 
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr "Det här faktureringsarrangemanget har ogiltiga inställningar."
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -14734,6 +14781,11 @@ msgstr "Den här kampanjens e‑postinnehåll är ogiltigt."
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "Den här kampanjens lista ligger i papperskorgen. Återställ den eller välj en annan lista i fältet Till."
+
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr "Den här ändringen skulle fakturera fler medlemmar än den hårda platsgränsen tillåter."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -14982,6 +15034,11 @@ msgstr "Denna instans rapporterade inget server-ID. Sätt SERVER_ID på denna in
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "Det här jobbet är för stort för att läggas i kö."
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr "Den här typen av faktureringsarrangemang kan inte skapas eller avslutas manuellt."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15428,6 +15485,11 @@ msgstr "Den här arbetsflödesversionen är inte redo att aktiveras. {reasons}"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "Denna arbetsyta har redan en prenumeration."
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr "Den här arbetsytan har redan ett arrangemang av den här typen under den perioden."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -18304,7 +18366,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Din roll kan inte ta bort vissa av dessa poster, så de kan inte sammanfogas."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din roll i den här arbetsytan kunde inte hittas. Vänligen kontakta din arbetsytsadministratör."

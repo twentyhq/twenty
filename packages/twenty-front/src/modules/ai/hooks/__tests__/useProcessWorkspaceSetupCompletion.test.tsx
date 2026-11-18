@@ -8,11 +8,13 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+const CONTINUED_THREAD_ID = '20202020-0000-4000-8000-000000000002';
 
 const navigateMock = jest.fn();
 
@@ -101,7 +103,10 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   });
 
   it('should redirect to the available homepage and move the chat to the side panel', () => {
-    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    jotaiStore.set(
+      aiChatContinueInSidePanelThreadIdState.atom,
+      CONTINUED_THREAD_ID,
+    );
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
@@ -115,8 +120,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      true,
+    expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
+      CONTINUED_THREAD_ID,
     );
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
@@ -139,7 +144,10 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   it('returns to settings and ends setup when no readable object homepage exists', () => {
     defaultHomePagePath = '/settings/profile';
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    jotaiStore.set(
+      aiChatContinueInSidePanelThreadIdState.atom,
+      CONTINUED_THREAD_ID,
+    );
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -154,9 +162,9 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      false,
-    );
+    expect(
+      jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom),
+    ).toBeNull();
     expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);
   });
 

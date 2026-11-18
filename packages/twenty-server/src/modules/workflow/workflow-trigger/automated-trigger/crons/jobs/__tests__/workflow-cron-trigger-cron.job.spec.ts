@@ -11,7 +11,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
@@ -53,7 +53,7 @@ const mockWorkflowCoreSyncService = {
   findCoreWorkflowByIdOrWorkspaceWorkflowId: jest.fn(),
 };
 
-const mockWorkflowVersionCoreSyncService = {
+const mockCoreWorkflowTriggerService = {
   findCoreVersionById: jest.fn(),
   resolveDispatchedCoreVersionId: jest.fn(
     async ({
@@ -132,7 +132,7 @@ describe('WorkflowCronTriggerCronJob', () => {
         ),
       }),
     );
-    mockWorkflowVersionCoreSyncService.findCoreVersionById.mockImplementation(
+    mockCoreWorkflowTriggerService.findCoreVersionById.mockImplementation(
       async (_workspaceId: string, versionId: string) => ({
         id: versionId,
         coreWorkflowId: versionId.replace('core-version-', 'workflow-'),
@@ -187,8 +187,8 @@ describe('WorkflowCronTriggerCronJob', () => {
           useValue: mockWorkflowCoreSyncService,
         },
         {
-          provide: WorkflowVersionCoreSyncService,
-          useValue: mockWorkflowVersionCoreSyncService,
+          provide: CoreWorkflowTriggerService,
+          useValue: mockCoreWorkflowTriggerService,
         },
       ],
     }).compile();

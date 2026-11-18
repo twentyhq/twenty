@@ -14,7 +14,7 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
-            roleId: 'user-role',
+            roleIds: ['user-role'],
             workspaceMemberId: 'member-1',
           },
           applicationPrincipal: {
@@ -25,9 +25,8 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         },
       }),
     ).toEqual({
-      type: 'application',
       applicationId: APPLICATION_ID,
-      roleId: APPLICATION_ROLE_ID,
+      roleIds: [APPLICATION_ROLE_ID],
     });
   });
 
@@ -37,7 +36,7 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         principals: {
           mainPrincipal: {
             type: 'application',
-            roleId: APPLICATION_ROLE_ID,
+            roleIds: [APPLICATION_ROLE_ID],
             applicationId: APPLICATION_ID,
           },
           applicationPrincipal: {
@@ -48,9 +47,8 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         },
       }),
     ).toEqual({
-      type: 'application',
       applicationId: APPLICATION_ID,
-      roleId: APPLICATION_ROLE_ID,
+      roleIds: [APPLICATION_ROLE_ID],
     });
   });
 
@@ -60,7 +58,7 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
-            roleId: APPLICATION_ROLE_ID,
+            roleIds: [APPLICATION_ROLE_ID],
             workspaceMemberId: 'member-1',
           },
           applicationPrincipal: {
@@ -79,10 +77,28 @@ describe('getPermissionsPrincipalsActingApplication', () => {
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
-            roleId: 'user-role',
+            roleIds: ['user-role'],
             workspaceMemberId: 'member-1',
           },
           applicationPrincipal: { type: 'customApplication' },
+        },
+      }),
+    ).toBeUndefined();
+  });
+
+  it('ignores an application without a role of its own', () => {
+    expect(
+      getPermissionsPrincipalsActingApplication({
+        principals: {
+          mainPrincipal: {
+            type: 'workspaceMember',
+            roleIds: ['user-role'],
+            workspaceMemberId: 'member-1',
+          },
+          applicationPrincipal: {
+            type: 'application',
+            applicationId: APPLICATION_ID,
+          },
         },
       }),
     ).toBeUndefined();
@@ -103,7 +119,7 @@ describe('getPermissionsPrincipalsActingApplication', () => {
           application: { id: TWENTY_STANDARD_APPLICATION_ID },
         },
         roleMaps: {
-          userWorkspaceRoleMap: { 'user-workspace-1': ADMIN_ROLE_ID },
+          userWorkspaceRoleMap: { 'user-workspace-1': [ADMIN_ROLE_ID] },
           apiKeyRoleMap: {},
           flatRoleTargetByAgentIdMaps: {},
           flatRoleTargetByApplicationIdMaps,
@@ -142,9 +158,8 @@ describe('getPermissionsPrincipalsActingApplication', () => {
           [TWENTY_STANDARD_APPLICATION_ID]: { roleId: 'admin-grant-role-id' },
         }),
       ).toEqual({
-        type: 'application',
         applicationId: TWENTY_STANDARD_APPLICATION_ID,
-        roleId: 'admin-grant-role-id',
+        roleIds: ['admin-grant-role-id'],
       });
     });
   });
