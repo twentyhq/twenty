@@ -315,6 +315,7 @@ import { AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand } from 'src
 import { DropJobConfigFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1794932308059-drop-job-config';
 import { AddRequestedRoleIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794992742917-add-requested-role-id-to-application';
 import { BackfillApplicationRequestedRoleIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794992743917-backfill-application-requested-role-id';
+import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795006012069-add-view-sort-relation-target-field-metadata-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -632,4 +633,5 @@ export const INSTANCE_COMMANDS = [
   DropJobConfigFastInstanceCommand,
   AddRequestedRoleIdToApplicationFastInstanceCommand,
   BackfillApplicationRequestedRoleIdSlowInstanceCommand,
+  AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
 ];

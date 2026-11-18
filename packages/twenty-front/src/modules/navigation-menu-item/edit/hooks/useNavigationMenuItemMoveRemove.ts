@@ -2,7 +2,7 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { isDefined } from 'twenty-shared/utils';
 
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
-import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
+import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
@@ -31,41 +31,27 @@ export const useNavigationMenuItemMoveRemove = (
       .sort((a, b) => a.position - b.position);
   };
 
-  const moveUp = async (navigationMenuItemId: string) => {
+  const move = async (navigationMenuItemId: string, offset: -1 | 1) => {
     const siblings = getSortedSiblings(navigationMenuItemId);
     if (!isDefined(siblings)) {
       return;
     }
-    const currentIndex = siblings.findIndex(
-      (item) => item.id === navigationMenuItemId,
-    );
-    if (currentIndex <= 0) {
+    const position = getNavigationMenuItemMovedPosition({
+      siblings,
+      itemId: navigationMenuItemId,
+      offset,
+    });
+    if (!isDefined(position)) {
       return;
     }
-    const prev = siblings[currentIndex - 1];
-    const prevPrev = siblings[currentIndex - 2];
-    await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(prevPrev?.position, prev.position),
-    });
+    await updateItem(navigationMenuItemId, { position });
   };
 
-  const moveDown = async (navigationMenuItemId: string) => {
-    const siblings = getSortedSiblings(navigationMenuItemId);
-    if (!isDefined(siblings)) {
-      return;
-    }
-    const currentIndex = siblings.findIndex(
-      (item) => item.id === navigationMenuItemId,
-    );
-    if (currentIndex < 0 || currentIndex >= siblings.length - 1) {
-      return;
-    }
-    const next = siblings[currentIndex + 1];
-    const nextNext = siblings[currentIndex + 2];
-    await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(next.position, nextNext?.position),
-    });
-  };
+  const moveUp = (navigationMenuItemId: string) =>
+    move(navigationMenuItemId, -1);
+
+  const moveDown = (navigationMenuItemId: string) =>
+    move(navigationMenuItemId, 1);
 
   const remove = async (navigationMenuItemId: string) => {
     const itemToRemove = currentItems.find(
