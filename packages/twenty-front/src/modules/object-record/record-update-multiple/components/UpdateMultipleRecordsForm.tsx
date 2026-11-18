@@ -5,13 +5,14 @@ import { RecordFormFieldInput } from '@/object-record/record-form/components/Rec
 import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
+import { getFieldsEditableInMultiEditForm } from '@/object-record/record-update-multiple/utils/getFieldsEditableInMultiEditForm';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
-import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { css } from '@linaria/core';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { type JsonValue } from 'type-fest';
 
 const updateMultipleRecordsFormSectionClassName = css`
   display: flex;
@@ -25,7 +26,7 @@ export type UpdateMultipleRecordsFormProps = {
   formInstanceId: string;
   disabled?: boolean;
   values: UpdateMultipleRecordsState;
-  onChange: (fieldName: string, value: any) => void;
+  onChange: (fieldName: string, value: unknown) => void;
 };
 
 export const UpdateMultipleRecordsForm = ({
@@ -39,9 +40,7 @@ export const UpdateMultipleRecordsForm = ({
     objectNameSingular,
   });
 
-  const editableFields = objectMetadataItem.fields
-    .filter(shouldDisplayFormMultiEditField)
-    .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name));
+  const editableFields = getFieldsEditableInMultiEditForm(objectMetadataItem);
 
   const fieldsWithDefinitions = editableFields.map((fieldMetadataItem) => ({
     fieldMetadataItem,
@@ -70,7 +69,7 @@ export const UpdateMultipleRecordsForm = ({
 
         const value = values[fieldNameOrRelationIdName];
 
-        const handleValueChange = (newValue: any) => {
+        const handleValueChange = (newValue: JsonValue) => {
           if (newValue === null) {
             onChange(fieldNameOrRelationIdName, null);
           } else if (isUpdateRecordValueEmpty(newValue)) {

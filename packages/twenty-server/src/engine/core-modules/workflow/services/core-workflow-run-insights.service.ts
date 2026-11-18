@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS } from 'src/engine/core-modules/workflow/constants/core-workflow-run-count-window-in-days.constant';
 import { type CoreWorkflowRunInsightsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.dto';
 import { buildCoreWorkflowRunCountWindowPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-run-count-window-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
+import { buildRunInsightsDailySeriesQuery } from 'src/engine/utils/run-insights/build-run-insights-daily-series-query.util';
+import { buildRunInsightsWindowFirstLocalDay } from 'src/engine/utils/run-insights/build-run-insights-window-first-local-day.util';
+import { RUN_INSIGHTS_WINDOW_IN_DAYS } from 'src/engine/utils/run-insights/run-insights-window-in-days.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   type WorkflowRunWorkspaceEntity,
@@ -98,7 +100,15 @@ export class CoreWorkflowRunInsightsService {
     const runCountWindow = buildCoreWorkflowRunCountWindowPredicate(
       column('createdAt'),
     );
-    const windowFirstLocalDay = `DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)`;
+    const dailySeriesPlaceholders = {
+      timeZone: ':timeZone',
+      lastDayOffset: ':lastDayOffset',
+      completedStatus: ':completedStatus',
+      failedStatus: ':failedStatus',
+    };
+    const windowFirstLocalDay = buildRunInsightsWindowFirstLocalDay(
+      dailySeriesPlaceholders,
+    );
 
     const totalsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect('COUNT(*)', 'runCount')
@@ -135,7 +145,7 @@ export class CoreWorkflowRunInsightsService {
     const parameters = {
       completedStatus: WorkflowRunStatus.COMPLETED,
       failedStatus: WorkflowRunStatus.FAILED,
-      lastDayOffset: CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS - 1,
+      lastDayOffset: RUN_INSIGHTS_WINDOW_IN_DAYS - 1,
       timeZone,
       recentFailedRunsLimit: RECENT_FAILED_RUNS_LIMIT,
     };
@@ -146,21 +156,10 @@ export class CoreWorkflowRunInsightsService {
         { ...totalsQueryBuilder.getParameters(), ...parameters },
       ),
       workflowRunRepository.executeRaw<DailyRunCountRow>(
-        `
-        SELECT
-          TO_CHAR("calendarDay"."day", 'YYYY-MM-DD') AS "day",
-          COUNT("dailyRun"."id") FILTER (WHERE "dailyRun"."status" = :completedStatus) AS "completedRunCount",
-          COUNT("dailyRun"."id") FILTER (WHERE "dailyRun"."status" = :failedStatus) AS "failedRunCount",
-          COUNT("dailyRun"."id") FILTER (WHERE "dailyRun"."status" NOT IN (:completedStatus, :failedStatus)) AS "otherRunCount"
-        FROM GENERATE_SERIES(
-          ${windowFirstLocalDay},
-          DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone),
-          INTERVAL '1 day'
-        ) AS "calendarDay"("day")
-        LEFT JOIN (${dailyRunsQueryBuilder.getQuery()}) AS "dailyRun"
-          ON DATE_TRUNC('day', "dailyRun"."createdAt" AT TIME ZONE :timeZone) = "calendarDay"."day"
-        GROUP BY "calendarDay"."day"
-        ORDER BY "calendarDay"."day"`,
+        buildRunInsightsDailySeriesQuery({
+          runsSource: `(${dailyRunsQueryBuilder.getQuery()})`,
+          placeholders: dailySeriesPlaceholders,
+        }),
         { ...dailyRunsQueryBuilder.getParameters(), ...parameters },
       ),
       workflowRunRepository.executeRaw<FailedRunRow>(

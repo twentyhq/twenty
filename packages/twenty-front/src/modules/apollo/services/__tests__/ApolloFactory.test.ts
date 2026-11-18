@@ -100,7 +100,7 @@ const mockWorkspace = {
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
-  isInternalMessagesImportEnabled: false,
+  isInternalImportEnabled: false,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
   installedApplications: [],

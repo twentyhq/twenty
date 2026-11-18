@@ -5,7 +5,9 @@ import { useFilteredSelectOptionsFromRLSPredicates } from '@/object-record/recor
 import { useMultiSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectField';
 import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/input/components/FieldInputDropdown';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { filterSelectableFieldOptions } from '@/object-record/record-field/ui/utils/filterSelectableFieldOptions';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
+import { isSelectOptionNameTaken } from '@/object-record/record-field/ui/utils/isSelectOptionNameTaken';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +27,10 @@ export const MultiSelectFieldInput = () => {
       fieldMetadataId: fieldDefinition.fieldMetadataId,
       objectMetadataNameSingular:
         fieldDefinition.metadata.objectMetadataNameSingular,
-      options: fieldDefinition.metadata.options,
+      options: filterSelectableFieldOptions({
+        options: fieldDefinition.metadata.options,
+        selectedValues: draftValue ?? [],
+      }),
     });
 
   const handleOptionSelected = (newDraftValue: FieldMultiSelectValue) => {
@@ -53,6 +58,12 @@ export const MultiSelectFieldInput = () => {
         onOptionSelected={handleOptionSelected}
         values={draftValue}
         onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+        isExistingOptionName={(optionName) =>
+          isSelectOptionNameTaken({
+            options: fieldDefinition.metadata.options,
+            optionName,
+          })
+        }
       />
     </FieldInputDropdown>
   );

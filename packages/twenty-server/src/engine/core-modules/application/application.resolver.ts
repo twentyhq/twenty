@@ -151,16 +151,26 @@ export class ApplicationResolver {
     );
   }
 
+  @ResolveField(() => String, {
+    nullable: true,
+    deprecationReason: 'Use requestedRoleId instead',
+  })
+  defaultRoleId(
+    @Parent() application: Pick<ApplicationDTO, 'requestedRoleId'>,
+  ): string | null {
+    return application.requestedRoleId ?? null;
+  }
+
   @ResolveField(() => Boolean)
-  runOnUserPreferences(
+  runHealthCheckOnUserPreferences(
     @Parent()
     application: Partial<
       Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
-        Pick<ApplicationDTO, 'runOnUserPreferences'>
+        Pick<ApplicationDTO, 'runHealthCheckOnUserPreferences'>
     >,
   ): boolean {
     return (
-      application.runOnUserPreferences ??
+      application.runHealthCheckOnUserPreferences ??
       application.isUserHealthCheckEnabled ??
       false
     );

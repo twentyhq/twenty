@@ -1,6 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useContext, type ReactNode } from 'react';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
@@ -10,8 +11,8 @@ export const RecordTableCellDisplayMode = ({
 }: {
   children: ReactNode;
 }) => {
-  const { recordId, isRecordFieldReadOnly: isReadOnly } =
-    useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
+  const { recordId } = useRecordTableRowContextOrThrow();
 
   const { openRecordContextMenu } = useRecordTableBodyContextOrThrow();
 

@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
@@ -16,9 +19,12 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
-  visibility?: WorkflowVisibility | null;
+  visibility?: WorkflowVisibility | ViewVisibility | null;
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
+  viewId?: string | null;
+  overrides?: FlatView['overrides'];
+  applicationUniversalIdentifier?: string;
 };
 
 const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
@@ -26,10 +32,45 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
     ? event.properties.before
     : event.properties.after) as BroadcastEventRecord | undefined;
 
-const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
-  record?.visibility === WorkflowVisibility.PRIVATE
-    ? (record.createdByUserWorkspaceId ?? undefined)
-    : undefined;
+const getWorkflowRecipientUserWorkspaceIds = (
+  workflow: Pick<
+    BroadcastEventRecord,
+    'visibility' | 'createdByUserWorkspaceId'
+  >,
+): string[] | undefined => {
+  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
+    return undefined;
+  }
+
+  return isNonEmptyString(workflow.createdByUserWorkspaceId)
+    ? [workflow.createdByUserWorkspaceId]
+    : [];
+};
+
+const getViewRecipientUserWorkspaceIds = (
+  view: Pick<
+    BroadcastEventRecord,
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
+    | 'overrides'
+    | 'applicationUniversalIdentifier'
+  >,
+): string[] | undefined => {
+  const visibility = resolveEffectiveFlatEntityProperty({
+    metadataName: 'view',
+    flatEntity: view,
+    property: 'visibility',
+  });
+
+  if (visibility === ViewVisibility.WORKSPACE) {
+    return undefined;
+  }
+
+  return visibility === ViewVisibility.UNLISTED &&
+    isNonEmptyString(view.createdByUserWorkspaceId)
+    ? [view.createdByUserWorkspaceId]
+    : [];
+};
 
 @Injectable()
 export class MetadataEventPublisher {
@@ -89,21 +130,43 @@ export class MetadataEventPublisher {
           ).flatWorkflowMaps
         : undefined;
 
+    const flatViewMaps = VIEW_CHILD_METADATA_NAMES.includes(metadataName)
+      ? (
+          await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewMaps'] },
+          )
+        ).flatViewMaps
+      : undefined;
+
     const resolveRecipients = (
       record: BroadcastEventRecord | undefined,
     ): string[] | undefined => {
+      if (isDefined(flatViewMaps)) {
+        const parentFlatView = isNonEmptyString(record?.viewId)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityMaps: flatViewMaps,
+              flatEntityId: record.viewId,
+            })
+          : undefined;
+
+        return isDefined(parentFlatView)
+          ? getViewRecipientUserWorkspaceIds(parentFlatView)
+          : [];
+      }
+
       switch (metadataName) {
+        case 'view':
+          return isDefined(record)
+            ? getViewRecipientUserWorkspaceIds(record)
+            : [];
         case 'navigationMenuItem':
           return isNonEmptyString(record?.userWorkspaceId)
             ? [record.userWorkspaceId]
             : undefined;
-        case 'workflow': {
-          const ownerUserWorkspaceId = getPrivateWorkflowOwner(record);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
+        case 'workflow':
+          return isDefined(record)
+            ? getWorkflowRecipientUserWorkspaceIds(record)
             : undefined;
-        }
         case 'workflowVersion': {
           const coreWorkflowId = record?.coreWorkflowId;
 
@@ -123,12 +186,7 @@ export class MetadataEventPublisher {
             return [];
           }
 
-          const ownerUserWorkspaceId =
-            getPrivateWorkflowOwner(parentFlatWorkflow);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
-            : undefined;
+          return getWorkflowRecipientUserWorkspaceIds(parentFlatWorkflow);
         }
         default:
           return undefined;
@@ -173,11 +231,19 @@ export class MetadataEventPublisher {
   private async prepareFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+      flatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: metadataEventBatch.workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+            'flatObjectMetadataMaps',
+          ],
         },
       );
 
@@ -194,9 +260,10 @@ export class MetadataEventPublisher {
         'after' in enrichedProperties &&
         isDefined(enrichedProperties.after)
       ) {
-        enrichedProperties.after = enrichFieldMetadataEventWithRelations({
+        enrichedProperties.after = enrichFieldMetadataEventRecord({
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,
         }) as typeof enrichedProperties.after;
       }

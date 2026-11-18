@@ -20,39 +20,43 @@ export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
   label: 'My new role',
   description: 'A role that can be used in your workspace',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-          .universalIdentifier,
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
+  recordsPermissions: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+        unreadableFields: [
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+            .universalIdentifier,
+        ],
+      },
+    ],
+  },
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+`recordsPermissions` يحتوي على كل ما يمكن لدور القيام به في السجلات:
+
+* `canReadAllRecords` و`canCreateAllRecords` و`canUpdateAllRecords` و`canSoftDeleteAllRecords` و
+  `canDestroyAllRecords` في مستواه الأعلى تنطبق على **كل كائن**. يتبع `canCreateAllRecords`
+  `canUpdateAllRecords` عندما لا يكون معيّنًا.
+* يسرد `objects` ما يختلف لكائن واحد: المنح الخمس نفسها لجميع سجلاته،
+  `unreadableFields` و`uneditableFields` (المعرّفات العامة للحقول؛ الحقل الذي لا يمكن
+  قراءته لا يمكن تحريره أيضًا)، و[أذونات السجلات على مستوى الصف](#row-level-security).
 
 <Note>
   يتوفر `SystemPermissionFlag.USER_APPS` و`SystemPermissionFlag.WORKSPACE_APPS`
@@ -72,7 +76,16 @@ export default defineRole({
 
 تحدّد أذونات الكائن والحقل *أي الكائنات والحقول* يمكن لدورٍ معيّن التفاعل معها. **محددات الأذونات على مستوى الصف** تتعمّق أكثر وتحدّد *أي السجلات* يمكن لدورٍ معيّن رؤيتها والتصرّف فيها — على سبيل المثال، دور للخدمة الذاتية حيث يرى كل مستخدم خارجي سجلاته الخاصة فقط.
 
-عرِّف المحددات باستخدام `rowLevelPermissionPredicates` على الدور. مثل باقي ملف manifest، يحمل كل محدِّد `universalIdentifier` خاصًا به، ويشير إلى كائن وحقل باستخدام `universalIdentifier` الخاصّ بهما، و`operand`، وحقل workspaceMember (اختياري) تُحقن قيمته وقت الاستعلام — بحيث يمكنك التعبير عن: "علاقة مالك السجل **هي** عضو مساحة العمل الحالي":
+يمكن لكائن من `recordsPermissions.objects` تقييد بعض العمليات على جزء من سجلاته باستخدام
+`rowLevelRecordsPermissions`، وهي قائمة بالقواعد. تمنح القاعدة عمليات (`canReadRecords`،
+`canCreateRecords`، `canUpdateRecords`، `canSoftDeleteRecords`، `canDestroyRecords`) على السجلات
+المطابقة للمحددات المتداخلة فيها؛ ويتبع `canCreateRecords` القيمة `canUpdateRecords` عند
+حذفه. يمكن أن تحمل القاعدة أيضًا `unreadableFields` و
+`uneditableFields` خاصين بها، وينطبقان على السجلات التي تطابقها؛ وتحتاج هذه القاعدة إلى مجموعة
+محددات واحدة على الأقل.
+
+يشير المحدِّد إلى حقل باستخدام `universalIdentifier` الخاص به، و`operand`، وحقل workspaceMember (اختياري) تُحقن قيمته وقت الاستعلام — بحيث يمكنك التعبير عن "علاقة مالك السجل **هي** عضو مساحة العمل الحالي". يمكن لهذا الدور إنشاء أي شركة، لكنه يقرأ
+ويحدّث الشركات التي يملكها فقط:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -88,34 +101,54 @@ export default defineRole({
   label: 'Partner',
   description: 'External partner — sees only its own records',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
-          .universalIdentifier,
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canCreateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              {
+                universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+                fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+                    .universalIdentifier,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
-نظرًا إلى أنّ المحددات (predicates) تُشحَن داخل ملف manifest، فإنّه يتم إنشاؤها وتحديثها وإزالتها مع الدور نفسه في كل عملية تثبيت وترقية — ولا توجد خطوة ما بعد التثبيت منفصلة تحتاج إلى مزامنتها.
+نظرًا إلى أن هذه الأذونات تُشحَن في ملف manifest، فإنها تُنشأ وتُحدَّث وتُزال مع
+الدور في كل عملية تثبيت وترقية — ولا توجد خطوة منفصلة بعد التثبيت يجب الحفاظ على مزامنتها.
+
+<Warning>
+  تتغلب العملية الممنوحة على **كل السجلات** على القواعد. لا تمنح، باستخدام `can…AllRecords`،
+  على الكائن أو لكل كائن، العمليات التي يُفترض أن تقيّدها قاعدة: عندما يمنح الدور
+  إحداها لكل كائن، اضبط `can…AllRecords` الخاص بالكائن على `false`. يعرض `defineRole` تحذيرًا
+  عندما تكون قاعدة محجوبة بهذه الطريقة.
+</Warning>
+
+يمكن للكائن تعريف عدة قواعد. يصبح السجل متاحًا لإجراء عملية بمجرد أن تطابقه قاعدة واحدة
+تمنح تلك العملية، لذلك يمكن لقاعدة أن تسمح لشريك بقراءة حسابات منطقته
+بينما تسمح له قاعدة أخرى بتحديث الحسابات التي يملكها فقط.
 
 ### دمج المحددات مع المجموعات
 
-افتراضيًا، يتم دمج محددات الدور باستخدام `AND`. لدمج بعضها باستخدام `OR` (أو لتداخل المنطق)، قم بتعريف إدخال `rowLevelPermissionPredicateGroups` وأشِر كل محدد إليه من خلال `predicateGroupUniversalIdentifier`. يُتيح هذا الدور للشريك رؤية فرصة (Opportunity) إذا كان إمّا **مالكها** أو **جهة الاتصال** لها:
+تُدمج محددات القاعدة باستخدام `AND`. لدمج بعض منها باستخدام `OR` (أو لتداخل
+المنطق)، أضف `predicateGroups` إلى القاعدة: تحتوي المجموعة على `logicalOperator`، و`predicates`
+الخاصة بها، ويمكن أن تتضمن `predicateGroups` إضافية. يتيح هذا الدور للشريك رؤية فرصة إما **مالكها** أو **جهة الاتصال** بها:
 
 ```ts src/roles/partner-opportunities-role.ts
 import {
@@ -134,50 +167,79 @@ export default defineRole({
   universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
   label: 'Partner (opportunities)',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      canReadObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicateGroups: [
-    {
-      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-    {
-      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier:
-        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                predicates: [
+                  {
+                    universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.owner.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                  {
+                    universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
+<Note>
+  لا تقرأ الخوادم الأقدم من Twenty 2.59 `recordsPermissions`: عرّف `engines.twenty` على أنه
+  `>=2.59.0` في `package.json` عندما يجب ألا يُثبَّت تطبيقك عليها.
+</Note>
+
+### خصائص مهملة
+
+قبل `recordsPermissions`، كان الدور يعرّف الأذونات نفسها باستخدام خصائص منفصلة. ما
+زالت تعمل، ويعرض `defineRole` تحذير إهمال يسمّي الخصائص التي يستخدمها الدور. يرسل الإصدار
+هذه الخصائص كما كُتبت، ويحوّلها Twenty عند مزامنة التطبيق. لا يمكن للدور الجمع بين
+`recordsPermissions` وخصائص المنح المهملة:
+
+| مهمل                                                                                                                  | اكتب بدلًا من ذلك                                                                  |
+| --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `canReadAllObjectRecords`, `canUpdateAllObjectRecords`, `canSoftDeleteAllObjectRecords`, `canDestroyAllObjectRecords` | `recordsPermissions.canReadAllRecords` و`can…AllRecords` الأخرى                    |
+| `objectPermissions` مع `canReadObjectRecords`، …                                                                      | إدخال في `recordsPermissions.objects` مع `canReadAllRecords`، …                    |
+| `fieldPermissions` مع `canReadFieldValue: false` / `canUpdateFieldValue: false`                                       | `unreadableFields` / `uneditableFields` على الكائن                                 |
+| `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`                                                   | `rowLevelRecordsPermissions` على الكائن، مع المحددات والمجموعات المتداخلة في قاعدة |
+
+لم تكن للمحددات المعرّفة على الدور منح خاصة بها. تُحوَّل إلى قاعدة واحدة لكل
+مجموعة محددات من المستوى الأعلى، وإلى قاعدة واحدة للمحددات غير المجمّعة لكل كائن. تأخذ القاعدة
+العمليات التي كانت لدى الدور على ذلك الكائن، وتُضبط قيم `can…AllRecords` الخاصة بالكائن على `false` حتى
+تظل المحددات مقيِّدة له.
+
 الملاحظات:
 
-* امنح كل محدد وكل مجموعة قيمة `universalIdentifier` ثابتة (أي uuid) — فهي المفتاح الذي يعرّف الكيان عبر الترقيات، كما أنّ المحددات تشير إلى المجموعات من خلاله.
-* يمكن للمحددات الإشارة إلى الكائنات والحقول التي يملكها تطبيقك أو إلى كائنات Twenty القياسية.
-* يُفرض الأمان على مستوى الصف لمساحات العمل في **خطة Organization أو أعلى**. في الخطط
-  الأخرى، تظل المسندات المعلنة في بيان التطبيق متزامنة، لكنها لا تُفرض ببساطة.
-* تتصرف واجهة Metadata API بشكل مختلف عن البيان هنا: من دون الاستحقاق،
-  يُرفض `upsertRowLevelPermissionPredicates` مع
-  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` بدلاً من المزامنة. لذلك، لا يمكن لمساحة عمل ضمن خطة لا
+* امنح كل قاعدة ومحدد ومجموعة قيمة `universalIdentifier` ثابتة (أي uuid) — فهي المفتاح الذي يعرّف الكيان
+  عبر الترقيات.
+* يمكن للمحددات الإشارة إلى الحقول التي يملكها تطبيقك أو كائنات Twenty القياسية.
+* يُفرض الأمان على مستوى الصف لمساحات العمل في **خطة Organization أو أعلى**. في الخطط الأخرى،
+  تظل القواعد المعرّفة في ملف manifest للتطبيق متزامنة، لكنها لا تُطبَّق ببساطة.
+* تتصرف واجهة برمجة تطبيقات البيانات الوصفية بشكل مختلف عن ملف البيان هنا: بدون الاستحقاق،
+  يتم رفض `upsertRowLevelPermissionRules` مع
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` بدلًا من المزامنة. لذلك، لا يمكن لمساحة عمل ضمن خطة لا
   تتضمن الأمان على مستوى الصف إنشاء مسندات خارج بيان التطبيق، حتى
   مع وجود الحقل `rowLevelPermissionPredicates` في النوع `Role` عند فحص
   المخطط.
@@ -196,16 +258,16 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [],
-  fieldPermissions: [],
+  recordsPermissions: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+  },
   permissionFlagUniversalIdentifiers: [],
 });
 ```
@@ -217,7 +279,6 @@ export default defineApplicationRole({
 * يُسمح بوجود **استدعاء واحد فقط** لـ `defineApplicationRole(...)` لكل تطبيق — سيفشل إنشاء بيان التطبيق (manifest) إذا عثر على أكثر من واحد.
 * استخدم `defineRole()` (وليس `defineApplicationRole()`) لأي أدوار **إضافية** يأتي بها تطبيقك.
 * لا يزال تعيين `defaultRoleUniversalIdentifier` صراحةً على `defineApplication()` مدعومًا للتوافق مع الإصدارات السابقة، ولكنه مُهمَل لصالح `defineApplicationRole()`. يمكنه أيضًا تسمية دور لا يعرّفه تطبيقك، مثل الدور الافتراضي المضمّن للتطبيق المخصص لمساحة العمل الذي يحتفظ به `twenty app pull`؛ وعندئذٍ لا يمكن لعملية البناء التحقق من ذلك الدور، لذا يجب أن يكون موجودًا في مساحة العمل المستهدفة.
-* يُعد الدور الذي يمكن إسناده إلى أعضاء مساحة العمل أو مفاتيح API (`canBeAssignedToUsers` أو `canBeAssignedToApiKeys`، وكلاهما `true` عند حذفه) دورًا مخصصًا، ويتطلب **خطة Organization أو أعلى**: في الخطط الأخرى يُرفض التثبيت. أبقِ كليهما `false` في الأدوار التي لا يعمل بها سوى تطبيقك ووكلائه.
 
 ### أدوار الوكلاء
 
@@ -226,7 +287,7 @@ export default defineApplicationRole({
 ## أفضل الممارسات
 
 * ابدأ من الدور المُنشأ تلقائيًا، ثم قم بتقييده تدريجيًا — إذ يمنح الإعداد الافتراضي صلاحيات قراءة واسعة، وهو ما نادرًا ما تريده في بيئة الإنتاج.
-* استبدل `objectPermissions` و`fieldPermissions` بالكائنات والحقول الدقيقة التي تحتاجها وظائفك فعليًا.
+* أدرج في `recordsPermissions.objects` فقط الكائنات التي تحتاجها دوالك فعليًا، واستخدم `unreadableFields` و`uneditableFields` لإخفاء الحقول التي لا تحتاجها أو قفلها.
 * `permissionFlagUniversalIdentifiers` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
 * تحمل علامة إذن يعرّفها تطبيقك باستخدام `definePermissionFlag()` قيمة `permissionType`: وهي `'tool'` (القيمة الافتراضية) لإمكانية يمكن منحها لوكيل أو لمستخدم، و`'settings'` لعلامة تفتح منطقة الإعدادات.
 * اطّلع على مثال عملي: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

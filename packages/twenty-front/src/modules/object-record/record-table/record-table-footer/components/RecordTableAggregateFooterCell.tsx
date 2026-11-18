@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
@@ -18,7 +19,7 @@ import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 
 const FIRST_COLUMN_WIDTH_CSS_VAR = `var(${getRecordTableColumnFieldWidthCSSVariableName(0)})`;
 
@@ -103,13 +104,20 @@ export const RecordTableAggregateFooterCell = ({
     isRecordTableColumnResizableComponentState,
   );
 
-  const isFooterReadOnly =
-    useIsRecordTableWidgetAggregateNonInteractive() ??
-    !isRecordTableColumnResizable;
+  const recordField = visibleRecordFields.find(findById(viewFieldId));
 
-  const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', fieldMetadataId),
+  // A total over a lookup counts a related record once per row that links to it
+  const isLookup = isDefined(
+    useRecordFieldLookupTarget({
+      fieldMetadataItemId: fieldMetadataId,
+      relationTargetFieldMetadataId: recordField?.relationTargetFieldMetadataId,
+    }),
   );
+
+  const isFooterReadOnly =
+    (useIsRecordTableWidgetAggregateNonInteractive() ??
+      !isRecordTableColumnResizable) ||
+    isLookup;
 
   const isFirstCell = columnIndex === 0;
 
@@ -131,10 +139,10 @@ export const RecordTableAggregateFooterCell = ({
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
         {isFooterReadOnly ? (
-          hasAggregateOperationForViewField ? (
+          hasAggregateOperationForViewField && !isLookup ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}
-              dropdownId={`${fieldMetadataId}-footer-readonly`}
+              dropdownId={`${viewFieldId}-footer-readonly`}
             />
           ) : null
         ) : (

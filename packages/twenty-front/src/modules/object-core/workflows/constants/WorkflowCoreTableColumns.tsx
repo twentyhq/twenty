@@ -9,8 +9,8 @@ import {
 } from 'twenty-ui/icon';
 
 import { CoreWorkflowNameCell } from '@/object-core/workflows/components/CoreWorkflowNameCell';
-import { CoreWorkflowRecentRunsCell } from '@/object-core/workflows/components/CoreWorkflowRecentRunsCell';
-import { CoreWorkflowRunCountCell } from '@/object-core/workflows/components/CoreWorkflowRunCountCell';
+import { CoreObjectRecentRunsCell } from '@/object-core/components/cells/CoreObjectRecentRunsCell';
+import { CoreObjectRunCountCell } from '@/object-core/components/cells/CoreObjectRunCountCell';
 import { CoreWorkflowStatusesCell } from '@/object-core/workflows/components/CoreWorkflowStatusesCell';
 import { CoreWorkflowVisibilityCell } from '@/object-core/workflows/components/CoreWorkflowVisibilityCell';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
@@ -48,7 +48,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       align: 'left',
       gridTrack: '120px',
       renderCell: (workflow) => (
-        <CoreWorkflowRecentRunsCell recentRuns={workflow.recentRuns} />
+        <CoreObjectRecentRunsCell recentRuns={workflow.recentRuns} />
       ),
     },
     {
@@ -71,7 +71,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       align: 'right',
       gridTrack: '100px',
       renderCell: (workflow) => (
-        <CoreWorkflowRunCountCell
+        <CoreObjectRunCountCell
           runCount={workflow.runCountLast14Days}
           isLowerBound={workflow.isRunCountLowerBound}
         />

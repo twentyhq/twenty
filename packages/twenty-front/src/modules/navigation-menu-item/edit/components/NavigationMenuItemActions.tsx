@@ -3,7 +3,6 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronUp,
   IconChevronDown,
@@ -19,6 +18,8 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
+import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 
@@ -36,8 +37,16 @@ export const NavigationMenuItemActions = ({
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const containerId =
+    section === 'workspace'
+      ? getNavigationMenuItemContainerId({
+          item,
+          items: workspaceNavigationMenuItems,
+        })
+      : null;
   const { items, getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
-    useNavigationMenuItemMoveRemove(section);
+    useNavigationMenuItemMoveRemove(section, containerId);
   const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
@@ -74,7 +83,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconRowInsertTop,
       hasSubMenu: true,
       onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index }),
+        onAdd({ parentId: item.parentId ?? undefined, position: index }),
     },
     {
       id: 'after',
@@ -82,7 +91,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconRowInsertBottom,
       hasSubMenu: true,
       onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
+        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
     },
     {
       id: 'remove',
@@ -97,8 +106,8 @@ export const NavigationMenuItemActions = ({
       id: 'root',
       label: t`Root level`,
       Icon: IconHierarchy2,
-      isDisabled: !isDefined(item.folderId),
-      onClick: () => run(() => moveToFolder(item.id, null)),
+      isDisabled: (item.parentId ?? null) === containerId,
+      onClick: () => run(() => moveToFolder(item.id, containerId)),
     },
     ...items
       .filter((folder) => folder.type === NavigationMenuItemType.FOLDER)
@@ -111,7 +120,7 @@ export const NavigationMenuItemActions = ({
             color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
           />
         ),
-        isDisabled: folder.id === item.folderId,
+        isDisabled: folder.id === item.parentId,
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
   ];

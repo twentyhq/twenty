@@ -127,12 +127,12 @@ export class McpProtocolService {
     };
   }
 
-  private async buildActorContext(
+  private async buildActorMetadata(
     workspaceId: string,
     userId?: string,
     apiKey?: FlatApiKey,
   ): Promise<ActorMetadata> {
-    let actorContext: ActorMetadata = {
+    let actorMetadata: ActorMetadata = {
       source: FieldActorSource.AGENT,
       workspaceMemberId: null,
       name: 'Agent',
@@ -140,7 +140,7 @@ export class McpProtocolService {
     };
 
     if (isDefined(apiKey)) {
-      actorContext = {
+      actorMetadata = {
         source: FieldActorSource.AGENT,
         workspaceMemberId: null,
         name: apiKey.name,
@@ -157,7 +157,7 @@ export class McpProtocolService {
         : undefined;
 
       if (isDefined(workspaceMember)) {
-        actorContext = {
+        actorMetadata = {
           source: FieldActorSource.AGENT,
           workspaceMemberId: workspaceMember.id,
           name:
@@ -168,7 +168,7 @@ export class McpProtocolService {
       }
     }
 
-    return actorContext;
+    return actorMetadata;
   }
 
   private async buildMcpToolSet(
@@ -182,7 +182,7 @@ export class McpProtocolService {
       agentId?: string;
     },
   ): Promise<{ toolSet: McpToolSet; toolContext: ToolProviderContext }> {
-    const actorContext = await this.buildActorContext(
+    const actorMetadata = await this.buildActorMetadata(
       workspace.id,
       options?.userId,
       options?.apiKey,
@@ -195,7 +195,7 @@ export class McpProtocolService {
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
       agentId: options?.agentId,
-      actorContext,
+      actorMetadata,
     };
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
@@ -341,29 +341,31 @@ export class McpProtocolService {
   ): Promise<McpToolsListResult> {
     const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
 
-    switch (context.toolMode) {
-      case 'meta':
-        return this.mcpToolExecutorService.handleToolsListing(toolSet);
-      case 'direct': {
-        const {
-          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-          ...nativeTools
-        } = toolSet;
+    if (context.toolMode === 'meta') {
+      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    }
 
+    // Directory reviews (ChatGPT) refuse a generic executor; still callable for clients that listed it
+    const {
+      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+      ...nativeTools
+    } = toolSet;
+
+    switch (context.toolMode) {
+      case 'direct':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({ toolContext })),
           ...nativeTools,
         });
-      }
       case 'generic':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({
             toolContext,
             categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
           })),
-          ...toolSet,
+          ...nativeTools,
         });
       default:
         return assertUnreachable(context.toolMode);

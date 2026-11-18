@@ -78,6 +78,7 @@ export const recoverPendingCallRecording = async ({
       callRecordingId: callRecording.id,
       externalBotId: existingExternalBotId,
       joinAt: computeRecallBotJoinAt(calendarEvent.startsAt),
+      bookedJoinAt: undefined,
     });
   }
 

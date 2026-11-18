@@ -25,7 +25,7 @@ export class CreateViewSortActionHandlerService extends WorkspaceMigrationRunner
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewSortAction>): Promise<FlatCreateViewSortAction> {
-    const { fieldMetadataId, viewId } =
+    const { fieldMetadataId, viewId, relationTargetFieldMetadataId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
@@ -38,6 +38,7 @@ export class CreateViewSortActionHandlerService extends WorkspaceMigrationRunner
         ...action.flatEntity,
         fieldMetadataId,
         viewId,
+        relationTargetFieldMetadataId,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,

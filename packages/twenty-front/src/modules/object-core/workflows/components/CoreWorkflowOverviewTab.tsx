@@ -1,71 +1,38 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { CoreWorkflowOverviewWidget } from '@/object-core/workflows/components/CoreWorkflowOverviewWidget';
+import { CoreObjectRunInsightsOverview } from '@/object-core/components/CoreObjectRunInsightsOverview';
+import { CoreObjectRunsPerDayChart } from '@/object-core/components/CoreObjectRunsPerDayChart';
 import { CoreWorkflowRecentFailedRuns } from '@/object-core/workflows/components/CoreWorkflowRecentFailedRuns';
-import { CoreWorkflowRunsPerDayChart } from '@/object-core/workflows/components/CoreWorkflowRunsPerDayChart';
-import { useCoreWorkflowRunInsights } from '@/object-core/workflows/hooks/useCoreWorkflowRunInsights';
-import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChart';
-import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { type CoreWorkflowRunInsights } from '@/object-core/workflows/types/CoreWorkflowRunInsights';
 import { formatDuration } from '~/utils/format/formatDuration';
-
-const StyledOverview = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledStatGrid = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-`;
-
-const StyledPanelGrid = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-`;
 
 type CoreWorkflowOverviewTabProps = {
   coreWorkflowId: string;
+  insights: CoreWorkflowRunInsights | null;
+  isLoading: boolean;
+  hasError: boolean;
 };
 
 export const CoreWorkflowOverviewTab = ({
   coreWorkflowId,
+  insights,
+  isLoading,
+  hasError,
 }: CoreWorkflowOverviewTabProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { insights, loading, error } =
-    useCoreWorkflowRunInsights(coreWorkflowId);
-
-  if (!isDefined(insights) && loading) {
-    return (
-      <StyledOverview>
-        <SkeletonLine height={96} />
-        <SkeletonLine height={280} />
-      </StyledOverview>
-    );
-  }
 
   if (!isDefined(insights)) {
     return (
-      <EmptyState.Root>
-        <AnimatedPlaceholder
-          type={isDefined(error) ? 'errorIndex' : 'emptyTimeline'}
-        />
-        <EmptyState.Content>
-          <EmptyState.Title>{t`Could not load run insights`}</EmptyState.Title>
-          <EmptyState.Description>{t`Try again in a moment`}</EmptyState.Description>
-        </EmptyState.Content>
-      </EmptyState.Root>
+      <CoreObjectRunInsightsOverview
+        hasInsights={false}
+        isLoading={isLoading}
+        hasError={hasError}
+        stats={[]}
+        panels={[]}
+      />
     );
   }
 
@@ -79,50 +46,51 @@ export const CoreWorkflowOverviewTab = ({
   } = insights;
 
   return (
-    <StyledOverview>
-      <StyledStatGrid>
-        <CoreWorkflowOverviewWidget title={t`Runs · 14d`}>
-          <GraphWidgetAggregateChart
-            value={formatNumber(runCount)}
-            suffix={isRunCountLowerBound ? '+' : undefined}
-          />
-        </CoreWorkflowOverviewWidget>
-        <CoreWorkflowOverviewWidget title={t`Failed · 14d`}>
-          <GraphWidgetAggregateChart value={formatNumber(failedRunCount)} />
-        </CoreWorkflowOverviewWidget>
-        <CoreWorkflowOverviewWidget title={t`Failure rate`}>
-          <GraphWidgetAggregateChart
-            value={
-              runCount > 0
-                ? formatNumber((failedRunCount / runCount) * 100, {
-                    decimals: 1,
-                  })
-                : '-'
-            }
-            suffix={runCount > 0 ? '%' : undefined}
-          />
-        </CoreWorkflowOverviewWidget>
-        <CoreWorkflowOverviewWidget title={t`Avg duration`}>
-          <GraphWidgetAggregateChart
-            value={
-              isDefined(averageDurationInMs)
-                ? formatDuration(Math.round(averageDurationInMs))
-                : '-'
-            }
-          />
-        </CoreWorkflowOverviewWidget>
-      </StyledStatGrid>
-      <StyledPanelGrid>
-        <CoreWorkflowOverviewWidget title={t`Runs per day`}>
-          <CoreWorkflowRunsPerDayChart
-            coreWorkflowId={coreWorkflowId}
-            dailyRunCounts={dailyRunCounts}
-          />
-        </CoreWorkflowOverviewWidget>
-        <CoreWorkflowOverviewWidget title={t`Recent failed runs`}>
-          <CoreWorkflowRecentFailedRuns failedRuns={recentFailedRuns} />
-        </CoreWorkflowOverviewWidget>
-      </StyledPanelGrid>
-    </StyledOverview>
+    <CoreObjectRunInsightsOverview
+      hasInsights
+      isLoading={isLoading}
+      hasError={hasError}
+      stats={[
+        {
+          title: t`Runs · 14d`,
+          value: formatNumber(runCount),
+          suffix: isRunCountLowerBound ? '+' : undefined,
+        },
+        { title: t`Failed · 14d`, value: formatNumber(failedRunCount) },
+        {
+          title: t`Failure rate`,
+          value:
+            runCount > 0
+              ? formatNumber((failedRunCount / runCount) * 100, {
+                  decimals: 1,
+                })
+              : '-',
+          suffix: runCount > 0 ? '%' : undefined,
+        },
+        {
+          title: t`Avg duration`,
+          value: isDefined(averageDurationInMs)
+            ? formatDuration(Math.round(averageDurationInMs))
+            : '-',
+        },
+      ]}
+      panels={[
+        {
+          title: t`Runs per day`,
+          content: (
+            <CoreObjectRunsPerDayChart
+              chartInstanceId={`core-workflow-runs-per-day-${coreWorkflowId}`}
+              dailyRunCounts={dailyRunCounts}
+            />
+          ),
+        },
+        {
+          title: t`Recent failed runs`,
+          content: (
+            <CoreWorkflowRecentFailedRuns failedRuns={recentFailedRuns} />
+          ),
+        },
+      ]}
+    />
   );
 };

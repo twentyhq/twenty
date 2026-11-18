@@ -44,7 +44,7 @@ export default defineField({
 
 * `defineField()` هي الطريقة الوحيدة لإضافة حقول إلى كائنات لم تُنشئها باستخدام `defineObject()`.
 
-* يتبع `SELECT` و`MULTI_SELECT` [قواعد التحقق من الخيارات والألوان](/ar/developers/extend/apps/data/objects#select-options) نفسها المتبعة في الحقول المضمنة. يكون اللون المحذوف أو الفارغ افتراضيًا `gray`؛ وتُرفض الألوان غير المدعومة.
+* يتبع `SELECT` و`MULTI_SELECT` [قواعد التحقق من الخيارات والألوان](/ar/developers/extend/apps/data/objects#select-options) نفسها المتبعة في الحقول المضمنة. يكون اللون المحذوف أو الفارغ افتراضيًا `gray`؛ وتُرفض الألوان غير المدعومة. يمكن لمساحة عمل تجاوز هذه الخيارات وإلغاء تنشيطها، ولكن لا يمكنها إزالتها، وتكون تغييراتها [محفوظة عبر عمليات المزامنة](/ar/developers/extend/apps/data/objects#workspace-changes-to-your-options).
 
 * موقع الملف متروك لك. المتعارف عليه هو `src/fields/\<name>.field.ts`، لكن واجهة CLI تكتشف الحقول في أي مكان داخل `src/`.
 

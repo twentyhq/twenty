@@ -65,14 +65,17 @@ export function PartnerBecomeStrip() {
           </Heading>
           <Body muted size="sm">
             {i18n._(
-              msg`Agencies and freelancers can apply to join the certified directory.`,
+              msg`Agencies and freelancers who implement Twenty can join as integrators.`,
             )}
           </Body>
-          <LearnMoreLink href="/partners/become">
-            {i18n._(msg`Learn more about the partner program`)}
+          <LearnMoreLink href="/partners/integrators">
+            {i18n._(msg`Learn more about the integrator program`)}
           </LearnMoreLink>
         </BecomeCopy>
-        <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />
+        <BecomePartnerButton
+          label={msg`Apply as an integrator`}
+          variant="outlined"
+        />
       </BecomeRow>
     </SectionShell>
   );

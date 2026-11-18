@@ -1,4 +1,5 @@
 import { fetchPrebuiltCameraTileFramesOrThrow } from 'src/logic-functions/data/fetch-prebuilt-camera-tile-frames-or-throw.util';
+import { buildRecallBotAutomaticVideoOutputFromFrames } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output-from-frames.util';
 import { buildWorkspaceCameraTileFrames } from 'src/logic-functions/domain/build-workspace-camera-tile-frames.util';
 import { type CameraTileFrames } from 'src/logic-functions/types/camera-tile-frames.type';
 import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
@@ -39,10 +40,7 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
         style === 'MINIMAL' ? 'MINIMAL' : 'TWENTY',
       ));
 
-    return {
-      in_call_recording: { kind: 'jpeg', b64_data: frames.recording },
-      in_call_not_recording: { kind: 'jpeg', b64_data: frames.notRecording },
-    };
+    return buildRecallBotAutomaticVideoOutputFromFrames(frames);
   } catch (error) {
     console.warn(
       `[call-recorder] failed to build the camera tile: ${error instanceof Error ? error.message : String(error)}`,

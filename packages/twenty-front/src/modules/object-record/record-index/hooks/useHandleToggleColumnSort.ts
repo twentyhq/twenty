@@ -1,6 +1,5 @@
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -24,8 +23,6 @@ export const useHandleToggleColumnSort = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
-  const { upsertRecordSort } = useUpsertRecordSort();
-
   const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
@@ -33,7 +30,13 @@ export const useHandleToggleColumnSort = ({
   const store = useStore();
 
   const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+    ({
+      fieldMetadataId,
+      relationTargetFieldMetadataId,
+    }: {
+      fieldMetadataId: string;
+      relationTargetFieldMetadataId?: string;
+    }) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -46,12 +49,17 @@ export const useHandleToggleColumnSort = ({
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
       const existingSort = currentRecordSorts.find(
-        (sort) => sort.fieldMetadataId === fieldMetadataId,
+        (sort) =>
+          sort.fieldMetadataId === fieldMetadataId &&
+          (sort.relationTargetFieldMetadataId ?? undefined) ===
+            relationTargetFieldMetadataId,
       );
 
       const newSort: RecordSort = {
+        ...existingSort,
         id: existingSort?.id ?? v4(),
         fieldMetadataId,
+        relationTargetFieldMetadataId,
         direction: existingSort
           ? existingSort.direction === ViewSortDirection.ASC
             ? ViewSortDirection.DESC
@@ -59,14 +67,9 @@ export const useHandleToggleColumnSort = ({
           : ViewSortDirection.ASC,
       };
 
-      upsertRecordSort(newSort);
+      store.set(currentRecordSortsCallbackState, [newSort]);
     },
-    [
-      columnDefinitions,
-      currentRecordSortsCallbackState,
-      store,
-      upsertRecordSort,
-    ],
+    [columnDefinitions, currentRecordSortsCallbackState, store],
   );
 
   return handleToggleColumnSort;

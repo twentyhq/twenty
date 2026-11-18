@@ -1,12 +1,11 @@
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 
-// Change only together with the "Twenty Affiliate Program Terms" doc.
 export function AffiliateProgramTermsDocument() {
   return (
     <>
       <p>
         <strong>Last updated:</strong>
-        {' November 3, 2026'}
+        {' November 18, 2026'}
       </p>
 
       <h2>1. About these terms</h2>
@@ -14,16 +13,17 @@ export function AffiliateProgramTermsDocument() {
         These terms are an agreement between Twenty.com PBC, a public benefit
         corporation incorporated in Delaware, United States
         (&ldquo;Twenty&rdquo;, &ldquo;we&rdquo;), and you, the person or company
-        accepted into the Twenty Affiliate Program (&ldquo;you&rdquo;,
+        accepted into the Twenty Partner Program (&ldquo;you&rdquo;,
         &ldquo;Partner&rdquo;). You accept them when you tick &ldquo;I agree to
-        the affiliate program terms&rdquo; in the application form.
+        the Partner Program Terms&rdquo; in the application form.
       </p>
       <p>
-        In short: you share Twenty, and you earn{' '}
-        <strong>20% of the seat revenue</strong> from each new paying customer
-        you refer, <strong>for 12 months</strong> from their first payment.
-        Commissions are held 30 days, then paid monthly once your balance
-        reaches $50.
+        In short: you bring new customers to Twenty, as a creator sharing it
+        with your audience or as an integrator implementing it for clients, and
+        you earn <strong>20% of the seat revenue</strong> from each new paying
+        customer you refer, <strong>for 12 months</strong> from their first
+        payment. Commissions are held 30 days, then paid monthly once your
+        balance reaches $50.
       </p>
       <p>
         The program covers paid Twenty Cloud subscriptions on the Organization
@@ -33,9 +33,13 @@ export function AffiliateProgramTermsDocument() {
       <h2>2. Joining the program</h2>
       <ol>
         <li>
-          You apply through the form on{' '}
-          <LocalizedLink href="/affiliate-partners">
-            twenty.com/affiliate-partners
+          You apply through the form for your program: creators on{' '}
+          <LocalizedLink href="/partners/creators">
+            twenty.com/partners/creators
+          </LocalizedLink>
+          , integrators on{' '}
+          <LocalizedLink href="/partners/integrators">
+            twenty.com/partners/integrators
           </LocalizedLink>
           . You must be at least 18, or a registered business. Twenty employees,
           contractors and members of their household can&rsquo;t join.
@@ -78,6 +82,12 @@ export function AffiliateProgramTermsDocument() {
           you set up. See &ldquo;Code added after sign-up&rdquo; below.
         </li>
       </ul>
+      <p>
+        You may put your link on your own website and channels, for example a
+        &ldquo;Get started&rdquo; button next to a Twenty plan. Show the same
+        prices and plan details as twenty.com, and make clear the subscription
+        is with Twenty.
+      </p>
       <p>
         Your code is personal. Don&rsquo;t post it on coupon or discount-code
         sites.
@@ -134,6 +144,9 @@ export function AffiliateProgramTermsDocument() {
           Your own workspace, or one used by your company, a co-founder or an
           employee (self-referrals). Workspaces you set up and pay for on behalf
           of a client do qualify.
+        </li>
+        <li>
+          Clients Twenty introduces to a Lead Integrator through a client brief.
         </li>
         <li>Customers obtained by breaking these terms (section 8).</li>
       </ul>
@@ -257,12 +270,13 @@ export function AffiliateProgramTermsDocument() {
       <ul>
         <li>
           Say clearly that you earn a commission when you share your link or
-          code (for example &ldquo;affiliate link&rdquo; or &ldquo;#ad&rdquo;),
-          as required by the FTC and similar rules in other countries.
+          code (for example &ldquo;#ad&rdquo; or &ldquo;I earn a commission if
+          you sign up&rdquo;), as required by the FTC and similar rules in other
+          countries.
         </li>
         <li>
           Describe Twenty accurately: no invented features, prices, discounts or
-          claims of partnership beyond being an affiliate.
+          claims of a closer relationship with Twenty than the Partner Program.
         </li>
         <li>
           Follow the rules of the platforms you post on, and anti-spam laws when
@@ -273,8 +287,9 @@ export function AffiliateProgramTermsDocument() {
       <ul>
         <li>
           Bid on &ldquo;Twenty&rdquo;, &ldquo;Twenty CRM&rdquo; or close
-          variants in paid search ads, or run ads that send people straight to
-          twenty.com through your link.
+          variants in paid search ads, let your ads show on searches for those
+          terms, or run ads that send people straight to twenty.com through your
+          link.
         </li>
         <li>Send unsolicited bulk email or messages, or buy lists.</li>
         <li>
@@ -294,6 +309,22 @@ export function AffiliateProgramTermsDocument() {
         </li>
         <li>Refer yourself or your own company.</li>
       </ul>
+      <p>
+        <strong>Paid ads.</strong> You may mention Twenty in the text of your
+        ads to describe your own services, for example &ldquo;built on Twenty
+        open-source CRM&rdquo;, as long as:
+      </p>
+      <ul>
+        <li>
+          Twenty appears in the description only, not in the headline or the
+          display URL.
+        </li>
+        <li>
+          &ldquo;Twenty&rdquo; is set as a negative keyword, so your ads never
+          show on searches for Twenty.
+        </li>
+        <li>The ad leads to your own website.</li>
+      </ul>
 
       <h2>9. Use of the Twenty brand</h2>
       <p>
@@ -302,9 +333,15 @@ export function AffiliateProgramTermsDocument() {
         partner kit. This permission ends when you leave the program.
       </p>
       <p>
-        You may not use &ldquo;Twenty&rdquo; in your own company, product or
-        domain name, or change the logo. Content you create about Twenty stays
-        yours. We&rsquo;ll ask before sharing it on our channels.
+        You may not use &ldquo;Twenty&rdquo; or a close variant (such as
+        &ldquo;20&rdquo;) in your own company, product or domain name, or change
+        the logo. You may describe a product or service you build as built on,
+        or integrated with, Twenty, as long as it is clear that it is yours and
+        supported by you, not by Twenty.
+      </p>
+      <p>
+        Content you create about Twenty stays yours. We&rsquo;ll ask before
+        sharing it on our channels.
       </p>
 
       <h2>10. Suspension and termination</h2>

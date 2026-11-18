@@ -110,11 +110,12 @@ export class SubdomainManagerService {
   private async filterFreeToUseSubdomains(
     candidates: string[],
   ): Promise<string[]> {
-    const defaultSubdomain = this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
+    const subdomainsReservedByConfig = this.getSubdomainsReservedByConfig();
 
     const validCandidates = candidates.filter(
       (candidate) =>
-        isSubdomainValid(candidate) && candidate !== defaultSubdomain,
+        isSubdomainValid(candidate) &&
+        !subdomainsReservedByConfig.includes(candidate),
     );
 
     if (validCandidates.length === 0) {
@@ -182,7 +183,7 @@ export class SubdomainManagerService {
 
     if (
       !isAvailable ||
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === subdomain
+      this.getSubdomainsReservedByConfig().includes(subdomain)
     ) {
       throw new WorkspaceException(
         'Subdomain already taken',
@@ -194,9 +195,16 @@ export class SubdomainManagerService {
   private async isSubdomainFreeToUse(subdomain: string): Promise<boolean> {
     return (
       isSubdomainValid(subdomain) &&
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') !== subdomain &&
+      !this.getSubdomainsReservedByConfig().includes(subdomain) &&
       (await this.isSubdomainAvailable(subdomain))
     );
+  }
+
+  private getSubdomainsReservedByConfig(): string[] {
+    return [
+      this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
+      ...this.twentyConfigService.get('ADDITIONAL_RESERVED_SUBDOMAINS'),
+    ].map((subdomain) => String(subdomain).toLowerCase());
   }
 
   private appendNumberedSuffix(base: string, suffix: number): string {

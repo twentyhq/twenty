@@ -1,9 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type FilterQuoteCharacter,
   getOpenQuoteAfterCharacter,
-} from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/get-open-quote-after-character.util';
+  isDefined,
+} from 'twenty-shared/utils';
 import { ROOT_FILTER_CONJUNCTION_REGEX } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util';
 
 // The root regex also matches sibling groups such as `or(...),not(...)`

@@ -221,7 +221,7 @@ export class RecordPermissionsReadService {
               getPermissionsPrincipalsRecordsPermissions({
                 principals: buildRolePermissionsPrincipals({
                   workspaceId,
-                  roleId,
+                  roleIds: [roleId],
                 }),
                 metadataMaps,
               }).objects[objectMetadataId],

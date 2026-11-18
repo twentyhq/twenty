@@ -21,7 +21,7 @@ export const useMcpToolStepForm = ({
 
   const saveAction = useDebouncedCallback(
     (updatedSettings: McpToolStepSettings) => {
-      if (readonly === true) {
+      if (readonly) {
         return;
       }
 

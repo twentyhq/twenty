@@ -17,11 +17,13 @@ export const filterRequestHeaders = ({
   forwardedRequestHeaders,
   forwardAllHeaders = false,
   forwardableCredentialHeaderName,
+  identityAssertionHeaderName,
 }: {
   requestHeaders: Request['headers'];
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
   forwardableCredentialHeaderName?: typeof SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME;
+  identityAssertionHeaderName?: string;
 }): Record<string, string | undefined> => {
   if (forwardAllHeaders) {
     const allHeaders: Record<string, string | undefined> = {};
@@ -29,7 +31,10 @@ export const filterRequestHeaders = ({
     for (const [headerName, headerValue] of Object.entries(requestHeaders)) {
       if (
         !isDefined(headerValue) ||
-        isCredentialRequestHeaderName(headerName)
+        isCredentialRequestHeaderName({
+          headerName,
+          identityAssertionHeaderName,
+        })
       ) {
         continue;
       }
@@ -44,8 +49,10 @@ export const filterRequestHeaders = ({
     .map((headerName) => headerName.toLowerCase())
     .filter(
       (headerName) =>
-        !isCredentialRequestHeaderName(headerName) ||
-        headerName === forwardableCredentialHeaderName,
+        !isCredentialRequestHeaderName({
+          headerName,
+          identityAssertionHeaderName,
+        }) || headerName === forwardableCredentialHeaderName,
     );
 
   const filteredHeaders: Record<string, string | undefined> = {};
@@ -153,6 +160,7 @@ export const buildLogicFunctionEvent = ({
   forwardedRequestHeaders,
   forwardAllHeaders = false,
   forwardableCredentialHeaderName,
+  identityAssertionHeaderName,
   userWorkspaceId,
 }: {
   request: Pick<
@@ -163,6 +171,7 @@ export const buildLogicFunctionEvent = ({
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
   forwardableCredentialHeaderName?: typeof SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME;
+  identityAssertionHeaderName?: string;
   userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
@@ -173,6 +182,7 @@ export const buildLogicFunctionEvent = ({
       forwardedRequestHeaders,
       forwardAllHeaders,
       forwardableCredentialHeaderName,
+      identityAssertionHeaderName,
     }),
     queryStringParameters: normalizeQueryStringParameters(request.query),
     pathParameters: normalizePathParameters(pathParameters),

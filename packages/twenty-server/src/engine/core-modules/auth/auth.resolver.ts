@@ -459,6 +459,8 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
+
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
       twoFactorAuthenticationVerificationInput.otp,
@@ -503,6 +505,8 @@ export class AuthResolver {
     const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
 
     const user = await this.userService.findUserByEmailOrThrow(email);
+
+    await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
     const { provisioningUri, isTwoFactorAuthenticationReset } =
       await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({

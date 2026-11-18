@@ -4,6 +4,7 @@ export type AppPlanAction = {
   universalIdentifier?: string;
   flatEntity?: Record<string, unknown>;
   diff?: Record<string, { before?: unknown; after?: unknown }>;
+  cascadedFromUniversalIdentifier?: string;
 };
 
 export type AppPlanSummary = {
@@ -11,4 +12,5 @@ export type AppPlanSummary = {
   update: number;
   delete: number;
   destructive: number;
+  cascaded: number;
 };

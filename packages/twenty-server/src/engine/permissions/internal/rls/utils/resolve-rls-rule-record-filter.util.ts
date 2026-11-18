@@ -47,6 +47,7 @@ export const buildRlsRulesRecordFilter = ({
     }),
     currentWorkspaceMemberId: workspaceMember?.id,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
   });

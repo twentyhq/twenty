@@ -16,22 +16,22 @@ type NavigationMenuItemAddDropdownProps = {
   section?: NavigationMenuItemSection;
   onOpen?: () => void;
 } & (
-  | { folderId: string; position: number }
-  | { folderId?: never; position?: number }
+  | { parentId: string; position: number }
+  | { parentId?: never; position?: number }
 );
 
 export const NavigationMenuItemAddDropdown = ({
   children,
   instanceId,
   section = 'workspace',
-  folderId,
+  parentId,
   position,
   onOpen,
 }: NavigationMenuItemAddDropdownProps) => {
   const navigationMenuItemInsertionAnchor = useAtomStateValue(
     navigationMenuItemInsertionAnchorState,
   );
-  const dropdownId = `navigation-add-item-${instanceId ?? folderId ?? 'workspace'}`;
+  const dropdownId = `navigation-add-item-${instanceId ?? parentId ?? 'workspace'}`;
   const { closeDropdown } = useCloseDropdown();
 
   return (
@@ -61,7 +61,7 @@ export const NavigationMenuItemAddDropdown = ({
         <NavigationMenuItemAddDropdownContent
           section={section}
           dropdownId={dropdownId}
-          folderId={folderId}
+          parentId={parentId}
           position={position}
           onClose={() => closeDropdown(dropdownId)}
         />

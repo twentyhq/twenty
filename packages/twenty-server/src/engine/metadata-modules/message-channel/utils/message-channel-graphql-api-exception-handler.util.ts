@@ -31,6 +31,7 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN:
         throw new ForbiddenError(error);
       case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
+      case MessageChannelExceptionCode.MESSAGE_ATTACHMENT_STORAGE_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

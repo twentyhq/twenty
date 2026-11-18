@@ -12,6 +12,7 @@ import { type ApplicationInput } from 'src/engine/core-modules/application/appli
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
+import { annotateCascadedDeletions } from 'src/engine/core-modules/application/application-manifest/utils/annotate-cascaded-deletions.util';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationManifestExportService } from 'src/engine/core-modules/application/application-manifest/services/application-manifest-export.service';
 import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
@@ -105,17 +106,26 @@ export class ApplicationDevelopmentService {
     workspaceId,
     shouldIncludeDependencies,
     shouldIncludeSourceFiles,
+    shouldIncludeSourceDependencies,
+    shouldIncludeLogicFunctionSources,
+    shouldIncludePublicAssets,
   }: {
     universalIdentifier: string;
     workspaceId: string;
     shouldIncludeDependencies?: boolean;
     shouldIncludeSourceFiles?: boolean;
+    shouldIncludeSourceDependencies?: boolean;
+    shouldIncludeLogicFunctionSources?: boolean;
+    shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     return this.applicationManifestExportService.exportApplication({
       workspaceId,
       applicationUniversalIdentifier: universalIdentifier,
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
+      shouldIncludeSourceDependencies,
+      shouldIncludeLogicFunctionSources,
+      shouldIncludePublicAssets,
     });
   }
 
@@ -170,7 +180,7 @@ export class ApplicationDevelopmentService {
       });
 
     if (dryRun === true) {
-      const { workspaceMigration } =
+      const { workspaceMigration, cascadeDeletionParentByUniversalIdentifier } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,
           manifest,
@@ -182,7 +192,10 @@ export class ApplicationDevelopmentService {
       return {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
-        actions: workspaceMigration.actions,
+        actions: annotateCascadedDeletions({
+          actions: workspaceMigration.actions,
+          cascadeDeletionParentByUniversalIdentifier,
+        }),
       };
     }
 
@@ -285,7 +298,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const { workspaceMigration } =
+    const { workspaceMigration, cascadeDeletionParentByUniversalIdentifier } =
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
@@ -303,7 +316,10 @@ export class ApplicationDevelopmentService {
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
-      actions: workspaceMigration.actions,
+      actions: annotateCascadedDeletions({
+        actions: workspaceMigration.actions,
+        cascadeDeletionParentByUniversalIdentifier,
+      }),
     };
   }
 

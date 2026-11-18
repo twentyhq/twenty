@@ -103,5 +103,22 @@ export const buildApplicationFileList = (
     });
   }
 
+  for (const sourceFile of manifest.sourceFiles ?? []) {
+    const existingFile = files.find(
+      (file) =>
+        file.fileFolder === FileFolder.Source &&
+        file.relativePath === sourceFile.filePath,
+    );
+    if (isDefined(existingFile)) {
+      existingFile.isRequired = true;
+    } else {
+      files.push({
+        relativePath: sourceFile.filePath,
+        fileFolder: FileFolder.Source,
+        isRequired: true,
+      });
+    }
+  }
+
   return files;
 };

@@ -24,7 +24,7 @@ import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-p
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
@@ -785,7 +785,7 @@ const ticketsNavigationItem: NavigationMenuItemManifest = {
   type: NavigationMenuItemType.OBJECT,
   position: 41,
   icon: 'IconTicket',
-  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  parentUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
   targetObjectUniversalIdentifier: TICKET_OBJECT_ID,
 };
 
@@ -795,7 +795,7 @@ const ticketsIndexViewNavigationItem: NavigationMenuItemManifest = {
   position: 42,
   name: 'All tickets',
   icon: 'IconList',
-  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  parentUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
   viewUniversalIdentifier: TICKET_INDEX_VIEW_ID,
 };
 
@@ -1382,49 +1382,65 @@ describe('Application export - data model', () => {
         },
       });
 
+      const ruleId = v4();
       const predicateGroupId = v4();
       const keptPredicateId = v4();
       const removedPredicateId = v4();
-      const predicateGroupInput = {
-        id: predicateGroupId,
-        objectMetadataId: personObject.id,
-        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-      };
       const keptPredicateInput = {
         id: keptPredicateId,
         fieldMetadataId: personJobTitleField.id,
         operand: RowLevelPermissionPredicateOperand.CONTAINS,
         value: 'Engineer',
-        rowLevelPermissionPredicateGroupId: predicateGroupId,
-        positionInRowLevelPermissionPredicateGroup: 0,
+        position: 0,
       };
 
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId: createdRoleId,
           objectMetadataId: personObject.id,
-          predicateGroups: [predicateGroupInput],
-          predicates: [
-            keptPredicateInput,
+          rules: [
             {
-              id: removedPredicateId,
-              fieldMetadataId: personJobTitleField.id,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Manager',
-              rowLevelPermissionPredicateGroupId: predicateGroupId,
-              positionInRowLevelPermissionPredicateGroup: 1,
+              id: ruleId,
+              predicateGroups: [
+                {
+                  id: predicateGroupId,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  predicates: [
+                    keptPredicateInput,
+                    {
+                      id: removedPredicateId,
+                      fieldMetadataId: personJobTitleField.id,
+                      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                      value: 'Manager',
+                      position: 1,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
       });
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId: createdRoleId,
           objectMetadataId: personObject.id,
-          predicateGroups: [predicateGroupInput],
-          predicates: [keptPredicateInput],
+          rules: [
+            {
+              id: ruleId,
+              predicateGroups: [
+                {
+                  id: predicateGroupId,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  predicates: [keptPredicateInput],
+                },
+              ],
+            },
+          ],
         },
       });
 
@@ -1436,41 +1452,37 @@ describe('Application export - data model', () => {
       expect(data.exportApplication.manifest.roles).toContainEqual(
         expect.objectContaining({
           label: 'Export Custom Application Recruiter',
-          objectPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-            }),
-          ],
-          fieldPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canUpdateFieldValue: false,
-            }),
-          ],
-          rowLevelPermissionPredicateGroups: [
-            expect.objectContaining({
-              universalIdentifier: predicateGroupId,
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            }),
-          ],
-          rowLevelPermissionPredicates: [
-            expect.objectContaining({
-              universalIdentifier: keptPredicateId,
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Engineer',
-              predicateGroupUniversalIdentifier: predicateGroupId,
-              position: 0,
-            }),
-          ],
+          recordsPermissions: expect.objectContaining({
+            objects: [
+              expect.objectContaining({
+                objectUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+                canReadAllRecords: true,
+                canUpdateAllRecords: false,
+                uneditableFields: [expect.any(String)],
+                rowLevelRecordsPermissions: [
+                  expect.objectContaining({
+                    predicateGroups: [
+                      expect.objectContaining({
+                        universalIdentifier: predicateGroupId,
+                        logicalOperator:
+                          RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                        predicates: [
+                          expect.objectContaining({
+                            universalIdentifier: keptPredicateId,
+                            operand:
+                              RowLevelPermissionPredicateOperand.CONTAINS,
+                            value: 'Engineer',
+                            position: 0,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
           permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],
         }),
       );
@@ -1506,13 +1518,12 @@ describe('Application export - data model', () => {
         ),
       ).toEqual([]);
     } finally {
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId: createdRoleId,
           objectMetadataId: personObject.id,
-          predicateGroups: [],
-          predicates: [],
+          rules: [],
         },
       });
       await deleteOneRole({
