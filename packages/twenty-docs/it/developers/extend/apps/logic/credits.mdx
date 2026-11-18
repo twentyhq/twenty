@@ -84,13 +84,13 @@ Modalità di applicazione:
 * Solo per gli abbonamenti mensili. A un workspace con piano annuale non viene addebitata una tariffa `MONTH`, anziché essere addebitato una volta per l'intero anno.
 * Limitati. Una tariffa dichiarata superiore a $100, o un addebito per membro la cui tariffa moltiplicata per il numero di membri supererebbe $1.000 per il periodo, viene rifiutata e non viene aumentata. La piattaforma applica questi addebiti autonomamente, quindi non registrerà un addebito che non può giustificare.
 
-## Prices
+## Prezzi
 
 <Warning>
-  Declaration only for now. The build validates `billing.prices`, but the platform does not bill them yet.
+  Solo dichiarazione per ora. La build convalida `billing.prices`, ma la piattaforma non li fattura ancora.
 </Warning>
 
-A price is charged in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice. Prices are in US dollars only for now.
+Un prezzo viene addebitato in valuta reale anziché in crediti. Viene fatturato come voce dell'abbonamento Twenty dello spazio di lavoro, in modo che lo spazio di lavoro mantenga un'unica fattura. Per ora i prezzi sono solo in dollari statunitensi.
 
 ```ts src/application-config.ts
 billing: {
@@ -116,20 +116,20 @@ billing: {
 },
 ```
 
-| Campo                 | Descrizione                                                                                                                         |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | A UUID that identifies the price across versions of your app. Generate it once and never change it: a new identifier is a new price |
-| `label`               | What admins read for that line                                                                                                      |
-| `description`         | Facoltativo. A longer explanation of what the price covers                                                                          |
-| `type`                | `RECURRING`, the only type for now                                                                                                  |
-| `billingPeriod`       | `MONTHLY`, the only period for now                                                                                                  |
-| `amountCents`         | Price per month in USD cents, a positive integer up to 8,333,333                                                                    |
-| `valuta`              | Facoltativo. `USD` is the only supported currency for now, and the default                                                          |
-| `per`                 | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member                                                |
+| Campo                 | Descrizione                                                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo |
+| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                              |
+| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                         |
+| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                               |
+| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                              |
+| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                     |
+| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                               |
+| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro dello spazio di lavoro                                                  |
 
-A price follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
+Un prezzo segue l'intervallo di fatturazione dello spazio di lavoro: uno spazio di lavoro con un piano Twenty mensile paga l'importo mensile, mentre uno spazio di lavoro con un piano annuale paga una volta all'anno 12 volte l'importo mensile.
 
-The build rejects a missing, duplicated or invalid `universalIdentifier`, an empty `label` or `description`, an unknown `type`, `billingPeriod` or `per`, an `amountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), and a `currency` other than `USD`.
+La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non sia un numero intero positivo o che superi 8.333.333 (12 volte tale valore è il massimo che Stripe accetta per un singolo prezzo) e una `currency` diversa da `USD`.
 
 ## Operazioni fatturabili
 
