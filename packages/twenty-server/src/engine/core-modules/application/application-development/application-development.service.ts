@@ -163,10 +163,19 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+    const applicationRegistration =
+      await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+        {
+          universalIdentifier: manifest.application.universalIdentifier,
+          workspaceId,
+        },
+      );
+
+    await this.applicationManifestApplyService.assertManifestRolesAllowedOrThrow(
       {
-        universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
+        manifest,
+        sourceType: applicationRegistration.sourceType,
       },
     );
 

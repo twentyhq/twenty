@@ -10,7 +10,18 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_SECOND_ROLE_ID = uuidv4();
 
-const buildManifest = (overrides?: Partial<Pick<Manifest, 'roles'>>) =>
+// Only the requested role and agent roles are synced for an app
+const VIEWER_AGENT: Manifest['agents'][number] = {
+  universalIdentifier: uuidv4(),
+  name: 'viewer-agent',
+  label: 'Viewer agent',
+  prompt: 'You are a test agent.',
+  roleUniversalIdentifier: TEST_SECOND_ROLE_ID,
+};
+
+const buildManifest = (
+  overrides?: Partial<Pick<Manifest, 'roles' | 'agents'>>,
+) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
@@ -83,6 +94,7 @@ describe('Manifest update - roles', () => {
             description: 'Read-only access',
           },
         ],
+        agents: [VIEWER_AGENT],
       }),
       expectToFail: false,
     });
@@ -154,6 +166,7 @@ describe('Manifest update - roles', () => {
             description: 'Read-only access',
           },
         ],
+        agents: [VIEWER_AGENT],
       }),
       expectToFail: false,
     });

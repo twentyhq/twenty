@@ -1,3 +1,4 @@
+import { assertAppRolesAllowedOnTargetOrThrow } from '@/app/deployment/assert-app-roles-allowed';
 import { fetchAppPlan } from '@/app/deployment/fetch-app-plan';
 import { formatAppPlan } from '@/app/deployment/format-app-plan';
 import { getAppPlanSummary } from '@/app/deployment/get-app-plan-summary';
@@ -20,6 +21,12 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
 
   context.output.progress({
     message: 'Computing metadata plan (read-only, nothing will be applied)…',
+  });
+
+  await assertAppRolesAllowedOnTargetOrThrow({
+    build,
+    target: context.target,
+    signal: context.signal,
   });
 
   const actions = await fetchAppPlan({

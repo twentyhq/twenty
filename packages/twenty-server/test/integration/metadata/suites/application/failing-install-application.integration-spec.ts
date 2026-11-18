@@ -7,7 +7,6 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { v4 as uuidv4 } from 'uuid';
 
 const INVALID_UUID_APP_ID = uuidv4();
-const INVALID_UUID_ROLE_ID = uuidv4();
 
 describe('Install application should fail when entity does not exist', () => {
   beforeEach(async () => {
@@ -39,7 +38,7 @@ describe('Install application should fail when entity does not exist', () => {
   it('should fail when a role has an invalid universalIdentifier', async () => {
     const manifest = buildBaseManifest({
       appId: INVALID_UUID_APP_ID,
-      roleId: INVALID_UUID_ROLE_ID,
+      roleId: 'not-a-valid-uuid',
       overrides: {
         roles: [
           {

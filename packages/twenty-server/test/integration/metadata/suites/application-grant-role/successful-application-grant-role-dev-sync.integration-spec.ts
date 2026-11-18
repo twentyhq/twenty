@@ -21,10 +21,7 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  FieldMetadataType,
-  RowLevelPermissionPredicateOperand,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -33,7 +30,6 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
 const FIELD_UNIVERSAL_IDENTIFIER = uuidv4();
-const PREDICATE_UNIVERSAL_IDENTIFIER = uuidv4();
 
 const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.universalIdentifier;
@@ -43,7 +39,7 @@ const scopingFieldManifest: FieldManifest = {
   type: FieldMetadataType.TEXT,
   name: 'grantScopingColumn',
   label: 'Grant Scoping Column',
-  description: 'Custom field the requested role restricts',
+  description: 'Custom field synced with the requested role',
   icon: 'IconLock',
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
@@ -60,22 +56,6 @@ const INITIAL_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
       canUpdateObjectRecords: true,
     },
   ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-      canUpdateFieldValue: false,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
-      objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.CONTAINS,
-      value: 'shared',
-    },
-  ],
 };
 
 const CHANGED_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
@@ -87,16 +67,6 @@ const CHANGED_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
       objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
-      objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
-      value: 'private',
     },
   ],
 };
@@ -150,7 +120,7 @@ describe('Application grant on dev sync', () => {
     });
   });
 
-  it('creates a grant owned by the workspace custom application, equal to the requested role with its rule grants on all records', async () => {
+  it('creates a grant owned by the workspace custom application, equal to the requested role', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
@@ -177,22 +147,8 @@ describe('Application grant on dev sync', () => {
 
     const requestedSnapshot = await findRolePermissionSnapshot(requestedRoleId);
 
-    expect(requestedSnapshot.rowLevelPermissionPredicates).toHaveLength(1);
-    expect(grantSnapshot).toEqual({
-      ...requestedSnapshot,
-      objectPermissions: requestedSnapshot.objectPermissions.map(
-        (objectPermission) => ({
-          ...objectPermission,
-          canReadObjectRecords: true,
-          canCreateObjectRecords: true,
-          canUpdateObjectRecords: true,
-        }),
-      ),
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
-    });
+    expect(grantSnapshot).toEqual(requestedSnapshot);
     expect(grantSnapshot.objectPermissions).toHaveLength(1);
-    expect(grantSnapshot.fieldPermissions).toHaveLength(1);
     expect(grantSnapshot.permissionFlags).toHaveLength(1);
   }, 60000);
 
@@ -215,19 +171,8 @@ describe('Application grant on dev sync', () => {
 
     const requestedSnapshot = await findRolePermissionSnapshot(requestedRoleId);
 
-    expect(grantSnapshot).toEqual({
-      ...requestedSnapshot,
-      objectPermissions: requestedSnapshot.objectPermissions.map(
-        (objectPermission) => ({
-          ...objectPermission,
-          canReadObjectRecords: true,
-        }),
-      ),
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
-    });
+    expect(grantSnapshot).toEqual(requestedSnapshot);
     expect(grantSnapshot.switches.canAccessAllTools).toBe(true);
-    expect(grantSnapshot.fieldPermissions).toEqual([]);
     expect(grantSnapshot.permissionFlags).toEqual([]);
   }, 60000);
 

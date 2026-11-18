@@ -354,6 +354,11 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type {
+  ApplicationManifestRoleKind,
+  ClassifiedApplicationManifestRoles,
+} from './utils/classifyApplicationManifestRoles';
+export { classifyApplicationManifestRoles } from './utils/classifyApplicationManifestRoles';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
@@ -363,6 +368,11 @@ export type {
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export type { ApplicationManifestRoleViolation } from './utils/getApplicationManifestRoleViolations';
+export {
+  getApplicationManifestRoleViolations,
+  formatApplicationManifestRoleViolation,
+} from './utils/getApplicationManifestRoleViolations';
 export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
 export type {
   EffectiveObjectPermissions,

@@ -11,6 +11,8 @@ import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-mod
 import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { freezeStandaloneApplicationRolesThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/freeze-standalone-application-roles-through-mutation.util';
+import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
@@ -274,6 +276,23 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
+    if (
+      isDefined(workspaceCustomFlatApplication) &&
+      isMarketplaceApplication({
+        universalIdentifier: ownerFlatApplication.universalIdentifier,
+        sourceType: ownerFlatApplication.sourceType,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      })
+    ) {
+      freezeStandaloneApplicationRolesThroughMutation({
+        manifest,
+        ownerFlatApplication,
+        fromAllFlatEntityMapsToMutate: fromAllFlatEntityMaps,
+        toAllUniversalFlatEntityMapsToMutate: toAllUniversalFlatEntityMaps,
+      });
+    }
+
     const fromToFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
@@ -429,23 +448,21 @@ export class ApplicationManifestMigrationService {
       'flatLogicFunctionMaps',
     ]);
 
-    let requestedRoleId: string | null = null;
-
-    for (const role of manifest.roles) {
-      const flatRoleId = resolveApplicationReferenceIdOrThrow({
-        flatEntityMaps: refreshedFlatRoleMaps,
-        universalIdentifier: role.universalIdentifier,
-        referenceLabel: 'role',
-        exceptionCode: ApplicationExceptionCode.ENTITY_NOT_FOUND,
-      });
-
-      if (
+    // Standalone roles of a marketplace app are not synced, so only the requested role is resolved
+    const isDefaultRoleDeclared = manifest.roles.some(
+      (role) =>
         role.universalIdentifier ===
-        manifest.application.defaultRoleUniversalIdentifier
-      ) {
-        requestedRoleId = flatRoleId;
-      }
-    }
+        manifest.application.defaultRoleUniversalIdentifier,
+    );
+    const requestedRoleId = isDefaultRoleDeclared
+      ? resolveApplicationReferenceIdOrThrow({
+          flatEntityMaps: refreshedFlatRoleMaps,
+          universalIdentifier:
+            manifest.application.defaultRoleUniversalIdentifier,
+          referenceLabel: 'role',
+          exceptionCode: ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        })
+      : null;
 
     const settingsFrontComponentUniversalIdentifier =
       manifest.application.settingsFrontComponent?.universalIdentifier;

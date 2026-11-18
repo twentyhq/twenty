@@ -34,7 +34,7 @@ describe('Sync application should fail when creating permissions on a standard r
   it('should fail when adding a permission flag under the standard admin role', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
@@ -66,7 +66,7 @@ describe('Sync application should fail when creating permissions on a standard r
   it('should fail when adding an object permission under the standard admin role', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
@@ -101,7 +101,7 @@ describe('Sync application should fail when creating permissions on a standard r
   it('should fail when adding a field permission under the standard admin role', async () => {
     const manifest = buildBaseManifest({
       appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
+      roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
           {
