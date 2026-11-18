@@ -1347,7 +1347,7 @@ export interface ClientConfig {
     serverUrl: Scalars['String']
     signInPrefilled: Scalars['Boolean']
     support: Support
-    webPushVapidPublicKey?: Scalars['String']
+    webPushVapidPublicKey: Scalars['String']
     __typename: 'ClientConfig'
 }
 
@@ -2712,9 +2712,9 @@ export interface Mutation {
     updateCalendarChannel: CalendarChannel
     updateCommandMenuItem: CommandMenuItem
     updateEmailGroupChannel: MessageChannel
+    updateFocusedTab: Scalars['Boolean']
     updateFrontComponent: FrontComponent
     updateGettingStarted: GettingStartedProgress
-    updateInboxPresence: Scalars['Boolean']
     updateLabPublicFeatureFlag: FeatureFlag
     updateManyNavigationMenuItems: NavigationMenuItem[]
     updateManyObjects: Object[]
@@ -7607,9 +7607,9 @@ export interface MutationGenqlSelection{
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
+    updateFocusedTab?: { __args: {input: UpdateFocusedTabInput} }
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
     updateGettingStarted?: (GettingStartedProgressGenqlSelection & { __args: {input: UpdateGettingStartedInput} })
-    updateInboxPresence?: { __args: {input: UpdateInboxPresenceInput} }
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
@@ -9037,6 +9037,8 @@ export interface UpdateEmailGroupChannelInput {displayName?: (Scalars['String'] 
 
 export interface UpdateFieldInput {defaultValue?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isAuditLogged?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),name?: (Scalars['String'] | null),objectMetadataId?: (Scalars['UUID'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),translations?: (MetadataTranslationOverrideInput[] | null),universalIdentifier?: (Scalars['String'] | null)}
 
+export interface UpdateFocusedTabInput {isFocused: Scalars['Boolean'],tabId: Scalars['String']}
+
 export interface UpdateFrontComponentInput {
 /** The id of the front component to update */
 id: Scalars['UUID'],
@@ -9046,8 +9048,6 @@ update: UpdateFrontComponentInputUpdates}
 export interface UpdateFrontComponentInputUpdates {description?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
 export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),completedStepChatThreadId?: (Scalars['String'] | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
-
-export interface UpdateInboxPresenceInput {isFocused: Scalars['Boolean'],tabId: Scalars['String']}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
