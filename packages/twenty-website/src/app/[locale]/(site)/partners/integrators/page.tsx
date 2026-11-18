@@ -59,7 +59,6 @@ export default async function IntegratorProgramPage({
       <Menu communityStats={communityStats} />
       <main>
         <PartnerHero
-          badge={msg`Beta`}
           heading={msg`Become a\n*Twenty integrator*`}
           body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           stats={INTEGRATOR_HERO_STATS}
