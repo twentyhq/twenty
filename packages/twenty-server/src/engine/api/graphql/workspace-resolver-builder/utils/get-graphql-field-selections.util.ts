@@ -84,13 +84,19 @@ const collectFieldSelections = ({
     if (selection.kind === Kind.FRAGMENT_SPREAD) {
       const fragment = info.fragments[selection.name.value];
 
-      if (isDefined(fragment)) {
-        collectFieldSelections({
-          selectionSet: fragment.selectionSet,
-          info,
-          selectionsByResponseKey: selectionsByResponseKey,
-        });
+      if (!isDefined(fragment)) {
+        throw new CommonQueryRunnerException(
+          `Unknown fragment "${selection.name.value}"`,
+          CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
       }
+
+      collectFieldSelections({
+        selectionSet: fragment.selectionSet,
+        info,
+        selectionsByResponseKey: selectionsByResponseKey,
+      });
       continue;
     }
 
