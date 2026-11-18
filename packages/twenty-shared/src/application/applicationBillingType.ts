@@ -58,8 +58,32 @@ export const isRecurringCharge = (value: unknown): value is RecurringCharge => {
 // Raised by the platform once per billing period, unlike operations the app charges via chargeCredits.
 export type RecurringCharges = Partial<Record<string, RecurringCharge>>;
 
+export const MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS = 99_999_999;
+
+export const isSubscriptionPlanAmount = (value: unknown): value is number =>
+  typeof value === 'number' &&
+  Number.isSafeInteger(value) &&
+  value > 0 &&
+  value <= MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS;
+
+export type SubscriptionPlan = {
+  label: string;
+  monthlyAmountCents: number;
+  yearlyAmountCents?: number;
+  per?: RecurringChargeUnit;
+};
+
+export const getSubscriptionPlanYearlyAmountCents = ({
+  monthlyAmountCents,
+  yearlyAmountCents,
+}: Pick<SubscriptionPlan, 'monthlyAmountCents' | 'yearlyAmountCents'>) =>
+  yearlyAmountCents ?? monthlyAmountCents * 12;
+
+export type SubscriptionPlans = Partial<Record<string, SubscriptionPlan>>;
+
 export type ApplicationBilling = {
   description?: string;
   recurring?: RecurringCharges;
+  subscriptions?: SubscriptionPlans;
   operations?: BillableOperations;
 };

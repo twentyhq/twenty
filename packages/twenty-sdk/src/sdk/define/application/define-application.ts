@@ -4,10 +4,13 @@ import {
   APPLICATION_VARIABLE_SCOPES,
   isApplicationVariableScope,
   isKnownApplicationCategory,
+  getSubscriptionPlanYearlyAmountCents,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
+  isSubscriptionPlanAmount,
   isUsageOperationTypeValue,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+  MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
@@ -157,6 +160,45 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (Object.prototype.hasOwnProperty.call(billableOperations, chargeName)) {
       errors.push(
         `"${chargeName}" is declared both as a recurring charge and as a billable operation. Give them distinct names.`,
+      );
+    }
+  }
+
+  for (const [planName, subscriptionPlan] of Object.entries(
+    config.billing?.subscriptions ?? {},
+  )) {
+    if (!isDefined(subscriptionPlan)) {
+      continue;
+    }
+
+    if (!isSubscriptionPlanAmount(subscriptionPlan.monthlyAmountCents)) {
+      errors.push(
+        `Subscription plan "${planName}" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}`,
+      );
+    } else if (
+      !isSubscriptionPlanAmount(
+        getSubscriptionPlanYearlyAmountCents(subscriptionPlan),
+      )
+    ) {
+      errors.push(
+        `Subscription plan "${planName}" must have a positive integer yearly amount of at most ${MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS}: yearlyAmountCents, or 12 times monthlyAmountCents when omitted`,
+      );
+    }
+
+    if (
+      isDefined(subscriptionPlan.per) &&
+      !isRecurringChargeUnit(subscriptionPlan.per)
+    ) {
+      errors.push(
+        `Subscription plan "${planName}" must be billed per a known unit (${RECURRING_CHARGE_UNITS.join(
+          ', ',
+        )}) or omit \`per\` for a flat fee`,
+      );
+    }
+
+    if (!isNonEmptyString(subscriptionPlan.label)) {
+      errors.push(
+        `Subscription plan "${planName}" must have a non empty label`,
       );
     }
   }
