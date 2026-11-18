@@ -3,4 +3,5 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 export const FLAT_VIEW_SORT_EDITABLE_PROPERTIES = [
   'direction',
   'subFieldName',
+  'relationTargetFieldMetadataId',
 ] as const satisfies MetadataEntityPropertyName<'viewSort'>[];

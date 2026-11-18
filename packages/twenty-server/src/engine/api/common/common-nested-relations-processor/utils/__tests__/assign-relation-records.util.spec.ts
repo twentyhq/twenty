@@ -14,17 +14,21 @@ const assignActivities = (
     relatedRecordJoinColumnName: 'opportunityId',
   });
 
-const assignCompanies = (
-  parentRecords: ObjectRecord[],
-  relationRecords: ObjectRecord[],
-  selectedFields: Record<string, unknown> = {},
-) =>
+const assignCompanies = ({
+  parentRecords,
+  relationRecords,
+  selectedColumns = {},
+}: {
+  parentRecords: ObjectRecord[];
+  relationRecords: ObjectRecord[];
+  selectedColumns?: Record<string, true>;
+}) =>
   assignManyToOneRelationRecords({
     parentRecords,
     relationRecords,
     sourceFieldName: 'company',
     parentRecordJoinColumnName: 'companyId',
-    selectedFields,
+    selectedColumns,
   });
 
 describe('relation record assignment', () => {
@@ -82,7 +86,10 @@ describe('relation record assignment', () => {
     ];
     const company = { id: 'company', name: 'Original', deletedAt: null };
 
-    assignCompanies(parents, [company, { id: 'company', name: 'Duplicate' }]);
+    assignCompanies({
+      parentRecords: parents,
+      relationRecords: [company, { id: 'company', name: 'Duplicate' }],
+    });
 
     expect(parents).toEqual([
       {
@@ -103,7 +110,11 @@ describe('relation record assignment', () => {
     const parents = [{ id: 'first', companyId: 'company' }];
     const company = { id: 'company', deletedAt: null };
 
-    assignCompanies(parents, [company], { deletedAt: true });
+    assignCompanies({
+      parentRecords: parents,
+      relationRecords: [company],
+      selectedColumns: { deletedAt: true },
+    });
 
     expect(parents).toEqual([{ id: 'first', companyId: 'company', company }]);
   });
@@ -111,7 +122,10 @@ describe('relation record assignment', () => {
   it('clears both the relation and foreign key for a deleted related record', () => {
     const parents = [{ id: 'first', companyId: 'company' }];
 
-    assignCompanies(parents, [{ id: 'company', deletedAt: '2026-01-01' }]);
+    assignCompanies({
+      parentRecords: parents,
+      relationRecords: [{ id: 'company', deletedAt: '2026-01-01' }],
+    });
 
     expect(parents).toEqual([{ id: 'first', companyId: null, company: null }]);
   });
@@ -123,7 +137,10 @@ describe('relation record assignment', () => {
       { id: 'third' },
     ];
 
-    assignCompanies(parents, [{ id: 'other' }]);
+    assignCompanies({
+      parentRecords: parents,
+      relationRecords: [{ id: 'other' }],
+    });
 
     expect(parents).toEqual([
       { id: 'first', companyId: 'missing', company: null },
