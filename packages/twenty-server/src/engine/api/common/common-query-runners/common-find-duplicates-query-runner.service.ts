@@ -62,8 +62,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     let objectRecords: Partial<ObjectRecord>[] = [];
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -168,10 +167,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: findDuplicatesOutput.flatMap((item) => item.records),
       parentObjectRecordsAggregatedValues: {},
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       authContext,
-      selectedFields: args.selectedFieldsResult.select,
       ...this.getNestedRelationsReadPathOptions(),
     });
 
@@ -230,7 +228,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    relationSelections,
+    selection,
   }: CommonQueryResultProcessingArgs<
     CommonFindDuplicatesOutputItem[]
   >): Promise<CommonFindDuplicatesOutputItem[]> {
@@ -244,7 +242,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             workspaceId: authContext.workspace.id,
-            relationSelections,
+            selection,
           }),
         };
       }),
@@ -301,7 +299,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       inputRecordCount *
       QUERY_MAX_RECORDS *
       computeMaxFieldCountPerRecord({
-        selectedFieldsResult,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

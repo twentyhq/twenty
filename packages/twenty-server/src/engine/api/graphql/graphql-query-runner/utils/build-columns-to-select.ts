@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -13,54 +13,44 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const buildColumnsToSelect = ({
-  select,
-  relationSelections,
+  selection,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  select: Record<string, unknown>;
-  relationSelections: CommonRelationSelections;
+  selection: Pick<CommonSelection, 'columns' | 'relations'>;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}) => {
-  const requiredRelationColumns = getRequiredRelationColumns({
-    relationSelections,
+}): Record<string, boolean> => {
+  const fieldsToSelect: Record<string, boolean> = { ...selection.columns };
+
+  for (const columnName of getRequiredRelationColumns({
+    relations: selection.relations,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  });
-
-  const fieldsToSelect: Record<string, boolean> = Object.entries(select)
-    .filter(
-      ([_columnName, value]) => value === true && typeof value !== 'object',
-    )
-    .reduce((acc, [columnName]) => ({ ...acc, [columnName]: true }), {});
-
-  for (const columnName of requiredRelationColumns) {
+  })) {
     fieldsToSelect[columnName] = true;
   }
 
-  const result = { ...fieldsToSelect, id: true };
-
-  return result;
+  return { ...fieldsToSelect, id: true };
 };
 
 const getRequiredRelationColumns = ({
-  relationSelections,
+  relations,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  relationSelections: CommonRelationSelections;
+  relations: CommonSelection['relations'];
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string[] => {
   const requiredColumns: string[] = [];
   const selectedRelationFieldNames = new Set(
-    Object.values(relationSelections)
+    Object.values(relations)
       .filter(isDefined)
       .map(({ fieldName }) => fieldName),
   );

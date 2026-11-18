@@ -1,8 +1,7 @@
 import { RelationType } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
 
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
-import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -11,25 +10,20 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeMaxFieldCountPerRecord = ({
-  selectedFieldsResult: { select, relationSelections },
+  selection,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   recordLimitPerOneToManyRelation,
 }: {
-  selectedFieldsResult: Pick<
-    CommonSelectedFieldsResult,
-    'select' | 'relationSelections'
-  >;
+  selection: Pick<CommonSelection, 'columns' | 'relations'>;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   recordLimitPerOneToManyRelation: number;
-}): number => {
-  const relationEntries = getRelationSelectionEntries(relationSelections);
-
-  return relationEntries.reduce(
-    (fieldCount, { responseKey, relationSelection }) => {
+}): number =>
+  getRelationSelectionEntries(selection).reduce(
+    (fieldCount, { relationSelection }) => {
       const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: buildFieldMapsFromFlatObjectMetadata(
           flatFieldMetadataMaps,
@@ -37,12 +31,8 @@ export const computeMaxFieldCountPerRecord = ({
         ).fieldIdByName[relationSelection.fieldName],
         flatEntityMaps: flatFieldMetadataMaps,
       });
-      const relationSelect = select[responseKey];
 
-      if (
-        !isMorphOrRelationFlatFieldMetadata(relationField) ||
-        !isPlainObject(relationSelect)
-      ) {
+      if (!isMorphOrRelationFlatFieldMetadata(relationField)) {
         return fieldCount;
       }
 
@@ -52,10 +42,7 @@ export const computeMaxFieldCountPerRecord = ({
           ? recordLimitPerOneToManyRelation
           : 1) *
           computeMaxFieldCountPerRecord({
-            selectedFieldsResult: {
-              select: relationSelect,
-              relationSelections: relationSelection.relationSelections,
-            },
+            selection: relationSelection.selection,
             flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
               flatEntityId: relationField.relationTargetObjectMetadataId,
               flatEntityMaps: flatObjectMetadataMaps,
@@ -66,6 +53,5 @@ export const computeMaxFieldCountPerRecord = ({
           })
       );
     },
-    Object.keys(select).length - relationEntries.length,
+    Object.keys(selection.columns).length,
   );
-};

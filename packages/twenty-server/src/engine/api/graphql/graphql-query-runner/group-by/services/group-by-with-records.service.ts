@@ -81,8 +81,7 @@ export class GroupByWithRecordsService {
     } = queryRunnerContext;
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relationSelections: selectedFieldsResult.relationSelections,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -108,18 +107,17 @@ export class GroupByWithRecordsService {
       .flatMap((group) => group.records as ObjectRecord[])
       .filter(isDefined);
 
-    if (!isEmpty(selectedFieldsResult.relationSelections)) {
+    if (!isEmpty(selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: allRecords,
         parentObjectRecordsAggregatedValues: {},
-        relationSelections: selectedFieldsResult.relationSelections,
-        aggregate: selectedFieldsResult.aggregate,
+        selection: selectedFieldsResult,
+        shouldComputeAggregates: true,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        selectedFields: selectedFieldsResult.select,
         ...nestedRelationsReadPathOptions,
       });
     }
@@ -128,7 +126,7 @@ export class GroupByWithRecordsService {
       groupsResult,
       recordsResult,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregates),
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -139,7 +137,7 @@ export class GroupByWithRecordsService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           workspaceId: authContext.workspace.id,
-          relationSelections: selectedFieldsResult.relationSelections,
+          selection: selectedFieldsResult,
         }),
     });
   }

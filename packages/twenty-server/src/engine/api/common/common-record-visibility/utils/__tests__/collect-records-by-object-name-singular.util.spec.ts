@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -64,30 +64,37 @@ const calendarEvent = getFlatObjectMetadataMock({
   fieldIds: [],
 });
 
-const PARTICIPANT_EVENT_SELECTIONS: CommonRelationSelections = {
+const buildSelection = (
+  relations: CommonSelection['relations'] = {},
+): CommonSelection => ({ columns: {}, aggregates: {}, relations });
+
+const PARTICIPANT_EVENT_SELECTION = buildSelection({
   calendarEventParticipants: {
     fieldName: 'calendarEventParticipants',
-    relationSelections: {
-      calendarEvent: { fieldName: 'calendarEvent', relationSelections: {} },
-    },
+    selection: buildSelection({
+      calendarEvent: {
+        fieldName: 'calendarEvent',
+        selection: buildSelection(),
+      },
+    }),
   },
-};
+});
 
 const collect = ({
   records,
   flatObjectMetadata,
-  relationSelections = PARTICIPANT_EVENT_SELECTIONS,
+  selection = PARTICIPANT_EVENT_SELECTION,
   objectNameSingulars,
 }: {
   records: ObjectRecord[];
   flatObjectMetadata: FlatObjectMetadata;
-  relationSelections?: CommonRelationSelections;
+  selection?: CommonSelection;
   objectNameSingulars: string[];
 }) =>
   collectRecordsByObjectNameSingular({
     records,
     flatObjectMetadata,
-    relationSelections,
+    selection,
     flatObjectMetadataMaps: buildFlatEntityMaps([
       person,
       calendarEventParticipant,
@@ -108,7 +115,7 @@ describe('collectRecordsByObjectNameSingular', () => {
       collect({
         records: [event],
         flatObjectMetadata: calendarEvent,
-        relationSelections: {},
+        selection: buildSelection(),
         objectNameSingulars: ['calendarEvent'],
       }),
     ).toEqual(new Map([['calendarEvent', [event]]]));
@@ -178,14 +185,17 @@ describe('collectRecordsByObjectNameSingular', () => {
       collect({
         records,
         flatObjectMetadata: person,
-        relationSelections: {
+        selection: buildSelection({
           attendees: {
             fieldName: 'calendarEventParticipants',
-            relationSelections: {
-              meeting: { fieldName: 'calendarEvent', relationSelections: {} },
-            },
+            selection: buildSelection({
+              meeting: {
+                fieldName: 'calendarEvent',
+                selection: buildSelection(),
+              },
+            }),
           },
-        },
+        }),
         objectNameSingulars: ['calendarEvent'],
       }).get('calendarEvent'),
     ).toEqual([event]);

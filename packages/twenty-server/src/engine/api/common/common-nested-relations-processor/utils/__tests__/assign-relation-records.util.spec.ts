@@ -17,14 +17,14 @@ const assignActivities = (
 const assignCompanies = (
   parentRecords: ObjectRecord[],
   relationRecords: ObjectRecord[],
-  selectedFields: Record<string, unknown> = {},
+  selectedColumns: Record<string, true> = {},
 ) =>
   assignManyToOneRelationRecords({
     parentRecords,
     relationRecords,
     sourceFieldName: 'company',
     parentRecordJoinColumnName: 'companyId',
-    selectedFields,
+    selectedColumns,
   });
 
 describe('relation record assignment', () => {

@@ -109,8 +109,8 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
 
     const result = parser.parse({ id: true, fund: true }, investorLeadObject);
 
-    expect(result.select).toEqual({ id: true });
-    expect(result.relationSelections).toEqual({});
+    expect(result.columns).toEqual({ id: true });
+    expect(result.relations).toEqual({});
     expect(result.relationFieldsCount).toBe(0);
   });
 
@@ -122,10 +122,14 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
       investorLeadObject,
     );
 
-    expect(result.select.fund).toEqual({ id: true, name: true });
-    expect(result.relationSelections.fund).toEqual({
+    expect(result.columns).toEqual({ id: true });
+    expect(result.relations.fund).toEqual({
       fieldName: 'fund',
-      relationSelections: {},
+      selection: {
+        columns: { id: true, name: true },
+        aggregates: {},
+        relations: {},
+      },
     });
     expect(result.relationFieldsCount).toBe(1);
   });

@@ -81,8 +81,15 @@ describe('CommonResultGettersService', () => {
       flatObjectMetadataMaps: buildFlatEntityMaps([company, attachment]),
       flatFieldMetadataMaps: buildFlatEntityMaps([attachmentsField, fileField]),
       workspaceId: 'workspace-id',
-      relationSelections: {
-        files: { fieldName: 'attachments', relationSelections: {} },
+      selection: {
+        columns: {},
+        aggregates: {},
+        relations: {
+          files: {
+            fieldName: 'attachments',
+            selection: { columns: {}, aggregates: {}, relations: {} },
+          },
+        },
       },
     });
 

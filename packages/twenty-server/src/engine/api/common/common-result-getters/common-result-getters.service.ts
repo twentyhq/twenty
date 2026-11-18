@@ -13,7 +13,7 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 import { FilesFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/files-field-query-result-getter.handler';
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -28,7 +28,7 @@ type ResultGettersArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
-  relationSelections: CommonRelationSelections;
+  selection: CommonSelection;
 };
 
 type ResultProcessingContext = {
@@ -43,7 +43,7 @@ type ResultProcessingContext = {
 
 type RecordProcessingArgs = {
   flatObjectMetadata: FlatObjectMetadata;
-  relationSelections: CommonRelationSelections;
+  selection: CommonSelection;
   context: ResultProcessingContext;
 };
 
@@ -95,7 +95,7 @@ export class CommonResultGettersService {
     return this.processRecordArrayWithContext({
       records,
       flatObjectMetadata: resultGettersArgs.flatObjectMetadata,
-      relationSelections: resultGettersArgs.relationSelections,
+      selection: resultGettersArgs.selection,
       context: this.buildContext(resultGettersArgs),
     });
   }
@@ -107,7 +107,7 @@ export class CommonResultGettersService {
     return this.processRecordWithContext({
       record,
       flatObjectMetadata: resultGettersArgs.flatObjectMetadata,
-      relationSelections: resultGettersArgs.relationSelections,
+      selection: resultGettersArgs.selection,
       context: this.buildContext(resultGettersArgs),
     });
   }
@@ -131,7 +131,7 @@ export class CommonResultGettersService {
   private processRecordArrayWithContext({
     records,
     flatObjectMetadata,
-    relationSelections,
+    selection,
     context,
   }: RecordProcessingArgs & { records: ObjectRecord[] }): Promise<
     ObjectRecord[]
@@ -141,7 +141,7 @@ export class CommonResultGettersService {
         this.processRecordWithContext({
           record,
           flatObjectMetadata,
-          relationSelections,
+          selection,
           context,
         }),
       ),
@@ -151,7 +151,7 @@ export class CommonResultGettersService {
   private async processRecordWithContext({
     record,
     flatObjectMetadata,
-    relationSelections,
+    selection,
     context,
   }: RecordProcessingArgs & { record: ObjectRecord }): Promise<ObjectRecord> {
     const fieldMetadataByName = this.getOrBuildFieldMetadataByName(
@@ -180,14 +180,13 @@ export class CommonResultGettersService {
       QueryResultFieldValue
     >;
 
-    for (const {
-      responseKey,
-      relationSelection,
-    } of getRelationSelectionEntries(relationSelections)) {
+    for (const { key, relationSelection } of getRelationSelectionEntries(
+      selection,
+    )) {
       const relationField = fieldMetadataByName.get(
         relationSelection.fieldName,
       );
-      const recordFieldValue = record[responseKey];
+      const recordFieldValue = record[key];
 
       if (
         !isDefined(relationField) ||
@@ -210,18 +209,18 @@ export class CommonResultGettersService {
           flatEntityMaps: context.flatObjectMetadataMaps,
         });
 
-      relationFieldsProcessedMap[responseKey] =
+      relationFieldsProcessedMap[key] =
         relationField.settings?.relationType === RelationType.ONE_TO_MANY
           ? await this.processRecordArrayWithContext({
               records: recordFieldValue,
               flatObjectMetadata: targetFlatObjectMetadata,
-              relationSelections: relationSelection.relationSelections,
+              selection: relationSelection.selection,
               context,
             })
           : await this.processRecordWithContext({
               record: recordFieldValue,
               flatObjectMetadata: targetFlatObjectMetadata,
-              relationSelections: relationSelection.relationSelections,
+              selection: relationSelection.selection,
               context,
             });
     }

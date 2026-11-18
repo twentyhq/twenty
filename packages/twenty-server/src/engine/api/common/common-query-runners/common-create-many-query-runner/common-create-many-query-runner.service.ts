@@ -201,11 +201,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: records,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS,
       authContext,
       repository,
-      selectedFields: args.selectedFieldsResult.select,
       ...nestedRelationsReadPathOptions,
     });
   }
@@ -272,8 +271,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
-        select: selectedFieldsResult.select,
-        relationSelections: selectedFieldsResult.relationSelections,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -368,8 +366,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     };
 
     const columnsToReturn = buildColumnsToReturn({
-      select: selectedFieldsResult.select,
-      relationSelections: selectedFieldsResult.relationSelections,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -708,8 +705,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relationSelections: selectedFieldsResult.relationSelections,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -743,7 +739,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    relationSelections,
+    selection,
   }: CommonQueryResultProcessingArgs<ObjectRecord[]>): Promise<ObjectRecord[]> {
     return await this.commonResultGettersService.processRecordArray({
       records: queryResult,
@@ -751,7 +747,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
-      relationSelections,
+      selection,
     });
   }
 
@@ -803,7 +799,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return (
       args.data.length *
       computeMaxFieldCountPerRecord({
-        selectedFieldsResult,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

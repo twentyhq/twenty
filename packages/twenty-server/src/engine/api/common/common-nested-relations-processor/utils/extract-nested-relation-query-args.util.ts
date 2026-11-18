@@ -5,7 +5,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { type CommonRelationSelection } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonRelationSelection } from 'src/engine/api/common/types/common-selection.type';
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,

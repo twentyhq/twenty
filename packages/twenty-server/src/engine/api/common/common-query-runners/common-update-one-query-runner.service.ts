@@ -90,7 +90,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    relationSelections,
+    selection,
   }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord({
       record: queryResult,
@@ -98,7 +98,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
-      relationSelections,
+      selection,
     });
   }
 

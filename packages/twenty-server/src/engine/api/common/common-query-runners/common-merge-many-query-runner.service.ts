@@ -160,10 +160,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
         parentObjectMetadataItem: context.flatObjectMetadata,
         parentObjectRecords: recordsToMerge,
-        relationSelections: args.selectedFieldsResult.relationSelections,
+        selection: args.selectedFieldsResult,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext: context.authContext,
-        selectedFields: args.selectedFieldsResult.select,
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
@@ -570,8 +569,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const alias = flatObjectMetadata.nameSingular;
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -670,10 +668,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: updatedRecords,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       authContext,
-      selectedFields: args.selectedFieldsResult.select,
       ...this.getNestedRelationsReadPathOptions(),
     });
   }

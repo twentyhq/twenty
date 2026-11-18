@@ -1,7 +1,7 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -18,14 +18,14 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 export const collectRecordsByObjectNameSingular = ({
   records,
   flatObjectMetadata,
-  relationSelections,
+  selection,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   objectNameSingulars,
 }: {
   records: ObjectRecord[];
   flatObjectMetadata: FlatObjectMetadata;
-  relationSelections: CommonRelationSelections;
+  selection: CommonSelection;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectNameSingulars: ReadonlySet<string>;
@@ -38,11 +38,11 @@ export const collectRecordsByObjectNameSingular = ({
   const visit = ({
     record,
     objectMetadata,
-    relationSelections,
+    selection,
   }: {
     record: ObjectRecord;
     objectMetadata: FlatObjectMetadata;
-    relationSelections: CommonRelationSelections;
+    selection: CommonSelection;
   }) => {
     if (objectNameSingulars.has(objectMetadata.nameSingular)) {
       const collectedRecords =
@@ -61,11 +61,10 @@ export const collectRecordsByObjectNameSingular = ({
       objectMetadata,
     );
 
-    for (const {
-      responseKey,
-      relationSelection,
-    } of getRelationSelectionEntries(relationSelections)) {
-      const relationValue = record[responseKey];
+    for (const { key, relationSelection } of getRelationSelectionEntries(
+      selection,
+    )) {
+      const relationValue = record[key];
 
       if (!isDefined(relationValue)) {
         continue;
@@ -108,14 +107,14 @@ export const collectRecordsByObjectNameSingular = ({
         visit({
           record: relationRecord,
           objectMetadata: targetObjectMetadata,
-          relationSelections: relationSelection.relationSelections,
+          selection: relationSelection.selection,
         });
       }
     }
   };
 
   for (const record of records) {
-    visit({ record, objectMetadata: flatObjectMetadata, relationSelections });
+    visit({ record, objectMetadata: flatObjectMetadata, selection });
   }
 
   return new Map(

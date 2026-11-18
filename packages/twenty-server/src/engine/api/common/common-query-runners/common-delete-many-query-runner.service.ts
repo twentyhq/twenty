@@ -42,8 +42,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     } = queryRunnerContext;
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -61,10 +60,9 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: deletedRecords,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       authContext,
-      selectedFields: args.selectedFieldsResult.select,
       ...this.getNestedRelationsReadPathOptions(),
     });
 
@@ -98,7 +96,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    relationSelections,
+    selection,
   }: CommonQueryResultProcessingArgs<ObjectRecord[]>): Promise<ObjectRecord[]> {
     return this.commonResultGettersService.processRecordArray({
       records: queryResult,
@@ -106,7 +104,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
-      relationSelections,
+      selection,
     });
   }
 

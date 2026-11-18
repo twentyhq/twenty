@@ -178,21 +178,20 @@ describe('buildColumnsToSelect', () => {
       companyObjectMetadata,
     ]);
 
-    const select = {
-      nameFirstName: true,
-      company: {
-        id: true,
-        name: true,
-      },
-    };
-
-    const relationSelections = {
-      company: { fieldName: 'company', relationSelections: {} },
-    };
-
     const result = buildColumnsToSelect({
-      select,
-      relationSelections,
+      selection: {
+        columns: { nameFirstName: true },
+        relations: {
+          company: {
+            fieldName: 'company',
+            selection: {
+              columns: { id: true, name: true },
+              aggregates: {},
+              relations: {},
+            },
+          },
+        },
+      },
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -220,9 +219,14 @@ describe('buildColumnsToSelect', () => {
     ]);
 
     const result = buildColumnsToSelect({
-      select: { nameFirstName: true, employer: { id: true } },
-      relationSelections: {
-        employer: { fieldName: 'company', relationSelections: {} },
+      selection: {
+        columns: { nameFirstName: true },
+        relations: {
+          employer: {
+            fieldName: 'company',
+            selection: { columns: { id: true }, aggregates: {}, relations: {} },
+          },
+        },
       },
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -250,16 +254,11 @@ describe('buildColumnsToSelect', () => {
       companyObjectMetadata,
     ]);
 
-    const select = {
-      nameFirstName: true,
-      nameLastName: true,
-    };
-
-    const relationSelections = {};
-
     const result = buildColumnsToSelect({
-      select,
-      relationSelections,
+      selection: {
+        columns: { nameFirstName: true, nameLastName: true },
+        relations: {},
+      },
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -268,42 +267,6 @@ describe('buildColumnsToSelect', () => {
     expect(result).toEqual({
       nameFirstName: true,
       nameLastName: true,
-      id: true,
-    });
-  });
-
-  it('should filter out non-boolean values from select', () => {
-    const flatObjectMetadata = buildMockFlatObjectMetadata([
-      nameFieldId,
-      companyFieldId,
-    ]);
-    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-      nameField,
-      companyRelationField,
-    ]);
-    const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
-      flatObjectMetadata,
-      companyObjectMetadata,
-    ]);
-
-    const select = {
-      nameFirstName: true,
-      nameLastName: false,
-      company: { id: true },
-    };
-
-    const relationSelections = {};
-
-    const result = buildColumnsToSelect({
-      select,
-      relationSelections,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toEqual({
-      nameFirstName: true,
       id: true,
     });
   });
@@ -322,17 +285,16 @@ describe('buildColumnsToSelect', () => {
       companyObjectMetadata,
     ]);
 
-    const select = {
-      nameFirstName: true,
-    };
-
-    const relationSelections = {
-      name: { fieldName: 'name', relationSelections: {} },
-    };
-
     const result = buildColumnsToSelect({
-      select,
-      relationSelections,
+      selection: {
+        columns: { nameFirstName: true },
+        relations: {
+          name: {
+            fieldName: 'name',
+            selection: { columns: {}, aggregates: {}, relations: {} },
+          },
+        },
+      },
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -372,17 +334,16 @@ describe('buildColumnsToSelect', () => {
       companyObjectMetadata,
     ]);
 
-    const select = {
-      nameFirstName: true,
-    };
-
-    const relationSelections = {
-      company: { fieldName: 'company', relationSelections: {} },
-    };
-
     const result = buildColumnsToSelect({
-      select,
-      relationSelections,
+      selection: {
+        columns: { nameFirstName: true },
+        relations: {
+          company: {
+            fieldName: 'company',
+            selection: { columns: {}, aggregates: {}, relations: {} },
+          },
+        },
+      },
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

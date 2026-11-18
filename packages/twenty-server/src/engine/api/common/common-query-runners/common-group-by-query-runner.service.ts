@@ -136,7 +136,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregates,
       queryBuilder,
       objectMetadataNameSingular: objectAlias,
     });
@@ -406,7 +406,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return formatResultWithGroupByDimensionValues({
       groupsResult: result,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregates),
     });
   }
 
@@ -507,7 +507,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const groupByQueryComplexity = 1;
     const simpleFieldsComplexity = 1;
     const selectedFieldsComplexity =
-      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+      simpleFieldsComplexity + selectedFieldsResult.relationFieldsCount;
 
     return (args.includeRecords ?? false)
       ? groupByQueryComplexity +
@@ -526,15 +526,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    const aggregateCount = Object.keys(selectedFieldsResult.aggregate).filter(
-      (aggregateName) =>
-        !isDefined(selectedFieldsResult.relationSelections[aggregateName]),
-    ).length;
+    const aggregateCount = Object.keys(selectedFieldsResult.aggregates).length;
 
     const recordFieldCount = args.includeRecords
       ? RECORDS_PER_GROUP_LIMIT *
         computeMaxFieldCountPerRecord({
-          selectedFieldsResult,
+          selection: selectedFieldsResult,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,

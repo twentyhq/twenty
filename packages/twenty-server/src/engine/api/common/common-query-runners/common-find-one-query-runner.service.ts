@@ -60,8 +60,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -90,10 +89,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
       parentObjectRecords: objectRecords,
-      relationSelections: args.selectedFieldsResult.relationSelections,
+      selection: args.selectedFieldsResult,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       authContext,
-      selectedFields: args.selectedFieldsResult.select,
       ...this.getNestedRelationsReadPathOptions(),
     });
 
@@ -127,7 +125,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    relationSelections,
+    selection,
   }: CommonQueryResultProcessingArgs<ObjectRecord>): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord({
       record: queryResult,
@@ -135,7 +133,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
-      relationSelections,
+      selection,
     });
   }
 

@@ -319,8 +319,7 @@ export class ObjectRecordEventPublisher {
       flatFieldMetadataMaps,
     );
 
-    const selectedFieldsResult =
-      commonQueryParser.parseSelectedFields(selectedFields);
+    const selection = commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
     const resolvedSubscriberAuthContext = await subscriberAuthContext;
@@ -334,8 +333,7 @@ export class ObjectRecordEventPublisher {
           parentObjectRecords: allRecords,
           authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
-          relationSelections: selectedFieldsResult.relationSelections,
-          selectedFields: selectedFieldsResult.select,
+          selection,
         }),
       resolvedSubscriberAuthContext,
     );
