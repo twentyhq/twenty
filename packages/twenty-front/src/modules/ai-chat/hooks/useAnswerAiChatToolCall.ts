@@ -10,7 +10,7 @@ import { findToolPartOutput } from '@/ai-chat/utils/findToolPartOutput';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { isAiChatCreditsExhaustedError } from '@/ai-chat/utils/isAiChatCreditsExhaustedError';
+import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai-chat/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai-chat/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
