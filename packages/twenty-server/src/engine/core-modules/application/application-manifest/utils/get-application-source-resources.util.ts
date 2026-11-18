@@ -5,10 +5,13 @@ import { type ApplicationSourceResource } from 'src/engine/core-modules/applicat
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 
-export const getApplicationSourceResources = (
-  manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>>,
-  flatLogicFunctionMaps?: AllFlatEntityMaps['flatLogicFunctionMaps'],
-): ApplicationSourceResource[] => [
+export const getApplicationSourceResources = ({
+  manifest,
+  flatLogicFunctionMaps,
+}: {
+  manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>>;
+  flatLogicFunctionMaps?: AllFlatEntityMaps['flatLogicFunctionMaps'];
+}): ApplicationSourceResource[] => [
   ...(manifest.frontComponents ?? []).map((component) => ({
     kind: 'frontComponent' as const,
     universalIdentifier: component.universalIdentifier,

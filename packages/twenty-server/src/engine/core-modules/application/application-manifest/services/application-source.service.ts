@@ -14,12 +14,13 @@ import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/ap
 import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { type ApplicationSourceResource } from 'src/engine/core-modules/application/application-manifest/types/application-source-resource.type';
 import { getApplicationSourceResources } from 'src/engine/core-modules/application/application-manifest/utils/get-application-source-resources.util';
-import { validateApplicationSourceInventory } from 'src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory.util';
+import { validateApplicationSourceInventoryOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -33,7 +34,7 @@ export class ApplicationSourceService {
   validateOrThrow(
     manifest: Partial<Pick<Manifest, 'frontComponents' | 'logicFunctions'>>,
   ): void {
-    for (const resource of getApplicationSourceResources(manifest)) {
+    for (const resource of getApplicationSourceResources({ manifest })) {
       if (
         isDefined(resource.sourceFiles) &&
         (!isSourceFileManifestList(resource.sourceFiles) ||
@@ -60,19 +61,23 @@ export class ApplicationSourceService {
       application: Pick<Manifest['application'], 'universalIdentifier'>;
     };
   }): Promise<void> {
-    const flatLogicFunctionMaps = manifest.logicFunctions?.some(
-      (logicFunction) => isDefined(logicFunction.sourceFiles),
-    )
-      ? (
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatLogicFunctionMaps',
-          ])
-        ).flatLogicFunctionMaps
-      : undefined;
-    const resources = getApplicationSourceResources(
+    let flatLogicFunctionMaps:
+      | AllFlatEntityMaps['flatLogicFunctionMaps']
+      | undefined;
+    if (
+      manifest.logicFunctions?.some((logicFunction) =>
+        isDefined(logicFunction.sourceFiles),
+      )
+    ) {
+      ({ flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+        ]));
+    }
+    const resources = getApplicationSourceResources({
       manifest,
       flatLogicFunctionMaps,
-    );
+    });
     for (const resource of resources) {
       if (
         !isDefined(resource.sourceFiles) &&
@@ -137,7 +142,7 @@ export class ApplicationSourceService {
         )
       ).toString('utf8'),
     );
-    const sourceFiles = validateApplicationSourceInventory({
+    const sourceFiles = validateApplicationSourceInventoryOrThrow({
       inventory,
       resource,
     });

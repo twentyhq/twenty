@@ -84,7 +84,7 @@ export class ApplicationFrontComponentExportService {
               workspaceId,
               applicationUniversalIdentifier,
               resource: getApplicationSourceResources({
-                frontComponents: [manifest],
+                manifest: { frontComponents: [manifest] },
               })[0],
               remainingBytes: fileBudget.remainingBytes,
               exportedFiles: files,

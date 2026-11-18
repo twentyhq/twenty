@@ -61,7 +61,11 @@ const APPLICATION = {
   name: 'apply-app',
   displayName: 'Apply App',
 };
-const MANIFEST = { application: APPLICATION };
+const MANIFEST = {
+  application: APPLICATION,
+  frontComponents: [],
+  logicFunctions: [],
+};
 const WORKSPACE_ID = '48eb6ca1-dbd6-492e-8b53-5785a266c454';
 const EXPORTED_MANIFEST = {
   application: { ...APPLICATION, displayName: 'Server-normalized app' },
@@ -414,8 +418,10 @@ describe('app apply', () => {
     application = APPLICATION,
     generateClientBody,
     editDuringBuild,
+    hasSourceCollections = true,
   }: {
     corruptPath?: string;
+    hasSourceCollections?: boolean;
     application?: typeof APPLICATION;
     generateClientBody?: string;
     editDuringBuild?: { relativePath: string; content: string };
@@ -457,7 +463,7 @@ describe('app apply', () => {
             contentHash: 'a'.repeat(64),
             application: ${JSON.stringify(application)},
             manifestFormat: 'twenty-application',
-            manifest: ${JSON.stringify({ application })},
+            manifest: ${JSON.stringify({ application, ...(hasSourceCollections ? { frontComponents: [], logicFunctions: [] } : {}) })},
             files,
           },
           diagnostics: [],
@@ -706,6 +712,27 @@ describe('app apply', () => {
       'pull-base.json',
       'snapshots',
     ]);
+  });
+
+  it('keeps the previous pull base when the applied snapshot omits source collections', async () => {
+    await writeTooling({ hasSourceCollections: false });
+    const basePath = join(appPath, '.twenty/cli/pull-base.json');
+    await mkdir(join(appPath, '.twenty/cli'), { recursive: true });
+    await writeFile(basePath, 'previous baseline');
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data.pullBase).toBe('failed');
+    expect(envelope.warnings).toContainEqual(
+      expect.objectContaining({
+        code: 'PULL_BASE_NOT_RECORDED',
+        message: expect.stringContaining(
+          'missing its frontend component or logic function collection',
+        ),
+      }),
+    );
+    expect(await readFile(basePath, 'utf8')).toBe('previous baseline');
   });
 
   it('fingerprints the source files as they were built, not as edited during the build', async () => {

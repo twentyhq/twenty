@@ -79,12 +79,11 @@ export const exportLogicFunctionSources = async ({
       const inventory = await readSource({
         workspaceId,
         applicationUniversalIdentifier,
-        resource: getApplicationSourceResources(
-          {
-            logicFunctions: [manifest],
-          },
-          applicationAllFlatEntityMaps.flatLogicFunctionMaps,
-        )[0],
+        resource: getApplicationSourceResources({
+          manifest: { logicFunctions: [manifest] },
+          flatLogicFunctionMaps:
+            applicationAllFlatEntityMaps.flatLogicFunctionMaps,
+        })[0],
         remainingBytes: fileBudget.remainingBytes,
         exportedFiles: existingFiles,
       });

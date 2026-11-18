@@ -129,7 +129,7 @@ export class ApplicationSyncService {
         await this.applicationSourceService.store({ workspaceId, manifest });
       } catch (error) {
         this.logger.warn(
-          `Application sync succeeded but its source inventory could not be stored: ${error instanceof Error ? error.message : String(error)}`,
+          `Application ${manifest.application.universalIdentifier} sync succeeded in workspace ${workspaceId} but its source inventory could not be stored: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }

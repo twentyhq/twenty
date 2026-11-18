@@ -6,7 +6,7 @@ import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engin
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
 import { exportLogicFunctionSources } from 'src/engine/core-modules/application/application-manifest/utils/export-logic-function-sources.util';
 import { getApplicationSourceResources } from 'src/engine/core-modules/application/application-manifest/utils/get-application-source-resources.util';
-import { validateApplicationSourceInventory } from 'src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory.util';
+import { validateApplicationSourceInventoryOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
@@ -75,7 +75,11 @@ describe('logic function source export', () => {
   const run = ({
     include = true,
     budget = 100_000,
-    exportedFiles = [] as typeof files,
+    exportedFiles = [],
+  }: {
+    include?: boolean;
+    budget?: number;
+    exportedFiles?: typeof files;
   } = {}) =>
     exportLogicFunctionSources({
       workspaceId: identifier,
@@ -180,40 +184,45 @@ describe('logic function source export', () => {
   });
 
   it('uses the deployed revision, independent of manifest converter defaults', () => {
-    const resource = getApplicationSourceResources(
-      { logicFunctions: [logicFunctionManifest] },
-      flatMaps().flatLogicFunctionMaps,
-    )[0];
+    const resource = getApplicationSourceResources({
+      manifest: { logicFunctions: [logicFunctionManifest] },
+      flatLogicFunctionMaps: flatMaps().flatLogicFunctionMaps,
+    })[0];
     const inventory = { ...resource.metadata, sourceFiles };
-    const changedDefaults = getApplicationSourceResources(
-      { logicFunctions: [{ ...logicFunctionManifest, timeoutSeconds: 999 }] },
-      flatMaps().flatLogicFunctionMaps,
-    )[0];
+    const changedDefaults = getApplicationSourceResources({
+      manifest: {
+        logicFunctions: [{ ...logicFunctionManifest, timeoutSeconds: 999 }],
+      },
+      flatLogicFunctionMaps: flatMaps().flatLogicFunctionMaps,
+    })[0];
     expect(
-      validateApplicationSourceInventory({
+      validateApplicationSourceInventoryOrThrow({
         inventory,
         resource: changedDefaults,
       }),
     ).toEqual(sourceFiles);
     functions[0] = { ...functions[0], updatedAt: '2026-11-18T00:00:00.000Z' };
-    const updated = getApplicationSourceResources(
-      { logicFunctions: [logicFunctionManifest] },
-      flatMaps().flatLogicFunctionMaps,
-    )[0];
+    const updated = getApplicationSourceResources({
+      manifest: { logicFunctions: [logicFunctionManifest] },
+      flatLogicFunctionMaps: flatMaps().flatLogicFunctionMaps,
+    })[0];
     expect(() =>
-      validateApplicationSourceInventory({ inventory, resource: updated }),
+      validateApplicationSourceInventoryOrThrow({
+        inventory,
+        resource: updated,
+      }),
     ).toThrow('does not match');
   });
 
   it('invalidates an old inventory when the synchronized function is absent', () => {
     functions = [];
-    const resource = getApplicationSourceResources(
-      { logicFunctions: [logicFunctionManifest] },
-      flatMaps().flatLogicFunctionMaps,
-    )[0];
+    const resource = getApplicationSourceResources({
+      manifest: { logicFunctions: [logicFunctionManifest] },
+      flatLogicFunctionMaps: flatMaps().flatLogicFunctionMaps,
+    })[0];
     expect(resource.sourceFiles).toBeUndefined();
     expect(
-      validateApplicationSourceInventory({
+      validateApplicationSourceInventoryOrThrow({
         resource,
         inventory: {
           ...resource.metadata,

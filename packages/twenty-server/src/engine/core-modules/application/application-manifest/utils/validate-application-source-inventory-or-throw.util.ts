@@ -10,7 +10,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 
-export const validateApplicationSourceInventory = ({
+export const validateApplicationSourceInventoryOrThrow = ({
   inventory,
   resource,
 }: {

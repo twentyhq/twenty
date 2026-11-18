@@ -145,10 +145,13 @@ export const manifestUpdateChecksums = ({
 
   const withSourceFiles = <
     TDefinition extends { sourceFiles?: SourceFileManifest[] },
-  >(
-    definition: TDefinition,
-    paths: string[] | undefined,
-  ): TDefinition & { sourceFiles?: SourceFileManifest[] } =>
+  >({
+    definition,
+    paths,
+  }: {
+    definition: TDefinition;
+    paths?: string[];
+  }): TDefinition & { sourceFiles?: SourceFileManifest[] } =>
     isDefined(paths)
       ? {
           ...definition,
@@ -161,16 +164,16 @@ export const manifestUpdateChecksums = ({
       : definition;
 
   result.frontComponents = result.frontComponents.map((component) =>
-    withSourceFiles(
-      component,
-      frontComponentSourcePaths?.get(component.sourceComponentPath),
-    ),
+    withSourceFiles({
+      definition: component,
+      paths: frontComponentSourcePaths?.get(component.sourceComponentPath),
+    }),
   );
   result.logicFunctions = result.logicFunctions.map((logicFunction) =>
-    withSourceFiles(
-      logicFunction,
-      logicFunctionSourcePaths?.get(logicFunction.sourceHandlerPath),
-    ),
+    withSourceFiles({
+      definition: logicFunction,
+      paths: logicFunctionSourcePaths?.get(logicFunction.sourceHandlerPath),
+    }),
   );
   return result;
 };
