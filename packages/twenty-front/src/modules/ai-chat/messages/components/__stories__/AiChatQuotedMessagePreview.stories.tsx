@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatQuotedMessagePreview } from '@/ai-chat/composer/components/AiChatQuotedMessagePreview';
+import { AiChatQuotedMessagePreview } from '@/ai-chat/messages/components/AiChatQuotedMessagePreview';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const meta: Meta<typeof AiChatQuotedMessagePreview> = {
