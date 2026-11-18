@@ -2413,22 +2413,6 @@ type EnqueuedJob {
   sizeBytes: Int!
 }
 
-type EnterpriseLicenseInfoDTO {
-  expiresAt: DateTime
-  isValid: Boolean!
-  licensee: String
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  expiresAt: DateTime
-  isCancellationScheduled: Boolean!
-  licensee: String
-  status: String!
-}
-
 input EventLogDateRangeInput {
   end: DateTime
   start: DateTime
@@ -3565,7 +3549,6 @@ type Mutation {
   checkCustomDomainValidRecords: DomainValidRecords
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   checkoutSession(plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
-  claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -3713,8 +3696,6 @@ type Mutation {
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   openDirectMessage(workspaceMemberId: UUID!): UUID!
   prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
-  refreshEnterpriseValidityToken: Boolean!
-  releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
@@ -3752,7 +3733,6 @@ type Mutation {
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
-  setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
@@ -4436,9 +4416,6 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
   currentUserSessions: [UserSession!]!
   currentWorkspace: Workspace!
-  enterpriseCheckoutSession(billingInterval: String): String
-  enterprisePortalSession(returnUrlPath: String): String
-  enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
   exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeLogicFunctionSources: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(

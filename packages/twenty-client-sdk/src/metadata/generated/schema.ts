@@ -1612,24 +1612,6 @@ export interface EnqueuedJob {
     __typename: 'EnqueuedJob'
 }
 
-export interface EnterpriseLicenseInfoDTO {
-    expiresAt?: Scalars['DateTime']
-    isValid: Scalars['Boolean']
-    licensee?: Scalars['String']
-    subscriptionId?: Scalars['String']
-    __typename: 'EnterpriseLicenseInfoDTO'
-}
-
-export interface EnterpriseSubscriptionStatusDTO {
-    cancelAt?: Scalars['DateTime']
-    currentPeriodEnd?: Scalars['DateTime']
-    expiresAt?: Scalars['DateTime']
-    isCancellationScheduled: Scalars['Boolean']
-    licensee?: Scalars['String']
-    status: Scalars['String']
-    __typename: 'EnterpriseSubscriptionStatusDTO'
-}
-
 export type EventLogFilterOperand = 'IS' | 'IS_NOT'
 
 export interface EventLogPageInfo {
@@ -2479,7 +2461,6 @@ export interface Mutation {
     checkCustomDomainValidRecords?: DomainValidRecords
     checkPublicDomainValidRecords?: DomainValidRecords
     checkoutSession: BillingSession
-    claimApplicationRegistrationOwnership: ApplicationRegistration
     completeAppTarballUpload: ApplicationRegistration
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
     completeBookCallOnboardingStep: OnboardingStepSuccess
@@ -2629,8 +2610,6 @@ export interface Mutation {
     moveAgentChatThreadToChannel: Scalars['Boolean']
     openDirectMessage: Scalars['UUID']
     prepareGettingStartedWorkflow: GettingStartedWorkflow
-    refreshEnterpriseValidityToken: Scalars['Boolean']
-    releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     removeAgentChatMessageReaction: AgentMessageReactionSummary[]
     removeQueryFromEventStream: Scalars['Boolean']
     removeRecordShare: RecordSharingDTO
@@ -2668,7 +2647,6 @@ export interface Mutation {
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
     setBillingPartnerCode: BillingPartnerCode
-    setEnterpriseKey: EnterpriseLicenseInfoDTO
     setRecordPrivate: RecordSharingDTO
     setRecordShare: RecordSharingDTO
     setResourceCreditSubscriptionPrice: BillingUpdate
@@ -3268,9 +3246,6 @@ export interface Query {
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     currentUserSessions: UserSession[]
     currentWorkspace: Workspace
-    enterpriseCheckoutSession?: Scalars['String']
-    enterprisePortalSession?: Scalars['String']
-    enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
     eventLogs: EventLogQueryResult
     exportApplication: ApplicationExport
     field: Field
@@ -6439,26 +6414,6 @@ export interface EnqueuedJobGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EnterpriseLicenseInfoDTOGenqlSelection{
-    expiresAt?: boolean | number
-    isValid?: boolean | number
-    licensee?: boolean | number
-    subscriptionId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
-    cancelAt?: boolean | number
-    currentPeriodEnd?: boolean | number
-    expiresAt?: boolean | number
-    isCancellationScheduled?: boolean | number
-    licensee?: boolean | number
-    status?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface EventLogDateRangeInput {end?: (Scalars['DateTime'] | null),start?: (Scalars['DateTime'] | null)}
 
 export interface EventLogFieldFilterInput {field: Scalars['String'],operand: EventLogFilterOperand,values: Scalars['String'][]}
@@ -7369,7 +7324,6 @@ export interface MutationGenqlSelection{
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {plan: BillingPlanKey, recurringInterval: SubscriptionInterval, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
-    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
@@ -7519,8 +7473,6 @@ export interface MutationGenqlSelection{
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     openDirectMessage?: { __args: {workspaceMemberId: Scalars['UUID']} }
     prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })
-    refreshEnterpriseValidityToken?: boolean | number
-    releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
@@ -7558,7 +7510,6 @@ export interface MutationGenqlSelection{
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
     setBillingPartnerCode?: (BillingPartnerCodeGenqlSelection & { __args: {partnerCode: Scalars['String']} })
-    setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
     setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
@@ -8201,9 +8152,6 @@ export interface QueryGenqlSelection{
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     currentUserSessions?: UserSessionGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
-    enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
-    enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
-    enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
     exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeLogicFunctionSources?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
@@ -11054,22 +11002,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isEnqueuedJob = (obj?: { __typename?: any } | null): obj is EnqueuedJob => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueuedJob"')
       return EnqueuedJob_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
-    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
-      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
-    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
-      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
     
 
