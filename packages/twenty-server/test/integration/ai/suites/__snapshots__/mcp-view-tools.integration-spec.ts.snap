@@ -505,6 +505,161 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "description": "Position of the field in the view (0-based).",
           "type": "number",
         },
+        "relationScope": {
+          "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
+          "properties": {
+            "filterGroups": {
+              "default": [],
+              "items": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "logicalOperator": {
+                    "enum": [
+                      "AND",
+                      "OR",
+                      "NOT",
+                    ],
+                    "type": "string",
+                  },
+                  "parentFilterGroupId": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "id",
+                  "logicalOperator",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            "filters": {
+              "default": [],
+              "items": {
+                "properties": {
+                  "fieldMetadataId": {
+                    "description": "A field of the related object.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "filterGroupId": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "id": {
+                    "description": "Local id, used to place the filter in a group.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "operand": {
+                    "enum": [
+                      "IS",
+                      "IS_NOT_NULL",
+                      "IS_NOT",
+                      "LESS_THAN_OR_EQUAL",
+                      "GREATER_THAN_OR_EQUAL",
+                      "IS_BEFORE",
+                      "IS_AFTER",
+                      "CONTAINS",
+                      "DOES_NOT_CONTAIN",
+                      "IS_EMPTY",
+                      "IS_NOT_EMPTY",
+                      "IS_RELATIVE",
+                      "IS_IN_PAST",
+                      "IS_IN_FUTURE",
+                      "IS_TODAY",
+                      "VECTOR_SEARCH",
+                    ],
+                    "type": "string",
+                  },
+                  "relationTargetFieldMetadataId": {
+                    "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "subFieldName": {
+                    "type": "string",
+                  },
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                      },
+                      {
+                        "items": {
+                          "type": "string",
+                        },
+                        "type": "array",
+                      },
+                      {
+                        "type": "boolean",
+                      },
+                      {
+                        "type": "number",
+                      },
+                      {
+                        "additionalProperties": {},
+                        "propertyNames": {
+                          "type": "string",
+                        },
+                        "type": "object",
+                      },
+                    ],
+                  },
+                },
+                "required": [
+                  "id",
+                  "fieldMetadataId",
+                  "operand",
+                  "value",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            "limit": {
+              "type": "integer",
+            },
+            "sorts": {
+              "default": [],
+              "items": {
+                "properties": {
+                  "direction": {
+                    "enum": [
+                      "ASC",
+                      "DESC",
+                    ],
+                    "type": "string",
+                  },
+                  "fieldMetadataId": {
+                    "description": "A field of the related object.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "relationTargetFieldMetadataId": {
+                    "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "subFieldName": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "fieldMetadataId",
+                  "direction",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
         "relationTargetFieldMetadataId": {
           "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
           "format": "uuid",
@@ -563,6 +718,169 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "position": {
           "description": "Position of the field.",
           "type": "number",
+        },
+        "relationScope": {
+          "anyOf": [
+            {
+              "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
+              "properties": {
+                "filterGroups": {
+                  "default": [],
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "logicalOperator": {
+                        "enum": [
+                          "AND",
+                          "OR",
+                          "NOT",
+                        ],
+                        "type": "string",
+                      },
+                      "parentFilterGroupId": {
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "logicalOperator",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "filters": {
+                  "default": [],
+                  "items": {
+                    "properties": {
+                      "fieldMetadataId": {
+                        "description": "A field of the related object.",
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "filterGroupId": {
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "id": {
+                        "description": "Local id, used to place the filter in a group.",
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "operand": {
+                        "enum": [
+                          "IS",
+                          "IS_NOT_NULL",
+                          "IS_NOT",
+                          "LESS_THAN_OR_EQUAL",
+                          "GREATER_THAN_OR_EQUAL",
+                          "IS_BEFORE",
+                          "IS_AFTER",
+                          "CONTAINS",
+                          "DOES_NOT_CONTAIN",
+                          "IS_EMPTY",
+                          "IS_NOT_EMPTY",
+                          "IS_RELATIVE",
+                          "IS_IN_PAST",
+                          "IS_IN_FUTURE",
+                          "IS_TODAY",
+                          "VECTOR_SEARCH",
+                        ],
+                        "type": "string",
+                      },
+                      "relationTargetFieldMetadataId": {
+                        "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "subFieldName": {
+                        "type": "string",
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                          },
+                          {
+                            "items": {
+                              "type": "string",
+                            },
+                            "type": "array",
+                          },
+                          {
+                            "type": "boolean",
+                          },
+                          {
+                            "type": "number",
+                          },
+                          {
+                            "additionalProperties": {},
+                            "propertyNames": {
+                              "type": "string",
+                            },
+                            "type": "object",
+                          },
+                        ],
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "fieldMetadataId",
+                      "operand",
+                      "value",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "limit": {
+                  "type": "integer",
+                },
+                "sorts": {
+                  "default": [],
+                  "items": {
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "ASC",
+                          "DESC",
+                        ],
+                        "type": "string",
+                      },
+                      "fieldMetadataId": {
+                        "description": "A field of the related object.",
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "relationTargetFieldMetadataId": {
+                        "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                        "format": "uuid",
+                        "type": "string",
+                      },
+                      "subFieldName": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "fieldMetadataId",
+                      "direction",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Null shows every related record again.",
         },
         "relationTargetFieldMetadataId": {
           "anyOf": [
@@ -651,6 +969,161 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "description": "Position of the field in the view (0-based).",
                 "type": "number",
               },
+              "relationScope": {
+                "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
+                "properties": {
+                  "filterGroups": {
+                    "default": [],
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "logicalOperator": {
+                          "enum": [
+                            "AND",
+                            "OR",
+                            "NOT",
+                          ],
+                          "type": "string",
+                        },
+                        "parentFilterGroupId": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "logicalOperator",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  "filters": {
+                    "default": [],
+                    "items": {
+                      "properties": {
+                        "fieldMetadataId": {
+                          "description": "A field of the related object.",
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "filterGroupId": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "id": {
+                          "description": "Local id, used to place the filter in a group.",
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "operand": {
+                          "enum": [
+                            "IS",
+                            "IS_NOT_NULL",
+                            "IS_NOT",
+                            "LESS_THAN_OR_EQUAL",
+                            "GREATER_THAN_OR_EQUAL",
+                            "IS_BEFORE",
+                            "IS_AFTER",
+                            "CONTAINS",
+                            "DOES_NOT_CONTAIN",
+                            "IS_EMPTY",
+                            "IS_NOT_EMPTY",
+                            "IS_RELATIVE",
+                            "IS_IN_PAST",
+                            "IS_IN_FUTURE",
+                            "IS_TODAY",
+                            "VECTOR_SEARCH",
+                          ],
+                          "type": "string",
+                        },
+                        "relationTargetFieldMetadataId": {
+                          "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "subFieldName": {
+                          "type": "string",
+                        },
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                            },
+                            {
+                              "items": {
+                                "type": "string",
+                              },
+                              "type": "array",
+                            },
+                            {
+                              "type": "boolean",
+                            },
+                            {
+                              "type": "number",
+                            },
+                            {
+                              "additionalProperties": {},
+                              "propertyNames": {
+                                "type": "string",
+                              },
+                              "type": "object",
+                            },
+                          ],
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "fieldMetadataId",
+                        "operand",
+                        "value",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  "limit": {
+                    "type": "integer",
+                  },
+                  "sorts": {
+                    "default": [],
+                    "items": {
+                      "properties": {
+                        "direction": {
+                          "enum": [
+                            "ASC",
+                            "DESC",
+                          ],
+                          "type": "string",
+                        },
+                        "fieldMetadataId": {
+                          "description": "A field of the related object.",
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "relationTargetFieldMetadataId": {
+                          "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "subFieldName": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "fieldMetadataId",
+                        "direction",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                },
+                "type": "object",
+              },
               "relationTargetFieldMetadataId": {
                 "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
                 "format": "uuid",
@@ -723,6 +1196,169 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "position": {
                 "description": "Position of the field.",
                 "type": "number",
+              },
+              "relationScope": {
+                "anyOf": [
+                  {
+                    "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
+                    "properties": {
+                      "filterGroups": {
+                        "default": [],
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "logicalOperator": {
+                              "enum": [
+                                "AND",
+                                "OR",
+                                "NOT",
+                              ],
+                              "type": "string",
+                            },
+                            "parentFilterGroupId": {
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "logicalOperator",
+                          ],
+                          "type": "object",
+                        },
+                        "type": "array",
+                      },
+                      "filters": {
+                        "default": [],
+                        "items": {
+                          "properties": {
+                            "fieldMetadataId": {
+                              "description": "A field of the related object.",
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "filterGroupId": {
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "id": {
+                              "description": "Local id, used to place the filter in a group.",
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "operand": {
+                              "enum": [
+                                "IS",
+                                "IS_NOT_NULL",
+                                "IS_NOT",
+                                "LESS_THAN_OR_EQUAL",
+                                "GREATER_THAN_OR_EQUAL",
+                                "IS_BEFORE",
+                                "IS_AFTER",
+                                "CONTAINS",
+                                "DOES_NOT_CONTAIN",
+                                "IS_EMPTY",
+                                "IS_NOT_EMPTY",
+                                "IS_RELATIVE",
+                                "IS_IN_PAST",
+                                "IS_IN_FUTURE",
+                                "IS_TODAY",
+                                "VECTOR_SEARCH",
+                              ],
+                              "type": "string",
+                            },
+                            "relationTargetFieldMetadataId": {
+                              "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "subFieldName": {
+                              "type": "string",
+                            },
+                            "value": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                },
+                                {
+                                  "items": {
+                                    "type": "string",
+                                  },
+                                  "type": "array",
+                                },
+                                {
+                                  "type": "boolean",
+                                },
+                                {
+                                  "type": "number",
+                                },
+                                {
+                                  "additionalProperties": {},
+                                  "propertyNames": {
+                                    "type": "string",
+                                  },
+                                  "type": "object",
+                                },
+                              ],
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "fieldMetadataId",
+                            "operand",
+                            "value",
+                          ],
+                          "type": "object",
+                        },
+                        "type": "array",
+                      },
+                      "limit": {
+                        "type": "integer",
+                      },
+                      "sorts": {
+                        "default": [],
+                        "items": {
+                          "properties": {
+                            "direction": {
+                              "enum": [
+                                "ASC",
+                                "DESC",
+                              ],
+                              "type": "string",
+                            },
+                            "fieldMetadataId": {
+                              "description": "A field of the related object.",
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "relationTargetFieldMetadataId": {
+                              "description": "When fieldMetadataId is a many-to-one relation of the related object, use this field of the record it points to, e.g. task > status on taskTargets.",
+                              "format": "uuid",
+                              "type": "string",
+                            },
+                            "subFieldName": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "fieldMetadataId",
+                            "direction",
+                          ],
+                          "type": "object",
+                        },
+                        "type": "array",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Null shows every related record again.",
               },
               "relationTargetFieldMetadataId": {
                 "anyOf": [
