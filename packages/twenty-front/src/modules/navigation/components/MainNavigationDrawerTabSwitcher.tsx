@@ -16,7 +16,6 @@ import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNa
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
-import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerTabs';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
@@ -58,10 +57,6 @@ const StyledUnreadBadge = styled.span`
   position: absolute;
   right: calc(-1 * ${themeCssVariables.spacing['1.5']});
   top: calc(-1 * ${themeCssVariables.spacing['1.5']});
-`;
-
-const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
-  background: ${themeCssVariables.color.red};
 `;
 
 export const MainNavigationDrawerTabSwitcher = () => {
@@ -189,7 +184,6 @@ export const MainNavigationDrawerTabSwitcher = () => {
                   ? unreadOpenThreadCount
                   : 0
               }
-              unreadBadge={<StyledUnreadDot aria-hidden="true" />}
             />
           )),
           ...(isLayoutCustomizationModeEnabled &&

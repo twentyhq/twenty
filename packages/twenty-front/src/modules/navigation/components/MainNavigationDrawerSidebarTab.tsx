@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useRef } from 'react';
+import { useRef } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
@@ -17,7 +18,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
+  background: ${themeCssVariables.color.red};
+`;
 
 const StyledAnchor = styled.span`
   display: flex;
@@ -30,7 +36,6 @@ type MainNavigationDrawerSidebarTabProps = {
   isExpanded: boolean;
   shouldShowTooltip: boolean;
   unreadCount: number;
-  unreadBadge: ReactNode;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -39,7 +44,6 @@ export const MainNavigationDrawerSidebarTab = ({
   isExpanded,
   shouldShowTooltip,
   unreadCount,
-  unreadBadge,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -77,7 +81,9 @@ export const MainNavigationDrawerSidebarTab = ({
         ariaLabel={
           unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
         }
-        iconAccessory={unreadCount > 0 && unreadBadge}
+        iconAccessory={
+          unreadCount > 0 && <StyledUnreadDot aria-hidden="true" />
+        }
       />
       {isLayoutCustomizationModeEnabled && (
         <DropdownRoot dropdownId={dropdownId} type="menu">
