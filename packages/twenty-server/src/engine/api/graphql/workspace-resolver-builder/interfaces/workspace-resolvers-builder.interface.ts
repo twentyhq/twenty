@@ -128,11 +128,6 @@ export type WorkspaceResolverBuilderMethodNames =
   | WorkspaceResolverBuilderQueryMethodNames
   | WorkspaceResolverBuilderMutationMethodNames;
 
-export interface WorkspaceResolverBuilderMethods {
-  readonly queries: readonly WorkspaceResolverBuilderQueryMethodNames[];
-  readonly mutations: readonly WorkspaceResolverBuilderMutationMethodNames[];
-}
-
 export type ResolverArgs =
   | CreateManyResolverArgs
   | CreateOneResolverArgs

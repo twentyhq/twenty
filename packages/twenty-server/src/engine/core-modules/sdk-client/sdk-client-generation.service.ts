@@ -3,14 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
-import { printSchema } from 'graphql';
+import { buildSchema, printSchema } from 'graphql';
 import path, { join } from 'path';
 
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   ApplicationException,
@@ -49,7 +50,7 @@ export class SdkClientGenerationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
+    private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
     private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -123,8 +124,8 @@ export class SdkClientGenerationService {
         id: workspaceId,
       });
 
-      const graphqlSchema =
-        await this.workspaceSchemaFactory.createGraphQLSchema(
+      const schemaSDLResult =
+        await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
           fromWorkspaceEntityToFlat(workspaceEntity),
           applicationId,
         );
@@ -133,7 +134,9 @@ export class SdkClientGenerationService {
         workspaceId,
         applicationId,
         applicationUniversalIdentifier,
-        schema: printSchema(graphqlSchema),
+        schema: isDefined(schemaSDLResult)
+          ? printSchema(buildSchema(schemaSDLResult.sdl))
+          : '',
       });
 
       const generationDurationMs = performance.now() - generationStart;
