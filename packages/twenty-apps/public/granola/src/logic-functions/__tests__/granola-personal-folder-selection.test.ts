@@ -1,17 +1,21 @@
-import { kv, listConnections } from 'twenty-sdk/logic-function';
+import {
+  kv,
+  listConnections,
+  reportConnectionAuthFailure,
+} from 'twenty-sdk/logic-function';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   OTHER_CONNECTION,
   OWN_CONNECTION,
 } from 'src/__tests__/utils/granola-personal-connection-fixtures';
-import { GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
 import { granolaPersonalFolderSelectionHandler } from 'src/logic-functions/granola-personal-folder-selection';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
   listConnections: vi.fn(),
+  reportConnectionAuthFailure: vi.fn(),
   kv: { get: vi.fn(), set: vi.fn() },
 }));
 
@@ -20,22 +24,8 @@ const PARTNER_FOLDER_ID = 'fol_partnerCalls12';
 const SAVED_AT = '2026-11-17T12:00:00.000Z';
 const OPTED_IN_AT = '2026-11-18T12:00:00.000Z';
 
-const buildRoutePayload = (body: unknown) => ({
-  body,
-  headers: {},
-  queryStringParameters: {},
-  pathParameters: {},
-  isBase64Encoded: false,
-  requestContext: {
-    http: {
-      method: 'POST',
-      path: GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_PATH,
-    },
-  },
-  userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
-});
-
 const context = { userWorkspaceId: OWN_CONNECTION.userWorkspaceId };
+
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
@@ -53,14 +43,32 @@ describe('granolaPersonalFolderSelectionHandler', () => {
 
     await expect(
       granolaPersonalFolderSelectionHandler(
-        buildRoutePayload({
-          connectionId: OTHER_CONNECTION.id,
-          folderIds: [],
-        }),
+        { body: { connectionId: OTHER_CONNECTION.id, folderIds: [] } },
         context,
       ),
     ).resolves.toMatchObject({ status: 404 });
     expect(fetchProvider).not.toHaveBeenCalled();
+    expect(kv.set).not.toHaveBeenCalled();
+  });
+
+  it('marks a rejected personal key for reconnect before saving', async () => {
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(new Response(null, { status: 401 })),
+    );
+
+    await expect(
+      granolaPersonalFolderSelectionHandler(
+        { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
+        context,
+      ),
+    ).resolves.toMatchObject({ status: 404 });
+    expect(reportConnectionAuthFailure).toHaveBeenCalledWith({
+      connectionId: OWN_CONNECTION.id,
+    });
     expect(kv.set).not.toHaveBeenCalled();
   });
 
@@ -95,10 +103,12 @@ describe('granolaPersonalFolderSelectionHandler', () => {
 
     await expect(
       granolaPersonalFolderSelectionHandler(
-        buildRoutePayload({
-          connectionId: OWN_CONNECTION.id,
-          folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
-        }),
+        {
+          body: {
+            connectionId: OWN_CONNECTION.id,
+            folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
+          },
+        },
         context,
       ),
     ).resolves.toEqual({

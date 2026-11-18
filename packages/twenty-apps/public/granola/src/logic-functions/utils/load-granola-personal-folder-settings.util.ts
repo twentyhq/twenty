@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { kv } from 'twenty-sdk/logic-function';
+import { kv, reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
@@ -38,6 +38,8 @@ export const loadGranolaPersonalFolderSettings = async ({
     return { folders, selectionKey, selection };
   } catch (error) {
     if (error instanceof GranolaApiError && error.status === 401) {
+      await reportConnectionAuthFailure({ connectionId: connection.id });
+
       return undefined;
     }
 

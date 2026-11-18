@@ -11,16 +11,16 @@ import { GRANOLA_PERSONAL_FOLDERS_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constan
 import { loadGranolaPersonalFolderSettings } from 'src/logic-functions/utils/load-granola-personal-folder-settings.util';
 
 export const granolaPersonalFoldersHandler = async (
-  payload: RoutePayload<unknown>,
+  payload: Pick<RoutePayload<unknown>, 'queryStringParameters'>,
   { userWorkspaceId }: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ) => {
-  const connectionId = z
-    .uuid()
-    .safeParse(payload.queryStringParameters?.connectionId);
-
   if (!isDefined(userWorkspaceId)) {
     return new Response({ error: 'AUTHENTICATION_REQUIRED' }, { status: 401 });
   }
+
+  const connectionId = z
+    .uuid()
+    .safeParse(payload.queryStringParameters?.connectionId);
 
   if (!connectionId.success) {
     return new Response({ error: 'INVALID_CONNECTION_ID' }, { status: 400 });

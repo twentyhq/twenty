@@ -24,14 +24,14 @@ const FOLDER_SELECTION_SCHEMA = z.object({
 });
 
 export const granolaPersonalFolderSelectionHandler = async (
-  payload: RoutePayload<unknown>,
+  payload: Pick<RoutePayload<unknown>, 'body'>,
   { userWorkspaceId }: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ) => {
-  const request = FOLDER_SELECTION_SCHEMA.safeParse(payload.body);
-
   if (!isDefined(userWorkspaceId)) {
     return new Response({ error: 'AUTHENTICATION_REQUIRED' }, { status: 401 });
   }
+
+  const request = FOLDER_SELECTION_SCHEMA.safeParse(payload.body);
 
   if (!request.success) {
     return new Response({ error: 'INVALID_FOLDER_SELECTION' }, { status: 400 });
