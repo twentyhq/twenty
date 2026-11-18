@@ -18,6 +18,7 @@ import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/compon
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 type WorkspaceSectionListDndKitProps = NavigationMenuItemSectionListDndKitProps;
 
@@ -51,6 +52,7 @@ export const WorkspaceSectionListDndKit = ({
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
   const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const orphanAppendDndIndex = filteredItems.length;
   const listDroppableId = isDefined(containerId)
     ? `${NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX}${containerId}`
@@ -104,7 +106,12 @@ export const WorkspaceSectionListDndKit = ({
           <WorkspaceSectionAddMenuItemButton
             container={
               isDefined(containerId)
-                ? { id: containerId, itemCount: filteredItems.length }
+                ? {
+                    id: containerId,
+                    itemCount: workspaceNavigationMenuItems.filter(
+                      (item) => item.parentId === containerId,
+                    ).length,
+                  }
                 : undefined
             }
           />
