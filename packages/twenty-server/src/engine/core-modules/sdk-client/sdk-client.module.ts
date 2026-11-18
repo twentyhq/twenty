@@ -1,6 +1,6 @@
 import { Module, type OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
+import { WorkspaceGraphqlSchemaSDLModule } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.module';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -23,7 +23,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([ApplicationEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
-    CoreGraphQLApiModule,
+    WorkspaceGraphqlSchemaSDLModule,
     ApplicationModule,
     MetricsModule,
   ],
