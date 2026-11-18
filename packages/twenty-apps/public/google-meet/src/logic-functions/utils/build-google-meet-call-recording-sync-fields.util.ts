@@ -11,6 +11,7 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
   title,
   summaryMarkdown,
   transcriptEntries,
+  hasRecordingFile,
   calendarEvent,
 }: {
   conferenceRecord: Pick<
@@ -20,12 +21,15 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
   title: string | undefined;
   summaryMarkdown: string | undefined;
   transcriptEntries: TranscriptEntry[];
+  hasRecordingFile: boolean;
   calendarEvent: Pick<CalendarEventCandidate, 'id'> | undefined;
 }): CallRecordingSyncFields => {
   return {
     ...(isNonEmptyString(title) ? { title } : {}),
     status:
-      isNonEmptyArray(transcriptEntries) || isNonEmptyString(summaryMarkdown)
+      isNonEmptyArray(transcriptEntries) ||
+      isNonEmptyString(summaryMarkdown) ||
+      hasRecordingFile
         ? 'COMPLETED'
         : 'PROCESSING',
     externalRecordingId: conferenceRecord.name,
