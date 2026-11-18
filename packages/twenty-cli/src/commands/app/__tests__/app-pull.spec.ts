@@ -229,10 +229,12 @@ describe('app pull command with the packaged worker', () => {
 
   it.each([
     ['shouldIncludePublicAssets'],
+    ['shouldIncludeLogicFunctionSources'],
     ['shouldIncludeSourceDependencies'],
     ['shouldIncludeSourceDependencies', 'encoding'],
     [
       'shouldIncludeSourceFiles',
+      'shouldIncludeLogicFunctionSources',
       'shouldIncludePublicAssets',
       'shouldIncludeSourceDependencies',
     ],
@@ -266,11 +268,15 @@ describe('app pull command with the packaged worker', () => {
           shouldIncludeDependencies: true,
           shouldIncludeSourceFiles: true,
           shouldIncludeSourceDependencies: true,
+          shouldIncludeLogicFunctionSources: true,
           shouldIncludePublicAssets: true,
         },
         {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
+          ...(!unsupportedOptions.includes('shouldIncludeLogicFunctionSources')
+            ? { shouldIncludeLogicFunctionSources: true }
+            : {}),
           ...(!unsupportedOptions.includes('shouldIncludeSourceDependencies')
             ? { shouldIncludeSourceDependencies: true }
             : {}),
@@ -342,6 +348,7 @@ describe('app pull command with the packaged worker', () => {
           shouldIncludeDependencies: true,
           shouldIncludeSourceFiles: true,
           shouldIncludeSourceDependencies: true,
+          shouldIncludeLogicFunctionSources: true,
           shouldIncludePublicAssets: true,
         },
       ]);
@@ -556,6 +563,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
       shouldIncludeDependencies: true,
       shouldIncludeSourceFiles: true,
       shouldIncludeSourceDependencies: true,
+      shouldIncludeLogicFunctionSources: true,
       shouldIncludePublicAssets: true,
     });
     expect(
@@ -578,6 +586,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
         shouldIncludeDependencies: true,
         shouldIncludeSourceFiles: true,
         shouldIncludeSourceDependencies: true,
+        shouldIncludeLogicFunctionSources: true,
         shouldIncludePublicAssets: true,
       });
       expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();

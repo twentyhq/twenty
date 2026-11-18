@@ -9,10 +9,11 @@ import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/ed
 
 export const useNavigationMenuItemMoveRemove = (
   section: NavigationMenuItemSection,
+  containerId: string | null = null,
 ) => {
   const { currentItems, updateItem, deleteItems } =
     useNavigationMenuItemEditController(section);
-  const items = useNavigationMenuItemEditSectionItems(section);
+  const items = useNavigationMenuItemEditSectionItems(section, containerId);
   const visibleItemIds = new Set(items.map((item) => item.id));
 
   const getSortedSiblings = (navigationMenuItemId: string) => {
