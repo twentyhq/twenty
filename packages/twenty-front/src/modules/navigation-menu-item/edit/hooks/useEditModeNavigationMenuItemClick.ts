@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
@@ -7,17 +8,12 @@ import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/displ
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 export const useEditModeNavigationMenuItemClick = () => {
   const navigate = useNavigate();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
-  const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
-    lastVisitedViewPerObjectMetadataItemState,
-  );
+  const store = useStore();
   const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
     selectedNavigationMenuItemIdInEditModeState,
   );
@@ -34,9 +30,11 @@ export const useEditModeNavigationMenuItemClick = () => {
 
     const link = getNavigationMenuItemComputedLink({
       item,
-      objectMetadataItems,
-      views,
-      lastVisitedViewPerObjectMetadataItem,
+      objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
+      views: store.get(viewsSelector.atom),
+      lastVisitedViewPerObjectMetadataItem: store.get(
+        lastVisitedViewPerObjectMetadataItemState.atom,
+      ),
     });
 
     if (isNonEmptyString(link)) {
