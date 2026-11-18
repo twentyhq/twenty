@@ -20,7 +20,10 @@ export const parseGoogleMeetEventOrThrow = (
   }
 
   const eventData = parseGoogleMeetEventDataOrThrow(pushBody?.message?.data);
-  const artifactName = eventData.transcript?.name ?? eventData.smartNote?.name;
+  const artifactName =
+    eventData.transcript?.name ??
+    eventData.smartNote?.name ??
+    eventData.recording?.name;
 
   return {
     subscriptionName: source.slice(
