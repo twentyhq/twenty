@@ -449,7 +449,7 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should accept a flat and a per member subscription plan', () => {
+  it('should accept a flat, a per member and a per connected account subscription plan', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -464,6 +464,11 @@ describe('defineApplication', () => {
             monthlyAmountCents: 1000,
             per: 'WORKSPACE_MEMBER',
             label: 'Per member',
+          },
+          account: {
+            monthlyAmountCents: 1000,
+            per: 'CONNECTED_ACCOUNT',
+            label: 'Per connected account',
           },
         },
       },

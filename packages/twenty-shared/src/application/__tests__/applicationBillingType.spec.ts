@@ -1,6 +1,6 @@
 import {
-  isRecurringChargeUnit,
   isSubscriptionPlanMonthlyAmount,
+  isSubscriptionPlanUnit,
   MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
 } from '@/application/applicationBillingType';
 
@@ -25,12 +25,15 @@ describe('isSubscriptionPlanMonthlyAmount', () => {
   });
 });
 
-describe('isRecurringChargeUnit', () => {
-  it('should accept WORKSPACE_MEMBER', () => {
-    expect(isRecurringChargeUnit('WORKSPACE_MEMBER')).toBe(true);
-  });
+describe('isSubscriptionPlanUnit', () => {
+  it.each([['WORKSPACE_MEMBER'], ['CONNECTED_ACCOUNT']])(
+    'should accept %p',
+    (unit) => {
+      expect(isSubscriptionPlanUnit(unit)).toBe(true);
+    },
+  );
 
   it.each([['CONNECTION'], [undefined]])('should reject %p', (unit) => {
-    expect(isRecurringChargeUnit(unit)).toBe(false);
+    expect(isSubscriptionPlanUnit(unit)).toBe(false);
   });
 });

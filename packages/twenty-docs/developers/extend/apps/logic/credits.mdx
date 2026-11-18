@@ -111,7 +111,7 @@ billing: {
 | Field | Description |
 |-------|-------------|
 | `monthlyAmountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
-| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member, `CONNECTED_ACCOUNT` a rate per account connected through your app |
 | `label` | What admins read for that line |
 
 A plan follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.

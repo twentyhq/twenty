@@ -7,11 +7,13 @@ import {
   isRecurringChargePeriod,
   isRecurringChargeUnit,
   isSubscriptionPlanMonthlyAmount,
+  isSubscriptionPlanUnit,
   isUsageOperationTypeValue,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
   MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
+  SUBSCRIPTION_PLAN_UNITS,
   USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
@@ -184,10 +186,10 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
 
     if (
       isDefined(subscriptionPlan.per) &&
-      !isRecurringChargeUnit(subscriptionPlan.per)
+      !isSubscriptionPlanUnit(subscriptionPlan.per)
     ) {
       errors.push(
-        `Subscription plan "${planName}" must be billed per a known unit (${RECURRING_CHARGE_UNITS.join(
+        `Subscription plan "${planName}" must be billed per a known unit (${SUBSCRIPTION_PLAN_UNITS.join(
           ', ',
         )}) or omit \`per\` for a flat fee`,
       );

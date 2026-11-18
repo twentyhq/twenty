@@ -24,6 +24,7 @@ export type {
   RecurringChargeUnit,
   RecurringCharge,
   RecurringCharges,
+  SubscriptionPlanUnit,
   SubscriptionPlan,
   SubscriptionPlans,
   ApplicationBilling,
@@ -39,6 +40,8 @@ export {
   isRecurringCharge,
   MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
   isSubscriptionPlanMonthlyAmount,
+  SUBSCRIPTION_PLAN_UNITS,
+  isSubscriptionPlanUnit,
 } from './applicationBillingType';
 export type { ApplicationCapability } from './applicationCapabilityType';
 export {
