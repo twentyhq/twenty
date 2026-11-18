@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
-import { Body, Heading } from '@/ui';
+import { Body, Heading, type HeadingLevel } from '@/ui';
 
 const SwitchRow = styled.div`
   align-items: center;
@@ -35,16 +35,22 @@ type ProgramStripProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
   action: ReactNode;
+  headingLevel?: HeadingLevel;
 };
 
 // A row, not a section: it closes the section it is slotted into.
-export function ProgramStrip({ heading, body, action }: ProgramStripProps) {
+export function ProgramStrip({
+  heading,
+  body,
+  action,
+  headingLevel = 'h3',
+}: ProgramStripProps) {
   const i18n = getServerI18n();
 
   return (
     <SwitchRow>
       <SwitchCopy>
-        <Heading as="h3" size="xs" weight="regular">
+        <Heading as={headingLevel} size="xs" weight="regular">
           {i18n._(heading)}
         </Heading>
         <Body muted size="sm">

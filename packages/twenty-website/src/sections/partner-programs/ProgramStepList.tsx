@@ -82,6 +82,7 @@ const StepList = styled.ol`
   position: relative;
 
   ${mediaUp('md')} {
+    grid-auto-rows: 1fr;
     padding: 0 ${spacing(8)};
   }
 `;

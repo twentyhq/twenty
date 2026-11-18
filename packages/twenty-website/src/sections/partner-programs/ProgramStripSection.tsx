@@ -10,7 +10,7 @@ export function ProgramStripSection(
 ) {
   return (
     <SectionShell rhythm="section" scheme="muted">
-      <ProgramStrip {...props} />
+      <ProgramStrip headingLevel="h2" {...props} />
     </SectionShell>
   );
 }
