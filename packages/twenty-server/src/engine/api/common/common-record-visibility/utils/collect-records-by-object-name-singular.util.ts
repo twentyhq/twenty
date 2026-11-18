@@ -1,22 +1,31 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
 export const collectRecordsByObjectNameSingular = ({
   records,
   flatObjectMetadata,
+  selection,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   objectNameSingulars,
 }: {
   records: ObjectRecord[];
   flatObjectMetadata: FlatObjectMetadata;
+  selection: CommonSelection;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectNameSingulars: ReadonlySet<string>;
@@ -25,36 +34,15 @@ export const collectRecordsByObjectNameSingular = ({
     string,
     Set<ObjectRecord>
   >();
-  const relationFieldsByObjectMetadataId = new Map<
-    string,
-    OrmFlatFieldMetadata[]
-  >();
-
-  const getRelationFields = (objectMetadata: FlatObjectMetadata) => {
-    const cachedRelationFields = relationFieldsByObjectMetadataId.get(
-      objectMetadata.id,
-    );
-
-    if (isDefined(cachedRelationFields)) {
-      return cachedRelationFields;
-    }
-
-    const relationFields = getFlatFieldsFromFlatObjectMetadata(
-      objectMetadata,
-      flatFieldMetadataMaps,
-    ).filter(isMorphOrRelationFlatFieldMetadata);
-
-    relationFieldsByObjectMetadataId.set(objectMetadata.id, relationFields);
-
-    return relationFields;
-  };
 
   const visit = ({
     record,
     objectMetadata,
+    selection,
   }: {
     record: ObjectRecord;
     objectMetadata: FlatObjectMetadata;
+    selection: CommonSelection;
   }) => {
     if (objectNameSingulars.has(objectMetadata.nameSingular)) {
       const collectedRecords =
@@ -68,13 +56,37 @@ export const collectRecordsByObjectNameSingular = ({
       );
     }
 
-    for (const relationField of getRelationFields(objectMetadata)) {
-      const relationValue = record[relationField.name];
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      objectMetadata,
+    );
 
-      if (
-        !isDefined(relationValue) ||
-        !isDefined(relationField.relationTargetObjectMetadataId)
-      ) {
+    for (const { key, relationSelection } of getRelationSelectionEntries(
+      selection,
+    )) {
+      const relationValue = record[key];
+
+      if (!isDefined(relationValue)) {
+        continue;
+      }
+
+      const fieldId = fieldIdByName[relationSelection.fieldName];
+
+      // Rows under a relation nobody can resolve would skip the visibility check
+      if (!isDefined(fieldId)) {
+        throw new CommonQueryRunnerException(
+          `Relation field ${relationSelection.fieldName} not found on ${objectMetadata.nameSingular}`,
+          CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(relationField.relationTargetObjectMetadataId)) {
         continue;
       }
 
@@ -92,13 +104,17 @@ export const collectRecordsByObjectNameSingular = ({
         : [relationValue];
 
       for (const relationRecord of relationRecords) {
-        visit({ record: relationRecord, objectMetadata: targetObjectMetadata });
+        visit({
+          record: relationRecord,
+          objectMetadata: targetObjectMetadata,
+          selection: relationSelection.selection,
+        });
       }
     }
   };
 
   for (const record of records) {
-    visit({ record, objectMetadata: flatObjectMetadata });
+    visit({ record, objectMetadata: flatObjectMetadata, selection });
   }
 
   return new Map(

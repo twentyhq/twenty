@@ -2037,6 +2037,7 @@ input CreateViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   viewId: UUID!
 }
@@ -5875,6 +5876,7 @@ input UpdateViewSortInput {
 
 input UpdateViewSortInputUpdates {
   direction: ViewSortDirection
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
 }
 
@@ -6540,6 +6542,7 @@ type ViewSort {
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   updatedAt: DateTime!
   viewId: UUID!
