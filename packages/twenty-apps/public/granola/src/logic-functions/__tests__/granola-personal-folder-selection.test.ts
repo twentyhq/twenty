@@ -1,12 +1,11 @@
-import {
-  kv,
-  listConnections,
-  type AppConnection,
-} from 'twenty-sdk/logic-function';
+import { kv, listConnections } from 'twenty-sdk/logic-function';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
-import { granolaPersonalConnectionsHandler } from 'src/logic-functions/granola-personal-connections';
+import {
+  OTHER_CONNECTION,
+  OWN_CONNECTION,
+} from 'src/__tests__/utils/granola-personal-connection-fixtures';
+import { GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
 import { granolaPersonalFolderSelectionHandler } from 'src/logic-functions/granola-personal-folder-selection';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 
@@ -16,27 +15,6 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   kv: { get: vi.fn(), set: vi.fn() },
 }));
 
-const OWN_CONNECTION: AppConnection = {
-  id: '486c773a-3e7e-4aa8-9b39-6fef855f94a4',
-  providerName: GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME,
-  name: 'My Granola',
-  handle: 'member@example.com',
-  externalAccountId: null,
-  scope: 'USER',
-  visibility: 'user',
-  userWorkspaceId: 'member',
-  workspaceMemberId: 'workspace-member',
-  providerType: 'api-key',
-  accessToken: 'grn_personal_test',
-  scopes: [],
-  authFailedAt: null,
-  authFailedReason: null,
-};
-const OTHER_CONNECTION: AppConnection = {
-  ...OWN_CONNECTION,
-  id: 'f41ff81d-4baa-41ff-ae3c-34e5cbc2ff51',
-  userWorkspaceId: 'other-member',
-};
 const CUSTOMER_FOLDER_ID = 'fol_customerCalls1';
 const PARTNER_FOLDER_ID = 'fol_partnerCalls12';
 const SAVED_AT = '2026-11-17T12:00:00.000Z';
@@ -49,7 +27,10 @@ const buildRoutePayload = (body: unknown) => ({
   pathParameters: {},
   isBase64Encoded: false,
   requestContext: {
-    http: { method: 'POST', path: '/granola/personal-folder-selection' },
+    http: {
+      method: 'POST',
+      path: GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_PATH,
+    },
   },
   userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
 });
@@ -61,21 +42,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('Granola personal settings', () => {
-  it('returns connection labels only for the requesting member', async () => {
-    vi.mocked(listConnections).mockResolvedValue([
-      OWN_CONNECTION,
-      OTHER_CONNECTION,
-    ]);
-
-    await expect(
-      granolaPersonalConnectionsHandler(buildRoutePayload(null), context),
-    ).resolves.toEqual({
-      success: true,
-      connections: [{ id: OWN_CONNECTION.id, name: OWN_CONNECTION.name }],
-    });
-  });
-
+describe('granolaPersonalFolderSelectionHandler', () => {
   it('rejects a folder write for someone else’s connection', async () => {
     vi.mocked(listConnections).mockResolvedValue([
       OWN_CONNECTION,
@@ -92,7 +59,7 @@ describe('Granola personal settings', () => {
         }),
         context,
       ),
-    ).resolves.toMatchObject({ success: false });
+    ).resolves.toMatchObject({ status: 404 });
     expect(fetchProvider).not.toHaveBeenCalled();
     expect(kv.set).not.toHaveBeenCalled();
   });

@@ -1,5 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+import {
+  Response,
+  type LogicFunctionExecutionContext,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import { z } from 'zod';
 
@@ -15,8 +18,12 @@ export const granolaPersonalFoldersHandler = async (
     .uuid()
     .safeParse(payload.queryStringParameters?.connectionId);
 
-  if (!connectionId.success || !isDefined(userWorkspaceId)) {
-    return { success: false };
+  if (!isDefined(userWorkspaceId)) {
+    return new Response({ error: 'AUTHENTICATION_REQUIRED' }, { status: 401 });
+  }
+
+  if (!connectionId.success) {
+    return new Response({ error: 'INVALID_CONNECTION_ID' }, { status: 400 });
   }
 
   const settings = await loadGranolaPersonalFolderSettings({
@@ -25,7 +32,7 @@ export const granolaPersonalFoldersHandler = async (
   });
 
   if (!isDefined(settings)) {
-    return { success: false };
+    return new Response({ error: 'CONNECTION_UNAVAILABLE' }, { status: 404 });
   }
 
   const { folders, selection } = settings;

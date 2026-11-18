@@ -1,6 +1,7 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import {
   kv,
+  Response,
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
@@ -28,8 +29,12 @@ export const granolaPersonalFolderSelectionHandler = async (
 ) => {
   const request = FOLDER_SELECTION_SCHEMA.safeParse(payload.body);
 
-  if (!request.success || !isDefined(userWorkspaceId)) {
-    return { success: false };
+  if (!isDefined(userWorkspaceId)) {
+    return new Response({ error: 'AUTHENTICATION_REQUIRED' }, { status: 401 });
+  }
+
+  if (!request.success) {
+    return new Response({ error: 'INVALID_FOLDER_SELECTION' }, { status: 400 });
   }
 
   const settings = await loadGranolaPersonalFolderSettings({
@@ -38,7 +43,7 @@ export const granolaPersonalFolderSelectionHandler = async (
   });
 
   if (!isDefined(settings)) {
-    return { success: false };
+    return new Response({ error: 'CONNECTION_UNAVAILABLE' }, { status: 404 });
   }
 
   const { folders, selection, selectionKey } = settings;
@@ -47,7 +52,7 @@ export const granolaPersonalFolderSelectionHandler = async (
   if (
     request.data.folderIds.some((folderId) => !availableFolders.has(folderId))
   ) {
-    return { success: false };
+    return new Response({ error: 'FOLDER_UNAVAILABLE' }, { status: 400 });
   }
 
   const folderIds = getGranolaSelectedParentFolders({

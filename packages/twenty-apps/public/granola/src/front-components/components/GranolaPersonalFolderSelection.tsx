@@ -58,10 +58,13 @@ export const GranolaPersonalFolderSelection = ({
     save(folderIds);
   };
 
-  return (
-    <>
-      <OnMountEffect onMount={loadFolders} />
-      {state.status === 'failed' && (
+  const renderFolders = () => {
+    if (state.status === 'loading') {
+      return null;
+    }
+
+    if (state.status === 'failed') {
+      return (
         <InlineBanner
           layout="compact"
           status="error"
@@ -75,38 +78,47 @@ export const GranolaPersonalFolderSelection = ({
             'Could not load your Granola folders. Check your API key in General.',
           )}
         </InlineBanner>
-      )}
-      {state.status === 'loaded' &&
-        (state.folders.length === 0 ? (
-          <GranolaFolderEmptyState />
-        ) : (
-          <>
-            <InlineBanner layout="compact" status="info">
-              {t(
-                'People who can read Call Recordings in this workspace can see the shared summaries and transcripts.',
-              )}
-            </InlineBanner>
-            <GranolaFolderTree
-              folders={state.folders}
-              selectedFolderIds={selectedFolderIds}
-              selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
-              hint={undefined}
-              onToggleFolder={(folderId, checked) =>
-                replaceSelection(
-                  checked
-                    ? [...selectedFolderIds, folderId]
-                    : selectedFolderIds.filter((id) => id !== folderId),
-                )
-              }
-              onReplaceSelection={replaceSelection}
-            />
-            <Text size="sm" color="secondary">
-              {t(
-                'Future notes from your selected folders and their subfolders will sync. Clear the selection to turn off personal sync.',
-              )}
-            </Text>
-          </>
-        ))}
+      );
+    }
+
+    if (state.folders.length === 0) {
+      return <GranolaFolderEmptyState />;
+    }
+
+    return (
+      <>
+        <InlineBanner layout="compact" status="info">
+          {t(
+            'People who can read Call Recordings in this workspace can see the shared summaries and transcripts.',
+          )}
+        </InlineBanner>
+        <GranolaFolderTree
+          folders={state.folders}
+          selectedFolderIds={selectedFolderIds}
+          selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
+          hint={undefined}
+          onToggleFolder={(folderId, checked) =>
+            replaceSelection(
+              checked
+                ? [...selectedFolderIds, folderId]
+                : selectedFolderIds.filter((id) => id !== folderId),
+            )
+          }
+          onReplaceSelection={replaceSelection}
+        />
+        <Text size="sm" color="secondary">
+          {t(
+            'Future notes from your selected folders and their subfolders will sync. Clear the selection to turn off personal sync.',
+          )}
+        </Text>
+      </>
+    );
+  };
+
+  return (
+    <>
+      <OnMountEffect onMount={loadFolders} />
+      {renderFolders()}
     </>
   );
 };

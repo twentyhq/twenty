@@ -1,5 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+import {
+  Response,
+  type LogicFunctionExecutionContext,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { GRANOLA_PERSONAL_CONNECTIONS_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
@@ -11,7 +14,7 @@ export const granolaPersonalConnectionsHandler = async (
   { userWorkspaceId }: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ) => {
   if (!isDefined(userWorkspaceId)) {
-    return { success: false };
+    return new Response({ error: 'AUTHENTICATION_REQUIRED' }, { status: 401 });
   }
 
   const connections = await listGranolaPersonalConnections(userWorkspaceId);
