@@ -1,5 +1,5 @@
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { getWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/get-web-push-vapid-key-pair.util';
+import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 
 const buildConfig = (
   env: Record<string, string>,
@@ -13,10 +13,10 @@ const TEST_KEY_PAIR = {
   privateKey: 'xKfneOVILaDn_klgtKJ9hq1G0AXyuAbp5j4W1VnsJXM',
 };
 
-describe('getWebPushVapidKeyPair', () => {
+describe('deriveWebPushVapidKeyPair', () => {
   it('should derive a stable key pair from ENCRYPTION_KEY', () => {
     expect(
-      getWebPushVapidKeyPair({
+      deriveWebPushVapidKeyPair({
         twentyConfigService: buildConfig({
           ENCRYPTION_KEY: 'test-encryption-key',
           APP_SECRET: 'app-secret',
@@ -27,7 +27,7 @@ describe('getWebPushVapidKeyPair', () => {
 
   it('should fall back to APP_SECRET on legacy instances', () => {
     expect(
-      getWebPushVapidKeyPair({
+      deriveWebPushVapidKeyPair({
         twentyConfigService: buildConfig({ APP_SECRET: 'test-encryption-key' }),
       }),
     ).toEqual(TEST_KEY_PAIR);

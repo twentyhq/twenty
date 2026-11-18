@@ -19,19 +19,33 @@ const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/integration-push';
 const ROTATED_ENDPOINT =
   'https://fcm.googleapis.com/fcm/send/integration-push-rotated';
 
-const upsertPushSubscriptionMutation = (input: {
-  endpoint: string;
-  p256dhKey: string;
-  authSecret: string;
+const upsertPushSubscription = ({
+  cookieHeader,
+  applicationServerKey,
+  endpoint = ENDPOINT,
+}: {
+  cookieHeader: string;
   applicationServerKey: string;
-}) => ({
-  query: gql`
-    mutation UpsertPushSubscription($input: UpsertPushSubscriptionInput!) {
-      upsertPushSubscription(input: $input)
-    }
-  `,
-  variables: { input },
-});
+  endpoint?: string;
+}) =>
+  postMetadataOperationWithHeaders(
+    {
+      query: gql`
+        mutation UpsertPushSubscription($input: UpsertPushSubscriptionInput!) {
+          upsertPushSubscription(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          endpoint,
+          p256dhKey: 'p256dh-key',
+          authSecret: 'auth-secret',
+          applicationServerKey,
+        },
+      },
+    },
+    { originHeader: ALLOWED_ORIGIN, cookieHeader },
+  );
 
 const signInSession = async (email: string) => {
   const sessionCookie = extractSessionCookie(
@@ -76,26 +90,20 @@ describe('push subscriptions (integration)', () => {
   it('should store the subscription on the current session and move it to the next user of the browser', async () => {
     const tim = await signInSession('tim@apple.dev');
     const jony = await signInSession('jony.ive@apple.dev');
-    const input = {
-      endpoint: ENDPOINT,
-      p256dhKey: 'p256dh-key',
-      authSecret: 'auth-secret',
-      applicationServerKey,
-    };
 
-    await postMetadataOperationWithHeaders(
-      upsertPushSubscriptionMutation(input),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
-    );
+    await upsertPushSubscription({
+      cookieHeader: tim.cookieHeader,
+      applicationServerKey,
+    });
 
     expect(await findPushSubscription()).toMatchObject({
       userSessionId: tim.sessionId,
     });
 
-    await postMetadataOperationWithHeaders(
-      upsertPushSubscriptionMutation(input),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: jony.cookieHeader },
-    );
+    await upsertPushSubscription({
+      cookieHeader: jony.cookieHeader,
+      applicationServerKey,
+    });
 
     expect(await findPushSubscription()).toMatchObject({
       userSessionId: jony.sessionId,
@@ -104,21 +112,16 @@ describe('push subscriptions (integration)', () => {
 
   it('should keep one subscription per session when the browser rotates its endpoint', async () => {
     const tim = await signInSession('tim@apple.dev');
-    const input = {
-      endpoint: ENDPOINT,
-      p256dhKey: 'p256dh-key',
-      authSecret: 'auth-secret',
-      applicationServerKey,
-    };
 
-    await postMetadataOperationWithHeaders(
-      upsertPushSubscriptionMutation(input),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
-    );
-    await postMetadataOperationWithHeaders(
-      upsertPushSubscriptionMutation({ ...input, endpoint: ROTATED_ENDPOINT }),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
-    );
+    await upsertPushSubscription({
+      cookieHeader: tim.cookieHeader,
+      applicationServerKey,
+    });
+    await upsertPushSubscription({
+      cookieHeader: tim.cookieHeader,
+      applicationServerKey,
+      endpoint: ROTATED_ENDPOINT,
+    });
 
     expect(await findPushSubscription()).toBeNull();
     expect(await findPushSubscription(ROTATED_ENDPOINT)).toMatchObject({
@@ -129,15 +132,10 @@ describe('push subscriptions (integration)', () => {
   it('should refuse a key this server did not issue', async () => {
     const tim = await signInSession('tim@apple.dev');
 
-    const response = await postMetadataOperationWithHeaders(
-      upsertPushSubscriptionMutation({
-        endpoint: ENDPOINT,
-        p256dhKey: 'p256dh-key',
-        authSecret: 'auth-secret',
-        applicationServerKey: 'not-a-server-key',
-      }),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
-    );
+    const response = await upsertPushSubscription({
+      cookieHeader: tim.cookieHeader,
+      applicationServerKey: 'not-a-server-key',
+    });
 
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
     expect(await findPushSubscription()).toBeNull();

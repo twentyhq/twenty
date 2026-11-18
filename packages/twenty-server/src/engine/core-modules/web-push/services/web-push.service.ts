@@ -15,7 +15,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { type UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
 import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
-import { getWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/get-web-push-vapid-key-pair.util';
+import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils/is-web-push-endpoint-allowed.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -53,7 +53,7 @@ export class WebPushService {
       );
     }
 
-    const { publicKey } = getWebPushVapidKeyPair({
+    const { publicKey } = deriveWebPushVapidKeyPair({
       twentyConfigService: this.twentyConfigService,
     });
 
@@ -102,16 +102,23 @@ export class WebPushService {
     tabId: string;
     isFocused: boolean;
   }): Promise<void> {
-    const key = getFocusedTabKey(workspaceId, userId);
+    const focusedTabKey = getFocusedTabKey(workspaceId, userId);
 
     if (isFocused) {
-      await this.cacheStorageService.set(key, tabId, FOCUSED_TAB_TTL_MS);
+      await this.cacheStorageService.set(
+        focusedTabKey,
+        tabId,
+        FOCUSED_TAB_TTL_MS,
+      );
 
       return;
     }
 
-    if ((await this.cacheStorageService.get<string>(key)) === tabId) {
-      await this.cacheStorageService.del(key);
+    const focusedTabId =
+      await this.cacheStorageService.get<string>(focusedTabKey);
+
+    if (focusedTabId === tabId) {
+      await this.cacheStorageService.del(focusedTabKey);
     }
   }
 }
