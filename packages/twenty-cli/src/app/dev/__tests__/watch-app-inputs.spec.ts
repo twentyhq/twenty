@@ -1,13 +1,17 @@
+import { readdirSync } from 'node:fs';
+import type * as nodeFileSystem from 'node:fs';
 import {
   mkdir,
   mkdtemp,
   realpath,
   rename,
   rm,
+  symlink,
   writeFile,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import type * as nodeOperatingSystem from 'node:os';
+import { dirname, join, parse } from 'node:path';
 
 import type * as chokidar from 'chokidar';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,7 +23,23 @@ import {
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { watchAppInputs } from '@/app/dev/watch-app-inputs';
 
-const watcherOptions = vi.hoisted(() => ({ useFsEvents: false }));
+const watcherOptions = vi.hoisted(() => ({
+  useFsEvents: false,
+  homeDirectory: '',
+}));
+
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof nodeFileSystem>();
+  return { ...actual, readdirSync: vi.fn(actual.readdirSync) };
+});
+
+vi.mock('node:os', async (importOriginal) => {
+  const actual = await importOriginal<typeof nodeOperatingSystem>();
+  return {
+    ...actual,
+    homedir: () => watcherOptions.homeDirectory || actual.homedir(),
+  };
+});
 
 vi.mock('chokidar', async (importOriginal) => {
   const actual = await importOriginal<typeof chokidar>();
@@ -45,15 +65,17 @@ const fixture = async () => {
   await mkdir(appPath);
   const onChange = vi.fn();
   const onError = vi.fn();
+  const onWarning = vi.fn();
   const watcher = await watchAppInputs({
     appPath,
     signal: new AbortController().signal,
     onChange,
     onError,
+    onWarning,
   });
   cleanups.push(watcher.close);
 
-  return { root, appPath, watcher, onChange, onError };
+  return { root, appPath, watcher, onChange, onError, onWarning };
 };
 const collect = async (file: string) =>
   (
@@ -65,6 +87,8 @@ const collect = async (file: string) =>
 describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
   beforeEach(() => {
     watcherOptions.useFsEvents = backend === 'platform';
+    watcherOptions.homeDirectory = '';
+    vi.mocked(readdirSync).mockClear();
   });
   it('observes atomic saves and new files, ignores generated output and dependency installations', async () => {
     const { appPath, onChange, onError } = await fixture();
@@ -158,9 +182,6 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(onChange).not.toHaveBeenCalled();
     await mkdir(parent);
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
-    await watcher.update([], false);
-    onChange.mockClear();
     await mkdir(directory);
     await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
     expect(onError).not.toHaveBeenCalled();
@@ -218,5 +239,77 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'after');
     await watcher.update(inputs, true);
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('never lists broad directories or their symlink aliases while collecting or attaching inputs', async () => {
+    const { root, watcher, onWarning } = await fixture();
+    const home = join(root, 'home');
+    await mkdir(home);
+    watcherOptions.homeDirectory = await realpath(home);
+    const alias = join(root, 'home-alias');
+    await symlink(home, alias);
+
+    for (const directory of [
+      home,
+      alias,
+      dirname(home),
+      tmpdir(),
+      parse(root).root,
+    ]) {
+      const inputs = await collect(join(directory, 'not-created.ts'));
+      const stamp = readWatchInputStamp({ path: directory, kind: 'directory' });
+      expect(stamp).toBeNull();
+      await watcher.update(
+        [...inputs, { path: directory, kind: 'directory', stamp }],
+        false,
+      );
+    }
+
+    expect(onWarning).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'WATCH_SCOPE_LIMITED' }),
+    );
+    expect(readdirSync).not.toHaveBeenCalled();
+  });
+
+  it('watches exact files in an excluded directory through atomic saves, deletion and creation', async () => {
+    const { root, watcher, onChange, onWarning } = await fixture();
+    const home = join(root, 'home');
+    await mkdir(home);
+    watcherOptions.homeDirectory = await realpath(home);
+    const external = join(home, 'helper.ts');
+    await writeFile(external, 'initial');
+    await watcher.update(await collect(external), true);
+    await watcher.update(await collect(external), true);
+    expect(onWarning).toHaveBeenCalledOnce();
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    onChange.mockClear();
+
+    await writeFile(join(home, 'unrelated.ts'), 'unrelated');
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(onChange).not.toHaveBeenCalled();
+
+    await writeFile(join(home, 'helper.tmp'), 'replacement');
+    await rename(join(home, 'helper.tmp'), external);
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    onChange.mockClear();
+    await rm(external);
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    onChange.mockClear();
+    await writeFile(external, 'recreated');
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+
+    const missing = join(home, 'missing', 'new.ts');
+    await watcher.update(await collect(missing), false);
+    onChange.mockClear();
+    await mkdir(dirname(missing));
+    await writeFile(missing, 'created');
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(readdirSync).not.toHaveBeenCalled();
+
+    await watcher.close();
+    onChange.mockClear();
+    await writeFile(external, 'after close');
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

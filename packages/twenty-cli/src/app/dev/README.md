@@ -26,7 +26,12 @@ unrelated ancestor directories.
 Inputs have stamps captured before reads; after attaching the watcher, changed
 stamps invalidate the result. A successful graph replaces the previous graph; a
 failure watches the last successful graph plus only that attempt's inputs.
-External directory observation is shallow.
+External inputs use exact-path polling, including missing files and deleted
+directories. Directory stamps list only immediate entries. Home and temporary
+directory roots, their ancestors and filesystem roots are excluded from external
+directory observation; symlink
+aliases use the same restriction. Known files there remain watched, and dev
+warns when missing-import recovery would require an excluded directory.
 
 ## Apply and client generation
 

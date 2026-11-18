@@ -1,6 +1,7 @@
 import { readdirSync, statSync } from 'node:fs';
 
 import { isIgnoredWatchPath } from '@/app/dev/is-ignored-watch-path';
+import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 
 import { type WatchInput } from '@/app/dev/types/watch-inputs.type';
 
@@ -10,6 +11,8 @@ export const readWatchInputStamp = ({
 }: Pick<WatchInput, 'path' | 'kind'>): string | null => {
   try {
     if (kind === 'directory') {
+      if (isBroadWatchDirectory(path)) return null;
+
       return JSON.stringify(
         readdirSync(path, { withFileTypes: true })
           .filter((entry) => !isIgnoredWatchPath(entry.name))

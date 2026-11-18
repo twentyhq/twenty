@@ -45,6 +45,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
         signal: context.signal,
         onChange: invalidate,
         onError: fail,
+        onWarning: output.warn,
       });
       try {
         await emit(
