@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import type Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -14,6 +16,9 @@ export function isStripeValidProductMetadata(
     return true;
   }
   const hasBillingPlanKey = isValidEnumValue(metadata.planKey, BillingPlanKey);
+  const isPlanKeyOptional =
+    metadata.productKey === BillingProductKey.APPLICATION &&
+    !isDefined(metadata.planKey);
   const hasPriceUsageBased = isValidEnumValue(
     metadata.priceUsageBased,
     BillingUsageType,
@@ -23,7 +28,11 @@ export function isStripeValidProductMetadata(
     BillingProductKey,
   );
 
-  return hasBillingPlanKey && hasPriceUsageBased && hasProductKey;
+  return (
+    (hasBillingPlanKey || isPlanKeyOptional) &&
+    hasPriceUsageBased &&
+    hasProductKey
+  );
 }
 
 const isValidEnumValue = <T>(

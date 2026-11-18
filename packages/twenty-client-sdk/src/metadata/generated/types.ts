@@ -11763,6 +11763,9 @@ export default {
                     "shouldIncludeDependencies": [
                         1
                     ],
+                    "shouldIncludeLogicFunctionSources": [
+                        1
+                    ],
                     "shouldIncludePublicAssets": [
                         1
                     ],
