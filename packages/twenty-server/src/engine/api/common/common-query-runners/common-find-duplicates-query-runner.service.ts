@@ -17,6 +17,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindDuplicatesOutputItem } from 'src/engine/api/common/types/common-find-duplicates-output-item.type';
 import {
@@ -43,7 +44,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   async run(
     args: CommonExtendedInput<FindDuplicatesQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<CommonFindDuplicatesOutputItem[]> {
+  ): Promise<CommonQueryRunResult<CommonFindDuplicatesOutputItem[]>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -161,18 +162,21 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         }),
       );
 
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: findDuplicatesOutput.flatMap((item) => item.records),
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
+    const relationAggregatedValues =
+      await this.processNestedRelationsHelper.processNestedRelations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
+        parentObjectRecords: findDuplicatesOutput.flatMap(
+          (item) => item.records,
+        ),
+        selection: args.selectedFieldsResult,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
+        authContext,
+        ...this.getNestedRelationsReadPathOptions(),
+      });
 
-    return findDuplicatesOutput;
+    return { result: findDuplicatesOutput, relationAggregatedValues };
   }
 
   async computeArgs(

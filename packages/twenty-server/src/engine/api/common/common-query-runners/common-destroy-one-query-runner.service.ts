@@ -12,6 +12,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -36,14 +37,15 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
   async run(
     args: CommonExtendedInput<DestroyOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.commonDestroyManyQueryRunnerService.run(
-      {
-        ...args,
-        filter: { id: { eq: args.id } },
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.commonDestroyManyQueryRunnerService.run(
+        {
+          ...args,
+          filter: { id: { eq: args.id } },
+        },
+        queryRunnerContext,
+      );
 
     if (!isDefined(result) || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -55,7 +57,7 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(

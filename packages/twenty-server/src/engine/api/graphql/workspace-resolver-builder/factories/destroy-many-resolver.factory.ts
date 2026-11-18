@@ -39,6 +39,7 @@ export class DestroyManyResolverFactory implements WorkspaceResolverBuilderFacto
       try {
         const {
           results: records,
+          relationAggregatedValues,
           args: { selectedFieldsResult },
         } = await this.commonDestroyManyQueryRunnerService.execute(
           { ...args, selectedFields },
@@ -56,6 +57,7 @@ export class DestroyManyResolverFactory implements WorkspaceResolverBuilderFacto
           typeORMObjectRecordsParser.processRecord({
             objectRecord: record,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            relationAggregatedValues,
             selection: selectedFieldsResult,
             take: 1,
             totalCount: 1,
