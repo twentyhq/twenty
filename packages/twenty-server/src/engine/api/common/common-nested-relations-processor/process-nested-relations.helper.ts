@@ -15,6 +15,11 @@ import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nes
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import {
+  type CommonAggregatedValues,
+  type CommonRelationAggregatedValues,
+  type CommonRelationsAggregatedValues,
+} from 'src/engine/api/common/types/common-aggregated-values.type';
+import {
   type CommonRelationSelection,
   type CommonSelection,
 } from 'src/engine/api/common/types/common-selection.type';
@@ -50,8 +55,6 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
-  // oxlint-disable-next-line typescript/no-explicit-any
-  parentObjectRecordsAggregatedValues?: Record<string, any>;
   selection: CommonSelection;
   shouldComputeAggregates?: boolean;
   limit: number;
@@ -66,8 +69,8 @@ export class ProcessNestedRelationsHelper {
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
-  ): Promise<void> {
-    await this.processNestedRelationsWithLimiter(
+  ): Promise<CommonRelationsAggregatedValues> {
+    return await this.processNestedRelationsWithLimiter(
       args,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
@@ -81,7 +84,6 @@ export class ProcessNestedRelationsHelper {
       flatFieldMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
-      parentObjectRecordsAggregatedValues = {},
       selection,
       shouldComputeAggregates = false,
       limit,
@@ -90,27 +92,29 @@ export class ProcessNestedRelationsHelper {
       repository,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
-  ): Promise<void> {
+  ): Promise<CommonRelationsAggregatedValues> {
     const processRelationTasks = getRelationSelectionEntries(selection).map(
-      ({ key, relationSelection }) =>
-        this.processRelation({
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          parentObjectMetadataItem,
-          parentObjectRecords,
-          parentObjectRecordsAggregatedValues,
+      async ({ key, relationSelection }) =>
+        [
           key,
-          relationSelection,
-          shouldComputeAggregates,
-          limit,
-          authContext,
-          useReplica,
-          repository,
-          relationQueryLimiter,
-        }),
+          await this.processRelation({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            parentObjectMetadataItem,
+            parentObjectRecords,
+            key,
+            relationSelection,
+            shouldComputeAggregates,
+            limit,
+            authContext,
+            useReplica,
+            repository,
+            relationQueryLimiter,
+          }),
+        ] as const,
     );
 
-    await Promise.all(processRelationTasks);
+    return Object.fromEntries(await Promise.all(processRelationTasks));
   }
 
   private async processRelation<T extends ObjectRecord = ObjectRecord>({
@@ -118,7 +122,6 @@ export class ProcessNestedRelationsHelper {
     flatFieldMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedValues,
     key,
     relationSelection,
     shouldComputeAggregates,
@@ -132,8 +135,6 @@ export class ProcessNestedRelationsHelper {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    parentObjectRecordsAggregatedValues: Record<string, any>;
     key: string;
     relationSelection: CommonRelationSelection;
     shouldComputeAggregates: boolean;
@@ -142,7 +143,11 @@ export class ProcessNestedRelationsHelper {
     useReplica: boolean;
     repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
-  }): Promise<void> {
+  }): Promise<CommonRelationAggregatedValues> {
+    const emptyAggregatedValues: CommonRelationAggregatedValues = {
+      valuesByParentRecordId: {},
+      relations: {},
+    };
     const relationFieldName = relationSelection.fieldName;
 
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
@@ -156,7 +161,7 @@ export class ProcessNestedRelationsHelper {
     });
 
     if (!sourceFieldMetadata) {
-      return;
+      return emptyAggregatedValues;
     }
 
     if (
@@ -169,7 +174,7 @@ export class ProcessNestedRelationsHelper {
         FieldMetadataType.MORPH_RELATION,
       )
     ) {
-      return;
+      return emptyAggregatedValues;
     }
 
     if (!sourceFieldMetadata.settings) {
@@ -203,9 +208,7 @@ export class ProcessNestedRelationsHelper {
     if (await targetObjectRepository.isReadDisabled()) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
-        parentObjectRecordsAggregatedValues,
         relationResults: [],
-        relationAggregatedFieldsResult: {},
         key,
         relatedRecordJoinColumnName: 'id',
         parentRecordJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
@@ -215,7 +218,7 @@ export class ProcessNestedRelationsHelper {
         selectedColumns: relationSelection.selection.columns,
       });
 
-      return;
+      return emptyAggregatedValues;
     }
 
     let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
@@ -271,7 +274,7 @@ export class ProcessNestedRelationsHelper {
             : (targetRelationName as string),
       });
 
-    const { relationResults, relationAggregatedFieldsResult } =
+    const { relationResults, valuesByParentRecordId } =
       await relationQueryLimiter(() =>
         this.findRelations({
           referenceQueryBuilder: targetObjectQueryBuilder,
@@ -295,14 +298,13 @@ export class ProcessNestedRelationsHelper {
         }),
       );
 
-    if (!isEmptyObject(relationSelection.selection.relations)) {
+    const nestedRelationsAggregatedValues =
       await this.processNestedRelationsWithLimiter(
         {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           parentObjectMetadataItem: targetObjectMetadata,
           parentObjectRecords: relationResults as ObjectRecord[],
-          parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
           selection: relationSelection.selection,
           shouldComputeAggregates,
           limit,
@@ -312,14 +314,11 @@ export class ProcessNestedRelationsHelper {
         },
         relationQueryLimiter,
       );
-    }
 
     // After the nested load: a to-one relation is assigned as a copy, so nested rows must already be on it
     this.assignRelationResults({
       parentRecords: parentObjectRecords,
-      parentObjectRecordsAggregatedValues,
       relationResults,
-      relationAggregatedFieldsResult,
       key,
       relatedRecordJoinColumnName:
         relationType === RelationType.ONE_TO_MANY
@@ -329,6 +328,11 @@ export class ProcessNestedRelationsHelper {
       relationType,
       selectedColumns: relationSelection.selection.columns,
     });
+
+    return {
+      valuesByParentRecordId,
+      relations: nestedRelationsAggregatedValues,
+    };
   }
 
   private getTargetObjectMetadata({
@@ -408,23 +412,23 @@ export class ProcessNestedRelationsHelper {
     targetObjectNameSingular: string;
     relationSelection: CommonRelationSelection;
     relationQueryParser: GraphqlQueryParser;
+  }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
-  }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
+    relationResults: any[];
+    valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'];
+  }> {
     if (ids.length === 0) {
-      return { relationResults: [], relationAggregatedFieldsResult: {} };
+      return { relationResults: [], valuesByParentRecordId: {} };
     }
 
     // Qualified so a relation join added by orderBy or filter can't make it ambiguous
     const qualifiedColumn = `"${targetObjectNameSingular}".${column}`;
-    const { aggregates, relations } = relationSelection.selection;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    let relationAggregatedFieldsResult: Record<string, any> = {};
+    const columnWithoutQuotes = column.replace(/["']/g, '');
+    const { aggregates } = relationSelection.selection;
+    let valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'] =
+      {};
 
-    // Nested relations alone also trigger it, as they do the root aggregate query
-    if (
-      shouldComputeAggregates &&
-      (!isEmptyObject(aggregates) || !isEmptyObject(relations))
-    ) {
+    if (shouldComputeAggregates && !isEmptyObject(aggregates)) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
       this.applyNestedRelationFilterToBuilder({
@@ -441,26 +445,22 @@ export class ProcessNestedRelationsHelper {
       });
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
-        .addSelect(qualifiedColumn, column.replace(/["']/g, ''))
+        .addSelect(qualifiedColumn, columnWithoutQuotes)
         .andWhere(`${qualifiedColumn} IN (:...ids)`, { ids })
         .groupBy(qualifiedColumn)
-        .getRawMany();
+        .getRawMany<CommonAggregatedValues>();
 
-      relationAggregatedFieldsResult = aggregatedFieldsValues.reduce<
-        Record<string, unknown>
-      >((acc, item) => {
-        const columnWithoutQuotes = column.replace(/["']/g, '');
-        const key = String(item[columnWithoutQuotes]);
-        const { [column]: _, ...itemWithoutColumn } = item;
-
-        acc[key] = itemWithoutColumn;
-
-        return acc;
-      }, {});
+      valuesByParentRecordId = Object.fromEntries(
+        aggregatedFieldsValues.map(
+          ({ [columnWithoutQuotes]: parentRecordId, ...values }) => [
+            String(parentRecordId),
+            values,
+          ],
+        ),
+      );
     }
 
     const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
-    const columnWithoutQuotes = column.replace(/["']/g, '');
 
     const findOptionsWithJoinColumn = {
       ...queryBuilderOptions,
@@ -474,7 +474,7 @@ export class ProcessNestedRelationsHelper {
         .take(perParentLimit * parentRecordsCount)
         .getMany();
 
-      return { relationResults: result, relationAggregatedFieldsResult };
+      return { relationResults: result, valuesByParentRecordId };
     }
 
     const allowedRelationRecordIds =
@@ -517,7 +517,7 @@ export class ProcessNestedRelationsHelper {
 
     const result = await hydrationQueryBuilder.getMany();
 
-    return { relationResults: result, relationAggregatedFieldsResult };
+    return { relationResults: result, valuesByParentRecordId };
   }
 
   private async findRelationRecordIdsLimitedPerParent({
@@ -614,9 +614,7 @@ export class ProcessNestedRelationsHelper {
 
   private assignRelationResults({
     parentRecords,
-    parentObjectRecordsAggregatedValues,
     relationResults,
-    relationAggregatedFieldsResult,
     key,
     relatedRecordJoinColumnName,
     parentRecordJoinColumnName,
@@ -625,11 +623,7 @@ export class ProcessNestedRelationsHelper {
   }: {
     parentRecords: ObjectRecord[];
     // oxlint-disable-next-line typescript/no-explicit-any
-    parentObjectRecordsAggregatedValues: Record<string, any>;
-    // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    relationAggregatedFieldsResult: Record<string, any>;
     key: string;
     relatedRecordJoinColumnName: string;
     parentRecordJoinColumnName: string;
@@ -652,7 +646,5 @@ export class ProcessNestedRelationsHelper {
         selectedColumns,
       });
     }
-
-    parentObjectRecordsAggregatedValues[key] = relationAggregatedFieldsResult;
   }
 }
