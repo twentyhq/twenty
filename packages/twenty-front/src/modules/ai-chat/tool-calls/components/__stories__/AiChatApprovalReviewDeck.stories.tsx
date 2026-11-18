@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatApprovalOutcome } from '@/ai-chat/tool-calls/components/AiChatApprovalOutcome';
 import { AiChatApprovalReviewDeck } from '@/ai-chat/tool-calls/components/AiChatApprovalReviewDeck';
-import { AiChatApprovalReviewExample } from '@/ai-chat/components/__stories__/AiChatApprovalReviewExample';
+import { AiChatApprovalReviewExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalReviewExample';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 

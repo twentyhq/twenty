@@ -4,8 +4,8 @@ import { FormFieldRow } from 'twenty-ui/components/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatTimePickerExample } from '@/ai-chat/components/__stories__/AiChatTimePickerExample';
-import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai-chat/components/__stories__/aiChatTimePickerFixture';
+import { AiChatTimePickerExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatTimePickerExample';
+import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai-chat/tool-calls/components/__stories__/aiChatTimePickerFixture';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

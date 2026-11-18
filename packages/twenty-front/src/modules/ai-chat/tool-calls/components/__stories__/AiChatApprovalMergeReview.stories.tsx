@@ -3,7 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatApprovalMergeReview } from '@/ai-chat/tool-calls/components/AiChatApprovalMergeReview';
-import { AiChatApprovalMergeReviewExample } from '@/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample';
+import { AiChatApprovalMergeReviewExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 

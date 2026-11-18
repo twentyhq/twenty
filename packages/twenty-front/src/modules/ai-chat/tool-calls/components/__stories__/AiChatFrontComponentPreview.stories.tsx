@@ -10,7 +10,7 @@ import {
   frontComponentPreviewReports,
   getFrontComponentPreviewMock,
   seedFrontComponentPreviewWorkspace,
-} from '@/ai-chat/components/__mocks__/aiChatFrontComponentPreviewMocks';
+} from '@/ai-chat/tool-calls/components/__mocks__/aiChatFrontComponentPreviewMocks';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';

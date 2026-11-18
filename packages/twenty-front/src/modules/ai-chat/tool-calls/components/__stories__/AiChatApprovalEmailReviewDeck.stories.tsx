@@ -2,9 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatApprovalEmailControlledExample } from '@/ai-chat/components/__stories__/AiChatApprovalEmailControlledExample';
-import { AiChatApprovalEmailReviewExample } from '@/ai-chat/components/__stories__/AiChatApprovalEmailReviewExample';
-import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/components/__stories__/aiChatApprovalEmailReviewFixtures';
+import { AiChatApprovalEmailControlledExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalEmailControlledExample';
+import { AiChatApprovalEmailReviewExample } from '@/ai-chat/tool-calls/components/__stories__/AiChatApprovalEmailReviewExample';
+import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/tool-calls/components/__stories__/aiChatApprovalEmailReviewFixtures';
 import { type AiChatApprovalReviewEmail } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmail';
 import { type AiChatApprovalReviewStatus } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewStatus';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

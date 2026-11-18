@@ -11,7 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiChatSchedulingAvailability } from '@/ai-chat/tool-calls/types/AiChatSchedulingAvailability';
 import { type AiChatSchedulingSlot } from '@/ai-chat/tool-calls/types/AiChatSchedulingSlot';
-import { hasMixedTimeZoneOffsets } from '@/ai-chat/utils/hasMixedTimeZoneOffsets';
+import { hasMixedTimeZoneOffsets } from '@/ai-chat/tool-calls/utils/hasMixedTimeZoneOffsets';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
 import { resolveTimeFormat } from '@/localization/utils/resolveTimeFormat';

@@ -25,7 +25,7 @@ import {
   frontComponentPreviewHandlers,
   getFrontComponentPreviewMock,
   seedFrontComponentPreviewWorkspace,
-} from '@/ai-chat/components/__mocks__/aiChatFrontComponentPreviewMocks';
+} from '@/ai-chat/tool-calls/components/__mocks__/aiChatFrontComponentPreviewMocks';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
