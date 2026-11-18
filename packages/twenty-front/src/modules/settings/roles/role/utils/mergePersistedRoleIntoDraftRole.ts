@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const getDraftRoleSyncedWithPersistedRole = ({
+export const mergePersistedRoleIntoDraftRole = ({
   draftRole,
   initialDraftRole,
   persistedRole,

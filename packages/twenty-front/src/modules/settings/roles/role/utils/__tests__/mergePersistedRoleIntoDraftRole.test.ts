@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
-import { getDraftRoleSyncedWithPersistedRole } from '@/settings/roles/role/utils/getDraftRoleSyncedWithPersistedRole';
+import { mergePersistedRoleIntoDraftRole } from '@/settings/roles/role/utils/mergePersistedRoleIntoDraftRole';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const PERSISTED_ROLE: RoleWithPartialMembers = {
@@ -14,10 +14,10 @@ const REFRESHED_ROLE: RoleWithPartialMembers = {
   canReadAllObjectRecords: false,
 };
 
-describe('getDraftRoleSyncedWithPersistedRole', () => {
+describe('mergePersistedRoleIntoDraftRole', () => {
   it('should return the persisted role when the draft is for another role', () => {
     expect(
-      getDraftRoleSyncedWithPersistedRole({
+      mergePersistedRoleIntoDraftRole({
         draftRole: DEFAULT_SETTINGS_DRAFT_ROLE,
         initialDraftRole: undefined,
         persistedRole: PERSISTED_ROLE,
@@ -27,7 +27,7 @@ describe('getDraftRoleSyncedWithPersistedRole', () => {
 
   it('should return the persisted role when the draft has no unsaved changes', () => {
     expect(
-      getDraftRoleSyncedWithPersistedRole({
+      mergePersistedRoleIntoDraftRole({
         draftRole: PERSISTED_ROLE,
         initialDraftRole: PERSISTED_ROLE,
         persistedRole: REFRESHED_ROLE,
@@ -39,7 +39,7 @@ describe('getDraftRoleSyncedWithPersistedRole', () => {
     const editedDraftRole = { ...PERSISTED_ROLE, label: 'Edited' };
 
     expect(
-      getDraftRoleSyncedWithPersistedRole({
+      mergePersistedRoleIntoDraftRole({
         draftRole: editedDraftRole,
         initialDraftRole: PERSISTED_ROLE,
         persistedRole: REFRESHED_ROLE,
