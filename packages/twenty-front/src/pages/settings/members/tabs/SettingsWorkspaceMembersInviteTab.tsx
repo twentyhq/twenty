@@ -33,6 +33,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   GetWorkspaceInvitationsDocument,
   PermissionFlagType,
+  type WorkspaceInvitation,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
@@ -127,15 +128,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const canCopyInvitationLink = ({
     expiresAt,
     roleId,
-  }: {
-    expiresAt: string;
-    roleId: string | null;
-  }) =>
+  }: Pick<WorkspaceInvitation, 'expiresAt' | 'roleId'>) =>
     !isEmailDeliveryConfigured &&
     !isExpired(expiresAt) &&
     (hasRolesPermission || !isDefined(roleId));
 
-  const canResendInvitation = ({ expiresAt }: { expiresAt: string }) =>
+  const canResendInvitation = ({
+    expiresAt,
+  }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
     isEmailDeliveryConfigured || isExpired(expiresAt);
 
   const getExpiresAtText = (expiresAt: string) => {

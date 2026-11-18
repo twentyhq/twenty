@@ -16,7 +16,6 @@ export const WorkspaceInvitationCopyLinkButton = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  // Fetched ahead of the click: Safari only allows clipboard writes synchronously within the click
   const { data } = useQuery(GetWorkspaceInvitationLinkDocument, {
     variables: { appTokenId },
   });

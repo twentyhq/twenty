@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
@@ -293,7 +294,6 @@ export class WorkspaceInvitationService {
       appTokenIdToInvalidate: appToken.id,
     });
 
-    // Resend does not check the caller's ROLES permission, so links only come from getWorkspaceInvitationLink
     return { ...result, inviteLinks: [] };
   }
 
@@ -335,7 +335,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    if (!isDefined(appToken) || !appToken.context?.email) {
+    if (!isDefined(appToken) || !isNonEmptyString(appToken.context?.email)) {
       throw new WorkspaceInvitationException(
         'Invalid appToken',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,
