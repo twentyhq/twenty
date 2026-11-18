@@ -510,7 +510,9 @@ export class ApplicationManifestMigrationService {
                 ?.runOnUserPreferences ?? false,
           }
         : {}),
-      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+      ...(isDefined(defaultRoleId)
+        ? { defaultRoleId, requestedRoleId: defaultRoleId }
+        : {}),
     });
   }
 }
