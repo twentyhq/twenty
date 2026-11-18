@@ -25,13 +25,7 @@ export const BrowserNotificationPermissionCard = () => {
   };
 
   const allowNotifications = async () => {
-    const nextPermission = await Notification.requestPermission();
-
-    setPermission(nextPermission);
-
-    if (nextPermission !== 'granted') {
-      return;
-    }
+    setPermission(await Notification.requestPermission());
 
     await subscribeToPushNotifications().catch(() =>
       enqueueToast({

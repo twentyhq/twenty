@@ -9,7 +9,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export const useIsWebPushAvailable = () => {
+export const useIsWebPushEnabled = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );

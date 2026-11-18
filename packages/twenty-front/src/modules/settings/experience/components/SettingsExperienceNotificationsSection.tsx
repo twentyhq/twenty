@@ -4,9 +4,8 @@ import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { BrowserNotificationPermissionCard } from '@/settings/experience/components/BrowserNotificationPermissionCard';
-import { InboxNotificationLevelPicker } from '@/settings/experience/components/InboxNotificationLevelPicker';
-import { InboxNotificationPreviewSwitch } from '@/settings/experience/components/InboxNotificationPreviewSwitch';
-import { useIsWebPushAvailable } from '@/web-push/hooks/useIsWebPushAvailable';
+import { InboxNotificationPreferences } from '@/settings/experience/components/InboxNotificationPreferences';
+import { useIsWebPushEnabled } from '@/web-push/hooks/useIsWebPushEnabled';
 
 const StyledNotificationControls = styled.div`
   display: flex;
@@ -16,9 +15,9 @@ const StyledNotificationControls = styled.div`
 
 export const SettingsExperienceNotificationsSection = () => {
   const { t } = useLingui();
-  const isWebPushAvailable = useIsWebPushAvailable();
+  const isWebPushEnabled = useIsWebPushEnabled();
 
-  if (!isWebPushAvailable) {
+  if (!isWebPushEnabled) {
     return null;
   }
 
@@ -30,8 +29,7 @@ export const SettingsExperienceNotificationsSection = () => {
       />
       <StyledNotificationControls>
         <BrowserNotificationPermissionCard />
-        <InboxNotificationLevelPicker />
-        <InboxNotificationPreviewSwitch />
+        <InboxNotificationPreferences />
       </StyledNotificationControls>
     </Section.Root>
   );

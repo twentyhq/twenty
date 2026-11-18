@@ -1,3 +1,4 @@
+import { getAgentChatPushNotificationTag } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const closeInboxPushNotifications = async (threadIds: string[]) => {
@@ -13,7 +14,9 @@ export const closeInboxPushNotifications = async (threadIds: string[]) => {
 
   const notifications = await Promise.all(
     threadIds.map((threadId) =>
-      registration.getNotifications({ tag: `inbox-${threadId}` }),
+      registration.getNotifications({
+        tag: getAgentChatPushNotificationTag(threadId),
+      }),
     ),
   );
 

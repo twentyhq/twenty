@@ -2,43 +2,37 @@ import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UPDATE_INBOX_PRESENCE } from '@/web-push/graphql/mutations/updateInboxPresence';
-import { useIsWebPushAvailable } from '@/web-push/hooks/useIsWebPushAvailable';
+import { UPDATE_FOCUSED_TAB } from '@/web-push/graphql/mutations/updateFocusedTab';
 import { logError } from '~/utils/logError';
 
-const HEARTBEAT_INTERVAL_MS = 20_000;
+const FOCUSED_TAB_HEARTBEAT_INTERVAL_MS = 20_000;
 
 const isDocumentFocused = () =>
   document.visibilityState === 'visible' && document.hasFocus();
 
-export const InboxPresenceEffect = () => {
-  const isWebPushAvailable = useIsWebPushAvailable();
+export const FocusedTabEffect = () => {
   const [tabId] = useState(() => uuidv4());
-  const [updateInboxPresence] = useMutation(UPDATE_INBOX_PRESENCE);
+  const [updateFocusedTab] = useMutation(UPDATE_FOCUSED_TAB);
 
   useEffect(() => {
-    if (!isWebPushAvailable) {
-      return;
-    }
-
-    const reportPresence = (isFocused: boolean) => {
-      updateInboxPresence({
+    const reportIsTabFocused = (isFocused: boolean) => {
+      updateFocusedTab({
         variables: { input: { tabId, isFocused } },
         context: { fetchOptions: { keepalive: true } },
       }).catch(logError);
     };
 
-    const reportFocus = () => reportPresence(true);
-    const reportBlur = () => reportPresence(false);
-    const reportVisibility = () => reportPresence(isDocumentFocused());
+    const reportFocus = () => reportIsTabFocused(true);
+    const reportBlur = () => reportIsTabFocused(false);
+    const reportVisibility = () => reportIsTabFocused(isDocumentFocused());
 
     reportVisibility();
 
     const intervalId = setInterval(() => {
       if (isDocumentFocused()) {
-        reportPresence(true);
+        reportIsTabFocused(true);
       }
-    }, HEARTBEAT_INTERVAL_MS);
+    }, FOCUSED_TAB_HEARTBEAT_INTERVAL_MS);
 
     window.addEventListener('focus', reportFocus);
     window.addEventListener('blur', reportBlur);
@@ -50,7 +44,7 @@ export const InboxPresenceEffect = () => {
       window.removeEventListener('blur', reportBlur);
       document.removeEventListener('visibilitychange', reportVisibility);
     };
-  }, [isWebPushAvailable, tabId, updateInboxPresence]);
+  }, [tabId, updateFocusedTab]);
 
   return null;
 };
