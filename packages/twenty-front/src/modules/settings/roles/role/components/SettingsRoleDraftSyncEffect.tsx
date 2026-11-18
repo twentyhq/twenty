@@ -1,23 +1,22 @@
+import { getDraftRoleSyncedWithPersistedRole } from '@/settings/roles/role/utils/getDraftRoleSyncedWithPersistedRole';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { type PrimitiveAtom, useStore } from 'jotai';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsRoleDraftSyncEffectProps = {
   roleId: string;
-  draftRoleAtom: PrimitiveAtom<RoleWithPartialMembers>;
-  initialDraftRoleAtom: PrimitiveAtom<RoleWithPartialMembers | undefined>;
 };
 
 // SettingsRolesQueryEffect only fills the saved role, while role permission
 // components render the draft, so the draft must be seeded and kept in sync
 export const SettingsRoleDraftSyncEffect = ({
   roleId,
-  draftRoleAtom,
-  initialDraftRoleAtom,
 }: SettingsRoleDraftSyncEffectProps) => {
   const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
@@ -25,29 +24,29 @@ export const SettingsRoleDraftSyncEffect = ({
   );
 
   const store = useStore();
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
 
   useEffect(() => {
     if (!isDefined(settingsPersistedRole)) {
       return;
     }
 
+    const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
+      roleId,
+      routedFlowStateScopeId,
+    );
+    const initialDraftRoleAtom = settingsInitialDraftRoleFamilyState.getAtom(
+      roleId,
+      routedFlowStateScopeId,
+    );
     const currentDraftRole = store.get(draftRoleAtom);
     const initialDraftRole = store.get(initialDraftRoleAtom);
 
-    const isUninitialized = currentDraftRole.id !== settingsPersistedRole.id;
-    const hasNoUnsavedChanges =
-      isDefined(initialDraftRole) &&
-      isDeeplyEqual(currentDraftRole, initialDraftRole);
-
-    const nextDraftRole =
-      isUninitialized || hasNoUnsavedChanges
-        ? settingsPersistedRole
-        : {
-            ...currentDraftRole,
-            workspaceMembers: settingsPersistedRole.workspaceMembers,
-            agents: settingsPersistedRole.agents,
-            apiKeys: settingsPersistedRole.apiKeys,
-          };
+    const nextDraftRole = getDraftRoleSyncedWithPersistedRole({
+      draftRole: currentDraftRole,
+      initialDraftRole,
+      persistedRole: settingsPersistedRole,
+    });
 
     if (!isDeeplyEqual(currentDraftRole, nextDraftRole)) {
       store.set(draftRoleAtom, nextDraftRole);
@@ -56,7 +55,7 @@ export const SettingsRoleDraftSyncEffect = ({
     if (!isDeeplyEqual(initialDraftRole, settingsPersistedRole)) {
       store.set(initialDraftRoleAtom, settingsPersistedRole);
     }
-  }, [draftRoleAtom, initialDraftRoleAtom, settingsPersistedRole, store]);
+  }, [roleId, routedFlowStateScopeId, settingsPersistedRole, store]);
 
   return null;
 };

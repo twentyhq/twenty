@@ -7,13 +7,9 @@ import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 
 export const SettingsRoleEdit = () => {
   const { roleId } = useParams();
-  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
 
   const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
@@ -29,17 +25,7 @@ export const SettingsRoleEdit = () => {
   return (
     <SettingsRoleRouteGuard roleId={roleId}>
       <SettingsRoleEditEffect roleId={roleId} />
-      <SettingsRoleDraftSyncEffect
-        roleId={roleId}
-        draftRoleAtom={settingsDraftRoleFamilyState.getAtom(
-          roleId,
-          routedFlowStateScopeId,
-        )}
-        initialDraftRoleAtom={settingsInitialDraftRoleFamilyState.getAtom(
-          roleId,
-          routedFlowStateScopeId,
-        )}
-      />
+      <SettingsRoleDraftSyncEffect roleId={roleId} />
       <SettingsRole roleId={roleId} isCreateMode={isCreateMode} />
     </SettingsRoleRouteGuard>
   );
