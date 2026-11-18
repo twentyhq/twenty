@@ -1,4 +1,4 @@
-import { LazyMarkdownRenderer } from '@/ai-chat/components/LazyMarkdownRenderer';
+import { LazyMarkdownRenderer } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import {
   type DeveloperLinks,
   SettingsApplicationAboutSidebar,

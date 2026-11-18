@@ -5,11 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAddAiChatThreadParticipants } from '@/ai-chat/hooks/useAddAiChatThreadParticipants';
 import { useFetchAiChatThreadsPage } from '@/ai-chat/hooks/useFetchAiChatThreadsPage';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/hooks/useRefreshAiChatThreadPermissions';
-import { aiChatUsageFamilyState } from '@/ai-chat/states/aiChatUsageFamilyState';
+import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
 import { mergeLoadedAiChatThread } from '@/ai-chat/utils/mergeLoadedAiChatThread';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { getAiChatUsageFromThread } from '@/ai-chat/utils/getAiChatUsageFromThread';
+import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 
 export const useLoadAiChatThread = () => {
   const store = useStore();
