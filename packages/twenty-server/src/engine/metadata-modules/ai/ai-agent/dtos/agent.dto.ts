@@ -71,6 +71,13 @@ export class AgentDTO {
   @Field()
   isActive: boolean;
 
+  @IsBoolean()
+  @Field()
+  isPrivate: boolean;
+
+  @HideField()
+  createdByUserWorkspaceId: string | null;
+
   @HideField()
   workspaceId: string;
 

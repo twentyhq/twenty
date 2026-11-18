@@ -105,6 +105,11 @@ export class UpdateAgentInput {
   @Field(() => Boolean, { nullable: true })
   isActive?: boolean | null;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean | null;
+
   @IsArray()
   @IsObject({ each: true })
   @IsOptional()

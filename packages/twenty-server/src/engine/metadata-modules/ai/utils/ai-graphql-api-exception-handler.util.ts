@@ -57,6 +57,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
+      case AiExceptionCode.AGENT_PRIVACY_CHANGE_NOT_ALLOWED:
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
       case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
       case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:

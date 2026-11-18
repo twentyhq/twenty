@@ -28,6 +28,8 @@ const appAgent: FlatAgent = {
   triggers: [],
   isSystem: true,
   isActive: true,
+  isPrivate: false,
+  createdByUserWorkspaceId: null,
   overrides: null,
   navigationMenuItemIds: [],
   navigationMenuItemUniversalIdentifiers: [],
@@ -69,6 +71,7 @@ const updateAsWorkspace = (
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    userWorkspaceId: undefined,
   });
 
 describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
@@ -133,6 +136,7 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceCustomApplicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      userWorkspaceId: undefined,
     });
 
     expect(flatAgentToUpdate.overrides).toBeNull();

@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
@@ -8,6 +9,10 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -17,6 +22,7 @@ export type FromCreateAgentInputToFlatAgentArgs = {
   createAgentInput: CreateAgentInput;
   isSystem: boolean;
   workspaceId: string;
+  userWorkspaceId: string | undefined;
   flatApplication: FlatApplication;
   flatRoleMaps: AllFlatEntityMaps['flatRoleMaps'];
 };
@@ -25,6 +31,7 @@ export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   isSystem,
   workspaceId,
+  userWorkspaceId,
   flatApplication,
   flatRoleMaps,
 }: FromCreateAgentInputToFlatAgentArgs): {
@@ -36,6 +43,18 @@ export const fromCreateAgentInputToFlatAgent = ({
       rawCreateAgentInput,
       ['name', 'label', 'icon', 'description', 'prompt', 'modelId', 'roleId'],
     );
+
+  const isPrivate = createAgentInput.isPrivate ?? false;
+
+  if (isPrivate && !isDefined(userWorkspaceId)) {
+    throw new AiException(
+      'A private agent can only be created by a workspace member',
+      AiExceptionCode.AGENT_PRIVACY_CHANGE_NOT_ALLOWED,
+      {
+        userFriendlyMessage: msg`Only a workspace member can create a private agent.`,
+      },
+    );
+  }
 
   const createdAt = new Date().toISOString();
   const agentId = v4();
@@ -62,6 +81,8 @@ export const fromCreateAgentInputToFlatAgent = ({
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     triggers: createAgentInput.triggers ?? [],
+    isPrivate,
+    createdByUserWorkspaceId: userWorkspaceId ?? null,
     navigationMenuItemIds: [],
     navigationMenuItemUniversalIdentifiers: [],
     createdAt,

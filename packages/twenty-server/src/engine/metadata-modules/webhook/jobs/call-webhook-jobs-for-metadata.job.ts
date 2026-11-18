@@ -158,6 +158,12 @@ export class CallWebhookJobsForMetadataJob {
       });
     }
 
+    if (metadataName === 'agent') {
+      return events.filter(
+        (event) => getWebhookEventRecord(event)?.isPrivate === false,
+      );
+    }
+
     if (metadataName === 'workflow') {
       return events.filter(
         (event) =>

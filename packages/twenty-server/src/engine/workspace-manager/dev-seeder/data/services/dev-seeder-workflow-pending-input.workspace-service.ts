@@ -197,6 +197,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         responseFormat: { type: 'text' },
       },
       workspaceId,
+      undefined,
     );
 
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {

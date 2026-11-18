@@ -367,13 +367,15 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         timeoutSeconds: logicFunction.timeoutSeconds,
       }),
     ),
-    agents: findOwned(flatEntityMaps.flatAgentMaps).map((agent) => ({
-      id: agent.id,
-      universalIdentifier: agent.universalIdentifier,
-      label: agent.label,
-      icon: agent.icon,
-      description: agent.description,
-    })),
+    agents: findOwned(flatEntityMaps.flatAgentMaps)
+      .filter((agent) => !agent.isPrivate)
+      .map((agent) => ({
+        id: agent.id,
+        universalIdentifier: agent.universalIdentifier,
+        label: agent.label,
+        icon: agent.icon,
+        description: agent.description,
+      })),
     skills: findOwned(flatEntityMaps.flatSkillMaps).map((skill) => ({
       id: skill.id,
       universalIdentifier: skill.universalIdentifier,

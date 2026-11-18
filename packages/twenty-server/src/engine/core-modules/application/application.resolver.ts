@@ -36,6 +36,8 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -192,13 +194,15 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [AgentDTO])
-  agents(
+  async agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     if (
       !canCallerReachApplication({
@@ -211,10 +215,14 @@ export class ApplicationResolver {
       return [];
     }
 
-    return context.loaders.agentsByApplicationIdLoader.load({
+    const agents = await context.loaders.agentsByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
     });
+
+    return agents.filter((agent) =>
+      isAgentVisibleToUser({ agent, userWorkspaceId }),
+    );
   }
 
   @ResolveField(() => [FrontComponentDTO])

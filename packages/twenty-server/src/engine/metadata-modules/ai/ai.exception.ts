@@ -42,6 +42,7 @@ export enum AiExceptionCode {
   RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED = 'RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED',
   RUN_AS_WORKSPACE_MEMBER_NOT_FOUND = 'RUN_AS_WORKSPACE_MEMBER_NOT_FOUND',
   RUN_AGENT_NOT_ALLOWED = 'RUN_AGENT_NOT_ALLOWED',
+  AGENT_PRIVACY_CHANGE_NOT_ALLOWED = 'AGENT_PRIVACY_CHANGE_NOT_ALLOWED',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
   EVALUATION_MODEL_NOT_FOUND = 'EVALUATION_MODEL_NOT_FOUND',
@@ -127,6 +128,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Workspace member not found.`;
     case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       return msg`This action is not available for your request.`;
+    case AiExceptionCode.AGENT_PRIVACY_CHANGE_NOT_ALLOWED:
+      return msg`Only the member who owns an agent can change who sees it.`;
     case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:
