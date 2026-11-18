@@ -24,7 +24,7 @@ export const getApplicationSourceResources = ({
     },
   })),
   ...(manifest.logicFunctions ?? []).map(({ sourceFiles, ...definition }) => {
-    const logicFunction = flatLogicFunctionMaps
+    const logicFunction = isDefined(flatLogicFunctionMaps)
       ? findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatLogicFunctionMaps,
           universalIdentifier: definition.universalIdentifier,

@@ -73,11 +73,11 @@ describe('logic function source export', () => {
     }),
   });
   const run = ({
-    include = true,
+    shouldInclude = true,
     budget = 100_000,
     exportedFiles = [],
   }: {
-    include?: boolean;
+    shouldInclude?: boolean;
     budget?: number;
     exportedFiles?: typeof files;
   } = {}) =>
@@ -85,7 +85,7 @@ describe('logic function source export', () => {
       workspaceId: identifier,
       applicationUniversalIdentifier: identifier,
       applicationAllFlatEntityMaps: flatMaps(),
-      shouldIncludeLogicFunctionSources: include,
+      shouldIncludeLogicFunctionSources: shouldInclude,
       fileBudget: { remainingBytes: budget },
       exportedFiles,
       readSource,
@@ -113,7 +113,7 @@ describe('logic function source export', () => {
   });
 
   it('keeps old clients opted out without reading storage', async () => {
-    expect(await run({ include: false })).toEqual({
+    expect(await run({ shouldInclude: false })).toEqual({
       logicFunctions: [],
       files: [],
       coverage: [],
