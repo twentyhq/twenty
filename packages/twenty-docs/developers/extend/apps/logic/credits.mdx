@@ -80,6 +80,42 @@ How they are raised:
 - Only on monthly subscriptions. A workspace on a yearly plan is not charged a `MONTH` fee, rather than being charged once for the whole year.
 - Bounded. A declared rate above \$100, or a per-member charge whose rate multiplied by the member count would exceed \$1,000 for the period, is refused and not raised. The platform raises these itself, so it will not write a debit it cannot justify.
 
+## Subscription plans
+
+<Warning>
+  Declaration only for now. The build validates `billing.subscriptions`, but the platform does not bill these plans yet.
+</Warning>
+
+A subscription plan is a recurring price in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice.
+
+```ts src/application-config.ts
+billing: {
+  subscriptions: {
+    platform: {
+      monthlyAmountCents: 2000,
+      label: 'Platform',
+    },
+    seat: {
+      monthlyAmountCents: 1000,
+      yearlyAmountCents: 10_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Field | Description |
+|-------|-------------|
+| `monthlyAmountCents` | Price per month in USD cents, a positive integer |
+| `yearlyAmountCents` | Optional price per year in USD cents. Defaults to 12 times `monthlyAmountCents` |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
+| `label` | What admins read for that line |
+
+A plan follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays the yearly amount once a year.
+
+The build rejects an amount that is not a positive integer or exceeds 99,999,999 cents (declared or derived for the year), an unknown `per`, and an empty `label`.
+
 ## Billable operations
 
 An operation is what your app charges for as it works. Each entry names an operation you choose and the label shown to workspace admins in **Settings > Usage** and to you in your app's monitoring **Credits used** chart. It can optionally map onto one of the platform's billing categories.
