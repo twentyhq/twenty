@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_VIEW_SORT_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-view-sort-relation-target-field-metadata-id-upgrade-command-name.constant';
+import { ADD_VIEW_SORT_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-view-sort-relation-target-field-metadata-id-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewSortDirection } from 'twenty-shared/types';
@@ -66,8 +66,10 @@ export class ViewSortEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid', default: null })
   relationTargetFieldMetadataId: string | null;
 
+  // Not CASCADE: a sync deletes fields before it updates view sorts, so a cascade would drop a sort
+  // the same sync repoints. fieldRelationTargetViewSortsOnDelete deletes the sorts left on the field.
   @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })

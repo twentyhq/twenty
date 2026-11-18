@@ -344,4 +344,30 @@ describe('View sort ordering by a field of the related record', () => {
       input: { idToDelete: revenueFieldId },
     });
   });
+
+  it('removes the sort when an active related record field is deleted', async () => {
+    const scoreFieldId = await createField({
+      objectMetadataId: testContext.companyObjectId,
+      name: 'score',
+      type: FieldMetadataType.NUMBER,
+    });
+
+    const {
+      data: { createViewSort },
+    } = await createRelationTargetViewSort({
+      viewId: testContext.dealViewId,
+      fieldMetadataId: testContext.dealCompanyFieldId,
+      relationTargetFieldMetadataId: scoreFieldId,
+      expectToFail: false,
+    });
+
+    await deleteOneFieldMetadata({
+      expectToFail: false,
+      input: { idToDelete: scoreFieldId },
+    });
+
+    expect(await findViewSortIds(testContext.dealViewId)).not.toContain(
+      createViewSort.id,
+    );
+  });
 });
