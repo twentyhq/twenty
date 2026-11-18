@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { AiModelTierBars } from '@/ai-chat/composer/components/AiModelTierBars';
+import { AiModelTierBars } from '@/ai-chat/components/AiModelTierBars';
 
 describe('AiModelTierBars', () => {
   it('preserves the accessible button label', () => {
