@@ -40,12 +40,12 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
           results: {
             records,
             aggregatedValues,
-            relationAggregatedValues,
             totalCount,
             pageInfo,
             orderByValuesByRecordId,
             selectedFieldsResult,
           },
+          relationAggregatedValues,
           args: processedArgs,
         } = await this.commonFindManyQueryRunnerService.execute(
           { ...args, selectedFields },

@@ -10,6 +10,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -35,14 +36,15 @@ export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerSe
   async run(
     args: CommonExtendedInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.commonUpdateManyQueryRunnerService.run(
-      {
-        ...args,
-        filter: { id: { eq: args.id } },
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.commonUpdateManyQueryRunnerService.run(
+        {
+          ...args,
+          filter: { id: { eq: args.id } },
+        },
+        queryRunnerContext,
+      );
 
     if (!result || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -54,7 +56,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerSe
       );
     }
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(

@@ -1576,13 +1576,13 @@ msgstr "생성 후에는 애플리케이션 변수 범위를 변경할 수 없�
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "애플리케이션은 다음 필드를 업데이트할 수 없습니다: {fieldsList}."
 
-#. js-lingui-id: irwO8L
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr "프런트엔드 구성 요소 소스를 복원하려면 애플리케이션을 다시 적용하거나 게시하세요."
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr ""
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6295,6 +6295,11 @@ msgstr "함수를 찾을 수 없음."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "함수 공급자가 사용 중입니다. 몇 분 후에 다시 시도하세요."
+
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
