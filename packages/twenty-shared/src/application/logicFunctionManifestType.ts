@@ -1,3 +1,4 @@
+import { type SourceFileManifest } from '@/application/sourceFileManifestType';
 import { type EventTriggerManifestSettings } from '@/application/eventTriggerManifestSettingsType';
 import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
@@ -18,6 +19,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;
+  sourceFiles?: SourceFileManifest[];
   builtHandlerPath: string;
   builtHandlerChecksum: string;
   handlerName: string;
