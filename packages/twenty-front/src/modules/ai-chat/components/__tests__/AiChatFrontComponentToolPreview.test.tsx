@@ -20,7 +20,7 @@ jest.mock('@/ai-chat/components/AiChatFrontComponentPreview', () => ({
   ),
 }));
 
-jest.mock('@/ai-chat/components/ThinkingToolStepRow', () => ({
+jest.mock('@/ai-chat/thinking-steps/components/ThinkingToolStepRow', () => ({
   ThinkingToolStepRow: () => <span>Preview tool result</span>,
 }));
 
