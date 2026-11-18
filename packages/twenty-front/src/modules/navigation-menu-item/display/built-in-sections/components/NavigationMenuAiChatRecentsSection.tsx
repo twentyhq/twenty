@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
+import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThreadsMaxCount';
