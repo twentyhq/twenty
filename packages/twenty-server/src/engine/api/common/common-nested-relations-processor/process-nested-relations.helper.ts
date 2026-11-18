@@ -401,7 +401,10 @@ export class ProcessNestedRelationsHelper {
     perParentLimit: number;
     parentRecordsCount: number;
     targetObjectNameSingular: string;
-    relationSelection: CommonRelationSelection;
+    relationSelection: Pick<
+      CommonRelationSelection,
+      'selection' | 'filter' | 'orderBy'
+    >;
     relationQueryParser: GraphqlQueryParser;
   }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any

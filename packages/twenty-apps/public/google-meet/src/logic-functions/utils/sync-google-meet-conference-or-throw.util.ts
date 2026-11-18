@@ -11,6 +11,7 @@ import { findGoogleMeetConferenceTitle } from 'src/logic-functions/utils/find-go
 import { findGoogleMeetSmartNotesMarkdown } from 'src/logic-functions/utils/find-google-meet-smart-notes-markdown.util';
 import { getGoogleMeetSpace } from 'src/logic-functions/utils/get-google-meet-space.util';
 import { listGoogleMeetParticipants } from 'src/logic-functions/utils/list-google-meet-participants.util';
+import { listGoogleMeetRecordings } from 'src/logic-functions/utils/list-google-meet-recordings.util';
 import { listGoogleMeetSmartNotes } from 'src/logic-functions/utils/list-google-meet-smart-notes.util';
 import { listGoogleMeetTranscriptEntries } from 'src/logic-functions/utils/list-google-meet-transcript-entries.util';
 import { listGoogleMeetTranscripts } from 'src/logic-functions/utils/list-google-meet-transcripts.util';
@@ -30,7 +31,7 @@ export const syncGoogleMeetConferenceOrThrow = async ({
     'name' | 'startTime' | 'endTime' | 'space'
   >;
 }): Promise<GoogleMeetConferenceSyncResult> => {
-  const [transcripts, smartNotes] = await Promise.all([
+  const [transcripts, smartNotes, recordings] = await Promise.all([
     listGoogleMeetTranscripts({
       accessToken,
       conferenceRecordName: conferenceRecord.name,
@@ -39,9 +40,17 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       accessToken,
       conferenceRecordName: conferenceRecord.name,
     }),
+    listGoogleMeetRecordings({
+      accessToken,
+      conferenceRecordName: conferenceRecord.name,
+    }),
   ]);
 
-  if (!isNonEmptyArray(transcripts) && !isNonEmptyArray(smartNotes)) {
+  if (
+    !isNonEmptyArray(transcripts) &&
+    !isNonEmptyArray(smartNotes) &&
+    !isNonEmptyArray(recordings)
+  ) {
     return { outcome: 'NO_ARTIFACT', shouldGenerateAiSummary: false };
   }
 
@@ -78,6 +87,10 @@ export const syncGoogleMeetConferenceOrThrow = async ({
     participants,
     transcriptEntries: transcriptEntriesByTranscript.flat(),
   });
+  // Google lists recordings by start time; a call keeps its first video.
+  const recordingToImport = recordings.find(
+    ({ state }) => state === 'FILE_GENERATED',
+  );
 
   const outcome = await upsertCallRecordingOrThrow({
     coreApiClient,
@@ -93,18 +106,24 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       }),
       summaryMarkdown,
       transcriptEntries,
+      hasRecordingFile: isDefined(recordingToImport),
       calendarEvent,
     }),
   });
 
+  if (outcome === 'SKIPPED_DELETED') {
+    return { outcome, shouldGenerateAiSummary: false };
+  }
+
   return {
     outcome,
-    shouldGenerateAiSummary:
-      outcome !== 'SKIPPED_DELETED' &&
-      shouldGenerateGoogleMeetAiSummary({
-        transcriptEntries,
-        summaryMarkdown,
-        smartNotes,
-      }),
+    shouldGenerateAiSummary: shouldGenerateGoogleMeetAiSummary({
+      transcriptEntries,
+      summaryMarkdown,
+      smartNotes,
+    }),
+    ...(isDefined(recordingToImport)
+      ? { recordingNameToImport: recordingToImport.name }
+      : {}),
   };
 };

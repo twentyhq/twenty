@@ -213,17 +213,17 @@ export abstract class CommonBaseQueryRunnerService<
     queryResult,
     ...resultGettersArgs
   }: CommonQueryResultProcessingArgs<Output>): Promise<Output> {
-    return (
-      Array.isArray(queryResult)
-        ? await this.commonResultGettersService.processRecordArray({
-            records: queryResult as ObjectRecord[],
-            ...resultGettersArgs,
-          })
-        : await this.commonResultGettersService.processRecord({
-            record: queryResult as ObjectRecord,
-            ...resultGettersArgs,
-          })
-    ) as Output;
+    if (Array.isArray(queryResult)) {
+      return (await this.commonResultGettersService.processRecordArray({
+        records: queryResult as ObjectRecord[],
+        ...resultGettersArgs,
+      })) as Output;
+    }
+
+    return (await this.commonResultGettersService.processRecord({
+      record: queryResult as ObjectRecord,
+      ...resultGettersArgs,
+    })) as Output;
   }
 
   protected getResultRecords(results: Output): ObjectRecord[] {

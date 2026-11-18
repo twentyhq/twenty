@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { type DeveloperLinks } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
 
-jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({
     text,
     noImage,

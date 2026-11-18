@@ -41,7 +41,7 @@ const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
   isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   createdAt: '2026-11-02T00:00:00.000Z',
-  defaultRoleId: null,
+  requestedRoleId: null,
   settingsCustomTabFrontComponentId: null,
   healthCheckLogicFunctionId: null,
   availablePackages: {},
