@@ -57,7 +57,7 @@ import { getAiChatInitialRecipients } from '@/ai-chat/utils/getAiChatInitialReci
 import { getAiChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai-chat/utils/getAiChatNewThreadDirectMessageWorkspaceMemberId';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai-chat/utils/getParticipantMentionsFromSerializedDocument';
 import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/utils/isAiChatAssistantMentionedInSerializedDocument';
-import { isAiChatCreditsExhaustedError } from '@/ai-chat/utils/isAiChatCreditsExhaustedError';
+import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai-chat/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
