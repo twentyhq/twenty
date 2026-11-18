@@ -5,7 +5,7 @@ import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/util
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
-import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
+import { getUserSessionVariantFromImpersonationContext } from 'src/engine/guards/utils/get-user-session-variant-from-impersonation-context.util';
 
 type AuthPrincipalRequest = {
   user?: unknown;
@@ -64,9 +64,9 @@ export const classifyAuthPrincipal = (
       return carriesUserWithoutOtherPrincipal(request)
         ? {
             kind: 'userSession',
-            variant: isImpersonating(request.impersonationContext)
-              ? 'impersonated'
-              : 'standard',
+            variant: getUserSessionVariantFromImpersonationContext(
+              request.impersonationContext,
+            ),
           }
         : undefined;
     case JwtTokenTypeEnum.PLAYGROUND:
