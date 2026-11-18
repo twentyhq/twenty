@@ -1,4 +1,4 @@
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
 export type InboxThreadListItemData = Pick<
   AiChatThreadRecord,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { OrderByDirection } from 'twenty-shared/types';
+import { type ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
@@ -17,6 +17,7 @@ import { CommonRestoreManyQueryRunnerService } from 'src/engine/api/common/commo
 import { CommonRestoreOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-restore-one-query-runner.service';
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
 import {
   GraphqlDirectExecutionException,
   GraphqlDirectExecutionExceptionCode,
@@ -48,11 +49,50 @@ import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resol
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
-const CONNECTION_RESOLVER_METHOD_NAMES = new Set<string>([
-  RESOLVER_METHOD_NAMES.FIND_MANY,
-  RESOLVER_METHOD_NAMES.FIND_DUPLICATES,
-  RESOLVER_METHOD_NAMES.GROUP_BY,
-]);
+const SELECTION_KIND_BY_RESOLVER_METHOD_NAME: Record<
+  WorkspaceResolverBuilderMethodNames,
+  'record' | 'connection'
+> = {
+  findMany: 'connection',
+  findDuplicates: 'connection',
+  groupBy: 'connection',
+  findOne: 'record',
+  createOne: 'record',
+  createMany: 'record',
+  updateOne: 'record',
+  updateMany: 'record',
+  deleteOne: 'record',
+  deleteMany: 'record',
+  destroyOne: 'record',
+  destroyMany: 'record',
+  restoreOne: 'record',
+  restoreMany: 'record',
+  mergeMany: 'record',
+};
+
+const toRecordResult = ({
+  results,
+  relationAggregatedValues,
+}: {
+  results: ObjectRecord;
+  relationAggregatedValues: CommonRelationsAggregatedValues;
+}): GraphqlResolverResult => ({
+  kind: 'record',
+  record: results,
+  relationAggregatedValues,
+});
+
+const toRecordsResult = ({
+  results,
+  relationAggregatedValues,
+}: {
+  results: ObjectRecord[];
+  relationAggregatedValues: CommonRelationsAggregatedValues;
+}): GraphqlResolverResult => ({
+  kind: 'records',
+  records: results,
+  relationAggregatedValues,
+});
 
 @Injectable()
 export class WorkspaceResolverRunnerService {
@@ -88,9 +128,10 @@ export class WorkspaceResolverRunnerService {
     const queryRunnerContext = createQueryRunnerContext({
       workspaceSchemaBuilderContext,
     });
-    const buildSelectedFields = CONNECTION_RESOLVER_METHOD_NAMES.has(method)
-      ? buildConnectionSelectedFields
-      : buildRecordSelectedFields;
+    const buildSelectedFields =
+      SELECTION_KIND_BY_RESOLVER_METHOD_NAME[method] === 'connection'
+        ? buildConnectionSelectedFields
+        : buildRecordSelectedFields;
     const selectedFields = buildSelectedFields({
       fieldSelections,
       flatObjectMetadata: workspaceSchemaBuilderContext.flatObjectMetadata,
@@ -104,11 +145,14 @@ export class WorkspaceResolverRunnerService {
       case RESOLVER_METHOD_NAMES.FIND_MANY: {
         assertFindManyArgs(args);
 
-        const { results, args: processedArgs } =
-          await this.commonFindManyQueryRunnerService.execute(
-            { ...args, selectedFields },
-            queryRunnerContext,
-          );
+        const {
+          results,
+          relationAggregatedValues,
+          args: processedArgs,
+        } = await this.commonFindManyQueryRunnerService.execute(
+          { ...args, selectedFields },
+          queryRunnerContext,
+        );
 
         return {
           kind: 'connection',
@@ -118,7 +162,7 @@ export class WorkspaceResolverRunnerService {
               ...results.aggregatedValues,
               totalCount: results.totalCount,
             },
-            relationAggregatedValues: results.relationAggregatedValues,
+            relationAggregatedValues,
             hasNextPage: results.pageInfo.hasNextPage,
             hasPreviousPage: results.pageInfo.hasPreviousPage,
             order: processedArgs.orderBy,
@@ -129,7 +173,7 @@ export class WorkspaceResolverRunnerService {
       case RESOLVER_METHOD_NAMES.FIND_DUPLICATES: {
         assertFindDuplicatesArgs(args);
 
-        const { results } =
+        const { results, relationAggregatedValues } =
           await this.commonFindDuplicatesQueryRunnerService.execute(
             { ...args, selectedFields },
             queryRunnerContext,
@@ -140,6 +184,7 @@ export class WorkspaceResolverRunnerService {
           connections: results.map((duplicates) => ({
             records: duplicates.records,
             connectionValues: { totalCount: duplicates.totalCount },
+            relationAggregatedValues,
             hasNextPage: duplicates.hasNextPage,
             hasPreviousPage: duplicates.hasPreviousPage,
             order: [{ id: OrderByDirection.AscNullsFirst }],
@@ -149,7 +194,11 @@ export class WorkspaceResolverRunnerService {
       case RESOLVER_METHOD_NAMES.GROUP_BY: {
         assertGroupByArgs(args);
 
-        const { results } = await this.commonGroupByQueryRunnerService.execute(
+        const {
+          results,
+          relationAggregatedValues,
+          args: processedArgs,
+        } = await this.commonGroupByQueryRunnerService.execute(
           {
             ...args,
             selectedFields,
@@ -168,156 +217,121 @@ export class WorkspaceResolverRunnerService {
               ...groupValues,
               totalCount: Number(groupValues.totalCount ?? 0),
             },
+            relationAggregatedValues,
             hasNextPage: false,
             hasPreviousPage: false,
-            order: args.orderByForRecords ?? [],
+            order: processedArgs.orderByForRecords ?? [],
           })),
         };
       }
       case RESOLVER_METHOD_NAMES.FIND_ONE:
         assertFindOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonFindOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonFindOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.CREATE_ONE:
         assertCreateOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonCreateOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonCreateOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.UPDATE_ONE:
         assertUpdateOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonUpdateOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonUpdateOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.DELETE_ONE:
         assertDeleteOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonDeleteOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonDeleteOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.DESTROY_ONE:
         assertDestroyOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonDestroyOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonDestroyOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.RESTORE_ONE:
         assertRestoreOneArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonRestoreOneQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonRestoreOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.MERGE_MANY:
         assertMergeManyArgs(args);
 
-        return {
-          kind: 'record',
-          record: (
-            await this.commonMergeManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordResult(
+          await this.commonMergeManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.CREATE_MANY:
         assertCreateManyArgs(args);
 
-        return {
-          kind: 'records',
-          records: (
-            await this.commonCreateManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordsResult(
+          await this.commonCreateManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.UPDATE_MANY:
         assertUpdateManyArgs(args);
 
-        return {
-          kind: 'records',
-          records: (
-            await this.commonUpdateManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordsResult(
+          await this.commonUpdateManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.DELETE_MANY:
         assertDeleteManyArgs(args);
 
-        return {
-          kind: 'records',
-          records: (
-            await this.commonDeleteManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordsResult(
+          await this.commonDeleteManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.DESTROY_MANY:
         assertDestroyManyArgs(args);
 
-        return {
-          kind: 'records',
-          records: (
-            await this.commonDestroyManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordsResult(
+          await this.commonDestroyManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       case RESOLVER_METHOD_NAMES.RESTORE_MANY:
         assertRestoreManyArgs(args);
 
-        return {
-          kind: 'records',
-          records: (
-            await this.commonRestoreManyQueryRunnerService.execute(
-              { ...args, selectedFields },
-              queryRunnerContext,
-            )
-          ).results,
-        };
+        return toRecordsResult(
+          await this.commonRestoreManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            queryRunnerContext,
+          ),
+        );
       default:
         throw new GraphqlDirectExecutionException(
           `Unknown method: ${method}`,

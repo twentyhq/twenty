@@ -225,7 +225,7 @@ describe('buildRecordSelectedFields', () => {
           arguments: { first: 1 },
           selectedFields: {
             fields: { id: true },
-            aggregates: ['edges'],
+            aggregates: [],
             relations: {},
           },
         },
@@ -234,7 +234,7 @@ describe('buildRecordSelectedFields', () => {
           arguments: { first: 2 },
           selectedFields: {
             fields: { phones: { primaryPhoneNumber: true } },
-            aggregates: ['edges'],
+            aggregates: [],
             relations: {},
           },
         },
@@ -270,7 +270,7 @@ describe('buildRecordSelectedFields', () => {
           arguments: { first: 1 },
           selectedFields: {
             fields: { id: true },
-            aggregates: ['edges', 'totalCount'],
+            aggregates: ['totalCount'],
             relations: {
               company: {
                 fieldName: 'company',
@@ -338,7 +338,7 @@ describe('buildConnectionSelectedFields', () => {
       }),
     ).toStrictEqual({
       fields: { id: true },
-      aggregates: ['totalCount', 'pageInfo', 'edges'],
+      aggregates: ['totalCount'],
       relations: {
         people: {
           fieldName: 'people',
@@ -365,7 +365,7 @@ describe('buildConnectionSelectedFields', () => {
       }),
     ).toStrictEqual({
       fields: { id: true, name: true },
-      aggregates: ['edges'],
+      aggregates: [],
       relations: {},
     });
   });

@@ -16,8 +16,16 @@ export type GraphqlConnectionResult = {
 };
 
 export type GraphqlResolverResult =
-  | { kind: 'record'; record: ObjectRecord }
-  | { kind: 'records'; records: ObjectRecord[] }
+  | {
+      kind: 'record';
+      record: ObjectRecord;
+      relationAggregatedValues?: CommonRelationsAggregatedValues;
+    }
+  | {
+      kind: 'records';
+      records: ObjectRecord[];
+      relationAggregatedValues?: CommonRelationsAggregatedValues;
+    }
   | { kind: 'connection'; connection: GraphqlConnectionResult }
   | { kind: 'connections'; connections: GraphqlConnectionResult[] }
   | { kind: 'groupByConnections'; connections: GraphqlConnectionResult[] };

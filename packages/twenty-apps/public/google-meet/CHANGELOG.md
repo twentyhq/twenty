@@ -9,4 +9,4 @@ All notable changes to this application are documented in this file.
   matching Calendar Event.
 - Write an AI summary for calls without Gemini notes. Each member can turn off
   AI summaries for their own calls in App preferences.
-- Recordings (video) are not imported yet.
+- Import the video of each call's first recording, up to 500 MB.

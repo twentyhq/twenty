@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { ObjectRecord } from 'twenty-shared/types';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -20,7 +21,7 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
-export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerService<
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
@@ -29,7 +30,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     return this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,

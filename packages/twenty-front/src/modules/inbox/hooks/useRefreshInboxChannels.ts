@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxDefaultSelectedThreadListSource';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { isInboxSelectedThreadListSourceAccessible } from '@/inbox/utils/isInboxSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';

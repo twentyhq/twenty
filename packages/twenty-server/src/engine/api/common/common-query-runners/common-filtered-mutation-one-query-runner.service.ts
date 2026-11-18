@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { type CommonFilteredMutationManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-filtered-mutation-many-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -10,6 +10,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import {
   CommonExtendedInput,
   CommonInput,
@@ -25,7 +26,7 @@ type FilteredMutationOneQueryArgs =
   | DestroyOneQueryArgs
   | RestoreOneQueryArgs;
 
-export abstract class CommonFilteredMutationOneQueryRunnerService extends CommonBaseQueryRunnerService<
+export abstract class CommonFilteredMutationOneQueryRunnerService extends CommonRecordQueryRunnerService<
   FilteredMutationOneQueryArgs,
   ObjectRecord
 > {
@@ -38,14 +39,15 @@ export abstract class CommonFilteredMutationOneQueryRunnerService extends Common
   async run(
     args: CommonExtendedInput<FilteredMutationOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.manyQueryRunnerService.run(
-      {
-        ...args,
-        filter: { id: { eq: args.id } },
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.manyQueryRunnerService.run(
+        {
+          ...args,
+          filter: { id: { eq: args.id } },
+        },
+        queryRunnerContext,
+      );
 
     if (!isDefined(result) || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -57,7 +59,7 @@ export abstract class CommonFilteredMutationOneQueryRunnerService extends Common
       );
     }
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(
