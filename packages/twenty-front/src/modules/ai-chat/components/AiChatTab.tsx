@@ -8,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AiChatHasBeenOpenedEffect } from '@/ai-chat/components/AiChatHasBeenOpenedEffect';
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/threads/components/AiChatThreadMarkAsReadEffect';
+import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatThreadOpenViewEffect';
 import { AiChatStreamingPartsDiffSyncEffect } from '@/ai-chat/messages/components/AiChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai-chat/composer/components/AiChatNewThreadRecipientBar';
@@ -66,6 +67,7 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AiChatHasBeenOpenedEffect />
+      <AiChatThreadOpenViewEffect threadId={threadId} />
       <AiChatThreadMarkAsReadEffect />
       <AiChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (

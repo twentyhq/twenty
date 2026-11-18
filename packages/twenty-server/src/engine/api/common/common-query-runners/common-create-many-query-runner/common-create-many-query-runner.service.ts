@@ -164,21 +164,23 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
-    const relationAggregatedValues = await this.processNestedRelations({
-      args,
-      records: upsertedRecords,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext,
-      repository,
-      nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
-    });
+    const relationAggregatedValues =
+      await this.processUpsertedRecordsNestedRelations({
+        args,
+        records: upsertedRecords,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        authContext,
+        repository,
+        nestedRelationsReadPathOptions:
+          this.getNestedRelationsReadPathOptions(),
+      });
 
     return { result: upsertedRecords, relationAggregatedValues };
   }
 
-  private async processNestedRelations({
+  private async processUpsertedRecordsNestedRelations({
     args,
     records,
     flatObjectMetadata,

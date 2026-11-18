@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -35,7 +34,6 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const {
-      authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -84,17 +82,11 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    const relationAggregatedValues =
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: objectRecords,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+    });
 
     return { result: objectRecords[0], relationAggregatedValues };
   }
