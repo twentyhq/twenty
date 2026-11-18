@@ -9,6 +9,11 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
 export const collectRecordsByObjectNameSingular = ({
   records,
@@ -70,8 +75,10 @@ export const collectRecordsByObjectNameSingular = ({
 
       // Rows under a relation nobody can resolve would skip the visibility check
       if (!isDefined(fieldId)) {
-        throw new Error(
+        throw new CommonQueryRunnerException(
           `Relation field ${relationSelection.fieldName} not found on ${objectMetadata.nameSingular}`,
+          CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
 
