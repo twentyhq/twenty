@@ -124,11 +124,6 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         (item) =>
           item.engineComponentKey !==
-          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
-      )
-      .filter(
-        (item) =>
-          item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )

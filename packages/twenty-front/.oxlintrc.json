@@ -140,14 +140,20 @@
       {
         "directions": [
           {
-            "sourcePath": "/src/modules/ai/",
+            "sourcePath": "/src/modules/ai-chat/",
             "forbiddenImportPrefix": "@/inbox/",
             "ignoredSourcePaths": [
               "/__tests__/",
               "/__stories__/",
-              "/src/modules/ai/testing/"
+              "/src/modules/ai-chat/testing/"
             ],
             "reason": "the AI chat must not depend on the inbox. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+          },
+          {
+            "sourcePath": "/src/modules/ai/",
+            "forbiddenImportPrefix": "@/ai-chat/",
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "modules/ai holds the AI code used outside the chat, so it must not depend on the chat. Move the code to modules/ai-chat."
           }
         ]
       }

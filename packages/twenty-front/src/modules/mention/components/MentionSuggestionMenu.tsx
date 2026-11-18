@@ -10,7 +10,7 @@ import { isTeammateMentionSearchResult } from '@/mention/utils/isTeammateMention
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
+import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvatar';
 
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
