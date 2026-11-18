@@ -13,7 +13,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to match Google Meet conferences, writes imported transcripts and notes to Call Recordings, and summarizes calls without Gemini notes.',
+    'Reads calendar events to match Google Meet conferences, writes imported transcripts, notes and videos to Call Recordings, and summarizes calls without Gemini notes.',
   recordsPermissions: {
     canReadAllRecords: false,
     canCreateAllRecords: false,
@@ -37,7 +37,10 @@ export default defineApplicationRole({
       },
     ],
   },
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.AI,
+    SystemPermissionFlag.UPLOAD_FILE,
+  ],
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,

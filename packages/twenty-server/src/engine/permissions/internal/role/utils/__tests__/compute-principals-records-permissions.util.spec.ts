@@ -403,7 +403,7 @@ describe('computePrincipalsRecordsPermissions', () => {
         byId: {
           'application-id': {
             id: 'application-id',
-            defaultRoleId: 'default-role-id',
+            requestedRoleId: 'default-role-id',
             sourceType: ApplicationRegistrationSourceType.LOCAL,
             deletedAt: null,
           },
@@ -458,7 +458,7 @@ describe('computePrincipalsRecordsPermissions', () => {
             byId: {
               'application-id': {
                 id: 'application-id',
-                defaultRoleId: applicationRoleId,
+                requestedRoleId: applicationRoleId,
                 sourceType,
                 deletedAt: null,
               },
@@ -553,13 +553,13 @@ const flatApplicationMaps: PermissionsPrincipalsRoleMaps['flatApplicationMaps'] 
     byId: {
       'owning-application-id': {
         id: 'owning-application-id',
-        defaultRoleId: 'owning-application-role-id',
+        requestedRoleId: 'owning-application-role-id',
         sourceType: ApplicationRegistrationSourceType.LOCAL,
         deletedAt: null,
       },
       'other-application-id': {
         id: 'other-application-id',
-        defaultRoleId: 'other-application-role-id',
+        requestedRoleId: 'other-application-role-id',
         sourceType: ApplicationRegistrationSourceType.LOCAL,
         deletedAt: null,
       },

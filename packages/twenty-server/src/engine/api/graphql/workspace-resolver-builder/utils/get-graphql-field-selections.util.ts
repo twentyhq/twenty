@@ -53,7 +53,7 @@ const isSelectionIncluded = ({
     return directive.name.value !== 'include' || conditionValue !== false;
   });
 
-const collectFieldSelections = ({
+const collectFieldSelectionsOrThrow = ({
   selectionSet,
   info,
   selectionsByResponseKey,
@@ -73,7 +73,7 @@ const collectFieldSelections = ({
     }
 
     if (selection.kind === Kind.INLINE_FRAGMENT) {
-      collectFieldSelections({
+      collectFieldSelectionsOrThrow({
         selectionSet: selection.selectionSet,
         info,
         selectionsByResponseKey: selectionsByResponseKey,
@@ -84,13 +84,19 @@ const collectFieldSelections = ({
     if (selection.kind === Kind.FRAGMENT_SPREAD) {
       const fragment = info.fragments[selection.name.value];
 
-      if (isDefined(fragment)) {
-        collectFieldSelections({
-          selectionSet: fragment.selectionSet,
-          info,
-          selectionsByResponseKey: selectionsByResponseKey,
-        });
+      if (!isDefined(fragment)) {
+        throw new CommonQueryRunnerException(
+          `Unknown fragment "${selection.name.value}"`,
+          CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
       }
+
+      collectFieldSelectionsOrThrow({
+        selectionSet: fragment.selectionSet,
+        info,
+        selectionsByResponseKey: selectionsByResponseKey,
+      });
       continue;
     }
 
@@ -125,7 +131,7 @@ const collectFieldSelections = ({
     selectionsByResponseKey.set(responseKey, fieldSelection);
 
     if (isDefined(selection.selectionSet)) {
-      collectFieldSelections({
+      collectFieldSelectionsOrThrow({
         selectionSet: selection.selectionSet,
         info,
         selectionsByResponseKey: fieldSelection.selectionsByResponseKey,
@@ -151,7 +157,7 @@ export const getGraphqlFieldSelections = (
 
   for (const fieldNode of info.fieldNodes) {
     if (isDefined(fieldNode.selectionSet)) {
-      collectFieldSelections({
+      collectFieldSelectionsOrThrow({
         selectionSet: fieldNode.selectionSet,
         info,
         selectionsByResponseKey: selectionsByResponseKey,
