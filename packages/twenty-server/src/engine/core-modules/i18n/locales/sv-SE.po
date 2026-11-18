@@ -116,11 +116,6 @@ msgstr "{hostnameCount} värdnamn hittades för domänen \"{domainName}\". Förv
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} för {aggregateFieldLabel}"
 
-#. js-lingui-id: nzKj4z
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "{senderName} in {threadLabel}"
-msgstr ""
-
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6106,12 +6101,6 @@ msgstr "Formulärfält måste ha unika namn"
 msgid "Form action must have at least one field"
 msgstr "Formuläråtgärd måste ha minst ett fält"
 
-#. js-lingui-id: CjVkbV
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "Former member"
-msgstr ""
-
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6715,18 +6704,6 @@ msgstr "Pågående"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Inkorgen är inte aktiverad för den här arbetsytan."
-
-#. js-lingui-id: XB5CcM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notification preview"
-msgstr ""
-
-#. js-lingui-id: t20nDR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notifications"
-msgstr ""
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -9408,11 +9385,6 @@ msgstr "Ny"
 msgid "New backup codes were generated for your account"
 msgstr "Nya reservkoder skapades för ditt konto"
 
-#. js-lingui-id: hIQkLb
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New chat"
-msgstr ""
-
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9428,11 +9400,6 @@ msgstr "Ny chatt"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
-
-#. js-lingui-id: mTBAsF
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -9760,11 +9727,6 @@ msgstr "Position för NoteTarget-post"
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget target"
 msgstr "NoteTarget-mål"
-
-#. js-lingui-id: OEmEnk
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Notifications can only be turned on from a signed-in browser."
-msgstr ""
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14779,16 +14741,6 @@ msgstr "Denna omfattning för applikationsvariabel stöds inte."
 msgid "This billing arrangement has invalid settings."
 msgstr "Det här faktureringsarrangemanget har ogiltiga inställningar."
 
-#. js-lingui-id: CHSdNs
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser subscribed to notifications with an outdated key. Reload the page to try again."
-msgstr ""
-
-#. js-lingui-id: 7F4yS5
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser's notification service is not supported."
-msgstr ""
-
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15849,11 +15801,6 @@ msgstr "För många administratörskandidater hittades."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "För många deltagare: {attendeeCount}. Högsta tillåtna antal är {MAX_EMAIL_RECIPIENTS}."
-
-#. js-lingui-id: QarV/J
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Too many browsers receive notifications for this account."
-msgstr ""
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17379,12 +17326,6 @@ msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "Huruvida aktuella deltagarregler motiverar detta mål"
 
-#. js-lingui-id: qjkyvm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Whether inbox notifications show the message text"
-msgstr ""
-
 #. js-lingui-id: rJ6Dbr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17414,12 +17355,6 @@ msgstr "Om detta är en vanlig chatt eller ett kanoniskt direktmeddelande"
 msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "Huruvida detta meddelande är ett osänt utkast synkroniserat från leverantören"
-
-#. js-lingui-id: zXbRSm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Which new inbox messages send a notification"
-msgstr ""
 
 #. js-lingui-id: 5JE8rv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

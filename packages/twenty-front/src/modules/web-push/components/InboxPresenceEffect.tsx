@@ -1,11 +1,14 @@
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
 
-import { INBOX_PRESENCE_HEARTBEAT_INTERVAL_MS } from '@/web-push/constants/InboxPresenceHeartbeatIntervalMs';
 import { UPDATE_INBOX_PRESENCE } from '@/web-push/graphql/mutations/updateInboxPresence';
 import { useIsWebPushAvailable } from '@/web-push/hooks/useIsWebPushAvailable';
-import { isDocumentFocused } from '@/web-push/utils/isDocumentFocused';
 import { logError } from '~/utils/logError';
+
+const HEARTBEAT_INTERVAL_MS = 20_000;
+
+const isDocumentFocused = () =>
+  document.visibilityState === 'visible' && document.hasFocus();
 
 export const InboxPresenceEffect = () => {
   const isWebPushAvailable = useIsWebPushAvailable();
@@ -28,29 +31,22 @@ export const InboxPresenceEffect = () => {
     const reportBlur = () => reportPresence(false);
     const reportVisibility = () => reportPresence(isDocumentFocused());
 
-    const reportPresenceWhileFocused = () => {
+    reportVisibility();
+
+    const intervalId = setInterval(() => {
       if (isDocumentFocused()) {
         reportPresence(true);
       }
-    };
-
-    reportVisibility();
-
-    const intervalId = setInterval(
-      reportPresenceWhileFocused,
-      INBOX_PRESENCE_HEARTBEAT_INTERVAL_MS,
-    );
+    }, HEARTBEAT_INTERVAL_MS);
 
     window.addEventListener('focus', reportFocus);
     window.addEventListener('blur', reportBlur);
-    window.addEventListener('pagehide', reportBlur);
     document.addEventListener('visibilitychange', reportVisibility);
 
     return () => {
       clearInterval(intervalId);
       window.removeEventListener('focus', reportFocus);
       window.removeEventListener('blur', reportBlur);
-      window.removeEventListener('pagehide', reportBlur);
       document.removeEventListener('visibilitychange', reportVisibility);
     };
   }, [isWebPushAvailable, tabId, updateInboxPresence]);

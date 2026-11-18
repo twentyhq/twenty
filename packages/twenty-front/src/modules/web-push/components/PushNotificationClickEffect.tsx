@@ -2,8 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PUSH_NOTIFICATION_CLICK_MESSAGE_TYPE } from '@/web-push/constants/PushNotificationClickMessageType';
-
 export const PushNotificationClickEffect = () => {
   const navigate = useNavigate();
 
@@ -16,7 +14,7 @@ export const PushNotificationClickEffect = () => {
       event: MessageEvent<{ type?: string; url?: string }>,
     ) => {
       if (
-        event.data?.type === PUSH_NOTIFICATION_CLICK_MESSAGE_TYPE &&
+        event.data?.type === 'push-notification-click' &&
         isNonEmptyString(event.data.url)
       ) {
         navigate(event.data.url);

@@ -8,6 +8,7 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
@@ -15,6 +16,8 @@ import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-su
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/integration-push';
+const ROTATED_ENDPOINT =
+  'https://fcm.googleapis.com/fcm/send/integration-push-rotated';
 
 const upsertPushSubscriptionMutation = (input: {
   endpoint: string;
@@ -28,15 +31,6 @@ const upsertPushSubscriptionMutation = (input: {
     }
   `,
   variables: { input },
-});
-
-const deletePushSubscriptionMutation = (endpoint: string) => ({
-  query: gql`
-    mutation DeletePushSubscription($input: DeletePushSubscriptionInput!) {
-      deletePushSubscription(input: $input)
-    }
-  `,
-  variables: { input: { endpoint } },
 });
 
 const signInSession = async (email: string) => {
@@ -57,9 +51,9 @@ const signInSession = async (email: string) => {
   return { cookieHeader: sessionCookie.cookieHeader, sessionId: session.id };
 };
 
-const findPushSubscription = () =>
+const findPushSubscription = (endpoint = ENDPOINT) =>
   getCoreRepository<PushSubscriptionEntity>(PushSubscriptionEntity).findOneBy({
-    endpoint: ENDPOINT,
+    endpoint,
   });
 
 describe('push subscriptions (integration)', () => {
@@ -76,7 +70,7 @@ describe('push subscriptions (integration)', () => {
   afterEach(async () => {
     await getCoreRepository<PushSubscriptionEntity>(
       PushSubscriptionEntity,
-    ).delete({ endpoint: ENDPOINT });
+    ).delete({ endpoint: In([ENDPOINT, ROTATED_ENDPOINT]) });
   });
 
   it('should store the subscription on the current session and move it to the next user of the browser', async () => {
@@ -96,7 +90,6 @@ describe('push subscriptions (integration)', () => {
 
     expect(await findPushSubscription()).toMatchObject({
       userSessionId: tim.sessionId,
-      origin: ALLOWED_ORIGIN,
     });
 
     await postMetadataOperationWithHeaders(
@@ -107,20 +100,30 @@ describe('push subscriptions (integration)', () => {
     expect(await findPushSubscription()).toMatchObject({
       userSessionId: jony.sessionId,
     });
+  });
+
+  it('should keep one subscription per session when the browser rotates its endpoint', async () => {
+    const tim = await signInSession('tim@apple.dev');
+    const input = {
+      endpoint: ENDPOINT,
+      p256dhKey: 'p256dh-key',
+      authSecret: 'auth-secret',
+      applicationServerKey,
+    };
 
     await postMetadataOperationWithHeaders(
-      deletePushSubscriptionMutation(ENDPOINT),
+      upsertPushSubscriptionMutation(input),
+      { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
+    );
+    await postMetadataOperationWithHeaders(
+      upsertPushSubscriptionMutation({ ...input, endpoint: ROTATED_ENDPOINT }),
       { originHeader: ALLOWED_ORIGIN, cookieHeader: tim.cookieHeader },
     );
 
-    expect(await findPushSubscription()).not.toBeNull();
-
-    await postMetadataOperationWithHeaders(
-      deletePushSubscriptionMutation(ENDPOINT),
-      { originHeader: ALLOWED_ORIGIN, cookieHeader: jony.cookieHeader },
-    );
-
     expect(await findPushSubscription()).toBeNull();
+    expect(await findPushSubscription(ROTATED_ENDPOINT)).toMatchObject({
+      userSessionId: tim.sessionId,
+    });
   });
 
   it('should refuse a key this server did not issue', async () => {

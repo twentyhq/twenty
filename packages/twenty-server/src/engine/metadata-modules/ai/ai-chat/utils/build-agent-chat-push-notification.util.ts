@@ -5,8 +5,8 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
-import { type AgentChatPushNotificationThread } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-push-notification-thread.type';
 import { getAgentChatPushNotificationPreviewText } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-preview-text.util';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildAgentChatPushNotification = ({
@@ -17,7 +17,16 @@ export const buildAgentChatPushNotification = ({
   isPreviewEnabled,
 }: {
   i18n: I18n;
-  thread: AgentChatPushNotificationThread;
+  thread: Pick<
+    AgentChatThreadWorkspaceEntity,
+    | 'id'
+    | 'title'
+    | 'conversationType'
+    | 'directMessageFirstWorkspaceMemberId'
+    | 'directMessageSecondWorkspaceMemberId'
+    | 'lastMessageText'
+    | 'lastMessageSenderWorkspaceMemberId'
+  >;
   recipientWorkspaceMemberId: string;
   workspaceMembers: Pick<
     WorkspaceMemberWorkspaceEntity,

@@ -11,11 +11,9 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { WebPushPresenceService } from 'src/engine/core-modules/web-push/services/web-push-presence.service';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { AGENT_CHAT_PUSH_NOTIFICATION_COOLDOWN_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-push-notification-cooldown-ms.constant';
-import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications-job.types';
+import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { buildAgentChatPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util';
@@ -28,16 +26,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-type ParticipantInboxRow = Pick<
-  AgentChatThreadParticipantRow,
-  | 'workspaceMemberId'
-  | 'lastReadAt'
-  | 'archivedAt'
-  | 'snoozedUntil'
-  | 'isSubscribed'
-  | 'lastMentionedAt'
-  | 'mentionsResolvedAt'
->;
+const RENOTIFY_COOLDOWN_MS = 15_000;
 
 const toIsoStringOrNull = (date: Date | null) => date?.toISOString() ?? null;
 
@@ -54,7 +43,6 @@ export class AgentChatPushNotificationService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly i18nService: I18nService,
     private readonly sharingService: AgentChatSharingService,
-    private readonly webPushPresenceService: WebPushPresenceService,
     private readonly webPushService: WebPushService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
@@ -69,8 +57,7 @@ export class AgentChatPushNotificationService {
     );
 
     if (
-      !isDefined(workspace) ||
-      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE ||
+      workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE ||
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspaceId,
@@ -79,18 +66,120 @@ export class AgentChatPushNotificationService {
       return;
     }
 
-    const participantRows = await this.threadRepository.query(
+    const participants = await this.findParticipants({
       workspaceId,
-      ({ manager }) =>
-        manager.query<ParticipantInboxRow[]>(
-          `SELECT "workspaceMemberId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt"
-           FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-           WHERE "threadId" = $1`,
-          [thread.id],
-        ),
+      threadId: thread.id,
+    });
+    const recipientIds = [
+      ...participants.keys(),
+      thread.directMessageFirstWorkspaceMemberId,
+      thread.directMessageSecondWorkspaceMemberId,
+      thread.assigneeId,
+    ].filter(
+      (workspaceMemberId): workspaceMemberId is string =>
+        isDefined(workspaceMemberId) &&
+        workspaceMemberId !== thread.lastMessageSenderWorkspaceMemberId,
     );
-    const participantByWorkspaceMemberId = new Map<string, AgentChatInboxState>(
-      participantRows.map((row) => [
+
+    if (recipientIds.length === 0) {
+      return;
+    }
+
+    const workspaceMembers = await this.findWorkspaceMembers({
+      workspaceId,
+      workspaceMemberIds: [
+        ...recipientIds,
+        thread.lastMessageSenderWorkspaceMemberId,
+        thread.directMessageFirstWorkspaceMemberId,
+        thread.directMessageSecondWorkspaceMemberId,
+      ].filter(isDefined),
+    });
+
+    for (const recipient of workspaceMembers) {
+      if (!recipientIds.includes(recipient.id)) {
+        continue;
+      }
+
+      try {
+        const reason = getAgentChatPushNotificationReason({
+          thread,
+          participant: participants.get(recipient.id),
+          workspaceMemberId: recipient.id,
+          inboxNotificationLevel: recipient.inboxNotificationLevel,
+        });
+
+        if (
+          !isDefined(reason) ||
+          (await this.webPushService.hasFocusedTab({
+            workspaceId,
+            userId: recipient.userId,
+          }))
+        ) {
+          continue;
+        }
+
+        const readableThreadIds =
+          await this.sharingService.findReadableThreadIds({
+            workspaceId,
+            workspaceMemberId: recipient.id,
+            threadIds: [thread.id],
+          });
+
+        if (!readableThreadIds.includes(thread.id)) {
+          continue;
+        }
+
+        const isOutsideCooldown = await this.cacheStorageService.setIfAbsent(
+          `cooldown:${recipient.id}:${thread.id}`,
+          true,
+          RENOTIFY_COOLDOWN_MS,
+        );
+
+        await this.webPushService.sendToUser({
+          workspaceId,
+          userId: recipient.userId,
+          notification: {
+            ...buildAgentChatPushNotification({
+              i18n: this.i18nService.getI18nInstance(recipient.locale),
+              thread,
+              recipientWorkspaceMemberId: recipient.id,
+              workspaceMembers,
+              isPreviewEnabled: recipient.isInboxNotificationPreviewEnabled,
+            }),
+            renotify:
+              reason === 'DIRECT_MESSAGE' ||
+              reason === 'MENTION' ||
+              isOutsideCooldown,
+          },
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Could not send the push notification of thread ${thread.id} to workspace member ${recipient.id} in workspace ${workspaceId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
+  }
+
+  private async findParticipants({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<Map<string, AgentChatInboxState>> {
+    const rows = await this.threadRepository.query(workspaceId, ({ manager }) =>
+      manager.query<AgentChatThreadParticipantRow[]>(
+        `SELECT "workspaceMemberId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt"
+         FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+         WHERE "threadId" = $1`,
+        [threadId],
+      ),
+    );
+
+    return new Map(
+      rows.map((row) => [
         row.workspaceMemberId,
         {
           lastReadAt: toIsoStringOrNull(row.lastReadAt),
@@ -102,99 +191,6 @@ export class AgentChatPushNotificationService {
         },
       ]),
     );
-    const recipientWorkspaceMemberIds = [
-      ...new Set([
-        ...participantByWorkspaceMemberId.keys(),
-        thread.directMessageFirstWorkspaceMemberId,
-        thread.directMessageSecondWorkspaceMemberId,
-        thread.assigneeId,
-      ]),
-    ].filter(
-      (workspaceMemberId): workspaceMemberId is string =>
-        isDefined(workspaceMemberId) &&
-        workspaceMemberId !== thread.lastMessageSenderWorkspaceMemberId,
-    );
-
-    if (recipientWorkspaceMemberIds.length === 0) {
-      return;
-    }
-
-    const workspaceMembers = await this.findWorkspaceMembers({
-      workspaceId,
-      workspaceMemberIds: [
-        ...recipientWorkspaceMemberIds,
-        thread.lastMessageSenderWorkspaceMemberId,
-        thread.directMessageFirstWorkspaceMemberId,
-        thread.directMessageSecondWorkspaceMemberId,
-      ].filter(isDefined),
-    });
-
-    for (const workspaceMember of workspaceMembers) {
-      if (!recipientWorkspaceMemberIds.includes(workspaceMember.id)) {
-        continue;
-      }
-
-      try {
-        const reason = getAgentChatPushNotificationReason({
-          thread,
-          participant: participantByWorkspaceMemberId.get(workspaceMember.id),
-          workspaceMemberId: workspaceMember.id,
-          inboxNotificationLevel: workspaceMember.inboxNotificationLevel,
-        });
-
-        if (
-          !isDefined(reason) ||
-          (await this.webPushPresenceService.hasFocusedTab({
-            workspaceId,
-            userId: workspaceMember.userId,
-          }))
-        ) {
-          continue;
-        }
-
-        const readableThreadIds =
-          await this.sharingService.findReadableThreadIds({
-            workspaceId,
-            workspaceMemberId: workspaceMember.id,
-            threadIds: [thread.id],
-          });
-
-        if (!readableThreadIds.includes(thread.id)) {
-          continue;
-        }
-
-        const isOutsideCooldown = await this.cacheStorageService.setIfAbsent(
-          `cooldown:${workspaceMember.id}:${thread.id}`,
-          true,
-          AGENT_CHAT_PUSH_NOTIFICATION_COOLDOWN_MS,
-        );
-
-        await this.webPushService.sendToUser({
-          workspace,
-          userId: workspaceMember.userId,
-          notification: {
-            ...buildAgentChatPushNotification({
-              i18n: this.i18nService.getI18nInstance(workspaceMember.locale),
-              thread,
-              recipientWorkspaceMemberId: workspaceMember.id,
-              workspaceMembers,
-              isPreviewEnabled:
-                workspaceMember.isInboxNotificationPreviewEnabled,
-            }),
-            renotify:
-              reason === 'DIRECT_MESSAGE' ||
-              reason === 'MENTION' ||
-              isOutsideCooldown,
-          },
-        });
-      } catch (error) {
-        this.logger.warn(
-          `Could not send the push notification of thread ${thread.id} to workspace member ${workspaceMember.id} in workspace ${workspaceId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-    }
   }
 
   private async findWorkspaceMembers({

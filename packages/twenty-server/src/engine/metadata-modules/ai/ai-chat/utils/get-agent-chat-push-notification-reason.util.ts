@@ -6,9 +6,10 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_PUSH_NOTIFICATION_MENTION_WINDOW_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-push-notification-mention-window-ms.constant';
-import { type AgentChatPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-push-notification-reason.type';
-import { type AgentChatPushNotificationThread } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-push-notification-thread.type';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+
+// lastMentionedAt and lastActivityAt are stamped by separate writes of the same message
+const MENTION_WINDOW_MS = 2_000;
 
 export const getAgentChatPushNotificationReason = ({
   thread,
@@ -16,14 +17,20 @@ export const getAgentChatPushNotificationReason = ({
   workspaceMemberId,
   inboxNotificationLevel,
 }: {
-  thread: Omit<
-    AgentChatPushNotificationThread,
-    'id' | 'title' | 'lastMessageText'
+  thread: Pick<
+    AgentChatThreadWorkspaceEntity,
+    | 'conversationType'
+    | 'directMessageFirstWorkspaceMemberId'
+    | 'directMessageSecondWorkspaceMemberId'
+    | 'assigneeId'
+    | 'lastActivityAt'
+    | 'lastMessageSenderWorkspaceMemberId'
+    | 'deletedAt'
   >;
   participant: AgentChatInboxState | undefined;
   workspaceMemberId: string;
   inboxNotificationLevel: string;
-}): AgentChatPushNotificationReason | null => {
+}): 'DIRECT_MESSAGE' | 'MENTION' | 'ASSIGNED' | 'FOLLOWED' | null => {
   const { lastActivityAt } = thread;
 
   if (
@@ -60,7 +67,7 @@ export const getAgentChatPushNotificationReason = ({
     isDefined(lastMentionedAt) &&
     Math.abs(
       new Date(lastMentionedAt).getTime() - new Date(lastActivityAt).getTime(),
-    ) <= AGENT_CHAT_PUSH_NOTIFICATION_MENTION_WINDOW_MS
+    ) <= MENTION_WINDOW_MS
   ) {
     return 'MENTION';
   }

@@ -44,9 +44,6 @@ export class PushSubscriptionEntity {
   @Column({ type: 'varchar' })
   applicationServerKey: string;
 
-  @Column({ type: 'varchar' })
-  origin: string;
-
   @ManyToOne(() => UserSessionEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userSessionId' })
   userSession: Relation<UserSessionEntity>;

@@ -6,7 +6,37 @@ import { isDefined } from 'twenty-shared/utils';
 import { webPushVapidPublicKeyState } from '@/client-config/states/webPushVapidPublicKeyState';
 import { UPSERT_PUSH_SUBSCRIPTION } from '@/web-push/graphql/mutations/upsertPushSubscription';
 import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNotificationPermission';
-import { getPushSubscriptionForKey } from '@/web-push/utils/getPushSubscriptionForKey';
+
+const encodeBase64Url = (buffer: ArrayBuffer) =>
+  btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+const getPushSubscription = async (
+  applicationServerKey: string,
+): Promise<PushSubscription> => {
+  const registration = await navigator.serviceWorker.register('/sw.js');
+  const existingSubscription = await registration.pushManager.getSubscription();
+
+  if (isDefined(existingSubscription)) {
+    const existingKey = existingSubscription.options.applicationServerKey;
+
+    if (
+      isDefined(existingKey) &&
+      encodeBase64Url(existingKey) === applicationServerKey
+    ) {
+      return existingSubscription;
+    }
+
+    await existingSubscription.unsubscribe();
+  }
+
+  return registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey,
+  });
+};
 
 export const useSubscribeToPushNotifications = () => {
   const store = useStore();
@@ -23,10 +53,7 @@ export const useSubscribeToPushNotifications = () => {
     }
 
     const { endpoint, keys } = (
-      await getPushSubscriptionForKey({
-        registration: await navigator.serviceWorker.register('/sw.js'),
-        applicationServerKey,
-      })
+      await getPushSubscription(applicationServerKey)
     ).toJSON();
 
     if (!isDefined(endpoint) || !isDefined(keys)) {

@@ -111,11 +111,6 @@ msgstr "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} of {aggregateFieldLabel}"
 
-#. js-lingui-id: nzKj4z
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "{senderName} in {threadLabel}"
-msgstr "{senderName} in {threadLabel}"
-
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6101,12 +6096,6 @@ msgstr "Form action fields must have unique names"
 msgid "Form action must have at least one field"
 msgstr "Form action must have at least one field"
 
-#. js-lingui-id: CjVkbV
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "Former member"
-msgstr "Former member"
-
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6710,18 +6699,6 @@ msgstr "In progress"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Inbox is not enabled for this workspace."
-
-#. js-lingui-id: XB5CcM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notification preview"
-msgstr "Inbox notification preview"
-
-#. js-lingui-id: t20nDR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notifications"
-msgstr "Inbox notifications"
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -9401,11 +9378,6 @@ msgstr "New"
 msgid "New backup codes were generated for your account"
 msgstr "New backup codes were generated for your account"
 
-#. js-lingui-id: hIQkLb
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New chat"
-msgstr "New chat"
-
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9422,11 +9394,6 @@ msgstr "New chat"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr "New email must be different from current email"
-
-#. js-lingui-id: mTBAsF
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New message"
-msgstr "New message"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9753,11 +9720,6 @@ msgstr "NoteTarget record position"
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget target"
 msgstr "NoteTarget target"
-
-#. js-lingui-id: OEmEnk
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Notifications can only be turned on from a signed-in browser."
-msgstr "Notifications can only be turned on from a signed-in browser."
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14768,16 +14730,6 @@ msgstr "This application variable scope is not supported."
 msgid "This billing arrangement has invalid settings."
 msgstr "This billing arrangement has invalid settings."
 
-#. js-lingui-id: CHSdNs
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser subscribed to notifications with an outdated key. Reload the page to try again."
-msgstr "This browser subscribed to notifications with an outdated key. Reload the page to try again."
-
-#. js-lingui-id: 7F4yS5
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser's notification service is not supported."
-msgstr "This browser's notification service is not supported."
-
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15838,11 +15790,6 @@ msgstr "Too many admin candidates found."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-
-#. js-lingui-id: QarV/J
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Too many browsers receive notifications for this account."
-msgstr "Too many browsers receive notifications for this account."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17368,12 +17315,6 @@ msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "Whether current participant rules justify this target"
 
-#. js-lingui-id: qjkyvm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Whether inbox notifications show the message text"
-msgstr "Whether inbox notifications show the message text"
-
 #. js-lingui-id: rJ6Dbr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17403,12 +17344,6 @@ msgstr "Whether this is a regular chat or a canonical direct message"
 msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "Whether this message is an unsent draft synced from the provider"
-
-#. js-lingui-id: zXbRSm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Which new inbox messages send a notification"
-msgstr "Which new inbox messages send a notification"
 
 #. js-lingui-id: 5JE8rv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

@@ -2560,7 +2560,6 @@ export interface Mutation {
     deleteOneObject: Object
     deleteOneRole: Scalars['String']
     deletePublicDomain: Scalars['Boolean']
-    deletePushSubscription: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     deleteRelatedRecordPath: RelatedRecordPath
     deleteSSOIdentityProvider: DeleteSso
@@ -6248,8 +6247,6 @@ export interface DeleteOneObjectInput {
 /** The id of the record to delete. */
 id: Scalars['UUID']}
 
-export interface DeletePushSubscriptionInput {endpoint: Scalars['String']}
-
 export interface DeleteSsoGenqlSelection{
     identityProviderId?: boolean | number
     __typename?: boolean | number
@@ -7455,7 +7452,6 @@ export interface MutationGenqlSelection{
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
-    deletePushSubscription?: { __args: {input: DeletePushSubscriptionInput} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     deleteRelatedRecordPath?: (RelatedRecordPathGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })

@@ -116,11 +116,6 @@ msgstr "Đã tìm thấy {hostnameCount} tên máy chủ cho miền \"{domainNam
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} của {aggregateFieldLabel}"
 
-#. js-lingui-id: nzKj4z
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "{senderName} in {threadLabel}"
-msgstr ""
-
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6106,12 +6101,6 @@ msgstr "Trường hành động biểu mẫu phải có tên duy nhất"
 msgid "Form action must have at least one field"
 msgstr "Hành động biểu mẫu phải có ít nhất một trường"
 
-#. js-lingui-id: CjVkbV
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "Former member"
-msgstr ""
-
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6715,18 +6704,6 @@ msgstr "Đang thực hiện"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Hộp thư đến chưa được bật cho không gian làm việc này."
-
-#. js-lingui-id: XB5CcM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notification preview"
-msgstr ""
-
-#. js-lingui-id: t20nDR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Inbox notifications"
-msgstr ""
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -9406,11 +9383,6 @@ msgstr "Mới"
 msgid "New backup codes were generated for your account"
 msgstr "Các mã dự phòng mới đã được tạo cho tài khoản của bạn"
 
-#. js-lingui-id: hIQkLb
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New chat"
-msgstr ""
-
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9426,11 +9398,6 @@ msgstr "Trò chuyện mới"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
-
-#. js-lingui-id: mTBAsF
-#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
-msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -9758,11 +9725,6 @@ msgstr "Vị trí bản ghi Mục tiêu Ghi chú"
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget target"
 msgstr "Đối tượng Mục tiêu Ghi chú"
-
-#. js-lingui-id: OEmEnk
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Notifications can only be turned on from a signed-in browser."
-msgstr ""
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14773,16 +14735,6 @@ msgstr "Phạm vi biến ứng dụng này không được hỗ trợ."
 msgid "This billing arrangement has invalid settings."
 msgstr "Thỏa thuận thanh toán này có các cài đặt không hợp lệ."
 
-#. js-lingui-id: CHSdNs
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser subscribed to notifications with an outdated key. Reload the page to try again."
-msgstr ""
-
-#. js-lingui-id: 7F4yS5
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "This browser's notification service is not supported."
-msgstr ""
-
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15843,11 +15795,6 @@ msgstr "Tìm thấy quá nhiều ứng viên quản trị."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Quá nhiều người tham dự: {attendeeCount}. Số lượng tối đa được phép là {MAX_EMAIL_RECIPIENTS}."
-
-#. js-lingui-id: QarV/J
-#: src/engine/core-modules/web-push/web-push.exception.ts
-msgid "Too many browsers receive notifications for this account."
-msgstr ""
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17373,12 +17320,6 @@ msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "Liệu các quy tắc người tham gia hiện tại có xác đáng đối với mục tiêu này hay không"
 
-#. js-lingui-id: qjkyvm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Whether inbox notifications show the message text"
-msgstr ""
-
 #. js-lingui-id: rJ6Dbr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17408,12 +17349,6 @@ msgstr "Liệu đây là cuộc trò chuyện thông thường hay tin nhắn tr
 msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "Tin nhắn này có phải là bản nháp chưa gửi được đồng bộ từ nhà cung cấp hay không"
-
-#. js-lingui-id: zXbRSm
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Which new inbox messages send a notification"
-msgstr ""
 
 #. js-lingui-id: 5JE8rv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

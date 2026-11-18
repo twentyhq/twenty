@@ -2214,10 +2214,6 @@ export type DeleteOneObjectInput = {
   id: Scalars['UUID']['input'];
 };
 
-export type DeletePushSubscriptionInput = {
-  endpoint: Scalars['String']['input'];
-};
-
 export type DeleteSso = {
   __typename?: 'DeleteSso';
   identityProviderId: Scalars['UUID']['output'];
@@ -3834,7 +3830,6 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRole: Scalars['String']['output'];
   deletePublicDomain: Scalars['Boolean']['output'];
-  deletePushSubscription: Scalars['Boolean']['output'];
   deleteQueuedChatMessage: Scalars['Boolean']['output'];
   deleteRelatedRecordPath: RelatedRecordPath;
   deleteSSOIdentityProvider: DeleteSso;
@@ -4558,11 +4553,6 @@ export type MutationDeleteOneRoleArgs = {
 
 export type MutationDeletePublicDomainArgs = {
   domain: Scalars['String']['input'];
-};
-
-
-export type MutationDeletePushSubscriptionArgs = {
-  input: DeletePushSubscriptionInput;
 };
 
 

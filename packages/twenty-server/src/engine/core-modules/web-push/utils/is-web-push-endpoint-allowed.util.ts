@@ -1,4 +1,9 @@
-import { WEB_PUSH_SERVICE_HOSTS } from 'src/engine/core-modules/web-push/constants/web-push-service-hosts.constant';
+const WEB_PUSH_SERVICE_HOSTS = [
+  'fcm.googleapis.com',
+  '*.notify.windows.com',
+  'updates.push.services.mozilla.com',
+  'web.push.apple.com',
+];
 
 export const isWebPushEndpointAllowed = (endpoint: string): boolean => {
   if (!URL.canParse(endpoint)) {

@@ -2106,10 +2106,6 @@ input DeleteOneObjectInput {
   id: UUID!
 }
 
-input DeletePushSubscriptionInput {
-  endpoint: String!
-}
-
 type DeleteSso {
   identityProviderId: UUID!
 }
@@ -3650,7 +3646,6 @@ type Mutation {
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
-  deletePushSubscription(input: DeletePushSubscriptionInput!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   deleteRelatedRecordPath(id: UUID!): RelatedRecordPath!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
