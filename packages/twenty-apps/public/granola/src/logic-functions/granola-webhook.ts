@@ -83,7 +83,7 @@ export const granolaWebhookHandler = async ({
   await assertGranolaFolderSelectionReadyOrThrow();
   const result = await syncGranolaNoteToCallRecordingOrThrow({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
-    client: createGranolaClientOrThrow(),
+    client: createGranolaClientOrThrow({ apiKey }),
     noteId: parsed.data.note_id,
   }).catch((error: unknown) => {
     if (
