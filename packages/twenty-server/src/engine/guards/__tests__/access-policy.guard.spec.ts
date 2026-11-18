@@ -928,12 +928,12 @@ describe('AccessPolicyGuard', () => {
     let accessPolicyService: AccessPolicyService;
 
     const mockCache = ({
-      defaultRoleId,
+      requestedRoleId,
       canUpdateAllSettings = false,
       isLayoutsFlagAssigned = false,
       canAgentRoleUpdateAllSettings = false,
     }: {
-      defaultRoleId: string | null;
+      requestedRoleId: string | null;
       canUpdateAllSettings?: boolean;
       isLayoutsFlagAssigned?: boolean;
       canAgentRoleUpdateAllSettings?: boolean;
@@ -950,7 +950,7 @@ describe('AccessPolicyGuard', () => {
           byId: {
             'application-id': {
               id: 'application-id',
-              defaultRoleId,
+              requestedRoleId,
               deletedAt: null,
             },
           },
@@ -1043,7 +1043,7 @@ describe('AccessPolicyGuard', () => {
       );
 
     it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
-      mockCache({ defaultRoleId: null });
+      mockCache({ requestedRoleId: null });
 
       await expect(canActivateApplication()).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
@@ -1051,14 +1051,14 @@ describe('AccessPolicyGuard', () => {
     });
 
     it('should allow when the default role of the application grants the setting', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(canActivateApplication()).resolves.toBe(true);
     });
 
     it('should allow when the setting is assigned to the default role of the application', async () => {
       mockCache({
-        defaultRoleId: 'role-id',
+        requestedRoleId: 'role-id',
         canUpdateAllSettings: false,
         isLayoutsFlagAssigned: true,
       });
@@ -1067,7 +1067,7 @@ describe('AccessPolicyGuard', () => {
     });
 
     it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: false });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: false });
 
       await expect(canActivateApplication()).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
@@ -1076,7 +1076,7 @@ describe('AccessPolicyGuard', () => {
 
     it('should allow when both the application and the agent roles grant the setting', async () => {
       mockCache({
-        defaultRoleId: 'role-id',
+        requestedRoleId: 'role-id',
         canUpdateAllSettings: true,
         canAgentRoleUpdateAllSettings: true,
       });
@@ -1092,7 +1092,7 @@ describe('AccessPolicyGuard', () => {
     ])(
       'should deny with PERMISSION_DENIED a setting the application grants when $title',
       async ({ agentId }) => {
-        mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+        mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
         await expect(canActivateApplication({ agentId })).rejects.toMatchObject(
           {
@@ -1103,7 +1103,7 @@ describe('AccessPolicyGuard', () => {
     );
 
     it('should deny with PERMISSION_DENIED when the application does not exist', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(
         canActivateApplication({ applicationId: 'unknown-application-id' }),

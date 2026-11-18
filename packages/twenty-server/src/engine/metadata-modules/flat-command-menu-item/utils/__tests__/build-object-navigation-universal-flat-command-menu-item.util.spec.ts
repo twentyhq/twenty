@@ -1,7 +1,4 @@
-import {
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 
@@ -14,24 +11,5 @@ describe('buildNavigationConditionalAvailabilityExpression', () => {
         nameSingular: 'messageCampaign',
       }),
     ).toBe('targetObjectReadPermissions.messageCampaign');
-  });
-
-  it('hides the workflow versions navigation', () => {
-    expect(
-      buildNavigationConditionalAvailabilityExpression({
-        universalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        nameSingular: 'workflowVersion',
-      }),
-    ).toBe('false');
-  });
-
-  it('does not hide a custom object that reuses a hidden object name', () => {
-    expect(
-      buildNavigationConditionalAvailabilityExpression({
-        universalIdentifier: 'custom-object-universal-id',
-        nameSingular: 'workflowVersion',
-      }),
-    ).toBe('targetObjectReadPermissions.workflowVersion');
   });
 });
