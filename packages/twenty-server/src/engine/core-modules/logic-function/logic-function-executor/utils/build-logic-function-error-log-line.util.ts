@@ -14,12 +14,16 @@ const getStackTraceLines = (
   return isNonEmptyString(stackTrace) ? stackTrace.split('\n') : [];
 };
 
-export const buildLogicFunctionErrorLogLine = (
+export const buildLogicFunctionErrorLogLine = ({
+  error,
+  willRetry,
+}: {
   error: Pick<LogicFunctionExecuteError, 'errorType' | 'errorMessage'> &
-    Partial<Pick<LogicFunctionExecuteError, 'stackTrace'>>,
-): ParsedLogLine & Pick<ApplicationLogEntry, 'errorCode' | 'properties'> => ({
+    Partial<Pick<LogicFunctionExecuteError, 'stackTrace'>>;
+  willRetry: boolean;
+}): ParsedLogLine & Pick<ApplicationLogEntry, 'errorCode' | 'properties'> => ({
   timestamp: new Date(),
-  level: 'ERROR',
+  level: willRetry ? 'WARN' : 'ERROR',
   message: `${error.errorType}: ${error.errorMessage}`,
   errorCode: error.errorType,
   properties: {

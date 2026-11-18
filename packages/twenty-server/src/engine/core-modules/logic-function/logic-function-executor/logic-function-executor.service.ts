@@ -47,6 +47,7 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
+import { willRetryLogicFunctionExecution } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/will-retry-logic-function-execution.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
@@ -355,6 +356,7 @@ export class LogicFunctionExecutorService {
 
     await this.handleExecutionResult({
       result: resultLogicFunction,
+      retry,
       flatApplication,
       flatLogicFunction,
       workspaceId,
@@ -677,12 +679,14 @@ export class LogicFunctionExecutorService {
 
   private async handleExecutionResult({
     result,
+    retry,
     flatApplication,
     flatLogicFunction,
     workspaceId,
     spenders,
   }: {
     result: LogicFunctionExecuteResult;
+    retry: LogicFunctionRetryContext;
     workspaceId: string;
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
@@ -690,10 +694,13 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
+    // An attempt the queue will retry is not a failure yet; only the last one counts as an error.
+    const willRetry = willRetryLogicFunctionExecution(result.error, retry);
+
     const logLines = [
       ...parseApplicationLogLines(result.logs),
       ...(isDefined(result.error)
-        ? [buildLogicFunctionErrorLogLine(result.error)]
+        ? [buildLogicFunctionErrorLogLine({ error: result.error, willRetry })]
         : []),
     ];
 
@@ -715,6 +722,7 @@ export class LogicFunctionExecutorService {
     void this.eventLogEmitterService.recordApplicationMetricEvents([
       buildLogicFunctionRunMetricEvent({
         result,
+        willRetry,
         flatApplication,
         flatLogicFunction,
         workspaceId,

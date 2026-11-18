@@ -23,6 +23,7 @@ describe('buildLogicFunctionRunMetricEvent', () => {
           billedDurationMs: 420,
           status: LogicFunctionExecutionStatus.SUCCESS,
         },
+        willRetry: false,
         flatApplication,
         flatLogicFunction,
         workspaceId: 'workspace-1',
@@ -56,10 +57,37 @@ describe('buildLogicFunctionRunMetricEvent', () => {
             stackTrace: [],
           },
         },
+        willRetry: false,
         flatApplication,
         flatLogicFunction,
         workspaceId: 'workspace-1',
       }),
     ).toMatchObject({ level: 'ERROR', errorCode: 'TimeoutError' });
+  });
+
+  it('counts an attempt that will be retried as a warning', () => {
+    expect(
+      buildLogicFunctionRunMetricEvent({
+        result: {
+          data: null,
+          logs: '',
+          duration: 120,
+          billedDurationMs: 120,
+          status: LogicFunctionExecutionStatus.ERROR,
+          error: {
+            errorType: 'RetryableLogicFunctionError',
+            errorMessage: 'Upstream API returned 503',
+            stackTrace: [],
+          },
+        },
+        willRetry: true,
+        flatApplication,
+        flatLogicFunction,
+        workspaceId: 'workspace-1',
+      }),
+    ).toMatchObject({
+      level: 'WARN',
+      errorCode: 'RetryableLogicFunctionError',
+    });
   });
 });

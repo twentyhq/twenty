@@ -8,8 +8,8 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { willRetryLogicFunctionExecution } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/will-retry-logic-function-execution.util';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
-import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -49,10 +49,13 @@ export class LogicFunctionJobRunnerService {
   }): Promise<void> {
     try {
       const retryCount = logicFunctionPayload.applicationRetryCount ?? 0;
-      const maxRetries = Math.min(
-        LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
-        retryLimit,
-      );
+      const retry = {
+        retryCount,
+        maxRetries: Math.min(
+          LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
+          retryLimit,
+        ),
+      };
       const logicFunctionExecutionResult =
         await this.logicFunctionExecutorService.execute({
           logicFunctionId: logicFunctionPayload.logicFunctionId,
@@ -60,14 +63,14 @@ export class LogicFunctionJobRunnerService {
           payload: logicFunctionPayload.payload ?? {},
           userId: logicFunctionPayload.userId,
           userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          retry: { retryCount, maxRetries },
+          retry,
         });
 
       if (
-        !isRetryableLogicFunctionExecutionError(
+        !willRetryLogicFunctionExecution(
           logicFunctionExecutionResult.error,
-        ) ||
-        retryCount >= maxRetries
+          retry,
+        )
       ) {
         return;
       }
