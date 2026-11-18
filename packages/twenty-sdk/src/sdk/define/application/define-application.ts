@@ -180,6 +180,10 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   (config.billing?.prices ?? []).forEach((price, index) => {
     const priceName = `billing.prices[${index}]`;
 
+    if (!isNonEmptyString(price.universalIdentifier)) {
+      errors.push(`${priceName} must have a universalIdentifier`);
+    }
+
     if (!isNonEmptyString(price.label)) {
       errors.push(`${priceName} must have a non empty label`);
     }

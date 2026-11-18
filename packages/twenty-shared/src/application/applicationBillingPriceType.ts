@@ -4,6 +4,7 @@ import { type APPLICATION_BILLING_PRICE_TYPES } from '@/application/constants/Ap
 import { type APPLICATION_BILLING_PRICE_UNITS } from '@/application/constants/ApplicationBillingPriceUnits';
 
 export type ApplicationBillingPrice = {
+  universalIdentifier: string;
   label: string;
   description?: string;
   type: (typeof APPLICATION_BILLING_PRICE_TYPES)[number];

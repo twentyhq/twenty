@@ -457,12 +457,14 @@ describe('defineApplication', () => {
       billing: {
         prices: [
           {
+            universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
             label: 'Platform',
             type: 'recurring',
             billingPeriod: 'monthly',
             amountCents: MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
           },
           {
+            universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
             label: 'Per member',
             description: 'Monthly price per workspace member',
             type: 'recurring',
@@ -488,18 +490,21 @@ describe('defineApplication', () => {
       billing: {
         prices: [
           {
+            universalIdentifier: '5d2a8c7e-91b4-4e36-a07f-6c1d9e3b2a84',
             label: 'Free',
             type: 'recurring',
             billingPeriod: 'monthly',
             amountCents: 0,
           },
           {
+            universalIdentifier: 'e94b6f13-7c20-4a8d-b5e9-2f7a0d1c6b35',
             label: 'Fractional',
             type: 'recurring',
             billingPeriod: 'monthly',
             amountCents: 9.99,
           },
           {
+            universalIdentifier: '0a6d3e9b-4f85-4c12-9e7a-b3c8d5f2e170',
             label: 'Excessive',
             type: 'recurring',
             billingPeriod: 'monthly',
@@ -525,6 +530,7 @@ describe('defineApplication', () => {
       billing: {
         prices: [
           {
+            universalIdentifier: 'c18f7b24-d6a9-4035-8b4e-7a2e9c0d5f63',
             label: '',
             description: '',
             type: 'recurring',
@@ -539,6 +545,30 @@ describe('defineApplication', () => {
     expect(result.errors).toEqual([
       'billing.prices[0] must have a non empty label',
       'billing.prices[0] must have a non empty description when set',
+    ]);
+  });
+
+  it('should return error when a price has no universalIdentifier', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        prices: [
+          {
+            universalIdentifier: '',
+            label: 'Platform',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: 2000,
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'billing.prices[0] must have a universalIdentifier',
     ]);
   });
 
