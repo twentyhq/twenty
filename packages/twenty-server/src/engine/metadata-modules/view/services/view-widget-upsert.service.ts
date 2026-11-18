@@ -1030,6 +1030,8 @@ export class ViewWidgetUpsertService {
           viewId,
           viewUniversalIdentifier,
           direction: inputSort.direction ?? ViewSortDirection.ASC,
+          relationTargetFieldMetadataId: null,
+          relationTargetFieldMetadataUniversalIdentifier: null,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
