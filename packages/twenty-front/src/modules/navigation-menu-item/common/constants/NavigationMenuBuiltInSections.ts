@@ -5,7 +5,7 @@ import {
   IconHeart,
   IconHistory,
   IconInbox,
-  IconMessageCircle,
+  IconMessage,
 } from 'twenty-ui/icon';
 
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
@@ -26,7 +26,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
     type: NavigationMenuItemType.AI_CHAT_FAVORITES,
     label: msg`Favorite chats`,
-    Icon: IconMessageCircle,
+    Icon: IconMessage,
     color: 'pink',
     isAi: true,
   },

@@ -6,13 +6,8 @@ import { NavigationDrawerInboxTriageSection } from '@/inbox/components/Navigatio
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
 import { FavoritesSectionDispatcher } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  type NavigationMenuItem,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
   section: Pick<NavigationMenuItem, 'id' | 'type'>;
@@ -23,16 +18,13 @@ export const NavigationMenuBuiltInSection = ({
   section,
   headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
+  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
 
   if (section.type === NavigationMenuItemType.FAVORITES) {
     return <FavoritesSectionDispatcher />;
   }
 
-  if (!hasAiPermission || !isAiChatInboxEnabled) {
+  if (!areAiChatSectionsAvailable) {
     return null;
   }
 

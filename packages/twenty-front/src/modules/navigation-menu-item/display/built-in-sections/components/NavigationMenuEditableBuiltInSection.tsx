@@ -3,16 +3,11 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NavigationMenuBuiltInSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuBuiltInSection';
+import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  type NavigationMenuItem,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuEditableBuiltInSectionProps = {
   section: Pick<
@@ -25,10 +20,7 @@ export const NavigationMenuEditableBuiltInSection = ({
   section,
 }: NavigationMenuEditableBuiltInSectionProps) => {
   const { t } = useLingui();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
+  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
   const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
     ({ type }) => type === section.type,
   );
@@ -40,8 +32,7 @@ export const NavigationMenuEditableBuiltInSection = ({
   const sectionMenu = <NavigationMenuSectionMenu section={section} />;
   const canShowContent =
     builtInSection.type !== NavigationMenuItemType.FAVORITES &&
-    hasAiPermission &&
-    isAiChatInboxEnabled;
+    areAiChatSectionsAvailable;
 
   if (canShowContent) {
     return (
