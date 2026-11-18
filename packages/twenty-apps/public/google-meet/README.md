@@ -10,9 +10,9 @@ imports what Meet makes. What you get depends on the plan of the person who
 
 | Organizer's Google plan                                          | Transcripts | Gemini notes |
 | ---------------------------------------------------------------- | ----------- | ------------ |
+| Workspace Business Starter, Google AI Plus, free Gmail           | No          | No           |
 | Workspace Business Standard or Plus, Enterprise Standard or Plus | Yes         | Yes          |
 | Google AI Pro or Ultra                                           | Yes         | Yes          |
-| Workspace Business Starter, Google AI Plus, free Gmail           | No          | No           |
 
 ## ✨ What you get
 
@@ -41,3 +41,5 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
   Calls from before you connect are imported only if they started in the last
   two days.
 - **Imports are shared with your workspace.**
+- **Needs a paid Google plan.** The organizer needs a Google Workspace plan
+  with Meet transcripts, or Google AI Pro or Ultra for Gemini notes.
