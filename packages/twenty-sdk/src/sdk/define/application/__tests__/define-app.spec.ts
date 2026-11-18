@@ -359,6 +359,9 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([
+      '`billing.recurring` is deprecated. Use `billing.subscriptions` instead.',
+    ]);
   });
 
   it('should return error when a recurring charge has an unknown period', () => {
@@ -469,6 +472,7 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
   });
 
   it('should return error when a subscription plan has a non positive or non integer monthly amount', () => {

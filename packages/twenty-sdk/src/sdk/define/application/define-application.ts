@@ -164,6 +164,12 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     }
   }
 
+  if (Object.values(recurringCharges).some(isDefined)) {
+    warnings.push(
+      '`billing.recurring` is deprecated. Use `billing.subscriptions` instead.',
+    );
+  }
+
   for (const [planName, subscriptionPlan] of Object.entries(
     config.billing?.subscriptions ?? {},
   )) {
