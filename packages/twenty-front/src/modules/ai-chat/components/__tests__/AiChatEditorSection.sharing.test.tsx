@@ -1,12 +1,12 @@
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { setAiChatThreadPermissions } from '@/ai-chat/testing/setAiChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AiChatEditorSection } from '@/ai-chat/components/AiChatEditorSection';
+import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
 import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import {
   jotaiStore,
@@ -14,14 +14,14 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const useAiChatEditor = jest.fn();
-jest.mock('@/ai-chat/hooks/useAiChatEditor', () => ({
+jest.mock('@/ai-chat/composer/hooks/useAiChatEditor', () => ({
   useAiChatEditor: () => useAiChatEditor(),
 }));
-jest.mock('@/ai-chat/components/AiChatStandaloneError', () => ({
+jest.mock('@/ai-chat/composer/components/AiChatStandaloneError', () => ({
   AiChatStandaloneError: () => null,
 }));
 // The gate's cards pull in a rich text editor Jest cannot load.
-jest.mock('@/ai-chat/components/AiChatPendingAskGate', () => ({
+jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
 }));
 const Wrapper = ({ children }: { children: ReactNode }) => (
