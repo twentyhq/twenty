@@ -23,6 +23,7 @@ import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linke
 import { getLinkedinImportHistoryJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { refreshLinkedinChatReadState } from 'src/logic-functions/utils/refresh-linkedin-chat-read-state.util';
 import { setLinkedinAccountOwnerAvatar } from 'src/logic-functions/utils/set-linkedin-account-owner-avatar.util';
 import {
   getLinkedinHistoryImportChunkChats,
@@ -199,13 +200,10 @@ export const linkedinImportHistoryHandler = async (
     settings: LinkedinSettings;
     resolveCounterpart: LinkedinCounterpartResolver;
   }): Promise<void> => {
-    const chat =
-      getLinkedinChatCounterparts(listedChat).length > 0
-        ? listedChat
-        : await getUnipileChat({
-            accountId: unipileAccountId,
-            chatId: listedChat.id,
-          });
+    const chat = await getUnipileChat({
+      accountId: unipileAccountId,
+      chatId: listedChat.id,
+    });
     const counterparts = getLinkedinChatCounterparts(chat);
     const seenCursors = new Set<string>();
 
@@ -262,6 +260,12 @@ export const linkedinImportHistoryHandler = async (
 
     if (isChatImported) {
       importedConversationCount += 1;
+
+      await refreshLinkedinChatReadState({
+        unipileAccountId,
+        messageChannelId: channel.id,
+        chatId: chat.id,
+      });
     }
 
     processedChatCount += 1;
