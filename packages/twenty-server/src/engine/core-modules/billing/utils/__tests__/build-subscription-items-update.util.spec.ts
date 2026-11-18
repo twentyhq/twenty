@@ -7,7 +7,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credits_year_1200',
-  targetApplicationPriceIdByCurrentPriceId: new Map<string, string>(),
+  applicationPriceIds: [],
 };
 
 const baseItem = {
@@ -101,9 +101,7 @@ describe('buildSubscriptionItemsUpdate', () => {
       ],
       toUpdatePrices: {
         ...toUpdatePrices,
-        targetApplicationPriceIdByCurrentPriceId: new Map([
-          ['price_application_month', 'price_application_month'],
-        ]),
+        applicationPriceIds: ['price_application_month'],
       },
     });
 

@@ -67,7 +67,7 @@ export const buildPhaseUpdateParamsOrThrow = ({
       }
 
       const applicationPriceId = isDefined(item.price)
-        ? toUpdatePrices.targetApplicationPriceIdByCurrentPriceId.get(
+        ? toUpdatePrices.targetApplicationPriceIdByCurrentPriceId?.get(
             item.price,
           )
         : undefined;

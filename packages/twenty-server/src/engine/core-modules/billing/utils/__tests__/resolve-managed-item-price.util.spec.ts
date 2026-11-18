@@ -7,7 +7,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credit_year',
-  targetApplicationPriceIdByCurrentPriceId: new Map<string, string>(),
+  applicationPriceIds: [],
 };
 
 describe('resolveManagedItemPrice', () => {

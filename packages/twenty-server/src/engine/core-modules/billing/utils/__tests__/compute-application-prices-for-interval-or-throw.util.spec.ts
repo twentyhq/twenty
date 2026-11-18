@@ -24,9 +24,7 @@ describe('computeApplicationPricesForIntervalOrThrow', () => {
   it('maps each application price to the price of its product at the interval', () => {
     expect(
       computeApplicationPricesForIntervalOrThrow({
-        targetApplicationPriceIdByCurrentPriceId: new Map([
-          ['price_application_month', 'price_application_month'],
-        ]),
+        applicationPriceIds: ['price_application_month'],
         applicationPrices: [
           {
             stripePriceId: 'price_application_month',
@@ -41,7 +39,7 @@ describe('computeApplicationPricesForIntervalOrThrow', () => {
   it('returns an empty map when the subscription has no application item', () => {
     expect(
       computeApplicationPricesForIntervalOrThrow({
-        targetApplicationPriceIdByCurrentPriceId: new Map(),
+        applicationPriceIds: [],
         applicationPrices: [],
         interval: SubscriptionInterval.Year,
       }),
@@ -51,9 +49,7 @@ describe('computeApplicationPricesForIntervalOrThrow', () => {
   it('throws when an application price has no billing product', () => {
     expect(() =>
       computeApplicationPricesForIntervalOrThrow({
-        targetApplicationPriceIdByCurrentPriceId: new Map([
-          ['price_application_month', 'price_application_month'],
-        ]),
+        applicationPriceIds: ['price_application_month'],
         applicationPrices: [],
         interval: SubscriptionInterval.Year,
       }),
@@ -67,9 +63,7 @@ describe('computeApplicationPricesForIntervalOrThrow', () => {
   it('throws when the product has no price at the interval', () => {
     expect(() =>
       computeApplicationPricesForIntervalOrThrow({
-        targetApplicationPriceIdByCurrentPriceId: new Map([
-          ['price_application_month', 'price_application_month'],
-        ]),
+        applicationPriceIds: ['price_application_month'],
         applicationPrices: [
           {
             stripePriceId: 'price_application_month',

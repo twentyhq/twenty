@@ -17,33 +17,31 @@ type ApplicationPrice = {
 };
 
 export const computeApplicationPricesForIntervalOrThrow = ({
-  targetApplicationPriceIdByCurrentPriceId,
+  applicationPriceIds,
   applicationPrices,
   interval,
 }: {
-  targetApplicationPriceIdByCurrentPriceId: Map<string, string>;
+  applicationPriceIds: string[];
   applicationPrices: ApplicationPrice[];
   interval: SubscriptionInterval;
 }): Map<string, string> =>
   new Map(
-    [...targetApplicationPriceIdByCurrentPriceId.keys()].map(
-      (currentPriceId) => {
-        const billingProduct = applicationPrices.find(
-          ({ stripePriceId }) => stripePriceId === currentPriceId,
-        )?.billingProduct;
+    applicationPriceIds.map((currentPriceId) => {
+      const billingProduct = applicationPrices.find(
+        ({ stripePriceId }) => stripePriceId === currentPriceId,
+      )?.billingProduct;
 
-        if (!isDefined(billingProduct)) {
-          throw new BillingException(
-            `Application price ${currentPriceId} has no billing product`,
-            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-          );
-        }
+      if (!isDefined(billingProduct)) {
+        throw new BillingException(
+          `Application price ${currentPriceId} has no billing product`,
+          BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+        );
+      }
 
-        return [
-          currentPriceId,
-          findProductPriceForIntervalOrThrow(billingProduct, interval)
-            .stripePriceId,
-        ];
-      },
-    ),
+      return [
+        currentPriceId,
+        findProductPriceForIntervalOrThrow(billingProduct, interval)
+          .stripePriceId,
+      ];
+    }),
   );

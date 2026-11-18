@@ -572,15 +572,13 @@ export class BillingSubscriptionUpdateService {
       baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
-      targetApplicationPriceIdByCurrentPriceId: new Map(
-        phaseItemPrices
-          .filter(
-            (price) =>
-              price.billingProduct?.metadata?.productKey ===
-              BillingProductKey.APPLICATION,
-          )
-          .map((price) => [price.stripePriceId, price.stripePriceId]),
-      ),
+      applicationPriceIds: phaseItemPrices
+        .filter(
+          (price) =>
+            price.billingProduct?.metadata?.productKey ===
+            BillingProductKey.APPLICATION,
+        )
+        .map((price) => price.stripePriceId),
     };
   }
 
@@ -950,28 +948,28 @@ export class BillingSubscriptionUpdateService {
         hasSamePlanKey: true,
       });
 
-    const applicationPriceIds = [
-      ...currentPrices.targetApplicationPriceIdByCurrentPriceId.keys(),
-    ];
-
-    const applicationPrices = isNonEmptyArray(applicationPriceIds)
+    const applicationPrices = isNonEmptyArray(currentPrices.applicationPriceIds)
       ? await this.billingPriceRepository.find({
-          where: { stripePriceId: In(applicationPriceIds) },
+          where: { stripePriceId: In(currentPrices.applicationPriceIds) },
           relations: ['billingProduct', 'billingProduct.billingPrices'],
         })
       : [];
+
+    const targetApplicationPriceIdByCurrentPriceId =
+      computeApplicationPricesForIntervalOrThrow({
+        applicationPriceIds: currentPrices.applicationPriceIds,
+        applicationPrices,
+        interval: newInterval,
+      });
 
     return {
       ...currentPrices,
       baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
-      targetApplicationPriceIdByCurrentPriceId:
-        computeApplicationPricesForIntervalOrThrow({
-          targetApplicationPriceIdByCurrentPriceId:
-            currentPrices.targetApplicationPriceIdByCurrentPriceId,
-          applicationPrices,
-          interval: newInterval,
-        }),
+      applicationPriceIds: [
+        ...targetApplicationPriceIdByCurrentPriceId.values(),
+      ],
+      targetApplicationPriceIdByCurrentPriceId,
     };
   }
 }
