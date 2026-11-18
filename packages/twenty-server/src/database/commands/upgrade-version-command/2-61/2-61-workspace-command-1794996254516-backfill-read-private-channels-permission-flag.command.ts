@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { READ_PRIVATE_CHANNELS_PERMISSION_FLAG } from 'src/database/commands/upgrade-version-command/2-60/constants/read-private-channels-permission-flag.constant';
+import { READ_PRIVATE_CHANNELS_PERMISSION_FLAG } from 'src/database/commands/upgrade-version-command/2-61/constants/read-private-channels-permission-flag.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
@@ -13,9 +13,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.60.0', 1794927482217)
+@RegisteredWorkspaceCommand('2.61.0', 1794996254516)
 @Command({
-  name: 'upgrade:2-60:backfill-read-private-channels-permission-flag',
+  name: 'upgrade:2-61:backfill-read-private-channels-permission-flag',
   description:
     'Create the READ_PRIVATE_CHANNELS standard permission flag in workspaces that lack it',
 })
