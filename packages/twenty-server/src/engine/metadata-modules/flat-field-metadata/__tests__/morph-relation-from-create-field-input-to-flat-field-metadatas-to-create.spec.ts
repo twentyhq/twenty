@@ -43,6 +43,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   grantedIframeMediaPermissions: [],
   logicFunctionLayerId: null,
   defaultRoleId: null,
+  requestedRoleId: null,
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   healthCheckLogicFunctionId: null,
