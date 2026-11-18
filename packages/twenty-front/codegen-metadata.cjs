@@ -9,8 +9,9 @@ module.exports = {
     './src/modules/users/graphql/**/*.{ts,tsx}',
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
+    './src/modules/ai-chat/**/graphql/**/*.{ts,tsx}',
     // answerToolCall is served by the core (/graphql) schema via @CoreResolver.
-    '!./src/modules/ai/graphql/mutations/answerToolCall.ts',
+    '!./src/modules/ai-chat/tool-calls/graphql/mutations/answerToolCall.ts',
     './src/modules/object-record/record-sharing/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
 

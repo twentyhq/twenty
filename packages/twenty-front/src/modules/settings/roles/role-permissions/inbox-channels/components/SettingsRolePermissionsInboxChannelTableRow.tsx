@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';

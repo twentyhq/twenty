@@ -2,14 +2,14 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { useProjectAiChatThreadToUrl } from '@/ai-chat/hooks/useProjectAiChatThreadToUrl';
+import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
-import { getCurrentAiChatPageThreadId } from '@/ai/utils/getCurrentAiChatPageThreadId';
-import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
+import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useLeaveRemovedInboxThread = () => {

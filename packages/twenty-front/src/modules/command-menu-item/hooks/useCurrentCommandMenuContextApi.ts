@@ -1,4 +1,4 @@
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
