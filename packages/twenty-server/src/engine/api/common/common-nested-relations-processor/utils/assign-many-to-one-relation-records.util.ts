@@ -1,18 +1,20 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
+
 export const assignManyToOneRelationRecords = ({
   parentRecords,
   relationRecords,
   sourceFieldName,
   parentRecordJoinColumnName,
-  selectedFields,
+  selectedColumns,
 }: {
   parentRecords: ObjectRecord[];
   relationRecords: ObjectRecord[];
   sourceFieldName: string;
   parentRecordJoinColumnName: string;
-  selectedFields: Record<string, unknown>;
+  selectedColumns: CommonSelection['columns'];
 }): void => {
   const relationRecordById = new Map<unknown, ObjectRecord>();
 
@@ -42,7 +44,7 @@ export const assignManyToOneRelationRecords = ({
       continue;
     }
 
-    if (selectedFields?.deletedAt === true) {
+    if (selectedColumns.deletedAt) {
       parentRecord[sourceFieldName] = matchedRelation;
 
       continue;

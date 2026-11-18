@@ -15,14 +15,20 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 
 export const fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow = ({
   updateViewSortInput: rawUpdateViewSortInput,
   flatViewSortMaps,
+  flatFieldMetadataMaps,
 }: {
   updateViewSortInput: UpdateViewSortInput;
   flatViewSortMaps: FlatViewSortMaps;
-}): UniversalFlatViewSort => {
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps'
+>): UniversalFlatViewSort => {
   const { id: viewSortToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateViewSortInput,
@@ -46,9 +52,28 @@ export const fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow = ({
     FLAT_VIEW_SORT_EDITABLE_PROPERTIES,
   );
 
-  return mergeUpdateInExistingRecord({
+  const flatViewSortToUpdate = mergeUpdateInExistingRecord({
     existing: existingFlatViewSortToUpdate,
     properties: FLAT_VIEW_SORT_EDITABLE_PROPERTIES,
     update: updatedEditableSortProperties,
   });
+
+  if (
+    updatedEditableSortProperties.relationTargetFieldMetadataId !== undefined
+  ) {
+    const { relationTargetFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewSort',
+        foreignKeyValues: {
+          relationTargetFieldMetadataId:
+            flatViewSortToUpdate.relationTargetFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewSortToUpdate.relationTargetFieldMetadataUniversalIdentifier =
+      relationTargetFieldMetadataUniversalIdentifier;
+  }
+
+  return flatViewSortToUpdate;
 };

@@ -4,10 +4,8 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { extractNestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/utils/extract-nested-relation-query-args.util';
-import {
-  GraphqlQuerySelectedFieldsParser,
-  type GraphqlQuerySelectedFieldsResult,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -33,7 +31,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
     fieldKey: string,
     fieldValue: unknown,
-    accumulator: GraphqlQuerySelectedFieldsResult,
+    accumulator: CommonSelectedFieldsResult,
     isFromOneToManyRelation?: boolean,
   ): void {
     if (!fieldValue || typeof fieldValue !== 'object') {
@@ -46,8 +44,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     if (isFromOneToManyRelation && isOneToManyRelation) {
       accumulator.hasAtLeastTwoNestedOneToManyRelations = true;
     }
-
-    accumulator.relations[fieldKey] = true;
 
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
       throw new Error(
@@ -70,12 +66,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       isFromOneToManyRelation || isOneToManyRelation,
     );
 
-    accumulator.select[fieldKey] = {
-      id: true,
-      ...relationAccumulator.select,
-    };
-    accumulator.relations[fieldKey] = relationAccumulator.relations;
-    accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +
       relationAccumulator.relationFieldsCount +
@@ -83,14 +73,18 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
-    accumulator.nestedRelationQueryArgsByFieldName[fieldKey] = {
+    accumulator.relations[fieldKey] = {
+      fieldName: fieldMetadata.name,
       ...(isOneToManyRelation &&
       isPlainObject(fieldValue) &&
       isPlainObject(fieldValue.__arguments)
         ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
         : {}),
-      nestedRelationQueryArgsByFieldName:
-        relationAccumulator.nestedRelationQueryArgsByFieldName,
+      selection: {
+        columns: { id: true, ...relationAccumulator.columns },
+        aggregates: relationAccumulator.aggregates,
+        relations: relationAccumulator.relations,
+      },
     };
   }
 

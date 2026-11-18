@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(đã chọn: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -288,7 +288,7 @@ msgstr "{0, plural, other {# Đối tượng}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# bước} other {# bước}}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "{formattedFailedRunCount} trong số {formattedRunCount} lượt chạy đã thất bại"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "Đã sử dụng {formattedPercentage}%, {formattedConversationSize} trong số {formattedContextWindow} token"
 
@@ -2119,17 +2119,17 @@ msgid "Add a meeting link"
 msgstr "Thêm liên kết cuộc họp"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Thêm một công ty mới mà chúng tôi đang liên hệ (ví dụ: tên, trang web, ngành). Chi tiết: "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "Thêm ghi chú"
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "Thêm ghi chú vào bản ghi này: "
 
@@ -2154,13 +2154,13 @@ msgid "Add a related record"
 msgstr "Thêm bản ghi liên quan"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "Thêm bước"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "Thêm một bước vào quy trình công việc này để "
 
@@ -2306,7 +2306,7 @@ msgid "Add credit card"
 msgstr "Thêm thẻ tín dụng"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Thêm Thẻ Tín Dụng"
@@ -2600,6 +2600,11 @@ msgstr "Thêm quy tắc"
 msgid "Add rule group"
 msgstr "Thêm nhóm quy tắc"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2618,12 @@ msgstr "Thêm sắp xếp"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Thêm nhà cung cấp Định danh SSO"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr ""
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3148,7 +3159,7 @@ msgstr "Tín dụng AI"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Tín dụng AI sẽ được gia hạn sau {0, plural, other {# ngày}}."
 
@@ -3245,22 +3256,22 @@ msgid "AI Usage by Workspace"
 msgstr "Mức sử dụng AI theo không gian làm việc"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "Đã đạt giới hạn sử dụng AI cho giai đoạn này."
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai-chat/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "Đã đạt giới hạn sử dụng AI. Hãy yêu cầu quản trị viên tăng giới hạn."
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "Đã đạt đến giới hạn sử dụng AI. Hãy yêu cầu quản trị viên nâng cấp gói."
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "Đã đạt đến giới hạn sử dụng AI. Hãy liên hệ bộ phận hỗ trợ để nâng cấp."
 
@@ -5533,8 +5544,8 @@ msgid "Cached creation"
 msgstr "Ghi vào bộ nhớ đệm"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "Đầu vào đã lưu vào bộ nhớ đệm"
 
@@ -6232,7 +6243,7 @@ msgid "Check List"
 msgstr "Danh sách kiểm tra"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Kiểm tra các lần chạy gần đây"
 
@@ -6252,7 +6263,7 @@ msgid "Check the merge result before trying again"
 msgstr "Kiểm tra kết quả hợp nhất trước khi thử lại"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "Kiểm tra các lần chạy gần đây của quy trình công việc này và cho tôi biết liệu có lần nào thất bại không và lý do."
 
@@ -6848,7 +6859,7 @@ msgstr "mã"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "Mã"
@@ -6864,7 +6875,7 @@ msgid "Code Block"
 msgstr "Khối mã"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "Đã sao chép mã vào bảng tạm"
 
@@ -6915,7 +6926,7 @@ msgid "collapse"
 msgstr "thu gọn"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7193,7 @@ msgstr "hoàn thành"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7692,22 +7703,22 @@ msgid "Context"
 msgstr "Ngữ cảnh"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "Ngữ cảnh và mức sử dụng"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "Ngữ cảnh và mức sử dụng, đã dùng {formattedPercentage}% cửa sổ ngữ cảnh"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "Ngữ cảnh và mức sử dụng, không có cửa sổ ngữ cảnh"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Cửa sổ ngữ cảnh"
@@ -7793,7 +7804,7 @@ msgstr "Kiểm soát loại thực thể nào mà vai trò này có thể đư�
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7890,10 +7901,10 @@ msgid "Copy audio download link"
 msgstr "Sao chép liên kết tải xuống âm thanh"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
-#: src/modules/ai-chat/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Sao chép mã"
 
@@ -7935,8 +7946,8 @@ msgid "Copy link to view"
 msgstr "Sao chép liên kết để xem"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "Sao chép đầu ra"
 
@@ -8386,18 +8397,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "Tạo một vài {0} để xem trước quy tắc này trên các bản ghi thực."
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "Tạo một liên hệ mới và liên kết họ với một công ty. Chi tiết: "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "Tạo bản ghi mới trong chế độ xem này. Chi tiết: "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "Tạo một bản ghi"
 
@@ -8407,23 +8418,23 @@ msgid "Create a relation with other objects"
 msgstr "Tạo quan hệ với các đối tượng khác"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "Tạo công việc"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "Tạo công việc cho công ty này: "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "Tạo công việc cho bản ghi này: "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Tạo một quy trình làm việc"
 
@@ -8790,8 +8801,8 @@ msgid "credits"
 msgstr "tín dụng"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10084,6 +10095,11 @@ msgstr "Xóa hàng"
 msgid "Delete Skill"
 msgstr "Xóa kỹ năng"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -10558,7 +10574,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "Khả năng phát hiện trên {defaultDomain}"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "Bỏ qua"
 
@@ -10792,7 +10808,7 @@ msgid "Download"
 msgstr "Tải xuống"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "Tải về {filename}"
 
@@ -10838,12 +10854,12 @@ msgid "Draft"
 msgstr "Bản nháp"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "Soạn email"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "Soạn email cho công ty này về "
 
@@ -11624,7 +11640,7 @@ msgid "Empty"
 msgstr "Trống"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11659,7 @@ msgid "Empty Array"
 msgstr "Mảng trống"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12729,7 +12745,7 @@ msgid "Exit import flow"
 msgstr "Thoát khỏi luồng nhập"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12879,12 @@ msgid "Expires in less than a day"
 msgstr "Hết hạn trong chưa đầy một ngày"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "Giải thích quy trình công việc này"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Giải thích từng bước quy trình công việc này thực hiện những gì."
 
@@ -12982,8 +12998,8 @@ msgstr "Khuôn mặt"
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -14004,12 +14020,12 @@ msgid "Filter opt-outs"
 msgstr "Lọc các mục từ chối"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "Lọc chế độ xem này"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "Lọc chế độ xem này để chỉ hiển thị "
 
@@ -14070,11 +14086,6 @@ msgstr "Hoàn tất chỉnh sửa bố cục để mở Hộp thư đến"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Hoàn tất chỉnh sửa bố cục để mở Cài đặt"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Hoàn tất chỉnh sửa bố cục để mở tab này"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -14669,7 +14680,7 @@ msgid "Generate recovery code"
 msgstr "Tạo mã khôi phục"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "Tệp đã tạo"
 
@@ -14689,7 +14700,7 @@ msgid "Germany"
 msgstr "Đức"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Nhận thêm tín dụng"
@@ -15418,7 +15429,7 @@ msgid "Hours between triggers"
 msgstr "Số giờ giữa các kích hoạt"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Tôi có thể giúp gì cho bạn?"
 
@@ -16100,7 +16111,7 @@ msgid "Initial values"
 msgstr "Giá trị ban đầu"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16142,8 @@ msgid "Input settings"
 msgstr "Cài đặt đầu vào"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "Mã thông báo đầu vào"
 
@@ -17188,7 +17199,7 @@ msgid "Last event"
 msgstr "Sự kiện gần nhất"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "Tin nhắn cuối cùng"
 
@@ -17461,7 +17472,7 @@ msgid "Legend"
 msgstr ""
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "Ít hơn"
 
@@ -18024,7 +18035,7 @@ msgid "Loading..."
 msgstr "Đang tải..."
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18074,7 @@ msgid "Lock diagram"
 msgstr "Khóa sơ đồ"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Ghi nhận một thương vụ mới (công ty, số tiền, giai đoạn, ngày dự kiến chốt). Chi tiết: "
 
@@ -19191,7 +19202,7 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Thêm nữa"
@@ -19277,6 +19288,7 @@ msgstr "Hầu như trống"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "Di chuyển xuống"
 
@@ -19293,6 +19305,7 @@ msgstr "Chuyển các cuộc trò chuyện của nó đến"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19301,6 +19314,7 @@ msgstr "Di chuyển sang trái"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19342,6 +19356,7 @@ msgstr "Chuyển sang gói {planLabel} mới?"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "Di chuyển lên"
 
@@ -19863,6 +19878,11 @@ msgstr "Giới hạn cộng dồn mới"
 msgid "New rule"
 msgstr "Quy tắc mới"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19886,6 +19906,7 @@ msgid "New SSO provider"
 msgstr "Nhà cung cấp SSO mới"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "Tab mới"
@@ -20552,7 +20573,7 @@ msgid "No latest version found"
 msgstr "Không tìm thấy phiên bản mới nhất"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Không giới hạn"
@@ -20676,7 +20697,7 @@ msgid "No options found"
 msgstr "Không tìm thấy tuỳ chọn nào"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -21194,9 +21215,9 @@ msgstr "Không phải tất cả các cột đều đã khớp"
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai-chat/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "Không khả dụng"
 
@@ -22411,9 +22432,9 @@ msgid "Outlook"
 msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
-#: src/modules/ai-chat/components/TerminalOutput.tsx
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -22437,13 +22458,13 @@ msgid "Output saved"
 msgstr "Đầu ra đã được lưu"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "Luồng đầu ra"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai-chat/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "Mã thông báo đầu ra"
 
@@ -22949,7 +22970,7 @@ msgid "Personal AI usage"
 msgstr "Mức sử dụng AI cá nhân"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Mức sử dụng cá nhân"
 
@@ -23724,7 +23745,7 @@ msgid "Purple"
 msgstr "Tím"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Thực thi mã Python"
 
@@ -24861,6 +24882,11 @@ msgstr "Xóa nhóm quy tắc"
 msgid "Remove searchable field"
 msgstr "Xóa trường có thể tìm kiếm"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -25048,12 +25074,12 @@ msgid "Reschedule Campaign"
 msgstr "Lên lịch lại chiến dịch"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "Nghiên cứu công ty này"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "Nghiên cứu công ty này và tóm tắt hoạt động, quy mô cũng như mọi tin tức gần đây của họ."
 
@@ -25094,7 +25120,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "Đặt lại mọi ghi đè trên bố cục này để đưa bố cục về mặc định của ứng dụng"
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai-chat/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "Đặt lại sau {daysUntilReset, plural, other {# ngày}} ({percentage}%)"
 
@@ -25670,7 +25696,7 @@ msgstr "Đang chạy công cụ..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai-chat/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Running..."
 msgstr "Đang chạy..."
 
@@ -26477,6 +26503,16 @@ msgstr "phần"
 msgid "Section"
 msgstr "Phần"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr ""
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26587,7 +26623,7 @@ msgid "See Turns"
 msgstr "Xem lượt tương tác"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "Xem tôi có thể làm gì"
 
@@ -27377,7 +27413,7 @@ msgstr "Đang thiết lập <0>cơ sở dữ liệu</0> của bạn..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -28766,7 +28802,7 @@ msgid "Subscribe"
 msgstr "Đăng ký"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Đăng ký Ngay"
@@ -28881,22 +28917,22 @@ msgid "Sum"
 msgstr "Tổng cộng"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "Tóm tắt các bản ghi trong chế độ xem này và chỉ ra bất kỳ mục nào cần chú ý."
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "Tóm tắt bản ghi này"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "Tóm tắt bản ghi này và hoạt động gần đây của nó."
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai-chat/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "Tóm tắt chế độ xem này"
 
@@ -29175,6 +29211,16 @@ msgstr "Thẻ {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "Tab {tabNumber}: {0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr ""
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29856,8 +29902,8 @@ msgid "Thickness"
 msgstr "Độ dày"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "Đang suy nghĩ"
 
@@ -30476,7 +30522,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "Thao tác này sẽ thu hồi {0} của {userLabel}."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai-chat/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Suy nghĩ"
 
@@ -30785,7 +30831,7 @@ msgid "Tool deleted"
 msgstr "Đã xóa công cụ"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai-chat/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Chi tiết công cụ: {displayMessage}"
 
@@ -32084,8 +32130,8 @@ msgid "Updating..."
 msgstr "Đang cập nhật..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32180,7 @@ msgstr "Nâng cấp lên {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Nâng cấp lên {0} tín dụng với giá ${1}/{2}."
@@ -32366,7 +32412,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -33126,7 +33172,7 @@ msgid "Waiting for a form to be filled in"
 msgstr "Đang chờ biểu mẫu được điền"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai-chat/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Đang chờ đầu ra..."
 
@@ -33442,17 +33488,17 @@ msgid "Weekly"
 msgstr "Hàng tuần"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "Đã đạt giới hạn sử dụng AI cá nhân hằng tuần. Hãy yêu cầu quản trị viên bật tín dụng không gian làm việc."
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "Đã đạt giới hạn sử dụng AI cá nhân hằng tuần. Hãy bật tín dụng không gian làm việc để tiếp tục."
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "Đã đạt giới hạn sử dụng AI cá nhân hằng tuần. Hiện đang sử dụng tín dụng không gian làm việc."
 
@@ -33488,12 +33534,12 @@ msgid "What AI model should your agent run on"
 msgstr "Tác nhân của bạn nên chạy trên mô hình AI nào"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Tôi có thể giúp gì cho bạn?"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Bạn có thể làm gì?"
 
@@ -33549,17 +33595,17 @@ msgid "When {assistantName} finishes"
 msgstr "Khi {assistantName} hoàn thành"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "Khi giai đoạn của một thương vụ chuyển sang Đã thắng, hãy tạo một nhiệm vụ được giao cho chủ sở hữu thương vụ, đến hạn sau 7 ngày kể từ ngày chốt, với tiêu đề \"Kiểm tra sau bán hàng\" và tên công ty trong phần mô tả."
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Khi một khách hàng tiềm năng mới được tạo với nguồn \"Website\", hãy gán cho nhân viên bán hàng có lãnh thổ (theo khu vực/quốc gia) khớp với địa chỉ của khách hàng tiềm năng; nếu không khớp, gán cho trưởng nhóm."
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai-chat/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Khi bất kỳ thương vụ nào có số tiền trên $100,000 được cập nhật giai đoạn hoặc số tiền, hãy gửi thông báo tới kênh bán hàng kèm tên thương vụ, công ty, giai đoạn mới, số tiền và chủ sở hữu."
 
@@ -33739,7 +33785,7 @@ msgstr "không cần thẻ tín dụng"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai-chat/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "Đã hoạt động trong {0}"
 
@@ -34413,7 +34459,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "Bạn sắp thay đổi tên miền phụ của không gian làm việc của mình. Thao tác này sẽ đăng xuất tất cả người dùng."
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai-chat/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Bạn đã đạt đến giới hạn sử dụng AI."
 
@@ -34520,7 +34566,7 @@ msgid "Your other events"
 msgstr "Các sự kiện khác của bạn"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai-chat/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "Mức sử dụng AI của riêng bạn, tách biệt với tín dụng không gian làm việc"
 
