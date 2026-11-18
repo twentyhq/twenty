@@ -37,13 +37,17 @@ export default defineApplication({
 });
 ```
 
-- `recurring` — flat and per-member fees the **platform** raises for you, once per billing period.
+- `recurring` — deprecated, see [subscription plans](#subscription-plans). Flat and per-member fees the **platform** raises for you, once per billing period.
 - `operations` — what you charge for as you use it, from a logic function.
 - `description` — one friendly line shown to buyers on your marketplace listing.
 
 All three land on the same credit meter and the same **Settings > Usage** breakdown, so a workspace sees one bill.
 
 ## Recurring charges
+
+<Warning>
+  Deprecated in favor of [subscription plans](#subscription-plans). The build warns about recurring charges, but they keep being raised: subscription plans are not billed yet, so keep yours until they are.
+</Warning>
 
 A recurring charge is a subscription fee: a flat monthly amount, an amount per workspace member, or both. You declare the amount and the platform charges it. Your app never calls `chargeCredits` for these.
 
