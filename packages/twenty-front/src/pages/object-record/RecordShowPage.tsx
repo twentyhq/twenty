@@ -2,7 +2,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
+import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
