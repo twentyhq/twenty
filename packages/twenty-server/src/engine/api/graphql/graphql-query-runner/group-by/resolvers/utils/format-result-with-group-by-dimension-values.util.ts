@@ -5,6 +5,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -21,11 +23,13 @@ export const formatResultWithGroupByDimensionValues = async ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   processRecord,
+  selection,
 }: {
   groupsResult: Record<string, unknown>[];
   groupByDefinitions: GroupByDefinition[];
   aggregateFieldNames: string[];
   processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
+  selection?: Pick<CommonSelection, 'relations'>;
   recordsResult?: Array<Record<string, unknown>>;
   flatObjectMetadata?: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
@@ -50,20 +54,35 @@ export const formatResultWithGroupByDimensionValues = async ({
       );
     }
 
+    const relationKeys = new Set(
+      isDefined(selection)
+        ? getRelationSelectionEntries(selection).map(({ key }) => key)
+        : [],
+    );
+
     for (const entry of recordsResult) {
       const groupKey = createGroupKey(entry, groupByDefinitions);
 
       const records = await Promise.all(
         ((entry.records as Array<Record<string, unknown>>) ?? []).map(
-          async (record) =>
-            await processRecord(
-              formatResult(
-                record,
+          async (record) => {
+            const recordEntries = Object.entries(record);
+
+            // Relation rows come formatted from the nested load, under keys formatResult does not know
+            return await processRecord({
+              ...formatResult<ObjectRecord>(
+                Object.fromEntries(
+                  recordEntries.filter(([key]) => !relationKeys.has(key)),
+                ),
                 flatObjectMetadata,
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
               ),
-            ),
+              ...Object.fromEntries(
+                recordEntries.filter(([key]) => relationKeys.has(key)),
+              ),
+            });
+          },
         ),
       );
 
