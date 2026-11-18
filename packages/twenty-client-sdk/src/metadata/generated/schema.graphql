@@ -1199,7 +1199,7 @@ enum BillingProductKey {
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
+  planKey: BillingPlanKey
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
 }
