@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
@@ -33,7 +34,7 @@ const SwitchCopy = styled.div`
 
 type ProgramStripProps = {
   heading: MessageDescriptor;
-  body: MessageDescriptor;
+  body?: MessageDescriptor;
   action: ReactNode;
   headingLevel?: HeadingLevel;
 };
@@ -53,9 +54,11 @@ export function ProgramStrip({
         <Heading as={headingLevel} size="xs" weight="regular">
           {i18n._(heading)}
         </Heading>
-        <Body muted size="sm">
-          {i18n._(body)}
-        </Body>
+        {isDefined(body) && (
+          <Body muted size="sm">
+            {i18n._(body)}
+          </Body>
+        )}
       </SwitchCopy>
       {action}
     </SwitchRow>

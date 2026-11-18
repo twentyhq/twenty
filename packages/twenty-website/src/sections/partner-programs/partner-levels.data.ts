@@ -77,6 +77,6 @@ export const PARTNER_LEVELS: readonly PartnerLevel[] = [
         description: msg`Clients from briefs do not earn a commission`,
       },
     ],
-    requirement: msg`Once we have seen your work with clients`,
+    requirement: msg`For partners with extensive experience implementing Twenty`,
   },
 ];

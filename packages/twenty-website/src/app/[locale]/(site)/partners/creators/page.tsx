@@ -85,7 +85,7 @@ export default async function CreatorProgramPage({
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
           eyebrow={msg`How it works`}
           heading={msg`From link *to payout*`}
-          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays.`}
+          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months.`}
           steps={CREATOR_STEPS}
           footer={[
             {
@@ -103,8 +103,7 @@ export default async function CreatorProgramPage({
           ]}
         />
         <ProgramStripSection
-          heading={msg`You implement Twenty *for clients?*`}
-          body={msg`Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs.`}
+          heading={msg`You implement Twenty *for your clients?*`}
           action={
             <Button
               href="/partners/integrators"

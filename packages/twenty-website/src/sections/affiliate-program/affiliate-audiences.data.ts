@@ -26,7 +26,7 @@ export const AFFILIATE_AUDIENCES: readonly AffiliateAudience[] = [
   },
   {
     title: msg`Consultants and agencies`,
-    body: msg`Recommend Twenty to clients, even on projects you don't implement.`,
+    body: msg`Recommend Twenty to your clients, even on projects you don't implement.`,
   },
   {
     title: msg`Tech partners`,
