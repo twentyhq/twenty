@@ -19,7 +19,7 @@ import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/consta
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
 import { useAiChat } from '@/ai-chat/hooks/useAiChat';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatNewThreadRecipientsFamilyState';
@@ -67,7 +67,7 @@ const loadAiChatThread = jest.fn(async (threadId: string) => ({
   id: threadId,
 }));
 
-jest.mock('@/ai-chat/threads/hooks/useLoadAiChatThread', () => ({
+jest.mock('@/ai-chat/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 

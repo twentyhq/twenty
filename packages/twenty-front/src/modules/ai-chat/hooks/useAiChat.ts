@@ -28,7 +28,7 @@ import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOpti
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatMessageAuthorLookupSelector } from '@/ai-chat/messages/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
@@ -36,7 +36,7 @@ import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatM
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
 import { aiChatLastSentBrowsingContextFamilyState } from '@/ai-chat/states/aiChatLastSentBrowsingContextFamilyState';
 import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
-import { aiChatSentMessageHandOffState } from '@/ai-chat/composer/states/aiChatSentMessageHandOffState';
+import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';

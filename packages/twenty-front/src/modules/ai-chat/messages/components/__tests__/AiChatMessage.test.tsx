@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatComposerQuote } from '@/ai-chat/composer/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';

@@ -7,7 +7,7 @@ import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/
 import {
   type AiChatPrepromptMode,
   aiChatPrepromptState,
-} from '@/ai-chat/composer/states/aiChatPrepromptState';
+} from '@/ai-chat/states/aiChatPrepromptState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 

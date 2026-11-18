@@ -7,7 +7,7 @@ import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/hooks/useOpenAskAiPageW
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatPrepromptState } from '@/ai-chat/composer/states/aiChatPrepromptState';
+import { aiChatPrepromptState } from '@/ai-chat/states/aiChatPrepromptState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';

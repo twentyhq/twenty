@@ -6,8 +6,8 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
-import { aiChatSentMessageHandOffState } from '@/ai-chat/composer/states/aiChatSentMessageHandOffState';
-import { getTextBoundingClientRect } from '@/ai-chat/composer/utils/getTextBoundingClientRect';
+import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
+import { getTextBoundingClientRect } from '@/ai-chat/utils/getTextBoundingClientRect';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 
 type AiChatSentMessageHandOffEffectProps = {

@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { groupContiguousThinkingStepParts } from '@/ai-chat/thinking-steps/utils/groupContiguousThinkingStepParts';
+import { groupContiguousThinkingStepParts } from '@/ai-chat/messages/utils/groupContiguousThinkingStepParts';
 import { isThinkingStepPartActive } from '@/ai-chat/thinking-steps/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
 
