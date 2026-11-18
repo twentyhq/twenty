@@ -228,6 +228,29 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       );
     });
 
+    it('files a chat once when all its views close in the same render', async () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const view = render(
+        <JotaiProvider store={jotaiStore}>
+          <AiChatTestInstance>
+            <AiChatThreadMarkAsReadEffect />
+          </AiChatTestInstance>
+          <AiChatTestInstance>
+            <AiChatThreadMarkAsReadEffect />
+          </AiChatTestInstance>
+        </JotaiProvider>,
+      );
+
+      await leaveChatView(view);
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledTimes(1);
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
     it('keeps a chat handed to another view in the same render', async () => {
       setReadUpTo(LAST_ACTIVITY_AT);
 
