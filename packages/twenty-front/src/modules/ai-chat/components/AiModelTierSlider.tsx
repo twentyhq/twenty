@@ -5,7 +5,7 @@ import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiModelTierInformationButton } from '@/ai-chat/composer/components/AiModelTierInformationButton';
+import { AiModelTierInformationButton } from '@/ai-chat/components/AiModelTierInformationButton';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 
 const TRACK_HEIGHT_PX = 24;

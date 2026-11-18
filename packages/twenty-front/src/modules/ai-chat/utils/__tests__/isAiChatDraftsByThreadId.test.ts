@@ -1,5 +1,5 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { isAiChatDraftsByThreadId } from '@/ai-chat/composer/utils/isAiChatDraftsByThreadId';
+import { isAiChatDraftsByThreadId } from '@/ai-chat/utils/isAiChatDraftsByThreadId';
 
 describe('isAiChatDraftsByThreadId', () => {
   it('accepts empty and canonical drafts', () => {
