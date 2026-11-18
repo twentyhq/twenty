@@ -28,6 +28,8 @@ import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/com
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -64,7 +66,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
   async run(
     args: CommonExtendedInput<MergeManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const { flatFieldMetadataMaps, flatObjectMetadata } = queryRunnerContext;
 
     const recordsToMerge = await this.fetchRecordsToMerge(
@@ -92,8 +94,12 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
       args.dryRun ?? false,
     );
 
+    // The preview merges every record's relations, so per-record counts would not match it
     if (args.dryRun) {
-      return this.createDryRunResponse(priorityRecord, mergedData);
+      return {
+        result: this.createDryRunResponse(priorityRecord, mergedData),
+        relationAggregatedValues: {},
+      };
     }
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
@@ -106,13 +112,13 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
       mergedData,
     });
 
-    await this.processNestedRelations({
+    const relationAggregatedValues = await this.processNestedRelations({
       args,
       queryRunnerContext,
       updatedRecords: [updatedRecord],
     });
 
-    return updatedRecord;
+    return { result: updatedRecord, relationAggregatedValues };
   }
 
   private async fetchRecordsToMerge(
@@ -655,7 +661,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     args: CommonExtendedInput<MergeManyQueryArgs>;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     updatedRecords: ObjectRecord[];
-  }): Promise<void> {
+  }): Promise<CommonRelationsAggregatedValues> {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -663,7 +669,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
       authContext,
     } = queryRunnerContext;
 
-    await this.processNestedRelationsHelper.processNestedRelations({
+    return await this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,
