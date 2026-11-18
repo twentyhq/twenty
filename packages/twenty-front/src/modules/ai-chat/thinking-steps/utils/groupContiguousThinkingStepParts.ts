@@ -3,7 +3,7 @@ import {
   isPausingToolPart,
 } from 'twenty-shared/ai';
 
-import { type AssistantMessageRenderItem } from '@/ai-chat/types/AssistantMessageRenderItem';
+import { type AssistantMessageRenderItem } from '@/ai-chat/messages/types/AssistantMessageRenderItem';
 
 import { isThinkingStepPart } from '@/ai-chat/thinking-steps/utils/isThinkingStepPart';
 import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
