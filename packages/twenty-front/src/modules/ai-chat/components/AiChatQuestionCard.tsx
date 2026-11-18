@@ -29,9 +29,9 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai-chat/components/StyledAiChatAskCard';
-import { TextWithChatReferences } from '@/ai-chat/components/TextWithChatReferences';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/internal/AiChatComposerActionsRow';
-import { AiChatContextUsageButton } from '@/ai-chat/components/internal/AiChatContextUsageButton';
+import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai-chat/components/internal/AiChatQuestionOtherOption';
 import { useAnswerAiChatToolCall } from '@/ai-chat/hooks/useAnswerAiChatToolCall';
 import { type AiChatPendingQuestion } from '@/ai-chat/types/AiChatPendingQuestion';
