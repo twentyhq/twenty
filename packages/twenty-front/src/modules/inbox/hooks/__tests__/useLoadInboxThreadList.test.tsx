@@ -11,7 +11,7 @@ import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamily
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
 import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/states/aiChatThreadStreamedParticipantsState';
-import { aiChatUsageFamilyState } from '@/ai-chat/states/aiChatUsageFamilyState';
+import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
