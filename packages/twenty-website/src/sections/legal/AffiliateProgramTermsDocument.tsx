@@ -5,7 +5,7 @@ export function AffiliateProgramTermsDocument() {
     <>
       <p>
         <strong>Last updated:</strong>
-        {' November 13, 2026'}
+        {' November 18, 2026'}
       </p>
 
       <h2>1. About these terms</h2>
@@ -82,6 +82,12 @@ export function AffiliateProgramTermsDocument() {
           you set up. See &ldquo;Code added after sign-up&rdquo; below.
         </li>
       </ul>
+      <p>
+        You may put your link on your own website and channels, for example a
+        &ldquo;Get started&rdquo; button next to a Twenty plan. Show the same
+        prices and plan details as twenty.com, and make clear the subscription
+        is with Twenty.
+      </p>
       <p>
         Your code is personal. Don&rsquo;t post it on coupon or discount-code
         sites.
@@ -281,8 +287,9 @@ export function AffiliateProgramTermsDocument() {
       <ul>
         <li>
           Bid on &ldquo;Twenty&rdquo;, &ldquo;Twenty CRM&rdquo; or close
-          variants in paid search ads, or run ads that send people straight to
-          twenty.com through your link.
+          variants in paid search ads, let your ads show on searches for those
+          terms, or run ads that send people straight to twenty.com through your
+          link.
         </li>
         <li>Send unsolicited bulk email or messages, or buy lists.</li>
         <li>
@@ -302,6 +309,22 @@ export function AffiliateProgramTermsDocument() {
         </li>
         <li>Refer yourself or your own company.</li>
       </ul>
+      <p>
+        <strong>Paid ads.</strong> You may mention Twenty in the text of your
+        ads to describe your own services, for example &ldquo;built on Twenty
+        open-source CRM&rdquo;, as long as:
+      </p>
+      <ul>
+        <li>
+          Twenty appears in the description only, not in the headline or the
+          display URL.
+        </li>
+        <li>
+          &ldquo;Twenty&rdquo; is set as a negative keyword, so your ads never
+          show on searches for Twenty.
+        </li>
+        <li>The ad leads to your own website.</li>
+      </ul>
 
       <h2>9. Use of the Twenty brand</h2>
       <p>
@@ -310,9 +333,15 @@ export function AffiliateProgramTermsDocument() {
         partner kit. This permission ends when you leave the program.
       </p>
       <p>
-        You may not use &ldquo;Twenty&rdquo; in your own company, product or
-        domain name, or change the logo. Content you create about Twenty stays
-        yours. We&rsquo;ll ask before sharing it on our channels.
+        You may not use &ldquo;Twenty&rdquo; or a close variant (such as
+        &ldquo;20&rdquo;) in your own company, product or domain name, or change
+        the logo. You may describe a product or service you build as built on,
+        or integrated with, Twenty, as long as it is clear that it is yours and
+        supported by you, not by Twenty.
+      </p>
+      <p>
+        Content you create about Twenty stays yours. We&rsquo;ll ask before
+        sharing it on our channels.
       </p>
 
       <h2>10. Suspension and termination</h2>
