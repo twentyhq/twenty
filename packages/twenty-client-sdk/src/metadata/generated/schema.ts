@@ -434,7 +434,6 @@ export interface Application {
     logicFunctions: LogicFunction[]
     logoFileId?: Scalars['UUID']
     logoUrl?: Scalars['String']
-    marketplaceAppUniversalIdentifier?: Scalars['String']
     name: Scalars['String']
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
@@ -5025,7 +5024,6 @@ export interface ApplicationGenqlSelection{
     logicFunctions?: LogicFunctionGenqlSelection
     logoFileId?: boolean | number
     logoUrl?: boolean | number
-    marketplaceAppUniversalIdentifier?: boolean | number
     name?: boolean | number
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number

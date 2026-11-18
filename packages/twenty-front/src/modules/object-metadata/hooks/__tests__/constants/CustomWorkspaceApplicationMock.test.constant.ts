@@ -11,7 +11,6 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   settingsMenuItems: [],
   availablePackages: {},
   canBeUninstalled: false,
-  marketplaceAppUniversalIdentifier: null,
   isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   runHealthCheckOnUserPreferences: false,

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { VERIFIED_OAUTH_CLIENTS } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/constants/verified-oauth-clients.constant';
 import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/types/verified-oauth-client.type';
 import { type VerifiableOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/types/verifiable-oauth-client-registration.type';
@@ -10,16 +12,17 @@ const isRegistrationOfVerifiedClient = ({
   verifiedClient: VerifiedOAuthClient;
   registration: VerifiableOAuthClientRegistration;
 }): boolean => {
-  if ('clientIdMetadataDocumentUrl' in verifiedClient) {
+  if (isVerifiedOAuthClientRegistration(registration)) {
     return (
-      verifiedClient.clientIdMetadataDocumentUrl === registration.oAuthClientId
+      verifiedClient.universalIdentifier ===
+      registration.universalIdentifier.toLowerCase()
     );
   }
 
+  // TODO(felix): remove once an upgrade command moves per-URL registrations onto their card's registration
   return (
-    isVerifiedOAuthClientRegistration(registration) &&
-    verifiedClient.registrationUniversalIdentifier ===
-      registration.universalIdentifier.toLowerCase()
+    isDefined(verifiedClient.clientIdMetadataDocumentUrl) &&
+    verifiedClient.clientIdMetadataDocumentUrl === registration.oAuthClientId
   );
 };
 

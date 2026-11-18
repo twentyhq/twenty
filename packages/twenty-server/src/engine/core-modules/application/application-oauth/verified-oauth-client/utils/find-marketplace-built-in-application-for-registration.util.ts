@@ -15,8 +15,6 @@ export const findMarketplaceBuiltInApplicationForRegistration = (
   const verifiedClient = findVerifiedOAuthClientForRegistration(registration);
 
   return isDefined(verifiedClient)
-    ? findMarketplaceBuiltInApplication(
-        verifiedClient.marketplaceAppUniversalIdentifier,
-      )
+    ? findMarketplaceBuiltInApplication(verifiedClient.universalIdentifier)
     : undefined;
 };

@@ -38,7 +38,6 @@ const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,
-  marketplaceAppUniversalIdentifier: null,
   isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   createdAt: '2026-11-02T00:00:00.000Z',

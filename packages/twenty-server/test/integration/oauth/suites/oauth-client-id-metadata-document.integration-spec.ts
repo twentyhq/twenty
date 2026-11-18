@@ -37,10 +37,28 @@ const VERIFIED_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
   logoUri: null,
   redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
 };
+const CLAUDE_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://claude.ai/oauth/mcp-oauth-client-metadata',
+  clientName: 'Claude',
+  logoUri: null,
+  redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+};
+const CLAUDE_CODE_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://claude.ai/oauth/claude-code-client-metadata',
+  clientName: 'Claude Code',
+  logoUri: null,
+  redirectUris: ['http://127.0.0.1/callback'],
+};
 const DOCUMENTS = [
   WEB_CLIENT_DOCUMENT,
   NATIVE_CLIENT_DOCUMENT,
   VERIFIED_CLIENT_DOCUMENT,
+  CLAUDE_DOCUMENT,
+  CLAUDE_CODE_DOCUMENT,
+];
+const VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS = [
+  MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+  MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
 ];
 const DOCUMENT_CLIENT_IDS = DOCUMENTS.map(({ clientId }) => clientId);
 const WEB_CLIENT_CALLBACK = WEB_CLIENT_DOCUMENT.redirectUris[0];
@@ -89,7 +107,7 @@ const findManyApplicationsQuery = gql`
       name
       description
       logoUrl
-      marketplaceAppUniversalIdentifier
+      universalIdentifier
       applicationRegistration {
         id
       }
@@ -169,6 +187,41 @@ describe('OAuth client ID metadata documents (integration)', () => {
     return count;
   };
 
+  const authorizeAndExchange = async ({
+    clientId,
+    redirectUris,
+  }: ClientIdMetadataDocument) => {
+    const authorization = await requestAuthorization({
+      clientId,
+      redirectUrl: redirectUris[0],
+    });
+
+    expect(authorization.body.errors).toBeUndefined();
+
+    const exchangeResponse = await postToken({
+      grant_type: 'authorization_code',
+      code: findAuthorizationCode(authorization),
+      client_id: clientId,
+      code_verifier: CODE_VERIFIER,
+      redirect_uri: redirectUris[0],
+    });
+
+    expect(exchangeResponse.status).toBe(200);
+
+    return exchangeResponse.body;
+  };
+
+  const findApplications = async () => {
+    const response = await makeMetadataApiRequest(
+      { query: findManyApplicationsQuery },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.findManyApplications;
+  };
+
   const stubDocuments = () => {
     findDocumentSpy = jest
       .spyOn(clientIdMetadataDocumentService, 'findDocument')
@@ -208,8 +261,15 @@ describe('OAuth client ID metadata documents (integration)', () => {
       [DOCUMENT_CLIENT_IDS],
     );
     await dataSource.query(
-      `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
-      [DOCUMENT_CLIENT_IDS],
+      `DELETE FROM core."application" application
+       USING core."applicationRegistration" registration
+       WHERE registration.id = application."applicationRegistrationId"
+         AND registration."universalIdentifier" = ANY($1)`,
+      [VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS],
+    );
+    await dataSource.query(
+      `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1) OR "universalIdentifier" = ANY($2)`,
+      [DOCUMENT_CLIENT_IDS, VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS],
     );
     await dataSource.query(
       `DELETE FROM core."appToken" WHERE context->>'clientId' = ANY($1)`,
@@ -298,68 +358,104 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(refreshResponse.status).toBe(200);
     });
 
-    it('should show an installed verified client as its store card, and an unverified one as itself', async () => {
-      for (const { clientId, redirectUris } of [
-        VERIFIED_CLIENT_DOCUMENT,
-        WEB_CLIENT_DOCUMENT,
-      ]) {
-        const authorization = await requestAuthorization({
-          clientId,
-          redirectUrl: redirectUris[0],
+    it('should give the documents of one store card a single registration and application with its identity', async () => {
+      for (const document of [CLAUDE_DOCUMENT, CLAUDE_CODE_DOCUMENT]) {
+        const tokens = await authorizeAndExchange(document);
+
+        const refreshResponse = await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: tokens.refresh_token,
+          client_id: document.clientId,
         });
 
-        const exchangeResponse = await postToken({
-          grant_type: 'authorization_code',
-          code: findAuthorizationCode(authorization),
-          client_id: clientId,
-          code_verifier: CODE_VERIFIER,
-          redirect_uri: redirectUris[0],
-        });
-
-        expect(exchangeResponse.status).toBe(200);
+        expect(refreshResponse.status).toBe(200);
+        expect(await countRegistrations(document.clientId)).toBe(0);
       }
 
-      const [verifiedRegistration] = await dataSource.query(
-        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
-        [VERIFIED_CLIENT_DOCUMENT.clientId],
+      const claudeApplications = (await findApplications()).filter(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier ===
+          MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
       );
-      const [unverifiedRegistration] = await dataSource.query(
-        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+
+      expect(claudeApplications).toEqual([
+        {
+          name: 'Claude',
+          description: findMarketplaceBuiltInApplication(
+            MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          )?.description,
+          logoUrl: expect.stringMatching(
+            /\/images\/oauth-clients\/claude\.webp$/,
+          ),
+          universalIdentifier:
+            MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          applicationRegistration: { id: expect.any(String) },
+        },
+      ]);
+    });
+
+    it('should keep a verified document client on the registration it already had for its URL', async () => {
+      const [legacyRegistration] = await dataSource.query(
+        `INSERT INTO core."applicationRegistration"
+           ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")
+         VALUES (gen_random_uuid(), 'ChatGPT', $1, $2, $3, 'oauth-only')
+         RETURNING id`,
+        [
+          VERIFIED_CLIENT_DOCUMENT.clientId,
+          VERIFIED_CLIENT_DOCUMENT.redirectUris,
+          ['api', 'profile'],
+        ],
+      );
+
+      const tokens = await authorizeAndExchange(VERIFIED_CLIENT_DOCUMENT);
+
+      const refreshResponse = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: tokens.refresh_token,
+        client_id: VERIFIED_CLIENT_DOCUMENT.clientId,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+      expect(
+        (await findApplications()).some(
+          ({
+            applicationRegistration,
+          }: {
+            applicationRegistration: { id: string } | null;
+          }) => applicationRegistration?.id === legacyRegistration.id,
+        ),
+      ).toBe(true);
+
+      const [{ count }] = await dataSource.query(
+        `SELECT COUNT(*)::int AS count FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT],
+      );
+
+      expect(count).toBe(0);
+    });
+
+    it('should show an unverified document client as itself', async () => {
+      await authorizeAndExchange(WEB_CLIENT_DOCUMENT);
+
+      const [registration] = await dataSource.query(
+        `SELECT id, "universalIdentifier" FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
         [WEB_CLIENT_DOCUMENT.clientId],
       );
 
-      const response = await makeMetadataApiRequest(
-        { query: findManyApplicationsQuery },
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      const findApplication = (registrationId: string) =>
-        response.body.data.findManyApplications.find(
-          (application: { applicationRegistration: { id: string } | null }) =>
-            application.applicationRegistration?.id === registrationId,
-        );
-      const chatGptCard = findMarketplaceBuiltInApplication(
-        MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
-      );
-
-      expect(findApplication(verifiedRegistration.id)).toEqual({
-        name: 'ChatGPT',
-        description: chatGptCard?.description,
-        logoUrl: expect.stringMatching(
-          /\/images\/oauth-clients\/chatgpt\.webp$/,
+      expect(
+        (await findApplications()).find(
+          ({
+            applicationRegistration,
+          }: {
+            applicationRegistration: { id: string } | null;
+          }) => applicationRegistration?.id === registration.id,
         ),
-        marketplaceAppUniversalIdentifier:
-          MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
-        applicationRegistration: { id: verifiedRegistration.id },
-      });
-      expect(findApplication(unverifiedRegistration.id)).toEqual({
+      ).toEqual({
         name: 'ChatGPT',
         description: 'OAuth application registered as "ChatGPT"',
         logoUrl: null,
-        marketplaceAppUniversalIdentifier: null,
-        applicationRegistration: { id: unverifiedRegistration.id },
+        universalIdentifier: registration.universalIdentifier,
+        applicationRegistration: { id: registration.id },
       });
     });
 

@@ -141,38 +141,16 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     roles: [],
   };
 
-const CLAUDE_MARKETPLACE_APP_UNIVERSAL_IDENTIFIER =
-  '20202020-b759-4b27-9593-4d075aea79ed';
-
-const CLAUDE_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] =
-  {
-    ...MARKETPLACE_APP_DETAIL,
-    id: CLAUDE_MARKETPLACE_APP_UNIVERSAL_IDENTIFIER,
-    universalIdentifier: CLAUDE_MARKETPLACE_APP_UNIVERSAL_IDENTIFIER,
-    name: 'Claude',
-    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    sourcePackage: null,
-    latestAvailableVersion: null,
-    description:
-      'Search, create and update your Twenty records from a Claude conversation.',
-    author: 'Anthropic',
-    connectUrl: 'https://claude.ai/customize/connectors',
-    galleryImages: ['https://example.com/claude-cover.webp'],
-    installCount: 0,
-  };
-
 const buildApplicationHandlers = ({
   settingsMenuItems,
   healthCheckLogicFunctionId = null,
   runHealthCheckOnUserPreferences = false,
   marketplaceAppDetail,
-  marketplaceAppUniversalIdentifier = null,
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
   healthCheckLogicFunctionId?: string | null;
   runHealthCheckOnUserPreferences?: boolean;
   marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
-  marketplaceAppUniversalIdentifier?: string | null;
 }) => [
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
@@ -188,7 +166,6 @@ const buildApplicationHandlers = ({
           applicationRegistrationId: null,
           applicationRegistration: null,
           canBeUninstalled: true,
-          marketplaceAppUniversalIdentifier,
           isUninstallBlockedByOtherWorkspaceInstallations: false,
           autoUpgrade: false,
           requestedRoleId: null,
@@ -208,10 +185,9 @@ const buildApplicationHandlers = ({
       },
     }),
   ),
-  graphql.query('FindMarketplaceAppDetail', ({ variables }) =>
+  graphql.query('FindMarketplaceAppDetail', () =>
     HttpResponse.json(
-      variables.universalIdentifier ===
-        marketplaceAppDetail?.universalIdentifier
+      isDefined(marketplaceAppDetail)
         ? { data: { findMarketplaceAppDetail: marketplaceAppDetail } }
         : {
             errors: [
@@ -315,36 +291,6 @@ export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
     expect(
       canvas.getByRole('button', { name: 'View in marketplace' }),
     ).toBeVisible();
-  },
-};
-
-export const OAuthClientShowsItsStoreCard: Story = {
-  parameters: {
-    msw: {
-      handlers: buildApplicationHandlers({
-        settingsMenuItems: [],
-        marketplaceAppDetail: CLAUDE_MARKETPLACE_APP_DETAIL,
-        marketplaceAppUniversalIdentifier:
-          CLAUDE_MARKETPLACE_APP_UNIVERSAL_IDENTIFIER,
-      }),
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText(
-        'Search, create and update your Twenty records from a Claude conversation.',
-        undefined,
-        { timeout: 3000 },
-      ),
-    ).toBeVisible();
-    expect(
-      canvasElement.querySelector(
-        'img[src="https://example.com/claude-cover.webp"]',
-      ),
-    ).not.toBeNull();
-    expect(canvas.getByRole('button', { name: 'See app page' })).toBeVisible();
   },
 };
 
