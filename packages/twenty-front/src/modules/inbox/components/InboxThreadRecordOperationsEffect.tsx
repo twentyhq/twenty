@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
@@ -12,7 +12,7 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';

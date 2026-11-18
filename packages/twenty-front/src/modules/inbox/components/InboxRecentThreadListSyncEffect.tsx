@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';

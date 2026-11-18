@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
 
 type InboxRecordSelectionScope = {
   routeSelectionKey: string | undefined;

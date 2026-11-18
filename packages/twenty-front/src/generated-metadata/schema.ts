@@ -584,6 +584,7 @@ export type Application = {
   content?: Maybe<ApplicationContent>;
   createdAt: Scalars['DateTime']['output'];
   defaultLogicFunctionRole?: Maybe<Role>;
+  /** @deprecated Use requestedRoleId instead */
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
@@ -600,6 +601,7 @@ export type Application = {
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
   requestedIframeMediaPermissions: Array<IframeMediaPermission>;
+  requestedRoleId?: Maybe<Scalars['UUID']['output']>;
   runHealthCheckOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
@@ -1276,6 +1278,7 @@ export type BillingProductDto = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  APPLICATION = 'APPLICATION',
   BASE_PRODUCT = 'BASE_PRODUCT',
   RESOURCE_CREDIT = 'RESOURCE_CREDIT'
 }
@@ -1283,7 +1286,7 @@ export enum BillingProductKey {
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
-  planKey: BillingPlanKey;
+  planKey?: Maybe<BillingPlanKey>;
   priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
@@ -2151,6 +2154,7 @@ export type CreateViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   viewId: Scalars['UUID']['input'];
 };
@@ -2472,7 +2476,6 @@ export enum EngineComponentKey {
   SEE_RUNS_WORKFLOW_VERSION = 'SEE_RUNS_WORKFLOW_VERSION',
   SEE_VERSIONS_WORKFLOW = 'SEE_VERSIONS_WORKFLOW',
   SEE_VERSIONS_WORKFLOW_VERSION = 'SEE_VERSIONS_WORKFLOW_VERSION',
-  SEE_VERSION_WORKFLOW_RUN = 'SEE_VERSION_WORKFLOW_RUN',
   SEE_WORKFLOW_WORKFLOW_RUN = 'SEE_WORKFLOW_WORKFLOW_RUN',
   SEE_WORKFLOW_WORKFLOW_VERSION = 'SEE_WORKFLOW_WORKFLOW_VERSION',
   SEND_MESSAGE_CAMPAIGN = 'SEND_MESSAGE_CAMPAIGN',
@@ -6497,6 +6500,7 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeLogicFunctionSources?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8270,6 +8274,7 @@ export type UpdateViewSortInput = {
 
 export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8939,6 +8944,7 @@ export type ViewSort = {
   direction: ViewSortDirection;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   viewId: Scalars['UUID']['output'];

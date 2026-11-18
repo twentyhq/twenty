@@ -175,10 +175,10 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
         id: true,
       },
     });
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
   });
 
-  it('should not write a call recording for a conference without transcript or notes', async () => {
+  it('should not write a call recording for a conference without transcript, notes or recording', async () => {
     fetchMock.mockImplementation(async () => new Response('{}'));
 
     const coreApiClient = buildCoreApiClient();
@@ -194,9 +194,55 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       shouldGenerateAiSummary: false,
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(coreApiClient.query).not.toHaveBeenCalled();
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
+  });
+
+  it('should complete a conference that only has a recording and import its first video', async () => {
+    fetchMock.mockImplementation(async (url) =>
+      url ===
+      `${MEET_API_URL}/conferenceRecords/first/recordings?pageSize=100`
+        ? new Response(
+            JSON.stringify({
+              recordings: [
+                {
+                  name: 'conferenceRecords/first/recordings/fourth',
+                  state: 'FILE_GENERATED',
+                },
+                {
+                  name: 'conferenceRecords/first/recordings/fifth',
+                  state: 'FILE_GENERATED',
+                },
+              ],
+            }),
+          )
+        : new Response('{}'),
+    );
+
+    const coreApiClient = buildCoreApiClient();
+
+    await expect(
+      syncGoogleMeetConferenceOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        conferenceRecord: {
+          name: CONFERENCE_RECORD.name,
+          startTime: CONFERENCE_RECORD.startTime,
+        },
+      }),
+    ).resolves.toEqual({
+      outcome: 'CREATED',
+      shouldGenerateAiSummary: false,
+      recordingNameToImport: 'conferenceRecords/first/recordings/fourth',
+    });
+
+    const recordingData =
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
+
+    expect(recordingData.status).toBe('COMPLETED');
+    expect(recordingData).not.toHaveProperty('transcript');
+    expect(recordingData).not.toHaveProperty('summary');
   });
 
   it('should name a conference without calendar event after its transcript document', async () => {
@@ -213,7 +259,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
       }),
     ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
 
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
 
     const recordingData =
