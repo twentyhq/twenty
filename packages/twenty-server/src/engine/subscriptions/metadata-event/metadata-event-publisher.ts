@@ -51,7 +51,7 @@ const getWorkflowRecipientUserWorkspaceIds = (
 const getAgentRecipientUserWorkspaceIds = (
   agent: Pick<BroadcastEventRecord, 'isPrivate' | 'createdByUserWorkspaceId'>,
 ): string[] | undefined => {
-  if (agent.isPrivate !== true) {
+  if (!agent.isPrivate) {
     return undefined;
   }
 

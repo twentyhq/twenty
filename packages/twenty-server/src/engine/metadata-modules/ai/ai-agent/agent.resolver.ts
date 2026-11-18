@@ -125,11 +125,11 @@ export class AgentResolver {
       });
     }
 
-    const createdAgent = await this.agentService.createOneAgent(
+    const createdAgent = await this.agentService.createOneAgent({
       input,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
 
     return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
   }

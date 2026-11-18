@@ -86,15 +86,15 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
       aiDataPolicy,
     });
 
-    const agent = await this.agentService.createOneAgent(
-      {
+    const agent = await this.agentService.createOneAgent({
+      input: {
         ...parameters,
         modelId,
         triggers: toAgentTriggers(triggers ?? []),
       },
       workspaceId,
       userWorkspaceId,
-    );
+    });
 
     return {
       success: true,

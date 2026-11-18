@@ -97,11 +97,15 @@ export class AgentService {
     return { ...resolveEffectiveAgent(flatAgent), roleId: roleId ?? null };
   }
 
-  async createOneAgent(
-    { isSystem = false, ...input }: CreateAgentInput & { isSystem?: boolean },
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<FlatAgentWithRoleId> {
+  async createOneAgent({
+    input: { isSystem = false, ...input },
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    input: CreateAgentInput & { isSystem?: boolean };
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<FlatAgentWithRoleId> {
     const {
       flatApplicationMaps,
       flatRoleMaps,

@@ -192,6 +192,9 @@ export default {
             "isCustom": [
                 1
             ],
+            "isPrivate": [
+                1
+            ],
             "isSystem": [
                 1
             ],
@@ -3546,6 +3549,9 @@ export default {
             ],
             "icon": [
                 4
+            ],
+            "isPrivate": [
+                1
             ],
             "label": [
                 4
@@ -14408,6 +14414,9 @@ export default {
                 565
             ],
             "isActive": [
+                1
+            ],
+            "isPrivate": [
                 1
             ],
             "label": [
