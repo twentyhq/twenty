@@ -8,19 +8,19 @@ import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/ed
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuContainerReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuTabMenuContentProps = {
   tab: Pick<NavigationMenuItem, 'id' | 'name' | 'icon'>;
-  onClose: () => void;
 };
 
 export const NavigationMenuTabMenuContent = ({
   tab,
-  onClose,
 }: NavigationMenuTabMenuContentProps) => {
   const { t } = useLingui();
+  const { closeDropdown } = useCloseDropdown();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -38,7 +38,7 @@ export const NavigationMenuTabMenuContent = ({
         item={tab}
         placeholder={t`Tab name`}
         hasIconPicker
-        onSubmit={onClose}
+        onSubmit={() => closeDropdown()}
       />
       <Dropdown.Separator />
       <Dropdown.Section>
@@ -54,7 +54,7 @@ export const NavigationMenuTabMenuContent = ({
             onClick: () => {
               setCurrentNavigationMenuTabId(null);
               void remove(tab.id);
-              onClose();
+              closeDropdown();
             },
           }}
         />
