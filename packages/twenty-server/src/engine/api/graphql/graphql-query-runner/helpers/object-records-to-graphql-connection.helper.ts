@@ -5,6 +5,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import {
+  type CommonAggregatedValues,
+  type CommonRelationsAggregatedValues,
+} from 'src/engine/api/common/types/common-aggregated-values.type';
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -49,8 +53,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
   public createConnection<T extends ObjectRecord = ObjectRecord>({
     objectRecords,
-    parentObjectRecord,
-    objectRecordsAggregatedValues = {},
+    aggregatedValues,
+    relationAggregatedValues,
     selection,
     objectName,
     take,
@@ -62,9 +66,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     orderByValuesByRecordId,
   }: {
     objectRecords: T[];
-    parentObjectRecord?: T;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    objectRecordsAggregatedValues?: Record<string, any>;
+    aggregatedValues?: CommonAggregatedValues;
+    relationAggregatedValues?: CommonRelationsAggregatedValues;
     selection: CommonSelection;
     objectName: string;
     take: number;
@@ -85,7 +88,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       node: this.processRecord({
         objectRecord,
         objectName,
-        objectRecordsAggregatedValues,
+        relationAggregatedValues,
         selection,
         take,
         totalCount,
@@ -104,9 +107,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
     const aggregatedFieldsValues = this.extractAggregatedFieldsValues({
       aggregates: selection.aggregates,
-      objectRecordsAggregatedValues: parentObjectRecord
-        ? objectRecordsAggregatedValues[parentObjectRecord.id]
-        : objectRecordsAggregatedValues,
+      aggregatedValues,
     });
 
     return {
@@ -124,37 +125,25 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
   private extractAggregatedFieldsValues = ({
     aggregates,
-    objectRecordsAggregatedValues,
+    aggregatedValues,
   }: {
     aggregates: CommonSelection['aggregates'];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    objectRecordsAggregatedValues: Record<string, any>;
-  }) => {
-    if (!isDefined(objectRecordsAggregatedValues)) {
-      return {};
-    }
-
-    return Object.keys(aggregates).reduce((acc, aggregatedFieldName) => {
-      const aggregatedFieldValue =
-        objectRecordsAggregatedValues[aggregatedFieldName];
-
-      if (!isDefined(aggregatedFieldValue)) {
-        return acc;
-      }
-
-      return {
-        ...acc,
-        [aggregatedFieldName]:
-          objectRecordsAggregatedValues[aggregatedFieldName],
-      };
-    }, {});
-  };
+    aggregatedValues?: CommonAggregatedValues;
+  }) =>
+    Object.fromEntries(
+      Object.keys(aggregates)
+        .map((aggregatedFieldName) => [
+          aggregatedFieldName,
+          aggregatedValues?.[aggregatedFieldName],
+        ])
+        .filter(([, aggregatedFieldValue]) => isDefined(aggregatedFieldValue)),
+    );
 
   // oxlint-disable-next-line typescript/no-explicit-any
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
-    objectRecordsAggregatedValues = {},
+    relationAggregatedValues = {},
     selection,
     take,
     totalCount,
@@ -163,8 +152,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecord: T;
     objectName: string;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    objectRecordsAggregatedValues?: Record<string, any>;
+    relationAggregatedValues?: CommonRelationsAggregatedValues;
     selection: CommonSelection;
     take: number;
     totalCount: number | undefined;
@@ -251,18 +239,20 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         isToManyRelation && !isDefined(objectRecord[key])
           ? []
           : objectRecord[key];
+      const relationAggregates = relationAggregatedValues[key];
 
       if (Array.isArray(relationValue)) {
+        const aggregatedValues =
+          relationAggregates?.valuesByParentRecordId[objectRecord.id];
+
         processedObjectRecord[key] = this.createConnection({
           objectRecords: relationValue,
-          parentObjectRecord: objectRecord,
-          objectRecordsAggregatedValues: objectRecordsAggregatedValues[key],
+          aggregatedValues,
+          relationAggregatedValues: relationAggregates?.relations,
           selection: relationSelection.selection,
           objectName: targetObjectMetadata.nameSingular,
           take,
-          totalCount:
-            objectRecordsAggregatedValues[key]?.[objectRecord.id]?.totalCount ??
-            relationValue.length,
+          totalCount: aggregatedValues?.totalCount ?? relationValue.length,
           order,
           hasNextPage: false,
           hasPreviousPage: false,
@@ -271,7 +261,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       } else if (isPlainObject(relationValue)) {
         processedObjectRecord[key] = this.processRecord({
           objectRecord: relationValue,
-          objectRecordsAggregatedValues: objectRecordsAggregatedValues[key],
+          relationAggregatedValues: relationAggregates?.relations,
           selection: relationSelection.selection,
           objectName: targetObjectMetadata.nameSingular,
           take,

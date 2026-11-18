@@ -1,7 +1,7 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { type AiChatMessageAuthor } from '@/ai-chat/messages/types/AiChatMessageAuthor';
-import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/composer/utils/getAiChatMessageQuoteExcerpt';
+import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 export const getAiChatMessageQuoteSource = <
