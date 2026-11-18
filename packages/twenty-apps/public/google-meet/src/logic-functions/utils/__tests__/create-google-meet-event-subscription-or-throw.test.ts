@@ -47,6 +47,7 @@ describe('createGoogleMeetEventSubscriptionOrThrow', () => {
           eventTypes: [
             'google.workspace.meet.transcript.v2.fileGenerated',
             'google.workspace.meet.smartNote.v2.fileGenerated',
+            'google.workspace.meet.recording.v2.fileGenerated',
           ],
           notificationEndpoint: {
             pubsubTopic: 'projects/twenty/topics/google-meet',

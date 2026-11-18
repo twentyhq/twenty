@@ -36,8 +36,8 @@ Workspace members then only connect their Google account.
 
 ## Pub/Sub topic
 
-Google publishes a message to this topic each time a transcript or Gemini notes
-are ready.
+Google publishes a message to this topic each time a transcript, Gemini notes
+or a recording is ready.
 
 1. Create the topic in the same project as the OAuth client:
 
