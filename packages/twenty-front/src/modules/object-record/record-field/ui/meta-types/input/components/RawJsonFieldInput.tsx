@@ -61,7 +61,7 @@ export const RawJsonFieldInput = () => {
 
   const parseJsonField = (
     nextValue: string,
-  ): { success: boolean; value?: any } => {
+  ): { success: boolean; value?: unknown } => {
     if (!nextValue) {
       return {
         success: true,
