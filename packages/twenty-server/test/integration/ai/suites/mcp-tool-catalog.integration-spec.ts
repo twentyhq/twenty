@@ -304,7 +304,7 @@ describe('MCP tool catalog (integration)', () => {
   });
 
   describe('generic mode (default)', () => {
-    it('should list record tools that take the object as an argument, without per-object tools', async () => {
+    it('should list record tools and every workspace-independent tool, without per-object tools or meta-tools', async () => {
       const toolNames = (
         await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)
       ).map((tool) => tool.name);
@@ -321,16 +321,21 @@ describe('MCP tool catalog (integration)', () => {
           'merge_records',
           'get_field_metadata',
           'list_object_metadata_names',
-          'execute_tool',
-          'learn_tools',
+          'list_workflows',
+          'create_complete_workflow',
+          'create_complete_dashboard',
+          'get_views',
+          'list_webhooks',
         ]),
       );
 
       for (const unlistedToolName of [
         'find_many_companies',
         'create_one_person',
-        'create_complete_workflow',
         'http_request',
+        'get_tool_catalog',
+        'learn_tools',
+        'execute_tool',
       ]) {
         expect(toolNames).not.toContain(unlistedToolName);
       }
@@ -414,7 +419,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(result.isError).toBe(false);
     });
 
-    it('should run an unlisted tool through execute_tool', async () => {
+    it('should keep execute_tool callable for clients that listed it earlier', async () => {
       const result = await callMcpTool(
         adminApiKeyToken,
         'execute_tool',

@@ -341,29 +341,31 @@ export class McpProtocolService {
   ): Promise<McpToolsListResult> {
     const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
 
-    switch (context.toolMode) {
-      case 'meta':
-        return this.mcpToolExecutorService.handleToolsListing(toolSet);
-      case 'direct': {
-        const {
-          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-          ...nativeTools
-        } = toolSet;
+    if (context.toolMode === 'meta') {
+      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    }
 
+    // Directory reviews (ChatGPT) refuse a generic executor; still callable for clients that listed it
+    const {
+      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+      ...nativeTools
+    } = toolSet;
+
+    switch (context.toolMode) {
+      case 'direct':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({ toolContext })),
           ...nativeTools,
         });
-      }
       case 'generic':
         return this.mcpToolExecutorService.handleToolsListing({
           ...(await this.buildAnnotatedRegistryTools({
             toolContext,
             categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
           })),
-          ...toolSet,
+          ...nativeTools,
         });
       default:
         return assertUnreachable(context.toolMode);
