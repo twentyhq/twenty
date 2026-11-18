@@ -67,6 +67,7 @@ describe('buildSubscriptionItemsUpdate', () => {
         {
           stripeSubscriptionItemId: 'si_application',
           stripePriceId: 'price_application_month',
+          quantity: 4,
           billingProduct: {
             metadata: { productKey: BillingProductKey.APPLICATION },
           },
@@ -82,7 +83,7 @@ describe('buildSubscriptionItemsUpdate', () => {
 
     expect(items).toEqual([
       { id: 'si_base', price: 'price_base_year', quantity: 7 },
-      { id: 'si_application', price: 'price_application_year' },
+      { id: 'si_application', price: 'price_application_year', quantity: 4 },
     ]);
   });
 

@@ -13,7 +13,7 @@ type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
   'stripeSubscriptionItemId'
 > &
-  Partial<Pick<BillingSubscriptionItemEntity, 'stripePriceId'>> & {
+  Partial<Pick<BillingSubscriptionItemEntity, 'stripePriceId' | 'quantity'>> & {
     billingProduct?: {
       metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
     } | null;
@@ -27,7 +27,7 @@ export const buildSubscriptionItemsUpdate = ({
   toUpdatePrices: SubscriptionStripePrices;
 }): Stripe.SubscriptionUpdateParams.Item[] =>
   billingSubscriptionItems.flatMap(
-    ({ stripeSubscriptionItemId, stripePriceId, billingProduct }) => {
+    ({ stripeSubscriptionItemId, stripePriceId, quantity, billingProduct }) => {
       const managedPrice = resolveManagedItemPrice({
         productKey: billingProduct?.metadata?.productKey,
         toUpdatePrices,
@@ -43,7 +43,13 @@ export const buildSubscriptionItemsUpdate = ({
 
       return isDefined(applicationPriceId) &&
         applicationPriceId !== stripePriceId
-        ? [{ id: stripeSubscriptionItemId, price: applicationPriceId }]
+        ? [
+            {
+              id: stripeSubscriptionItemId,
+              price: applicationPriceId,
+              quantity: quantity ?? undefined,
+            },
+          ]
         : [];
     },
   );
