@@ -36,12 +36,9 @@ jest.mock(
 );
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 jest.mock(
-  '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection',
+  '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController',
   () => ({
-    useCreateNavigationMenuTabOrSection: () => ({
-      createTab: jest.fn(),
-      createSection: jest.fn(),
-    }),
+    useNavigationMenuItemEditController: () => ({ createItem: jest.fn() }),
   }),
 );
 
