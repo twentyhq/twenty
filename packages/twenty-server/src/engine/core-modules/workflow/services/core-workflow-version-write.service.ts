@@ -298,13 +298,13 @@ export class CoreWorkflowVersionWriteService {
 
   async createDraftCoreWorkflowVersion({
     workspaceId,
-    coreWorkflowId,
+    coreWorkflowUniversalIdentifier,
     workspaceWorkflowId,
     trigger,
     steps: callerSteps,
   }: {
     workspaceId: string;
-    coreWorkflowId: string;
+    coreWorkflowUniversalIdentifier: string;
     workspaceWorkflowId: string | null;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
@@ -347,7 +347,7 @@ export class CoreWorkflowVersionWriteService {
               id: coreWorkflowVersionId,
               universalIdentifier: uuidv4(),
               workflowId: workspaceWorkflowId,
-              coreWorkflowId,
+              coreWorkflowUniversalIdentifier,
               triggers: isDefined(trigger) ? [trigger] : null,
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,

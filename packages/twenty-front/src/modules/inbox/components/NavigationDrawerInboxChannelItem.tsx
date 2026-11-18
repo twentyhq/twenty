@@ -6,10 +6,10 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { NavigationDrawerInboxChannelActionsDropdown } from '@/inbox/components/NavigationDrawerInboxChannelActionsDropdown';
 import { NavigationDrawerInboxChannelNavigation } from '@/inbox/components/NavigationDrawerInboxChannelNavigation';
-import { useAiChatChannelIcon } from '@/ai/hooks/useAiChatChannelIcon';
+import { useAiChatChannelIcon } from '@/ai-chat/threads/hooks/useAiChatChannelIcon';
 import { useDeleteInboxChannel } from '@/inbox/hooks/useDeleteInboxChannel';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useUpdateInboxChannel } from '@/inbox/hooks/useUpdateInboxChannel';
@@ -23,7 +23,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 const StyledIconPickerTrigger = styled.div`

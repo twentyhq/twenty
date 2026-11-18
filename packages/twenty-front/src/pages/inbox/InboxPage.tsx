@@ -23,11 +23,11 @@ import { InboxSelectionToContextStoreEffect } from '@/inbox/components/InboxSele
 import { InboxPageThreadList } from '@/inbox/components/InboxPageThreadList';
 import { InboxThreadPagination } from '@/inbox/components/InboxThreadPagination';
 import { INBOX_LIST_PANE_WIDTH } from '@/inbox/constants/InboxListPaneWidth';
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { InboxThreadListLoadEffect } from '@/inbox/components/InboxThreadListLoadEffect';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
@@ -35,8 +35,8 @@ import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { isSidePanelItemShowingAiChat } from '@/ai-chat/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
@@ -364,7 +364,7 @@ const InboxPageContent = () => {
             <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
-                  <AiChatPageEffects />
+                  <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
                   <AiChatNewThreadPageContent
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}
@@ -373,7 +373,10 @@ const InboxPageContent = () => {
               )}
               {isThreadShown && (
                 <>
-                  <AiChatPageEffects />
+                  <AiChatPageEffects
+                    threadId={selectedThreadId}
+                    isNewChat={false}
+                  />
                   <AiChatThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={

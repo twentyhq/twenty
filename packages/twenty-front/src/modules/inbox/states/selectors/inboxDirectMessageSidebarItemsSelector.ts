@@ -1,11 +1,11 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
-import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
-import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai-chat/threads/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
+import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';

@@ -48,7 +48,11 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
             resolverContext.objectIdByNameSingular,
           );
 
-        const { results } = await this.commonGroupByQueryRunnerService.execute(
+        const {
+          results,
+          relationAggregatedValues,
+          args: { selectedFieldsResult },
+        } = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
           resolverContext,
         );
@@ -57,8 +61,8 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
             objectRecords: group.records ?? [],
             objectName: resolverContext.flatObjectMetadata.nameSingular,
-            objectRecordsAggregatedValues: {},
-            selectedAggregatedFields: {},
+            relationAggregatedValues,
+            selection: selectedFieldsResult,
             take: group.records?.length || 0,
             totalCount: Number(group.totalCount ?? 0),
             hasNextPage: false,

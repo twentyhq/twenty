@@ -91,14 +91,14 @@ export class ApplicationService {
       where: { id: applicationId },
     });
 
-    if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+    if (!isDefined(application) || !isDefined(application.requestedRoleId)) {
       throw new ApplicationException(
         `Could not find application ${applicationId}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
-    return application.defaultRoleId;
+    return application.requestedRoleId;
   }
 
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({

@@ -73,10 +73,17 @@ Pentru a face obligatoriu un câmp, utilizați `not isEmpty(fieldName)`. Acest l
 
 | Funcție                                                | Folosiți                                                                                                                                                                                                                                                |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `daysSince(date)`                                      | Obține numărul de zile de la o dată până astăzi, în UTC. O dată din viitor produce un număr negativ.                                                                                                                                                    |
+| `dateDiff(from, to, unit)`                             | Obține numărul de unități întregi dintre două date. Minutele și orele reprezintă timpul scurs; zilele, săptămânile, lunile, trimestrele și anii numără zilele și lunile calendaristice, în UTC. Negativ când `to` este anterior.                        |
+| `dateAdd(date, amount, unit)`                          | Deplasează o dată cu un număr întreg de unități, în UTC. O lună adăugată zilei de 31 ajunge în ultima zi a lunii.                                                                                                                                       |
+| `dateTrunc(date, unit)`                                | Obține începutul unității care conține data, în UTC. Săptămânile încep luni.                                                                                                                                                                            |
+| `datePart(date, part)`                                 | Obține o parte a datei ca număr, în UTC: `"YEAR"`, `"QUARTER"`, `"MONTH"`, `"WEEK"`, `"DAY"`, `"DAY_OF_WEEK"` (1 este luni), `"HOUR"` sau `"MINUTE"`.                                                                                                   |
 | `isInRelativeDateRange(date, direction, amount, unit)` | Verifică dacă o dată se încadrează într-o perioadă calculată de astăzi, în UTC. `direction` este `"PAST"`, `"NEXT"` sau `"THIS"`, iar `unit` este `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` sau `"YEAR"`. `"PAST"` și `"NEXT"` exclud perioada curentă. |
 
-De exemplu, `daysSince(closeDate) >= 0 and daysSince(closeDate) \<= 30` permite o salvare numai la data de închidere sau în cele 30 de zile de după aceasta.
+`daysSince(date)` a fost eliminată. Utilizează în schimb `dateDiff(date, now, 'DAY')`.
+
+Comparările datelor utilizează ziua calendaristică UTC atunci când o dată nu are oră. Două valori dată-oră sunt comparate ca momente, astfel încât decalajele echivalente și reprezentările secundelor fracționare sunt comparate ca egale. Aceasta modifică și expresiile existente care comparau acele valori ca text.
+
+Unitățile sunt `"MINUTE"`, `"HOUR"`, `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` sau `"YEAR"`. De exemplu, `dateDiff(closeDate, now, "DAY") >= 0 and dateDiff(closeDate, now, "DAY") \<= 30` permite salvarea numai la data de închidere sau în cele 30 de zile de după aceasta.
 
 ### Faceți referire la câmpuri compuse și asociate
 

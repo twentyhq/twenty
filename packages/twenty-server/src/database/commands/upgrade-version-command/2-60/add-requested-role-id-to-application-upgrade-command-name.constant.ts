@@ -1,0 +1,2 @@
+export const ADD_REQUESTED_ROLE_ID_TO_APPLICATION_UPGRADE_COMMAND_NAME =
+  '2.60.0_AddRequestedRoleIdToApplicationFastInstanceCommand_1794992742917';

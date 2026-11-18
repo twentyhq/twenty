@@ -4,8 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { CommonDestroyManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-many-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -13,6 +12,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -20,12 +20,9 @@ import {
   CommonQueryNames,
   DestroyOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
-export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonDestroyOneQueryRunnerService extends CommonRecordQueryRunnerService<
   DestroyOneQueryArgs,
   ObjectRecord
 > {
@@ -40,14 +37,15 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
   async run(
     args: CommonExtendedInput<DestroyOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.commonDestroyManyQueryRunnerService.run(
-      {
-        ...args,
-        filter: { id: { eq: args.id } },
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.commonDestroyManyQueryRunnerService.run(
+        {
+          ...args,
+          filter: { id: { eq: args.id } },
+        },
+        queryRunnerContext,
+      );
 
     if (!isDefined(result) || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -59,7 +57,7 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(
@@ -67,22 +65,6 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
     _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<DestroyOneQueryArgs>> {
     return args;
-  }
-
-  async processQueryResult(
-    queryResult: ObjectRecord,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
   }
 
   async validate(

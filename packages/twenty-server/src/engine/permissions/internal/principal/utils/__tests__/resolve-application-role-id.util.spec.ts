@@ -6,17 +6,17 @@ const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
 
 const resolve = ({
   applicationId = APPLICATION_ID,
-  defaultRoleId,
+  requestedRoleId,
   sourceType,
   grantRoleId,
 }: {
   applicationId?: string;
-  defaultRoleId: string | null;
+  requestedRoleId: string | null;
   sourceType: ApplicationRegistrationSourceType;
   grantRoleId?: string;
 }) =>
   resolveApplicationRoleId({
-    application: { id: applicationId, defaultRoleId, sourceType },
+    application: { id: applicationId, requestedRoleId, sourceType },
     workspaceId: 'workspace-id',
     workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
     flatRoleTargetByApplicationIdMaps:
@@ -33,7 +33,7 @@ describe('resolveApplicationRoleId', () => {
   ])('restricts a %s application to its grant', (sourceType) => {
     expect(
       resolve({
-        defaultRoleId: 'application-role-id',
+        requestedRoleId: 'application-role-id',
         sourceType,
         grantRoleId: 'grant-role-id',
       }),
@@ -47,7 +47,7 @@ describe('resolveApplicationRoleId', () => {
   ])('denies a %s application without a role', (sourceType) => {
     expect(
       resolve({
-        defaultRoleId: null,
+        requestedRoleId: null,
         sourceType,
         grantRoleId: 'grant-role-id',
       }),
@@ -58,7 +58,7 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolve({
         applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-        defaultRoleId: 'custom-application-role-id',
+        requestedRoleId: 'custom-application-role-id',
         sourceType: ApplicationRegistrationSourceType.LOCAL,
       }),
     ).toBe('custom-application-role-id');
@@ -67,7 +67,7 @@ describe('resolveApplicationRoleId', () => {
   it('restricts an OAuth-only application to its role', () => {
     expect(
       resolve({
-        defaultRoleId: 'application-role-id',
+        requestedRoleId: 'application-role-id',
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       }),
     ).toBe('application-role-id');
@@ -76,7 +76,7 @@ describe('resolveApplicationRoleId', () => {
   it('gives no role to an OAuth-only application without one', () => {
     expect(
       resolve({
-        defaultRoleId: null,
+        requestedRoleId: null,
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       }),
     ).toBeUndefined();

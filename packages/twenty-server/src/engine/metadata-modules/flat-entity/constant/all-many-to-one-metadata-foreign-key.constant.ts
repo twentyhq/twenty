@@ -354,6 +354,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
     },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
+    },
     view: {
       foreignKey: 'viewId',
     },
@@ -431,6 +434,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   workflowVersion: {
     workspace: null,
     application: null,
+    coreWorkflow: {
+      foreignKey: 'coreWorkflowId',
+    },
   },
   agentChatChannel: {
     workspace: null,

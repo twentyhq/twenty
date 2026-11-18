@@ -241,9 +241,9 @@ Notițe:
 * Predicatele pot face referire la câmpuri deținute de aplicația ta sau de obiectele standard ale Twenty.
 * Securitatea la nivel de rând este aplicată pentru spațiile de lucru din **planul Organization sau unul superior**. În alte
   planuri, regulile declarate într-un manifest de aplicație se sincronizează în continuare, dar pur și simplu nu sunt aplicate.
-* API-ul Metadata se comportă diferit față de manifest în acest caz: fără acest drept,
-  `upsertRowLevelPermissionPredicates` este respins cu
-  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` în loc să fie sincronizat. Prin urmare, un spațiu de lucru dintr-un plan care nu
+* API-ul Metadata se comportă diferit față de manifest aici: fără drept,
+  `upsertRowLevelPermissionRules` este respins cu
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` în loc să se sincronizeze. Prin urmare, un spațiu de lucru dintr-un plan care nu
   include securitatea la nivel de rând nu poate crea predicate în afara unui manifest de aplicație, chiar
   dacă câmpul `rowLevelPermissionPredicates` este prezent în tipul `Role` atunci când inspectați
   schema.

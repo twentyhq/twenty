@@ -9,7 +9,7 @@ export const resolveApplicationRoleId = ({
   workspaceCustomApplicationId,
   flatRoleTargetByApplicationIdMaps,
 }: {
-  application: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'sourceType'>;
+  application: Pick<FlatApplication, 'id' | 'requestedRoleId' | 'sourceType'>;
   workspaceId: string;
   workspaceCustomApplicationId: string;
   flatRoleTargetByApplicationIdMaps: Partial<
@@ -17,7 +17,7 @@ export const resolveApplicationRoleId = ({
   >;
 }): string | undefined => {
   if (isOAuthOnlyApplication(application)) {
-    return application.defaultRoleId ?? undefined;
+    return application.requestedRoleId ?? undefined;
   }
 
   return resolveApplicationGrantRoleId({

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { AgentChatChannelThreadFilter } from '~/generated-metadata/graphql';
 
 export const isInboxThreadInChannelThreadFilter = ({
