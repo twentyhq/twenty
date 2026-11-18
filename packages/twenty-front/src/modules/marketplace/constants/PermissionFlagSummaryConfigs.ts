@@ -144,6 +144,7 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
   },
   [PermissionFlagType.READ_PRIVATE_CHANNELS]: {
     Icon: IconAt,
-    getLabel: () => t`Read members' private channels`,
+    getLabel: () =>
+      t`Read the address, owner and account status of members' private channels`,
   },
 };
