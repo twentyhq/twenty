@@ -44,6 +44,7 @@ import { type CommonSelection } from 'src/engine/api/common/types/common-selecti
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
@@ -438,18 +439,30 @@ export abstract class CommonBaseQueryRunnerService<
   protected async runFilteredMutation({
     queryRunnerContext,
     filter,
-    columnsToReturn,
+    selection,
     kind,
     data,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
-    columnsToReturn: string[];
+    selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
-    const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      commonQueryParser,
+    } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
+
+    const columnsToReturn = buildColumnsToReturn({
+      selection,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     if (isRecordFilterEmpty(filter)) {
       throw new CommonQueryRunnerException(
@@ -481,13 +494,21 @@ export abstract class CommonBaseQueryRunnerService<
         kind,
       });
 
-    return writeRepository.runMutation({
+    const records = await writeRepository.runMutation({
       selectQueryBuilder,
       rowLevelPermissionsApplied,
       kind,
       columnsToReturn,
       data: resolvedData,
     });
+
+    await this.processNestedRelations({
+      records,
+      selection,
+      queryRunnerContext,
+    });
+
+    return records;
   }
 
   protected async resolveNestedRelations({
@@ -550,6 +571,27 @@ export abstract class CommonBaseQueryRunnerService<
       }
 
       return columnKeyedRecord;
+    });
+  }
+
+  protected async processNestedRelations({
+    records,
+    selection,
+    queryRunnerContext,
+  }: {
+    records: ObjectRecord[];
+    selection: CommonSelection;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+  }): Promise<void> {
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      parentObjectMetadataItem: queryRunnerContext.flatObjectMetadata,
+      parentObjectRecords: records,
+      selection,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      authContext: queryRunnerContext.authContext,
+      ...this.getNestedRelationsReadPathOptions(),
     });
   }
 

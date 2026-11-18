@@ -6,7 +6,6 @@ import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
-  QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
   FieldMetadataSettingsMapping,
@@ -107,9 +106,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     });
 
     await this.processNestedRelations({
-      args,
+      records: [updatedRecord],
+      selection: args.selectedFieldsResult,
       queryRunnerContext,
-      updatedRecords: [updatedRecord],
     });
 
     return updatedRecord;
@@ -155,15 +154,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const recordsToMerge = fetchedRecords;
 
     if (args.dryRun) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge,
+      await this.processNestedRelations({
+        records: recordsToMerge,
         selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext: context.authContext,
-        ...this.getNestedRelationsReadPathOptions(),
+        queryRunnerContext: context,
       });
     }
 
@@ -645,34 +639,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         return updatedRecords[0];
       },
     );
-  }
-
-  private async processNestedRelations({
-    args,
-    queryRunnerContext,
-    updatedRecords,
-  }: {
-    args: CommonExtendedInput<MergeManyQueryArgs>;
-    queryRunnerContext: CommonExtendedQueryRunnerContext;
-    updatedRecords: ObjectRecord[];
-  }): Promise<void> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-      authContext,
-    } = queryRunnerContext;
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: updatedRecords,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
   }
 
   async computeArgs(

@@ -49,7 +49,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       commonQueryParser,
-      authContext,
       permissionsPrincipals,
     } = queryRunnerContext;
 
@@ -161,15 +160,10 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         }),
       );
 
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: findDuplicatesOutput.flatMap((item) => item.records),
+    await this.processNestedRelations({
+      records: findDuplicatesOutput.flatMap((item) => item.records),
       selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
+      queryRunnerContext,
     });
 
     return findDuplicatesOutput;
