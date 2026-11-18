@@ -876,11 +876,9 @@ export const MultiplayerConversation: Story = {
   },
 };
 
-const READ_RECEIPTS_THREAD_ID = CONVERSATION_STORY_THREAD_ID;
-
 const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
   const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
-    threadId: READ_RECEIPTS_THREAD_ID,
+    threadId: CONVERSATION_STORY_THREAD_ID,
   });
 
   jotaiStore.set(readPositionsAtom, readPositions);
@@ -940,7 +938,7 @@ export const SendingThenSentReceipt: Story = {
   args: { messageId: mockUserMessage.id },
   beforeEach: () => {
     const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId: READ_RECEIPTS_THREAD_ID,
+      threadId: CONVERSATION_STORY_THREAD_ID,
     });
     const resetReadPositions = seedReadPositions([
       { workspaceMemberId: mockTeammate.id, lastReadAt: null },
@@ -962,7 +960,7 @@ export const SendingThenSentReceipt: Story = {
 
     jotaiStore.set(
       aiChatIsSendingMessageFamilyState.atomFamily({
-        threadId: READ_RECEIPTS_THREAD_ID,
+        threadId: CONVERSATION_STORY_THREAD_ID,
       }),
       false,
     );
