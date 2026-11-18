@@ -29,7 +29,7 @@ export const NavigationMenuTabMenuContent = ({
     itemId: tab.id,
     type: NavigationMenuItemType.TAB,
     containerId: null,
-    onMoved: onClose,
+    onMoved: () => closeDropdown(),
   });
 
   return (
