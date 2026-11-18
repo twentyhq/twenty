@@ -142,20 +142,22 @@ otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
 ## Exported files and compatibility
 
 Pull requests
-`exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true, shouldIncludeSourceDependencies: true, shouldIncludePublicAssets: true)`.
+`exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true, shouldIncludeSourceDependencies: true, shouldIncludeLogicFunctionSources: true, shouldIncludePublicAssets: true)`.
 Existing clients that do not request source files continue to receive coverage
 gaps for frontend components and their widgets, without reading component source
 from storage.
 
-Apply baseline recording opts in to source export too, so a later pull compares
-the same supported components. Pull restores `dependencies/package.json` and
-`dependencies/yarn.lock` to the project root, in the same transaction as
-metadata and the baseline.
+Apply and dev record the source definitions from the manifest just synced,
+alongside the remote metadata export. Recording this baseline does not download
+component or function sources. Pull restores
+`dependencies/package.json` and `dependencies/yarn.lock` to the project root,
+in the same transaction as metadata and the baseline.
 
 Exact folder and filename checks accept only that dependency pair, declared
-frontend component entries and their inventoried sources, and `public-asset` files under `public/`. Public
-assets travel as base64 and are restored as bytes, preserving images and fonts.
-Record attachments and unrelated files are refused.
+frontend component and logic function entries and their inventoried sources,
+and `public-asset` files under `public/`. Public assets travel as base64 and
+are restored as bytes, preserving images and fonts. Record attachments and
+unrelated files are refused.
 
 Public assets unchanged on the server preserve local edits; remote changes use
 the usual overwrite report. Missing remote assets leave local files untouched.
@@ -169,12 +171,12 @@ remote changes replace local contents and use the usual overwrite report.
 Missing remote files leave local files untouched.
 
 After project setup, reconciliation does not install dependencies, generate the
-typed client or write logic-function source. Export responses have a 16 MiB cap.
+typed client. Export responses have a 16 MiB cap.
 Pull does not modify the workspace. Because pull is partial, `app apply` of the
 workspace custom application only deletes entities missing from source with
 `--prune`.
 
-## Front component source
+## Frontend component and logic function sources
 
 Front component entry files are restored from their stored original TSX, at
 their original path. Legacy entry-only exports can use the existing local
@@ -183,27 +185,28 @@ regenerated. Export reports missing source, computed identifiers, and
 unsupported widget availability as coverage gaps; widgets referencing those
 components remain unexported.
 
-New builds attach a source inventory to each frontend component. Export reads
-that deployed inventory, verifies checksums, and includes its local imports,
-type declarations, TypeScript configs, nested CSS and imported images/fonts.
-Paths and bytes are preserved; shared files are restored once. Imported binary
-files use base64 with an explicit encoding. Source files remain private Source
-artifacts, even when their extensions match public assets.
+New builds attach a source inventory to each frontend component and logic
+function. Export reads that deployed inventory, verifies checksums, and
+includes its local imports, type declarations, TypeScript configs, nested CSS
+and imported images/fonts. Paths and bytes are preserved; shared files are
+restored once. Imported binary files use base64 with an explicit encoding.
+Source files remain private Source artifacts, even when their extensions match
+public assets.
 
-Only files in an exported component's inventory are read. Logic-function-only
-files, stale storage files and record attachments are not exported. Inventory
-files missing from storage or with mismatched checksums make the component a
+Only files in an exported definition's inventory are read. Stale storage files
+and record attachments are not exported. Inventory
+files missing from storage or with mismatched checksums make the definition a
 coverage gap. Files no longer inventoried remain untouched locally.
 
-Applications deployed without a per-component inventory still export only their
-entry files. Apply or publish them again to retain imported files. Imports
-outside the app and installed packages are not copied; reinstall package
-dependencies before building. Pull refuses a locally moved entry with an
-inventory, since restoring its helpers at their original paths would break
+Frontend components deployed without a per-component inventory still export
+only their entry files. Apply or publish them again to retain imported files.
+Imports outside the app and installed packages are not copied; reinstall
+package dependencies before building. Pull refuses a locally moved entry with
+an inventory, since restoring its helpers at their original paths would break
 relative imports.
 
 Explicit GraphQL rejection of a file-export option retries without that option.
-Older clients receive entry-only source exports unless they opt into source
+Older clients receive entry-only frontend exports unless they opt into source
 dependencies. Older servers retain their existing pull behavior.
 
 Pull records remote source hashes separately from local fingerprints. Unchanged
@@ -214,6 +217,20 @@ compiled checksum stayed the same.
 An occupied destination or a missing declared source aborts the entire pull
 before writes. Supported page-layout widgets keep their component identifiers.
 Run `yarn install` after dependency changes before building the pulled TSX.
+
+Logic functions require a per-function inventory. The server records their
+deployed `updatedAt` revision after successful sync. Export compares that revision
+and validates every source checksum. Converter changes alone do not invalidate
+the inventory. Missing inventories, changed metadata or stale builds become
+coverage gaps; pull never invents a handler or replaces a newer workspace edit
+with an older definition. Apply the app with the current CLI to refresh its
+inventory. Original definitions, including install hooks, keep their SDK
+exports and identifiers.
+
+`shouldIncludeLogicFunctionSources` is a separate opt-in so older clients never
+receive source kinds they cannot restore. It shares the existing 12 MiB encoded
+file budget with frontend sources, dependency files and public assets. Shared
+helpers are returned once across both kinds.
 
 ## Verification
 

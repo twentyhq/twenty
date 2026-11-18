@@ -133,6 +133,14 @@ describe('getGraphqlFieldSelections', () => {
     ).toThrow(/^Fields "(label|scoped)" conflict/);
   });
 
+  it('rejects a spread of an unknown fragment', () => {
+    expect(() =>
+      getNodeSelections({
+        query: 'query { companies { edges { node { ...missingFields } } } }',
+      }),
+    ).toThrow('Unknown fragment "missingFields"');
+  });
+
   it('honours skip and include', () => {
     expect(
       getNodeSelections({

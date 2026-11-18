@@ -38,8 +38,10 @@ import {
 import {
   CommonQueryExecutionResult,
   CommonQueryResult,
+  CommonQueryRunResult,
 } from 'src/engine/api/common/types/common-query-result.type';
 import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
@@ -176,18 +178,20 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () =>
-        this.executeQueryAndEnrichResults(
-          processedArgs,
-          queryRunnerContext,
-          commonQueryParser,
-        ),
-      authContext,
-    );
+    const { result, relationAggregatedValues } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.executeQueryAndEnrichResults(
+            processedArgs,
+            queryRunnerContext,
+            commonQueryParser,
+          ),
+        authContext,
+      );
 
     return {
-      results,
+      results: result,
+      relationAggregatedValues,
       args: processedArgs,
     };
   }
@@ -195,7 +199,7 @@ export abstract class CommonBaseQueryRunnerService<
   protected abstract run(
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<Output>;
+  ): Promise<CommonQueryRunResult<Output>>;
 
   protected abstract validate(
     args: CommonInput<Args>,
@@ -207,28 +211,11 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
 
-  protected async processQueryResult({
-    queryResult,
-    ...resultGettersArgs
-  }: CommonQueryResultProcessingArgs<Output>): Promise<Output> {
-    return (
-      Array.isArray(queryResult)
-        ? await this.commonResultGettersService.processRecordArray({
-            records: queryResult as ObjectRecord[],
-            ...resultGettersArgs,
-          })
-        : await this.commonResultGettersService.processRecord({
-            record: queryResult as ObjectRecord,
-            ...resultGettersArgs,
-          })
-    ) as Output;
-  }
+  protected abstract processQueryResult(
+    args: CommonQueryResultProcessingArgs<Output>,
+  ): Promise<Output>;
 
-  protected getResultRecords(results: Output): ObjectRecord[] {
-    return (
-      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
-    ).filter(isDefined);
-  }
+  protected abstract getResultRecords(results: Output): ObjectRecord[];
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
@@ -286,13 +273,13 @@ export abstract class CommonBaseQueryRunnerService<
     processedArgs: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
     commonQueryParser: GraphqlQueryParser,
-  ): Promise<Output> {
+  ): Promise<CommonQueryRunResult<Output>> {
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
         queryRunnerContext,
       );
 
-    const results = await this.run(
+    const { result, relationAggregatedValues } = await this.run(
       {
         ...processedArgs,
         selectedFieldsResult: addTimelineActivityObjectColumnsToSelect({
@@ -310,8 +297,8 @@ export abstract class CommonBaseQueryRunnerService<
       },
     );
 
-    return this.enrichResultsWithGettersAndHooks({
-      results,
+    const enrichedResult = await this.enrichResultsWithGettersAndHooks({
+      results: result,
       selection: processedArgs.selectedFieldsResult,
       operationName: this.operationName,
       authContext: extendedQueryRunnerContext.authContext,
@@ -321,6 +308,8 @@ export abstract class CommonBaseQueryRunnerService<
       transactionScope: queryRunnerContext.transactionScope,
       recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
     });
+
+    return { result: enrichedResult, relationAggregatedValues };
   }
 
   private async enrichResultsWithGettersAndHooks({
@@ -448,7 +437,7 @@ export abstract class CommonBaseQueryRunnerService<
     selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
-  }): Promise<ObjectRecord[]> {
+  }): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -502,13 +491,13 @@ export abstract class CommonBaseQueryRunnerService<
       data: resolvedData,
     });
 
-    await this.processNestedRelations({
+    const relationAggregatedValues = await this.processNestedRelations({
       records,
       selection,
       queryRunnerContext,
     });
 
-    return records;
+    return { result: records, relationAggregatedValues };
   }
 
   protected async resolveNestedRelations({
@@ -581,9 +570,15 @@ export abstract class CommonBaseQueryRunnerService<
   }: {
     records: ObjectRecord[];
     selection: CommonSelection;
-    queryRunnerContext: CommonExtendedQueryRunnerContext;
-  }): Promise<void> {
-    await this.processNestedRelationsHelper.processNestedRelations({
+    queryRunnerContext: Pick<
+      CommonExtendedQueryRunnerContext,
+      | 'flatObjectMetadataMaps'
+      | 'flatFieldMetadataMaps'
+      | 'flatObjectMetadata'
+      | 'authContext'
+    >;
+  }): Promise<CommonRelationsAggregatedValues> {
+    return this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       parentObjectMetadataItem: queryRunnerContext.flatObjectMetadata,

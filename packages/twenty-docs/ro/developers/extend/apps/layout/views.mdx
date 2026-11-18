@@ -41,6 +41,7 @@ export default defineView({
 * `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`. Pentru a face referire la un câmp de sistem creat automat, cum ar fi `createdAt`, consultă [Țintirea metadatelor de sistem](/ro/developers/extend/apps/data/system-fields).
 * Setați `isCanonical: false` pe un câmp pentru a adăuga o coloană suplimentară pentru un câmp pe care vizualizarea îl afișează deja. O vizualizare are cel mult o coloană canonică per câmp, dar oricâte coloane necanonice. Acestea nu sunt permise pe câmpul identificator al etichetei obiectului sau în vizualizările widgeturilor, iar `isCanonical` este setat atunci când este creată coloana: modificarea lui ulterior nu are niciun efect.
 * O coloană necanonică dintr-un câmp de relație many-to-one poate seta `relationTargetFieldMetadataUniversalIdentifier` pentru a afișa un câmp al înregistrării asociate în locul înregistrării în sine. Ținta trebuie să fie un câmp fără relație al obiectului asociat.
+* O sortare după un câmp de relație de tip many-to-one poate seta `relationTargetFieldMetadataUniversalIdentifier` pentru a ordona înregistrările după un câmp al înregistrării asociate, cum ar fi persoanele după angajații companiei lor. Ținta trebuie să fie un câmp care nu este de relație al obiectului asociat.
 * Puteți declara, de asemenea, `filters`, `filterGroups`, `sorts`, `groups` și `fieldGroups` pentru configurații avansate.
 * `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 

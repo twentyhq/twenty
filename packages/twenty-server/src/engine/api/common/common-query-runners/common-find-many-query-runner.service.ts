@@ -21,6 +21,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
 import { type CommonAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
@@ -58,7 +59,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<CommonFindManyOutput> {
+  ): Promise<CommonQueryRunResult<CommonFindManyOutput>> {
     const {
       authContext,
       flatObjectMetadata,
@@ -230,20 +231,21 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
         selection: args.selectedFieldsResult,
-        shouldComputeAggregates: true,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         ...this.getNestedRelationsReadPathOptions(),
       });
 
     return {
-      records: objectRecords,
-      aggregatedValues,
+      result: {
+        records: objectRecords,
+        aggregatedValues,
+        totalCount: aggregatedValues?.totalCount,
+        pageInfo,
+        orderByValuesByRecordId,
+        selectedFieldsResult: args.selectedFieldsResult,
+      },
       relationAggregatedValues,
-      totalCount: aggregatedValues?.totalCount,
-      pageInfo,
-      orderByValuesByRecordId,
-      selectedFieldsResult: args.selectedFieldsResult,
     };
   }
 

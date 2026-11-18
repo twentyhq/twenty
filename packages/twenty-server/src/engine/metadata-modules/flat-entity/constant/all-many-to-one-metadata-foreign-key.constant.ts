@@ -26,11 +26,9 @@ type ManyToOneRelationConfiguration<
 
 type ManyToOneMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [
-      TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
-        MetadataEntity<TSourceMetadataName>
-      >
-    ]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
+    [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+      MetadataEntity<TSourceMetadataName>
+    >]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -353,6 +351,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
+    },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
     },
     view: {
       foreignKey: 'viewId',

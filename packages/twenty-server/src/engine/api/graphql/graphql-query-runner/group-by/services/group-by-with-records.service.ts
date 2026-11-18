@@ -12,6 +12,7 @@ import { type GroupByDefinition } from 'src/engine/api/common/common-query-runne
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
@@ -62,7 +63,7 @@ export class GroupByWithRecordsService {
     groupLimit?: number;
     offsetForRecords?: number;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<CommonGroupByOutputItem[]> {
+  }): Promise<CommonQueryRunResult<CommonGroupByOutputItem[]>> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
     const groupsResult = await queryBuilderWithGroupBy
@@ -70,7 +71,7 @@ export class GroupByWithRecordsService {
       .getRawMany();
 
     if (groupsResult.length === 0) {
-      return [];
+      return { result: [], relationAggregatedValues: {} };
     }
 
     const {
@@ -107,7 +108,7 @@ export class GroupByWithRecordsService {
       .flatMap((group) => group.records as ObjectRecord[])
       .filter(isDefined);
 
-    if (!isEmpty(selectedFieldsResult.relations)) {
+    const relationAggregatedValues =
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -118,9 +119,8 @@ export class GroupByWithRecordsService {
         authContext,
         ...nestedRelationsReadPathOptions,
       });
-    }
 
-    return await formatResultWithGroupByDimensionValues({
+    const groups = await formatResultWithGroupByDimensionValues({
       groupsResult,
       recordsResult,
       groupByDefinitions,
@@ -139,6 +139,8 @@ export class GroupByWithRecordsService {
           selection: selectedFieldsResult,
         }),
     });
+
+    return { result: groups, relationAggregatedValues };
   }
 
   private async buildRankedRecordsStatement({

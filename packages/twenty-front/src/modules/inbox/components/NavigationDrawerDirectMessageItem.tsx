@@ -1,6 +1,6 @@
-import { AiChatMemberPresence } from '@/ai/components/AiChatMemberPresence';
+import { AiChatMemberPresence } from '@/ai-chat/threads/components/AiChatMemberPresence';
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
