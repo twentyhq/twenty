@@ -125,10 +125,17 @@ export class WorkspaceInvitationResolver {
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return this.workspaceInvitationService.getWorkspaceInvitationLink(
-      appTokenId,
-      workspace,
-    );
+    const { link, roleId } =
+      await this.workspaceInvitationService.getWorkspaceInvitationLink({
+        appTokenId,
+        workspace,
+      });
+
+    if (isDefined(roleId)) {
+      await this.assertCanAssignRolesOrThrow();
+    }
+
+    return link;
   }
 
   @Query(() => [WorkspaceInvitation])
@@ -161,21 +168,7 @@ export class WorkspaceInvitationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsDTO> {
     if (isDefined(sendInviteLinkInput.roleId)) {
-      const canAssignRoles =
-        await this.settingPermissionsService.hasPermissionFlag({
-          authContext: workspaceAuthContextStorage.getStore(),
-          permissionFlag: PermissionFlagType.ROLES,
-        });
-
-      if (!canAssignRoles) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-          {
-            userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-          },
-        );
-      }
+      await this.assertCanAssignRolesOrThrow();
     }
 
     const authContext = buildSystemAuthContext(workspace.id);
@@ -200,5 +193,23 @@ export class WorkspaceInvitationResolver {
       sender: workspaceMember,
       roleId: sendInviteLinkInput.roleId ?? undefined,
     });
+  }
+
+  private async assertCanAssignRolesOrThrow() {
+    const canAssignRoles =
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: workspaceAuthContextStorage.getStore(),
+        permissionFlag: PermissionFlagType.ROLES,
+      });
+
+    if (!canAssignRoles) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+        },
+      );
+    }
   }
 }

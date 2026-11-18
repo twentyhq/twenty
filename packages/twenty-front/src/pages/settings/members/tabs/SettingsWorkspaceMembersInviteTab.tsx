@@ -2,6 +2,7 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -29,7 +30,10 @@ import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
+import {
+  GetWorkspaceInvitationsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledButtonContainer = styled.div`
@@ -87,6 +91,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const isEmailDeliveryConfigured = useAtomStateValue(
     isEmailDeliveryConfiguredState,
   );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const { data: invitationsData, error: invitationsError } = useQuery(
     GetWorkspaceInvitationsDocument,
@@ -118,6 +123,20 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   const isExpired = (expiresAt: string) =>
     new Date(expiresAt).getTime() <= Date.now();
+
+  const canCopyInvitationLink = ({
+    expiresAt,
+    roleId,
+  }: {
+    expiresAt: string;
+    roleId: string | null;
+  }) =>
+    !isEmailDeliveryConfigured &&
+    !isExpired(expiresAt) &&
+    (hasRolesPermission || !isDefined(roleId));
+
+  const canResendInvitation = ({ expiresAt }: { expiresAt: string }) =>
+    isEmailDeliveryConfigured || isExpired(expiresAt);
 
   const getExpiresAtText = (expiresAt: string) => {
     if (isExpired(expiresAt)) {
@@ -217,12 +236,12 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>
-                        {!isEmailDeliveryConfigured &&
-                        !isExpired(workspaceInvitation.expiresAt) ? (
+                        {canCopyInvitationLink(workspaceInvitation) && (
                           <WorkspaceInvitationCopyLinkButton
                             appTokenId={workspaceInvitation.id}
                           />
-                        ) : (
+                        )}
+                        {canResendInvitation(workspaceInvitation) && (
                           <IconButton
                             aria-label={t`Resend invitation`}
                             onClick={() => {

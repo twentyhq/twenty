@@ -29,6 +29,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { isEmailDeliveryConfigured } from 'src/engine/core-modules/email/utils/is-email-delivery-configured.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
@@ -282,7 +283,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.sendInvitations({
+    const result = await this.sendInvitations({
       emails: [appToken.context.email],
       workspace,
       sender,
@@ -291,12 +292,18 @@ export class WorkspaceInvitationService {
         appToken.type === AppTokenType.OnboardingInvitationToken,
       appTokenIdToInvalidate: appToken.id,
     });
+
+    // Resend does not check the caller's ROLES permission, so links only come from getWorkspaceInvitationLink
+    return { ...result, inviteLinks: [] };
   }
 
-  async getWorkspaceInvitationLink(
-    appTokenId: string,
-    workspace: WorkspaceEntity,
-  ) {
+  async getWorkspaceInvitationLink({
+    appTokenId,
+    workspace,
+  }: {
+    appTokenId: string;
+    workspace: WorkspaceEntity;
+  }) {
     if (
       isEmailDeliveryConfigured(this.twentyConfigService.get('EMAIL_DRIVER'))
     ) {
@@ -306,6 +313,15 @@ export class WorkspaceInvitationService {
         {
           userFriendlyMessage: msg`Invitation links are only available when no email provider is configured.`,
         },
+      );
+    }
+
+    const { inviteHash } = workspace;
+
+    if (!isDefined(inviteHash)) {
+      throw new WorkspaceInvitationException(
+        'Workspace invite hash not found',
+        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
       );
     }
 
@@ -326,11 +342,15 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.buildInvitationLink(
-      workspace,
-      appToken.value,
-      appToken.context.email,
-    );
+    return {
+      link: this.buildInvitationLink({
+        workspace,
+        workspaceInviteHash: inviteHash,
+        inviteToken: appToken.value,
+        email: appToken.context.email,
+      }),
+      roleId: appToken.context.roleId,
+    };
   }
 
   async sendInvitations({
@@ -407,11 +427,12 @@ export class WorkspaceInvitationService {
 
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
-        const link = this.buildInvitationLink(
+        const link = this.buildInvitationLink({
           workspace,
-          invitation.value.appToken.value,
-          invitation.value.email,
-        );
+          workspaceInviteHash: workspace.inviteHash,
+          inviteToken: invitation.value.appToken.value,
+          email: invitation.value.email,
+        });
 
         if (shouldReturnInviteLinks) {
           inviteLinks.push({ email: invitation.value.email, link });
@@ -518,17 +539,21 @@ export class WorkspaceInvitationService {
     };
   }
 
-  private buildInvitationLink(
-    workspace: WorkspaceEntity,
-    inviteToken: string,
-    email: string,
-  ) {
+  private buildInvitationLink({
+    workspace,
+    workspaceInviteHash,
+    inviteToken,
+    email,
+  }: {
+    workspace: WorkspaceDomainConfig;
+    workspaceInviteHash: string;
+    inviteToken: string;
+    email: string;
+  }) {
     return this.workspaceDomainsService
       .buildWorkspaceURL({
         workspace,
-        pathname: getAppPath(AppPath.Invite, {
-          workspaceInviteHash: workspace.inviteHash,
-        }),
+        pathname: getAppPath(AppPath.Invite, { workspaceInviteHash }),
         searchParams: {
           inviteToken,
           email,
