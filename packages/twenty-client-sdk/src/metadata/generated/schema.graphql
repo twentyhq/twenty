@@ -1971,6 +1971,7 @@ input CreateViewFieldInput {
   isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float = 0
   viewFieldGroupId: UUID
@@ -5786,6 +5787,7 @@ input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
   position: Float
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float
   viewFieldGroupId: UUID
@@ -6430,6 +6432,7 @@ type ViewField {
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
   position: Float!
+  relationScope: ViewFieldRelationScope
   relationTargetFieldMetadataId: UUID
   size: Float!
   universalIdentifier: UUID!
@@ -6452,6 +6455,66 @@ type ViewFieldGroup {
   viewFields: [ViewField!]!
   viewId: UUID!
   workspaceId: UUID!
+}
+
+type ViewFieldRelationScope {
+  filterGroups: [ViewFieldRelationScopeFilterGroup!]!
+  filters: [ViewFieldRelationScopeFilter!]!
+  limit: Int
+  sorts: [ViewFieldRelationScopeSort!]!
+}
+
+type ViewFieldRelationScopeFilter {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+type ViewFieldRelationScopeFilterGroup {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterGroupInput {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterInput {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+input ViewFieldRelationScopeInput {
+  filterGroups: [ViewFieldRelationScopeFilterGroupInput!]! = []
+  filters: [ViewFieldRelationScopeFilterInput!]! = []
+  limit: Int
+  sorts: [ViewFieldRelationScopeSortInput!]! = []
+}
+
+type ViewFieldRelationScopeSort {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+}
+
+input ViewFieldRelationScopeSortInput {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
 }
 
 type ViewFilter {
