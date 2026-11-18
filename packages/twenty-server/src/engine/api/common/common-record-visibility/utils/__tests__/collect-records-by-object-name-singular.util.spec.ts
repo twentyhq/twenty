@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -63,18 +64,37 @@ const calendarEvent = getFlatObjectMetadataMock({
   fieldIds: [],
 });
 
+const buildSelection = (
+  relations: CommonSelection['relations'] = {},
+): CommonSelection => ({ columns: {}, aggregates: {}, relations });
+
+const PARTICIPANT_EVENT_SELECTION = buildSelection({
+  calendarEventParticipants: {
+    fieldName: 'calendarEventParticipants',
+    selection: buildSelection({
+      calendarEvent: {
+        fieldName: 'calendarEvent',
+        selection: buildSelection(),
+      },
+    }),
+  },
+});
+
 const collect = ({
   records,
   flatObjectMetadata,
+  selection = PARTICIPANT_EVENT_SELECTION,
   objectNameSingulars,
 }: {
   records: ObjectRecord[];
   flatObjectMetadata: FlatObjectMetadata;
+  selection?: CommonSelection;
   objectNameSingulars: string[];
 }) =>
   collectRecordsByObjectNameSingular({
     records,
     flatObjectMetadata,
+    selection,
     flatObjectMetadataMaps: buildFlatEntityMaps([
       person,
       calendarEventParticipant,
@@ -95,6 +115,7 @@ describe('collectRecordsByObjectNameSingular', () => {
       collect({
         records: [event],
         flatObjectMetadata: calendarEvent,
+        selection: buildSelection(),
         objectNameSingulars: ['calendarEvent'],
       }),
     ).toEqual(new Map([['calendarEvent', [event]]]));
@@ -148,6 +169,36 @@ describe('collectRecordsByObjectNameSingular', () => {
         objectNameSingulars: ['calendarEvent'],
       }).get('calendarEvent'),
     ).toEqual([sharedEvent]);
+  });
+
+  it('should collect records nested under aliased relations', () => {
+    const event = { id: 'event-1', title: 'Demo' };
+
+    const records: ObjectRecord[] = [
+      {
+        id: 'person-1',
+        attendees: [{ id: 'participant-1', meeting: event }],
+      },
+    ];
+
+    expect(
+      collect({
+        records,
+        flatObjectMetadata: person,
+        selection: buildSelection({
+          attendees: {
+            fieldName: 'calendarEventParticipants',
+            selection: buildSelection({
+              meeting: {
+                fieldName: 'calendarEvent',
+                selection: buildSelection(),
+              },
+            }),
+          },
+        }),
+        objectNameSingulars: ['calendarEvent'],
+      }).get('calendarEvent'),
+    ).toEqual([event]);
   });
 
   it('should collect nothing when no requested object is in the result', () => {
