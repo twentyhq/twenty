@@ -60,12 +60,11 @@ export const ObjectOverrideExpandsInPlace: Story = {
       expect(overrideRow).toHaveAttribute('aria-expanded', 'true'),
     );
     expect(await canvas.findByText('All records')).toBeVisible();
+    expect(canvas.getAllByText('All fields')).toHaveLength(2);
     expect(
       canvas.getByRole('button', { name: 'Remove override' }),
     ).toBeVisible();
-    expect(
-      canvas.getByRole('button', { name: 'Fields and rule' }),
-    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Rule' })).toBeVisible();
   },
 };
 
