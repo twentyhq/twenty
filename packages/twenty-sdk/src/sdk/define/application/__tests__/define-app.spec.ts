@@ -521,7 +521,7 @@ describe('defineApplication', () => {
     );
   });
 
-  it('should return error when a subscription plan has an unknown unit or an empty label', () => {
+  it('should return error when a subscription plan has an empty label', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -530,7 +530,7 @@ describe('defineApplication', () => {
         subscriptions: {
           seat: {
             monthlyAmountCents: 1000,
-            per: 'CONNECTION' as 'WORKSPACE_MEMBER',
+            per: 'WORKSPACE_MEMBER',
             label: '',
           },
         },
@@ -539,7 +539,6 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
-      'Subscription plan "seat" must be billed per a known unit (WORKSPACE_MEMBER) or omit `per` for a flat fee',
       'Subscription plan "seat" must have a non empty label',
     ]);
   });

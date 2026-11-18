@@ -1,5 +1,6 @@
 import {
   getSubscriptionPlanYearlyAmountCents,
+  isRecurringChargeUnit,
   isSubscriptionPlanAmount,
   MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS,
 } from '@/application/applicationBillingType';
@@ -39,5 +40,15 @@ describe('isSubscriptionPlanAmount', () => {
     [MAX_SUBSCRIPTION_PLAN_AMOUNT_CENTS + 1],
   ])('should reject %p', (amount) => {
     expect(isSubscriptionPlanAmount(amount)).toBe(false);
+  });
+});
+
+describe('isRecurringChargeUnit', () => {
+  it('should accept WORKSPACE_MEMBER', () => {
+    expect(isRecurringChargeUnit('WORKSPACE_MEMBER')).toBe(true);
+  });
+
+  it.each([['CONNECTION'], [undefined]])('should reject %p', (unit) => {
+    expect(isRecurringChargeUnit(unit)).toBe(false);
   });
 });
