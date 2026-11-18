@@ -82,9 +82,20 @@ export const isSubscriptionPlanUnit = (
 ): value is SubscriptionPlanUnit =>
   SUBSCRIPTION_PLAN_UNITS.some((unit) => unit === value);
 
+export const SUBSCRIPTION_PLAN_CURRENCIES = ['USD'] as const;
+
+export type SubscriptionPlanCurrency =
+  (typeof SUBSCRIPTION_PLAN_CURRENCIES)[number];
+
+export const isSubscriptionPlanCurrency = (
+  value: unknown,
+): value is SubscriptionPlanCurrency =>
+  SUBSCRIPTION_PLAN_CURRENCIES.some((currency) => currency === value);
+
 export type SubscriptionPlan = {
   label: string;
   monthlyAmountCents: number;
+  currency?: SubscriptionPlanCurrency;
   per?: SubscriptionPlanUnit;
 };
 

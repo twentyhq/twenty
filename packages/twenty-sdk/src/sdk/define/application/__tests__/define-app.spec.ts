@@ -464,6 +464,7 @@ describe('defineApplication', () => {
           },
           account: {
             monthlyAmountCents: 1000,
+            currency: 'USD',
             per: 'CONNECTED_ACCOUNT',
             label: 'Per connected account',
           },
