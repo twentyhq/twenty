@@ -1193,13 +1193,14 @@ interface BillingProductDTO {
 
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
+  planKey: BillingPlanKey
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
 }
@@ -4441,7 +4442,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeLogicFunctionSources: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
