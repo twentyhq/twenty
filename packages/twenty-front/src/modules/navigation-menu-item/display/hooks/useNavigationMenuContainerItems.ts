@@ -5,13 +5,13 @@ import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/h
 export const useNavigationMenuContainerItems = (containerId: string) => {
   const items = useNavigationMenuItemSectionItems(containerId);
 
-  const { filteredTopLevelItems, filteredFolderChildrenById } =
+  const { displayTopLevelItems, displayFolderChildrenById } =
     useReadableNavigationMenuItems(
       groupNavigationMenuItemsByContainer({ items, containerId }),
     );
 
   return {
-    topLevelItems: filteredTopLevelItems,
-    folderChildrenById: filteredFolderChildrenById,
+    topLevelItems: displayTopLevelItems,
+    folderChildrenById: displayFolderChildrenById,
   };
 };

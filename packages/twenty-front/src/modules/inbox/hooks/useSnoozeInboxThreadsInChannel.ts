@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useUpdateAiChatThreadChannelCopy } from '@/ai/hooks/useUpdateAiChatThreadChannelCopy';
+import { useUpdateAiChatThreadChannelCopy } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadChannelCopy';
 import { SnoozeAgentChatThreadInChannelDocument } from '~/generated-metadata/graphql';
 
 export const useSnoozeInboxThreadsInChannel = () => {

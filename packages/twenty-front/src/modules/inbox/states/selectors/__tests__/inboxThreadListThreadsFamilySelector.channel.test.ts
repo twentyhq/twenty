@@ -5,7 +5,7 @@ import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/i
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,

@@ -37,13 +37,17 @@ export default defineApplication({
 });
 ```
 
-- `recurring` — flat and per-member fees the **platform** raises for you, once per billing period.
+- `recurring` — deprecated, see [prices](#prices). Flat and per-member fees the **platform** raises for you, once per billing period.
 - `operations` — what you charge for as you use it, from a logic function.
 - `description` — one friendly line shown to buyers on your marketplace listing.
 
 All three land on the same credit meter and the same **Settings > Usage** breakdown, so a workspace sees one bill.
 
 ## Recurring charges
+
+<Warning>
+  Deprecated in favor of [prices](#prices). The build warns about recurring charges, but they keep being raised: prices are not billed yet, so keep yours until they are.
+</Warning>
 
 A recurring charge is a subscription fee: a flat monthly amount, an amount per workspace member, or both. You declare the amount and the platform charges it. Your app never calls `chargeCredits` for these.
 
@@ -79,6 +83,53 @@ How they are raised:
 - Per-member charges count all workspace members at the moment the charge is raised, so a workspace that grows mid-period pays the higher count from the next period.
 - Only on monthly subscriptions. A workspace on a yearly plan is not charged a `MONTH` fee, rather than being charged once for the whole year.
 - Bounded. A declared rate above \$100, or a per-member charge whose rate multiplied by the member count would exceed \$1,000 for the period, is refused and not raised. The platform raises these itself, so it will not write a debit it cannot justify.
+
+## Prices
+
+<Warning>
+  Declaration only for now. The build validates `billing.prices`, but the platform does not bill them yet.
+</Warning>
+
+A price is charged in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice. Prices are in US dollars only for now.
+
+```ts src/application-config.ts
+billing: {
+  prices: [
+    {
+      universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      label: 'Platform',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 2000,
+    },
+    {
+      universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
+      label: 'Per member',
+      description: 'Monthly price per workspace member',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 1000,
+      currency: 'USD',
+      per: 'WORKSPACE_MEMBER',
+    },
+  ],
+},
+```
+
+| Field | Description |
+|-------|-------------|
+| `universalIdentifier` | A UUID that identifies the price across versions of your app. Generate it once and never change it: a new identifier is a new price |
+| `label` | What admins read for that line |
+| `description` | Optional. A longer explanation of what the price covers |
+| `type` | `RECURRING`, the only type for now |
+| `billingPeriod` | `MONTHLY`, the only period for now |
+| `amountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
+| `currency` | Optional. `USD` is the only supported currency for now, and the default |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
+
+A price follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
+
+The build rejects a missing, duplicated or invalid `universalIdentifier`, an empty `label` or `description`, an unknown `type`, `billingPeriod` or `per`, an `amountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), and a `currency` other than `USD`.
 
 ## Billable operations
 

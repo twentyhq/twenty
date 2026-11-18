@@ -1,9 +1,6 @@
 import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectRecordsPermissions,
   type RowLevelPermissionPredicate,
@@ -21,7 +18,6 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
 ];
 
 type RoleDefinitionForRecordsPermissions = Pick<
@@ -259,29 +255,31 @@ export const computeRoleRecordsPermissions = ({
         ),
       }))
       .filter(({ predicates }) => predicates.length > 0)
-      .map(({ rule, predicates }): RowLevelRecordsPermissions => ({
-        ruleId: rule.id,
-        canCreateRecords: rule.canCreateRecords && hasAiAccess,
-        canReadRecords: rule.canReadRecords && hasAiAccess,
-        canUpdateRecords: rule.canUpdateRecords && hasAiAccess,
-        canSoftDeleteRecords: rule.canSoftDeleteRecords && hasAiAccess,
-        canDestroyRecords: rule.canDestroyRecords && hasAiAccess,
-        predicates,
-        predicateGroups: rowLevelPermissionPredicateGroups.filter(
-          ({ rowLevelPermissionRuleId }) =>
-            rowLevelPermissionRuleId === rule.id,
-        ),
-        ...(isWorkflowObject
-          ? NO_FIELDS
-          : buildUnreadableAndUneditableFields({
-              objectMetadata,
-              fieldPermissions: fieldPermissions.filter(
-                ({ rowLevelPermissionRuleId }) =>
-                  rowLevelPermissionRuleId === rule.id,
-              ),
-              resolveMorphRelationPermissionFieldIds,
-            })),
-      }));
+      .map(
+        ({ rule, predicates }): RowLevelRecordsPermissions => ({
+          ruleId: rule.id,
+          canCreateRecords: rule.canCreateRecords && hasAiAccess,
+          canReadRecords: rule.canReadRecords && hasAiAccess,
+          canUpdateRecords: rule.canUpdateRecords && hasAiAccess,
+          canSoftDeleteRecords: rule.canSoftDeleteRecords && hasAiAccess,
+          canDestroyRecords: rule.canDestroyRecords && hasAiAccess,
+          predicates,
+          predicateGroups: rowLevelPermissionPredicateGroups.filter(
+            ({ rowLevelPermissionRuleId }) =>
+              rowLevelPermissionRuleId === rule.id,
+          ),
+          ...(isWorkflowObject
+            ? NO_FIELDS
+            : buildUnreadableAndUneditableFields({
+                objectMetadata,
+                fieldPermissions: fieldPermissions.filter(
+                  ({ rowLevelPermissionRuleId }) =>
+                    rowLevelPermissionRuleId === rule.id,
+                ),
+                resolveMorphRelationPermissionFieldIds,
+              })),
+        }),
+      );
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectFields: isWorkflowObject

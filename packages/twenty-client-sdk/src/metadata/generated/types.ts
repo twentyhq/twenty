@@ -1210,6 +1210,9 @@ export default {
             "requestedIframeMediaPermissions": [
                 326
             ],
+            "requestedRoleId": [
+                565
+            ],
             "runHealthCheckOnUserPreferences": [
                 1
             ],
@@ -4575,6 +4578,9 @@ export default {
                 565
             ],
             "id": [
+                565
+            ],
+            "relationTargetFieldMetadataId": [
                 565
             ],
             "subFieldName": [
@@ -11745,6 +11751,9 @@ export default {
                     "shouldIncludeDependencies": [
                         1
                     ],
+                    "shouldIncludeLogicFunctionSources": [
+                        1
+                    ],
                     "shouldIncludePublicAssets": [
                         1
                     ],
@@ -15524,6 +15533,9 @@ export default {
             "direction": [
                 690
             ],
+            "relationTargetFieldMetadataId": [
+                565
+            ],
             "subFieldName": [
                 4
             ],
@@ -16902,6 +16914,9 @@ export default {
                 565
             ],
             "id": [
+                565
+            ],
+            "relationTargetFieldMetadataId": [
                 565
             ],
             "subFieldName": [

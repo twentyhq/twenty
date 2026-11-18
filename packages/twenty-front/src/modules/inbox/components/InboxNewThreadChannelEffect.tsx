@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';

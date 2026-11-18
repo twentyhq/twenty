@@ -17,7 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -27,6 +27,7 @@ import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/com
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -54,7 +55,7 @@ import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/
 import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
-export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerService<
   MergeManyQueryArgs,
   ObjectRecord
 > {
@@ -63,7 +64,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   async run(
     args: CommonExtendedInput<MergeManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const { flatFieldMetadataMaps, flatObjectMetadata } = queryRunnerContext;
 
     const recordsToMerge = await this.fetchRecordsToMerge(
@@ -91,8 +92,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.dryRun ?? false,
     );
 
+    // The preview merges every record's relations, so per-record counts would not match it
     if (args.dryRun) {
-      return this.createDryRunResponse(priorityRecord, mergedData);
+      return {
+        result: this.createDryRunResponse(priorityRecord, mergedData),
+        relationAggregatedValues: {},
+      };
     }
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
@@ -105,13 +110,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       mergedData,
     });
 
-    await this.processNestedRelations({
+    const relationAggregatedValues = await this.processNestedRelations({
       records: [updatedRecord],
       selection: args.selectedFieldsResult,
       queryRunnerContext,
     });
 
-    return updatedRecord;
+    return { result: updatedRecord, relationAggregatedValues };
   }
 
   private async fetchRecordsToMerge(
