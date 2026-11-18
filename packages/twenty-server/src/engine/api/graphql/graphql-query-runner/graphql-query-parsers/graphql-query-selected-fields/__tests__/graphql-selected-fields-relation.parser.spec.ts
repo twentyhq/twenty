@@ -1,5 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
+import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -109,7 +110,7 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
 
     const result = parser.parse({ id: true, fund: true }, investorLeadObject);
 
-    expect(result.select).toEqual({ id: true });
+    expect(result.columns).toEqual({ id: true });
     expect(result.relations).toEqual({});
     expect(result.relationFieldsCount).toBe(0);
   });
@@ -122,8 +123,45 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
       investorLeadObject,
     );
 
-    expect(result.select.fund).toEqual({ id: true, name: true });
-    expect(result.relations.fund).toEqual({});
+    expect(result.columns).toEqual({ id: true });
+    expect(result.relations.fund).toEqual({
+      fieldName: 'fund',
+      selection: {
+        columns: { id: true, name: true },
+        aggregates: {},
+        relations: {},
+      },
+    });
     expect(result.relationFieldsCount).toBe(1);
+  });
+
+  it('should build one relation selection per selection key', () => {
+    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const firstFundKey = computeSelectionKey({
+      fieldName: 'fund',
+      arguments: { first: 2 },
+    });
+
+    const result = parser.parse(
+      {
+        id: {},
+        fund: { edges: { node: { name: {} } } },
+        [firstFundKey]: { __arguments: { first: 2 }, edges: { node: {} } },
+      },
+      investorLeadObject,
+    );
+
+    expect(result.columns).toEqual({ id: true });
+    expect(Object.keys(result.relations)).toEqual(['fund', firstFundKey]);
+    expect(result.relations.fund).toMatchObject({
+      fieldName: 'fund',
+      selection: { columns: { id: true, name: true } },
+    });
+    expect(result.relations[firstFundKey]).toMatchObject({
+      fieldName: 'fund',
+      first: 2,
+      selection: { columns: { id: true } },
+    });
+    expect(result.relationFieldsCount).toBe(2);
   });
 });

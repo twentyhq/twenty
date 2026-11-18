@@ -39,6 +39,8 @@ import {
   CommonQueryExecutionResult,
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
+import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -205,18 +207,10 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<CommonInput<Args>>;
 
   protected abstract processQueryResult(
-    queryResult: Output,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
+    args: CommonQueryResultProcessingArgs<Output>,
   ): Promise<Output>;
 
-  protected getResultRecords(results: Output): ObjectRecord[] {
-    return (
-      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
-    ).filter(isDefined);
-  }
+  protected abstract getResultRecords(results: Output): ObjectRecord[];
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
@@ -225,7 +219,7 @@ export abstract class CommonBaseQueryRunnerService<
   ): number {
     const simpleFieldsComplexity = 1;
     const selectedFieldsComplexity =
-      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+      simpleFieldsComplexity + selectedFieldsResult.relationFieldsCount;
 
     return selectedFieldsComplexity;
   }
@@ -242,7 +236,7 @@ export abstract class CommonBaseQueryRunnerService<
     } = queryRunnerContext;
 
     return computeMaxFieldCountPerRecord({
-      selectedFieldsResult,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -283,17 +277,14 @@ export abstract class CommonBaseQueryRunnerService<
     const results = await this.run(
       {
         ...processedArgs,
-        selectedFieldsResult: {
-          ...processedArgs.selectedFieldsResult,
-          select: addTimelineActivityObjectColumnsToSelect({
-            select: processedArgs.selectedFieldsResult.select,
-            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            recordReadRestrictions:
-              extendedQueryRunnerContext.recordReadRestrictions,
-            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-          }),
-        },
+        selectedFieldsResult: addTimelineActivityObjectColumnsToSelect({
+          selection: processedArgs.selectedFieldsResult,
+          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+          recordReadRestrictions:
+            extendedQueryRunnerContext.recordReadRestrictions,
+          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        }),
       },
       {
         ...extendedQueryRunnerContext,
@@ -303,6 +294,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     return this.enrichResultsWithGettersAndHooks({
       results,
+      selection: processedArgs.selectedFieldsResult,
       operationName: this.operationName,
       authContext: extendedQueryRunnerContext.authContext,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
@@ -315,6 +307,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private async enrichResultsWithGettersAndHooks({
     results,
+    selection,
     operationName,
     authContext,
     flatObjectMetadata,
@@ -324,6 +317,7 @@ export abstract class CommonBaseQueryRunnerService<
     recordReadRestrictions,
   }: {
     results: Output;
+    selection: CommonSelection;
     operationName: CommonQueryNames;
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
@@ -332,17 +326,19 @@ export abstract class CommonBaseQueryRunnerService<
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
     recordReadRestrictions: RecordReadRestrictions;
   }): Promise<Output> {
-    const resultWithGetters = await this.processQueryResult(
-      results,
+    const resultWithGetters = await this.processQueryResult({
+      queryResult: results,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      authContext,
-    );
+      workspaceId: authContext.workspace.id,
+      selection,
+    });
 
     await this.commonRecordVisibilityService.applyVisibilityRestrictions({
       records: this.getResultRecords(resultWithGetters),
       flatObjectMetadata,
+      selection,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,

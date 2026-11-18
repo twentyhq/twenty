@@ -9,13 +9,13 @@ import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/states/aiChatThreadStreamedParticipantsState';
-import { aiChatUsageFamilyState } from '@/ai-chat/states/aiChatUsageFamilyState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/threads/states/aiChatThreadStreamedParticipantsState';
+import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -54,7 +54,7 @@ jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
 
 const refreshAiChatThreadPermissions = jest.fn();
 
-jest.mock('@/ai-chat/hooks/useRefreshAiChatThreadPermissions', () => ({
+jest.mock('@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions', () => ({
   useRefreshAiChatThreadPermissions: () => ({
     refreshAiChatThreadPermissions,
   }),
