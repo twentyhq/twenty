@@ -4,6 +4,7 @@ import {
   metadataStoreState,
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
+import { type FlatNavigationMenuItem } from '@/metadata-store/types/FlatNavigationMenuItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
@@ -76,6 +77,17 @@ export const useLoadMinimalMetadata = () => {
       cachedViews.some((view) => !isDefined(view.universalIdentifier))
     ) {
       staleEntityKeys.push('views');
+    }
+
+    const cachedNavigationMenuItems = store.get(
+      metadataStoreState.atomFamily('navigationMenuItems'),
+    ).current as FlatNavigationMenuItem[];
+
+    if (
+      !staleEntityKeys.includes('navigationMenuItems') &&
+      cachedNavigationMenuItems.some((item) => !('parentId' in item))
+    ) {
+      staleEntityKeys.push('navigationMenuItems');
     }
 
     const objectsEntry = store.get(
