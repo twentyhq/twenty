@@ -113,6 +113,8 @@ Because the list does not depend on your objects, it stays valid for clients tha
 
 The functions of your installed apps and the tools of MCP servers you connected to Twenty differ per workspace, so this list leaves them out. Use direct mode to reach them.
 
+The list holds about a hundred tool definitions. Clients that load tools on demand, as Claude, Claude Code, Codex and ChatGPT do by default, handle it well. A client that loads every tool definition up front can use a large part of its context: connect it to meta mode instead.
+
 ### Direct mode
 
 Connect to `/mcp?mode=direct` to list one tool per object and operation instead, each with the exact input schema of that object: `find_many_companies`, `create_one_person`, and several hundred more. Direct mode also lists the other built-in tools, the functions of your installed apps and the tools of your connected MCP servers. Tools for objects created while you are connected appear after reconnecting.

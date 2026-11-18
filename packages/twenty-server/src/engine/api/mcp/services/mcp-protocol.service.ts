@@ -345,8 +345,7 @@ export class McpProtocolService {
       return this.mcpToolExecutorService.handleToolsListing(toolSet);
     }
 
-    // Unlisted but still callable, so clients that listed them earlier keep working; directory
-    // reviews (ChatGPT) refuse a generic executor that reaches tools not listed for review
+    // Directory reviews (ChatGPT) refuse a generic executor; still callable for clients that listed it
     const {
       [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
       [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
