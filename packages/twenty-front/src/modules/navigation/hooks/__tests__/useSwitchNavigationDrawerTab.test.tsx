@@ -1,6 +1,6 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
-import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
@@ -15,8 +15,8 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 
-jest.mock('@/ai/hooks/useReturnFromExpandedAiChat');
-jest.mock('@/ai/hooks/useSwitchToNewAiChat');
+jest.mock('@/ai-chat/hooks/useReturnFromExpandedAiChat');
+jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
@@ -26,7 +26,7 @@ jest.mock('twenty-ui/utilities', () => ({
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
-jest.mock('@/ai/hooks/useSelectAiChatThread', () => ({
+jest.mock('@/ai-chat/hooks/useSelectAiChatThread', () => ({
   useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
 }));
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
@@ -251,12 +251,13 @@ describe('useSwitchNavigationDrawerTab', () => {
     jest.mocked(useSwitchToNewAiChat).mockImplementation(
       jest.requireActual<{
         useSwitchToNewAiChat: typeof useSwitchToNewAiChat;
-      }>('@/ai/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
+      }>('@/ai-chat/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
     );
     jest.mocked(useReturnFromExpandedAiChat).mockImplementation(
       jest.requireActual<{
         useReturnFromExpandedAiChat: typeof useReturnFromExpandedAiChat;
-      }>('@/ai/hooks/useReturnFromExpandedAiChat').useReturnFromExpandedAiChat,
+      }>('@/ai-chat/hooks/useReturnFromExpandedAiChat')
+        .useReturnFromExpandedAiChat,
     );
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: DEFAULT_HOME_PAGE_PATH,

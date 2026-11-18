@@ -551,13 +551,14 @@ export class RoleService {
         workspaceCustomFlatApplication,
       }));
 
-    if (workspaceCustomFlatApplication.defaultRoleId === roleId) {
+    if (workspaceCustomFlatApplication.requestedRoleId === roleId) {
       return;
     }
 
     await this.applicationService.update(workspaceCustomFlatApplication.id, {
       workspaceId,
       defaultRoleId: roleId,
+      requestedRoleId: roleId,
     });
   }
 

@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AiChatCloseButton } from '@/ai-chat/components/AiChatCloseButton';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { NavigatePreservingSearchAndHash } from '@/app/routing/components/NavigatePreservingSearchAndHash';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLegacyAiChatInboxRedirectPath } from '@/legacy-ai-chat/hooks/useLegacyAiChatInboxRedirectPath';
