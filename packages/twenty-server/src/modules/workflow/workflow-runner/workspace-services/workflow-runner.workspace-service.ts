@@ -32,7 +32,6 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -43,7 +42,6 @@ export class WorkflowRunnerWorkspaceService {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
@@ -237,8 +235,6 @@ export class WorkflowRunnerWorkspaceService {
       };
     }
 
-    const wasNotStarted = workflowRun.status === WorkflowRunStatus.NOT_STARTED;
-
     let newStatus: WorkflowRunStatus;
 
     if (!isDefined(workflowRun.state)) {
@@ -279,13 +275,6 @@ export class WorkflowRunnerWorkspaceService {
         });
         newStatus = WorkflowRunStatus.STOPPED;
       }
-    }
-
-    // Only after the stop is persisted, so a persistence failure can't desync the throttle counter
-    if (wasNotStarted) {
-      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
-        workspaceId,
-      );
     }
 
     return {
