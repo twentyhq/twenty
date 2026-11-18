@@ -92,7 +92,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
             category,
             executionRef: { kind: 'static', toolId: name },
             ...(isDefined(icon) && { icon }),
-            ...(isDestructive === true && { isDestructive }),
+            ...(isDestructive && { isDestructive }),
           };
 
           return includeSchemas

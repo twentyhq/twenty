@@ -15,7 +15,7 @@ export const getMcpRegistryToolAnnotations = ({
     return MCP_DATABASE_CRUD_TOOL_ANNOTATIONS[executionRef.operation];
   }
 
-  return isDestructive === true
+  return isDestructive
     ? MCP_DESTRUCTIVE_WRITE_TOOL_ANNOTATIONS
     : MCP_EXECUTE_TOOL_ANNOTATIONS;
 };

@@ -10,8 +10,11 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 export type ToolSetToDescriptorsOptions = {
   includeSchemas?: boolean;
   icon?: string;
-  destructiveToolNames?: ReadonlySet<string>;
 };
+
+// Tool factories may mark themselves destructive; ToolSet types do not carry the flag
+const isDestructiveTool = (tool: object): boolean =>
+  'isDestructive' in tool && tool.isDestructive === true;
 
 export const humanizeToolName = (name: string): string =>
   name
@@ -36,9 +39,7 @@ export const toolSetToDescriptors = (
       category,
       executionRef: { kind: 'static' as const, toolId: name },
       ...(options?.icon && { icon: options.icon }),
-      ...(options?.destructiveToolNames?.has(name) === true && {
-        isDestructive: true,
-      }),
+      ...(isDestructiveTool(tool) && { isDestructive: true }),
     };
 
     if (!includeSchemas) {

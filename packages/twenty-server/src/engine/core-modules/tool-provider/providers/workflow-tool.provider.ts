@@ -14,7 +14,6 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
-import { WORKFLOW_DESTRUCTIVE_TOOL_NAMES } from 'src/engine/core-modules/tool-provider/constants/workflow-destructive-tool-names.constant';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -63,7 +62,6 @@ export class WorkflowToolProvider implements ToolProvider {
     return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
       includeSchemas: options?.includeSchemas ?? true,
       icon: 'IconSettingsAutomation',
-      destructiveToolNames: WORKFLOW_DESTRUCTIVE_TOOL_NAMES,
     });
   }
 
