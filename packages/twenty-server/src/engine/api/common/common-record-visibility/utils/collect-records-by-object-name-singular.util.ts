@@ -61,10 +61,18 @@ export const collectRecordsByObjectNameSingular = ({
       relationSelection,
     } of getRelationSelectionEntries(relationSelections)) {
       const relationValue = record[responseKey];
+
+      if (!isDefined(relationValue)) {
+        continue;
+      }
+
       const fieldId = fieldIdByName[relationSelection.fieldName];
 
-      if (!isDefined(relationValue) || !isDefined(fieldId)) {
-        continue;
+      // Rows under a relation nobody can resolve would skip the visibility check
+      if (!isDefined(fieldId)) {
+        throw new Error(
+          `Relation field ${relationSelection.fieldName} not found on ${objectMetadata.nameSingular}`,
+        );
       }
 
       const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
