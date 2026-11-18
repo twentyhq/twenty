@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { AppPath } from 'twenty-shared/types';
 
 import { InboxSelectionEffect } from '@/inbox/components/InboxSelectionEffect';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
 
 const navigate = jest.fn();
 

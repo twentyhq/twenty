@@ -1,5 +1,5 @@
-import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
-import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
+import { useChatThreadsForRecord } from '@/ai-chat/hooks/useChatThreadsForRecord';
+import { useDetachChatThreadFromRecord } from '@/ai-chat/hooks/useDetachChatThreadFromRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

@@ -163,14 +163,14 @@ describe('Administration operations with an application token should fail', () =
       });
 
       it('should refuse to raise its own role, which stays unchanged', async () => {
-        const { defaultRoleId } = globalTestContext.application;
+        const { requestedRoleId } = globalTestContext.application;
         const permissionsBeforeAttempt =
-          await readRolePermissions(defaultRoleId);
+          await readRolePermissions(requestedRoleId);
 
         const response = await makeMetadataApiRequest(
           updateOneRoleQueryFactory({
             input: {
-              idToUpdate: defaultRoleId,
+              idToUpdate: requestedRoleId,
               updatePayload: {
                 canUpdateAllSettings: true,
                 canReadAllObjectRecords: true,
@@ -185,7 +185,7 @@ describe('Administration operations with an application token should fail', () =
         expectOneNotInternalServerErrorSnapshot({
           errors: response.body.errors,
         });
-        expect(await readRolePermissions(defaultRoleId)).toEqual(
+        expect(await readRolePermissions(requestedRoleId)).toEqual(
           permissionsBeforeAttempt,
         );
       });
