@@ -60,6 +60,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata;
   colorScheme: string;
   uiScale: string;
+  inboxNotificationLevel: string;
+  isInboxNotificationPreviewEnabled: boolean;
   openRecordIn: string;
   locale: keyof typeof APP_LOCALES;
   avatarUrl: string | null;

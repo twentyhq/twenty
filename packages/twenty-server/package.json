@@ -176,6 +176,7 @@
     "typescript": "^5.9.3",
     "unzipper": "^0.12.3",
     "uuid": "^11.1.1",
+    "web-push": "3.6.7",
     "zod": "^4.6.6"
   },
   "devDependencies": {
@@ -224,6 +225,7 @@
     "@types/supertest": "^2.0.11",
     "@types/unzipper": "^0",
     "@types/uuid": "^9.0.2",
+    "@types/web-push": "3.6.4",
     "ioredis-mock": "8.13.1",
     "jest": "29.7.0",
     "msw": "2.12.14",

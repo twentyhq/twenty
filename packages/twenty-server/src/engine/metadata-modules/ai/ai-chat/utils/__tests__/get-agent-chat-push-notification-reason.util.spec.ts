@@ -1,0 +1,126 @@
+import {
+  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL,
+  type AgentChatInboxState,
+  AgentChatThreadConversationType,
+} from 'twenty-shared/ai';
+
+import { getAgentChatPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-reason.util';
+
+const ME = 'member-me';
+const FELIX = 'member-felix';
+const LAST_ACTIVITY_AT = '2026-11-16T10:00:00.000Z';
+
+const channelThread = {
+  deletedAt: null,
+  lastActivityAt: LAST_ACTIVITY_AT,
+  lastMessageSenderWorkspaceMemberId: FELIX,
+  conversationType: AgentChatThreadConversationType.STANDARD,
+  directMessageFirstWorkspaceMemberId: null,
+  directMessageSecondWorkspaceMemberId: null,
+  assigneeId: null,
+};
+
+const directMessageThread = {
+  ...channelThread,
+  conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+  directMessageFirstWorkspaceMemberId: FELIX,
+  directMessageSecondWorkspaceMemberId: ME,
+};
+
+const unreadFollowedParticipant: AgentChatInboxState = {
+  lastReadAt: '2026-11-16T09:00:00.000Z',
+  archivedAt: null,
+  snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
+  mentionsResolvedAt: null,
+};
+
+const getReason = (
+  overrides: Partial<Parameters<typeof getAgentChatPushNotificationReason>[0]>,
+) =>
+  getAgentChatPushNotificationReason({
+    thread: channelThread,
+    participant: unreadFollowedParticipant,
+    workspaceMemberId: ME,
+    inboxNotificationLevel: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
+    ...overrides,
+  });
+
+describe('getAgentChatPushNotificationReason', () => {
+  it('should notify for an unread message in a followed chat', () => {
+    expect(getReason({})).toBe('FOLLOWED');
+  });
+
+  it('should not notify for my own message, a deleted chat or a read message', () => {
+    expect(
+      getReason({
+        thread: { ...channelThread, lastMessageSenderWorkspaceMemberId: ME },
+      }),
+    ).toBeNull();
+    expect(
+      getReason({ thread: { ...channelThread, deletedAt: LAST_ACTIVITY_AT } }),
+    ).toBeNull();
+    expect(
+      getReason({
+        participant: {
+          ...unreadFollowedParticipant,
+          lastReadAt: LAST_ACTIVITY_AT,
+        },
+      }),
+    ).toBeNull();
+  });
+
+  it('should notify for a direct message before its participant row exists', () => {
+    expect(
+      getReason({ thread: directMessageThread, participant: undefined }),
+    ).toBe('DIRECT_MESSAGE');
+  });
+
+  it('should notify for a mention in this message only', () => {
+    const inboxNotificationLevel =
+      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
+
+    expect(
+      getReason({
+        inboxNotificationLevel,
+        participant: {
+          ...unreadFollowedParticipant,
+          isSubscribed: false,
+          lastMentionedAt: '2026-11-16T09:59:59.500Z',
+        },
+      }),
+    ).toBe('MENTION');
+    expect(
+      getReason({
+        inboxNotificationLevel,
+        participant: {
+          ...unreadFollowedParticipant,
+          lastMentionedAt: '2026-11-16T09:30:00.000Z',
+        },
+      }),
+    ).toBeNull();
+  });
+
+  it('should keep followed chats out of the direct messages and mentions level', () => {
+    const inboxNotificationLevel =
+      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
+
+    expect(getReason({ inboxNotificationLevel })).toBeNull();
+    expect(
+      getReason({
+        inboxNotificationLevel,
+        thread: { ...channelThread, assigneeId: ME },
+      }),
+    ).toBe('ASSIGNED');
+  });
+
+  it('should never notify when notifications are off', () => {
+    expect(
+      getReason({
+        inboxNotificationLevel: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.NONE,
+        thread: directMessageThread,
+      }),
+    ).toBeNull();
+  });
+});

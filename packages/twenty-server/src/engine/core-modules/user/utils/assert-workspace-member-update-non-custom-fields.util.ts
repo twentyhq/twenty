@@ -7,6 +7,8 @@ const WORKSPACE_MEMBER_SETTINGS_UPDATE_ALLOWED_FIELD_NAMES = new Set<string>([
   'name',
   'colorScheme',
   'uiScale',
+  'inboxNotificationLevel',
+  'isInboxNotificationPreviewEnabled',
   'openRecordIn',
   'locale',
   'avatarUrl',

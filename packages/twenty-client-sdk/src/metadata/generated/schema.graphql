@@ -6818,6 +6818,8 @@ type WorkspaceMember {
   colorScheme: String!
   dateFormat: WorkspaceMemberDateFormatEnum
   id: UUID!
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
   locale: String
   name: FullName!
   numberFormat: WorkspaceMemberNumberFormatEnum

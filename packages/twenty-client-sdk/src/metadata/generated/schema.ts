@@ -4515,6 +4515,8 @@ export interface WorkspaceMember {
     colorScheme: Scalars['String']
     dateFormat?: WorkspaceMemberDateFormatEnum
     id: Scalars['UUID']
+    inboxNotificationLevel: Scalars['String']
+    isInboxNotificationPreviewEnabled: Scalars['Boolean']
     locale?: Scalars['String']
     name: FullName
     numberFormat?: WorkspaceMemberNumberFormatEnum
@@ -9840,6 +9842,8 @@ export interface WorkspaceMemberGenqlSelection{
     colorScheme?: boolean | number
     dateFormat?: boolean | number
     id?: boolean | number
+    inboxNotificationLevel?: boolean | number
+    isInboxNotificationPreviewEnabled?: boolean | number
     locale?: boolean | number
     name?: FullNameGenqlSelection
     numberFormat?: boolean | number

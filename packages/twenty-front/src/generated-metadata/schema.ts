@@ -9248,6 +9248,8 @@ export type WorkspaceMember = {
   colorScheme: Scalars['String']['output'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID']['output'];
+  inboxNotificationLevel: Scalars['String']['output'];
+  isInboxNotificationPreviewEnabled: Scalars['Boolean']['output'];
   locale?: Maybe<Scalars['String']['output']>;
   name: FullName;
   numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;

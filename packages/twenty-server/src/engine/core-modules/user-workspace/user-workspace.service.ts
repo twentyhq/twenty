@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from 'twenty-shared/ai';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -195,6 +196,9 @@ export class UserWorkspaceService {
         },
         colorScheme: 'System',
         uiScale: 'Default',
+        inboxNotificationLevel:
+          AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
+        isInboxNotificationPreviewEnabled: true,
         openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,

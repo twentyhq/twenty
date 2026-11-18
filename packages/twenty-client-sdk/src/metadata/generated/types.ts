@@ -17424,6 +17424,12 @@ export default {
             "id": [
                 565
             ],
+            "inboxNotificationLevel": [
+                4
+            ],
+            "isInboxNotificationPreviewEnabled": [
+                1
+            ],
             "locale": [
                 4
             ],
