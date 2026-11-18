@@ -489,6 +489,9 @@ describe('manifestValidate', () => {
             markThreadAsReadLogicFunction: {
               universalIdentifier: markThreadAsReadLogicFunctionId,
             },
+            startConversationLogicFunction: {
+              universalIdentifier: sendMessageLogicFunctionId,
+            },
           },
         ],
       });
