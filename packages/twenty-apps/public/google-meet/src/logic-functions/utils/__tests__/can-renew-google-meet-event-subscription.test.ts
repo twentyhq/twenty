@@ -11,6 +11,7 @@ const SUBSCRIPTION = {
   eventTypes: [
     'google.workspace.meet.transcript.v2.fileGenerated',
     'google.workspace.meet.smartNote.v2.fileGenerated',
+    'google.workspace.meet.recording.v2.fileGenerated',
   ],
 };
 
