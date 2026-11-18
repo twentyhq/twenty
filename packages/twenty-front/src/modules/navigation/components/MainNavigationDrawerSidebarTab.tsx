@@ -15,7 +15,6 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -49,7 +48,6 @@ export const MainNavigationDrawerSidebarTab = ({
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
-  const { closeDropdown } = useCloseDropdown();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
 
   const handleClick = () => {
@@ -103,10 +101,7 @@ export const MainNavigationDrawerSidebarTab = ({
         width={GenericDropdownContentWidth.Large}
         aria-label={t`Tab actions`}
       >
-        <NavigationMenuTabMenuContent
-          tab={tab}
-          onClose={() => closeDropdown(dropdownId)}
-        />
+        <NavigationMenuTabMenuContent tab={tab} />
       </DropdownContent>
     </DropdownRoot>
   );
