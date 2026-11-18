@@ -19,6 +19,8 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -69,7 +71,7 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const isPrivateByDefault = isPrivateByDefaultObject(
       queryRunnerContext.flatObjectMetadata,
     );
@@ -162,21 +164,23 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
-    await this.processNestedRelationsIfNeeded({
-      args,
-      records: upsertedRecords,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext,
-      repository,
-      nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
-    });
+    const relationAggregatedValues =
+      await this.processUpsertedRecordsNestedRelations({
+        args,
+        records: upsertedRecords,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        authContext,
+        repository,
+        nestedRelationsReadPathOptions:
+          this.getNestedRelationsReadPathOptions(),
+      });
 
-    return upsertedRecords;
+    return { result: upsertedRecords, relationAggregatedValues };
   }
 
-  private async processNestedRelationsIfNeeded({
+  private async processUpsertedRecordsNestedRelations({
     args,
     records,
     flatObjectMetadata,
@@ -194,8 +198,8 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
     authContext: WorkspaceAuthContext;
     repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<void> {
-    await this.processNestedRelationsHelper.processNestedRelations({
+  }): Promise<CommonRelationsAggregatedValues> {
+    return await this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       parentObjectMetadataItem: flatObjectMetadata,

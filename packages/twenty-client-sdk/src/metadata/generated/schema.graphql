@@ -1192,13 +1192,14 @@ interface BillingProductDTO {
 
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
+  planKey: BillingPlanKey
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
 }
