@@ -69,9 +69,11 @@ export const syncGranolaPersonalNoteOrThrow = async ({
         apiKeyFingerprint,
       });
 
-      if (isDefined(current)) {
-        await reportConnectionAuthFailure({ connectionId: scope.connectionId });
+      if (!isDefined(current)) {
+        return { skipped: true };
       }
+
+      await reportConnectionAuthFailure({ connectionId: scope.connectionId });
 
       return { skipped: true };
     }

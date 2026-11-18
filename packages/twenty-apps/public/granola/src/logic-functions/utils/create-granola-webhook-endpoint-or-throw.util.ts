@@ -30,9 +30,9 @@ export const createGranolaWebhookEndpointOrThrow = async ({
   isPersonalConnection?: boolean;
 }) => {
   if (isPersonalConnection && !isNonEmptyArray(folderIds)) {
-    throw new GranolaWebhookConfigurationError(
-      'A personal Granola webhook requires selected folders.',
-    );
+    throw new GranolaWebhookConfigurationError({
+      message: 'A personal Granola webhook requires selected folders.',
+    });
   }
 
   const workspaceScopeCandidates = [

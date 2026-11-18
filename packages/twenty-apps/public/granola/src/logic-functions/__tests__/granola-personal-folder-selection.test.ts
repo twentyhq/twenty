@@ -91,6 +91,37 @@ describe('granolaPersonalFolderSelectionHandler', () => {
     expect(kv.set).not.toHaveBeenCalled();
   });
 
+  it('reports a setup failure when saved choices could not schedule reconciliation', async () => {
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.mocked(enqueueJobs).mockRejectedValue(new Error('Queue unavailable'));
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json({
+          folders: [],
+          hasMore: false,
+          cursor: null,
+        }),
+      ),
+    );
+
+    try {
+      await expect(
+        granolaPersonalFolderSelectionHandler(
+          { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
+          context,
+        ),
+      ).resolves.toMatchObject({ status: 503 });
+      expect(kv.set).toHaveBeenCalledWith(
+        getGranolaPersonalFolderSelectionKey(OWN_CONNECTION.id),
+        [],
+      );
+    } finally {
+      log.mockRestore();
+    }
+  });
+
   it('validates folders with the member key and timestamps new selections', async () => {
     vi.mocked(enqueueJobs).mockResolvedValue({
       enqueued: true,

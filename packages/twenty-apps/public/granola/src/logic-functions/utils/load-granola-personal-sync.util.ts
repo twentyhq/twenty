@@ -5,7 +5,7 @@ import { type GranolaPersonalFolderSelection } from 'src/logic-functions/types/g
 import { type GranolaPersonalSyncScope } from 'src/logic-functions/types/granola-personal-sync-scope.type';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
-import { findGranolaPersonalConnectionOrThrow } from 'src/logic-functions/utils/find-granola-personal-connection-or-throw.util';
+import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-granola-personal-connection.util';
 
 export const loadGranolaPersonalSync = async ({
   connectionId,
@@ -20,7 +20,7 @@ export const loadGranolaPersonalSync = async ({
     return undefined;
   }
 
-  const connection = await findGranolaPersonalConnectionOrThrow({
+  const connection = await findGranolaPersonalConnection({
     connectionId,
     userWorkspaceId,
   });

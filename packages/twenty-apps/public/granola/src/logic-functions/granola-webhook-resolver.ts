@@ -6,12 +6,12 @@ import {
   type ServerRouteResolverResult,
 } from 'twenty-sdk/logic-function';
 
+import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/constants/granola-personal-connection.constant';
 import {
   GRANOLA_PERSONAL_WEBHOOK_UNIVERSAL_IDENTIFIER,
   GRANOLA_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER,
   GRANOLA_WEBHOOK_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
 import { getGranolaRegistrationClaimKey } from 'src/logic-functions/utils/get-granola-registration-claim-key.util';
 
 export const granolaWebhookResolverHandler = async (

@@ -6,7 +6,7 @@ import { type GranolaPersonalFolderSelection } from 'src/logic-functions/types/g
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 import { listAllGranolaFoldersOrThrow } from 'src/logic-functions/utils/list-all-granola-folders-or-throw.util';
-import { findGranolaPersonalConnectionOrThrow } from 'src/logic-functions/utils/find-granola-personal-connection-or-throw.util';
+import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-granola-personal-connection.util';
 
 export const loadGranolaPersonalFolderSettings = async ({
   connectionId,
@@ -15,7 +15,7 @@ export const loadGranolaPersonalFolderSettings = async ({
   connectionId: string;
   userWorkspaceId: string;
 }) => {
-  const connection = await findGranolaPersonalConnectionOrThrow({
+  const connection = await findGranolaPersonalConnection({
     connectionId,
     userWorkspaceId,
   });

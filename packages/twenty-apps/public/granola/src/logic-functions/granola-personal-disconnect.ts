@@ -20,7 +20,10 @@ export const granolaPersonalDisconnectHandler = async ({
     },
   );
 
-  await disconnectGranolaPersonalConnection({ connectionId, connection });
+  await disconnectGranolaPersonalConnection({
+    connectionId,
+    apiKey: connection?.accessToken,
+  });
 
   return { success: true };
 };

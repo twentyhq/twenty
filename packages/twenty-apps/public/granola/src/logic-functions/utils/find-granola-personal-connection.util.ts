@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
 import { listGranolaPersonalConnections } from 'src/logic-functions/utils/list-granola-personal-connections.util';
 
-export const findGranolaPersonalConnectionOrThrow = async ({
+export const findGranolaPersonalConnection = async ({
   connectionId,
   userWorkspaceId,
 }: {

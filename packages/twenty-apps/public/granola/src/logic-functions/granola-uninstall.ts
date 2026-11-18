@@ -50,8 +50,8 @@ export const granolaUninstallHandler = async () => {
     connections.map(async (connection) => {
       try {
         await disconnectGranolaPersonalConnection({
-          connection,
           connectionId: connection.id,
+          apiKey: connection.accessToken,
         });
       } catch (error) {
         console.error(

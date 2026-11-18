@@ -74,14 +74,21 @@ export const granolaPersonalFolderSelectionHandler = async (
     })),
   );
 
-  await enqueueGranolaPersonalReconcileOrThrow({
-    connectionId: request.data.connectionId,
-    userWorkspaceId,
-  }).catch((error: unknown) => {
+  try {
+    await enqueueGranolaPersonalReconcileOrThrow({
+      connectionId: request.data.connectionId,
+      userWorkspaceId,
+    });
+  } catch (error) {
     console.error(
       `[granola] Could not start personal sync reconciliation. ${toErrorMessage(error)}`,
     );
-  });
+
+    return new Response(
+      { error: 'SYNC_RECONCILIATION_UNAVAILABLE' },
+      { status: 503 },
+    );
+  }
 
   return { success: true, folderIds };
 };

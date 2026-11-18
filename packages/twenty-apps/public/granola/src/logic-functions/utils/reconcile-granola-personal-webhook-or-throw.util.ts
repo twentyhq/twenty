@@ -2,16 +2,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/constants/granola-personal-connection.constant';
 import { type GranolaPersonalSyncScope } from 'src/logic-functions/types/granola-personal-sync-scope.type';
 import { type GranolaPersonalWebhookRegistration } from 'src/logic-functions/types/granola-personal-webhook-registration.type';
 import { GranolaWebhookConfigurationError } from 'src/logic-functions/types/granola-webhook-configuration-error';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { createGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/create-granola-webhook-endpoint-or-throw.util';
 import { deleteStaleGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/delete-stale-granola-webhook-endpoint-or-throw.util';
-import {
-  GRANOLA_PERSONAL_REGISTRATION_PREFIX,
-  getGranolaPersonalWebhookKey,
-} from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
+import { getGranolaPersonalWebhookKey } from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
 import { getGranolaRegistrationClaimKey } from 'src/logic-functions/utils/get-granola-registration-claim-key.util';
 import { getGranolaWebhookDestinationUrlOrThrow } from 'src/logic-functions/utils/get-granola-webhook-destination-url-or-throw.util';
 import { loadGranolaPersonalSync } from 'src/logic-functions/utils/load-granola-personal-sync.util';
@@ -41,9 +39,9 @@ export const reconcileGranolaPersonalWebhookOrThrow = async ({
   const apiUrl = process.env.TWENTY_API_URL;
 
   if (!isNonEmptyString(apiUrl)) {
-    throw new GranolaWebhookConfigurationError(
-      'TWENTY_API_URL is required to register a Granola webhook.',
-    );
+    throw new GranolaWebhookConfigurationError({
+      message: 'TWENTY_API_URL is required to register a Granola webhook.',
+    });
   }
 
   const key = getGranolaPersonalWebhookKey(connectionId);

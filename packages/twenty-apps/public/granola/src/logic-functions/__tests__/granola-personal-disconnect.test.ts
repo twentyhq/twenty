@@ -1,13 +1,11 @@
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/constants/granola-personal-connection.constant';
 import { OWN_CONNECTION } from 'src/__tests__/utils/granola-personal-connection-fixtures';
 import { granolaPersonalDisconnectHandler } from 'src/logic-functions/granola-personal-disconnect';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
-import {
-  GRANOLA_PERSONAL_REGISTRATION_PREFIX,
-  getGranolaPersonalWebhookKey,
-} from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
+import { getGranolaPersonalWebhookKey } from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
 import { getGranolaRegistrationClaimKey } from 'src/logic-functions/utils/get-granola-registration-claim-key.util';
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
