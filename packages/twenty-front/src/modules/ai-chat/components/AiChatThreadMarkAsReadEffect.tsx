@@ -55,9 +55,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
 
     store.set(openViewCountAtom, (count) => count + 1);
 
-    return () => {
-      store.set(openViewCountAtom, (count) => count - 1);
-
+    const leaveIfNoViewLeft = () => {
       if (store.get(openViewCountAtom) !== 0) {
         return;
       }
@@ -90,6 +88,11 @@ export const AiChatThreadMarkAsReadEffect = () => {
           action: AgentChatInboxAction.ARCHIVE,
         });
       }
+    };
+
+    return () => {
+      store.set(openViewCountAtom, (count) => count - 1);
+      queueMicrotask(leaveIfNoViewLeft);
     };
   }, [store, threadId, updateAgentChatThreadInboxState]);
 
