@@ -15,7 +15,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.60.0', 1794954922000)
+@RegisteredWorkspaceCommand('2.60.0', 1794995371200)
 @Command({
   name: 'upgrade:2-60:add-workspace-navigation-menu-section',
   description:
