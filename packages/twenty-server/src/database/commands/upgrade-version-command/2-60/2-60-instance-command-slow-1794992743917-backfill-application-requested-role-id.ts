@@ -4,7 +4,9 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('2.60.0', 1794992743917, { type: 'slow' })
-export class BackfillApplicationRequestedRoleIdSlowInstanceCommand implements SlowInstanceCommand {
+export class BackfillApplicationRequestedRoleIdSlowInstanceCommand
+  implements SlowInstanceCommand
+{
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       'UPDATE "core"."application" SET "requestedRoleId" = "defaultRoleId" WHERE "requestedRoleId" IS NULL AND "defaultRoleId" IS NOT NULL',

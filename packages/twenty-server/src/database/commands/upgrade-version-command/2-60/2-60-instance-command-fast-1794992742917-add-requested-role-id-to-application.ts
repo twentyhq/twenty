@@ -4,7 +4,9 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.60.0', 1794992742917)
-export class AddRequestedRoleIdToApplicationFastInstanceCommand implements FastInstanceCommand {
+export class AddRequestedRoleIdToApplicationFastInstanceCommand
+  implements FastInstanceCommand
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."application" ADD "requestedRoleId" uuid',
