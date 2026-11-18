@@ -5,7 +5,7 @@ import { type KeyboardEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatQuotedMessagePreview } from '@/ai-chat/composer/components/AiChatQuotedMessagePreview';
+import { AiChatQuotedMessagePreview } from '@/ai-chat/messages/components/AiChatQuotedMessagePreview';
 import { useIsOwnAiChatMessage } from '@/ai-chat/messages/hooks/useIsOwnAiChatMessage';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { aiChatReplyQuotedMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatReplyQuotedMessageIdFamilySelector';

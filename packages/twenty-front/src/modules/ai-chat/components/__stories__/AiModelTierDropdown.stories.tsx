@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiModelTierDropdown } from '@/ai-chat/composer/components/AiModelTierDropdown';
+import { AiModelTierDropdown } from '@/ai-chat/components/AiModelTierDropdown';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';

@@ -894,6 +894,51 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     ]);
   });
 
+  it('keeps root aggregates apart from the counts of relations under a to-one relation', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query People($filter: PersonFilterInput) {
+          people(filter: $filter) {
+            totalCount
+            edges {
+              node {
+                id
+                company {
+                  people(first: 1) {
+                    totalCount
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: { id: { in: [buildPersonId(1), buildPersonId(4)] } },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { totalCount, edges } = response.body.data.people;
+
+    expect(totalCount).toBe(2);
+    expect(
+      Object.fromEntries(
+        edges.map(
+          ({
+            node,
+          }: {
+            node: {
+              id: string;
+              company: { people: { totalCount: number } };
+            };
+          }) => [node.id, node.company.people.totalCount],
+        ),
+      ),
+    ).toEqual({ [buildPersonId(1)]: 3, [buildPersonId(4)]: 2 });
+  });
+
   it('rejects malformed nested arguments instead of ignoring them', async () => {
     const response = await findCompaniesWithPeople('people(first: -1)');
 
