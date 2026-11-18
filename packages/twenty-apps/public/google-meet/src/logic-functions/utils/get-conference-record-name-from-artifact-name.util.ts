@@ -1,5 +1,5 @@
 const ARTIFACT_NAME_PATTERN =
-  /^(conferenceRecords\/[^/]+)\/(?:transcripts|smartNotes)\/[^/]+$/;
+  /^(conferenceRecords\/[^/]+)\/(?:transcripts|smartNotes|recordings)\/[^/]+$/;
 
 export const getConferenceRecordNameFromArtifactName = (
   artifactName: string,
