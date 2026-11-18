@@ -1,7 +1,6 @@
-import { splitPhaseItemsInPrices } from '@/settings/billing/utils/splitPhaseItemsInPrices';
+import { splitPhaseItemsInPricesOrThrow } from '@/settings/billing/utils/splitPhaseItemsInPricesOrThrow';
 import {
   type BillingPriceLicensed,
-  type BillingPriceMetered,
   BillingUsageType,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
@@ -24,23 +23,15 @@ const resourceCreditPrice: BillingPriceLicensed = {
   isSellable: true,
 };
 
-const meteredPrice: BillingPriceMetered = {
-  stripePriceId: 'price_metered',
-  recurringInterval: SubscriptionInterval.Month,
-  priceUsageType: BillingUsageType.METERED,
-  tiers: [],
-};
+const billingPrices = [basePrice, resourceCreditPrice];
 
-const billingPrices = [basePrice, resourceCreditPrice, meteredPrice];
-
-describe('splitPhaseItemsInPrices', () => {
+describe('splitPhaseItemsInPricesOrThrow', () => {
   it('splits the phase into its base and resource credit prices', () => {
     expect(
-      splitPhaseItemsInPrices({
+      splitPhaseItemsInPricesOrThrow({
         phaseItems: [
           { price: 'price_base' },
           { price: 'price_resource_credit' },
-          { price: 'price_metered' },
         ],
         billingPrices,
       }),
@@ -50,9 +41,9 @@ describe('splitPhaseItemsInPrices', () => {
     });
   });
 
-  it('leaves out a price missing from the plans catalog and keeps the known ones', () => {
+  it('leaves out a price missing from the plans catalog', () => {
     expect(
-      splitPhaseItemsInPrices({
+      splitPhaseItemsInPricesOrThrow({
         phaseItems: [
           { price: 'price_base' },
           { price: 'price_application' },
@@ -66,9 +57,21 @@ describe('splitPhaseItemsInPrices', () => {
     });
   });
 
-  it('returns no price for an empty phase', () => {
-    expect(splitPhaseItemsInPrices({ phaseItems: [], billingPrices })).toEqual(
-      {},
-    );
+  it('throws when the phase has no resource credit price', () => {
+    expect(() =>
+      splitPhaseItemsInPricesOrThrow({
+        phaseItems: [{ price: 'price_base' }, { price: 'price_application' }],
+        billingPrices,
+      }),
+    ).toThrow('Next billing phase has no base or resource credit price');
+  });
+
+  it('throws when the phase has no base price', () => {
+    expect(() =>
+      splitPhaseItemsInPricesOrThrow({
+        phaseItems: [{ price: 'price_resource_credit' }],
+        billingPrices,
+      }),
+    ).toThrow('Next billing phase has no base or resource credit price');
   });
 });
