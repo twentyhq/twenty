@@ -84,13 +84,13 @@ billing: {
 * للاشتراكات الشهرية فقط. لا تُحصَّل من مساحة عمل على خطة سنوية رسوم `MONTH`، بدلًا من تحصيلها مرة واحدة عن السنة كاملة.
 * محدودة. يُرفض ولا يُنشأ سعر مُعلَن يتجاوز $100، أو رسم لكل عضو يؤدي ضرب سعره في عدد الأعضاء إلى تجاوز $1,000 للفترة. تتولى المنصة نفسها تحصيل هذه الرسوم، ولذلك لن تسجل عملية خصم لا يمكنها تبريرها.
 
-## Prices
+## الأسعار
 
 <Warning>
-  Declaration only for now. The build validates `billing.prices`, but the platform does not bill them yet.
+  تعريف فقط في الوقت الحالي. يتحقق الإصدار من `billing.prices`، لكن المنصة لا تفرض رسومًا عليها بعد.
 </Warning>
 
-A price is charged in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice. Prices are in US dollars only for now.
+يتم تحصيل السعر بعملة حقيقية بدلًا من الأرصدة. تُفوّتَر كبند في اشتراك Twenty الخاص بمساحة العمل، بحيث تحتفظ مساحة العمل بفاتورة واحدة. الأسعار بالدولار الأمريكي فقط في الوقت الحالي.
 
 ```ts src/application-config.ts
 billing: {
@@ -116,20 +116,20 @@ billing: {
 },
 ```
 
-| الحقل                 | الوصف                                                                                                                               |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | A UUID that identifies the price across versions of your app. Generate it once and never change it: a new identifier is a new price |
-| `label`               | What admins read for that line                                                                                                      |
-| `description`         | اختياري. A longer explanation of what the price covers                                                                              |
-| `type`                | `RECURRING`, the only type for now                                                                                                  |
-| `billingPeriod`       | `MONTHLY`, the only period for now                                                                                                  |
-| `amountCents`         | Price per month in USD cents, a positive integer up to 8,333,333                                                                    |
-| `العملة`              | اختياري. `USD` is the only supported currency for now, and the default                                                              |
-| `per`                 | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member                                                |
+| الحقل                 | الوصف                                                                                                          |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | معرّف UUID يحدّد السعر عبر إصدارات تطبيقك. أنشئه مرة واحدة ولا تغيّره أبدًا: فالمعرّف الجديد يعني سعرًا جديدًا |
+| `label`               | ما يقرأه المسؤولون لهذا البند                                                                                  |
+| `description`         | اختياري. شرح أطول لما يغطيه السعر                                                                              |
+| `type`                | `RECURRING`، النوع الوحيد في الوقت الحالي                                                                      |
+| `billingPeriod`       | `MONTHLY`، الفترة الوحيدة في الوقت الحالي                                                                      |
+| `amountCents`         | السعر الشهري بالسنتات الأمريكية، عدد صحيح موجب يصل إلى 8,333,333                                               |
+| `العملة`              | اختياري. `USD` هي العملة الوحيدة المدعومة في الوقت الحالي، وهي الافتراضية                                      |
+| `per`                 | احذفه للرسوم الثابتة. `WORKSPACE_MEMBER` يجعل المبلغ سعرًا لكل عضو في مساحة العمل                              |
 
-A price follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
+يتبع السعر فترة الفوترة الخاصة بمساحة العمل: تدفع مساحة العمل ضمن خطة Twenty شهرية المبلغ الشهري، بينما تدفع مساحة العمل ضمن خطة سنوية المبلغ الشهري مضروبًا في 12 مرة واحدة سنويًا.
 
-The build rejects a missing, duplicated or invalid `universalIdentifier`, an empty `label` or `description`, an unknown `type`, `billingPeriod` or `per`, an `amountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), and a `currency` other than `USD`.
+يرفض الإصدار `universalIdentifier` المفقود أو المكرر أو غير الصالح، أو `label` أو `description` الفارغين، أو `type` أو `billingPeriod` أو `per` غير المعروف، أو `amountCents` الذي ليس عددًا صحيحًا موجبًا أو يتجاوز 8,333,333 (12 ضعف هذا هو الحد الأقصى الذي تقبله Stripe لسعر واحد)، وكذلك أي `currency` غير `USD`.
 
 ## العمليات القابلة للفوترة
 
