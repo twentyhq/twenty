@@ -551,7 +551,7 @@ export class RoleService {
         workspaceCustomFlatApplication,
       }));
 
-    if (workspaceCustomFlatApplication.defaultRoleId === roleId) {
+    if (workspaceCustomFlatApplication.requestedRoleId === roleId) {
       return;
     }
 
