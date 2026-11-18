@@ -67,7 +67,7 @@ jest.mock('@/ai-chat/components/AiChatStreamingAutoScrollEffect', () => ({
   AiChatStreamingAutoScrollEffect: () => null,
 }));
 
-jest.mock('@/ai-chat/components/LazyMarkdownRenderer', () => ({
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,
 }));
 
