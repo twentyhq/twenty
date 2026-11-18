@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
   GOOGLE_MEET_RECORDING_FILE_FOLDER,
   GOOGLE_MEET_RECORDING_FILE_NAME,
@@ -29,8 +29,7 @@ export const uploadGoogleDriveFileAsCallRecordingVideoOrThrow = async ({
         size: sizeBytes,
         fileFolder: GOOGLE_MEET_RECORDING_FILE_FOLDER,
         fieldMetadataUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.fields.video
-            .universalIdentifier,
+          CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
       },
       fileId: true,
       uploadUrl: true,

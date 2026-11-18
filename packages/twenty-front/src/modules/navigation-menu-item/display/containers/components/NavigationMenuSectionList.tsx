@@ -1,8 +1,10 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NavigationMenuEditableSection } from '@/navigation-menu-item/display/containers/components/NavigationMenuEditableSection';
 import { NavigationMenuSection } from '@/navigation-menu-item/display/containers/components/NavigationMenuSection';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NavigationMenuAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuSectionListProps = {
@@ -21,7 +23,14 @@ export const NavigationMenuSectionList = ({
   );
 
   if (isLayoutCustomizationModeEnabled) {
-    return null;
+    return (
+      <>
+        {sections.map((section) => (
+          <NavigationMenuEditableSection key={section.id} section={section} />
+        ))}
+        <NavigationMenuAddSectionButton containerId={containerId} />
+      </>
+    );
   }
 
   return (
