@@ -10,6 +10,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -31,7 +32,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const {
       authContext,
       flatObjectMetadataMaps,
@@ -54,18 +55,19 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
       data: args.data,
     });
 
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: updatedRecords,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
+    const relationAggregatedValues =
+      await this.processNestedRelationsHelper.processNestedRelations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
+        parentObjectRecords: updatedRecords,
+        selection: args.selectedFieldsResult,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
+        authContext,
+        ...this.getNestedRelationsReadPathOptions(),
+      });
 
-    return updatedRecords;
+    return { result: updatedRecords, relationAggregatedValues };
   }
 
   async computeArgs(
