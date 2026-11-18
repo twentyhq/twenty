@@ -64,6 +64,7 @@ export default async function CreatorProgramPage({
       <main>
         <PartnerHero
           visualImageUrl={CREATORS_HERO_IMAGE_URL}
+          badge={msg`Beta`}
           heading={msg`Become a\n*Twenty creator*`}
           body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
           stats={CREATOR_HERO_STATS}
