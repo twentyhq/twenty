@@ -1,4 +1,4 @@
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';

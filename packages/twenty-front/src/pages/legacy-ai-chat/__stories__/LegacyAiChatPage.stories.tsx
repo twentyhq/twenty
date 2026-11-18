@@ -12,9 +12,9 @@ import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
