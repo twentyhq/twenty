@@ -5,8 +5,9 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
+import { useEditModeNavigationMenuItemClick } from '@/navigation-menu-item/edit/hooks/useEditModeNavigationMenuItemClick';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 const StyledList = styled.div`
@@ -27,10 +28,10 @@ export const NavigationMenuContainerEditableItems = ({
   topLevelItems,
   folderChildrenById,
 }: NavigationMenuContainerEditableItemsProps) => {
-  const [
-    selectedNavigationMenuItemIdInEditMode,
-    setSelectedNavigationMenuItemIdInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
+  const handleNavigationMenuItemClick = useEditModeNavigationMenuItemClick();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const folderCount = topLevelItems.filter(isNavigationMenuItemFolder).length;
 
@@ -46,12 +47,9 @@ export const NavigationMenuContainerEditableItems = ({
           editModeProps={{
             isSelectedInEditMode:
               selectedNavigationMenuItemIdInEditMode === item.id,
-            onEditModeClick: () =>
-              setSelectedNavigationMenuItemIdInEditMode(item.id),
+            onEditModeClick: () => handleNavigationMenuItemClick({ item }),
           }}
-          onNavigationMenuItemClick={({ item: clickedItem }) =>
-            setSelectedNavigationMenuItemIdInEditMode(clickedItem.id)
-          }
+          onNavigationMenuItemClick={handleNavigationMenuItemClick}
         />
       ))}
       <WorkspaceSectionAddMenuItemButton
