@@ -1,5 +1,5 @@
-import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
+import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
