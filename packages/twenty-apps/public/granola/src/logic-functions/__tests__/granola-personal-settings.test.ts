@@ -6,7 +6,8 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
-import { granolaPersonalSettingsHandler } from 'src/logic-functions/granola-personal-settings';
+import { granolaPersonalConnectionsHandler } from 'src/logic-functions/granola-personal-connections';
+import { granolaPersonalFolderSelectionHandler } from 'src/logic-functions/granola-personal-folder-selection';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -41,22 +42,19 @@ const PARTNER_FOLDER_ID = 'fol_partnerCalls12';
 const SAVED_AT = '2026-11-17T12:00:00.000Z';
 const OPTED_IN_AT = '2026-11-18T12:00:00.000Z';
 
-const requestSettings = (body: unknown) =>
-  granolaPersonalSettingsHandler(
-    {
-      body,
-      headers: {},
-      queryStringParameters: {},
-      pathParameters: {},
-      isBase64Encoded: false,
-      requestContext: {
-        http: { method: 'POST', path: '/granola/personal-settings' },
-      },
-      userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
-    },
-    { userWorkspaceId: OWN_CONNECTION.userWorkspaceId },
-  );
+const buildRoutePayload = (body: unknown) => ({
+  body,
+  headers: {},
+  queryStringParameters: {},
+  pathParameters: {},
+  isBase64Encoded: false,
+  requestContext: {
+    http: { method: 'POST', path: '/granola/personal-folder-selection' },
+  },
+  userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
+});
 
+const context = { userWorkspaceId: OWN_CONNECTION.userWorkspaceId };
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
@@ -71,7 +69,7 @@ describe('Granola personal settings', () => {
     ]);
 
     await expect(
-      requestSettings({ action: 'list-connections' }),
+      granolaPersonalConnectionsHandler(buildRoutePayload(null), context),
     ).resolves.toEqual({
       success: true,
       connections: [{ id: OWN_CONNECTION.id, name: OWN_CONNECTION.name }],
@@ -87,11 +85,13 @@ describe('Granola personal settings', () => {
     vi.stubGlobal('fetch', fetchProvider);
 
     await expect(
-      requestSettings({
-        action: 'save-folders',
-        connectionId: OTHER_CONNECTION.id,
-        folderIds: [],
-      }),
+      granolaPersonalFolderSelectionHandler(
+        buildRoutePayload({
+          connectionId: OTHER_CONNECTION.id,
+          folderIds: [],
+        }),
+        context,
+      ),
     ).resolves.toMatchObject({ success: false });
     expect(fetchProvider).not.toHaveBeenCalled();
     expect(kv.set).not.toHaveBeenCalled();
@@ -127,11 +127,13 @@ describe('Granola personal settings', () => {
     vi.stubGlobal('fetch', fetchProvider);
 
     await expect(
-      requestSettings({
-        action: 'save-folders',
-        connectionId: OWN_CONNECTION.id,
-        folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
-      }),
+      granolaPersonalFolderSelectionHandler(
+        buildRoutePayload({
+          connectionId: OWN_CONNECTION.id,
+          folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
+        }),
+        context,
+      ),
     ).resolves.toEqual({
       success: true,
       folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],

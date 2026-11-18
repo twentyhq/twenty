@@ -8,17 +8,11 @@ import { Section } from 'twenty-ui/components/layout';
 import { Select } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { THEME_DARK, THEME_LIGHT, ThemeProvider } from 'twenty-ui/theme';
-import { z } from 'zod';
 
 import { GranolaPersonalFolderSelection } from 'src/front-components/components/GranolaPersonalFolderSelection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
-import { requestGranolaPersonalSettingsOrThrow } from 'src/front-components/utils/request-granola-personal-settings-or-throw.util';
-
-const GRANOLA_CONNECTIONS_RESPONSE_SCHEMA = z.object({
-  success: z.literal(true),
-  connections: z.array(z.object({ id: z.string(), name: z.string() })),
-});
+import { fetchGranolaPersonalConnectionsOrThrow } from 'src/front-components/utils/fetch-granola-personal-connections-or-throw.util';
 
 type GranolaConnectionsState =
   | { status: 'loading' }
@@ -36,10 +30,7 @@ export const GranolaPersonalSettings = () => {
     setState({ status: 'loading' });
 
     try {
-      const { connections } = await requestGranolaPersonalSettingsOrThrow({
-        request: { action: 'list-connections' },
-        responseSchema: GRANOLA_CONNECTIONS_RESPONSE_SCHEMA,
-      });
+      const connections = await fetchGranolaPersonalConnectionsOrThrow();
       setState({ status: 'loaded', connections });
     } catch {
       setState({ status: 'failed' });
