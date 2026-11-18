@@ -19288,6 +19288,7 @@ msgstr "ほとんど未入力"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "下へ移動"
 
@@ -19304,6 +19305,7 @@ msgstr "チャットの移動先"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19312,6 +19314,7 @@ msgstr "左に移動"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19353,6 +19356,7 @@ msgstr "新しい{planLabel}プランに移行しますか？"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "上へ移動"
 
