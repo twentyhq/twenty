@@ -255,31 +255,29 @@ export const computeRoleRecordsPermissions = ({
         ),
       }))
       .filter(({ predicates }) => predicates.length > 0)
-      .map(
-        ({ rule, predicates }): RowLevelRecordsPermissions => ({
-          ruleId: rule.id,
-          canCreateRecords: rule.canCreateRecords && hasAiAccess,
-          canReadRecords: rule.canReadRecords && hasAiAccess,
-          canUpdateRecords: rule.canUpdateRecords && hasAiAccess,
-          canSoftDeleteRecords: rule.canSoftDeleteRecords && hasAiAccess,
-          canDestroyRecords: rule.canDestroyRecords && hasAiAccess,
-          predicates,
-          predicateGroups: rowLevelPermissionPredicateGroups.filter(
-            ({ rowLevelPermissionRuleId }) =>
-              rowLevelPermissionRuleId === rule.id,
-          ),
-          ...(isWorkflowObject
-            ? NO_FIELDS
-            : buildUnreadableAndUneditableFields({
-                objectMetadata,
-                fieldPermissions: fieldPermissions.filter(
-                  ({ rowLevelPermissionRuleId }) =>
-                    rowLevelPermissionRuleId === rule.id,
-                ),
-                resolveMorphRelationPermissionFieldIds,
-              })),
-        }),
-      );
+      .map(({ rule, predicates }): RowLevelRecordsPermissions => ({
+        ruleId: rule.id,
+        canCreateRecords: rule.canCreateRecords && hasAiAccess,
+        canReadRecords: rule.canReadRecords && hasAiAccess,
+        canUpdateRecords: rule.canUpdateRecords && hasAiAccess,
+        canSoftDeleteRecords: rule.canSoftDeleteRecords && hasAiAccess,
+        canDestroyRecords: rule.canDestroyRecords && hasAiAccess,
+        predicates,
+        predicateGroups: rowLevelPermissionPredicateGroups.filter(
+          ({ rowLevelPermissionRuleId }) =>
+            rowLevelPermissionRuleId === rule.id,
+        ),
+        ...(isWorkflowObject
+          ? NO_FIELDS
+          : buildUnreadableAndUneditableFields({
+              objectMetadata,
+              fieldPermissions: fieldPermissions.filter(
+                ({ rowLevelPermissionRuleId }) =>
+                  rowLevelPermissionRuleId === rule.id,
+              ),
+              resolveMorphRelationPermissionFieldIds,
+            })),
+      }));
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectFields: isWorkflowObject
