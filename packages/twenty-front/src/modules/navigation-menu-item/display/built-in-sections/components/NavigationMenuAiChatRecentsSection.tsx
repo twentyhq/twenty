@@ -53,7 +53,7 @@ export const NavigationMenuAiChatRecentsSection = ({
 
   const hasHiddenThreads =
     recentThreads.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT ||
-    inboxThreadList?.hasNextPage === true;
+    (inboxThreadList?.hasNextPage ?? false);
 
   const displayedThreads =
     hasHiddenThreads && !isShowingAllThreads
@@ -80,6 +80,7 @@ export const NavigationMenuAiChatRecentsSection = ({
               Icon={isShowingAllThreads ? IconChevronUp : IconChevronDown}
               variant="tertiary"
               preventCollapseOnMobile
+              triggerEvent="CLICK"
               onClick={() => setIsShowingAllThreads(!isShowingAllThreads)}
             />
           </>
