@@ -21,7 +21,10 @@ export const recordPullBase = async ({
   appPath: string;
   universalIdentifier: string;
   sourceFingerprints?: Record<string, string>;
-  appliedManifest: ToolingBuild['manifest'];
+  appliedManifest: Pick<
+    ToolingBuild['manifest'],
+    'frontComponents' | 'logicFunctions'
+  >;
   context: TargetCommandContext;
 }): Promise<PullBaseRecording> => {
   output.progress({ message: 'Recording the pull base…' });

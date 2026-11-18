@@ -151,17 +151,20 @@ export const manifestUpdateChecksums = ({
   }: {
     definition: TDefinition;
     paths?: string[];
-  }): TDefinition & { sourceFiles?: SourceFileManifest[] } =>
-    isDefined(paths)
-      ? {
-          ...definition,
-          sourceFiles: result.sourceFiles.filter(
-            (file) =>
-              paths.includes(file.filePath) &&
-              !['package.json', 'yarn.lock'].includes(file.filePath),
-          ),
-        }
-      : definition;
+  }): TDefinition & { sourceFiles?: SourceFileManifest[] } => {
+    if (!isDefined(paths)) {
+      return definition;
+    }
+
+    return {
+      ...definition,
+      sourceFiles: result.sourceFiles.filter(
+        (file) =>
+          paths.includes(file.filePath) &&
+          !['package.json', 'yarn.lock'].includes(file.filePath),
+      ),
+    };
+  };
 
   result.frontComponents = result.frontComponents.map((component) =>
     withSourceFiles({
