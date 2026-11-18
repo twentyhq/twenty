@@ -1,0 +1,2 @@
+export const DROP_APPLICATION_DEFAULT_ROLE_ID_UPGRADE_COMMAND_NAME =
+  '2.62.0_DropApplicationDefaultRoleIdFastInstanceCommand_1794997537557';
