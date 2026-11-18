@@ -57,11 +57,15 @@ const person = getFlatObjectMetadataMock({
 const flatObjectMetadataMaps = buildFlatEntityMaps([company, person]);
 const flatFieldMetadataMaps = buildFlatEntityMaps([peopleField, companyField]);
 
-const relation = (
-  fieldName: string,
-  columns: CommonSelection['columns'],
-  relations: CommonSelection['relations'] = {},
-): CommonRelationSelection => ({
+const relation = ({
+  fieldName,
+  columns,
+  relations = {},
+}: {
+  fieldName: string;
+  columns: CommonSelection['columns'];
+  relations?: CommonSelection['relations'];
+}): CommonRelationSelection => ({
   fieldName,
   selection: { columns, aggregates: {}, relations },
 });
@@ -104,7 +108,12 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor({
         flatObjectMetadata: person,
         columns: { id: true },
-        relations: { company: relation('company', { id: true, name: true }) },
+        relations: {
+          company: relation({
+            fieldName: 'company',
+            columns: { id: true, name: true },
+          }),
+        },
       }),
     ).toBe(3);
   });
@@ -114,7 +123,9 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor({
         flatObjectMetadata: company,
         columns: { id: true },
-        relations: { people: relation('people', { id: true }) },
+        relations: {
+          people: relation({ fieldName: 'people', columns: { id: true } }),
+        },
       }),
     ).toBe(61);
   });
@@ -125,11 +136,16 @@ describe('computeMaxFieldCountPerRecord', () => {
         flatObjectMetadata: company,
         columns: { id: true },
         relations: {
-          people: relation(
-            'people',
-            { id: true },
-            { company: relation('company', { id: true, name: true }) },
-          ),
+          people: relation({
+            fieldName: 'people',
+            columns: { id: true },
+            relations: {
+              company: relation({
+                fieldName: 'company',
+                columns: { id: true, name: true },
+              }),
+            },
+          }),
         },
       }),
     ).toBe(181);
@@ -140,7 +156,9 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor({
         flatObjectMetadata: company,
         columns: { id: true },
-        relations: { keyPeople: relation('people', { id: true }) },
+        relations: {
+          keyPeople: relation({ fieldName: 'people', columns: { id: true } }),
+        },
       }),
     ).toBe(61);
   });
@@ -150,7 +168,9 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor({
         flatObjectMetadata: company,
         columns: { id: true },
-        relations: { people: relation('people', { id: true }) },
+        relations: {
+          people: relation({ fieldName: 'people', columns: { id: true } }),
+        },
         recordLimitPerOneToManyRelation: 5,
       }),
     ).toBe(6);
@@ -161,7 +181,9 @@ describe('computeMaxFieldCountPerRecord', () => {
       computeFor({
         flatObjectMetadata: company,
         columns: { id: true },
-        relations: { people: relation('people', { id: true }) },
+        relations: {
+          people: relation({ fieldName: 'people', columns: { id: true } }),
+        },
         recordLimitPerOneToManyRelation: 0,
       }),
     ).toBe(1);
