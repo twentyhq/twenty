@@ -2,6 +2,7 @@ import { type ReactNode, Suspense } from 'react';
 
 import { AiChatRuntimeEffects } from '@/ai/components/AiChatRuntimeEffects';
 import { AiChatThreadParticipantOperationsEffect } from '@/ai/components/AiChatThreadParticipantOperationsEffect';
+import { AiChatRuntimeContext } from '@/ai/contexts/AiChatRuntimeContext';
 import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AiChatToolIndexInvalidationEffect';
 
 type AiChatProviderProps = {
@@ -13,6 +14,8 @@ export const AiChatProvider = ({ children }: AiChatProviderProps) => (
     <AiChatThreadParticipantOperationsEffect />
     <AiChatRuntimeEffects />
     <AiChatToolIndexInvalidationEffect />
-    {children}
+    <AiChatRuntimeContext.Provider value={true}>
+      {children}
+    </AiChatRuntimeContext.Provider>
   </Suspense>
 );

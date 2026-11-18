@@ -1,3 +1,4 @@
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -5,7 +6,7 @@ import { type ReactNode } from 'react';
 import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAiChatMessageReaction';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const THREAD_ID = 'thread-id';
@@ -31,11 +32,13 @@ const renderToggleReaction = () => {
   store.set(currentWorkspaceMemberState.atom, {
     id: WORKSPACE_MEMBER_ID,
   } as never);
-  store.set(currentAiChatThreadState.atom, THREAD_ID);
+  store.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
 
   const { result } = renderHook(() => useToggleAiChatMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <Provider store={store}>{children}</Provider>
+      <Provider store={store}>
+        <AiChatTestInstance>{children}</AiChatTestInstance>
+      </Provider>
     ),
   });
 

@@ -156,7 +156,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     );
 
     if (
-      isDraftMode &&
       isNavigationMenuItemFolder(draggedItem) &&
       isDefined(destinationFolderId)
     ) {

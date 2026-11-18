@@ -1,4 +1,4 @@
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
@@ -46,7 +46,7 @@ export class WorkflowCronTriggerCronJob {
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -286,11 +286,10 @@ export class WorkflowCronTriggerCronJob {
         'flatApplicationMaps',
       ]);
 
-    const version =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        trigger.workspaceId,
-        workflow.lastPublishedCoreWorkflowVersionId,
-      );
+    const version = await this.coreWorkflowTriggerService.findCoreVersionById(
+      trigger.workspaceId,
+      workflow.lastPublishedCoreWorkflowVersionId,
+    );
     const definition = version?.triggers?.[0];
 
     if (

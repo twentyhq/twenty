@@ -138,4 +138,69 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
       }),
     ]);
   });
+
+  it('should keep the current record filter the settings do not show', () => {
+    const store = createStore();
+    const currentRecordViewFilter = {
+      id: 'current-record-view-filter-id',
+      fieldMetadataId: SOURCE_FIELD_METADATA_ID,
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify({
+        selectedRecordIds: [],
+        isCurrentRecordSelected: true,
+      }),
+      viewId: snapshot.view.id,
+      viewFilterGroupId: null,
+      positionInViewFilterGroup: null,
+      subFieldName: null,
+      relationTargetFieldMetadataId: null,
+    };
+
+    store.set(
+      recordTableWidgetViewDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_ID,
+      }),
+      {
+        [WIDGET_ID]: { ...snapshot, viewFilters: [currentRecordViewFilter] },
+      },
+    );
+    store.set(
+      currentRecordFiltersComponentState.atomFamily({
+        instanceId: RECORD_INDEX_ID,
+      }),
+      [
+        {
+          ...relationTraversalRecordFilter,
+          value: JSON.stringify({ selectedRecordIds: ['record-id'] }),
+          relationTargetFieldMetadataId: undefined,
+        },
+      ],
+    );
+
+    const { result } = renderHook(
+      () =>
+        useRecordTableWidgetFilterCallbacks({
+          pageLayoutId: PAGE_LAYOUT_ID,
+          widgetId: WIDGET_ID,
+          viewId: snapshot.view.id,
+          recordIndexId: RECORD_INDEX_ID,
+        }),
+      { wrapper: getWrapper(store) },
+    );
+
+    act(() => {
+      result.current.handleFilterUpdate();
+    });
+
+    const updatedDraft = store.get(
+      recordTableWidgetViewDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_ID,
+      }),
+    );
+
+    expect(updatedDraft[WIDGET_ID].viewFilters).toEqual([
+      currentRecordViewFilter,
+      expect.objectContaining({ id: relationTraversalRecordFilter.id }),
+    ]);
+  });
 });

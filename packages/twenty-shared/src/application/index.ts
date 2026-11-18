@@ -158,6 +158,7 @@ export { getSystemPageLayoutWidgetUniversalIdentifier } from './deterministic-id
 export { getSystemRecordFormPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-form-page-layout-universal-identifier.util';
 export { getSystemRecordPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-page-layout-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
+export { getSystemSideEffectRoleTargetUniversalIdentifier } from './deterministic-identifier/get-system-side-effect-role-target-universal-identifier.util';
 export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-system-view-field-group-universal-identifier.util';
 export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
 export type { SystemViewKey } from './deterministic-identifier/get-system-view-universal-identifier.util';
@@ -370,7 +371,9 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableApplicationSourcePath } from './utils/isRestorableApplicationSourcePath';
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
+export { isSourceFileManifestList } from './utils/isSourceFileManifestList';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';

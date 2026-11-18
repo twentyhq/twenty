@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AiChatThreadParticipantUnsavedUpdatedAt';
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadVisitFamilyState } from '@/ai/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 
 // Mirrors what the server records when the member sends a message: the
@@ -28,7 +28,8 @@ export const useOptimisticallyRestoreOnSend = () => {
     const previousParticipant = store.get(aiChatThreadParticipantsState.atom)?.[
       threadId
     ];
-    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({ threadId });
+    const previousVisit = store.get(visitAtom);
 
     applyAiChatThreadUpdate({
       id: threadId,
@@ -59,8 +60,8 @@ export const useOptimisticallyRestoreOnSend = () => {
           }
         : participants,
     );
-    store.set(aiChatThreadVisitState.atom, (visit) =>
-      visit?.threadId === threadId
+    store.set(visitAtom, (visit) =>
+      isDefined(visit)
         ? { ...visit, isUnread: false, isKeptUnread: false }
         : visit,
     );
@@ -92,9 +93,7 @@ export const useOptimisticallyRestoreOnSend = () => {
           ? { ...otherParticipants, [threadId]: previousParticipant }
           : otherParticipants;
       });
-      store.set(aiChatThreadVisitState.atom, (visit) =>
-        visit?.threadId === threadId ? previousVisit : visit,
-      );
+      store.set(visitAtom, previousVisit);
     };
   };
 

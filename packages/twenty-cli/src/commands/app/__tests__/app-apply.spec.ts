@@ -1,6 +1,6 @@
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
 import { writeTestSourceSdk } from '@/app/__tests__/utils/write-test-source-sdk';
-import { createHash } from 'node:crypto';
+import { hashContent } from '@/utils/hash-content';
 import { existsSync } from 'node:fs';
 import {
   mkdir,
@@ -682,12 +682,13 @@ describe('app apply', () => {
       applicationUniversalIdentifier: APPLICATION.universalIdentifier,
       manifest: EXPORTED_MANIFEST,
       sourceFingerprints: {
-        'package.json': createHash('sha256')
-          .update(await readFile(join(appPath, 'package.json')))
-          .digest('hex'),
-        'application.ts': createHash('sha256')
-          .update('unrelated local edits')
-          .digest('hex'),
+        'test-tooling.cjs': hashContent(
+          await readFile(join(appPath, 'test-tooling.cjs')),
+        ),
+        'package.json': hashContent(
+          await readFile(join(appPath, 'package.json')),
+        ),
+        'application.ts': hashContent('unrelated local edits'),
       },
     });
     expect(await readFile(legacyBasePath, 'utf8')).toBe('legacy baseline');
@@ -701,6 +702,7 @@ describe('app apply', () => {
     ).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
       shouldIncludeSourceFiles: true,
+      shouldIncludeSourceDependencies: true,
     });
     expect((await readdir(join(appPath, '.twenty/cli'))).sort()).toEqual([
       'pull-base.json',
@@ -711,6 +713,7 @@ describe('app apply', () => {
   it('fingerprints the source files as they were built, not as edited during the build', async () => {
     await mkdir(join(appPath, 'src'), { recursive: true });
     await writeFile(join(appPath, 'src/role.ts'), 'applied role');
+    await writeFile(join(appPath, 'src/style.css'), '.card { color: red; }');
     await mkdir(join(appPath, 'locales'), { recursive: true });
     await writeFile(join(appPath, 'locales/fr-FR.json'), '{"Pet":"Animal"}');
     await writeTooling({
@@ -729,13 +732,15 @@ describe('app apply', () => {
         await readFile(join(appPath, '.twenty/cli/pull-base.json'), 'utf8'),
       ).sourceFingerprints,
     ).toEqual({
-      'package.json': createHash('sha256')
-        .update(await readFile(join(appPath, 'package.json')))
-        .digest('hex'),
-      'locales/fr-FR.json': createHash('sha256')
-        .update('{"Pet":"Animal"}')
-        .digest('hex'),
-      'src/role.ts': createHash('sha256').update('applied role').digest('hex'),
+      'test-tooling.cjs': hashContent(
+        await readFile(join(appPath, 'test-tooling.cjs')),
+      ),
+      'package.json': hashContent(
+        await readFile(join(appPath, 'package.json')),
+      ),
+      'locales/fr-FR.json': hashContent('{"Pet":"Animal"}'),
+      'src/role.ts': hashContent('applied role'),
+      'src/style.css': hashContent('.card { color: red; }'),
     });
     expect(await readFile(join(appPath, 'src/role.ts'), 'utf8')).toBe(
       'edited during the build',

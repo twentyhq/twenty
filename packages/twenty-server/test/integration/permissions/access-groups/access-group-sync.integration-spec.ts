@@ -1,5 +1,5 @@
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
@@ -104,30 +104,34 @@ describe('access group sync (integration)', () => {
       },
     });
     const roleId = data.createOneRole.id;
+    const ruleId = v4();
     const predicateGroupId = v4();
     const predicateId = v4();
     const upsertRule = (value: string) =>
-      upsertRowLevelPermissionPredicates({
+      upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
-          canReadRecords: true,
-          predicateGroups: [
+          rules: [
             {
-              id: predicateGroupId,
-              objectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            },
-          ],
-          predicates: [
-            {
-              id: predicateId,
-              fieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value,
-              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              id: ruleId,
+              canReadRecords: true,
+              predicateGroups: [
+                {
+                  id: predicateGroupId,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  predicates: [
+                    {
+                      id: predicateId,
+                      fieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                      value,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -175,7 +179,7 @@ describe('access group sync (integration)', () => {
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      roleId: await findAdminRoleId(),
+      roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
     const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
@@ -301,27 +305,29 @@ describe('access group propagation progress (integration)', () => {
 
     const predicateGroupId = v4();
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
-        canReadRecords: true,
-        predicateGroups: [
+        rules: [
           {
-            id: predicateGroupId,
-            objectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          },
-        ],
-        predicates: [
-          {
-            id: v4(),
-            fieldMetadataId: jobTitleFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Paris',
-            rowLevelPermissionPredicateGroupId: predicateGroupId,
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                id: predicateGroupId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: jobTitleFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Paris',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

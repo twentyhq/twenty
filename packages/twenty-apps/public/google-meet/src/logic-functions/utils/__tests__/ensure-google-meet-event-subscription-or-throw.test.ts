@@ -31,6 +31,10 @@ const SUBSCRIPTION_REQUEST = {
 const EXISTING_SUBSCRIPTION = {
   name: 'subscriptions/existing',
   notificationEndpoint: { pubsubTopic: PUBSUB_TOPIC },
+  eventTypes: [
+    'google.workspace.meet.transcript.v2.fileGenerated',
+    'google.workspace.meet.smartNote.v2.fileGenerated',
+  ],
 };
 
 const CREATED_SUBSCRIPTION = { name: 'subscriptions/created' };

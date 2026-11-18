@@ -1,12 +1,20 @@
-import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
-import { AiChatPageThreadSelection } from '@/ai/components/AiChatPageThreadSelection';
+import { AiChatPageThreadLoadEffect } from '@/ai/components/AiChatPageThreadLoadEffect';
+
+type AiChatPageEffectsProps = {
+  threadId: string;
+  isNewChat: boolean;
+};
 
 // What a chat shown on the main page needs, full page or in the inbox
-export const AiChatPageEffects = () => (
+export const AiChatPageEffects = ({
+  threadId,
+  isNewChat,
+}: AiChatPageEffectsProps) => (
   <>
-    <AiChatPageThreadSelection />
-    <AiChatPageCloseSidePanelChatEffect />
-    <AiChatPageContinueInSidePanelEffect />
+    {!isNewChat && (
+      <AiChatPageThreadLoadEffect key={threadId} threadId={threadId} />
+    )}
+    <AiChatPageContinueInSidePanelEffect threadId={threadId} />
   </>
 );

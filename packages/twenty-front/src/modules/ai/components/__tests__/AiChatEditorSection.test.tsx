@@ -9,8 +9,8 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatTestInstance } from '@/ai/testing/AiChatTestInstance';
+import { aiChatTestInstanceThreadIdState } from '@/ai/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -38,17 +38,18 @@ const renderEditorSection = (currentAiChatThread: string) => {
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
       store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-      store.set(currentAiChatThreadState.atom, currentAiChatThread);
-      store.set(aiChatDisplayedThreadState.atom, currentAiChatThread);
+      store.set(aiChatTestInstanceThreadIdState.atom, currentAiChatThread);
     },
   });
 
   return render(
     <MetadataAndApolloWrapper>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter>
-          <AiChatEditorSection />
-        </MemoryRouter>
+        <AiChatTestInstance>
+          <MemoryRouter>
+            <AiChatEditorSection />
+          </MemoryRouter>
+        </AiChatTestInstance>
       </I18nProvider>
     </MetadataAndApolloWrapper>,
   );

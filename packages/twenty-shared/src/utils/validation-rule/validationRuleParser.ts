@@ -4,6 +4,8 @@ import { Parser } from 'expr-eval-fork';
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
+import { parseExpressionDate } from '@/utils/expression-date/parseExpressionDate';
+import { isDefined } from '@/utils/validation/isDefined';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 
 // An operator enabled here for apps also needs a helper in twenty-sdk's ruleExpression
@@ -84,6 +86,20 @@ const getComparableValue = ({
     return toPlainDateStringOrSelf(value);
   }
 
+  if (isString(value) && isString(otherValue)) {
+    const date = parseExpressionDate(value);
+    const otherDate = parseExpressionDate(otherValue);
+
+    if (
+      isDefined(date) &&
+      isDefined(otherDate) &&
+      !date.isDateOnly &&
+      !otherDate.isDateOnly
+    ) {
+      return date.dateTime.epochNanoseconds;
+    }
+  }
+
   return value;
 };
 
@@ -102,6 +118,16 @@ const compareDefinedValues =
       getComparableValue({ value: right, otherValue: left }),
     );
 
+const areEqual = ({ left, right }: { left: unknown; right: unknown }) =>
+  isString(left) && isString(right)
+    ? getComparableValue({ value: left, otherValue: right }) ===
+      getComparableValue({ value: right, otherValue: left })
+    : left === right;
+
+validationRuleParser.binaryOps['=='] = (left: unknown, right: unknown) =>
+  areEqual({ left, right });
+validationRuleParser.binaryOps['!='] = (left: unknown, right: unknown) =>
+  !areEqual({ left, right });
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
   (left, right) => left < right,
 );

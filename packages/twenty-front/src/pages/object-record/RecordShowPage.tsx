@@ -1,7 +1,10 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
@@ -17,6 +20,10 @@ export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const isRouteObjectMetadataAvailable =
@@ -37,11 +44,16 @@ export const RecordShowPage = () => {
   ) {
     // A chat's record page is the chat page, on its own route
     if (!isInSidePanel) {
+      const aiChatPageRoute = getAiChatPageRoute({
+        isInbox: isAiChatInboxEnabled,
+        threadId: parameters.objectRecordId,
+      });
+
       return (
         <Navigate
           replace
-          to={getAppPath(AppPath.AiChat, {
-            threadId: parameters.objectRecordId,
+          to={getAppPath(aiChatPageRoute.appPath, {
+            threadId: aiChatPageRoute.threadId,
           })}
         />
       );

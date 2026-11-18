@@ -69,6 +69,18 @@ export class UsageLimitService {
     return this.usageLimitRepository.find(workspaceId);
   }
 
+  async findByIds({
+    workspaceId,
+    usageLimitIds,
+  }: {
+    workspaceId: string;
+    usageLimitIds: string[];
+  }): Promise<UsageLimitEntity[]> {
+    return this.usageLimitRepository.find(workspaceId, {
+      where: { id: In(usageLimitIds) },
+    });
+  }
+
   async create({
     workspaceId,
     input,
