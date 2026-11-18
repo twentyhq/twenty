@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -54,14 +55,19 @@ const person = getFlatObjectMetadataMock({
 const flatObjectMetadataMaps = buildFlatEntityMaps([company, person]);
 const flatFieldMetadataMaps = buildFlatEntityMaps([peopleField, companyField]);
 
-const computeFor = (
-  flatObjectMetadata: FlatObjectMetadata,
-  select: CommonSelectedFields,
-  relations: CommonSelectedFields,
+const computeFor = ({
+  flatObjectMetadata,
+  select,
+  relationSelections = {},
   recordLimitPerOneToManyRelation = 60,
-) =>
+}: {
+  flatObjectMetadata: FlatObjectMetadata;
+  select: CommonSelectedFields;
+  relationSelections?: CommonRelationSelections;
+  recordLimitPerOneToManyRelation?: number;
+}) =>
   computeMaxFieldCountPerRecord({
-    selectedFieldsResult: { select, relations },
+    selectedFieldsResult: { select, relationSelections },
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -70,58 +76,104 @@ const computeFor = (
 
 describe('computeMaxFieldCountPerRecord', () => {
   it('should count each selected field of the record', () => {
-    expect(computeFor(company, { id: true, name: true }, {})).toBe(2);
+    expect(
+      computeFor({
+        flatObjectMetadata: company,
+        select: { id: true, name: true },
+        relationSelections: {},
+      }),
+    ).toBe(2);
   });
 
   it('should count nothing when no field is selected', () => {
-    expect(computeFor(company, {}, {})).toBe(0);
+    expect(
+      computeFor({
+        flatObjectMetadata: company,
+        select: {},
+        relationSelections: {},
+      }),
+    ).toBe(0);
   });
 
   it('should add the fields of a to-one relation once', () => {
     expect(
-      computeFor(
-        person,
-        { id: true, company: { id: true, name: true } },
-        { company: {} },
-      ),
+      computeFor({
+        flatObjectMetadata: person,
+        select: { id: true, company: { id: true, name: true } },
+        relationSelections: {
+          company: { fieldName: 'company', relationSelections: {} },
+        },
+      }),
     ).toBe(3);
   });
 
   it('should multiply the fields of a one-to-many relation by its limit', () => {
     expect(
-      computeFor(company, { id: true, people: { id: true } }, { people: {} }),
+      computeFor({
+        flatObjectMetadata: company,
+        select: { id: true, people: { id: true } },
+        relationSelections: {
+          people: { fieldName: 'people', relationSelections: {} },
+        },
+      }),
     ).toBe(61);
   });
 
   it('should multiply fields nested under a one-to-many relation by its limit', () => {
     expect(
-      computeFor(
-        company,
-        { id: true, people: { id: true, company: { id: true, name: true } } },
-        { people: { company: {} } },
-      ),
+      computeFor({
+        flatObjectMetadata: company,
+        select: {
+          id: true,
+          people: { id: true, company: { id: true, name: true } },
+        },
+        relationSelections: {
+          people: {
+            fieldName: 'people',
+            relationSelections: {
+              company: { fieldName: 'company', relationSelections: {} },
+            },
+          },
+        },
+      }),
     ).toBe(181);
+  });
+
+  it('should count an aliased relation like the relation it reads', () => {
+    expect(
+      computeFor({
+        flatObjectMetadata: company,
+        select: { id: true, keyPeople: { id: true } },
+        relationSelections: {
+          keyPeople: { fieldName: 'people', relationSelections: {} },
+        },
+      }),
+    ).toBe(61);
   });
 
   it('should use the given one-to-many limit', () => {
     expect(
-      computeFor(
-        company,
-        { id: true, people: { id: true } },
-        { people: {} },
-        5,
-      ),
+      computeFor({
+        flatObjectMetadata: company,
+        select: { id: true, people: { id: true } },
+        relationSelections: {
+          people: { fieldName: 'people', relationSelections: {} },
+        },
+        recordLimitPerOneToManyRelation: 5,
+      }),
     ).toBe(6);
   });
 
   it('should count no one-to-many record when the limit is zero', () => {
     expect(
-      computeFor(
-        company,
-        { id: true, people: { id: true } },
-        { people: {} },
-        0,
-      ),
+      computeFor({
+        flatObjectMetadata: company,
+        select: { id: true, people: { id: true } },
+        relationSelections: {
+          people: { fieldName: 'people', relationSelections: {} },
+        },
+        recordLimitPerOneToManyRelation: 0,
+      }),
     ).toBe(1);
   });
 });

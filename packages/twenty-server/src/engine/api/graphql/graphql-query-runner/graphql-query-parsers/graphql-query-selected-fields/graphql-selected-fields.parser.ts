@@ -8,7 +8,7 @@ import {
   isMorphRelationHead,
 } from 'twenty-shared/utils';
 
-import { type NestedRelationQueryArgsByFieldName } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args-by-field-name.type';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
@@ -25,12 +25,10 @@ export type GraphqlQuerySelectedFieldsResult = {
   // oxlint-disable-next-line typescript/no-explicit-any
   select: Record<string, any>;
   // oxlint-disable-next-line typescript/no-explicit-any
-  relations: Record<string, any>;
-  // oxlint-disable-next-line typescript/no-explicit-any
   aggregate: Record<string, any>;
   relationFieldsCount: number;
   hasAtLeastTwoNestedOneToManyRelations: boolean;
-  nestedRelationQueryArgsByFieldName: NestedRelationQueryArgsByFieldName;
+  relationSelections: CommonRelationSelections;
 };
 
 export class GraphqlQuerySelectedFieldsParser {
@@ -61,11 +59,10 @@ export class GraphqlQuerySelectedFieldsParser {
   ): GraphqlQuerySelectedFieldsResult {
     const accumulator: GraphqlQuerySelectedFieldsResult = {
       select: {},
-      relations: {},
       aggregate: {},
       relationFieldsCount: 0,
       hasAtLeastTwoNestedOneToManyRelations: false,
-      nestedRelationQueryArgsByFieldName: {},
+      relationSelections: {},
     };
 
     if (this.isRootConnection(graphqlSelectedFields)) {

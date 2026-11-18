@@ -47,8 +47,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       accumulator.hasAtLeastTwoNestedOneToManyRelations = true;
     }
 
-    accumulator.relations[fieldKey] = true;
-
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
       throw new Error(
         `Relation target object metadata id not found for field ${fieldMetadata.name}`,
@@ -74,7 +72,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       id: true,
       ...relationAccumulator.select,
     };
-    accumulator.relations[fieldKey] = relationAccumulator.relations;
     accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
     accumulator.relationFieldsCount =
       accumulator.relationFieldsCount +
@@ -83,14 +80,14 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
-    accumulator.nestedRelationQueryArgsByFieldName[fieldKey] = {
+    accumulator.relationSelections[fieldKey] = {
+      fieldName: fieldMetadata.name,
       ...(isOneToManyRelation &&
       isPlainObject(fieldValue) &&
       isPlainObject(fieldValue.__arguments)
         ? this.resolveQueryArgs(fieldValue.__arguments, targetObjectMetadata)
         : {}),
-      nestedRelationQueryArgsByFieldName:
-        relationAccumulator.nestedRelationQueryArgsByFieldName,
+      relationSelections: relationAccumulator.relationSelections,
     };
   }
 

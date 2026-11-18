@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { type CommonRelationSelections } from 'src/engine/api/common/types/common-relation-selection.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -13,23 +14,23 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const buildColumnsToSelect = ({
   select,
-  relations,
+  relationSelections,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: Record<string, unknown>;
-  relations: Record<string, unknown>;
+  relationSelections: CommonRelationSelections;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
-  const requiredRelationColumns = getRequiredRelationColumns(
-    relations,
+  const requiredRelationColumns = getRequiredRelationColumns({
+    relationSelections,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  );
+  });
 
   const fieldsToSelect: Record<string, boolean> = Object.entries(select)
     .filter(
@@ -46,13 +47,23 @@ export const buildColumnsToSelect = ({
   return result;
 };
 
-const getRequiredRelationColumns = (
-  relations: Record<string, unknown>,
-  flatObjectMetadata: FlatObjectMetadata,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-): string[] => {
+const getRequiredRelationColumns = ({
+  relationSelections,
+  flatObjectMetadata,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  relationSelections: CommonRelationSelections;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): string[] => {
   const requiredColumns: string[] = [];
+  const selectedRelationFieldNames = new Set(
+    Object.values(relationSelections)
+      .filter(isDefined)
+      .map(({ fieldName }) => fieldName),
+  );
 
   for (const fieldId of flatObjectMetadata.fieldIds) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -61,10 +72,8 @@ const getRequiredRelationColumns = (
     });
 
     if (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)) {
-      const relationValue = relations[fieldMetadata.name];
-
       if (
-        !isDefined(relationValue) ||
+        !selectedRelationFieldNames.has(fieldMetadata.name) ||
         fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
         continue;
@@ -92,9 +101,7 @@ const getRequiredRelationColumns = (
         continue;
       }
 
-      const relationValue = relations[fieldMetadata.name];
-
-      if (!isDefined(relationValue)) {
+      if (!selectedRelationFieldNames.has(fieldMetadata.name)) {
         continue;
       }
 
