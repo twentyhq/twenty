@@ -1192,9 +1192,9 @@ interface BillingProductDTO {
 
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
-  APPLICATION
 }
 
 type BillingProductMetadata {
