@@ -6,7 +6,6 @@ import { type ReactNode } from 'react';
 import { useToggleAiChatMessageReaction } from '@/ai-chat/messages/hooks/useToggleAiChatMessageReaction';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const THREAD_ID = 'thread-id';
@@ -32,12 +31,11 @@ const renderToggleReaction = () => {
   store.set(currentWorkspaceMemberState.atom, {
     id: WORKSPACE_MEMBER_ID,
   } as never);
-  store.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
 
   const { result } = renderHook(() => useToggleAiChatMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Provider store={store}>
-        <AiChatTestInstance>{children}</AiChatTestInstance>
+        <AiChatTestInstance threadId={THREAD_ID}>{children}</AiChatTestInstance>
       </Provider>
     ),
   });
