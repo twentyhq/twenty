@@ -142,6 +142,7 @@ export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
+export { getAgentChatPushNotificationTag } from './utils/get-agent-chat-push-notification-tag.util';
 export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';

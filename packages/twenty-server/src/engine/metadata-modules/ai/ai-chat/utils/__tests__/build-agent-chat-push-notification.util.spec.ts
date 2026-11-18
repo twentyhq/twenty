@@ -8,18 +8,18 @@ const i18n = setupI18n({ locale: 'en', messages: { en: {} } });
 const ME = 'member-me';
 const FELIX = 'member-felix';
 
-const workspaceMembers = [
-  {
-    id: FELIX,
+const workspaceMemberById = {
+  [FELIX]: {
     name: { firstName: 'Felix', lastName: 'Martin' },
     userEmail: 'felix@example.com',
+    deletedAt: null,
   },
-  {
-    id: ME,
+  [ME]: {
     name: { firstName: 'Grace', lastName: 'Hopper' },
     userEmail: 'grace@example.com',
+    deletedAt: null,
   },
-];
+};
 
 const channelThread = {
   id: 'thread-1',
@@ -41,7 +41,7 @@ const build = (
     i18n,
     thread: channelThread,
     recipientWorkspaceMemberId: ME,
-    workspaceMembers,
+    workspaceMemberById,
     isPreviewEnabled: true,
     ...overrides,
   });

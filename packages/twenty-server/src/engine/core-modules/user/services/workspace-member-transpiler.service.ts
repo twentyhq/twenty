@@ -22,6 +22,11 @@ import {
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 
+const INBOX_NOTIFICATION_LEVEL_BEFORE_2_61_UPGRADE =
+  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED;
+
+const IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE = true;
+
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
   userWorkspaceRoles: RoleEntity[];
@@ -110,12 +115,11 @@ export class WorkspaceMemberTranspiler {
       colorScheme,
       openRecordIn: openRecordIn as OpenRecordIn,
       uiScale,
-      // Workspaces upgrade after the code rolls out, so these fields are
-      // absent until the 2-61 workspace command reaches them.
       inboxNotificationLevel: (inboxNotificationLevel ??
-        AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED) as AgentChatInboxNotificationLevel,
+        INBOX_NOTIFICATION_LEVEL_BEFORE_2_61_UPGRADE) as AgentChatInboxNotificationLevel,
       isInboxNotificationPreviewEnabled:
-        isInboxNotificationPreviewEnabled ?? true,
+        isInboxNotificationPreviewEnabled ??
+        IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

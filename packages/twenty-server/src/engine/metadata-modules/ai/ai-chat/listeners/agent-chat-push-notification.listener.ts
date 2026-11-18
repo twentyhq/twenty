@@ -15,14 +15,13 @@ import {
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-// Participant writes of a message (mentions, unread) land just after the activity bump
-const PUSH_NOTIFICATION_DELAY_MS = 1_000;
+const PARTICIPANT_WRITES_SETTLE_DELAY_MS = 1_000;
 
 @Injectable()
 export class AgentChatPushNotificationListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.notificationQueue)
-    private readonly notificationQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.pushNotificationQueue)
+    private readonly pushNotificationQueueService: MessageQueueService,
   ) {}
 
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.UPDATED)
@@ -41,13 +40,13 @@ export class AgentChatPushNotificationListener {
         continue;
       }
 
-      await this.notificationQueueService.add<SendAgentChatPushNotificationsJobData>(
+      await this.pushNotificationQueueService.add<SendAgentChatPushNotificationsJobData>(
         SendAgentChatPushNotificationsJob.name,
         { workspaceId: payload.workspaceId, thread },
         {
           id: `push-${thread.id}-${new Date(thread.lastActivityAt).getTime()}`,
           doNotCheckDuplicatesBasedOnPrefix: true,
-          delay: PUSH_NOTIFICATION_DELAY_MS,
+          delay: PARTICIPANT_WRITES_SETTLE_DELAY_MS,
           workspaceId: payload.workspaceId,
           isWorkspaceJob: true,
         },

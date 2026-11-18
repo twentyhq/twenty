@@ -116,5 +116,9 @@ export class AddWorkspaceMemberInboxNotificationFieldsCommand extends Provisione
         ),
       );
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatWorkspaceMemberMaps',
+    ]);
   }
 }

@@ -8,8 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
-// lastMentionedAt and lastActivityAt are stamped by separate writes of the same message
-const MENTION_WINDOW_MS = 2_000;
+const MAX_DELAY_BETWEEN_MENTION_AND_ACTIVITY_WRITES_MS = 2_000;
 
 export const getAgentChatPushNotificationReason = ({
   thread,
@@ -61,14 +60,14 @@ export const getAgentChatPushNotificationReason = ({
   }
 
   const lastMentionedAt = participant?.lastMentionedAt;
-
-  if (
+  const isMentionedInLastMessage =
     isMentioned &&
     isDefined(lastMentionedAt) &&
     Math.abs(
       new Date(lastMentionedAt).getTime() - new Date(lastActivityAt).getTime(),
-    ) <= MENTION_WINDOW_MS
-  ) {
+    ) <= MAX_DELAY_BETWEEN_MENTION_AND_ACTIVITY_WRITES_MS;
+
+  if (isMentionedInLastMessage) {
     return 'MENTION';
   }
 
