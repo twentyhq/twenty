@@ -1,6 +1,6 @@
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { AiChatInlineBanner } from '@/ai-chat/components/AiChatInlineBanner';
-import { useAiChatEndTrialPeriod } from '@/ai-chat/hooks/useAiChatEndTrialPeriod';
+import { useAiChatEndTrialPeriod } from '@/ai-chat/usage/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
