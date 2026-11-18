@@ -12,7 +12,10 @@ export const computeAgentPrivacyUpdateOrThrow = ({
   isPrivate,
   userWorkspaceId,
 }: {
-  existingFlatAgent: FlatAgent;
+  existingFlatAgent: Pick<
+    FlatAgent,
+    'id' | 'isPrivate' | 'createdByUserWorkspaceId'
+  >;
   isPrivate: boolean | null | undefined;
   userWorkspaceId: string | undefined;
 }): Partial<Pick<FlatAgent, 'isPrivate' | 'createdByUserWorkspaceId'>> => {
