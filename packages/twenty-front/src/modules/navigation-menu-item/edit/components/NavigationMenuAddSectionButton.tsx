@@ -10,6 +10,7 @@ import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/componen
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -99,6 +100,12 @@ export const NavigationMenuAddSectionButton = ({
                   item={{
                     id: builtInSection.type,
                     label: t(builtInSection.label),
+                    icon: (
+                      <ColoredIcon
+                        Icon={builtInSection.Icon}
+                        color={builtInSection.color}
+                      />
+                    ),
                     onClick: () =>
                       add(() =>
                         createBuiltInSection({

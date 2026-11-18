@@ -1,4 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { NavigationDrawerInboxTriageItem } from '@/inbox/components/NavigationDrawerInboxTriageItem';
@@ -7,7 +9,13 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 
 const INBOX_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
-export const NavigationDrawerInboxTriageSection = () => {
+type NavigationDrawerInboxTriageSectionProps = {
+  headerAction?: ReactNode;
+};
+
+export const NavigationDrawerInboxTriageSection = ({
+  headerAction,
+}: NavigationDrawerInboxTriageSectionProps) => {
   const { t } = useLingui();
   const { openThreadCount, hasUnreadOpenThread } = useInboxOpenThreadsSummary();
 
@@ -15,6 +23,8 @@ export const NavigationDrawerInboxTriageSection = () => {
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_TRIAGE_NAVIGATION_SECTION_ID}
       label={t`Triage`}
+      rightIcon={headerAction}
+      alwaysShowRightIcon={isDefined(headerAction)}
     >
       <NavigationDrawerInboxTriageItem
         presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.OPEN}

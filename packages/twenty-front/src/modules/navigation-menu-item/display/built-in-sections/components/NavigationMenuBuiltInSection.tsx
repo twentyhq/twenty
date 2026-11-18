@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
@@ -15,10 +16,12 @@ import {
 
 type NavigationMenuBuiltInSectionProps = {
   section: Pick<NavigationMenuItem, 'id' | 'type'>;
+  headerAction?: ReactNode;
 };
 
 export const NavigationMenuBuiltInSection = ({
   section,
+  headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -35,13 +38,22 @@ export const NavigationMenuBuiltInSection = ({
 
   switch (section.type) {
     case NavigationMenuItemType.AI_CHAT_INBOX:
-      return <NavigationDrawerInboxTriageSection />;
+      return <NavigationDrawerInboxTriageSection headerAction={headerAction} />;
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
-      return <NavigationMenuAiChatFavoritesSection />;
+      return (
+        <NavigationMenuAiChatFavoritesSection headerAction={headerAction} />
+      );
     case NavigationMenuItemType.AI_CHAT_CHANNELS:
-      return <NavigationDrawerInboxChannelsSection />;
+      return (
+        <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
+      );
     case NavigationMenuItemType.AI_CHAT_RECENTS:
-      return <NavigationMenuAiChatRecentsSection sectionId={section.id} />;
+      return (
+        <NavigationMenuAiChatRecentsSection
+          sectionId={section.id}
+          headerAction={headerAction}
+        />
+      );
     default:
       return null;
   }

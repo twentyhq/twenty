@@ -1,4 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
@@ -18,6 +20,7 @@ type NavigationDrawerInboxFavoritesSectionProps = {
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
   onThreadClick: (thread: InboxThreadListItemData) => void;
+  headerAction?: ReactNode;
 };
 
 export const NavigationDrawerInboxFavoritesSection = ({
@@ -25,6 +28,7 @@ export const NavigationDrawerInboxFavoritesSection = ({
   threads,
   currentThreadId,
   onThreadClick,
+  headerAction,
 }: NavigationDrawerInboxFavoritesSectionProps) => {
   const { t } = useLingui();
   const aiChatAccessibleChannels = useAtomStateValue(
@@ -35,7 +39,11 @@ export const NavigationDrawerInboxFavoritesSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
 
-  if (channels.length === 0 && threads.length === 0) {
+  if (
+    channels.length === 0 &&
+    threads.length === 0 &&
+    !isDefined(headerAction)
+  ) {
     return null;
   }
 
@@ -43,6 +51,8 @@ export const NavigationDrawerInboxFavoritesSection = ({
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_FAVORITES_NAVIGATION_SECTION_ID}
       label={t`Favorites`}
+      rightIcon={headerAction}
+      alwaysShowRightIcon={isDefined(headerAction)}
     >
       {channels.map((channel) => (
         <NavigationDrawerInboxChannelItem
