@@ -22,10 +22,12 @@ const getNodeSelections = (
   const [edges] = getGraphqlFieldSelections({
     fieldNodes: [rootField],
     fragments: Object.fromEntries(
-      (fragments as FragmentDefinitionNode[]).map((fragment) => [
-        fragment.name.value,
-        fragment,
-      ]),
+      fragments
+        .filter(
+          (definition): definition is FragmentDefinitionNode =>
+            definition.kind === Kind.FRAGMENT_DEFINITION,
+        )
+        .map((fragment) => [fragment.name.value, fragment]),
     ),
     variableValues,
   });

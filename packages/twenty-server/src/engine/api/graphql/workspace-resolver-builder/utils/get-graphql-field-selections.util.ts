@@ -28,10 +28,13 @@ type FieldSelectionsByResponseKey = Map<
   }
 >;
 
-const isSelectionIncluded = (
-  directives: readonly DirectiveNode[] | undefined,
-  variableValues: SelectionInfo['variableValues'],
-) =>
+const isSelectionIncluded = ({
+  directives,
+  variableValues,
+}: {
+  directives: readonly DirectiveNode[] | undefined;
+  variableValues: SelectionInfo['variableValues'];
+}) =>
   (directives ?? []).every((directive) => {
     const condition = directive.arguments?.find(
       (argument) => argument.name.value === 'if',
@@ -50,22 +53,31 @@ const isSelectionIncluded = (
     return directive.name.value !== 'include' || conditionValue !== false;
   });
 
-const collectFieldSelections = (
-  selectionSet: SelectionSetNode,
-  info: SelectionInfo,
-  selectionsByResponseKey: FieldSelectionsByResponseKey,
-) => {
+const collectFieldSelections = ({
+  selectionSet,
+  info,
+  selectionsByResponseKey,
+}: {
+  selectionSet: SelectionSetNode;
+  info: SelectionInfo;
+  selectionsByResponseKey: FieldSelectionsByResponseKey;
+}) => {
   for (const selection of selectionSet.selections) {
-    if (!isSelectionIncluded(selection.directives, info.variableValues)) {
+    if (
+      !isSelectionIncluded({
+        directives: selection.directives,
+        variableValues: info.variableValues,
+      })
+    ) {
       continue;
     }
 
     if (selection.kind === Kind.INLINE_FRAGMENT) {
-      collectFieldSelections(
-        selection.selectionSet,
+      collectFieldSelections({
+        selectionSet: selection.selectionSet,
         info,
-        selectionsByResponseKey,
-      );
+        selectionsByResponseKey: selectionsByResponseKey,
+      });
       continue;
     }
 
@@ -73,11 +85,11 @@ const collectFieldSelections = (
       const fragment = info.fragments[selection.name.value];
 
       if (isDefined(fragment)) {
-        collectFieldSelections(
-          fragment.selectionSet,
+        collectFieldSelections({
+          selectionSet: fragment.selectionSet,
           info,
-          selectionsByResponseKey,
-        );
+          selectionsByResponseKey: selectionsByResponseKey,
+        });
       }
       continue;
     }
@@ -113,11 +125,11 @@ const collectFieldSelections = (
     selectionsByResponseKey.set(responseKey, fieldSelection);
 
     if (isDefined(selection.selectionSet)) {
-      collectFieldSelections(
-        selection.selectionSet,
+      collectFieldSelections({
+        selectionSet: selection.selectionSet,
         info,
-        fieldSelection.selectionsByResponseKey,
-      );
+        selectionsByResponseKey: fieldSelection.selectionsByResponseKey,
+      });
     }
   }
 };
@@ -139,11 +151,11 @@ export const getGraphqlFieldSelections = (
 
   for (const fieldNode of info.fieldNodes) {
     if (isDefined(fieldNode.selectionSet)) {
-      collectFieldSelections(
-        fieldNode.selectionSet,
+      collectFieldSelections({
+        selectionSet: fieldNode.selectionSet,
         info,
-        selectionsByResponseKey,
-      );
+        selectionsByResponseKey: selectionsByResponseKey,
+      });
     }
   }
 

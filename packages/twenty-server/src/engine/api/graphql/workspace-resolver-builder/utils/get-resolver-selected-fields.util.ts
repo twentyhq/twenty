@@ -11,10 +11,13 @@ import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-re
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
-const addFieldSelections = (
-  fieldSelections: GraphqlFieldSelection[],
-  selectedFields: ResolverSelectedFields,
-) => {
+const addFieldSelections = ({
+  fieldSelections,
+  selectedFields,
+}: {
+  fieldSelections: GraphqlFieldSelection[];
+  selectedFields: ResolverSelectedFields;
+}) => {
   for (const fieldSelection of fieldSelections) {
     const { fieldName } = fieldSelection;
     const existingSelectedField: ResolverSelectedFields | undefined =
@@ -44,7 +47,10 @@ const addFieldSelections = (
       selectedField.__arguments = fieldSelection.arguments;
     }
 
-    addFieldSelections(fieldSelection.selections, selectedField);
+    addFieldSelections({
+      fieldSelections: fieldSelection.selections,
+      selectedFields: selectedField,
+    });
   }
 };
 
@@ -54,7 +60,10 @@ export const getResolverSelectedFields = (
 ): ResolverSelectedFields => {
   const selectedFields: ResolverSelectedFields = Object.create(null);
 
-  addFieldSelections(getGraphqlFieldSelections(info), selectedFields);
+  addFieldSelections({
+    fieldSelections: getGraphqlFieldSelections(info),
+    selectedFields,
+  });
 
   return selectedFields;
 };
