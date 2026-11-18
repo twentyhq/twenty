@@ -584,6 +584,7 @@ export type Application = {
   content?: Maybe<ApplicationContent>;
   createdAt: Scalars['DateTime']['output'];
   defaultLogicFunctionRole?: Maybe<Role>;
+  /** @deprecated Use requestedRoleId instead */
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
@@ -600,6 +601,7 @@ export type Application = {
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
   requestedIframeMediaPermissions: Array<IframeMediaPermission>;
+  requestedRoleId?: Maybe<Scalars['UUID']['output']>;
   runHealthCheckOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
@@ -748,8 +750,9 @@ export enum ApplicationExportCoverageStatus {
 
 export type ApplicationExportFile = {
   __typename?: 'ApplicationExportFile';
-  /** Base64 for public-asset files, UTF-8 text for other folders. */
+  /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
   content: Scalars['String']['output'];
+  encoding?: Maybe<Scalars['String']['output']>;
   folder: Scalars['String']['output'];
   path: Scalars['String']['output'];
 };
@@ -1275,6 +1278,7 @@ export type BillingProductDto = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  APPLICATION = 'APPLICATION',
   BASE_PRODUCT = 'BASE_PRODUCT',
   RESOURCE_CREDIT = 'RESOURCE_CREDIT'
 }
@@ -1282,7 +1286,7 @@ export enum BillingProductKey {
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
-  planKey: BillingPlanKey;
+  planKey?: Maybe<BillingPlanKey>;
   priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
@@ -2150,6 +2154,7 @@ export type CreateViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   viewId: Scalars['UUID']['input'];
 };
@@ -2471,7 +2476,6 @@ export enum EngineComponentKey {
   SEE_RUNS_WORKFLOW_VERSION = 'SEE_RUNS_WORKFLOW_VERSION',
   SEE_VERSIONS_WORKFLOW = 'SEE_VERSIONS_WORKFLOW',
   SEE_VERSIONS_WORKFLOW_VERSION = 'SEE_VERSIONS_WORKFLOW_VERSION',
-  SEE_VERSION_WORKFLOW_RUN = 'SEE_VERSION_WORKFLOW_RUN',
   SEE_WORKFLOW_WORKFLOW_RUN = 'SEE_WORKFLOW_WORKFLOW_RUN',
   SEE_WORKFLOW_WORKFLOW_VERSION = 'SEE_WORKFLOW_WORKFLOW_VERSION',
   SEND_MESSAGE_CAMPAIGN = 'SEND_MESSAGE_CAMPAIGN',
@@ -2647,8 +2651,10 @@ export enum FeatureFlagKey {
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
+  IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
@@ -4035,7 +4041,7 @@ export type Mutation = {
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
-  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -5564,8 +5570,8 @@ export type MutationUpsertPermissionFlagsArgs = {
 };
 
 
-export type MutationUpsertRowLevelPermissionPredicatesArgs = {
-  input: UpsertRowLevelPermissionPredicatesInput;
+export type MutationUpsertRowLevelPermissionRulesArgs = {
+  input: UpsertRowLevelPermissionRulesInput;
 };
 
 
@@ -6494,7 +6500,9 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeLogicFunctionSources?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeSourceDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
@@ -7105,6 +7113,7 @@ export type RowLevelPermissionPredicate = {
   relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
@@ -7123,37 +7132,13 @@ export type RowLevelPermissionPredicateGroup = {
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
   roleId: Scalars['String']['output'];
-};
-
-export type RowLevelPermissionPredicateGroupInput = {
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['UUID']['input'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND = 'AND',
   OR = 'OR'
 }
-
-export type RowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['JSON']['input']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
-};
 
 export enum RowLevelPermissionPredicateOperand {
   CONTAINS = 'CONTAINS',
@@ -7183,6 +7168,37 @@ export type RowLevelPermissionRule = {
   canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+};
+
+export type RowLevelPermissionRuleInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateGroupInput = {
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  predicateGroups?: InputMaybe<Array<RowLevelPermissionRulePredicateGroupInput>>;
+  predicates?: InputMaybe<Array<RowLevelPermissionRulePredicateInput>>;
+};
+
+export type RowLevelPermissionRulePredicateInput = {
+  fieldMetadataId: Scalars['UUID']['input'];
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  operand: RowLevelPermissionPredicateOperand;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['JSON']['input']>;
+  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RowLevelRecordsPermissions = {
@@ -8258,6 +8274,7 @@ export type UpdateViewSortInput = {
 
 export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8369,22 +8386,17 @@ export type UpsertPermissionFlagsInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type UpsertRowLevelPermissionPredicatesInput = {
-  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+export type UpsertRowLevelPermissionRulesInput = {
   objectMetadataId: Scalars['UUID']['input'];
-  predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
-  predicates: Array<RowLevelPermissionPredicateInput>;
   roleId: Scalars['UUID']['input'];
+  rules: Array<RowLevelPermissionRuleInput>;
 };
 
-export type UpsertRowLevelPermissionPredicatesResult = {
-  __typename?: 'UpsertRowLevelPermissionPredicatesResult';
+export type UpsertRowLevelPermissionRulesResult = {
+  __typename?: 'UpsertRowLevelPermissionRulesResult';
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+  rules: Array<RowLevelPermissionRule>;
 };
 
 export type UpsertViewWidgetInput = {
@@ -8932,6 +8944,7 @@ export type ViewSort = {
   direction: ViewSortDirection;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   viewId: Scalars['UUID']['output'];

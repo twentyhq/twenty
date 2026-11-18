@@ -5,8 +5,8 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
-import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai-chat/threads/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';

@@ -85,7 +85,8 @@ if (process.env.PUBLISH_TEST_HANG === args[0]) {
   const filename = 'test-billing-1.2.3.tgz';
   fs.writeFileSync(path.join(destination, filename), 'packed bytes');
   const files = ['package.json', 'manifest.json', 'src/main.mjs', 'dependencies/yarn.lock'].filter(file => file !== process.env.PUBLISH_TEST_OMIT);
-  console.log(JSON.stringify([{ name: '@test/billing', version: '1.2.3', filename, files: files.map(path => ({ path })) }]));
+  const packed = { name: '@test/billing', version: '1.2.3', filename, files: files.map(path => ({ path })) };
+  console.log(JSON.stringify(process.env.PUBLISH_TEST_PACK_KEYED_BY_NAME === 'true' ? { '@test/billing': packed } : [packed]));
 } else {
   console.log('npm output must not corrupt the CLI JSON');
 }
@@ -107,6 +108,7 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     vi.stubEnv('PUBLISH_TEST_TTY', '');
     vi.stubEnv('PUBLISH_TEST_OMIT', '');
     vi.stubEnv('PUBLISH_TEST_PACK_OUTPUT', '');
+    vi.stubEnv('PUBLISH_TEST_PACK_KEYED_BY_NAME', '');
     vi.stubEnv('ACTIONS_ID_TOKEN_REQUEST_URL', undefined);
     vi.stubEnv('TWENTY_APP_PUBLISH_DISABLE_PROVENANCE', undefined);
     vi.stubEnv('CI', 'true');
@@ -215,6 +217,18 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     await expect(access(invocations[1].args[1])).rejects.toThrow();
   });
 
+  it('publishes with the pack output of npm 12, keyed by package name', async () => {
+    vi.stubEnv('PUBLISH_TEST_PACK_KEYED_BY_NAME', 'true');
+
+    const result = await runPublish();
+
+    expect(result.exitCode).toBe(0);
+    expect(result.envelope.data).toMatchObject({
+      name: '@test/billing',
+      version: '1.2.3',
+    });
+  });
+
   it('forwards npm output as human progress', async () => {
     const result = await runCliForTest([
       'app',
@@ -266,6 +280,7 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
   it.each([
     ['{invalid', 'npm pack returned invalid JSON.'],
     ['[]', 'npm pack returned an invalid package description.'],
+    ['{}', 'npm pack returned an invalid package description.'],
     [
       JSON.stringify([
         {

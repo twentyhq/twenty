@@ -18,6 +18,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 
 @Injectable()
 export class RoleAssignmentWriteService {
@@ -68,12 +69,18 @@ export class RoleAssignmentWriteService {
       actingUserWorkspaceId,
     });
 
-    const { userWorkspaceRoleMap } =
+    const { flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
+        'flatRoleTargetMaps',
       ]);
 
-    if (userWorkspaceRoleMap[userWorkspace.id] === roleId) {
+    if (
+      findFlatRoleTargetFromForeignKey({
+        flatRoleTargetMaps,
+        targetMetadataForeignKey: 'userWorkspaceId',
+        targetId: userWorkspace.id,
+      })?.roleId === roleId
+    ) {
       return { workspaceMember, userWorkspaceId: userWorkspace.id };
     }
 
@@ -362,15 +369,22 @@ export class RoleAssignmentWriteService {
     roleId: string;
     workspaceId: string;
   }): Promise<FlatWorkspaceMember[]> {
-    const { userWorkspaceRoleMap, flatWorkspaceMemberMaps } =
+    const { flatRoleTargetMaps, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
+        'flatRoleTargetMaps',
         'flatWorkspaceMemberMaps',
       ]);
 
-    return Object.entries(userWorkspaceRoleMap)
-      .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
-      .map(([userWorkspaceId]) => {
+    return Object.values(flatRoleTargetMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (flatRoleTarget) =>
+          flatRoleTarget.roleId === roleId &&
+          !flatRoleTarget.isSystemSideEffect,
+      )
+      .map(({ userWorkspaceId }) => userWorkspaceId)
+      .filter(isDefined)
+      .map((userWorkspaceId) => {
         const workspaceMemberId =
           flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
 

@@ -422,6 +422,7 @@ export interface Application {
     content?: ApplicationContent
     createdAt: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
+    /** @deprecated Use requestedRoleId instead */
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
@@ -438,6 +439,7 @@ export interface Application {
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     requestedIframeMediaPermissions: IframeMediaPermission[]
+    requestedRoleId?: Scalars['UUID']
     runHealthCheckOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
@@ -580,8 +582,9 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content: Scalars['String']
+    encoding?: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
     __typename: 'ApplicationExportFile'
@@ -1050,11 +1053,11 @@ export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct)
 
 
 /** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
+export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
 
 export interface BillingProductMetadata {
     isLegacy?: Scalars['String']
-    planKey: BillingPlanKey
+    planKey?: BillingPlanKey
     priceUsageBased: BillingUsageType
     productKey: BillingProductKey
     __typename: 'BillingProductMetadata'
@@ -1584,7 +1587,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'MERGE_WITH_RECORD' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'MERGE_WITH_RECORD' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -1669,7 +1672,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2767,7 +2770,7 @@ export interface Mutation {
     upsertFieldsWidget: View
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
-    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
@@ -3558,6 +3561,7 @@ export interface RowLevelPermissionPredicate {
     relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     subFieldName?: Scalars['String']
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
@@ -3576,6 +3580,7 @@ export interface RowLevelPermissionPredicateGroup {
     parentRowLevelPermissionPredicateGroupId?: Scalars['String']
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
     roleId: Scalars['String']
+    rowLevelPermissionRuleId?: Scalars['String']
     __typename: 'RowLevelPermissionPredicateGroup'
 }
 
@@ -3949,10 +3954,11 @@ export interface UnsubscribeTopic {
 
 export type UnsubscribeTopicVisibility = 'PRIVATE' | 'PUBLIC'
 
-export interface UpsertRowLevelPermissionPredicatesResult {
+export interface UpsertRowLevelPermissionRulesResult {
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
-    __typename: 'UpsertRowLevelPermissionPredicatesResult'
+    rules: RowLevelPermissionRule[]
+    __typename: 'UpsertRowLevelPermissionRulesResult'
 }
 
 export interface UsageAnalytics {
@@ -4339,6 +4345,7 @@ export interface ViewSort {
     direction: ViewSortDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     subFieldName?: Scalars['String']
     updatedAt: Scalars['DateTime']
     viewId: Scalars['UUID']
@@ -5005,6 +5012,7 @@ export interface ApplicationGenqlSelection{
     content?: ApplicationContentGenqlSelection
     createdAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
+    /** @deprecated Use requestedRoleId instead */
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
@@ -5021,6 +5029,7 @@ export interface ApplicationGenqlSelection{
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
+    requestedRoleId?: boolean | number
     runHealthCheckOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
@@ -5172,8 +5181,9 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
-    /** Base64 for public-asset files, UTF-8 text for other folders. */
+    /** Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text. */
     content?: boolean | number
+    encoding?: boolean | number
     folder?: boolean | number
     path?: boolean | number
     __typename?: boolean | number
@@ -6198,7 +6208,7 @@ export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | nul
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
-export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
@@ -7650,7 +7660,7 @@ export interface MutationGenqlSelection{
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
-    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    upsertRowLevelPermissionRules?: (UpsertRowLevelPermissionRulesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionRulesInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], emailVerificationToken: Scalars['String'], origin: Scalars['String']} })
@@ -8195,7 +8205,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeLogicFunctionSources?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8513,6 +8523,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     subFieldName?: boolean | number
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
@@ -8532,13 +8543,10 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     parentRowLevelPermissionPredicateGroupId?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionRuleId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
-
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelPermissionRuleGenqlSelection{
     canCreateRecords?: boolean | number
@@ -8551,6 +8559,12 @@ export interface RowLevelPermissionRuleGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
+
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -9143,7 +9157,7 @@ id: Scalars['UUID'],
 /** The view sort to update */
 update: UpdateViewSortInputUpdates}
 
-export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),subFieldName?: (Scalars['String'] | null)}
+export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null)}
 
 export interface UpdateWebhookInput {
 /** The id of the webhook to update */
@@ -9183,11 +9197,12 @@ export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissi
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
 
-export interface UpsertRowLevelPermissionPredicatesInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
+export interface UpsertRowLevelPermissionRulesInput {objectMetadataId: Scalars['UUID'],roleId: Scalars['UUID'],rules: RowLevelPermissionRuleInput[]}
 
-export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
+export interface UpsertRowLevelPermissionRulesResultGenqlSelection{
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    rules?: RowLevelPermissionRuleGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9624,6 +9639,7 @@ export interface ViewSortGenqlSelection{
     direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     subFieldName?: boolean | number
     updatedAt?: boolean | number
     viewId?: boolean | number
@@ -12498,10 +12514,10 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    const UpsertRowLevelPermissionRulesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionRulesResult']
+    export const isUpsertRowLevelPermissionRulesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionRulesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionRulesResult"')
+      return UpsertRowLevelPermissionRulesResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13061,6 +13077,7 @@ export const enumBillingPlanKey = {
 }
 
 export const enumBillingProductKey = {
+   APPLICATION: 'APPLICATION' as const,
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
    RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
 }
@@ -13233,7 +13250,6 @@ export const enumEngineComponentKey = {
    SEE_RUNS_WORKFLOW_VERSION: 'SEE_RUNS_WORKFLOW_VERSION' as const,
    SEE_VERSIONS_WORKFLOW: 'SEE_VERSIONS_WORKFLOW' as const,
    SEE_VERSIONS_WORKFLOW_VERSION: 'SEE_VERSIONS_WORKFLOW_VERSION' as const,
-   SEE_VERSION_WORKFLOW_RUN: 'SEE_VERSION_WORKFLOW_RUN' as const,
    SEE_WORKFLOW_WORKFLOW_RUN: 'SEE_WORKFLOW_WORKFLOW_RUN' as const,
    SEE_WORKFLOW_WORKFLOW_VERSION: 'SEE_WORKFLOW_WORKFLOW_VERSION' as const,
    SEND_MESSAGE_CAMPAIGN: 'SEND_MESSAGE_CAMPAIGN' as const,
@@ -13276,8 +13292,10 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
+   IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
+   IS_LOOKUP_COLUMNS_ENABLED: 'IS_LOOKUP_COLUMNS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
    IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,

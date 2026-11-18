@@ -1,5 +1,5 @@
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { isInboxThreadInChannelView } from '@/inbox/utils/isInboxThreadInChannelView';
 import {
   AgentChatChannelAssignmentFilter,

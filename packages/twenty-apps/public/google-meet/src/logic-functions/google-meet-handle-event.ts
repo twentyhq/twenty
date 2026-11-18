@@ -6,10 +6,10 @@ import {
   GOOGLE_MEET_HANDLE_EVENT_UNIVERSAL_IDENTIFIER,
   GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { GOOGLE_MEET_TRANSCRIPT_GENERATED_EVENT_TYPE } from 'src/logic-functions/constants/google-workspace-events.constant';
+import { GOOGLE_MEET_EVENT_TYPES } from 'src/logic-functions/constants/google-workspace-events.constant';
 import { type GoogleMeetEventOutcome } from 'src/logic-functions/types/google-meet-event-outcome.type';
-import { buildGoogleMeetTranscriptImportJob } from 'src/logic-functions/utils/build-google-meet-transcript-import-job.util';
-import { getConferenceRecordNameFromTranscriptName } from 'src/logic-functions/utils/get-conference-record-name-from-transcript-name.util';
+import { buildGoogleMeetArtifactImportJob } from 'src/logic-functions/utils/build-google-meet-artifact-import-job.util';
+import { getConferenceRecordNameFromArtifactName } from 'src/logic-functions/utils/get-conference-record-name-from-artifact-name.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getGoogleMeetConferenceRecord } from 'src/logic-functions/utils/get-google-meet-conference-record.util';
 import { getGoogleMeetEventSubscriptionKey } from 'src/logic-functions/utils/get-google-meet-event-subscription-key.util';
@@ -21,29 +21,29 @@ type GoogleMeetHandleEventResult =
 export const googleMeetHandleEventHandler = async ({
   subscriptionName,
   eventType,
-  transcriptName,
+  artifactName,
 }: {
   subscriptionName?: string;
   eventType?: string;
-  transcriptName?: string;
+  artifactName?: string;
 }): Promise<GoogleMeetHandleEventResult> => {
   if (!isNonEmptyString(subscriptionName) || !isNonEmptyString(eventType)) {
     return { success: false, error: 'Invalid Google Meet event' };
   }
 
-  if (eventType !== GOOGLE_MEET_TRANSCRIPT_GENERATED_EVENT_TYPE) {
+  if (!GOOGLE_MEET_EVENT_TYPES.includes(eventType)) {
     return { success: true, outcome: 'EVENT_TYPE_IGNORED' };
   }
 
-  const conferenceRecordName = isNonEmptyString(transcriptName)
-    ? getConferenceRecordNameFromTranscriptName(transcriptName)
+  const conferenceRecordName = isNonEmptyString(artifactName)
+    ? getConferenceRecordNameFromArtifactName(artifactName)
     : undefined;
 
   if (
-    !isNonEmptyString(transcriptName) ||
+    !isNonEmptyString(artifactName) ||
     !isNonEmptyString(conferenceRecordName)
   ) {
-    return { success: false, error: 'Invalid Google Meet transcript event' };
+    return { success: false, error: 'Invalid Google Meet artifact event' };
   }
 
   const connectedAccountId = await kv.get<string>(
@@ -65,10 +65,10 @@ export const googleMeetHandleEventHandler = async ({
     logicFunctionUniversalIdentifier:
       GOOGLE_MEET_IMPORT_CONFERENCE_UNIVERSAL_IDENTIFIER,
     jobs: [
-      buildGoogleMeetTranscriptImportJob({
+      buildGoogleMeetArtifactImportJob({
         connectedAccountId,
         conferenceRecord,
-        transcriptName,
+        artifactName,
       }),
     ],
   });
@@ -80,7 +80,7 @@ export default defineLogicFunction({
   universalIdentifier: GOOGLE_MEET_HANDLE_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'google-meet-handle-event',
   description:
-    'Queues the import of a Google Meet conference when Google reports that its transcript is ready.',
+    'Queues the import of a Google Meet conference when Google reports that its transcript, Gemini notes or recording is ready.',
   timeoutSeconds: 60,
   handler: googleMeetHandleEventHandler,
 });

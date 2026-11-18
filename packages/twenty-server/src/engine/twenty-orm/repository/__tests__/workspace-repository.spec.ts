@@ -153,7 +153,7 @@ const buildRepository = ({
       mainPrincipal: {
         type: 'apiKey',
         apiKeyId: 'api-key-id',
-        roleId: ROLE_ID,
+        roleIds: [ROLE_ID],
       },
       applicationPrincipal: { type: 'customApplication' },
     },

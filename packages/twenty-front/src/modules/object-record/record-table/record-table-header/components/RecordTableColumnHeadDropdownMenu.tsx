@@ -3,6 +3,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -83,24 +84,36 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
+  const lookupTargetFieldMetadataItem =
+    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
+
   const handleToggleColumnSort = useHandleToggleColumnSort({
     objectMetadataItemId: objectMetadataId,
   });
 
   const handleSortClick = () => {
-    handleToggleColumnSort(recordField.fieldMetadataItemId);
+    handleToggleColumnSort({
+      fieldMetadataId: recordField.fieldMetadataItemId,
+      relationTargetFieldMetadataId: lookupTargetFieldMetadataItem?.id,
+    });
   };
 
   const { openRecordFilterChipFromTableHeader } =
     useOpenRecordFilterChipFromTableHeader();
 
   const handleFilterClick = () => {
-    openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
+    openRecordFilterChipFromTableHeader({
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+      relationTargetFieldMetadataItem: lookupTargetFieldMetadataItem,
+    });
   };
 
   const { isFilterable, isSortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
+    {
+      fieldMetadataItemId:
+        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+    },
   );
 
   const { canPersistChanges } = useCanPersistViewChanges();

@@ -128,6 +128,12 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24h"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr "Um item de menu de navegação {type} não pode ser colocado dentro de um {parentType}"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -314,6 +320,18 @@ msgstr "Ocorreu um conflito de nomes."
 msgid "A name is required for FOLDER type"
 msgstr "Um nome é obrigatório para o tipo FOLDER"
 
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr "Um nome é obrigatório para o tipo SECTION"
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr "Um nome é obrigatório para o tipo TAB"
+
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
@@ -465,6 +483,11 @@ msgstr "Já existe uma habilidade com este nome"
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
 msgstr "Já existe uma habilidade com este nome."
+
+#. js-lingui-id: ESdD/i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "A sort can only use a related record field on a many-to-one relation field"
+msgstr ""
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -1553,6 +1576,14 @@ msgstr "O âmbito da variável da aplicação não pode ser alterado após a cri
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "As aplicações não podem atualizar estes campos: {fieldsList}."
 
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr ""
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1928,6 +1959,11 @@ msgstr "Cco"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "Faturação"
+
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr "A configuração de cobrança não foi encontrada."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -6260,6 +6296,11 @@ msgstr "Função não encontrada."
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "O provedor de funções está ocupado. Tente novamente em alguns minutos."
 
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr ""
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
@@ -10003,6 +10044,11 @@ msgstr "Apenas uma coluna vinculada a um registro pode exibir um campo desse reg
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Apenas uma campanha em rascunho ou agendada pode ser enviada."
 
+#. js-lingui-id: 82FEG0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Only a field linking to one record can be sorted by a field of that record"
+msgstr ""
+
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
@@ -11455,6 +11501,16 @@ msgctxt "fieldMetadata.description"
 msgid "Recording summary"
 msgstr "Resumo da gravação"
 
+#. js-lingui-id: vyBbUK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a deactivated field"
+msgstr ""
+
+#. js-lingui-id: PbYQoA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a relation of the related record"
+msgstr ""
+
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11903,6 +11959,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Função"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr "A função \"{roleLabel}\" não pode ser atribuída"
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11943,6 +12004,11 @@ msgstr "A função \"{roleLabel}\" não pode ser atribuída a webhooks."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Não é possível atribuir a função \"{roleLabel}\": as funções personalizadas exigem o plano Organization"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr "A função \"{roleLabel}\" é mantida pelo sistema e não pode ser atribuída"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -14021,6 +14087,7 @@ msgstr "O campo configurado para este widget não pôde ser encontrado."
 
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The field must belong to the related object"
 msgstr "O campo deve pertencer ao objeto relacionado"
 
@@ -14295,16 +14362,19 @@ msgstr "O conteúdo do e-mail recebido não está mais disponível."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field cannot be a relation"
 msgstr "O campo de registro relacionado não pode ser uma relação"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field must be active"
 msgstr "O campo de registro relacionado deve estar ativo"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
 msgstr "O campo de registro relacionado deve pertencer ao objeto de destino da relação"
 
@@ -14689,6 +14759,11 @@ msgstr "Este aplicativo está sendo atualizado. Aguarde a conclusão antes de de
 msgid "This application variable scope is not supported."
 msgstr "Este âmbito de variável da aplicação não é suportado."
 
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr "Esta configuração de cobrança tem definições inválidas."
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -14729,6 +14804,11 @@ msgstr "O conteúdo do e-mail desta campanha é inválido."
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "A lista desta campanha está na lixeira. Restaure-a ou selecione outra lista no campo Para."
+
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr "Esta alteração cobraria mais membros do que o limite rígido de assentos permite."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -14977,6 +15057,11 @@ msgstr "Esta instância não reportou um identificador de servidor. Defina SERVE
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "Este trabalho é grande demais para ser colocado na fila."
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr "Este tipo de configuração de cobrança não pode ser criado ou encerrado manualmente."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15423,6 +15508,11 @@ msgstr "Esta versão do workflow não está pronta para ser ativada. {reasons}"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "Este espaço de trabalho já tem uma assinatura."
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr "Este espaço de trabalho já tem uma configuração deste tipo durante esse período."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -18299,7 +18389,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Sua função não pode excluir alguns destes registros, portanto eles não podem ser mesclados."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Seu papel nesta área de trabalho não pôde ser encontrado. Por favor, entre em contato com o administrador da área de trabalho."

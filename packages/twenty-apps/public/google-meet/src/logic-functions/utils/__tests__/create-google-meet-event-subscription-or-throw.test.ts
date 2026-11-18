@@ -44,7 +44,11 @@ describe('createGoogleMeetEventSubscriptionOrThrow', () => {
         },
         body: JSON.stringify({
           targetResource: '//cloudidentity.googleapis.com/users/1234567890',
-          eventTypes: ['google.workspace.meet.transcript.v2.fileGenerated'],
+          eventTypes: [
+            'google.workspace.meet.transcript.v2.fileGenerated',
+            'google.workspace.meet.smartNote.v2.fileGenerated',
+            'google.workspace.meet.recording.v2.fileGenerated',
+          ],
           notificationEndpoint: {
             pubsubTopic: 'projects/twenty/topics/google-meet',
           },

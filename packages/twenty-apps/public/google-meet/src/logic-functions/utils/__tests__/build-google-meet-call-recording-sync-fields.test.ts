@@ -21,7 +21,9 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
         title: 'Customer call',
+        summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        hasRecordingFile: false,
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).toEqual({
@@ -43,7 +45,9 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
           startTime: '2026-11-17T09:00:00Z',
         },
         title: undefined,
+        summaryMarkdown: undefined,
         transcriptEntries: [],
+        hasRecordingFile: false,
         calendarEvent: undefined,
       }),
     ).toEqual({
@@ -53,12 +57,46 @@ describe('buildGoogleMeetCallRecordingSyncFields', () => {
     });
   });
 
+  it('should complete a recording that only has Gemini notes', () => {
+    expect(
+      buildGoogleMeetCallRecordingSyncFields({
+        conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: '## Summary',
+        transcriptEntries: [],
+        hasRecordingFile: false,
+        calendarEvent: undefined,
+      }),
+    ).toEqual({
+      status: 'COMPLETED',
+      externalRecordingId: 'conferenceRecords/first',
+      startedAt: '2026-11-17T09:00:00Z',
+      endedAt: '2026-11-17T09:30:00Z',
+      summary: { blocknote: null, markdown: '## Summary' },
+    });
+  });
+
+  it('should complete a recording that only has a recording file', () => {
+    expect(
+      buildGoogleMeetCallRecordingSyncFields({
+        conferenceRecord: CONFERENCE_RECORD,
+        title: undefined,
+        summaryMarkdown: undefined,
+        transcriptEntries: [],
+        hasRecordingFile: true,
+        calendarEvent: undefined,
+      }).status,
+    ).toBe('COMPLETED');
+  });
+
   it('should leave the title out when the conference has none', () => {
     expect(
       buildGoogleMeetCallRecordingSyncFields({
         conferenceRecord: CONFERENCE_RECORD,
         title: undefined,
+        summaryMarkdown: undefined,
         transcriptEntries: TRANSCRIPT_ENTRIES,
+        hasRecordingFile: false,
         calendarEvent: { id: 'calendar-event-id' },
       }),
     ).not.toHaveProperty('title');

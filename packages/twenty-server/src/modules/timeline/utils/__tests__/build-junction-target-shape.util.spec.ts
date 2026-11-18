@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
@@ -47,6 +48,28 @@ const COMPANY_OBJECT = getFlatObjectMetadataMock({
   nameSingular: 'company',
   fieldIds: [],
 });
+
+const TIMELINE_ACTIVITY_OBJECT = getFlatObjectMetadataMock({
+  id: 'timeline-activity-object',
+  universalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+  nameSingular: 'timelineActivity',
+  fieldIds: ['timeline-target-person-field', 'timeline-target-company-field'],
+});
+
+const TIMELINE_TARGET_FIELDS = [
+  { id: 'timeline-target-person-field', targetObjectId: PERSON_OBJECT.id },
+  { id: 'timeline-target-company-field', targetObjectId: COMPANY_OBJECT.id },
+].map(({ id, targetObjectId }) =>
+  getFlatFieldMetadataMock({
+    id,
+    universalIdentifier: `${id}-uid`,
+    type: FieldMetadataType.MORPH_RELATION,
+    objectMetadataId: TIMELINE_ACTIVITY_OBJECT.id,
+    morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
+    relationTargetObjectMetadataId: targetObjectId,
+    settings: { relationType: RelationType.MANY_TO_ONE },
+  }),
+);
 
 const NOTE_TARGETS_FIELD = getFlatFieldMetadataMock({
   id: 'note-targets-field',
@@ -128,6 +151,7 @@ const flatObjectMetadataMaps = buildFlatEntityMaps([
   NOTE_TARGET_OBJECT,
   PERSON_OBJECT,
   COMPANY_OBJECT,
+  TIMELINE_ACTIVITY_OBJECT,
 ]);
 
 const flatFieldMetadataMaps = buildFlatEntityMaps([
@@ -135,6 +159,7 @@ const flatFieldMetadataMaps = buildFlatEntityMaps([
   NOTE_TARGET_NOTE_FIELD,
   NOTE_TARGET_PERSON_FIELD,
   NOTE_TARGET_COMPANY_FIELD,
+  ...TIMELINE_TARGET_FIELDS,
 ]);
 
 const buildShape = (relationFlatFieldMetadata: OrmFlatFieldMetadata) =>
@@ -191,6 +216,7 @@ describe('buildJunctionTargetShape', () => {
         NOTE_TARGETS_FIELD,
         NOTE_TARGET_NOTE_FIELD,
         NON_MORPH_JUNCTION_TARGET_FIELD,
+        ...TIMELINE_TARGET_FIELDS,
       ]),
     });
 
